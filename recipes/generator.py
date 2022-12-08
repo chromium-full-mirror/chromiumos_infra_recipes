@@ -125,6 +125,8 @@ class GeneratorRun:
     self.m = api
     self.properties = properties
 
+    self._policy: Optional[BranchPolicy] = None
+
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
     # version. This information will be used in branch determination and sent to
@@ -159,6 +161,17 @@ class GeneratorRun:
         self.m.naming.get_package_title(package) for package in self.packages
     ]
 
+  @property
+  def policy(self) -> BranchPolicy:
+    """Get the branch policy that applies to this build. See generator.proto."""
+    assert self._policy is not None
+    return self._policy
+
+  def set_policy(self, policy: BranchPolicy):
+    """Set the policy for this build, and report it as a step."""
+    self.m.easy.set_properties_step(policy=MessageToDict(policy))
+    self._policy = policy
+
   def run(self):
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
@@ -173,9 +186,8 @@ class GeneratorRun:
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
       policy_info = self.select_policy()
-      policy = policy_info.policy
-      self.m.easy.set_properties_step(policy=MessageToDict(policy))
-      if policy.ignore:
+      self.set_policy(policy_info.policy)
+      if self.policy.ignore:
         self.m.step.empty('policy set to ignore')
         return
       self.checkout_branch(policy_info)
@@ -199,25 +211,25 @@ class GeneratorRun:
           with self.m.step.nest('update policy'):
             user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
             self.m.easy.set_properties_step(
-                original_policy=MessageToDict(policy))
-            del policy.reviewers[:]
-            policy.reviewers.add().email = user
-            policy.existing_cls_policy = ABANDON
-            policy.no_existing_cls_policy = ABANDON
-            policy.outdated_cls_policy = OUTDATED_DO_NOTHING
-            policy.retry_cl_policy = NO_RETRY
-            policy.topic = '{}-{}'.format('testing', policy.topic or
-                                          base_topic_name)
-            self.m.easy.set_properties_step(policy=MessageToDict(policy))
+                original_policy=MessageToDict(self.policy))
+            del self.policy.reviewers[:]
+            self.policy.reviewers.add().email = user
+            self.policy.existing_cls_policy = ABANDON
+            self.policy.no_existing_cls_policy = ABANDON
+            self.policy.outdated_cls_policy = OUTDATED_DO_NOTHING
+            self.policy.retry_cl_policy = NO_RETRY
+            self.policy.topic = '{}-{}'.format(
+                'testing', self.policy.topic or base_topic_name)
+            self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
 
       if self.properties.init_sdk:
         with self.m.context(cwd=workspace_path):
           self.m.cros_sdk.create_chroot(use_image=False)
 
-      topic = policy.topic or base_topic_name
-      no_existing_cls_policy = policy.no_existing_cls_policy
-      outdated_cls_policy = policy.outdated_cls_policy
-      retry_cl_policy = policy.retry_cl_policy or NO_RETRY
+      topic = self.policy.topic or base_topic_name
+      no_existing_cls_policy = self.policy.no_existing_cls_policy
+      outdated_cls_policy = self.policy.outdated_cls_policy
+      retry_cl_policy = self.policy.retry_cl_policy or NO_RETRY
 
       if not self.retry_only_run:
         # If earlier we fetched for a target version through Gitiles, pass along
@@ -378,7 +390,7 @@ class GeneratorRun:
                                         outdated_cls_policy)
       if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
-        self._create_uprev_cls(policy, ebuilds_by_pinfo, topic, open_changes,
+        self._create_uprev_cls(ebuilds_by_pinfo, topic, open_changes,
                                existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
@@ -741,13 +753,12 @@ class GeneratorRun:
       else:
         pres.step_text = 'using default branch'
 
-  def _create_uprev_cls(self, policy: BranchPolicy,
-                        ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
+  def _create_uprev_cls(self, ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
                         open_changes: List[GerritChange], existing_cls: bool):
     """Create appropriate CLs for the uprevs."""
     send_to_cq_policy = (
-        policy.existing_cls_policy
-        if existing_cls else policy.no_existing_cls_policy)
+        self.policy.existing_cls_policy
+        if existing_cls else self.policy.no_existing_cls_policy)
 
     with self.m.step.nest('generate CLs'):
       changes = []
@@ -755,7 +766,9 @@ class GeneratorRun:
         changes.append(
             self.m.gerrit.create_change(
                 info.path,
-                reviewers=[reviewer.email for reviewer in policy.reviewers],
+                reviewers=[
+                    reviewer.email for reviewer in self.policy.reviewers
+                ],
                 topic=topic,
             ))
       self.m.easy.set_properties_step(
