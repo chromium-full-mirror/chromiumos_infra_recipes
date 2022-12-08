@@ -56,6 +56,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git.api import Reference
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
@@ -353,8 +354,8 @@ class GeneratorRun:
 
                 with self.m.step.nest("retry CL {}".format(retry_ci.change_id)):
                   labels = {
-                      self.m.gerrit.Label.BOT_COMMIT: 1,
-                      self.m.gerrit.Label.COMMIT_QUEUE: cq_label,
+                      Label.BOT_COMMIT: 1,
+                      Label.COMMIT_QUEUE: cq_label,
                   }
                   retry_cl = retry_ci.to_gerrit_change_proto()
                   # Find path of appropriate project in local checkout, then set labels.
@@ -377,8 +378,8 @@ class GeneratorRun:
                           outdated_cls_policy, self.retry_only_run)
       if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
-        _create_uprev_cls(self.m, policy, ebuilds_by_pinfo, topic, open_changes,
-                          existing_cls)
+        self._create_uprev_cls(policy, ebuilds_by_pinfo, topic, open_changes,
+                               existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
                 workspace_path: str, topic: str):
@@ -740,6 +741,91 @@ class GeneratorRun:
       else:
         pres.step_text = 'using default branch'
 
+  def _create_uprev_cls(self, policy: BranchPolicy,
+                        ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
+                        open_changes: List[GerritChange], existing_cls: bool):
+    """Create appropriate CLs for the uprevs."""
+    send_to_cq_policy = (
+        policy.existing_cls_policy
+        if existing_cls else policy.no_existing_cls_policy)
+
+    with self.m.step.nest('generate CLs'):
+      changes = []
+      for info in sorted(ebuilds_by_pinfo.keys()):
+        changes.append(
+            self.m.gerrit.create_change(
+                info.path,
+                reviewers=[reviewer.email for reviewer in policy.reviewers],
+                topic=topic,
+            ))
+      self.m.easy.set_properties_step(
+          generated_cls=[MessageToDict(change) for change in changes])
+
+    if changes:
+      with self.m.step.nest('cq-depend generated CLs'):
+        cq_depends = self.m.cros_cq_depends.get_mutual_cq_depend(changes)
+        for change, cq_depend in zip(changes, cq_depends):
+          with self.m.step.nest('set cq-depend for {} CL'.format(
+              change.project)) as presentation:
+            if not cq_depend:
+              presentation.step_text = "empty Cq-Depend, skipping"
+              continue
+            description = self.m.gerrit.get_change_description(change)
+            description = self.m.git_footers.edit_add_change_description(
+                description, 'Cq-Depend', cq_depend)
+            self.m.gerrit.set_change_description(change, description,
+                                                 amend_local=True)
+
+    with self.m.step.nest('update CL labels'):
+      for change in changes:
+        # First post explanatory message.
+        message_lines = [
+            'Found {} open CL(s) for Gerrit topic {}:'.format(
+                len(open_changes), topic),
+            '\n'.join(map(self.m.gerrit.parse_gerrit_change_url, open_changes)),
+            'Send-to-cq policy for this case is {}.'.format(
+                SendToCqPolicy.Name(send_to_cq_policy))
+        ]
+
+        message_lines.append({
+            DRY_RUN: 'Therefore, marking CL as CQ+1',
+            FULL_RUN: 'Therefore, marking CL as CQ+2',
+            ABANDON: 'Therefore, abandoning the CL',
+            SUBMIT: 'Therefore, will attempt to directly submit the CL.',
+        }.get(
+            send_to_cq_policy,
+            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+            'Reviewers may also want to abandon the open CL(s).',
+        ))
+
+        message = '\n'.join(message_lines)
+        if send_to_cq_policy == ABANDON:
+          self.m.gerrit.abandon_change(change, message=message)
+        else:
+          self.m.gerrit.add_change_comment(change, message)
+
+        # Then set labels.
+        labels = {
+            DRY_RUN: {
+                Label.BOT_COMMIT: 1,
+                Label.COMMIT_QUEUE: 1,
+            },
+            FULL_RUN: {
+                Label.BOT_COMMIT: 1,
+                Label.COMMIT_QUEUE: 2,
+            },
+            SUBMIT: {
+                Label.BOT_COMMIT: 1,
+            },
+        }.get(send_to_cq_policy)
+
+        if labels is not None:
+          self.m.gerrit.set_change_labels(change, labels)
+
+      if send_to_cq_policy == SUBMIT:
+        with self.m.step.nest('submit CL'):
+          self.m.gerrit.submit_change(change)
+
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
                        ) -> str:
@@ -838,92 +924,6 @@ def _abandon_cls(api: RecipeApi, outdated_cls: List[PatchSet],
                                 message=outdated_comment_message)
       if abandoned_cls is not None:
         abandoned_cls.append(outdated_cl)
-
-
-def _create_uprev_cls(api: RecipeApi, policy: BranchPolicy,
-                      ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
-                      open_changes: List[GerritChange], existing_cls: bool):
-  """Create appropriate CLs for the uprevs."""
-  send_to_cq_policy = (
-      policy.existing_cls_policy
-      if existing_cls else policy.no_existing_cls_policy)
-
-  with api.step.nest('generate CLs'):
-    changes = []
-    for info in sorted(ebuilds_by_pinfo.keys()):
-      changes.append(
-          api.gerrit.create_change(
-              info.path,
-              reviewers=[reviewer.email for reviewer in policy.reviewers],
-              topic=topic,
-          ))
-    api.easy.set_properties_step(
-        generated_cls=[MessageToDict(change) for change in changes])
-
-  if changes:
-    with api.step.nest('cq-depend generated CLs'):
-      cq_depends = api.cros_cq_depends.get_mutual_cq_depend(changes)
-      for change, cq_depend in zip(changes, cq_depends):
-        with api.step.nest('set cq-depend for {} CL'.format(
-            change.project)) as presentation:
-          if not cq_depend:
-            presentation.step_text = "empty Cq-Depend, skipping"
-            continue
-          description = api.gerrit.get_change_description(change)
-          description = api.git_footers.edit_add_change_description(
-              description, 'Cq-Depend', cq_depend)
-          api.gerrit.set_change_description(change, description,
-                                            amend_local=True)
-
-  with api.step.nest('update CL labels'):
-    for change in changes:
-      # First post explanatory message.
-      message_lines = [
-          'Found {} open CL(s) for Gerrit topic {}:'.format(
-              len(open_changes), topic),
-          '\n'.join(map(api.gerrit.parse_gerrit_change_url, open_changes)),
-          'Send-to-cq policy for this case is {}.'.format(
-              SendToCqPolicy.Name(send_to_cq_policy))
-      ]
-
-      message_lines.append({
-          DRY_RUN: 'Therefore, marking CL as CQ+1',
-          FULL_RUN: 'Therefore, marking CL as CQ+2',
-          ABANDON: 'Therefore, abandoning the CL',
-          SUBMIT: 'Therefore, will attempt to directly submit the CL.',
-      }.get(
-          send_to_cq_policy,
-          'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
-          'Reviewers may also want to abandon the open CL(s).',
-      ))
-
-      message = '\n'.join(message_lines)
-      if send_to_cq_policy == ABANDON:
-        api.gerrit.abandon_change(change, message=message)
-      else:
-        api.gerrit.add_change_comment(change, message)
-
-      # Then set labels.
-      labels = {
-          DRY_RUN: {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 1,
-          },
-          FULL_RUN: {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
-          },
-          SUBMIT: {
-              api.gerrit.Label.BOT_COMMIT: 1,
-          },
-      }.get(send_to_cq_policy)
-
-      if labels is not None:
-        api.gerrit.set_change_labels(change, labels)
-
-    if send_to_cq_policy == SUBMIT:
-      with api.step.nest('submit CL'):
-        api.gerrit.submit_change(change)
 
 
 def GenTests(api: RecipeTestApi):
