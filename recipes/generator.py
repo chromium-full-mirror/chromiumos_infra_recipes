@@ -53,6 +53,7 @@ from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
 from recipe_engine import post_process
+from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -125,6 +126,7 @@ class GeneratorRun:
     self.m = api
     self.properties = properties
 
+    self.workspace_path: Optional[Path] = None
     self._policy: Optional[BranchPolicy] = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
@@ -185,7 +187,7 @@ class GeneratorRun:
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
                                          self.m.src_state.gerrit_changes)
-    workspace_path = self.m.cros_source.workspace_path
+    self.workspace_path = self.m.cros_source.workspace_path
 
     self._validate_properties()
     self._validate_triggers()
@@ -205,7 +207,7 @@ class GeneratorRun:
         self.apply_gerrit_changes()
 
       if self.properties.init_sdk:
-        with self.m.context(cwd=workspace_path):
+        with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot(use_image=False)
 
       no_existing_cls_policy = self.policy.no_existing_cls_policy
@@ -222,8 +224,7 @@ class GeneratorRun:
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
-        ebuilds_by_pinfo = self.uprev_packages(workspace_path, versions,
-                                               change_id=None)
+        ebuilds_by_pinfo = self.uprev_packages(versions, change_id=None)
         if ebuilds_by_pinfo is None:
           return
 
@@ -331,16 +332,15 @@ class GeneratorRun:
 
               if retry_ci:
                 if self.properties.rebase_before_retry:
-                  self.rebase_cl(open_changes, retry_ci.change_id,
-                                 workspace_path)
+                  self.rebase_cl(open_changes, retry_ci.change_id)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
                           retry_ci.change_id)):
-                    with self.m.context(cwd=workspace_path):
+                    with self.m.context(cwd=self.workspace_path):
                       retry_cl = retry_ci.to_gerrit_change_proto()
                       project_info = self.m.repo.project_info(retry_cl.project)
                       repository_path = self.m.path.join(
-                          workspace_path, project_info.path)
+                          self.workspace_path, project_info.path)
                       with self.m.context(
                           cwd=self.m.path.abs_to_path(repository_path)):
                         self.m.git_cl.upload(send_mail=True)
@@ -352,9 +352,9 @@ class GeneratorRun:
                   }
                   retry_cl = retry_ci.to_gerrit_change_proto()
                   # Find path of appropriate project in local checkout, then set labels.
-                  with self.m.context(cwd=workspace_path):
+                  with self.m.context(cwd=self.workspace_path):
                     project_info = self.m.repo.project_info(retry_cl.project)
-                    repository_path = self.m.path.join(workspace_path,
+                    repository_path = self.m.path.join(self.workspace_path,
                                                        project_info.path)
                     with self.m.context(
                         cwd=self.m.path.abs_to_path(repository_path)):
@@ -373,14 +373,12 @@ class GeneratorRun:
         assert ebuilds_by_pinfo is not None
         self._create_uprev_cls(ebuilds_by_pinfo, open_changes, existing_cls)
 
-  def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
-                workspace_path: str):
+  def rebase_cl(self, open_changes: List[GerritChange], change_id: str):
     """Upload a new uprev patch to change_id.
 
     Args:
       open_changes: List of currently open uprev CLs.
       change_id: ID of the CL to upload a new patch set for.
-      workspace_path: Workspace checkout path where the build is processed.
     """
     with self.m.step.nest("rebase CL {}".format(change_id)):
       retry_changes = [p for p in open_changes if p.change == change_id]
@@ -391,8 +389,7 @@ class GeneratorRun:
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_pinfo = self.uprev_packages(workspace_path, existing_versions,
-                                             change_id)
+      ebuilds_by_pinfo = self.uprev_packages(existing_versions, change_id)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
@@ -400,14 +397,12 @@ class GeneratorRun:
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
             .format(sorted(ebuilds_by_pinfo.keys())))
 
-  def uprev_packages(self, workspace_path: str,
-                     versions: List[UprevVersionedPackageRequest.GitRef],
+  def uprev_packages(self, versions: List[UprevVersionedPackageRequest.GitRef],
                      change_id: Optional[str] = None
                     ) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
-      workspace_path: Workspace checkout path where the build is processed.
       versions: The versions to consider for an update.
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patchset of an existing Change. When this is
@@ -427,7 +422,7 @@ class GeneratorRun:
         return None
     if not all_valid_responses:
       return None
-    return self.commit_uprevs(workspace_path, versions, all_valid_responses,
+    return self.commit_uprevs(versions, all_valid_responses,
                               modified_package_names, change_id=change_id)
 
   def uprev_package(
@@ -483,15 +478,14 @@ class GeneratorRun:
       ]
     return valid_responses
 
-  def commit_uprevs(self, workspace_path: str,
-                    versions: List[UprevVersionedPackageRequest.GitRef],
+  def commit_uprevs(self, versions: List[UprevVersionedPackageRequest.GitRef],
                     uprev_packages_responses: List[UprevPackagesResponse],
                     modified_package_names: List[str],
-                    change_id: Optional[str] = None):
+                    change_id: Optional[str] = None
+                   ) -> Optional[EbuildsByPinfo]:
     """Commit the uprevs on the local filesystem.
 
     Args:
-      workspace_path: Workspace checkout path where the build is processed.
       versions: The versions to consider for an update.
       uprev_packages_responses: BAPI responses for all uprevs that actually
           produced code changes.
@@ -511,7 +505,7 @@ class GeneratorRun:
             Ebuild(path=ebuild.path, version=uprev_resp.version,
                    commit_info=uprev_resp.additional_commit_info)
             for ebuild in uprev_resp.modified_ebuilds)
-      with self.m.context(cwd=workspace_path):
+      with self.m.context(cwd=self.workspace_path):
         ebuilds_by_pinfo = EbuildsByPinfo(list)
         for ebuild in modified_ebuilds:
           dirname = self.m.path.dirname(ebuild.path)
@@ -528,7 +522,7 @@ class GeneratorRun:
       # For each repository, make the CL.
       for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
         name = self.m.path.basename(info.path)
-        root = workspace_path.join(info.path)
+        root = self.workspace_path.join(info.path)
         vers = ', '.join(sorted({e.version for e in ebuilds}))
 
         additional_msg = ''
