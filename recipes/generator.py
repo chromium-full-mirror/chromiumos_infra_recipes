@@ -253,47 +253,17 @@ class GeneratorRun:
           return
 
       open_changes = self.find_open_uprev_cls()
-
-      mrm = None  # Most recently merged uprev.
+      most_recent_uprev: Optional[PatchSet] = None
       if open_changes:
-        with self.m.step.nest('examine outdated CLs'):
-          for host, remote in HOSTS_REMOTES:
-            with self.m.step.nest(
-                'merged CLs from {} host (within 30 days)'.format(
-                    host)) as presentation:
-              host_url = 'https://{}-review.googlesource.com'.format(host)
-              merged_changes = []
-              for info in self._project_infos_by_remote[remote]:
-                merged_changes.extend(
-                    self.m.gerrit.query_changes(host_url,
-                                                [('topic', self.topic),
-                                                 ('project', info.name),
-                                                 ('branch', info.branch_name),
-                                                 ('status', 'merged'),
-                                                 ('-age', '30d')]))
-
-              if merged_changes:
-                presentation.logs['merged CLs'] = [
-                    self.m.gerrit.parse_gerrit_change_url(cl)
-                    for cl in merged_changes
-                ]
-
-                # Must fetch to get submitted times from the "PatchSets", which
-                # are really instances of ChangeInfo.
-                merged_ci = self.m.gerrit.fetch_patch_sets(merged_changes)
-                list.sort(merged_ci, key=lambda ci: ci.submitted, reverse=True)
-                mrm = merged_ci[0] if merged_ci else None
-                presentation.logs['most recent merged cl'] = [mrm.display_id]
-              else:
-                presentation.step_text = 'no merged CLs found'
-                presentation.status = self.m.step.WARNING
+        most_recent_uprev = self.find_most_recently_merged_uprev()
 
       outdated_cls: List[PatchSet] = []
       abandoned_cls: List[PatchSet] = []
-      if mrm:
+      if most_recent_uprev:
         open_ci = self.m.gerrit.fetch_patch_sets(open_changes)
         with self.m.step.nest('outdated CLs') as presentation:
-          d = mrm.created if self.properties.rebase_before_retry else mrm.submitted
+          d = most_recent_uprev.created if self.properties.rebase_before_retry \
+              else most_recent_uprev.submitted
           outdated_cls.extend([ci for ci in open_ci if ci.created < d])
           presentation.logs['outdated CLs'] = [
               ci.display_id for ci in outdated_cls
@@ -302,7 +272,7 @@ class GeneratorRun:
       if outdated_cls:
         with self.m.step.nest('act on outdated CLs with policy: {}'.format(
             OutdatedClsPolicy.Name(self.policy.outdated_cls_policy))):
-          self._abandon_cls(outdated_cls, mrm, abandoned_cls)
+          self._abandon_cls(outdated_cls, most_recent_uprev, abandoned_cls)
 
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
@@ -314,8 +284,8 @@ class GeneratorRun:
             open_ci = self.m.gerrit.fetch_patch_sets(open_changes,
                                                      include_messages=True)
             # Filter out outdated CLs, sort by recency
-            d = mrm.created if self.properties.rebase_before_retry else mrm.submitted
-            if mrm:
+            d = most_recent_uprev.created if self.properties.rebase_before_retry else most_recent_uprev.submitted
+            if most_recent_uprev:
               open_ci = [ci for ci in open_ci if ci.created > d]
             open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
@@ -833,13 +803,13 @@ class GeneratorRun:
           self.m.gerrit.submit_change(change)
 
   def _abandon_cls(self, outdated_cls: List[PatchSet],
-                   most_recent_merged_uprev: PatchSet,
+                   most_recent_uprev: PatchSet,
                    abandoned_cls: Optional[List[PatchSet]] = None):
     """Abandon uprev CLs according to the outdated_cls_policy.
 
     Args:
       outdated_cls: Open uprev CLs that are behind the most recent merge.
-      most_recent_merged_uprev: The most recent merged uprev CL.
+      most_recent_uprev: The most recent merged uprev CL.
       abandoned_cls: List of CLs which have been abandoned. This value is
           mutated by the function call.
     """
@@ -848,13 +818,13 @@ class GeneratorRun:
         outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                     'PUpr has been set to remind you that it'
                                     ' likely should be abandoned.').format(
-                                        most_recent_merged_uprev.display_url)
+                                        most_recent_uprev.display_url)
         self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
                                          outdated_comment_message)
       elif self.policy.outdated_cls_policy == OUTDATED_ABANDON:
         outdated_comment_message = ('This CL has been obviated by: {}\n\n'
                                     'PUpr has been set to abandon.').format(
-                                        most_recent_merged_uprev.display_url)
+                                        most_recent_uprev.display_url)
         self.m.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
                                      message=outdated_comment_message)
         if abandoned_cls is not None:
@@ -875,6 +845,41 @@ class GeneratorRun:
                                              ('branch', info.branch_name),
                                              ('status', 'open')]))
     return open_changes
+
+  def find_most_recently_merged_uprev(self) -> Optional[PatchSet]:
+    """Return the most recently merged relevant uprev as queried from Gerrit."""
+    most_recent_uprev: Optional[PatchSet] = None
+    with self.m.step.nest('examine outdated CLs'):
+      for host, remote in HOSTS_REMOTES:
+        with self.m.step.nest('merged CLs from {} host (within 30 days)'.format(
+            host)) as presentation:
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          merged_changes = []
+          for project_info in self._project_infos_by_remote[remote]:
+            merged_changes.extend(
+                self.m.gerrit.query_changes(
+                    host_url, [('topic', self.topic),
+                               ('project', project_info.name),
+                               ('branch', project_info.branch_name),
+                               ('status', 'merged'), ('-age', '30d')]))
+          if merged_changes:
+            presentation.logs['merged CLs'] = [
+                self.m.gerrit.parse_gerrit_change_url(cl)
+                for cl in merged_changes
+            ]
+            # Must fetch to get submitted times from the "PatchSets", which are
+            # really instances of ChangeInfo.
+            merged_change_infos = self.m.gerrit.fetch_patch_sets(merged_changes)
+            merged_change_infos.sort(key=lambda ci: ci.submitted, reverse=True)
+            if merged_change_infos:
+              most_recent_uprev = merged_change_infos[0]
+              presentation.logs['most recent merged cl'] = [
+                  most_recent_uprev.display_id
+              ]
+          else:
+            presentation.step_text = 'no merged CLs found'
+            presentation.status = self.m.step.WARNING
+    return most_recent_uprev
 
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
