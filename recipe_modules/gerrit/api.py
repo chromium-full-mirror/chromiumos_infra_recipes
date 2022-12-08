@@ -87,12 +87,12 @@ class PatchSet(object):
     return 'https://%s/c/%d' % (self.host, self.change_id)
 
   @property
-  def created(self):
+  def created(self) -> str:
     """Returns the date string with when PatchSet was created."""
     return self._change_info['created']
 
   @property
-  def updated(self):
+  def updated(self) -> str:
     """Returns the date string with when PatchSet was last updated."""
     return self._change_info['updated']
 
@@ -102,7 +102,7 @@ class PatchSet(object):
     return self._patch_set
 
   @property
-  def submitted(self):
+  def submitted(self) -> str:
     """Returns the date string with when PatchSet was submitted (merged).
 
     Returns None if the PatchSet hasn't been merged.
@@ -113,7 +113,7 @@ class PatchSet(object):
 
   @property
   def hashtags(self):
-    """ Returns the hashtags associated with this PatchSet."""
+    """Returns the hashtags associated with this PatchSet."""
     return self._change_info['hashtags']
 
   @property

@@ -256,17 +256,7 @@ class GeneratorRun:
       most_recent_uprev: Optional[PatchSet] = None
       if open_changes:
         most_recent_uprev = self.find_most_recently_merged_uprev()
-
-      outdated_cls: List[PatchSet] = []
-      if most_recent_uprev:
-        open_ci = self.m.gerrit.fetch_patch_sets(open_changes)
-        with self.m.step.nest('outdated CLs') as presentation:
-          d = most_recent_uprev.created if self.properties.rebase_before_retry \
-              else most_recent_uprev.submitted
-          outdated_cls.extend([ci for ci in open_ci if ci.created < d])
-          presentation.logs['outdated CLs'] = [
-              ci.display_id for ci in outdated_cls
-          ]
+      outdated_cls = self.get_outdated_cls(open_changes, most_recent_uprev)
       abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
@@ -795,6 +785,33 @@ class GeneratorRun:
       if send_to_cq_policy == SUBMIT:
         with self.m.step.nest('submit CL'):
           self.m.gerrit.submit_change(change)
+
+  def get_outdated_cls(self, open_changes: List[GerritChange],
+                       most_recent_uprev: Optional[PatchSet]) -> List[PatchSet]:
+    """Query Gerrit to find all CLs older than the most recently merged.
+
+    Args:
+      most_recent_uprev: The relevant uprev CL which was most recently merged.
+
+    Returns:
+      A list of CLs which were created before most_recent_uprev was either
+      created or submitted. (We compare against most_recent_uprev's either
+      created timestamp or submitted timestamp, depending on
+      properties.rebase_before_retry.)
+    """
+    if not most_recent_uprev:
+      return []
+    if self.properties.rebase_before_retry:
+      latest_timestamp = most_recent_uprev.created
+    else:
+      latest_timestamp = most_recent_uprev.submitted
+    open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes)
+    with self.m.step.nest('outdated CLs') as presentation:
+      outdated_cls = [
+          cl for cl in open_patch_sets if cl.created < latest_timestamp
+      ]
+      presentation.logs['outdated CLs'] = [cl.display_id for cl in outdated_cls]
+    return outdated_cls
 
   def _abandon_cls(self, outdated_cls: List[PatchSet],
                    most_recent_uprev: PatchSet,
@@ -1453,6 +1470,26 @@ def GenTests(api: RecipeTestApi):
           'created': '2020-10-23 18:54:00.000000000',
       },
   }
+
+  yield _with_infos(
+      'no-most-recent-merged-cl',
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host',
+          gerrit_changes_json, 'https://chromium-review.googlesource.com',
+          value_dict),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chromium host (within 30 days)',
+          [], 'https://chromium-review.googlesource.com', {}),
+      api.gerrit.set_query_changes_response(
+          'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
+          [], 'https://chrome-internal-review.googlesource.com', {}),
+      api.post_check(post_process.DoesNotRun, 'outdated CLs'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield _with_infos(
       'with-retry-policy',
