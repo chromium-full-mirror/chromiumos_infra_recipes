@@ -17,7 +17,7 @@ import copy
 import re
 from collections import defaultdict
 from functools import cached_property
-from typing import DefaultDict, List, NamedTuple, Optional
+from typing import DefaultDict, Dict, List, NamedTuple, Optional
 
 from urllib import parse
 from google.protobuf.json_format import MessageToDict
@@ -184,6 +184,27 @@ class GeneratorRun:
       return self.properties.topic
     return self.cpvs[0]
 
+  @cached_property
+  def _project_infos_by_remote(self) -> Dict[str, List[ProjectInfo]]:
+    """Organize projects relevant to this run by remote."""
+    project_infos_by_remote: DefaultDict[str, List[ProjectInfo]]
+    project_infos_by_remote = defaultdict(list)
+    if self.retry_only_run:
+      project_infos_by_remote[self.properties.retry_ref.remote] = [
+          self.m.repo.ProjectInfo(
+              remote=self.properties.retry_ref.remote,
+              name=self.properties.retry_ref.name,
+              branch=self.properties.retry_ref.ref,
+              rrev=self.properties.retry_ref.ref,
+              path=self.properties.retry_ref.path,
+          )
+      ]
+    else:
+      assert self.ebuilds_by_pinfo is not None
+      for info in sorted(self.ebuilds_by_pinfo):
+        project_infos_by_remote[info.remote].append(info)
+    return project_infos_by_remote
+
   def run(self):
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
@@ -225,35 +246,7 @@ class GeneratorRun:
         if self.ebuilds_by_pinfo is None:
           return
 
-      pinfos_by_remote = defaultdict(list)
-      if not self.retry_only_run:
-        assert self.ebuilds_by_pinfo is not None
-        for info in sorted(self.ebuilds_by_pinfo):
-          pinfos_by_remote[info.remote].append(info)
-      else:
-        pinfos_by_remote[self.properties.retry_ref.remote] = [
-            self.m.repo.ProjectInfo(
-                remote=self.properties.retry_ref.remote,
-                name=self.properties.retry_ref.name,
-                branch=self.properties.retry_ref.ref,
-                rrev=self.properties.retry_ref.ref,
-                path=self.properties.retry_ref.path,
-            )
-        ]
-
-      with self.m.step.nest('find open uprev CLs'):
-        open_changes: List[GerritChange] = []
-        for host, remote in (('chromium', 'cros'), ('chrome-internal',
-                                                    'cros-internal')):
-          with self.m.step.nest('find CLs from {} host'.format(host)):
-            host_url = 'https://{}-review.googlesource.com'.format(host)
-            for info in pinfos_by_remote[remote]:
-              open_changes.extend(
-                  self.m.gerrit.query_changes(host_url,
-                                              [('topic', self.topic),
-                                               ('project', info.name),
-                                               ('branch', info.branch_name),
-                                               ('status', 'open')]))
+      open_changes = self.find_open_uprev_cls()
 
       mrm = None  # Most recently merged uprev.
       if open_changes:
@@ -265,7 +258,7 @@ class GeneratorRun:
                     host)) as presentation:
               host_url = 'https://{}-review.googlesource.com'.format(host)
               merged_changes = []
-              for info in pinfos_by_remote[remote]:
+              for info in self._project_infos_by_remote[remote]:
                 merged_changes.extend(
                     self.m.gerrit.query_changes(host_url,
                                                 [('topic', self.topic),
@@ -861,6 +854,23 @@ class GeneratorRun:
                                      message=outdated_comment_message)
         if abandoned_cls is not None:
           abandoned_cls.append(outdated_cl)
+
+  def find_open_uprev_cls(self) -> List[GerritChange]:
+    """Return any open uprev CLs matching the same topic as this run."""
+    open_changes: List[GerritChange] = []
+    with self.m.step.nest('find open uprev CLs'):
+      for host, remote in (('chromium', 'cros'), ('chrome-internal',
+                                                  'cros-internal')):
+        with self.m.step.nest('find CLs from {} host'.format(host)):
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          for info in self._project_infos_by_remote[remote]:
+            open_changes.extend(
+                self.m.gerrit.query_changes(host_url,
+                                            [('topic', self.topic),
+                                             ('project', info.name),
+                                             ('branch', info.branch_name),
+                                             ('status', 'open')]))
+    return open_changes
 
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
