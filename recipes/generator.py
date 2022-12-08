@@ -176,31 +176,7 @@ class GeneratorRun:
       # the information returned by the Gitiles API. Otherwise, use the gitles.ref
       # seen in the trigger.
       with self.m.step.nest('determine branch') as pres:
-        trigger_policies = []
-        for trigger in self.triggers:
-          # Retrieve version information from Gitiles API.
-          if self.properties.HasField('gitiles_info'):
-            gitiles_response = self.m.gitiles.get_file(
-                str(self.properties.gitiles_info.host),
-                str(self.properties.gitiles_info.project),
-                str(self.properties.gitiles_info.path),
-                ref=str(trigger.gitiles.ref),
-                test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
-            if gitiles_response:
-              self.gitiles_response = gitiles_response.strip()
-
-          # If we we recieved a target version from Gitiles, override the tag
-          # argument.
-          tag = self.gitiles_response or trigger.gitiles.ref
-          policy_info = self._get_policy(tag)
-          if policy_info not in trigger_policies:
-            trigger_policies.append(policy_info)
-        # If we match more than one policy with the triggers, that is an error.
-        # For Chrome, we are launched with properties.triggers, for exactly one
-        # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-        if len(trigger_policies) > 1:
-          raise StepFailure('too many triggers')
-        policy_info = trigger_policies.pop()
+        policy_info = self.select_policy()
         policy = policy_info.policy
 
         if policy.ignore:
@@ -691,8 +667,36 @@ class GeneratorRun:
     """Check whether any of this build's triggers is a cron trigger."""
     return any(trigger.HasField('cron') for trigger in self._raw_triggers)
 
-  def _get_policy(self, tag: str) -> PolicyInfo:
-    """Find the applicable policy for the trigger.
+  def select_policy(self) -> PolicyInfo:
+    """Determine which trigger policy applies to this build."""
+    trigger_policies: List[PolicyInfo] = []
+    for trigger in self.triggers:
+      # Retrieve version information from Gitiles API.
+      if self.properties.HasField('gitiles_info'):
+        gitiles_response = self.m.gitiles.get_file(
+            str(self.properties.gitiles_info.host),
+            str(self.properties.gitiles_info.project),
+            str(self.properties.gitiles_info.path),
+            ref=str(trigger.gitiles.ref),
+            test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
+        if gitiles_response:
+          self.gitiles_response = gitiles_response.strip()
+
+      # If we we recieved a target version from Gitiles, override the tag
+      # argument.
+      tag = self.gitiles_response or trigger.gitiles.ref
+      policy_info = self._get_policy_info_for_tag(tag)
+      if policy_info not in trigger_policies:
+        trigger_policies.append(policy_info)
+    # If we match more than one policy with the triggers, that is an error.
+    # For Chrome, we are launched with properties.triggers, for exactly one
+    # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+    if len(trigger_policies) > 1:
+      raise StepFailure('too many triggers')
+    return trigger_policies.pop()
+
+  def _get_policy_info_for_tag(self, tag: str) -> PolicyInfo:
+    """Find the applicable policy for the given Git tag.
 
     The policy used is the first policy where policy.pattern matches the tag,
     and either:
