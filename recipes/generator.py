@@ -172,6 +172,15 @@ class GeneratorRun:
     self.m.easy.set_properties_step(policy=MessageToDict(policy))
     self._policy = policy
 
+  @property
+  def topic(self) -> str:
+    """Get the topic to use for all generated CLs."""
+    if self.policy and self.policy.topic:
+      return self.policy.topic
+    if self.properties.topic:
+      return self.properties.topic
+    return self.cpvs[0]
+
   def run(self):
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
@@ -192,7 +201,6 @@ class GeneratorRun:
         return
       self.checkout_branch(policy_info)
 
-      base_topic_name = self.properties.topic or self.cpvs[0]
       if self.m.cq.active or self.m.src_state.gerrit_changes:
         # Use case: Developer is working on the versioned uprev code for a
         # package, such as Chrome, and wants to test the changes prior to landing
@@ -218,15 +226,13 @@ class GeneratorRun:
             self.policy.no_existing_cls_policy = ABANDON
             self.policy.outdated_cls_policy = OUTDATED_DO_NOTHING
             self.policy.retry_cl_policy = NO_RETRY
-            self.policy.topic = '{}-{}'.format(
-                'testing', self.policy.topic or base_topic_name)
+            self.policy.topic = '{}-{}'.format('testing', self.topic)
             self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
 
       if self.properties.init_sdk:
         with self.m.context(cwd=workspace_path):
           self.m.cros_sdk.create_chroot(use_image=False)
 
-      topic = self.policy.topic or base_topic_name
       no_existing_cls_policy = self.policy.no_existing_cls_policy
       outdated_cls_policy = self.policy.outdated_cls_policy
       retry_cl_policy = self.policy.retry_cl_policy or NO_RETRY
@@ -241,7 +247,7 @@ class GeneratorRun:
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
-        ebuilds_by_pinfo = self.uprev_packages(workspace_path, versions, topic,
+        ebuilds_by_pinfo = self.uprev_packages(workspace_path, versions,
                                                change_id=None)
         if ebuilds_by_pinfo is None:
           return
@@ -271,7 +277,7 @@ class GeneratorRun:
             for info in pinfos_by_remote[remote]:
               open_changes.extend(
                   self.m.gerrit.query_changes(host_url,
-                                              [('topic', topic),
+                                              [('topic', self.topic),
                                                ('project', info.name),
                                                ('branch', info.branch_name),
                                                ('status', 'open')]))
@@ -289,7 +295,7 @@ class GeneratorRun:
               for info in pinfos_by_remote[remote]:
                 merged_changes.extend(
                     self.m.gerrit.query_changes(host_url,
-                                                [('topic', topic),
+                                                [('topic', self.topic),
                                                  ('project', info.name),
                                                  ('branch', info.branch_name),
                                                  ('status', 'merged'),
@@ -351,7 +357,7 @@ class GeneratorRun:
               if retry_ci:
                 if self.properties.rebase_before_retry:
                   self.rebase_cl(open_changes, retry_ci.change_id,
-                                 workspace_path, topic)
+                                 workspace_path)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
                           retry_ci.change_id)):
@@ -390,18 +396,16 @@ class GeneratorRun:
                                         outdated_cls_policy)
       if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
-        self._create_uprev_cls(ebuilds_by_pinfo, topic, open_changes,
-                               existing_cls)
+        self._create_uprev_cls(ebuilds_by_pinfo, open_changes, existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str,
-                workspace_path: str, topic: str):
+                workspace_path: str):
     """Upload a new uprev patch to change_id.
 
     Args:
       open_changes: List of currently open uprev CLs.
       change_id: ID of the CL to upload a new patch set for.
       workspace_path: Workspace checkout path where the build is processed.
-      topic: Topic describing the package.
     """
     with self.m.step.nest("rebase CL {}".format(change_id)):
       retry_changes = [p for p in open_changes if p.change == change_id]
@@ -413,7 +417,7 @@ class GeneratorRun:
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
       ebuilds_by_pinfo = self.uprev_packages(workspace_path, existing_versions,
-                                             topic, change_id)
+                                             change_id)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
@@ -423,14 +427,13 @@ class GeneratorRun:
 
   def uprev_packages(self, workspace_path: str,
                      versions: List[UprevVersionedPackageRequest.GitRef],
-                     topic: str, change_id: Optional[str] = None
+                     change_id: Optional[str] = None
                     ) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
       workspace_path: Workspace checkout path where the build is processed.
       versions: The versions to consider for an update.
-      topic: Topic describing package. Defaults to package title.
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patchset of an existing Change. When this is
         set, the uprev should not span multiple repositories.
@@ -449,9 +452,8 @@ class GeneratorRun:
         return None
     if not all_valid_responses:
       return None
-    return self.commit_uprevs(workspace_path, versions, topic,
-                              all_valid_responses, modified_package_names,
-                              change_id=change_id)
+    return self.commit_uprevs(workspace_path, versions, all_valid_responses,
+                              modified_package_names, change_id=change_id)
 
   def uprev_package(
       self,
@@ -508,7 +510,6 @@ class GeneratorRun:
 
   def commit_uprevs(self, workspace_path: str,
                     versions: List[UprevVersionedPackageRequest.GitRef],
-                    topic: str,
                     uprev_packages_responses: List[UprevPackagesResponse],
                     modified_package_names: List[str],
                     change_id: Optional[str] = None):
@@ -517,7 +518,6 @@ class GeneratorRun:
     Args:
       workspace_path: Workspace checkout path where the build is processed.
       versions: The versions to consider for an update.
-      topic: Topic describing package. Defaults to package title.
       uprev_packages_responses: BAPI responses for all uprevs that actually
           produced code changes.
       modified_package_names: The names of packages that are modified.
@@ -582,7 +582,7 @@ class GeneratorRun:
             '{label}: {versions}'.format(
                 label=UPREV_VERSION_LABEL,
                 versions=_serialize_versions(versions)),
-            'Cq-Cl-Tag: pupr:{topic}'.format(topic=topic),
+            'Cq-Cl-Tag: pupr:{topic}'.format(topic=self.topic),
         ]
         if self.m.src_state.gerrit_changes:
           commit_lines.append('Cq-Depend: {}'.format(','.join(
@@ -753,7 +753,7 @@ class GeneratorRun:
       else:
         pres.step_text = 'using default branch'
 
-  def _create_uprev_cls(self, ebuilds_by_pinfo: EbuildsByPinfo, topic: str,
+  def _create_uprev_cls(self, ebuilds_by_pinfo: EbuildsByPinfo,
                         open_changes: List[GerritChange], existing_cls: bool):
     """Create appropriate CLs for the uprevs."""
     send_to_cq_policy = (
@@ -769,7 +769,7 @@ class GeneratorRun:
                 reviewers=[
                     reviewer.email for reviewer in self.policy.reviewers
                 ],
-                topic=topic,
+                topic=self.topic,
             ))
       self.m.easy.set_properties_step(
           generated_cls=[MessageToDict(change) for change in changes])
@@ -794,7 +794,7 @@ class GeneratorRun:
         # First post explanatory message.
         message_lines = [
             'Found {} open CL(s) for Gerrit topic {}:'.format(
-                len(open_changes), topic),
+                len(open_changes), self.topic),
             '\n'.join(map(self.m.gerrit.parse_gerrit_change_url, open_changes)),
             'Send-to-cq policy for this case is {}.'.format(
                 SendToCqPolicy.Name(send_to_cq_policy))
