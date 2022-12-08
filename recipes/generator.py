@@ -177,17 +177,7 @@ class GeneratorRun:
       if policy.ignore:
         self.m.step.empty('policy set to ignore')
         return
-
-      # Check out the appropriate branch based on the selected policy.
-      with self.m.step.nest('checkout branch') as pres:
-        if policy_info.branch:
-          assert policy_info.reference is not None
-          pres.step_text = 'using {} {}'.format(policy_info.branch,
-                                                policy_info.reference.hash)
-          self.m.cros_source.checkout_branch(
-              self.m.src_state.internal_manifest.url, policy_info.branch)
-        else:
-          pres.step_text = 'using default branch'
+      self.checkout_branch(policy_info)
 
       base_topic_name = self.properties.topic or self.cpvs[0]
       if self.m.cq.active or self.m.src_state.gerrit_changes:
@@ -205,7 +195,7 @@ class GeneratorRun:
           if self.m.src_state.gerrit_changes:
             self.m.cros_source.apply_gerrit_changes(
                 self.m.src_state.gerrit_changes)
-          with self.m.step.nest('update policy') as pres:
+          with self.m.step.nest('update policy'):
             user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
             self.m.easy.set_properties_step(
                 original_policy=MessageToDict(policy))
@@ -321,7 +311,7 @@ class GeneratorRun:
 
       if outdated_cls:
         with self.m.step.nest('act on outdated CLs with policy: {}'.format(
-            OutdatedClsPolicy.Name(outdated_cls_policy))) as pres:
+            OutdatedClsPolicy.Name(outdated_cls_policy))):
           _abandon_cls(self.m, outdated_cls, mrm, outdated_cls_policy, \
               self.retry_only_run, abandoned_cls)
 
@@ -737,6 +727,18 @@ class GeneratorRun:
           # If we found no references, this policy does not apply.
 
       raise StepFailure('No matching policy found for tag {}'.format(tag))
+
+  def checkout_branch(self, policy_info: PolicyInfo):
+    """Check out the appropriate branch based on the selected policy."""
+    with self.m.step.nest('checkout branch') as pres:
+      if policy_info.branch:
+        assert policy_info.reference is not None
+        pres.step_text = 'using {} {}'.format(policy_info.branch,
+                                              policy_info.reference.hash)
+        self.m.cros_source.checkout_branch(
+            self.m.src_state.internal_manifest.url, policy_info.branch)
+      else:
+        pres.step_text = 'using default branch'
 
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
