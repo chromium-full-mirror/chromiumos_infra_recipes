@@ -9507,7 +9507,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [DoRunSteps](/recipes/chromeos_cbuildbot.py#58)(api, properties):**
 
-&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#98)(api, failure):**
+&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#100)(api, failure):**
 
 &mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#34)(api, properties):**
 ### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)

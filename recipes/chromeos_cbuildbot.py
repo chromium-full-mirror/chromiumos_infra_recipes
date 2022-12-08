@@ -86,8 +86,10 @@ def DoRunSteps(api, properties):
     api.gcloud.cleanup_gce_disks(), \
     api.gcloud.cleanup_mounted_disks(), \
     api.bot_cost.build_cost_context():
+    source_cache_branch = (
+        properties.source_cache_branch or api.chromite.chromite_branch)
     recipe_mount_path = api.gcloud.setup_cache_disk(
-        cache_name='chromeos', branch=api.chromite.chromite_branch,
+        cache_name='chromeos', branch=source_cache_branch,
         disk_type='pd-standard', disk_size='1024GB', recipe_mount=True,
         mount_existing=True,
         recovery_snapshot=properties.recovery_source_cache_snapshot)
