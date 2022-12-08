@@ -313,8 +313,8 @@ class GeneratorRun:
       if outdated_cls:
         with self.m.step.nest('act on outdated CLs with policy: {}'.format(
             OutdatedClsPolicy.Name(outdated_cls_policy))):
-          _abandon_cls(self.m, outdated_cls, mrm, outdated_cls_policy, \
-              self.retry_only_run, abandoned_cls)
+          self._abandon_cls(outdated_cls, mrm, outdated_cls_policy,
+                            abandoned_cls)
 
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
@@ -374,8 +374,8 @@ class GeneratorRun:
                       if cl.created < retry_ci.created]
                   if cls_to_abandon:
                     with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
-                      _abandon_cls(self.m, cls_to_abandon, retry_ci, \
-                          outdated_cls_policy, self.retry_only_run)
+                      self._abandon_cls(cls_to_abandon, retry_ci,
+                                        outdated_cls_policy)
       if not self.retry_only_run:
         assert ebuilds_by_pinfo is not None
         self._create_uprev_cls(policy, ebuilds_by_pinfo, topic, open_changes,
@@ -826,6 +826,37 @@ class GeneratorRun:
         with self.m.step.nest('submit CL'):
           self.m.gerrit.submit_change(change)
 
+  def _abandon_cls(self, outdated_cls: List[PatchSet],
+                   most_recent_merged_uprev: PatchSet,
+                   outdated_cls_policy: OutdatedClsPolicy,
+                   abandoned_cls: Optional[List[PatchSet]] = None):
+    """Abandon uprev CLs according to the outdated_cls_policy.
+
+    Args:
+      outdated_cls: Open uprev CLs that are behind the most recent merge.
+      most_recent_merged_uprev: The most recent merged uprev CL.
+      outdated_cls_policy: Policy to follow when for CLs that are still open but
+          behind a merge.
+      abandoned_cls: List of CLs which have been abandoned. This value is
+          mutated by the function call.
+    """
+    for outdated_cl in outdated_cls:
+      if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not self.retry_only_run:
+        outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                    'PUpr has been set to remind you that it'
+                                    ' likely should be abandoned.').format(
+                                        most_recent_merged_uprev.display_url)
+        self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                         outdated_comment_message)
+      elif outdated_cls_policy == OUTDATED_ABANDON:
+        outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                    'PUpr has been set to abandon.').format(
+                                        most_recent_merged_uprev.display_url)
+        self.m.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                     message=outdated_comment_message)
+        if abandoned_cls is not None:
+          abandoned_cls.append(outdated_cl)
+
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
                        ) -> str:
@@ -889,41 +920,6 @@ def _response_has_changes(api: RecipeApi,
       if api.git.diff_check(path):
         return True
   return False
-
-
-def _abandon_cls(api: RecipeApi, outdated_cls: List[PatchSet],
-                 most_recent_merged_uprev: PatchSet,
-                 outdated_cls_policy: OutdatedClsPolicy, retry_only_run: bool,
-                 abandoned_cls: Optional[List[PatchSet]] = None):
-  """Abandon uprev CLs according to the outdated_cls_policy.
-
-  Args:
-    api: See RunSteps documentation.
-    outdated_cls: Open uprev CLs that are behind the most recent merge.
-    most_recent_merged_uprev: The most recent merged uprev CL.
-    outdated_cls_policy: Policy to follow when for CLs that are still open but
-        behind a merge.
-    retry_only_run: Whether this run only applies retries to existing CLs (i.e.
-        does not create a new uprev CL).
-    abandoned_cls: List of CLs which have been abandoned. This value is mutated
-        by the function call.
-  """
-  for outdated_cl in outdated_cls:
-    if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not retry_only_run:
-      outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                  'PUpr has been set to remind you that it'
-                                  ' likely should be abandoned.').format(
-                                      most_recent_merged_uprev.display_url)
-      api.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
-                                    outdated_comment_message)
-    elif outdated_cls_policy == OUTDATED_ABANDON:
-      outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                  'PUpr has been set to abandon.').format(
-                                      most_recent_merged_uprev.display_url)
-      api.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                message=outdated_comment_message)
-      if abandoned_cls is not None:
-        abandoned_cls.append(outdated_cl)
 
 
 def GenTests(api: RecipeTestApi):
