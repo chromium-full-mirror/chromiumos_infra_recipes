@@ -128,6 +128,7 @@ class GeneratorRun:
 
     self.workspace_path: Optional[Path] = None
     self._policy: Optional[BranchPolicy] = None
+    self.ebuilds_by_pinfo: Optional[EbuildsByPinfo] = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -220,14 +221,14 @@ class GeneratorRun:
                                                    trigger.gitiles.revision))
             for trigger in self.triggers
         ]
-        ebuilds_by_pinfo = self.uprev_packages(versions, change_id=None)
-        if ebuilds_by_pinfo is None:
+        self.ebuilds_by_pinfo = self.uprev_packages(versions, change_id=None)
+        if self.ebuilds_by_pinfo is None:
           return
 
       pinfos_by_remote = defaultdict(list)
       if not self.retry_only_run:
-        assert ebuilds_by_pinfo is not None
-        for info in sorted(ebuilds_by_pinfo.keys()):
+        assert self.ebuilds_by_pinfo is not None
+        for info in sorted(self.ebuilds_by_pinfo):
           pinfos_by_remote[info.remote].append(info)
       else:
         pinfos_by_remote[self.properties.retry_ref.remote] = [
@@ -365,8 +366,7 @@ class GeneratorRun:
                     with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
                       self._abandon_cls(cls_to_abandon, retry_ci)
       if not self.retry_only_run:
-        assert ebuilds_by_pinfo is not None
-        self._create_uprev_cls(ebuilds_by_pinfo, open_changes, existing_cls)
+        self._create_uprev_cls(open_changes, existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str):
     """Upload a new uprev patch to change_id.
@@ -747,8 +747,8 @@ class GeneratorRun:
         self.policy.topic = '{}-{}'.format('testing', self.topic)
         self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
 
-  def _create_uprev_cls(self, ebuilds_by_pinfo: EbuildsByPinfo,
-                        open_changes: List[GerritChange], existing_cls: bool):
+  def _create_uprev_cls(self, open_changes: List[GerritChange],
+                        existing_cls: bool):
     """Create appropriate CLs for the uprevs."""
     send_to_cq_policy = (
         self.policy.existing_cls_policy
@@ -756,7 +756,8 @@ class GeneratorRun:
 
     with self.m.step.nest('generate CLs'):
       changes = []
-      for info in sorted(ebuilds_by_pinfo.keys()):
+      assert self.ebuilds_by_pinfo is not None
+      for info in sorted(self.ebuilds_by_pinfo):
         changes.append(
             self.m.gerrit.create_change(
                 info.path,
