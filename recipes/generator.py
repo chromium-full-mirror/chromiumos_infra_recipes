@@ -267,12 +267,7 @@ class GeneratorRun:
           presentation.logs['outdated CLs'] = [
               ci.display_id for ci in outdated_cls
           ]
-
-      abandoned_cls: List[PatchSet] = []
-      if outdated_cls:
-        with self.m.step.nest('act on outdated CLs with policy: {}'.format(
-            OutdatedClsPolicy.Name(self.policy.outdated_cls_policy))):
-          abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
+      abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
 
@@ -329,9 +324,9 @@ class GeneratorRun:
                 if retry_cl_is_passed:
                   cls_to_abandon = [cl for cl in open_ci \
                       if cl.created < retry_ci.created]
-                  if cls_to_abandon:
-                    with self.m.step.nest("abandon CLs before passed CQ+1 CL"):
-                      self._abandon_cls(cls_to_abandon, retry_ci)
+                  self._abandon_cls(
+                      cls_to_abandon, retry_ci,
+                      step_name='abandon CLs before passed CQ+1 CL')
       if not self.retry_only_run:
         self._create_uprev_cls(open_changes, existing_cls)
 
@@ -802,31 +797,40 @@ class GeneratorRun:
           self.m.gerrit.submit_change(change)
 
   def _abandon_cls(self, outdated_cls: List[PatchSet],
-                   most_recent_uprev: PatchSet) -> List[PatchSet]:
+                   most_recent_uprev: PatchSet,
+                   step_name: Optional[str] = None) -> List[PatchSet]:
     """Abandon uprev CLs according to the outdated_cls_policy.
 
     Args:
       outdated_cls: Open uprev CLs that are behind the most recent merge.
       most_recent_uprev: The most recent merged uprev CL.
+      step_name: Option to override the step name for this abandonment.
 
     Returns:
       List of CLs which have been abandoned.
     """
+    if not outdated_cls:
+      return []
     abandoned_cls: List[PatchSet] = []
-    for outdated_cl in outdated_cls:
-      if self.policy.outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not self.retry_only_run:
-        outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                    'PUpr has been set to remind you that it'
-                                    ' likely should be abandoned.').format(
-                                        most_recent_uprev.display_url)
-        self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
-                                         outdated_comment_message)
-      elif self.policy.outdated_cls_policy == OUTDATED_ABANDON:
-        outdated_comment_message = ('This CL has been obviated by: {}\n\n'
-                                    'PUpr has been set to abandon.').format(
-                                        most_recent_uprev.display_url)
-        self.m.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
-                                     message=outdated_comment_message)
+    if step_name is None:
+      step_name = 'act on outdated CLs with policy: {}'.format(
+          OutdatedClsPolicy.Name(self.policy.outdated_cls_policy))
+    with self.m.step.nest(step_name):
+      for outdated_cl in outdated_cls:
+        if self.policy.outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not self.retry_only_run:
+          outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                      'PUpr has been set to remind you that it'
+                                      ' likely should be abandoned.').format(
+                                          most_recent_uprev.display_url)
+          self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                           outdated_comment_message)
+        elif self.policy.outdated_cls_policy == OUTDATED_ABANDON:
+          outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                      'PUpr has been set to abandon.').format(
+                                          most_recent_uprev.display_url)
+          self.m.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                       message=outdated_comment_message)
+          abandoned_cls.append(outdated_cl)
     return abandoned_cls
 
   def find_open_uprev_cls(self) -> List[GerritChange]:
