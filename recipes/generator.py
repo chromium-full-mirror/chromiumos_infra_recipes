@@ -94,6 +94,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = GeneratorProperties
 
+# HOSTS_REMOTES contains tuples (host, remote) representing our Gerrit
+# instances, where host the section of the Gerrit URL that would be formatted
+# into f'https://{host}-review.googlesource.com', and remote is the name of that
+# host'secorresponding git remote.
+HOSTS_REMOTES = (('chromium', 'cros'), ('chrome-internal', 'cros-internal'))
+
 # The label written in the commit message to store versions information of
 # upstream repositories given by gitiles trigger.
 UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
@@ -251,8 +257,7 @@ class GeneratorRun:
       mrm = None  # Most recently merged uprev.
       if open_changes:
         with self.m.step.nest('examine outdated CLs'):
-          for host, remote in (('chromium', 'cros'), ('chrome-internal',
-                                                      'cros-internal')):
+          for host, remote in HOSTS_REMOTES:
             with self.m.step.nest(
                 'merged CLs from {} host (within 30 days)'.format(
                     host)) as presentation:
@@ -859,8 +864,7 @@ class GeneratorRun:
     """Return any open uprev CLs matching the same topic as this run."""
     open_changes: List[GerritChange] = []
     with self.m.step.nest('find open uprev CLs'):
-      for host, remote in (('chromium', 'cros'), ('chrome-internal',
-                                                  'cros-internal')):
+      for host, remote in HOSTS_REMOTES:
         with self.m.step.nest('find CLs from {} host'.format(host)):
           host_url = 'https://{}-review.googlesource.com'.format(host)
           for info in self._project_infos_by_remote[remote]:
