@@ -1114,16 +1114,20 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@using default branch@@@"
-    ]
+    "name": "select policy"
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"FULL_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \".*\", \"retryClPolicy\": \"RETRY_LATEST_OR_LATEST_PINNED\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using default branch@@@"
     ]
   },
   {

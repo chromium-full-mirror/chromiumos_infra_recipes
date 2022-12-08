@@ -1123,16 +1123,20 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@using default branch@@@"
-    ]
+    "name": "select policy"
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@policy@{\"pattern\": \".*\", \"reviewers\": [{\"email\": \"a@example.com\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using default branch@@@"
     ]
   },
   {

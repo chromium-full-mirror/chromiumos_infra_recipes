@@ -1123,16 +1123,20 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@using default branch@@@"
-    ]
+    "name": "select policy"
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"ABANDON\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using default branch@@@"
     ]
   },
   {

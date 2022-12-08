@@ -171,18 +171,15 @@ class GeneratorRun:
         self.m.cros_sdk.cleanup_context():
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
-      # Check out the appropriate branch, and use the appropriate policy.
-      # If gitiles_info is given to us then we will determine the branch based on
-      # the information returned by the Gitiles API. Otherwise, use the gitles.ref
-      # seen in the trigger.
-      with self.m.step.nest('determine branch') as pres:
-        policy_info = self.select_policy()
-        policy = policy_info.policy
+      policy_info = self.select_policy()
+      policy = policy_info.policy
+      self.m.easy.set_properties_step(policy=MessageToDict(policy))
+      if policy.ignore:
+        self.m.step.empty('policy set to ignore')
+        return
 
-        if policy.ignore:
-          pres.step_text = 'policy set to ignore.'
-          return
-
+      # Check out the appropriate branch based on the selected policy.
+      with self.m.step.nest('checkout branch') as pres:
         if policy_info.branch:
           assert policy_info.reference is not None
           pres.step_text = 'using {} {}'.format(policy_info.branch,
@@ -191,7 +188,6 @@ class GeneratorRun:
               self.m.src_state.internal_manifest.url, policy_info.branch)
         else:
           pres.step_text = 'using default branch'
-      self.m.easy.set_properties_step(policy=MessageToDict(policy))
 
       base_topic_name = self.properties.topic or self.cpvs[0]
       if self.m.cq.active or self.m.src_state.gerrit_changes:
@@ -668,32 +664,42 @@ class GeneratorRun:
     return any(trigger.HasField('cron') for trigger in self._raw_triggers)
 
   def select_policy(self) -> PolicyInfo:
-    """Determine which trigger policy applies to this build."""
-    trigger_policies: List[PolicyInfo] = []
-    for trigger in self.triggers:
-      # Retrieve version information from Gitiles API.
-      if self.properties.HasField('gitiles_info'):
-        gitiles_response = self.m.gitiles.get_file(
-            str(self.properties.gitiles_info.host),
-            str(self.properties.gitiles_info.project),
-            str(self.properties.gitiles_info.path),
-            ref=str(trigger.gitiles.ref),
-            test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
-        if gitiles_response:
-          self.gitiles_response = gitiles_response.strip()
+    """Return the trigger policy that applies to this build.
 
-      # If we we recieved a target version from Gitiles, override the tag
-      # argument.
-      tag = self.gitiles_response or trigger.gitiles.ref
-      policy_info = self._get_policy_info_for_tag(tag)
-      if policy_info not in trigger_policies:
-        trigger_policies.append(policy_info)
-    # If we match more than one policy with the triggers, that is an error.
-    # For Chrome, we are launched with properties.triggers, for exactly one
-    # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-    if len(trigger_policies) > 1:
-      raise StepFailure('too many triggers')
-    return trigger_policies.pop()
+    This will affect which branch the build will use. If the input properties
+    specify gitiles_info, then we will determine the branch based on information
+    returned by the Gitiles API. Otherwise, use the gitiles.ref seen in the
+    trigger.
+
+    Raises:
+      StepFailure: If more than one applicable trigger is selected.
+    """
+    with self.m.step.nest('select policy'):
+      trigger_policies: List[PolicyInfo] = []
+      for trigger in self.triggers:
+        # Retrieve version information from Gitiles API.
+        if self.properties.HasField('gitiles_info'):
+          gitiles_response = self.m.gitiles.get_file(
+              str(self.properties.gitiles_info.host),
+              str(self.properties.gitiles_info.project),
+              str(self.properties.gitiles_info.path),
+              ref=str(trigger.gitiles.ref),
+              test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
+          if gitiles_response:
+            self.gitiles_response = gitiles_response.strip()
+
+        # If we we recieved a target version from Gitiles, override the tag
+        # argument.
+        tag = self.gitiles_response or trigger.gitiles.ref
+        policy_info = self._get_policy_info_for_tag(tag)
+        if policy_info not in trigger_policies:
+          trigger_policies.append(policy_info)
+      # If we match more than one policy with the triggers, that is an error.
+      # For Chrome, we are launched with properties.triggers, for exactly one
+      # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+      if len(trigger_policies) > 1:
+        raise StepFailure('too many triggers')
+      return trigger_policies.pop()
 
   def _get_policy_info_for_tag(self, tag: str) -> PolicyInfo:
     """Find the applicable policy for the given Git tag.
@@ -970,6 +976,7 @@ def GenTests(api: RecipeTestApi):
       _props(branch_policies=[_policy(ignore=True)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'policy set to ignore'),
       api.post_check(post_process.DoesNotRun, 'commit uprev.repo forall'),
   )
 
@@ -1136,7 +1143,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.post_check(
-          post_process.MustRun, 'determine branch.fetch gitiles file.'
+          post_process.MustRun, 'select policy.fetch gitiles file.'
           'curl https://chromium.googlesource.com'
           '/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT'),
       api.test_util.test_build(
@@ -1208,9 +1215,9 @@ def GenTests(api: RecipeTestApi):
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.git.diff_check(True),
-      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
-                     'determine branch.checkout branch release-R79-*.B'),
+                     'checkout branch.checkout branch release-R79-*.B'),
       api.post_check(post_process.StatusSuccess),
   )
 
@@ -1219,9 +1226,9 @@ def GenTests(api: RecipeTestApi):
       api.properties(triggers=[trigger_prop] * 2),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.git.diff_check(True),
-      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
-                     'determine branch.checkout branch release-R79-*.B'),
+                     'checkout branch.checkout branch release-R79-*.B'),
       api.post_check(post_process.StatusSuccess),
   )
 
@@ -1230,7 +1237,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(triggers=[trigger_prop, trigger_prop2]),
       _props(package_info=package_chrome,
              branch_policies=[branch_policy, _policy()]),
-      api.post_check(post_process.MustRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
   )
 
@@ -1238,7 +1245,7 @@ def GenTests(api: RecipeTestApi):
       'branch-policies-no-pattern',
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[no_pattern_policy]),
-      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
   )
 
@@ -1250,7 +1257,7 @@ def GenTests(api: RecipeTestApi):
               BranchPolicy(pattern='.*', repl='',
                            reviewers=[Reviewer(email='a@example.com')])
           ]),
-      api.post_check(post_process.DoesNotRun, 'determine branch.git ls-remote'),
+      api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
       api.post_check(post_process.StatusSuccess),
   )
 
@@ -1259,7 +1266,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(triggers=[trigger_prop]),
       _props(package_info=package_chrome, branch_policies=[branch_policy]),
       api.step_data(
-          'determine branch.git ls-remote',
+          'select policy.git ls-remote',
           stdout=api.raw_io.output_text('\n'.join([
               '9ed37bc6f515ef0ef42949d9f23e1180432649f5\t'
               'refs/remotes/cros-internal/release-R79-5555.B',

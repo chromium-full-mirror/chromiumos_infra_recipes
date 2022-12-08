@@ -1131,49 +1131,60 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
+    "name": "select policy"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "release-R79-*.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "select policy.git ls-remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "release-R79-*.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "select policy.git ls-remote (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set policy",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checkout branch",
     "~followup_annotations": [
       "@@@STEP_TEXT@using release-R79-*.B deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@"
     ]
   },
   {
-    "cmd": [
-      "git",
-      "ls-remote",
-      ".",
-      "release-R79-*.B"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "determine branch.git ls-remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      ".",
-      "release-R79-*.B"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "determine branch.git ls-remote (2)",
+    "cmd": [],
+    "name": "checkout branch.checkout branch release-R79-*.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.set manifest_branch",
+    "name": "checkout branch.checkout branch release-R79-*.B.set manifest_branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@manifest_branch@\"release-R79-*.B\"@@@"
@@ -1202,7 +1213,7 @@
       ]
     },
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.repo init",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1232,7 +1243,7 @@
       ]
     },
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.repo sync",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1240,7 +1251,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.repo stats",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1267,7 +1278,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.repo stats.event-log",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1283,7 +1294,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.repo stats.set repo_retries",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 10}@@@"
@@ -1291,7 +1302,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.repo stats.set slowest_repos",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}}@@@"
@@ -1299,7 +1310,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.repo info",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -1312,14 +1323,14 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "determine branch.checkout branch release-R79-*.B.repo info.repo info",
+    "name": "checkout branch.checkout branch release-R79-*.B.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned",
+    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",
@@ -1343,7 +1354,7 @@
       ]
     },
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo forall",
+    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -1368,18 +1379,11 @@
       ]
     },
     "infra_step": true,
-    "name": "determine branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo manifest",
+    "name": "checkout branch.checkout branch release-R79-*.B.ensure manifest is pinned.repo manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set policy",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
     ]
   },
   {

@@ -1123,7 +1123,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
+    "name": "select policy",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]

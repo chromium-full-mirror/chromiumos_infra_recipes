@@ -1123,10 +1123,18 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
+    "name": "select policy"
+  },
+  {
+    "cmd": [],
+    "name": "set policy",
     "~followup_annotations": [
-      "@@@STEP_TEXT@policy set to ignore.@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"ignore\": true, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "policy set to ignore"
   },
   {
     "cmd": [],

@@ -1123,7 +1123,7 @@
   },
   {
     "cmd": [],
-    "name": "determine branch",
+    "name": "select policy",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
@@ -1137,7 +1137,7 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "determine branch.git ls-remote",
+    "name": "select policy.git ls-remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
