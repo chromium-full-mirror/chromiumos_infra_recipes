@@ -1942,7 +1942,7 @@
   },
   {
     "cmd": [],
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patchset for Change-Id 1",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1965,7 +1965,7 @@
       ]
     },
     "infra_step": true,
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patchset for Change-Id 1.repo forall",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
@@ -1990,7 +1990,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patchset for Change-Id 1.git_cl upload",
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.upload patch set for Change-Id 1.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

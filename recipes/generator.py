@@ -283,19 +283,7 @@ class GeneratorRun:
               if patch_set_to_retry:
                 if self.properties.rebase_before_retry:
                   self.rebase_cl(open_changes, patch_set_to_retry.change_id)
-                  with self.m.step.nest(
-                      "upload patchset for Change-Id {}".format(
-                          patch_set_to_retry.change_id)):
-                    with self.m.context(cwd=self.workspace_path):
-                      gerrit_change_to_retry = patch_set_to_retry.to_gerrit_change_proto(
-                      )
-                      project_info = self.m.repo.project_info(
-                          gerrit_change_to_retry.project)
-                      repository_path = self.m.path.join(
-                          self.workspace_path, project_info.path)
-                      with self.m.context(
-                          cwd=self.m.path.abs_to_path(repository_path)):
-                        self.m.git_cl.upload(send_mail=True)
+                  self.upload_new_patch_set(patch_set_to_retry)
                 self.retry_cl(patch_set_to_retry, cq_label)
                 if cl_passed_dry_run:
                   cls_to_abandon = [cl for cl in open_ci \
@@ -307,13 +295,13 @@ class GeneratorRun:
         self._create_uprev_cls(open_changes, existing_cls)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str):
-    """Upload a new uprev patch to change_id.
+    """Create a new uprev patch (locally) for change_id.
 
     Args:
       open_changes: List of currently open uprev CLs.
-      change_id: ID of the CL to upload a new patch set for.
+      change_id: ID of the CL to create a new patch set for.
     """
-    with self.m.step.nest("rebase CL {}".format(change_id)):
+    with self.m.step.nest('rebase CL {}'.format(change_id)):
       retry_changes = [p for p in open_changes if p.change == change_id]
       assert len(retry_changes) == 1
       retry_change = retry_changes[0]
@@ -338,8 +326,8 @@ class GeneratorRun:
     Args:
       versions: The versions to consider for an update.
       change_id: If not None, set Change-Id to the commit message, so that the
-        commit is uploaded as a new patchset of an existing Change. When this is
-        set, the uprev should not span multiple repositories.
+        commit is uploaded as a new patch set of an existing Change. When this
+        is set, the uprev should not span multiple repositories.
 
     Returns:
       ebuilds_by_pinfo, or None. If None, pupr should return immediately.
@@ -424,8 +412,8 @@ class GeneratorRun:
           produced code changes.
       modified_package_names: The names of packages that are modified.
       change_id: If not None, set Change-Id to the commit message, so that the
-        commit is uploaded as a new patchset of an existing Change. When this is
-        set, the uprev should not span multiple repositories.
+        commit is uploaded as a new patch set of an existing Change. When this
+        is set, the uprev should not span multiple repositories.
 
     Returns:
       ebuilds_by_pinfo, or None. If None, pupr should return immediately.
@@ -714,7 +702,7 @@ class GeneratorRun:
           with self.m.step.nest('set cq-depend for {} CL'.format(
               change.project)) as presentation:
             if not cq_depend:
-              presentation.step_text = "empty Cq-Depend, skipping"
+              presentation.step_text = 'empty Cq-Depend, skipping'
               continue
             description = self.m.gerrit.get_change_description(change)
             description = self.m.git_footers.edit_add_change_description(
@@ -884,9 +872,19 @@ class GeneratorRun:
             presentation.status = self.m.step.WARNING
     return most_recent_uprev
 
+  def upload_new_patch_set(self, gerrit_patch_set: PatchSet):
+    """Upload a new revision onto an existing Gerrit PatchSet."""
+    step_name = f'upload patch set for Change-Id {gerrit_patch_set.change_id}'
+    with self.m.step.nest(step_name), self.m.context(cwd=self.workspace_path):
+      gerrit_change = gerrit_patch_set.to_gerrit_change_proto()
+      project_info = self.m.repo.project_info(gerrit_change.project)
+      repo_path = self.m.path.join(self.workspace_path, project_info.path)
+      with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
+        self.m.git_cl.upload(send_mail=True)
+
   def retry_cl(self, patch_set: PatchSet, cq_label: int):
     """Retry sending the CL through CQ by setting its Gerrit labels."""
-    with self.m.step.nest("retry CL {}".format(patch_set.change_id)):
+    with self.m.step.nest('retry CL {}'.format(patch_set.change_id)):
       labels = {
           Label.BOT_COMMIT: 1,
           Label.COMMIT_QUEUE: cq_label,
@@ -1620,7 +1618,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
       # Commit message should contain the same version label as the original.
-      # The change should be uploaded as a new patchset for the same Change-Id.
+      # The change should be uploaded as a new patch set for the same Change-Id.
       api.post_check(
           post_process.StepCommandRE,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
@@ -1630,7 +1628,7 @@ def GenTests(api: RecipeTestApi):
               r'(.|\n)*Change-Id: deadbeef(.|\n)*', '.*'
           ]),
       api.post_check(post_process.MustRunRE,
-                     r'.*upload patchset for Change-Id 1\.git_cl upload'))
+                     r'.*upload patch set for Change-Id 1\.git_cl upload'))
 
   yield api.test(
       'cron-trigger-rebase-no-diff',
