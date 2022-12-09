@@ -140,7 +140,7 @@ class GeneratorRun:
     # performing a fetch from the Gitiles API for the package's target uprev
     # version. This information will be used in branch determination and sent to
     # the uprev handler.
-    self.gitiles_response = None
+    self.target_version_from_gitiles = None
 
   @cached_property
   def triggers(self) -> List[Trigger]:
@@ -150,6 +150,17 @@ class GeneratorRun:
           Trigger(gitiles=GitilesTrigger(ref=self.properties.retry_ref.ref))
       ]
     return self._raw_triggers
+
+  @property
+  def target_versions(self) -> List[UprevVersionedPackageRequest.GitRef]:
+    """Determine versions to try to uprev to."""
+    return [
+        UprevVersionedPackageRequest.GitRef(
+            repository=parse.urlparse(trigger.gitiles.repo).path,
+            ref=trigger.gitiles.ref,
+            revision=(self.target_version_from_gitiles or
+                      trigger.gitiles.revision)) for trigger in self.triggers
+    ]
 
   @property
   def retry_only_run(self) -> bool:
@@ -239,16 +250,7 @@ class GeneratorRun:
           self.m.cros_sdk.create_chroot(use_image=False)
 
       if not self.retry_only_run:
-        # If earlier we fetched for a target version through Gitiles, pass along
-        # the retrieved value.
-        versions = [
-            UprevVersionedPackageRequest.GitRef(
-                repository=parse.urlparse(trigger.gitiles.repo).path,
-                ref=trigger.gitiles.ref, revision=(self.gitiles_response or
-                                                   trigger.gitiles.revision))
-            for trigger in self.triggers
-        ]
-        self.ebuilds_by_pinfo = self.uprev_packages(versions, change_id=None)
+        self.ebuilds_by_pinfo = self.uprev_packages(change_id=None)
         if self.ebuilds_by_pinfo is None:
           return
 
@@ -310,7 +312,8 @@ class GeneratorRun:
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_pinfo = self.uprev_packages(existing_versions, change_id)
+      ebuilds_by_pinfo = self.uprev_packages(versions=existing_versions,
+                                             change_id=change_id)
       if not ebuilds_by_pinfo:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_pinfo.keys()) > 1:
@@ -318,13 +321,15 @@ class GeneratorRun:
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
             .format(sorted(ebuilds_by_pinfo.keys())))
 
-  def uprev_packages(self, versions: List[UprevVersionedPackageRequest.GitRef],
+  def uprev_packages(self,
+                     versions: List[UprevVersionedPackageRequest.GitRef] = None,
                      change_id: Optional[str] = None
                     ) -> Optional[EbuildsByPinfo]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
-      versions: The versions to consider for an update.
+      versions: The versions to consider for an update. Defaults to
+        self.target_versions.
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patch set of an existing Change. When this
         is set, the uprev should not span multiple repositories.
@@ -332,6 +337,8 @@ class GeneratorRun:
     Returns:
       ebuilds_by_pinfo, or None. If None, pupr should return immediately.
     """
+    if versions is None:
+      versions = self.target_versions
     modified_package_names: List[str] = []
     all_valid_responses: List[UprevPackagesResponse] = []
     for package in self.packages:
@@ -579,11 +586,9 @@ class GeneratorRun:
               ref=str(trigger.gitiles.ref),
               test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
           if gitiles_response:
-            self.gitiles_response = gitiles_response.strip()
+            self.target_version_from_gitiles = gitiles_response.strip()
 
-        # If we we recieved a target version from Gitiles, override the tag
-        # argument.
-        tag = self.gitiles_response or trigger.gitiles.ref
+        tag = self.target_version_from_gitiles or trigger.gitiles.ref
         policy_info = self._get_policy_info_for_tag(tag)
         if policy_info not in trigger_policies:
           trigger_policies.append(policy_info)
