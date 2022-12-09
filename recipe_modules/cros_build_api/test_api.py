@@ -584,7 +584,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                      '%s in service %s. %s' % (method, service, epilog))
 
     if service == 'PackageService':
-      if test_data.enabled and test_data.get('set_upreved_ebuilds'):
+      if test_data.enabled and 'set_upreved_ebuilds' in test_data:
         custom_responses = self.uprev_methods_responses(
             test_data.get('set_upreved_ebuilds'))
         if method in custom_responses:

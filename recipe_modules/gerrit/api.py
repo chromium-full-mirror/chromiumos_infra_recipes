@@ -72,7 +72,7 @@ class PatchSet(object):
     return self._change_info['subject']
 
   @property
-  def change_id(self):
+  def change_id(self) -> int:
     """Returns the int Change Number."""
     return self._change_info['_number']
 

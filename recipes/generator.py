@@ -12,8 +12,6 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 See go/pupr and go/pupr-generator for rationale and design decisions.
 """
 
-import json
-import copy
 import re
 from collections import defaultdict
 from functools import cached_property
@@ -24,8 +22,6 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
-from PB.chromite.api.packages import UprevVersionedPackageResponse
-from PB.chromite.api.packages import UprevPackagesResponse
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -61,6 +57,8 @@ from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git.api import Reference
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import EbuildsByProject
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 DEPS = [
@@ -86,6 +84,7 @@ DEPS = [
     'gitiles',
     'naming',
     'pupr',
+    'pupr_local_uprev',
     'repo',
     'src_state',
     'test_util',
@@ -101,28 +100,15 @@ PROPERTIES = GeneratorProperties
 # host'secorresponding git remote.
 HOSTS_REMOTES = (('chromium', 'cros'), ('chrome-internal', 'cros-internal'))
 
-# The label written in the commit message to store versions information of
-# upstream repositories given by gitiles trigger.
-UPREV_VERSION_LABEL = 'Pupr-Upstream-Versions'
-
 
 def RunSteps(api: RecipeApi, properties: GeneratorProperties):
   GeneratorRun(api, properties).run()
-
-
-class Ebuild(NamedTuple):
-  path: str
-  version: str
-  commit_info: str
 
 
 class PolicyInfo(NamedTuple):
   policy: BranchPolicy
   branch: str = ''
   reference: Optional[Reference] = None
-
-
-EbuildsByProject = DefaultDict[ProjectInfo, List[Ebuild]]
 
 
 class GeneratorRun:
@@ -231,6 +217,12 @@ class GeneratorRun:
 
     self._validate_properties()
     self._validate_triggers()
+    self.m.pupr_local_uprev.set_generator_attributes(
+        workspace_path=self.workspace_path,
+        additional_commit_message=self.properties.additional_commit_message,
+        allow_partial_uprev=self.properties.allow_partial_uprev,
+        build_targets=self.properties.build_targets,
+    )
 
     with self.m.cros_source.checkout_overlays_context(), \
         self.m.cros_sdk.cleanup_context():
@@ -251,7 +243,7 @@ class GeneratorRun:
           self.m.cros_sdk.create_chroot(use_image=False)
 
       if not self.retry_only_run:
-        self.ebuilds_by_project = self.uprev_packages(change_id=None)
+        self.ebuilds_by_project = self.uprev_packages()
         if self.ebuilds_by_project is None:
           return
 
@@ -261,206 +253,21 @@ class GeneratorRun:
       if not self.retry_only_run:
         self.create_uprev_cls(open_changes, do_open_cls_remain)
 
-  def rebase_cl(self, open_changes: List[GerritChange], change_id: str):
-    """Create a new uprev patch (locally) for change_id.
+  def uprev_packages(self) -> EbuildsByProject:
+    """Uprev packages on the local filesystem."""
+    return self.m.pupr_local_uprev.uprev_packages(self.packages,
+                                                  self.target_versions,
+                                                  self.topic)
+
+  def rebase_cl(self, open_changes: List[GerritChange], change_id: int):
+    """Rebase a CL on the local filesystem.
 
     Args:
       open_changes: List of currently open uprev CLs.
       change_id: ID of the CL to create a new patch set for.
     """
-    with self.m.step.nest('rebase CL {}'.format(change_id)):
-      retry_changes = [p for p in open_changes if p.change == change_id]
-      assert len(retry_changes) == 1
-      retry_change = retry_changes[0]
-      # Extract Change-Id from commit message
-      description = self.m.gerrit.get_change_description(retry_change)
-      change_id = _extract_metadata(description, 'Change-Id: (.*)')
-      existing_versions = _deserialize_versions(
-          _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_project = self.uprev_packages(versions=existing_versions,
-                                               change_id=change_id)
-      if not ebuilds_by_project:
-        raise StepFailure('The uprev had no file.')
-      if len(ebuilds_by_project.keys()) > 1:
-        raise StepFailure(
-            'The uprev requires multi-repo commit. Cannot be rebased. {}'
-            .format(sorted(ebuilds_by_project.keys())))
-
-  def uprev_packages(self,
-                     versions: List[UprevVersionedPackageRequest.GitRef] = None,
-                     change_id: Optional[str] = None
-                    ) -> Optional[EbuildsByProject]:
-    """Try the uprev for the given packages. If successful, commit the uprev.
-
-    Args:
-      versions: The versions to consider for an update. Defaults to
-        self.target_versions.
-      change_id: If not None, set Change-Id to the commit message, so that the
-        commit is uploaded as a new patch set of an existing Change. When this
-        is set, the uprev should not span multiple repositories.
-
-    Returns:
-      ebuilds_by_project, or None. If None, pupr should return immediately.
-    """
-    if versions is None:
-      versions = self.target_versions
-    modified_package_names: List[str] = []
-    all_valid_responses: List[UprevPackagesResponse] = []
-    for package in self.packages:
-      package_responses = self.uprev_package(package, versions)
-      if package_responses:
-        all_valid_responses.extend(package_responses)
-        modified_package_names.append(package.package_name)
-      elif not self.properties.allow_partial_uprev:
-        return None
-    if not all_valid_responses:
-      return None
-    return self.commit_uprevs(versions, all_valid_responses,
-                              modified_package_names, change_id=change_id)
-
-  def uprev_package(
-      self,
-      package: PackageInfo,
-      versions: List[UprevVersionedPackageRequest.GitRef],
-  ) -> List[UprevPackagesResponse]:
-    """Locally uprev a single package.
-
-    Args:
-      package: The package to uprev.
-      versions: The versions to consider for an update.
-
-    Returns:
-      List of UprevPackageResponses that actually changed code.
-    """
-    cpv = self.m.naming.get_package_title(package)
-    with self.m.step.nest('try uprev {}'.format(cpv)) as presentation:
-      request = UprevVersionedPackageRequest(
-          chroot=self.m.cros_sdk.chroot,
-          package_info=package,
-          versions=versions,
-          build_targets=self.properties.build_targets,
-      )
-      presentation.logs['request'] = str(request)
-      response = self.m.cros_build_api.PackageService.UprevVersionedPackage(
-          request, name='uprev versioned package')
-
-      if not response.responses:
-        presentation.step_text = 'no new versions for {}'.format(cpv)
-        return None
-
-      valid_responses: List[UprevPackagesResponse] = []
-      with self.m.step.nest('verify updates'):
-        # only act on files that are actually modified
-        for uprev_resp in response.responses:
-          if _response_has_changes(self.m, uprev_resp):
-            valid_responses.append(uprev_resp)
-
-      if not valid_responses:
-        presentation.step_text = (
-            'skipping uprev for {}. no modified files'.format(cpv))
-        if not self.properties.allow_partial_uprev:
-          return []
-        presentation.logs['partial_uprev'] = [
-            'no modified file for {}. continue because allow_partial_uprev=True'
-            .format(cpv)
-        ]
-        return []
-
-      presentation.logs['uprev versions'] = [
-          response.version for response in valid_responses
-      ]
-    return valid_responses
-
-  def commit_uprevs(self, versions: List[UprevVersionedPackageRequest.GitRef],
-                    uprev_packages_responses: List[UprevPackagesResponse],
-                    modified_package_names: List[str],
-                    change_id: Optional[str] = None
-                   ) -> Optional[EbuildsByProject]:
-    """Commit the uprevs on the local filesystem.
-
-    Args:
-      versions: The versions to consider for an update.
-      uprev_packages_responses: BAPI responses for all uprevs that actually
-          produced code changes.
-      modified_package_names: The names of packages that are modified.
-      change_id: If not None, set Change-Id to the commit message, so that the
-        commit is uploaded as a new patch set of an existing Change. When this
-        is set, the uprev should not span multiple repositories.
-
-    Returns:
-      ebuilds_by_project, or None. If None, pupr should return immediately.
-    """
-    with self.m.step.nest('commit uprev'):
-      # Flatten the list of modified files, and get the project info for them.
-      modified_ebuilds: List[Ebuild] = []
-      for uprev_resp in uprev_packages_responses:
-        modified_ebuilds.extend(
-            Ebuild(path=ebuild.path, version=uprev_resp.version,
-                   commit_info=uprev_resp.additional_commit_info)
-            for ebuild in uprev_resp.modified_ebuilds)
-      with self.m.context(cwd=self.workspace_path):
-        ebuilds_by_project = EbuildsByProject(list)
-        for ebuild in modified_ebuilds:
-          dirname = self.m.path.dirname(ebuild.path)
-          project_info = self.m.repo.project_infos(projects=[dirname])[0]
-          ebuilds_by_project[project_info].append(ebuild)
-
-        # Checkout git branches via repo so they track correctly.  Create them
-        # by path instead of project name, because they may be checked out
-        # multiple times.
-        self.m.repo.start(
-            'pupr',
-            projects=[info.path for info in sorted(ebuilds_by_project.keys())])
-
-      # For each repository, make the CL.
-      for info, ebuilds in sorted(ebuilds_by_project.items()):
-        name = self.m.path.basename(info.path)
-        root = self.workspace_path.join(info.path)
-        vers = ', '.join(sorted({e.version for e in ebuilds}))
-
-        additional_msg = ''
-        if self.properties.additional_commit_message \
-            and self.properties.additional_commit_message != '':
-          additional_msg = self.properties.additional_commit_message + '\n'
-
-        additional_commit_info = [
-            e.commit_info for e in ebuilds if e.commit_info
-        ]
-        if additional_commit_info:
-          additional_msg += '\n'.join(sorted(
-              set(additional_commit_info))) + '\n'
-
-        commit_lines = [
-            '{package_name}: Automatic uprev to {versions}.'.format(
-                package_name=', '.join(modified_package_names), versions=vers),
-            '',
-            '{additional_msg}Generated by PUpr, see {build_url} for job details.'
-            .format(additional_msg=additional_msg,
-                    build_url=self.m.buildbucket.build_url()),
-            '',
-            'BUG=None',
-            'TEST=CQ',
-            '',
-            '{label}: {versions}'.format(
-                label=UPREV_VERSION_LABEL,
-                versions=_serialize_versions(versions)),
-            'Cq-Cl-Tag: pupr:{topic}'.format(topic=self.topic),
-        ]
-        if self.m.src_state.gerrit_changes:
-          commit_lines.append('Cq-Depend: {}'.format(','.join(
-              '{}:{}'.format(
-                  x.host.split('.', 1)[0].replace('-review', ''), x.change)
-              for x in self.m.src_state.gerrit_changes)))
-        if change_id is not None:
-          commit_lines.append('Change-Id: ' + change_id)
-        commit_message = '\n'.join(commit_lines) + '\n'
-
-        with self.m.step.nest(
-            'commit in {}'.format(name)), self.m.context(cwd=root):
-          self.m.git.add([e.path for e in ebuilds])
-          self.m.git.commit(commit_message)
-
-    return ebuilds_by_project
+    self.m.pupr_local_uprev.rebase_cl(self.packages, open_changes, self.topic,
+                                      change_id)
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -921,70 +728,6 @@ class GeneratorRun:
           self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
 
-def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
-                       ) -> str:
-  """Serialize versions information.
-
-  Args:
-    versions: The versions to consider for an update.
-
-  Returns:
-    A JSON string that encodes the input.
-  """
-  o = [{
-      'ref': v.ref,
-      'repository': v.repository,
-      'revision': v.revision,
-  } for v in versions]
-  return json.dumps(o)
-
-
-def _deserialize_versions(json_str: str
-                         ) -> List[UprevVersionedPackageRequest.GitRef]:
-  """Deserialize versions information.
-
-  Args:
-    json_str: A string serialized by serializeVersions().
-
-  Returns:
-    The versions to consider for an uprev.
-  """
-  objs = json.loads(json_str)
-  return [
-      UprevVersionedPackageRequest.GitRef(
-          repository=o.get('repository'), ref=o.get('ref'),
-          revision=o.get('revision')) for o in objs
-  ]
-
-
-def _extract_metadata(description: str, pattern: str) -> str:
-  """Retrieves a single piece of metadata from a CL description.
-
-  Args:
-    description: The CL's commit message.
-    pattern: A string representing a regex pattern, with a single capture group.
-  """
-  m = re.findall(pattern, description)
-  if len(m) != 1:
-    raise StepFailure(
-        'failed to find a single pattern {} in the Change description (found {}): {}'
-        .format(pattern, len(m), description))
-  return m[0]
-
-
-# TODO(dburger): deleted files should be at the end of the modified_ebuilds list
-# to work correctly with api.git.diff_check.
-def _response_has_changes(api: RecipeApi,
-                          response: UprevVersionedPackageResponse) -> bool:
-  """Returns whether the given `UprevVersionedPackageResponse` contains changes."""
-  for ebuild in response.modified_ebuilds:
-    path = ebuild.path
-    with api.context(cwd=api.path.abs_to_path(api.path.dirname(path))):
-      if api.git.diff_check(path):
-        return True
-  return False
-
-
 def _get_outdated_timestamp(most_recent_uprev: Optional[PatchSet],
                             rebase_before_retry: bool) -> str:
   """Determine the cutoff time at which CLs become outdated.
@@ -1356,18 +1099,6 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield _with_infos(
-      'additional-commit-message',
-      _props(additional_commit_message='TEST'),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.git.diff_check(True),
-      api.post_check(post_process.MustRun, 'commit uprev'),
-      api.post_check(
-          post_process.StepCommandRE,
-          'commit uprev.commit in overlay.write commit message',
-          ['.*', '.*', '.*', '.*', '.*', '.*', r'(?s).*\n\nTEST\n.*', '.*']),
-  )
-
-  yield _with_infos(
       'multiple-packages', api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
@@ -1394,59 +1125,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'generate CLs.create gerrit change for src/overlay.git_cl upload',
           ['--topic', 'chromeos-base/new-topic-name']))
-
-  yield api.test(
-      'allow-partial-uprev',
-      api.repo.project_infos_step_data('commit uprev', data=[
-          dict(project='overlay'),
-      ], iteration=1),
-      api.repo.project_infos_step_data('commit uprev', data=[
-          dict(project='overlay'),
-      ], iteration=2),
-      _props(
-          packages=[
-              package_chrome,
-              PackageInfo(category='chromeos-base',
-                          package_name='chromeos-lacros'),
-          ], package_info=None, topic='chromeos-base/new-topic-name',
-          allow_partial_uprev=True),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.MustRun,
-                     'try uprev chromeos-base/chromeos-chrome'),
-      api.post_check(post_process.MustRun,
-                     'try uprev chromeos-base/chromeos-lacros'),
-      api.git.step_data(
-          'try uprev chromeos-base/chromeos-chrome.verify updates.diff check.git diff',
-          retcode=False),
-      api.git.step_data(
-          'try uprev chromeos-base/chromeos-lacros.verify updates.diff check.git diff',
-          retcode=True),
-      api.post_check(
-          post_process.StepCommandContains,
-          'generate CLs.create gerrit change for src/overlay.git_cl upload',
-          ['--topic', 'chromeos-base/new-topic-name']),
-      api.post_check(post_process.MustRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
-  )
-
-  yield api.test(
-      'allow-partial-uprev-no-update',
-      _props(
-          packages=[
-              package_chrome,
-              PackageInfo(category='chromeos-base',
-                          package_name='chromeos-lacros'),
-          ], package_info=None, topic='chromeos-base/new-topic-name',
-          allow_partial_uprev=True),
-      api.git.diff_check(False),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.MustRun,
-                     'try uprev chromeos-base/chromeos-chrome'),
-      api.post_check(post_process.MustRun,
-                     'try uprev chromeos-base/chromeos-lacros'),
-      api.post_check(post_process.DoesNotRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
-  )
 
   yield api.test(
       'duplicated-package-info-and-packages',
@@ -1729,90 +1407,6 @@ def GenTests(api: RecipeTestApi):
           ]),
       api.post_check(post_process.MustRunRE,
                      r'.*upload patch set for Change-Id 1\.git_cl upload'))
-
-  yield api.test(
-      'cron-trigger-rebase-no-diff',
-      _props(
-          branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=DRY_RUN)
-          ], retry_ref=retry_ref, rebase_before_retry=True),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
-      api.git.diff_check(False),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
-          changes, value_dict),
-      api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
-      api.post_check(
-          post_process.StepFailure,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
-  )
-
-  yield api.test(
-      'cron-trigger-rebase-multi-repo',
-      _props(
-          branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=DRY_RUN)
-          ], retry_ref=retry_ref, rebase_before_retry=True),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
-      api.git.diff_check(True),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
-          changes, value_dict),
-      api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
-      # The default of mocked UprevVersionedPackage updates multiple repos.
-      # Current implementation does not support rebasing CLs in such a case.
-      api.post_check(
-          post_process.StepFailure,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
-  )
-
-  value_dict2 = copy.deepcopy(value_dict)
-  # missing versions data in CL description.
-  value_dict2[1]['revision_info']['commit'][
-      'message'] = 'CL Description\n\nChange-Id: f00'
-  yield api.test(
-      'cron-trigger-rebase-no-data',
-      _props(
-          branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=DRY_RUN)
-          ], retry_ref=retry_ref, rebase_before_retry=True),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict2),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
-          changes, value_dict2),
-      api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
-      api.post_check(
-          post_process.StepFailure,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
-  )
 
   value_dict = {
       1: {
