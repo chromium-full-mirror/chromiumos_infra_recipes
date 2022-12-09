@@ -267,39 +267,41 @@ class GeneratorRun:
           if open_changes:
             open_ci = self.m.gerrit.fetch_patch_sets(open_changes,
                                                      include_messages=True)
-            # Filter out outdated CLs, sort by recency
-            d = most_recent_uprev.created if self.properties.rebase_before_retry else most_recent_uprev.submitted
             if most_recent_uprev:
-              open_ci = [ci for ci in open_ci if ci.created > d]
-            open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
+              open_ci = [
+                  ci for ci in open_ci if ci.created > _get_outdated_timestamp(
+                      most_recent_uprev, self.properties.rebase_before_retry)
+              ]
+            open_ci.sort(key=lambda ci: ci.created, reverse=True)
 
             if not self.m.pupr.retries_frozen(open_ci):
-              cl_to_retry, cq_label, message, cl_passed_dry_run = self.m.pupr.identify_retry(
+              patch_set_to_retry, cq_label, message, cl_passed_dry_run = self.m.pupr.identify_retry(
                   self.policy.retry_cl_policy,
                   self.policy.no_existing_cls_policy, open_ci)
               presentation.step_text = message
 
-              if cl_to_retry:
+              if patch_set_to_retry:
                 if self.properties.rebase_before_retry:
-                  self.rebase_cl(open_changes, cl_to_retry.change_id)
+                  self.rebase_cl(open_changes, patch_set_to_retry.change_id)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
-                          cl_to_retry.change_id)):
+                          patch_set_to_retry.change_id)):
                     with self.m.context(cwd=self.workspace_path):
-                      patch_set_to_retry = cl_to_retry.to_gerrit_change_proto()
+                      gerrit_change_to_retry = patch_set_to_retry.to_gerrit_change_proto(
+                      )
                       project_info = self.m.repo.project_info(
-                          patch_set_to_retry.project)
+                          gerrit_change_to_retry.project)
                       repository_path = self.m.path.join(
                           self.workspace_path, project_info.path)
                       with self.m.context(
                           cwd=self.m.path.abs_to_path(repository_path)):
                         self.m.git_cl.upload(send_mail=True)
-                self.retry_cl(cl_to_retry, cq_label)
+                self.retry_cl(patch_set_to_retry, cq_label)
                 if cl_passed_dry_run:
                   cls_to_abandon = [cl for cl in open_ci \
-                      if cl.created < cl_to_retry.created]
+                      if cl.created < patch_set_to_retry.created]
                   self._abandon_cls(
-                      cls_to_abandon, cl_to_retry,
+                      cls_to_abandon, patch_set_to_retry,
                       step_name='abandon CLs before passed CQ+1 CL')
       if not self.retry_only_run:
         self._create_uprev_cls(open_changes, existing_cls)
@@ -785,14 +787,11 @@ class GeneratorRun:
     """
     if not most_recent_uprev:
       return []
-    if self.properties.rebase_before_retry:
-      latest_timestamp = most_recent_uprev.created
-    else:
-      latest_timestamp = most_recent_uprev.submitted
     open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes)
     with self.m.step.nest('outdated CLs') as presentation:
       outdated_cls = [
-          cl for cl in open_patch_sets if cl.created < latest_timestamp
+          cl for cl in open_patch_sets if cl.created < _get_outdated_timestamp(
+              most_recent_uprev, self.properties.rebase_before_retry)
       ]
       presentation.logs['outdated CLs'] = [cl.display_id for cl in outdated_cls]
     return outdated_cls
@@ -962,6 +961,23 @@ def _response_has_changes(api: RecipeApi,
       if api.git.diff_check(path):
         return True
   return False
+
+
+def _get_outdated_timestamp(most_recent_uprev: Optional[PatchSet],
+                            rebase_before_retry: bool) -> str:
+  """Determine the cutoff time at which CLs become outdated.
+
+  Args:
+    most_recent_uprev: The most recently merged relevant uprev.
+    rebase_before_retry: See generator.proto.
+
+  Returns:
+    A timestamp string, in the same format as PatchSet.created, after which any
+    CL would be considered outdated.
+  """
+  if rebase_before_retry:
+    return most_recent_uprev.created
+  return most_recent_uprev.submitted
 
 
 def GenTests(api: RecipeTestApi):
