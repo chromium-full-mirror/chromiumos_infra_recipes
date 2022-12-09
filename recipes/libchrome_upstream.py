@@ -5,6 +5,7 @@
 
 """Recipe for updating libchrome upstream branch"""
 
+import os
 import re
 
 from recipe_engine.recipe_api import RecipeApi
@@ -15,6 +16,7 @@ DEPS = [
     'build_menu',
     'cros_source',
     'src_state',
+    'gcloud',
     'git',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -24,6 +26,7 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+CHROMIUM_OBJECTS_CACHE = 'chrome_cache/chromium.googlesource.com-chromium-src/objects'
 
 
 def RunSteps(api: RecipeApi):
@@ -39,12 +42,16 @@ def RunSteps(api: RecipeApi):
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
         with api.step.nest('fetch latest chromium'):
-          git_objects_info_dir = project_dir.join('.git/objects/info')
-          api.file.ensure_directory('ensure .git/objects/info',
-                                    git_objects_info_dir)
-          api.file.write_text('create chrome git reference',
-                              git_objects_info_dir.join('alternates'),
-                              '/preload/chrome/src/.git/objects')
+          with api.step.nest('use chromium cache'):
+            chrome_cache_dir = api.gcloud.setup_cache_disk('chrome')
+            chrome_cache_objects_dir = os.path.join(chrome_cache_dir,
+                                                    CHROMIUM_OBJECTS_CACHE)
+            git_objects_info_dir = project_dir.join('.git/objects/info')
+            api.file.ensure_directory('ensure .git/objects/info',
+                                      git_objects_info_dir)
+            api.file.write_text('create chrome git reference',
+                                git_objects_info_dir.join('alternates'),
+                                chrome_cache_objects_dir)
           api.step('git fetch chromium', [
               '/usr/bin/git', 'fetch',
               'https://chromium.googlesource.com/chromium/src'
