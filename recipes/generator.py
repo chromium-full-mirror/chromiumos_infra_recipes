@@ -121,7 +121,7 @@ class PolicyInfo(NamedTuple):
   reference: Optional[Reference] = None
 
 
-EbuildsByPinfo = DefaultDict[ProjectInfo, List[Ebuild]]
+EbuildsByProject = DefaultDict[ProjectInfo, List[Ebuild]]
 
 
 class GeneratorRun:
@@ -134,7 +134,7 @@ class GeneratorRun:
 
     self.workspace_path: Optional[Path] = None
     self._policy: Optional[BranchPolicy] = None
-    self.ebuilds_by_pinfo: Optional[EbuildsByPinfo] = None
+    self.ebuilds_by_project: Optional[EbuildsByProject] = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -217,8 +217,8 @@ class GeneratorRun:
           )
       ]
     else:
-      assert self.ebuilds_by_pinfo is not None
-      for info in sorted(self.ebuilds_by_pinfo):
+      assert self.ebuilds_by_project is not None
+      for info in sorted(self.ebuilds_by_project):
         project_infos_by_remote[info.remote].append(info)
     return project_infos_by_remote
 
@@ -250,8 +250,8 @@ class GeneratorRun:
           self.m.cros_sdk.create_chroot(use_image=False)
 
       if not self.retry_only_run:
-        self.ebuilds_by_pinfo = self.uprev_packages(change_id=None)
-        if self.ebuilds_by_pinfo is None:
+        self.ebuilds_by_project = self.uprev_packages(change_id=None)
+        if self.ebuilds_by_project is None:
           return
 
       open_changes = self.find_open_uprev_cls()
@@ -312,19 +312,19 @@ class GeneratorRun:
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_pinfo = self.uprev_packages(versions=existing_versions,
-                                             change_id=change_id)
-      if not ebuilds_by_pinfo:
+      ebuilds_by_project = self.uprev_packages(versions=existing_versions,
+                                               change_id=change_id)
+      if not ebuilds_by_project:
         raise StepFailure('The uprev had no file.')
-      if len(ebuilds_by_pinfo.keys()) > 1:
+      if len(ebuilds_by_project.keys()) > 1:
         raise StepFailure(
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
-            .format(sorted(ebuilds_by_pinfo.keys())))
+            .format(sorted(ebuilds_by_project.keys())))
 
   def uprev_packages(self,
                      versions: List[UprevVersionedPackageRequest.GitRef] = None,
                      change_id: Optional[str] = None
-                    ) -> Optional[EbuildsByPinfo]:
+                    ) -> Optional[EbuildsByProject]:
     """Try the uprev for the given packages. If successful, commit the uprev.
 
     Args:
@@ -335,7 +335,7 @@ class GeneratorRun:
         is set, the uprev should not span multiple repositories.
 
     Returns:
-      ebuilds_by_pinfo, or None. If None, pupr should return immediately.
+      ebuilds_by_project, or None. If None, pupr should return immediately.
     """
     if versions is None:
       versions = self.target_versions
@@ -410,7 +410,7 @@ class GeneratorRun:
                     uprev_packages_responses: List[UprevPackagesResponse],
                     modified_package_names: List[str],
                     change_id: Optional[str] = None
-                   ) -> Optional[EbuildsByPinfo]:
+                   ) -> Optional[EbuildsByProject]:
     """Commit the uprevs on the local filesystem.
 
     Args:
@@ -423,7 +423,7 @@ class GeneratorRun:
         is set, the uprev should not span multiple repositories.
 
     Returns:
-      ebuilds_by_pinfo, or None. If None, pupr should return immediately.
+      ebuilds_by_project, or None. If None, pupr should return immediately.
     """
     with self.m.step.nest('commit uprev'):
       # Flatten the list of modified files, and get the project info for them.
@@ -434,21 +434,21 @@ class GeneratorRun:
                    commit_info=uprev_resp.additional_commit_info)
             for ebuild in uprev_resp.modified_ebuilds)
       with self.m.context(cwd=self.workspace_path):
-        ebuilds_by_pinfo = EbuildsByPinfo(list)
+        ebuilds_by_project = EbuildsByProject(list)
         for ebuild in modified_ebuilds:
           dirname = self.m.path.dirname(ebuild.path)
-          info = self.m.repo.project_infos(projects=[dirname])[0]
-          ebuilds_by_pinfo[info].append(ebuild)
+          project_info = self.m.repo.project_infos(projects=[dirname])[0]
+          ebuilds_by_project[project_info].append(ebuild)
 
         # Checkout git branches via repo so they track correctly.  Create them
         # by path instead of project name, because they may be checked out
         # multiple times.
         self.m.repo.start(
             'pupr',
-            projects=[info.path for info in sorted(ebuilds_by_pinfo.keys())])
+            projects=[info.path for info in sorted(ebuilds_by_project.keys())])
 
       # For each repository, make the CL.
-      for info, ebuilds in sorted(ebuilds_by_pinfo.items()):
+      for info, ebuilds in sorted(ebuilds_by_project.items()):
         name = self.m.path.basename(info.path)
         root = self.workspace_path.join(info.path)
         vers = ', '.join(sorted({e.version for e in ebuilds}))
@@ -495,7 +495,7 @@ class GeneratorRun:
           self.m.git.add([e.path for e in ebuilds])
           self.m.git.commit(commit_message)
 
-    return ebuilds_by_pinfo
+    return ebuilds_by_project
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -687,8 +687,8 @@ class GeneratorRun:
 
     with self.m.step.nest('generate CLs'):
       changes = []
-      assert self.ebuilds_by_pinfo is not None
-      for info in sorted(self.ebuilds_by_pinfo):
+      assert self.ebuilds_by_project is not None
+      for info in sorted(self.ebuilds_by_project):
         changes.append(
             self.m.gerrit.create_change(
                 info.path,
