@@ -256,17 +256,10 @@ class GeneratorRun:
           return
 
       open_changes = self.find_open_uprev_cls()
-      most_recent_uprev: Optional[PatchSet] = None
-      if open_changes:
-        most_recent_uprev = self.find_most_recently_merged_uprev()
-      outdated_cls = self.get_outdated_cls(open_changes, most_recent_uprev)
-      abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
-      existing_cls = bool(
-          open_changes and len(abandoned_cls) < len(open_changes))
-      self.apply_retry_policy(open_changes, most_recent_uprev)
+      do_open_cls_remain = self._handle_open_changes(open_changes)
 
       if not self.retry_only_run:
-        self._create_uprev_cls(open_changes, existing_cls)
+        self.create_uprev_cls(open_changes, do_open_cls_remain)
 
   def rebase_cl(self, open_changes: List[GerritChange], change_id: str):
     """Create a new uprev patch (locally) for change_id.
@@ -650,8 +643,8 @@ class GeneratorRun:
         self.policy.topic = '{}-{}'.format('testing', self.topic)
         self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
 
-  def _create_uprev_cls(self, open_changes: List[GerritChange],
-                        existing_cls: bool):
+  def create_uprev_cls(self, open_changes: List[GerritChange],
+                       existing_cls: bool):
     """Create appropriate CLs for the uprevs."""
     send_to_cq_policy = (
         self.policy.existing_cls_policy
@@ -813,6 +806,19 @@ class GeneratorRun:
                                              ('branch', info.branch_name),
                                              ('status', 'open')]))
     return open_changes
+
+  def _handle_open_changes(self, open_changes: List[GerritChange]) -> bool:
+    """Abandon or retry already-open uprev CLs.
+
+    Returns:
+      A bool stating whether any open CLs remain after abandoning.
+    """
+    most_recent_uprev = self.find_most_recently_merged_uprev() if open_changes \
+        else None
+    outdated_cls = self.get_outdated_cls(open_changes, most_recent_uprev)
+    abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
+    self.apply_retry_policy(open_changes, most_recent_uprev)
+    return len(abandoned_cls) < len(open_changes)
 
   def find_most_recently_merged_uprev(self) -> Optional[PatchSet]:
     """Return the most recently merged relevant uprev as queried from Gerrit."""
