@@ -161,7 +161,7 @@ class PatchSet(object):
     """
     return self._rev_info.get('commit')
 
-  def to_gerrit_change_proto(self):
+  def to_gerrit_change_proto(self) -> GerritChange:
     """Returns a GerritChange proto constructed from this patchset."""
     return GerritChange(host=self.host, change=self.change_id,
                         project=self.project, patchset=self.patch_set)

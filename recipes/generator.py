@@ -274,48 +274,32 @@ class GeneratorRun:
             open_ci = sorted(open_ci, key=lambda ci: ci.created, reverse=True)
 
             if not self.m.pupr.retries_frozen(open_ci):
-              retry_ci, cq_label, message, retry_cl_is_passed = self.m.pupr.identify_retry(
+              cl_to_retry, cq_label, message, cl_passed_dry_run = self.m.pupr.identify_retry(
                   self.policy.retry_cl_policy,
                   self.policy.no_existing_cls_policy, open_ci)
               presentation.step_text = message
 
-              if retry_ci:
+              if cl_to_retry:
                 if self.properties.rebase_before_retry:
-                  self.rebase_cl(open_changes, retry_ci.change_id)
+                  self.rebase_cl(open_changes, cl_to_retry.change_id)
                   with self.m.step.nest(
                       "upload patchset for Change-Id {}".format(
-                          retry_ci.change_id)):
+                          cl_to_retry.change_id)):
                     with self.m.context(cwd=self.workspace_path):
-                      retry_cl = retry_ci.to_gerrit_change_proto()
-                      project_info = self.m.repo.project_info(retry_cl.project)
+                      patch_set_to_retry = cl_to_retry.to_gerrit_change_proto()
+                      project_info = self.m.repo.project_info(
+                          patch_set_to_retry.project)
                       repository_path = self.m.path.join(
                           self.workspace_path, project_info.path)
                       with self.m.context(
                           cwd=self.m.path.abs_to_path(repository_path)):
                         self.m.git_cl.upload(send_mail=True)
-
-                with self.m.step.nest("retry CL {}".format(retry_ci.change_id)):
-                  labels = {
-                      Label.BOT_COMMIT: 1,
-                      Label.COMMIT_QUEUE: cq_label,
-                  }
-                  retry_cl = retry_ci.to_gerrit_change_proto()
-                  # Find path of appropriate project in local checkout, then set labels.
-                  with self.m.context(cwd=self.workspace_path):
-                    project_info = self.m.repo.project_info(retry_cl.project)
-                    repository_path = self.m.path.join(self.workspace_path,
-                                                       project_info.path)
-                    with self.m.context(
-                        cwd=self.m.path.abs_to_path(repository_path)):
-                      self.m.gerrit.set_change_labels_remote(
-                          retry_cl,
-                          labels,
-                      )
-                if retry_cl_is_passed:
+                self.retry_cl(cl_to_retry, cq_label)
+                if cl_passed_dry_run:
                   cls_to_abandon = [cl for cl in open_ci \
-                      if cl.created < retry_ci.created]
+                      if cl.created < cl_to_retry.created]
                   self._abandon_cls(
-                      cls_to_abandon, retry_ci,
+                      cls_to_abandon, cl_to_retry,
                       step_name='abandon CLs before passed CQ+1 CL')
       if not self.retry_only_run:
         self._create_uprev_cls(open_changes, existing_cls)
@@ -900,6 +884,20 @@ class GeneratorRun:
             presentation.step_text = 'no merged CLs found'
             presentation.status = self.m.step.WARNING
     return most_recent_uprev
+
+  def retry_cl(self, patch_set: PatchSet, cq_label: int):
+    """Retry sending the CL through CQ by setting its Gerrit labels."""
+    with self.m.step.nest("retry CL {}".format(patch_set.change_id)):
+      labels = {
+          Label.BOT_COMMIT: 1,
+          Label.COMMIT_QUEUE: cq_label,
+      }
+      gerrit_change = patch_set.to_gerrit_change_proto()
+      with self.m.context(cwd=self.workspace_path):
+        project_info = self.m.repo.project_info(gerrit_change.project)
+        repo_path = self.m.path.join(self.workspace_path, project_info.path)
+        with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
+          self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
 
 def _serialize_versions(versions: List[UprevVersionedPackageRequest.GitRef]
