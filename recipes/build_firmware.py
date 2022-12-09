@@ -6,6 +6,7 @@
 """Recipe that builds and tests firmware.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
+This recipe should only be used for ToT firmware builds.
 """
 
 from google.protobuf.json_format import MessageToDict

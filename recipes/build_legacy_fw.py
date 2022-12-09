@@ -3,7 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe that builds chromeos-firmware on a firmware branch."""
+"""Recipe that builds chromeos-firmware on a firmware branch.
+
+This recipe is not deprecated. All branched firmware builds should use this
+recipe.
+"""
 
 from collections import defaultdict
 from contextlib import contextmanager
