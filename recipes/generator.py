@@ -60,6 +60,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git.api import Reference
+from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 DEPS = [
@@ -262,37 +263,8 @@ class GeneratorRun:
       abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev)
       existing_cls = bool(
           open_changes and len(abandoned_cls) < len(open_changes))
+      self.apply_retry_policy(open_changes, most_recent_uprev)
 
-      if self.policy.retry_cl_policy != NO_RETRY:
-        with self.m.step.nest('apply retry policy {}'.format(
-            RetryClPolicy.Name(self.policy.retry_cl_policy))) as presentation:
-          if open_changes:
-            open_ci = self.m.gerrit.fetch_patch_sets(open_changes,
-                                                     include_messages=True)
-            if most_recent_uprev:
-              open_ci = [
-                  ci for ci in open_ci if ci.created > _get_outdated_timestamp(
-                      most_recent_uprev, self.properties.rebase_before_retry)
-              ]
-            open_ci.sort(key=lambda ci: ci.created, reverse=True)
-
-            if not self.m.pupr.retries_frozen(open_ci):
-              patch_set_to_retry, cq_label, message, cl_passed_dry_run = self.m.pupr.identify_retry(
-                  self.policy.retry_cl_policy,
-                  self.policy.no_existing_cls_policy, open_ci)
-              presentation.step_text = message
-
-              if patch_set_to_retry:
-                if self.properties.rebase_before_retry:
-                  self.rebase_cl(open_changes, patch_set_to_retry.change_id)
-                  self.upload_new_patch_set(patch_set_to_retry)
-                self.retry_cl(patch_set_to_retry, cq_label)
-                if cl_passed_dry_run:
-                  cls_to_abandon = [cl for cl in open_ci \
-                      if cl.created < patch_set_to_retry.created]
-                  self._abandon_cls(
-                      cls_to_abandon, patch_set_to_retry,
-                      step_name='abandon CLs before passed CQ+1 CL')
       if not self.retry_only_run:
         self._create_uprev_cls(open_changes, existing_cls)
 
@@ -886,6 +858,47 @@ class GeneratorRun:
       repo_path = self.m.path.join(self.workspace_path, project_info.path)
       with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
         self.m.git_cl.upload(send_mail=True)
+
+  def apply_retry_policy(self, open_changes: List[GerritChange],
+                         most_recent_uprev: List[PatchSet]):
+    """Retry any open uprev CLs based on the retry policy."""
+    if self.policy.retry_cl_policy == NO_RETRY:
+      return
+    with self.m.step.nest('apply retry policy {}'.format(
+        RetryClPolicy.Name(self.policy.retry_cl_policy))) as presentation:
+      if not open_changes:
+        return
+      open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes,
+                                                       include_messages=True)
+      if most_recent_uprev:
+        open_patch_sets = [
+            ps for ps in open_patch_sets
+            if ps.created > _get_outdated_timestamp(
+                most_recent_uprev, self.properties.rebase_before_retry)
+        ]
+      if self.m.pupr.retries_frozen(open_patch_sets):
+        return
+
+      patch_set_to_retry, cq_label, message, cl_passed_dry_run = \
+          self.m.pupr.identify_retry(self.policy.retry_cl_policy,
+                                     self.policy.no_existing_cls_policy,
+                                     open_patch_sets)
+      presentation.step_text = message
+
+      if not patch_set_to_retry:
+        return
+
+      if self.properties.rebase_before_retry:
+        self.rebase_cl(open_changes, patch_set_to_retry.change_id)
+        self.upload_new_patch_set(patch_set_to_retry)
+
+      self.retry_cl(patch_set_to_retry, cq_label)
+
+      if cl_passed_dry_run:
+        cls_to_abandon = [cl for cl in open_patch_sets \
+            if cl.created < patch_set_to_retry.created]
+        self._abandon_cls(cls_to_abandon, patch_set_to_retry,
+                          step_name='abandon CLs before passed CQ+1 CL')
 
   def retry_cl(self, patch_set: PatchSet, cq_label: int):
     """Retry sending the CL through CQ by setting its Gerrit labels."""
@@ -1526,6 +1539,75 @@ def GenTests(api: RecipeTestApi):
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
           value_dict),
+  )
+
+  yield _with_infos(
+      'with-retry-policy-but-no-open-changes',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chromium host', [],
+          'https://chromium-review.googlesource.com', {}),
+      api.gerrit.set_query_changes_response(
+          'find open uprev CLs.find CLs from chrome-internal host', [],
+          'https://chrome-internal-review.googlesource.com', {}),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.DoesNotRun,
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+      api.post_check(post_process.MustRun, 'generate CLs'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield _with_infos(
+      'with-retry-policy-but-retries-frozen',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          [GerritChange(change=1, host='chromium-review.googlesource.com')], {
+              1: {
+                  'change_id': 777,
+                  'created': '2020-10-22 18:54:00.000000000',
+                  'hashtags': [HASHTAG_FREEZE_RETRIES],
+              }
+          }),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.DoesNotRunRE,
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+      api.post_check(post_process.MustRun, 'generate CLs'),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield _with_infos(
+      'with-retry-policy-but-no-retry-cl-identified',
+      _props(branch_policies=[
+          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun,
+                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.DoesNotRun,
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+      api.post_check(post_process.MustRun, 'generate CLs'),
+      api.post_process(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
   )
 
   retry_ref = RetryRef(

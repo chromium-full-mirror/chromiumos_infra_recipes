@@ -10,6 +10,7 @@ from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
 from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
+from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_PINNED_RETRY
 
 DEPS = [
     'recipe_engine/assertions',
@@ -157,7 +158,7 @@ def RunSteps(api):
               1,
           "created":
               "2020-10-22 18:54:00.000000000",
-          "hashtags": [api.pupr.HASHTAG_PINNED_RETRY],
+          "hashtags": [HASHTAG_PINNED_RETRY],
           "messages": [{
               "message":
                   "Patch Set 1:\n\nThis CL has failed the run. Reason: ...",
@@ -241,7 +242,7 @@ def RunSteps(api):
               1,
           "created":
               "2020-10-22 18:54:00.000000000",
-          "hashtags": [api.pupr.HASHTAG_PINNED_RETRY],
+          "hashtags": [HASHTAG_PINNED_RETRY],
           "messages": [{
               "message": "Uploaded patch set 1.\nInitial upload",
               "date": "2020-10-24T18:54:00Z"
@@ -384,7 +385,7 @@ def RunSteps(api):
               2,
           "created":
               "2020-10-22 18:54:00.000000000",
-          "hashtags": [api.pupr.HASHTAG_PINNED_RETRY],
+          "hashtags": [HASHTAG_PINNED_RETRY],
           "messages": [{
               "message":
                   "Patch Set 1:\n\nThis CL has failed the run. Reason: ...",

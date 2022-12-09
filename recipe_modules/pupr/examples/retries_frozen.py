@@ -5,6 +5,8 @@
 
 import collections
 
+from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
+
 DEPS = [
     'recipe_engine/assertions',
     'gerrit',
@@ -15,12 +17,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  change_info = {
-      1: {
-          "change_id": 1,
-          "hashtags": [api.pupr.HASHTAG_FREEZE_RETRIES]
-      }
-  }
+  change_info = {1: {"change_id": 1, "hashtags": [HASHTAG_FREEZE_RETRIES]}}
   open_cls = [
       api.gerrit.PatchSet(
           collections.defaultdict(str, {

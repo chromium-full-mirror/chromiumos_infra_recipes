@@ -7565,11 +7565,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 APIs for PUpr.
 
-#### **class [PuprApi](/recipe_modules/pupr/api.py#129)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PuprApi](/recipe_modules/pupr/api.py#134)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for PUpr steps.
 
-&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#145)(self, retry_policy, no_existing_cls_policy, open_cls):**
+&mdash; **def [identify\_retry](/recipe_modules/pupr/api.py#149)(self, retry_policy, no_existing_cls_policy, open_cls):**
 
 Identify the CL to be retried based on retry_policy.
 
@@ -7596,7 +7596,7 @@ Returns:
                                The description of the action,
                                Whether the CL, if any, is currently passed)
 
-&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#134)(self, changes):**
+&emsp; **@staticmethod**<br>&mdash; **def [retries\_frozen](/recipe_modules/pupr/api.py#137)(changes):**
 
 Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
@@ -11226,7 +11226,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#28)(api, properties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#65): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#66): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -11238,7 +11238,7 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#108)(api: RecipeApi, properties: GeneratorProperties):**
+&mdash; **def [RunSteps](/recipes/generator.py#109)(api: RecipeApi, properties: GeneratorProperties):**
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)
@@ -12058,20 +12058,20 @@ Recipe for invoking the per project buildspec tool.
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
-[DEPS](/recipe_modules/pupr/examples/identify_retry.py#14): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/pupr/examples/identify_retry.py#15): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#31)(api):**
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/identify_retry.py#32)(api):**
 
-&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#23)(api, changes):**
+&mdash; **def [patch\_set\_from\_dict](/recipe_modules/pupr/examples/identify_retry.py#24)(api, changes):**
 ### *recipes* / [pupr:examples/retries\_frozen](/recipe_modules/pupr/examples/retries_frozen.py)
 
-[DEPS](/recipe_modules/pupr/examples/retries_frozen.py#8): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/pupr/examples/retries_frozen.py#10): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#19)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

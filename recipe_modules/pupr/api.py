@@ -36,6 +36,11 @@ PASSED_DRY_RUN_RE = re.compile(
     r"^Patch Set \d+:\s*(Dry run: This CL passed the C[QV] dry run|"
     r"This CL has passed the run)")
 
+# Magic hashtag to specify that PUpr for the given package is frozen.
+HASHTAG_FREEZE_RETRIES = "pupr-freeze-retries"
+# Magic hashtag to give a specific PUpr CL priority.
+HASHTAG_PINNED_RETRY = "pupr-retry-pinned"
+
 
 class RunState(Enum):
   RUNNING = 1
@@ -128,10 +133,9 @@ def sorted_cls(cls):
 
 class PuprApi(recipe_api.RecipeApi):
   """A module for PUpr steps."""
-  HASHTAG_FREEZE_RETRIES = "pupr-freeze-retries"
-  HASHTAG_PINNED_RETRY = "pupr-retry-pinned"
 
-  def retries_frozen(self, changes):
+  @staticmethod
+  def retries_frozen(changes):
     """Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
     Args:
@@ -140,7 +144,7 @@ class PuprApi(recipe_api.RecipeApi):
     Returns:
       bool: Whether or not a HASHTAG_FREEZE_RETRIES hashtag is present.
     """
-    return any(self.HASHTAG_FREEZE_RETRIES in c.hashtags for c in changes)
+    return any(HASHTAG_FREEZE_RETRIES in c.hashtags for c in changes)
 
   def identify_retry(self, retry_policy, no_existing_cls_policy, open_cls):
     """Identify the CL to be retried based on retry_policy.
@@ -191,7 +195,7 @@ class PuprApi(recipe_api.RecipeApi):
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
     for cl in open_cls:
-      if self.HASHTAG_PINNED_RETRY in cl.hashtags:
+      if HASHTAG_PINNED_RETRY in cl.hashtags:
         # (Most recent) pinned CL identified. If the CL has not previously
         # failed, no retry is necessary and we can return.
 
