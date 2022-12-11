@@ -1,0 +1,17 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_toolchain;
+
+message BuildToolchainProperties {
+  // Name of the Google Storage bucket to which to upload the prebuilts
+  // (e.g. "chromeos-prebuilts").
+  string prebuilts_gs_bucket = 1;
+
+  // Name of the Google Storage bucket to which to upload the SDK tarball
+  // (e.g. "chromeos-archive").
+  string archive_gs_bucket = 2;
+}

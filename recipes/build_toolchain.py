@@ -9,25 +9,34 @@ import re
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import CreateBinhostCLsRequest
+from PB.chromite.api.sdk import BuildSdkTarballRequest
 from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipes.chromeos.build_toolchain import BuildToolchainProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
+    "depot_tools/gsutil",
     "recipe_engine/buildbucket",
+    "recipe_engine/path",
+    "recipe_engine/properties",
     "recipe_engine/step",
     "recipe_engine/time",
     "build_menu",
     "cros_build_api",
     "cros_sdk",
+    "cros_version",
     "gerrit",
     "test_util",
 ]
 
+PROPERTIES = BuildToolchainProperties
+
 PYTHON_VERSION_COMPATIBILITY = "PY3"
 
-PREBUILT_UPLOAD_BUCKET = "gs://chromeos-prebuilt"
+SDK_TARBALL_SUFFIX = ".tar.xz"
+
 # The chromeos-sdk builder uses 'chroot' as VERSION_PREFIX.
 # We use a different prefix to avoid conflicts.
 VERSION_PREFIX = "build_toolchain"
@@ -58,7 +67,13 @@ def _insert_before_change_id(change, description, text):
   return description[:pos] + text + description[pos:]
 
 
-def RunSteps(api):
+def RunSteps(api, properties):
+  with api.step.nest("check properties"):
+    if not properties.archive_gs_bucket:
+      raise StepFailure("archive_gs_bucket must be set")
+    if not properties.prebuilts_gs_bucket:
+      raise StepFailure("prebuilts_gs_bucket must be set")
+
   # Unlike normal CrOS builds, the SDK has no concept of pinned CrOS manifest
   # or specific Chrome version.  Use a datestamp instead.
   version = api.time.utcnow().strftime("%Y.%m.%d.%H%M%S")
@@ -149,21 +164,50 @@ def RunSteps(api):
       api.cros_build_api.SdkService.BuildPrebuilts(
           BuildPrebuiltsRequest(chroot=api.cros_sdk.chroot))
 
+    with api.step.nest("package SDK as tarball"):
+      tarball_path = api.cros_build_api.SdkService.BuildSdkTarball(
+          BuildSdkTarballRequest(chroot=api.cros_sdk.chroot)).sdk_tarball_path
+
+    with api.step.nest("upload SDK tarball"):
+      # Compute upload location.
+      # This is something like
+      #     chromiumos-sdk/R110-15267.0.0-b5252087/built-sdk.tar.xz
+      #
+      # Which is composed of:
+      #  - The builder name.
+      #  - The ChromeOS version string.
+      #  - The basename of the packaged SDK.
+      upload_path = "/".join([
+          api.buildbucket.builder_name,
+          str(api.cros_version.version),
+          api.path.basename(tarball_path),
+      ])
+      # Upload the file to google storage (-n so we don't overwrite an
+      # already existing file).
+      api.gsutil.upload(tarball_path.path, properties.archive_gs_bucket,
+                        upload_path, args=['-n'])
+
     with api.step.nest("upload prebuilt packages"):
       api.cros_build_api.SdkService.UploadPrebuiltPackages(
           UploadPrebuiltPackagesRequest(
               chroot=api.cros_sdk.chroot,
               prepend_version=VERSION_PREFIX,
               version=version,
-              upload_location=PREBUILT_UPLOAD_BUCKET,
+              upload_location=f"gs://{properties.prebuilts_gs_bucket}",
           ))
 
     with api.step.nest("create binhost CLs"):
+      # Compute sdk_tarball_template. Note that the "%(target)s" part is
+      # not filled in here. It will be written to the configuration file
+      # to be filled in by users of the configuration file.
+      year, month = version.split(".")[0:2]
+      sdk_tarball_template = f"{year}/{month}/%(target)s-{version}{SDK_TARBALL_SUFFIX}"
       response = api.cros_build_api.SdkService.CreateBinhostCLs(
           CreateBinhostCLsRequest(
               prepend_version=VERSION_PREFIX,
               version=version,
-              upload_location=PREBUILT_UPLOAD_BUCKET,
+              upload_location=properties.prebuilts_gs_bucket,
+              sdk_tarball_template=sdk_tarball_template,
           ))
       new_binhost_cls = response.cls
 
@@ -306,10 +350,35 @@ def GenTests(api):
     kwargs.setdefault("builder", "chromeos-sdk-cq")
     return kwargs
 
+  good_properties = BuildToolchainProperties(
+      archive_gs_bucket="test-archive-bucket",
+      prebuilts_gs_bucket="test-prebuilt-bucket",
+  )
+
   yield api.build_menu.test(
-      "no-cl",
+      "missing-archive-bucket",
+      api.properties(
+          BuildToolchainProperties(
+              prebuilts_gs_bucket="prebuilt-bucket-is-here")),
+      api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.build_menu.test(
+      "missing-prebuilts-bucket",
+      api.properties(
+          BuildToolchainProperties(archive_gs_bucket="archive-bucket-is-here")),
+      api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.build_menu.test(
+      "no-cl", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response("identify key CLs", [],
                                                    fetch_changes_responses),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.DoesNotRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
@@ -320,12 +389,13 @@ def GenTests(api):
       **builder_args(gerrit_changes=[]))
 
   yield api.build_menu.test(
-      "no-central-cl",
+      "no-central-cl", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots, another_change_without_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "identify key CLs"),
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.DoesNotRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
@@ -338,10 +408,11 @@ def GenTests(api):
       ]))
 
   yield api.build_menu.test(
-      "no-change-id",
+      "no-change-id", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response("identify key CLs",
                                                    [missing_change_id],
                                                    fetch_changes_responses),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.DoesNotRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
@@ -352,11 +423,12 @@ def GenTests(api):
       **builder_args(gerrit_changes=[missing_change_id]))
 
   yield api.build_menu.test(
-      "multiple-trybots-cls",
+      "multiple-trybots-cls", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots, another_change_with_trybots],
           fetch_changes_responses),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.DoesNotRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
@@ -369,13 +441,16 @@ def GenTests(api):
       ]))
 
   yield api.build_menu.test(
-      "successful-run",
+      "successful-run", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "identify key CLs"),
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
@@ -384,13 +459,16 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_with_trybots]))
 
   yield api.build_menu.test(
-      "successful-run-no-include-trybots",
+      "successful-run-no-include-trybots", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "identify key CLs"),
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
@@ -399,13 +477,16 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_without_trybots]))
 
   yield api.build_menu.test(
-      "successful-run-with-binhost-cl",
+      "successful-run-with-binhost-cl", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots, prebuilt_binhost_change],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "identify key CLs"),
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
@@ -417,13 +498,16 @@ def GenTests(api):
       ]))
 
   yield api.build_menu.test(
-      "build_sdk_packages-failed",
+      "build_sdk_packages-failed", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "identify key CLs"),
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.DoesNotRun, "package SDK as tarball"),
+      api.post_check(post_process.DoesNotRun, "upload SDK tarball"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
@@ -435,7 +519,47 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_with_trybots]))
 
   yield api.build_menu.test(
-      "upload_prebuilt_packages-failed",
+      "package_sdk-failed", api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          "identify key CLs",
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
+      api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.DoesNotRun, "upload SDK tarball"),
+      api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
+      api.post_check(post_process.DoesNotRun, "create binhost CLs"),
+      api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
+      api.post_check(post_process.StatusFailure),
+      api.build_menu.set_build_api_return("package SDK as tarball",
+                                          "SdkService/BuildSdkTarball",
+                                          retcode=1),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]))
+
+  yield api.build_menu.test(
+      "upload_sdk_tarball-failed", api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          "identify key CLs",
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ), api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.MustRun, "identify key CLs"),
+      api.post_check(post_process.MustRun, "build SDK packages"),
+      api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "upload SDK tarball"),
+      api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
+      api.post_check(post_process.DoesNotRun, "create binhost CLs"),
+      api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
+      api.post_check(post_process.StatusAnyFailure),
+      api.step_data("upload SDK tarball.gsutil upload", retcode=1),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]))
+
+  yield api.build_menu.test(
+      "upload_prebuilt_packages-failed", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
@@ -451,7 +575,7 @@ def GenTests(api):
       **builder_args(gerrit_changes=[single_change_with_trybots]))
 
   yield api.build_menu.test(
-      "create-binhost-cls-failed",
+      "create-binhost-cls-failed", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],

@@ -157,6 +157,7 @@ def RunSteps(api):
           'Clean': sdk.CleanResponse,
           'Create': sdk.CreateResponse,
           'BuildPrebuilts': sdk.BuildPrebuiltsResponse,
+          'BuildSdkTarball': sdk.BuildSdkTarballResponse,
           'Delete': sdk.UpdateResponse,
           'Unmount': sdk.UnmountResponse,
           'Update': sdk.UpdateResponse,
