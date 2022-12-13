@@ -669,7 +669,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.failures.set_test_failed_packages(presentation, pkgs)
 
   def upload_artifacts(self, config=None, private_bundle_func=None,
-                       sysroot=None, report_to_spike=False):
+                       sysroot=None, report_to_spike=False,
+                       name='upload artifacts',
+                       previously_uploaded_artifacts=None):
     """Upload artifacts from the build.
 
     Args:
@@ -681,6 +683,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
           the build.
       report_to_spike (bool): If True, will call bcid_reporter to report artifact
           information and trigger Spike to upload the provenance.
+      name (str): The step name. Defaults to 'upload artifacts'.
+      previously_uploaded_artifacts(UploadedArtifacts): The UploadedArtifacts
+        from a previous call to upload_artifacts; if set, these artifact
+        types will not be re-uploaded. This used to avoid re-bundling artifacts
+        if upload_artifacts is called multiple times.
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -703,7 +710,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           sysroot=sysroot, private_bundle_func=private_bundle_func,
           report_to_spike=report_to_spike,
           attestation_eligible=config.artifacts.attestation_eligible,
-          upload_coverage=run_upload_coverage)
+          upload_coverage=run_upload_coverage, name=name,
+          previously_uploaded_artifacts=previously_uploaded_artifacts)
     return uploaded
 
   def artifacts_gs_path(self):

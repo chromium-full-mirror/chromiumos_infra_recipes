@@ -65,6 +65,17 @@ def DoRunSteps(api, config):
   packages = env_info.packages
 
   failing_build_exception = None
+  uploaded_artifacts = None
+
+  # The 'async_unit_tests' experiment does an initial upload of artifacts after
+  # building images, before running unit tests. This allows the CQ orchestrator
+  # to immediately use the image artifacts without waiting for unit testing to
+  # complete. A final upload will be done at the end of the build, for any
+  # additional artifacts produced by unit testing, or if an exception was
+  # thrown.
+  #
+  # TODO(b/261873853): Remove this experiment once this is the default flow.
+  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
@@ -73,9 +84,19 @@ def DoRunSteps(api, config):
       test_containers_runner.run_function_async(
           lambda cfg, _: api.build_menu.create_containers(cfg), config)
 
-      # We have no steps following build_and_test_images, so we don't need to
-      # check the return value.
-      api.build_menu.build_and_test_images(config)
+      if async_unit_tests_enabled:
+        api.build_menu.build_images(config)
+        uploaded_artifacts = api.build_menu.upload_artifacts(config)
+        # Set a property to indicate image artifacts are uploaded, so CQ
+        # orchestrator can poll for this property.
+        api.easy.set_properties_step(image_artifacts_uploaded=True)
+        # We have no steps following unit_test_images, so we don't need to
+        # check the return value.
+        api.build_menu.unit_test_images(config)
+      else:
+        # We have no steps following build_and_test_images, so we don't need to
+        # check the return value.
+        api.build_menu.build_and_test_images(config)
 
       # Pause and throw if test containers failed to upload.
       test_containers_runner.wait_for_and_throw()
@@ -88,7 +109,12 @@ def DoRunSteps(api, config):
   # Always upload the artifacts, regardless of whether the above threw an
   # exception.
   try:
-    api.build_menu.upload_artifacts(config)
+    if async_unit_tests_enabled:
+      api.build_menu.upload_artifacts(
+          config, name='final upload artifacts',
+          previously_uploaded_artifacts=uploaded_artifacts)
+    else:
+      api.build_menu.upload_artifacts(config)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
     # build_and_test_images above threw an exception, in which case we want to
@@ -113,6 +139,21 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
+
+  # Normal CQ build, with the async_unit_tests experiment enabled. Note that
+  # this build runs multiple upload artifact steps.
+  yield api.build_menu.test(
+      'async-unit-test-experiment',
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
+      api.post_check(post_process.PropertyEquals, 'image_artifacts_uploaded',
+                     True),
+      cq=True,
+      build_target='coral',
+      experiments=['chromeos.build_cq.async_unit_tests'],
+  )
 
   # This covers the Relevance check.
   yield api.build_menu.test(
