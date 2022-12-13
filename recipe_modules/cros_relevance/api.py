@@ -290,7 +290,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         presentation.step_text = 'no changes to check for relevancy'
         return False
 
-      self._ensure_binaries()
       gitiles_commit = gitiles_commit or bbcommon_pb2.GitilesCommit()
       check_request = PointlessBuildCheckRequest(
           gitiles_commit=testplans_proto_bytes(
@@ -308,40 +307,61 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         new_gc.serialized_proto = (
             bbcommon_pb2.GerritChange.SerializeToString(gc))
 
-      messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
-      input_bin_file = messages_path.join('input.binaryproto')
-      output_bin_file = messages_path.join('output.binaryproto')
-      presentation.logs['relevance_input'] = [str(check_request)]
-      self.m.file.write_raw('write input binaryproto', input_bin_file,
-                            check_request.SerializeToString())
+      result = self._call_pointless_build_checker(
+          check_request, presentation, is_pointless_test_value=not test_value)
 
-      cmd = [
-          self._pointless_build_checker_path,
-          'check-build',
-          '--input_binary_pb',
-          input_bin_file,
-          '--output_binary_pb',
-          output_bin_file,
-      ]
-      if self.m.cros_source.manifest_branch:
-        presentation.step_text = 'running on manifest branch'
-        pinned_manifest = self.m.path.mkstemp(prefix='pinned-manifest')
-        self.m.file.write_raw('write pinned manifest', pinned_manifest,
-                              self.m.cros_source.pinned_manifest)
-        cmd.extend(['--manifest_file', pinned_manifest])
-
-      self.m.step('run check', cmd, infra_step=True)
-
-      test_resp = PointlessBuildCheckResponse()
-      # None is the same as False, for all of the default values.
-      test_resp.build_is_pointless.value = not test_value
-      test_data = test_resp.SerializeToString()
-      response_bin = self.m.file.read_raw('read output file', output_bin_file,
-                                          test_data=test_data)
-      result = PointlessBuildCheckResponse.FromString(response_bin)
-
-      presentation.logs['relevance_output'] = [str(result)]
       return not bool(result.build_is_pointless.value)
+
+  def _call_pointless_build_checker(self, check_request, step_presentation,
+                                    is_pointless_test_value=False):
+    """Returns the result of calling the Pointless Build Checker.
+
+    Args:
+      check_request (PointlessBuildCheckRequest): The request to pass into the
+          pointless build checker.
+      step_presentation (StepPresentation): The parent step presentation. This
+          is used for adding logs to the UI.
+      is_pointless_test_value (bool): The return value when testing. The default
+          is False.
+
+    Returns:
+      check_result (PointlessBuildCheckResponse): The response from calling the
+          Pointless Build Checker
+    """
+    self._ensure_binaries()
+    messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
+    input_bin_file = messages_path.join('input.binaryproto')
+    output_bin_file = messages_path.join('output.binaryproto')
+    step_presentation.logs['relevance_input'] = [str(check_request)]
+    self.m.file.write_raw('write input binaryproto', input_bin_file,
+                          check_request.SerializeToString())
+
+    cmd = [
+        self._pointless_build_checker_path,
+        'check-build',
+        '--input_binary_pb',
+        input_bin_file,
+        '--output_binary_pb',
+        output_bin_file,
+    ]
+    if self.m.cros_source.manifest_branch:
+      step_presentation.step_text = 'running on manifest branch'
+      pinned_manifest = self.m.path.mkstemp(prefix='pinned-manifest')
+      self.m.file.write_raw('write pinned manifest', pinned_manifest,
+                            self.m.cros_source.pinned_manifest)
+      cmd.extend(['--manifest_file', pinned_manifest])
+
+    self.m.step('run check', cmd, infra_step=True)
+
+    test_resp = PointlessBuildCheckResponse()
+    test_resp.build_is_pointless.value = is_pointless_test_value
+    test_data = test_resp.SerializeToString()
+    response_bin = self.m.file.read_raw('read output file', output_bin_file,
+                                        test_data=test_data)
+    check_result = PointlessBuildCheckResponse.FromString(response_bin)
+    step_presentation.logs['relevance_output'] = [str(check_result)]
+
+    return check_result
 
   def is_depgraph_affected(self, gerrit_changes, gitiles_commit, dep_graph,
                            test_value=None, name=None):
