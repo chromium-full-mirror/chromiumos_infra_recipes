@@ -85,16 +85,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     self._gs_upload_path = props.gs_upload_path
     self._timestamp_micros = int(time.time() * 1000)
 
-  def initialize(self):
-    # TODO(b/216849056): Remove once go/cros-build-target-builder-parallelization
-    # is fully rolled out.
-    # If the parallelization experiment is not enabled on the builder, then
-    # artifact bundling should be set to the default value (1).
-    if ('chromeos.cros_infra_config.image_builder_parallelization' not in
-        self.m.buildbucket.build.input.experiments):
-      self._max_concurrent_bundling_requests = (
-          _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
-
   @property
   def timestamp_micros(self):
     """Return the value of {time} in GS templates."""
