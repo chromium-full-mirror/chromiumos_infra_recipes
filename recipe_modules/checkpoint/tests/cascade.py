@@ -49,7 +49,7 @@ TESTS = [
     # Checks that STAGE_ARTIFACTS forces all other builder steps.
     ('stage-artifats-propagate', [RetryStep.STAGE_ARTIFACTS], [
         RetryStep.STAGE_ARTIFACTS, RetryStep.PUSH_IMAGES,
-        RetryStep.DEBUG_SYMBOLS, RetryStep.EBUILD_TESTS, RetryStep.PAYGEN
+        RetryStep.DEBUG_SYMBOLS, RetryStep.PAYGEN
     ]),
     # Checks that UPLOAD_PAYLOAD forces all other paygen steps.
     ('upload-payload-propagate', [RetryStep.UPLOAD_PAYLOAD],

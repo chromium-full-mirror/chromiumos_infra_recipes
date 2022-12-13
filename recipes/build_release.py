@@ -17,6 +17,7 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
+from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -34,6 +35,7 @@ DEPS = [
     'build_reporting',
     'builder_metadata',
     'cros_build_api',
+    'checkpoint',
     'cros_infra_config',
     'cros_prebuilts',
     'cros_release',
@@ -112,58 +114,62 @@ def DoRunSteps(api, config, properties):
               else '0')
   api.easy.set_properties_step('set critical property', critical=critical)
 
-  try:
-    api.build_menu.bootstrap_sysroot(config)
-    if api.build_menu.install_packages(config, env_info.packages):
-      # TODO(b/231739303): Make this step critical once cloud container build stablizes.
-      with api.step.nest('try creating test service containers') as step:
-        try:
-          api.build_menu.create_containers(config)
-        except StepFailure as sf:
-          # For now only mark the step as failed. Do not fail the build.
-          step.status = api.step.FAILURE
-          step.step_summary_text = 'One or more test service containers failed to build.'
+  api.build_menu.bootstrap_sysroot(config)
+
+  with api.checkpoint.retry(RetryStep.STAGE_ARTIFACTS) as run_step:
+    if run_step:
+      try:
+        if api.build_menu.install_packages(config, env_info.packages):
+          # TODO(b/231739303): Make this step critical once cloud container build stablizes.
+          with api.step.nest('try creating test service containers') as step:
+            try:
+              api.build_menu.create_containers(config)
+            except StepFailure as sf:
+              # For now only mark the step as failed. Do not fail the build.
+              step.status = api.step.FAILURE
+              step.step_summary_text = 'One or more test service containers failed to build.'
+
+          with api.failures.ignore_exceptions():
+            api.bcid_reporter.report_stage('compile')
+
+          api.build_menu.build_images(config, include_version=True)
+          # Now that the image is built, we should have all metadata available.
+          with api.step.nest('determine build and model metadata'):
+            # First look up builder metadata from build-api.
+            builder_metadata = api.builder_metadata.look_up_builder_metadata()
+            # Then fire off a pub/sub call with that builder meta.
+            api.build_reporting.publish_build_target_and_model_metadata(
+                api.cros_source.manifest_branch, builder_metadata)
+          # We upload devinstall prebuilts at this stage instead of earlier on
+          # because ImageService/Create (which is called in build_images above) is
+          # the call that generates the package list that the devinstall prebuilts
+          # call uses.
+          api.build_menu.upload_devinstall_prebuilts(config)
+      except StepFailure as sf:
+        # If we catch an exception, swallow it and store it so the next steps can
+        # still occur (there is value in uploading the artifact even in cases of
+        # build failure for debug purposes).
+        failing_build_exception = sf
 
       with api.failures.ignore_exceptions():
-        api.bcid_reporter.report_stage('compile')
+        api.bcid_reporter.report_stage('upload')
 
-      api.build_menu.build_images(config, include_version=True)
-      # Now that the image is built, we should have all metadata available.
-      with api.step.nest('determine build and model metadata'):
-        # First look up builder metadata from build-api.
-        builder_metadata = api.builder_metadata.look_up_builder_metadata()
-        # Then fire off a pub/sub call with that builder meta.
-        api.build_reporting.publish_build_target_and_model_metadata(
-            api.cros_source.manifest_branch, builder_metadata)
-      # We upload devinstall prebuilts at this stage instead of earlier on
-      # because ImageService/Create (which is called in build_images above) is
-      # the call that generates the package list that the devinstall prebuilts
-      # call uses.
-      api.build_menu.upload_devinstall_prebuilts(config)
-  except StepFailure as sf:
-    # If we catch an exception, swallow it and store it so the next steps can
-    # still occur (there is value in uploading the artifact even in cases of
-    # build failure for debug purposes).
-    failing_build_exception = sf
-
-  with api.failures.ignore_exceptions():
-    api.bcid_reporter.report_stage('upload')
-
-  try:
-    uploaded_artifacts = api.build_menu.upload_artifacts(
-        config, report_to_spike=True)
-    if uploaded_artifacts:
-      gs_image_dir = 'gs://{bucket}/{path}'.format(
-          bucket=uploaded_artifacts.gs_bucket, path=uploaded_artifacts.gs_path)
-      with api.step.nest("publish DLCs to pubsub"):
-        dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
-        api.build_reporting.publish_dlcs(dlc_locations)
-  except StepFailure as sf:
-    # If uploading artifacts threw an exception, surface that exception unless
-    # build_images above threw an exception, in which case we want to
-    # surface *that* exception for accuracy in reporting the build (and it's
-    # likely that upload artifacts failed as a result of those previous issues).
-    raise failing_build_exception or sf
+      try:
+        uploaded_artifacts = api.build_menu.upload_artifacts(
+            config, report_to_spike=True)
+        if uploaded_artifacts:
+          gs_image_dir = 'gs://{bucket}/{path}'.format(
+              bucket=uploaded_artifacts.gs_bucket,
+              path=uploaded_artifacts.gs_path)
+          with api.step.nest("publish DLCs to pubsub"):
+            dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
+            api.build_reporting.publish_dlcs(dlc_locations)
+      except StepFailure as sf:
+        # If uploading artifacts threw an exception, surface that exception unless
+        # build_images above threw an exception, in which case we want to
+        # surface *that* exception for accuracy in reporting the build (and it's
+        # likely that upload artifacts failed as a result of those previous issues).
+        raise failing_build_exception or sf
 
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('upload-complete')
@@ -191,7 +197,11 @@ def DoRunSteps(api, config, properties):
     with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
       return api.build_menu.unit_test_images(config=config)
 
-  unit_test_future = api.futures.spawn(_run_and_report_unit_tests)
+  # TODO(b/262388770): Properly support ebuild tests within checkpoint.
+  # For now, they're only run if the artifacts are built in the same run.
+  unit_test_future = api.futures.spawn(lambda: True)
+  if api.checkpoint.will_run_step(RetryStep.STAGE_ARTIFACTS):
+    unit_test_future = api.futures.spawn(_run_and_report_unit_tests)
 
   # Signing does not work in staging, so we shouldn't wait for it in that case.
   # We also can't sign anything if push_and_sign_images returned 0 instructions.

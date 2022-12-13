@@ -169,7 +169,9 @@
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) (Python3 ✅) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
+  * [checkpoint:examples/retry](#recipes-checkpoint_examples_retry) (Python3 ✅)
   * [checkpoint:tests/cascade](#recipes-checkpoint_tests_cascade) (Python3 ✅)
+  * [checkpoint:tests/update_summary](#recipes-checkpoint_tests_update_summary) (Python3 ✅)
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
@@ -1564,19 +1566,33 @@ Returns:
   builder_metadata proto describing build and model for the current target.
 ### *recipe_modules* / [checkpoint](/recipe_modules/checkpoint)
 
+[DEPS](/recipe_modules/checkpoint/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#47)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#57)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
+
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#95)(self, step: 'RetryStep'):**
+
+Context to handle retry logic / status reporting.
+
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#80)(self, step: 'RetryStep', status: str):**
+
+Updates the retry_summary output property with the given step/status.
+
+&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#53)(self, step: 'RetryStep'):**
+
+Return whether the step will be run in this retry.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9327,15 +9343,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#27)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#24): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#101)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#103)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#57)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#59)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9493,6 +9509,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Checks a project conforms to its program's constraints.
 
 &mdash; **def [RunSteps](/recipes/check_project_config.py#35)(api, properties):**
+### *recipes* / [checkpoint:examples/retry](/recipe_modules/checkpoint/examples/retry.py)
+
+[DEPS](/recipe_modules/checkpoint/examples/retry.py#11): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/checkpoint/examples/retry.py#23)(api: RecipeApi):**
 ### *recipes* / [checkpoint:tests/cascade](/recipe_modules/checkpoint/tests/cascade.py)
 
 [DEPS](/recipe_modules/checkpoint/tests/cascade.py#12): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -9500,6 +9523,13 @@ Checks a project conforms to its program's constraints.
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/checkpoint/tests/cascade.py#60)(api: RecipeApi, properties: TestProperties):**
+### *recipes* / [checkpoint:tests/update\_summary](/recipe_modules/checkpoint/tests/update_summary.py)
+
+[DEPS](/recipe_modules/checkpoint/tests/update_summary.py#9): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/checkpoint/tests/update_summary.py#18)(api: RecipeApi):**
 ### *recipes* / [chrome:examples/cache\_sync](/recipe_modules/chrome/examples/cache_sync.py)
 
 [DEPS](/recipe_modules/chrome/examples/cache_sync.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

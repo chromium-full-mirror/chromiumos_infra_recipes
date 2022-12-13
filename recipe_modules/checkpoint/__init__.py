@@ -4,7 +4,10 @@
 
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties
 
-DEPS = []
+DEPS = [
+    'recipe_engine/step',
+    'easy',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
