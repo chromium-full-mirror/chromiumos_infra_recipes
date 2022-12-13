@@ -437,6 +437,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     packages = packages or config.build.install_packages.packages
     dep_graph = self.get_dep_graph(packages)
 
+    pointless = False
+    # Only CQ and Postsubmit builders undergo a relevancy check.
     if config.id.type == BuilderConfig.Id.POSTSUBMIT:
       pointless = not self.m.cros_relevance.postsubmit_relevance_check(
           self.gitiles_commit, dep_graph.target)
@@ -444,7 +446,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # latest postsubmit image. See b/205142684.
       self.m.cros_tags.add_tags_to_current_build(**dict(
           relevance='{}relevant'.format('not ' if pointless else '')))
-    else:
+    elif config.id.type == BuilderConfig.Id.CQ:
       # In the cases where force_relevant is True:
       # 1. input_properties.force_relevant_build is True, and/or
       # 2. output_properties.testing_toolchain is True (now tracked in
@@ -456,9 +458,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # 4. The gerrit change contains the appropriate footer. The footers are read
       #    in the orchestrator and passed in as an input property (1) therefore we
       #    do not need to read the footers here.
-      pointless = self.m.cros_relevance.is_build_pointless(
+      pointless = self.m.cros_relevance.is_cq_build_pointless(
           self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
-          config=self.m.cros_infra_config.config_or_default,
           force_relevant=self._force_relevant_build)
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()

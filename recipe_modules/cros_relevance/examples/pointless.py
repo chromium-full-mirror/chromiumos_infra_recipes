@@ -50,9 +50,9 @@ def RunSteps(api, properties):
     pointless = not api.cros_relevance.postsubmit_relevance_check(
         bbcommon_pb2.GitilesCommit(id='my hash'), dep_graph)
   else:
-    pointless = api.cros_relevance.is_build_pointless(
+    pointless = api.cros_relevance.is_cq_build_pointless(
         properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
-        dep_graph=dep_graph, config=config, force_relevant=force_relevant,
+        dep_graph=dep_graph, force_relevant=force_relevant,
         test_value=properties.expected)
   api.assertions.assertEqual(properties.expected, pointless)
   api.cros_relevance.get_dependency_graph(sysroot, Chroot())
@@ -106,9 +106,6 @@ def GenTests(api):
       api.properties(
           PointlessTest(gerrit_changes=[], config_type=BuilderConfig.Id.CQ,
                         expected=True)))
-
-  yield api.test('relevant-non-cq',
-                 api.properties(PointlessTest(expected=False)))
 
   yield api.test(
       'force-postsubmit-relevant',
