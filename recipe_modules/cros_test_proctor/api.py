@@ -551,6 +551,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
 
+    tags = self.m.cros_tags.make_schedule_tags(snapshot)
+    tags.extend(self.m.cros_tags.tags(**{'hide-in-gerrit': 'true'}))
+
     # Record the names of all the tests that are scheduled. This will be set as
     # an output property when testing Recipes only.
     scheduled_test_names = []
@@ -578,8 +581,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               build_payload=unit.common.build_payload,
                               expressions=expressions,
                               total_shards=total_shards,
-                              shard_index=shard_index))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
+                              shard_index=shard_index))), tags=tags,
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
           scheduled_test_names.append(test.common.display_name)
@@ -615,6 +617,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # an output property when testing Recipes only.
     scheduled_test_names = []
 
+    tags = self.m.cros_tags.make_schedule_tags(snapshot)
+    tags.extend(self.m.cros_tags.tags(**{'hide-in-gerrit': 'true'}))
+
     for unit in test_plan.tast_gce_test_units:
       for test in unit.tast_gce_test_cfg.tast_gce_test:
         # Do not run non-critical tests on retries.
@@ -648,8 +653,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               total_shards=total_shards,
                               shard_index=shard_index,
                               gce_metadata=properties_gce_metadata))),
-                  tags=self.m.cros_tags.make_schedule_tags(snapshot),
-                  swarming_parent_run_id=None if run_async else
+                  tags=tags, swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
           scheduled_test_names.append(test.common.display_name)
     gce_tests = self.m.buildbucket.schedule(
