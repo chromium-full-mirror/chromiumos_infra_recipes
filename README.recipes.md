@@ -13,6 +13,7 @@
   * [build_reporting](#recipe_modules-build_reporting) (Python3 ✅) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) (Python3 ✅)
   * [builder_metadata](#recipe_modules-builder_metadata) (Python3 ✅)
+  * [checkpoint](#recipe_modules-checkpoint) (Python3 ✅)
   * [chrome](#recipe_modules-chrome) (Python3 ✅)
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
@@ -168,6 +169,7 @@
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) (Python3 ✅) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
+  * [checkpoint:tests/cascade](#recipes-checkpoint_tests_cascade) (Python3 ✅)
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
@@ -1559,6 +1561,21 @@ builder metadata is looked up once and cached.
 
 Returns:
   builder_metadata proto describing build and model for the current target.
+### *recipe_modules* / [checkpoint](/recipe_modules/checkpoint)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for managing release build checkpoints.
+
+See go/release-checkpoints-dd for context.
+
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#47)(self, requested_steps: List['RetryStep']):**
+
+Process step cascades for the requested steps.
+
+Returns: (List["RetryStep"]) all the steps that are meant to be run.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -9475,6 +9492,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Checks a project conforms to its program's constraints.
 
 &mdash; **def [RunSteps](/recipes/check_project_config.py#35)(api, properties):**
+### *recipes* / [checkpoint:tests/cascade](/recipe_modules/checkpoint/tests/cascade.py)
+
+[DEPS](/recipe_modules/checkpoint/tests/cascade.py#12): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/checkpoint/tests/cascade.py#60)(api: RecipeApi, properties: TestProperties):**
 ### *recipes* / [chrome:examples/cache\_sync](/recipe_modules/chrome/examples/cache_sync.py)
 
 [DEPS](/recipe_modules/chrome/examples/cache_sync.py#6): [chrome](#recipe_modules-chrome), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -1,0 +1,69 @@
+// Copyright 2022 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.checkpoint;
+
+enum RetryStep {
+    // Numbering guide:
+    // Orchestrator steps live [1, 100).
+    // Child builder steps live in [100, 800).
+    // Paygen orchestrator steps live in [800, 1000).
+    // Paygenie steps live in [1000, ...).
+    UNDEFINED = 0;
+
+    // Orchestrator steps.
+    CREATE_BUILDSPEC = 10;
+
+    PUBLIC_BUILD_LKGM = 20;
+
+    RUN_CHILDREN = 30;
+    RUN_FAILED_CHILDREN = 31;
+
+    LAUNCH_TESTS = 40;
+
+
+    // Child builder steps.
+    STAGE_ARTIFACTS = 150;
+
+    // Push images to the release bucket (and thus initiate signing).
+    PUSH_IMAGES = 160;
+
+    // Upload debug symbols.
+    DEBUG_SYMBOLS = 165;
+
+    // Run ebuild tests.
+    // Currently unsupported.
+    EBUILD_TESTS = 170;
+
+    // Do payload generation.
+    PAYGEN = 180;
+
+
+    // Paygenie steps.
+    UPLOAD_PAYLOAD = 1000;
+
+    TEST_PAYLOAD = 1010;
+}
+
+message RetrySteps {
+    repeated RetryStep steps = 1;
+}
+
+message CheckpointProperties {
+    // Whether to run a build in retry mode.
+    // If False, all other fields will be ignored and a standard release build will run.
+    bool retry = 1;
+
+    // BBID of the original build, or the previous retry.
+    string original_build_bbid = 2;
+
+    // Definitely execute these steps, whether for the first time or as a retry.
+    // May cause cascading retries, i.e. you can't generate new payloads without testing them.
+    RetrySteps exec_steps = 3;
+
+   // Build-target specific retry steps. Only relevant if the build being retried is the orchestrator.
+    map<string, RetrySteps> build_target_exec_steps = 4;
+}
