@@ -639,11 +639,79 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           return True
     return False
 
+  def _filter_previously_uploaded_artifacts(
+      self, artifacts_info: common_pb.ArtifactsByService,
+      previously_uploaded_artifacts: UploadedArtifacts
+  ) -> common_pb.ArtifactsByService:
+    """Return a copy of artifacts_info, with all of previously_uploaded_artifacts removed.
+
+    This function iterates each service in ArtifactsByService, and checks all
+    artifact types in the output artifacts of the service; if the artifact type
+    appears in previously_uploaded_artifacts, it will not be included in the
+    returned copy of artifacts_info.
+
+    Note that the EBUILD_LOGS is NOT filtered, as there are cases where this
+    artifact changes after an initial upload (e.g. it can change between
+    install packages and unit testing).
+
+    Args:
+      artifacts_info: ArtifactsByService to filter. Note that a copy will be
+        made, this object will not be modified.
+      previously_uploaded_artifacts: UploadedArtifacts from a previous call to
+        upload_artifacts, these artifact types will be filtered.
+
+    Returns:
+      A copy of artifacts_info with the types in previously_uploaded_artifacts
+        filtered.
+    """
+    filtered_artifacts_info = common_pb.ArtifactsByService()
+    filtered_artifacts_info.CopyFrom(artifacts_info)
+
+    for _, service in filtered_artifacts_info.ListFields():
+      # Each service is expected to have an 'output_artifacts' field, which
+      # contains an 'artifact_types' field. However, we don't treat it as a
+      # fatal error if a service doesn't contain these fields.
+      if hasattr(service, 'output_artifacts'):
+        # Create a list of output artifacts that still have at least one
+        # artifact type after filtering.
+        filtered_output_artifacts = []
+
+        for art_info in service.output_artifacts:
+          if hasattr(art_info, 'artifact_types'):
+            # Create a list of artifact types that are not in
+            # previously_uploaded_artifacts.
+            filtered_artifact_types = []
+            for art_type in art_info.artifact_types:
+              type_name = BuilderConfig.Artifacts.ArtifactTypes.Name(art_type)
+              # EBUILD_LOGS type is always included.
+              if (type_name not in
+                  previously_uploaded_artifacts.files_by_artifact or
+                  art_type == BuilderConfig.Artifacts.ArtifactTypes.EBUILD_LOGS
+                 ):
+                filtered_artifact_types.append(art_type)
+
+            # Set artifact_types to the new filtered list.
+            art_info.artifact_types[:] = filtered_artifact_types
+
+            # Only include the ArtifactInfo in the output if it has at least
+            # one artifact type.
+            if art_info.artifact_types:
+              filtered_output_artifacts.append(art_info)
+
+        # Overwrite the service's output_artifacts field with the filtered list.
+        # Note that directly setting `service.output_artifacts[:] = ...` is not
+        # supported on repeated message fields.
+        del service.output_artifacts[:]
+        service.output_artifacts.extend(filtered_output_artifacts)
+
+    return filtered_artifacts_info
+
   def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
                        artifacts_info=None, chroot=None, sysroot=None,
                        name='upload artifacts', test_data=None,
                        private_bundle_func=None, report_to_spike=False,
-                       attestation_eligible=False, upload_coverage=True):
+                       attestation_eligible=False, upload_coverage=True,
+                       previously_uploaded_artifacts=None):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -675,12 +743,21 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_coverage(bool): If True, we will run the upload coverage step and
            store coverage information. This should be set of False when we dont
            run unit tests and hence have no coverage information to store.
+      previously_uploaded_artifacts(UploadedArtifacts): If set, the
+        UploadedArtifacts from a previous call to upload_artifacts; these artifact
+        types will not be re-uploaded. This used to avoid re-bundling artifacts
+        if upload_artifacts is called multiple times.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
     """
     assert _kwonly == (), 'keyword parameters passed as positional'
     uploaded_artifacts = None
+
+    if previously_uploaded_artifacts:
+      artifacts_info = self._filter_previously_uploaded_artifacts(
+          artifacts_info, previously_uploaded_artifacts)
+
     with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts

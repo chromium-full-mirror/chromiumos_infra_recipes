@@ -195,6 +195,7 @@
   * [cros_artifacts:tests/gsutil_retry_fail](#recipes-cros_artifacts_tests_gsutil_retry_fail) (Python3 ✅)
   * [cros_artifacts:tests/gsutil_retry_success](#recipes-cros_artifacts_tests_gsutil_retry_success) (Python3 ✅)
   * [cros_artifacts:tests/has_artifacts](#recipes-cros_artifacts_tests_has_artifacts) (Python3 ✅)
+  * [cros_artifacts:tests/previously_uploaded_artifacts](#recipes-cros_artifacts_tests_previously_uploaded_artifacts) (Python3 ✅)
   * [cros_artifacts:tests/upload_artifacts](#recipes-cros_artifacts_tests_upload_artifacts) (Python3 ✅)
   * [cros_artifacts:tests/upload_attestations](#recipes-cros_artifacts_tests_upload_attestations) (Python3 ✅)
   * [cros_branch:examples/full](#recipes-cros_branch_examples_full) (Python3 ✅)
@@ -1876,7 +1877,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#870)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#947)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -1891,7 +1892,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#904)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#981)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -1920,14 +1921,14 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#847)(self, properties):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#924)(self, properties):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#924)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1001)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -1948,7 +1949,7 @@ Returns:
   is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1074)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1151)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1961,7 +1962,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1042)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1119)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -1983,7 +1984,7 @@ Returns:
 
 Return the value of {time} in GS templates.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#642)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False, attestation_eligible=False, upload_coverage=True):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#709)(self, builder_name, kind, gs_bucket, _kwonly=(), artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False, attestation_eligible=False, upload_coverage=True, previously_uploaded_artifacts=None):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -2016,11 +2017,15 @@ Args:
   upload_coverage(bool): If True, we will run the upload coverage step and
        store coverage information. This should be set of False when we dont
        run unit tests and hence have no coverage information to store.
+  previously_uploaded_artifacts(UploadedArtifacts): If set, the
+    UploadedArtifacts from a previous call to upload_artifacts; these artifact
+    types will not be re-uploaded. This used to avoid re-bundling artifacts
+    if upload_artifacts is called multiple times.
 
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#801)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#878)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -9818,6 +9823,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/has_artifacts.py#16)(api):**
+### *recipes* / [cros\_artifacts:tests/previously\_uploaded\_artifacts](/recipe_modules/cros_artifacts/tests/previously_uploaded_artifacts.py)
+
+[DEPS](/recipe_modules/cros_artifacts/tests/previously_uploaded_artifacts.py#14): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/previously_uploaded_artifacts.py#23)(api):**
 ### *recipes* / [cros\_artifacts:tests/upload\_artifacts](/recipe_modules/cros_artifacts/tests/upload_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#11): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
