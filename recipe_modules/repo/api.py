@@ -28,7 +28,6 @@ MANIFEST_MOCK = """
       <project path="SAMPLE" revision="FROM_REV"/>
     </manifest>
   """
-MANIFEST_DEPTH_VERSION = '2.29'
 
 ManifestDiff = namedtuple('ManifestDiff',
                           ['name', 'path', 'from_rev', 'to_rev'])
@@ -241,8 +240,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += ['--no-repo-verify']
     if manifest_name:
       cmd += ['--manifest-name', manifest_name]
-    # When repo in prod is at least 2.29, this check can be removed.
-    if manifest_depth and self.version_at_least(MANIFEST_DEPTH_VERSION):
+    if manifest_depth:
       cmd += ['--manifest-depth', manifest_depth]
     if verbose:
       cmd += ['--verbose']

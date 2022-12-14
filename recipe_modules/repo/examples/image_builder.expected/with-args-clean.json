@@ -420,33 +420,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sync to snapshot.check if repo version is at least 2.29",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[START_DIR]/repo/manifest-internal",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "sync to snapshot.check if repo version is at least 2.29.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
@@ -458,6 +431,8 @@
       "--repo-rev=next",
       "--manifest-name",
       "../tmp_manifest",
+      "--manifest-depth",
+      "0",
       "--verbose"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
