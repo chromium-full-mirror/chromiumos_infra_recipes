@@ -1566,31 +1566,35 @@ Returns:
   builder_metadata proto describing build and model for the current target.
 ### *recipe_modules* / [checkpoint](/recipe_modules/checkpoint)
 
-[DEPS](/recipe_modules/checkpoint/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/checkpoint/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#57)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#63)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#95)(self, step: 'RetryStep'):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#89)(self):**
+
+Perform initial set up for cros_checkpoint / mark the build as a retry.
+
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#133)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#80)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#118)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 
-&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#53)(self, step: 'RetryStep'):**
+&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#59)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -9349,7 +9353,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#103)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#104)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#59)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -9511,11 +9515,11 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipes/check_project_config.py#35)(api, properties):**
 ### *recipes* / [checkpoint:examples/retry](/recipe_modules/checkpoint/examples/retry.py)
 
-[DEPS](/recipe_modules/checkpoint/examples/retry.py#11): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/checkpoint/examples/retry.py#15): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/checkpoint/examples/retry.py#23)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/checkpoint/examples/retry.py#27)(api: RecipeApi):**
 ### *recipes* / [checkpoint:tests/cascade](/recipe_modules/checkpoint/tests/cascade.py)
 
 [DEPS](/recipe_modules/checkpoint/tests/cascade.py#12): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

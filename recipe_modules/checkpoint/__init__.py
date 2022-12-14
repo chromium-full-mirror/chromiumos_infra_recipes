@@ -5,6 +5,7 @@
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/step',
     'easy',
 ]

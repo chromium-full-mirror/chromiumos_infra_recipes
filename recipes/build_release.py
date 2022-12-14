@@ -34,8 +34,8 @@ DEPS = [
     'build_menu',
     'build_reporting',
     'builder_metadata',
-    'cros_build_api',
     'checkpoint',
+    'cros_build_api',
     'cros_infra_config',
     'cros_prebuilts',
     'cros_release',
@@ -58,6 +58,7 @@ StepDetails = BuildReport.StepDetails
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
+  api.checkpoint.register()
   api.cros_release.set_output_properties()
 
   if api.cros_infra_config.is_staging:
