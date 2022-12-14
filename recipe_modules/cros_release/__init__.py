@@ -15,6 +15,7 @@ DEPS = [
     'build_menu',
     'build_reporting',
     'builder_metadata',
+    'checkpoint',
     'cros_artifacts',
     'cros_release_util',
     'cros_test_plan',

@@ -43,7 +43,8 @@ def GenTests(api: RecipeApi):
     check('summary markdown == expected', summary_markdown == message)
 
   original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
-  original_build.output.properties['foo'] = 'bar'
+  original_build.output.properties[
+      'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
 
   yield api.test(
       'basic',
@@ -108,7 +109,7 @@ def GenTests(api: RecipeApi):
                  api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'skipped',
+      'skip-stage-artifacts',
       api.properties(
           **{
               '$chromeos/checkpoint': {
@@ -127,6 +128,28 @@ def GenTests(api: RecipeApi):
       api.post_check(post_process.PropertyEquals, 'retry_summary',
                      {RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED"}),
       api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  no_artifacts_link = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  yield api.test(
+      'skip-stage-artifacts-missing-property',
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.PUSH_IMAGES]
+                  },
+              }
+          }),
+      api.buildbucket.simulated_get(
+          no_artifacts_link,
+          step_name='RUNNING IN RETRY MODE.get original build'),
+      api.post_check(post_process.StepFailure,
+                     'RUNNING IN RETRY MODE.verify previous build'),
+      api.post_check(post_process.DoesNotRun, 'stage artifacts'),
+      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(

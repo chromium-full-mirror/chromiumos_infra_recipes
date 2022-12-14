@@ -311,8 +311,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           config.id.name, sysroot.build_target, config.id.type,
           template=publish_template)
 
-      gs_image_dir = gs_image_dir_template.format(gs_bucket=gs_bucket,
-                                                  gs_path=gs_path)
+      # If checkpoint has set an artifact link, use that instead.
+      gs_image_dir = self.m.checkpoint.artifact_link or gs_image_dir_template.format(
+          gs_bucket=gs_bucket, gs_path=gs_path)
       presentation.links['gs image dir'] = (
           'https://console.cloud.google.com/storage/browser/{gs_path}'.format(
               gs_path=gs_image_dir[len('gs://'):]))

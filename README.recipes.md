@@ -1561,25 +1561,25 @@ A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#63)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#66)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#89)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#92)(self):**
 
-Perform initial set up for cros_checkpoint / mark the build as a retry.
+Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#133)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#147)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#118)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#132)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 
-&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#59)(self, step: 'RetryStep'):**
+&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#62)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -2925,7 +2925,7 @@ Args:
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
 
-[DEPS](/recipe_modules/cros_release/__init__.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [manifest\_doctor](#recipe_modules-manifest_doctor), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_release/__init__.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [manifest\_doctor](#recipe_modules-manifest_doctor), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -2993,7 +2993,7 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#347)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#348)(self):**
 
 Set release-related output properties for the build.
 

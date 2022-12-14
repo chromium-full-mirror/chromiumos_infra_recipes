@@ -48,12 +48,15 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
     if self._original_build_bbid:
       self._original_build_bbid = int(self._original_build_bbid)
     self._original_build = None
+
     # Do step cascades.
     self._run_steps = self.cascade(properties.exec_steps.steps)
     self._build_target_run_steps = {
         bt: self.cascade(steps.steps)
         for bt, steps in properties.build_target_exec_steps.items()
     }
+
+    self.artifact_link = None
     self._retry_summary = {}
 
   def will_run_step(self, step: "RetryStep"):
@@ -87,7 +90,7 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
     return [RetryStep.Name(step) for step in steps]
 
   def register(self):
-    """Perform initial set up for cros_checkpoint / mark the build as a retry."""
+    """Perform initial set up for checkpoint / mark the build as a retry."""
     if not self._retry_run:
       return
     with self.m.step.nest("RUNNING IN RETRY MODE") as presentation:
@@ -114,6 +117,17 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
                   for k, steps in self._build_target_run_steps.items()
               }
           }, indent=2)
+
+      # Extract needed properties.
+      with self.m.step.nest('verify previous build') as presentation:
+        # If we aren't building/uploading artifacts in this run, we need the
+        # artifact link from the previous build.
+        if RetryStep.STAGE_ARTIFACTS not in self._run_steps:
+          if 'artifact_link' not in self._original_build.output.properties:
+            presentation.step_text = 'not doing STAGE_ARTIFACTS but could not get `artifact_link` from previous build'
+            raise StepFailure(presentation.step_text)
+          self.artifact_link = self._original_build.output.properties[
+              'artifact_link']
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""
