@@ -38,8 +38,13 @@ enum RetryStep {
     // Currently unsupported.
     EBUILD_TESTS = 170;
 
+    // Collect the results of signing.
+    // Used if the build fails after it initiates signing requests
+    // (in PUSH_IMAGES) but before it collects and reports signing results.
+    COLLECT_SIGNING = 180;
+
     // Do payload generation.
-    PAYGEN = 180;
+    PAYGEN = 190;
 
 
     // Paygenie steps.

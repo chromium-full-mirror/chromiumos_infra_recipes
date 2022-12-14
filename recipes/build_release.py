@@ -171,6 +171,9 @@ def DoRunSteps(api, config, properties):
         # surface *that* exception for accuracy in reporting the build (and it's
         # likely that upload artifacts failed as a result of those previous issues).
         raise failing_build_exception or sf
+    else:
+      api.easy.set_properties_step('set artifact_link property',
+                                   artifact_link=api.checkpoint.artifact_link)
 
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('upload-complete')
@@ -185,12 +188,21 @@ def DoRunSteps(api, config, properties):
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
-  gs_image_dir, instructions = api.cros_release.push_and_sign_images(
-      config, api.build_menu.sysroot)
+  gs_image_dir = None
+  instructions = None
+  with api.checkpoint.retry(RetryStep.PUSH_IMAGES) as run_step:
+    if run_step:
+      gs_image_dir, instructions = api.cros_release.push_and_sign_images(
+          config, api.build_menu.sysroot)
+    else:
+      gs_image_dir = api.checkpoint.artifact_link
+      instructions = api.checkpoint.signing_instructions_uris
 
-  with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
-    with api.step.nest("upload debug symbols"):
-      api.debug_symbols.upload_debug_symbols(gs_image_dir)
+  with api.checkpoint.retry(RetryStep.DEBUG_SYMBOLS) as run_step:
+    if run_step:
+      with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
+        with api.step.nest("upload debug symbols"):
+          api.debug_symbols.upload_debug_symbols(gs_image_dir)
 
   # Launch unit tests asynchronously. Wait for results after paygen.
   def _run_and_report_unit_tests():
@@ -201,31 +213,36 @@ def DoRunSteps(api, config, properties):
   # TODO(b/262388770): Properly support ebuild tests within checkpoint.
   # For now, they're only run if the artifacts are built in the same run.
   unit_test_future = api.futures.spawn(lambda: True)
-  if api.checkpoint.will_run_step(RetryStep.STAGE_ARTIFACTS):
+  if api.checkpoint.is_run_step(RetryStep.STAGE_ARTIFACTS):
     unit_test_future = api.futures.spawn(_run_and_report_unit_tests)
 
-  # Signing does not work in staging, so we shouldn't wait for it in that case.
-  # We also can't sign anything if push_and_sign_images returned 0 instructions.
-  # Otherwise, wait for signing to complete.
-  if not api.cros_infra_config.is_staging and instructions:
-    with api.step.nest('get signed build metadata') as pres:
-      # Wait for signing to complete. Note - "complete" does not mean "passed",
-      # it means "signing returned a terminal state or timed out".
-      metadata = api.signing.wait_for_signing(instructions)
-      # Get the signed build metadata now that it is complete.
-      signed_build_metadata_list = api.signing.get_signed_build_metadata(
-          metadata)
-      # Publish any signed build metadata we have on the pubsub.
-      api.build_reporting.publish_signed_build_metadata(
-          signed_build_metadata_list)
+  with api.checkpoint.retry(RetryStep.COLLECT_SIGNING) as run_step:
+    if run_step:
+      # Signing does not work in staging, so we shouldn't wait for it in that case.
+      # We also can't sign anything if push_and_sign_images returned 0 instructions.
+      # Otherwise, wait for signing to complete.
+      if not api.cros_infra_config.is_staging and instructions:
+        with api.step.nest('get signed build metadata') as pres:
+          # Wait for signing to complete. Note - "complete" does not mean "passed",
+          # it means "signing returned a terminal state or timed out".
+          metadata = api.signing.wait_for_signing(instructions)
+          # Get the signed build metadata now that it is complete.
+          signed_build_metadata_list = api.signing.get_signed_build_metadata(
+              metadata)
+          # Publish any signed build metadata we have on the pubsub.
+          api.build_reporting.publish_signed_build_metadata(
+              signed_build_metadata_list)
 
-      # Now that we've published informational artifacts, we need to fail the
-      # build if the outcome was anything other than "passed".
-      api.signing.verify_signing_success(metadata, pres)
+          # Now that we've published informational artifacts, we need to fail the
+          # build if the outcome was anything other than "passed".
+          api.signing.verify_signing_success(metadata, pres)
 
-  elif not instructions:
-    with api.step.nest('skipping signing') as pres:
-      pres.step_text = 'no signing instructions generated'
+      elif not instructions:
+        with api.step.nest('skipping signing') as pres:
+          pres.step_text = (
+              'no signing instructions generated'
+              if api.checkpoint.is_run_step(RetryStep.PUSH_IMAGES) else
+              'no signing instructions retrieved from original build')
 
   # With signing complete, we can start payload generation (only if there were
   # signed images generated). We _do_ want this in staging.
@@ -601,4 +618,83 @@ def GenTests(api):
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+  )
+
+  original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  original_build.output.properties[
+      'artifact_link'] = 'gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0'
+  original_build.output.properties[
+      'signing_instructions_uris'] = api.cros_build_api.INSTRUCTIONS
+
+  # Retry release build.
+  yield api.build_menu.test(
+      'release-build-signing-retry',
+      api.properties(
+          **{
+              'latest_files_gs_bucket':
+                  'chromeos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-release',
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5)),
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.DEBUG_SYMBOLS]
+                  }
+              }
+          }),
+      api.buildbucket.simulated_get(
+          original_build, step_name='RUNNING IN RETRY MODE.get original build'),
+      api.signing.setup_mocks(),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun,
+                     '(RETRY-MODE) not retrying STAGE_ARTIFACTS'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun,
+                     'determine build and model metadata'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun,
+                     '(RETRY-MODE) not retrying PUSH_IMAGES'),
+      api.post_process(post_process.PropertyEquals, 'critical', '1'),
+      api.post_process(
+          post_process.PropertyEquals, 'artifact_link',
+          'gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0'),
+      api.post_check(
+          post_process.PropertyEquals, 'retry_summary', {
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED",
+              RetryStep.Name(RetryStep.PUSH_IMAGES): "SKIPPED",
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
+          }),
+      api.post_check(post_process.StatusSuccess),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
   )

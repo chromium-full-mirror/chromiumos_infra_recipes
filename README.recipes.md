@@ -1555,33 +1555,33 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosCheckpointApi](/recipe_modules/checkpoint/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#66)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#70)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#92)(self):**
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#66)(self, step: 'RetryStep'):**
+
+Return whether the step will be run in this retry.
+
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#96)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#147)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#158)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#132)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#143)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
-
-&mdash; **def [will\_run\_step](/recipe_modules/checkpoint/api.py#62)(self, step: 'RetryStep'):**
-
-Return whether the step will be run in this retry.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
 [DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

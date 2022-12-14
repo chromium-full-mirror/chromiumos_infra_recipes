@@ -25,8 +25,9 @@ STEP_CASCADES = {
 
     # Child builder steps
     RetryStep.STAGE_ARTIFACTS: [RetryStep.PUSH_IMAGES],
-    RetryStep.PUSH_IMAGES: [RetryStep.DEBUG_SYMBOLS],
-    RetryStep.DEBUG_SYMBOLS: [RetryStep.PAYGEN],
+    RetryStep.PUSH_IMAGES: [RetryStep.DEBUG_SYMBOLS, RetryStep.COLLECT_SIGNING],
+    RetryStep.DEBUG_SYMBOLS: [RetryStep.COLLECT_SIGNING],
+    RetryStep.COLLECT_SIGNING: [RetryStep.PAYGEN],
 
     # Paygen steps
     RetryStep.UPLOAD_PAYLOAD: [RetryStep.TEST_PAYLOAD],
@@ -49,6 +50,8 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
       self._original_build_bbid = int(self._original_build_bbid)
     self._original_build = None
 
+    self._retry_summary = {}
+
     # Do step cascades.
     self._run_steps = self.cascade(properties.exec_steps.steps)
     self._build_target_run_steps = {
@@ -56,10 +59,11 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
         for bt, steps in properties.build_target_exec_steps.items()
     }
 
+    # Output properties from the previous builds.
     self.artifact_link = None
-    self._retry_summary = {}
+    self.signing_instructions_uris = None
 
-  def will_run_step(self, step: "RetryStep"):
+  def is_run_step(self, step: "RetryStep"):
     """Return whether the step will be run in this retry."""
     return not self._retry_run or step in self._run_steps
 
@@ -129,6 +133,13 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
           self.artifact_link = self._original_build.output.properties[
               'artifact_link']
 
+        if RetryStep.PUSH_IMAGES not in self._run_steps and RetryStep.COLLECT_SIGNING in self._run_steps:
+          if 'signing_instructions_uris' not in self._original_build.output.properties:
+            presentation.step_text = 'could not get `signing_instructions_uris` from previous build'
+            raise StepFailure(presentation.step_text)
+          self.signing_instructions_uris = self._original_build.output.properties[
+              'signing_instructions_uris']
+
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""
     # For now we don't want to alter non-retry builds.
@@ -149,16 +160,18 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
     """Context to handle retry logic / status reporting."""
     run_step = not self._retry_run or step in self._run_steps
 
-    try:
-      if not run_step:
-        # If we're not going to run the step,
-        with self.m.step.nest('(RETRY-MODE) not retrying {}'.format(
-            RetryStep.Name(step))):
-          yield run_step
-      else:
+    if run_step:
+      try:
+        self.update_summary(step, STATUS_STARTED)
         yield run_step
-    except:
-      self.update_summary(step, STATUS_FAILED)
-      raise
+      except:
+        self.update_summary(step, STATUS_FAILED)
+        raise
+      else:
+        self.update_summary(step, STATUS_SUCCESS)
     else:
-      self.update_summary(step, STATUS_SUCCESS if run_step else STATUS_SKIPPED)
+      # If we're not going to run the step,
+      with self.m.step.nest('(RETRY-MODE) not retrying {}'.format(
+          RetryStep.Name(step))):
+        yield run_step
+        self.update_summary(step, STATUS_SKIPPED)
