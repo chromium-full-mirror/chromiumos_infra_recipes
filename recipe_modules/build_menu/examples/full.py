@@ -46,7 +46,6 @@ def DoRunSteps(api, config, properties):
       cherry_pick_changes=cherry_pick_changes):
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
         not properties.no_sysroot)
-    api.build_menu.is_cq_build_relevant()
     # pylint: disable=protected-access
     api.assertions.assertEqual(properties.forced_relevant,
                                api.build_menu._force_relevant_build)
@@ -58,6 +57,7 @@ def DoRunSteps(api, config, properties):
       api.build_menu.install_packages()
       api.build_menu.build_and_test_images(config)
       api.build_menu.build_and_test_images(include_version=True)
+      api.build_menu.get_cl_affected_sysroot_packages()
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       if properties.upload_devinstall_prebuilts:
