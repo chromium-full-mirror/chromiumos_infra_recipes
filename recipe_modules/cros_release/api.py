@@ -342,6 +342,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       instructions_uris = [
           i.instructions_file_path for i in response.instructions
       ]
+      self.m.easy.set_properties_step(
+          signing_instructions_uris=instructions_uris)
 
       return (gs_image_dir, instructions_uris)
 

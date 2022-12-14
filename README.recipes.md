@@ -2993,7 +2993,7 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#348)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#350)(self):**
 
 Set release-related output properties for the build.
 

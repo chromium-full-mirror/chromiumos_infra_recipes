@@ -9870,6 +9870,14 @@
   },
   {
     "cmd": [],
+    "name": "push images.set signing_instructions_uris",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@signing_instructions_uris@[]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build status pubsub update (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
