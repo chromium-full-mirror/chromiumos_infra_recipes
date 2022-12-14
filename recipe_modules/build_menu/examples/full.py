@@ -124,6 +124,22 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'staging-cq-build',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='staging-amd64-generic',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          )
+      ),
+      get_buildbucket_simulated_search_results('staging-amd64-generic'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(lambda check, steps: check_child_build_output_properties(check, steps, True)),
+      build_target='staging-amd64-generic',
+      cq=True,
+  )
+
+  yield api.build_menu.test(
     'cq-build-no-cherry-pick',
       api.properties(FullProperties(dont_cherry_pick_changes=True)),
     api.properties(

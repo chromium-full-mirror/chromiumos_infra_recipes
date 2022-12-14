@@ -20,6 +20,7 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_source',
+    'gerrit',
     'src_state',
 ]
 
@@ -54,6 +55,11 @@ def RunSteps(api, properties):
         properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
         dep_graph=dep_graph, force_relevant=force_relevant,
         test_value=properties.expected)
+    patch_sets = api.gerrit.fetch_patch_sets(properties.gerrit_changes)
+    relevant = api.cros_relevance.is_cq_build_relevant(
+        patch_sets, dep_graph, force_relevant,
+        is_pointless_test_value=properties.expected)
+    api.assertions.assertEqual(not properties.expected, relevant)
   api.assertions.assertEqual(properties.expected, pointless)
   api.cros_relevance.get_dependency_graph(sysroot, Chroot())
 

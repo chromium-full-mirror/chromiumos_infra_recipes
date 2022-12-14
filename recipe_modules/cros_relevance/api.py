@@ -5,10 +5,14 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
+from typing import List
 
 import six
 from google.protobuf import json_format
 
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+
+from PB.chromite.api.depgraph import DepGraph
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromite.api.depgraph import ListRequest
@@ -171,6 +175,56 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         for b in builders
     ]
 
+  def is_cq_build_relevant(self, patch_sets: List[PatchSet],
+                           dep_graph: DepGraph, force_relevant: bool = False,
+                           is_pointless_test_value: bool = False) -> bool:
+    """Determines if changes are relevant to the CQ run.
+
+    If build_target is set, then the chromiumos workspace must have been
+    checked out prior to calling this method. This is a requirement for
+    BuildDependencyGraph checks.
+
+    Args:
+      patch_sets: The PatchSets applied to the build.
+      dep_graph: The dependency graph to compare the changes against to test
+          for build relevancy.
+      force_relevant: Whether to always declare the build relevant.
+      is_pointless_test_value: The test return value of the pointless build
+          checker. Default is False, meaning the build is not pointless.
+
+    Returns:
+      bool: Whether the changes are relevant to the CQ run.
+    """
+    if force_relevant or self.toolchain_cls_applied:
+      return True
+
+    # TODO(b/217773020): Consider renaming the step name. Keeping it as is at
+    # the moment since some queries may depend on the step name.
+    with self.m.step.nest('cq build relevancy check') as presentation:
+
+      if not patch_sets:
+        presentation.step_text: 'no changes to check for relevancy'
+        return False
+
+      check_request = PointlessBuildCheckRequest(
+          ignore_known_non_portage_directories=False,
+      )
+      affected_paths = self._get_affected_paths(patch_sets)
+      for source_path in affected_paths:
+        affected_path = check_request.affected_paths.add()
+        affected_path.path = source_path
+      relevant_paths = _flatten_depgraph_paths(dep_graph)
+      for source_path in relevant_paths:
+        relevant_path = check_request.relevant_paths.add()
+        relevant_path.path = source_path
+
+      response = self._call_pointless_build_checker(check_request, presentation,
+                                                    is_pointless_test_value)
+
+      return not bool(response.build_is_pointless.value)
+
+  # TODO(b/217773020): Delete this function in favor of is_cq_build_relevant
+  # once we are able to confirm parity in staging.
   def is_cq_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
                             force_relevant=False, test_value=None):
     """Determines if build(s) can be terminated early.

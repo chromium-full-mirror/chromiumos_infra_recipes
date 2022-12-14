@@ -434,6 +434,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
       pointless = self.m.cros_relevance.is_cq_build_pointless(
           self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
           force_relevant=self._force_relevant_build)
+
+      # TODO(b/217773020): Experiment calling the pointless build checker with a
+      # list of paths.
+      if self.m.cros_infra_config.is_staging:
+        relevant = self.m.cros_relevance.is_cq_build_relevant(
+            self.m.workspace_util.patch_sets, dep_graph.target,
+            force_relevant=self._force_relevant_build)
+        self.m.easy.set_properties_step(cq_relevance_experiment_result=relevant)
+
     if pointless:
       self.m.buildbucket.hide_current_build_in_gerrit()
 
