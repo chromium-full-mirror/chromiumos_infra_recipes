@@ -17,7 +17,9 @@ from google.protobuf import json_format
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.test_platform.request import Request
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -252,20 +254,29 @@ class OrchMenuApi(RecipeApi):
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
-          with self.m.workspace_util.sync_to_commit(staging=is_staging):
-            bump_version = self._properties.bump_version and not is_staging
-            self.m.cros_version.bump_version(dry_run=not bump_version)
-            kwargs = {}
-            if self._properties.manifest_versions_branch:
-              kwargs['branch'] = self._properties.manifest_versions_branch
-            self.m.cros_release.create_buildspec(
-                dry_run=is_staging,
-                gs_location=self._properties.buildspec_gs_path, **kwargs)
-            branch = config.orchestrator.gitiles_commit.ref
-            if branch.startswith('refs/heads/'):
-              branch = branch[len('refs/heads/'):]
-            if self.m.cros_source.is_tot or branch.startswith('release-'):
-              self.m.cros_lkgm.schedule_public_build()
+          with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
+            if run_step:
+              with self.m.workspace_util.sync_to_commit(staging=is_staging):
+                bump_version = self._properties.bump_version and not is_staging
+                self.m.cros_version.bump_version(dry_run=not bump_version)
+                kwargs = {}
+                if self._properties.manifest_versions_branch:
+                  kwargs['branch'] = self._properties.manifest_versions_branch
+                self.m.cros_release.create_buildspec(
+                    dry_run=is_staging,
+                    gs_location=self._properties.buildspec_gs_path, **kwargs)
+                branch = config.orchestrator.gitiles_commit.ref
+                if branch.startswith('refs/heads/'):
+                  branch = branch[len('refs/heads/'):]
+                with self.m.checkpoint.retry(
+                    RetryStep.PUBLIC_BUILD_LKGM) as run_step:
+                  if run_step:
+                    if self.m.cros_source.is_tot or branch.startswith(
+                        'release-'):
+                      self.m.cros_lkgm.schedule_public_build()
+            else:
+              self.m.cros_release.buildspec = ManifestLocation(
+                  manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
 
         if config and config.id.type == BuilderConfig.Id.FACTORY:
           self._is_factory_orchestrator = True

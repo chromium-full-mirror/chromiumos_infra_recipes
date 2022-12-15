@@ -623,6 +623,7 @@ def GenTests(api):
   )
 
   original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  original_build.input.properties['recipe'] = 'build_release'
   original_build.output.properties[
       'artifact_link'] = 'gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0'
   original_build.output.properties[

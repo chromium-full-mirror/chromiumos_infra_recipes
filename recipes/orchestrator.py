@@ -25,6 +25,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
+    'checkpoint',
     'cros_artifacts',
     'cros_lkgm',
     'cros_release',
@@ -39,6 +40,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
+  api.checkpoint.register()
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api)

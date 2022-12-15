@@ -7,11 +7,12 @@ import copy
 
 from google.protobuf import json_format
 
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
 
 from recipe_engine import post_process
@@ -25,6 +26,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'checkpoint',
     'cros_source',
     'cros_tags',
     'cros_test_plan',
@@ -39,6 +41,8 @@ PROPERTIES = FullProperties
 
 
 def RunSteps(api, properties):
+  api.checkpoint.register()
+
   build = api.buildbucket.build
   with api.orch_menu.setup_orchestrator(
       test_footers=properties.test_footers) as config:
@@ -160,6 +164,46 @@ def GenTests(api):
               'public-buildspec', '--paths', 'buildspecs/99/1234.56.0.xml',
               '--push'
           ]),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='master',
+          skip_paygen=True),
+      builder='release-main-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
+
+  original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  original_build.input.properties['recipe'] = 'orchestrator'
+  original_build.output.properties[
+      'buildspec_gs_uri'] = 'gs://chromeos-manifest-versions/foo/1.xml'
+  yield api.orch_menu.test(
+      'release-orchestrator-retry',
+      data.ctp_normal,
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0'))),
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.RUN_CHILDREN]
+                  },
+              },
+          }),
+      api.buildbucket.simulated_get(
+          original_build, step_name='RUNNING IN RETRY MODE.get original build'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',

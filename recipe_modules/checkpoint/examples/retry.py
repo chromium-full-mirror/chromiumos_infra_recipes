@@ -55,6 +55,7 @@ def GenTests(api: RecipeApi):
     check('summary markdown == expected', summary_markdown == message)
 
   original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  original_build.input.properties['recipe'] = 'build_release'
   original_build.output.properties[
       'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
   original_build.output.properties['signing_instructions_uris'] = ['foo', 'bar']
@@ -80,6 +81,21 @@ def GenTests(api: RecipeApi):
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
           }), api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'create-buildspec',
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.CREATE_BUILDSPEC]
+                  },
+              }
+          }), api.post_check(post_process.DoesNotRun, 'RUNNING IN RETRY MODE'),
+      api.post_check(post_process.MustRun, 'stage artifacts'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -196,6 +212,7 @@ def GenTests(api: RecipeApi):
       api.post_process(post_process.DropExpectation))
 
   no_artifacts_link = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  no_artifacts_link.input.properties['recipe'] = 'build_release'
   yield api.test(
       'skip-stage-artifacts-missing-artifact-link',
       api.properties(
@@ -218,6 +235,7 @@ def GenTests(api: RecipeApi):
       api.post_process(post_process.DropExpectation))
 
   no_signing_uris = build_pb2.Build(id=8922054662172514001, status='FAILURE')
+  no_signing_uris.input.properties['recipe'] = 'build_release'
   no_signing_uris.output.properties[
       'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
   yield api.test(

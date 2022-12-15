@@ -34,7 +34,15 @@ STEP_CASCADES = {
 }
 
 
-class CrosCheckpointApi(recipe_api.RecipeApi):
+ORIGINAL_BUILD_PROPERTIES = [
+    # Of the form (recipe, trigger_step, property name)
+    ('orchestrator', RetryStep.CREATE_BUILDSPEC, 'buildspec_gs_uri'),
+    ('build_release', RetryStep.STAGE_ARTIFACTS, 'artifact_link'),
+    ('build_release', RetryStep.PUSH_IMAGES, 'signing_instructions_uris'),
+]
+
+
+class CheckpointApi(recipe_api.RecipeApi):
   """A module for managing release build checkpoints.
 
     See go/release-checkpoints-dd for context.
@@ -43,8 +51,14 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
   # TODO(b/262388770): Improve documentaton here, and link to a dev guide.
 
   def __init__(self, properties: CheckpointProperties, *args, **kwargs):
-    super(CrosCheckpointApi, self).__init__(*args, **kwargs)
+    super(CheckpointApi, self).__init__(*args, **kwargs)
     self._retry_run = properties.retry
+    # If CREATE_BUILDSPEC is included we're just doing a full release build
+    # so go ahead and turn off retry mode.
+    if RetryStep.CREATE_BUILDSPEC in properties.exec_steps.steps:
+      self._retry_run = False
+      return
+
     self._original_build_bbid = properties.original_build_bbid
     if self._original_build_bbid:
       self._original_build_bbid = int(self._original_build_bbid)
@@ -60,8 +74,8 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
     }
 
     # Output properties from the previous builds.
-    self.artifact_link = None
-    self.signing_instructions_uris = None
+    for _, _, prop in ORIGINAL_BUILD_PROPERTIES:
+      setattr(self, prop, None)
 
   def is_run_step(self, step: "RetryStep"):
     """Return whether the step will be run in this retry."""
@@ -124,24 +138,14 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
 
       # Extract needed properties.
       with self.m.step.nest('verify previous build') as presentation:
-        # If we aren't building/uploading artifacts in this run, we need the
-        # artifact link from the previous build.
-        if RetryStep.STAGE_ARTIFACTS not in self._run_steps:
-          if 'artifact_link' not in self._original_build.output.properties:
-            presentation.step_text = 'not doing STAGE_ARTIFACTS but could not get `artifact_link` from previous build'
-            raise StepFailure(presentation.step_text)
-          self.artifact_link = self._original_build.output.properties[
-              'artifact_link']
-          presentation.logs['artifact_link'] = self.artifact_link
-
-        if RetryStep.PUSH_IMAGES not in self._run_steps:
-          if 'signing_instructions_uris' not in self._original_build.output.properties:
-            presentation.step_text = 'could not get `signing_instructions_uris` from previous build'
-            raise StepFailure(presentation.step_text)
-          self.signing_instructions_uris = self._original_build.output.properties[
-              'signing_instructions_uris']
-          presentation.logs[
-              'signing_instructions_uris'] = self.signing_instructions_uris
+        for recipe, trigger_step, prop in ORIGINAL_BUILD_PROPERTIES:
+          if self._original_build.input.properties['recipe'] == recipe:
+            if trigger_step not in self._run_steps:
+              if prop not in self._original_build.output.properties:
+                presentation.step_text = 'could not get `%s` from previous build' % prop
+                raise StepFailure(presentation.step_text)
+              setattr(self, prop, self._original_build.output.properties[prop])
+              presentation.logs[prop] = getattr(self, prop)
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""

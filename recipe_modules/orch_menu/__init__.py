@@ -18,6 +18,7 @@ DEPS = [
     'bot_cost',
     'build_menu',
     'build_plan',
+    'checkpoint',
     'cros_artifacts',
     'cros_history',
     'cros_infra_config',

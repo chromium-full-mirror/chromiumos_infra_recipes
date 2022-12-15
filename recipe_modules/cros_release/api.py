@@ -63,6 +63,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """Return the buildspec as created by this module, or None."""
     return self._buildspec
 
+  @buildspec.setter
+  def buildspec(self, buildspec: ManifestLocation):
+    self._buildspec = buildspec
+
   def create_buildspec(self, specs_dir='buildspecs', branch='release',
                        step_name='create buildspec', dry_run=False,
                        gs_location=None):
