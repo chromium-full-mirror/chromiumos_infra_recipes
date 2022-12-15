@@ -243,6 +243,7 @@ class CrosSdkApi(RecipeApi):
     self._use_flags = use_flags
 
   def mark_sdk_as_dirty(self):
+    self.m.easy.set_properties_step(sdk_state='DIRTY')
     self._sdk_is_dirty = True
 
   def __call__(self, name, args, **kwargs):

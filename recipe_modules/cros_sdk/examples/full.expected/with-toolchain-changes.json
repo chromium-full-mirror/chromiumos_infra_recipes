@@ -719,6 +719,14 @@
   },
   {
     "cmd": [],
+    "name": "init sdk.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update sdk"
   },
   {
@@ -896,6 +904,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@true@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {

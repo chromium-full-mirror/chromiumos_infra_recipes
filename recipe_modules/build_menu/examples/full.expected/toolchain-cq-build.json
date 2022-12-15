@@ -3387,7 +3387,23 @@
   },
   {
     "cmd": [],
+    "name": "init sdk.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update sdk"
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
   },
   {
     "cmd": [],
@@ -4430,6 +4446,14 @@
     "name": "validate SDK reuse.depgraph relevance check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate SDK reuse.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {

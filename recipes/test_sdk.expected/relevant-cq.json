@@ -3825,6 +3825,14 @@
   },
   {
     "cmd": [],
+    "name": "validate SDK reuse.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run SDK package unit tests"
   },
   {
@@ -4018,6 +4026,13 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set sdk_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {

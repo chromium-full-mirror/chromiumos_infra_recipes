@@ -3351,6 +3351,13 @@
   },
   {
     "cmd": [],
+    "name": "set sdk_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {

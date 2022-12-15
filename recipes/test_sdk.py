@@ -36,7 +36,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), \
       api.build_menu.setup_workspace_and_chroot():
-    dep_graph = api.build_menu.get_dep_graph()
+    dep_graph = api.build_menu.get_dep_graph_and_validate_sdk_reuse()
 
     # Exit early if there are no changes to the SDK.
     relevant = False

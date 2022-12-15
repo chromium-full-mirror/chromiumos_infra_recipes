@@ -498,3 +498,21 @@ def GenTests(api):
       build_target='coral',
       experiments=['chromeos.build_menu.is_cq_build_relevant'],
   )
+
+  yield api.build_menu.test(
+      'validate-sdk-reuse-failures',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='amd64-generic',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          )
+      ),
+      api.step_data('validate SDK reuse.depgraph relevance check.run check', retcode=1),
+      api.step_data('validate SDK reuse (2).depgraph relevance check.run check', retcode=1),
+      api.post_check(post_process.PropertyEquals, 'sdk_state', 'DIRTY'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+      build_target='amd64-generic',
+      cq=True,
+  )

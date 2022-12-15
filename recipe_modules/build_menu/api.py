@@ -12,6 +12,7 @@ import re
 from google.protobuf import json_format
 
 from PB.chromite.api.artifacts import PrepareForBuildResponse as Relevance
+from PB.chromite.api.depgraph import DepGraph
 from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
@@ -41,6 +42,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._container_version_fmt = props.container_version_format
     self._chroot_created = False
     self._dep_graph = None
+    self._sdk_reuse_checked = False
     self._target_versions = None
     self._build_target = props.build_target
     self._force_relevant_build = props.force_relevant_build
@@ -257,9 +259,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
         # If we have applied patches and the SDK was not validated, then we
         # need to do so before leaving the context.
-        if (self._chroot_created and not self._dep_graph and
-            self.m.workspace_util.patch_sets):
-          self.get_dep_graph()
+        if (self._chroot_created and self.m.workspace_util.patch_sets and
+            not self._sdk_reuse_checked):
+          self.get_dep_graph_and_validate_sdk_reuse()
 
   @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False,
@@ -402,7 +404,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.metadata_json.upload_to_gs(config, [self.build_target],
                                           partial=True)
 
-    dep_graph = self.get_dep_graph()
+    dep_graph = self.get_dep_graph_and_validate_sdk_reuse()
 
     relevant = True
     # Only CQ and Postsubmit builders undergo a relevancy check.
@@ -450,19 +452,40 @@ class BuildMenuApi(recipe_api.RecipeApi):
     packages = self.config_or_default.build.install_packages.packages
     return _env_info(not relevant, packages)
 
-  def get_dep_graph(self):
+  def get_dep_graph_and_validate_sdk_reuse(self):
     """Fetch the dependency graph, and validate the SDK for reuse.
+
+    Note that failure to validate the SDK for reuse is not considered fatal, but
+    the SDK will be marked as dirty out of an abundance of caution.
 
     Returns:
       The dependency graph from cros_relevance.get_dependency_graph.
     """
+    dep_graph = self._get_dep_graph()
+    # Being unable to validate the SDK graph because of quota exhaustion when
+    # calling the pointless build checker should not be fatal. Catch the
+    # failures here and try again at the end of the build.
+    try:
+      self._validate_sdk_reuse()
+    # If we fail to validate the SDK, just mark it dirty out of an abundance
+    # of caution. The SDK gets invalidated on all build failures anyway, so this
+    # would at least allow the current run to pass.
+    except recipe_api.StepFailure:
+      self.m.cros_sdk.mark_sdk_as_dirty()
+
+    return dep_graph
+
+  def _get_dep_graph(self) -> DepGraph:
+    """Fetch the dependency graph."""
     config = self.config_or_default
     packages = config.build.install_packages.packages
 
     self._dep_graph = (
         self._dep_graph or self.m.cros_relevance.get_dependency_graph(
             sysroot=self.sysroot, chroot=self.chroot, packages=packages))
+    return self.dep_graph
 
+  def _validate_sdk_reuse(self):
     with self.m.step.nest('validate SDK reuse'):
       # If any of the changes affect the sdk, mark the sdk as dirty.
       if self.m.cros_relevance.is_depgraph_affected(
@@ -470,8 +493,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           dep_graph=self._dep_graph.sdk,
           test_value=self.m.workspace_util.toolchain_cls_applied):
         self.m.cros_sdk.mark_sdk_as_dirty()
-
-    return self.dep_graph
+    self._sdk_reuse_checked = True
 
   def bootstrap_sysroot(self, config=None):
     """Bootstrap the sysroot by installing the toolchain.

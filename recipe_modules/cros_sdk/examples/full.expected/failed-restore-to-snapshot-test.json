@@ -750,6 +750,20 @@
   },
   {
     "cmd": [],
+    "name": "set sdk_state",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set sdk_state (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up SDK chroot"
   },
   {
