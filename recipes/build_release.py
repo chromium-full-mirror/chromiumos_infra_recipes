@@ -244,16 +244,18 @@ def DoRunSteps(api, config, properties):
               if api.checkpoint.is_run_step(RetryStep.PUSH_IMAGES) else
               'no signing instructions retrieved from original build')
 
-  # With signing complete, we can start payload generation (only if there were
-  # signed images generated). We _do_ want this in staging.
-  if not properties.skip_paygen and instructions:
-    api.cros_release.run_payload_generation()
-  else:
-    with api.step.nest('skipping payloads') as pres:
-      if properties.skip_paygen:
-        pres.step_text = 'property `skip_paygen` was set'
+  with api.checkpoint.retry(RetryStep.PAYGEN) as run_step:
+    if run_step:
+      # With signing complete, we can start payload generation (only if there were
+      # signed images generated). We _do_ want this in staging.
+      if not properties.skip_paygen and instructions:
+        api.cros_release.run_payload_generation()
       else:
-        pres.step_text = 'no payloads generated since no signed images'
+        with api.step.nest('skipping payloads') as pres:
+          if properties.skip_paygen:
+            pres.step_text = 'property `skip_paygen` was set'
+          else:
+            pres.step_text = 'no payloads generated since no signed images'
 
   # Wait for unit tests to finish.
   unit_test_future.result()
@@ -691,7 +693,8 @@ def GenTests(api):
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED",
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SKIPPED",
               RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
+              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',

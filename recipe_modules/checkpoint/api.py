@@ -132,13 +132,16 @@ class CrosCheckpointApi(recipe_api.RecipeApi):
             raise StepFailure(presentation.step_text)
           self.artifact_link = self._original_build.output.properties[
               'artifact_link']
+          presentation.logs['artifact_link'] = self.artifact_link
 
-        if RetryStep.PUSH_IMAGES not in self._run_steps and RetryStep.COLLECT_SIGNING in self._run_steps:
+        if RetryStep.PUSH_IMAGES not in self._run_steps:
           if 'signing_instructions_uris' not in self._original_build.output.properties:
             presentation.step_text = 'could not get `signing_instructions_uris` from previous build'
             raise StepFailure(presentation.step_text)
           self.signing_instructions_uris = self._original_build.output.properties[
               'signing_instructions_uris']
+          presentation.logs[
+              'signing_instructions_uris'] = self.signing_instructions_uris
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""

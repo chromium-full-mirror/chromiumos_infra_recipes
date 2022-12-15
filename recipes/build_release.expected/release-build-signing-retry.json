@@ -86,7 +86,12 @@
     "cmd": [],
     "name": "RUNNING IN RETRY MODE.verify previous build",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@artifact_link@gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0@@@",
+      "@@@STEP_LOG_END@artifact_link@@@",
+      "@@@STEP_LOG_LINE@signing_instructions_uris@gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions@@@",
+      "@@@STEP_LOG_LINE@signing_instructions_uris@gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions@@@",
+      "@@@STEP_LOG_END@signing_instructions_uris@@@"
     ]
   },
   {
@@ -5957,7 +5962,14 @@
     "cmd": [],
     "name": "update retry summary (4)",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PUSH_IMAGES\": \"SKIPPED\", \"STAGE_ARTIFACTS\": \"SKIPPED\"}@@@"
+      "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"STARTED\", \"PUSH_IMAGES\": \"SKIPPED\", \"STAGE_ARTIFACTS\": \"SKIPPED\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update retry summary (5)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"STARTED\", \"PUSH_IMAGES\": \"SKIPPED\", \"STAGE_ARTIFACTS\": \"SKIPPED\"}@@@"
     ]
   },
   {
@@ -6458,6 +6470,13 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update retry summary (6)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"SUCCESS\", \"PUSH_IMAGES\": \"SKIPPED\", \"STAGE_ARTIFACTS\": \"SKIPPED\"}@@@"
     ]
   },
   {
