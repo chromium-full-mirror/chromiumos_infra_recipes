@@ -3519,6 +3519,14 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.create buildspec.set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update manifest-internal ref refs/heads/postsubmit"
   },
   {

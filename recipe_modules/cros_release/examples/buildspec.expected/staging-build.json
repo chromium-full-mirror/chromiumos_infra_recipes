@@ -280,6 +280,14 @@
   },
   {
     "cmd": [],
+    "name": "create buildspec.set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create buildspec (2)"
   },
   {
@@ -548,6 +556,14 @@
   },
   {
     "cmd": [],
+    "name": "create buildspec (2).set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"gs://bucket/foo/99/1234.56.0-8945511751514863184.xml\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create buildspec (3)"
   },
   {
@@ -766,6 +782,14 @@
   },
   {
     "cmd": [],
+    "name": "create buildspec (3).set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"gs://bucket/foo/99/1234.56.0-8945511751514863184.xml\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create buildspec (4)"
   },
   {
@@ -980,6 +1004,14 @@
     "name": "create buildspec (4).create external buildspec gs://chromiumos-manifest-versions/foo/bar.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (4).set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"gs://bucket/foo/bar.xml\"@@@"
     ]
   },
   {

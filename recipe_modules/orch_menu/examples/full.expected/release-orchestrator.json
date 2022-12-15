@@ -3918,6 +3918,14 @@
   },
   {
     "cmd": [],
+    "name": "set up orchestrator.create buildspec.set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"gs://buildspecbucket/buildspecs/99/1234.56.0.xml\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set up orchestrator.schedule public build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

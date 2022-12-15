@@ -2953,7 +2953,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#241)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#242)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -2966,7 +2966,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#279)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#280)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -2985,7 +2985,7 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#177)(self):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#178)(self):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -2993,7 +2993,7 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#350)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#351)(self):**
 
 Set release-related output properties for the build.
 

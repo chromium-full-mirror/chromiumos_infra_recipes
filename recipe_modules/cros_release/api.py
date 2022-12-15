@@ -173,6 +173,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       self._buildspec = ManifestLocation(
           manifest_repo_url=self.MANIFEST_VERSIONS_URL, branch=branch,
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
+      self.m.easy.set_properties_step(buildspec_gs_uri=manifest_gs_path)
 
   def run_payload_generation(self):
     """Run the generation of release payloads using the context of a build.
