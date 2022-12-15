@@ -6994,7 +6994,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#851)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#856)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7060,7 +7060,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#780)(self, testable_builds=None, container_metadata=None):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#780)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
 
 Plan, schedule, and run tests.
 
@@ -7071,6 +7071,9 @@ Args:
     or None to use the current results.
   container_metadata (ContainerMetadata): Information on container
     images used for test execution.
+  ignore_gerrit_changes (bool): Whether to drop gerrit changes from the
+    test plan request, primarily used for tryjobs (which are release
+    builds and thus shouldn't test based on any patches applied).
 
 Returns:
   (BuildsStatus): The current status of the builds.

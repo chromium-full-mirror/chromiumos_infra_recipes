@@ -98,7 +98,9 @@ def DoRunSteps(api: RecipeApi):
     # Don't want to run tests on the public orchestrator, and unlike other
     # orchestrators without testing we can't run the test plan generator because
     # it requires access to internal repos.
-    api.orch_menu.plan_and_run_tests(container_metadata=metadata)
+    api.orch_menu.plan_and_run_tests(
+        container_metadata=metadata,
+        ignore_gerrit_changes=api.orch_menu.is_release_orchestrator)
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
     api.cros_lkgm.collect_public_build()

@@ -777,7 +777,8 @@ class OrchMenuApi(RecipeApi):
         self._builds_status.update(builds, failures)
       return builds[0]
 
-  def plan_and_run_tests(self, testable_builds=None, container_metadata=None):
+  def plan_and_run_tests(self, testable_builds=None, container_metadata=None,
+                         ignore_gerrit_changes=False):
     """Plan, schedule, and run tests.
 
     Run tests on the testable_builds identified by plan_and_run_children.
@@ -787,6 +788,9 @@ class OrchMenuApi(RecipeApi):
         or None to use the current results.
       container_metadata (ContainerMetadata): Information on container
         images used for test execution.
+      ignore_gerrit_changes (bool): Whether to drop gerrit changes from the
+        test plan request, primarily used for tryjobs (which are release
+        builds and thus shouldn't test based on any patches applied).
 
     Returns:
       (BuildsStatus): The current status of the builds.
@@ -797,13 +801,14 @@ class OrchMenuApi(RecipeApi):
                                   self.m.buildbucket.build.tags):
       self.m.skylab.set_qs_account('pupr')
 
-    if self.gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
-        self.gerrit_changes):
+    gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
+    if gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
+        gerrit_changes):
       if self.m.cros_test_plan_v2.generate_ctpv1_format:
         test_failures = self.m.cros_test_proctor.run_proctor(
             testable_builds or self._builds_status.testable_builds,
             self.gitiles_commit,
-            self.gerrit_changes,
+            gerrit_changes,
             False,            # self._properties.enable_history,
             require_stable_devices=self.config.orchestrator
             .require_stable_devices,
@@ -812,12 +817,12 @@ class OrchMenuApi(RecipeApi):
             use_test_plan_v2=True,
         )
       else:
-        self.m.cros_test_proctor.run_proctor_v2(self.gerrit_changes)
+        self.m.cros_test_proctor.run_proctor_v2(gerrit_changes)
     else:
       test_failures = self.m.cros_test_proctor.run_proctor(
           testable_builds or self._builds_status.testable_builds,
           self.gitiles_commit,
-          self.gerrit_changes,
+          gerrit_changes,
           self._properties.enable_history,
           require_stable_devices=self.config.orchestrator
           .require_stable_devices,
