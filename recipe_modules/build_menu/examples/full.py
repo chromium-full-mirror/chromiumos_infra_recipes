@@ -488,3 +488,13 @@ def GenTests(api):
       ),
     cq=True,
   )
+
+  yield api.build_menu.test(
+      'is-cq-build-relevant-experiment',
+      api.post_check(post_process.MustRun, 'cq build relevancy check'),
+      api.post_check(post_process.DoesNotRun, 'pointless build check'),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+      build_target='coral',
+      experiments=['chromeos.build_menu.is_cq_build_relevant'],
+  )

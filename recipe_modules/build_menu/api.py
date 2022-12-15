@@ -410,15 +410,21 @@ class BuildMenuApi(recipe_api.RecipeApi):
     packages = packages or config.build.install_packages.packages
     dep_graph = self.get_dep_graph(packages)
 
-    pointless = False
+    relevant = True
     # Only CQ and Postsubmit builders undergo a relevancy check.
     if config.id.type == BuilderConfig.Id.POSTSUBMIT:
-      pointless = not self.m.cros_relevance.postsubmit_relevance_check(
+      relevant = self.m.cros_relevance.postsubmit_relevance_check(
           self.gitiles_commit, dep_graph.target)
       # Adding relevance to tags to help cros_fleet and others search for
       # latest postsubmit image. See b/205142684.
       self.m.cros_tags.add_tags_to_current_build(**dict(
-          relevance='{}relevant'.format('not ' if pointless else '')))
+          relevance='{}relevant'.format('' if relevant else 'not ')))
+    elif (config.id.type == BuilderConfig.Id.CQ and
+          'chromeos.build_menu.is_cq_build_relevant' in
+          self.m.cros_infra_config.experiments):
+      relevant = self.m.cros_relevance.is_cq_build_relevant(
+          self.m.workspace_util.patch_sets, dep_graph.target,
+          force_relevant=self._force_relevant_build)
     elif config.id.type == BuilderConfig.Id.CQ:
       # In the cases where force_relevant is True:
       # 1. input_properties.force_relevant_build is True, and/or
@@ -431,22 +437,23 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # 4. The gerrit change contains the appropriate footer. The footers are read
       #    in the orchestrator and passed in as an input property (1) therefore we
       #    do not need to read the footers here.
-      pointless = self.m.cros_relevance.is_cq_build_pointless(
+      relevant = not self.m.cros_relevance.is_cq_build_pointless(
           self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
           force_relevant=self._force_relevant_build)
 
       # TODO(b/217773020): Experiment calling the pointless build checker with a
       # list of paths.
       if self.m.cros_infra_config.is_staging:
-        relevant = self.m.cros_relevance.is_cq_build_relevant(
+        exp_relevant = self.m.cros_relevance.is_cq_build_relevant(
             self.m.workspace_util.patch_sets, dep_graph.target,
             force_relevant=self._force_relevant_build)
-        self.m.easy.set_properties_step(cq_relevance_experiment_result=relevant)
+        self.m.easy.set_properties_step(
+            cq_relevance_experiment_result=exp_relevant)
 
-    if pointless:
+    if not relevant:
       self.m.buildbucket.hide_current_build_in_gerrit()
 
-    return _env_info(pointless, packages)
+    return _env_info(not relevant, packages)
 
   def get_dep_graph(self, packages):
     """Fetch the dependency graph, and validate the SDK for reuse.
