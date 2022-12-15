@@ -1652,6 +1652,7 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
 
     # Default values
     prejob_verdict = Result.Prejob.Step.VERDICT_FAIL
+    prejob_reason = ""
     is_incomplete = True
     test_verdict = Result.Autotest.TestCase.VERDICT_NO_VERDICT
     log_data = TaskLogData()
@@ -1683,13 +1684,16 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
       test_cases = [
           Result.Autotest.TestCase(name=test_name, verdict=test_verdict)
       ]
+      prejob_reason = _get_prejob_failure_reason_from_ctr_results(ctr_result)
+
     autotest_result = Result.Autotest(test_cases=test_cases,
                                       incomplete=is_incomplete)
 
     skylab_result = Result(
-        prejob=Result.Prejob(
-            step=[Result.Prejob.Step(name='provision', verdict=prejob_verdict)
-                 ]), autotest_result=autotest_result,
+        prejob=Result.Prejob(step=[
+            Result.Prejob.Step(name='provision', verdict=prejob_verdict,
+                               human_readable_summary=prejob_reason)
+        ]), autotest_result=autotest_result,
         autotest_results={"original_test": autotest_result},
         state_update=Result.StateUpdate(dut_state=dut_state), log_data=log_data)
     s_log(step, 'skylab_result', json_format.MessageToJson(skylab_result))
@@ -1736,6 +1740,28 @@ def _validate_inputs_for_ctr(api, properties):
       summary='test_suites is missing',
       failure_condition=not properties.cft_test_request.test_suites,
       fail_build=True)
+
+
+def _get_prejob_failure_reason_from_ctr_results(ctr_result):
+  """Return prejob reason from ctr result if any.
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * ctr_result (DUTResult): The result of all tests.
+    """
+  if not ctr_result:
+    return ""  # pragma: nocover
+  if not ctr_result.prejob_response:
+    return ""  # pragma: nocover
+  if not ctr_result.prejob_response.prejob_dut_responses:
+    return ""  # pragma: nocover
+  if not ctr_result.prejob_response.prejob_dut_responses[0].data:
+    return ""  # pragma: nocover
+  if not ctr_result.prejob_response.prejob_dut_responses[0].data.failure:
+    return ""  # pragma: nocover
+
+  return ctr_api.provision_service.InstallFailure.Reason.Name(
+      ctr_result.prejob_response.prejob_dut_responses[0].data.failure.reason)
 
 
 def RunSteps(api, properties):
