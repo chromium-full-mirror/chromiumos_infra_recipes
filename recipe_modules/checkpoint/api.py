@@ -10,6 +10,7 @@ from typing import List
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties, RetryStep
 
 STATUS_STARTED = "STARTED"
@@ -21,7 +22,11 @@ STEP_CASCADES = {
     # Orchestrator steps
     RetryStep.CREATE_BUILDSPEC: [RetryStep.RUN_CHILDREN],
     RetryStep.RUN_CHILDREN: [RetryStep.LAUNCH_TESTS],
-    RetryStep.RUN_FAILED_CHILDREN: [RetryStep.LAUNCH_TESTS],
+    # RUN_CHILDREN is the "super" step of RUN_FAILED_CHILDREN, need to include
+    # both if RUN_FAILED_CHILDREN is set.
+    RetryStep.RUN_FAILED_CHILDREN: [
+        RetryStep.RUN_CHILDREN, RetryStep.LAUNCH_TESTS
+    ],
 
     # Child builder steps
     RetryStep.STAGE_ARTIFACTS: [RetryStep.PUSH_IMAGES],
@@ -33,13 +38,14 @@ STEP_CASCADES = {
     RetryStep.UPLOAD_PAYLOAD: [RetryStep.TEST_PAYLOAD],
 }
 
-
 ORIGINAL_BUILD_PROPERTIES = [
-    # Of the form (recipe, trigger_step, property name)
-    ('orchestrator', RetryStep.CREATE_BUILDSPEC, 'buildspec_gs_uri'),
-    ('orchestrator', RetryStep.RUN_CHILDREN, 'child_builds'),
-    ('build_release', RetryStep.STAGE_ARTIFACTS, 'artifact_link'),
-    ('build_release', RetryStep.PUSH_IMAGES, 'signing_instructions_uris'),
+    # Of the form (recipe, step, filter on inclusion, property name)
+    ('orchestrator', RetryStep.CREATE_BUILDSPEC, False, 'buildspec_gs_uri'),
+    ('orchestrator', RetryStep.RUN_CHILDREN, False, 'child_builds'),
+    ('orchestrator', RetryStep.RUN_FAILED_CHILDREN, True, 'child_builds'),
+    ('build_release', RetryStep.STAGE_ARTIFACTS, False, 'artifact_link'),
+    ('build_release', RetryStep.PUSH_IMAGES, False,
+     'signing_instructions_uris'),
 ]
 
 
@@ -76,21 +82,43 @@ class CheckpointApi(recipe_api.RecipeApi):
     }
 
     # Output properties from the previous builds.
-    for _, _, prop in ORIGINAL_BUILD_PROPERTIES:
+    for _, _, _, prop in ORIGINAL_BUILD_PROPERTIES:
       setattr(self, prop, None)
-    self.child_builder_data = None
+    self.child_builder_data = {}
+    self._builder_children = {}
 
   def is_run_step(self, step: "RetryStep"):
     """Return whether the step will be run in this retry."""
+    # RUN_FAILED_CHILDREN is not a step that is normally run, so we shouldn't
+    # return true if we're not a retry.
+    if step == RetryStep.RUN_FAILED_CHILDREN:
+      return self._retry_run and step in self._run_steps
     return not self._retry_run or step in self._run_steps
 
   def builder_children(self) -> List[int]:
     """Gets the BBIDs of the child builders that are image builders."""
+    return list(self._builder_children.keys())
+
+  def successful_builder_children_bbids(self) -> List[int]:
+    """Gets the BBIDs of the child builders that were successful."""
     child_builds = []
-    for bbid, build in (self.child_builder_data or {}).items():
-      if build.input.properties['recipe'] == 'build_release':
+    for bbid, build in self._builder_children.items():
+      if build.status == common_pb2.SUCCESS:
         child_builds.append(bbid)
     return child_builds
+
+  def failed_builder_children(self) -> List[str]:
+    """Returns the list of child builders that failed.
+
+      Returns: (List[str]) names of child builders that failed, e.g.
+        eve-release-main.
+    """
+    failed_children = []
+    for _, build in self._builder_children.items():
+      # TODO(b/262388770): Handle still-running builds?
+      if build.status != common_pb2.SUCCESS:
+        failed_children.append(build.builder.builder)
+    return failed_children
 
   def cascade(self, requested_steps: List["RetryStep"]):
     """Process step cascades for the requested steps.
@@ -149,9 +177,10 @@ class CheckpointApi(recipe_api.RecipeApi):
 
       # Extract needed properties.
       with self.m.step.nest('verify previous build') as presentation:
-        for recipe, trigger_step, prop in ORIGINAL_BUILD_PROPERTIES:
+        for recipe, trigger_step, inclusion, prop in ORIGINAL_BUILD_PROPERTIES:
           if self._original_build.input.properties['recipe'] == recipe:
-            if trigger_step not in self._run_steps:
+            step_included = trigger_step in self._run_steps
+            if inclusion == step_included:
               if prop not in self._original_build.output.properties:
                 presentation.step_text = 'could not get `%s` from previous build' % prop
                 raise StepFailure(presentation.step_text)
@@ -162,6 +191,9 @@ class CheckpointApi(recipe_api.RecipeApi):
           self.child_builder_data = self.m.buildbucket.get_multi(
               [int(bbid) for bbid in self.child_builds],
               step_name='get child builder data')
+          for bbid, build in self.child_builder_data.items():
+            if build.input.properties['recipe'] == 'build_release':
+              self._builder_children[bbid] = build
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""

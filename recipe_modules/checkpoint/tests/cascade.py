@@ -44,8 +44,10 @@ TESTS = [
     # Test that RUN_CHILDREN and RUN_FAILED_CHILDREN force LAUNCH_TESTS.
     ('run-children-propagate', [RetryStep.RUN_CHILDREN],
      [RetryStep.RUN_CHILDREN, RetryStep.LAUNCH_TESTS]),
-    ('run-failed-children-propagate', [RetryStep.RUN_FAILED_CHILDREN],
-     [RetryStep.RUN_FAILED_CHILDREN, RetryStep.LAUNCH_TESTS]),
+    ('run-failed-children-propagate', [RetryStep.RUN_FAILED_CHILDREN], [
+        RetryStep.RUN_CHILDREN, RetryStep.RUN_FAILED_CHILDREN,
+        RetryStep.LAUNCH_TESTS
+    ]),
     # Checks that STAGE_ARTIFACTS forces all other builder steps.
     ('stage-artifats-propagate', [RetryStep.STAGE_ARTIFACTS], [
         RetryStep.STAGE_ARTIFACTS, RetryStep.PUSH_IMAGES,

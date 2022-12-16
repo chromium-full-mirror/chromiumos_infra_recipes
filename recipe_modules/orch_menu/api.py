@@ -553,9 +553,22 @@ class OrchMenuApi(RecipeApi):
       # only works with the release orchestrator.
       with self.m.checkpoint.retry(RetryStep.RUN_CHILDREN) as run_step:
         if run_step:
+          child_specs = self._get_child_specs()
+          if self.m.checkpoint.is_run_step(RetryStep.RUN_FAILED_CHILDREN):
+            with self.m.step.nest(
+                'only rerunning failed children') as presentation:
+              presentation.logs[
+                  'failed children'] = self.m.checkpoint.failed_builder_children(
+                  )
+              child_specs = [
+                  spec for spec in child_specs
+                  if spec.name in self.m.checkpoint.failed_builder_children()
+              ]
+
           completed_builds, collect_after = self._filter_schedule_wait_builds(
-              pres, self._get_child_specs(), extra_props=extra_child_props)
+              pres, child_specs, extra_props=extra_child_props)
         else:
+          results_step_name = '(RETRY-MODE) check build results from previous builds'
           completed_builds = self._collect_builds(
               self.m.checkpoint.builder_children())
           collect_after = []
@@ -563,6 +576,18 @@ class OrchMenuApi(RecipeApi):
     self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,
         check_critical_step_name=check_critical_step_name)
+    successful_child_bbids = self.m.checkpoint.successful_builder_children_bbids(
+    )
+    if self.m.checkpoint.is_run_step(
+        RetryStep.RUN_FAILED_CHILDREN) and successful_child_bbids:
+      with self.m.step.nest('(RETRY-MODE) previously successful builds'):
+        # Include the successful builds from the original build.
+        previously_successful_builds = self._collect_builds(
+            successful_child_bbids)
+        completed_builds += previously_successful_builds
+        self._collect_and_check_build_results(
+            previously_successful_builds,
+            check_critical_step_name=check_critical_step_name)
 
     self._builds_status.update(running=collect_after)
     self.m.greenness.update_build_info(completed_builds)

@@ -32,6 +32,8 @@ def RunSteps(api: RecipeApi):
       api.assertions.assertTrue(
           api.checkpoint.is_run_step(RetryStep.STAGE_ARTIFACTS))
       api.step('stage artifacts', ['echo', 'stage_artifacts'])
+      api.assertions.assertFalse(
+          api.checkpoint.is_run_step(RetryStep.RUN_FAILED_CHILDREN))
 
   with api.checkpoint.retry(RetryStep.PUSH_IMAGES) as run_step:
     if run_step:

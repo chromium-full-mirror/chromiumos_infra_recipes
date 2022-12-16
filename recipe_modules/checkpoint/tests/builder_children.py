@@ -6,7 +6,7 @@
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 
 DEPS = [
@@ -24,6 +24,12 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(api.checkpoint.builder_children(),
                              [8922054662172514002, 8922054662172514003])
 
+  api.assertions.assertEqual(api.checkpoint.failed_builder_children(),
+                             ['eve-release-main'])
+
+  api.assertions.assertEqual(api.checkpoint.successful_builder_children_bbids(),
+                             [8922054662172514002])
+
 
 def GenTests(api):
   original_build = build_pb2.Build(id=8922054662172514000, status='FAILURE')
@@ -35,8 +41,12 @@ def GenTests(api):
 
   def child_builds():
     builds = []
+    builders = ['paygen-orchestrator', 'brya-release-main', 'eve-release-main']
+    status = [common_pb2.FAILURE, common_pb2.SUCCESS, common_pb2.FAILURE]
     for i in range(3):
-      build = build_pb2.Build(id=8922054662172514001 + i, status='FAILURE')
+      build = build_pb2.Build(id=8922054662172514001 + i,
+                              builder={'builder': builders[i]},
+                              status=status[i])
       build.input.properties[
           'recipe'] = 'build_release' if i != 0 else 'paygen_orchestrator'
       builds.append(build)
