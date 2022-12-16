@@ -546,8 +546,19 @@ class OrchMenuApi(RecipeApi):
               'cq_cl_tag', 'pupr:chromeos-base/lacros-ash-atomic',
               self.m.buildbucket.build.tags)):
         return self._builds_status
-      completed_builds, collect_after = self._filter_schedule_wait_builds(
-          pres, self._get_child_specs(), extra_props=extra_child_props)
+
+      completed_builds = None
+      collect_after = None
+      # This retry logic doesn't do anything with collect_after, and thus
+      # only works with the release orchestrator.
+      with self.m.checkpoint.retry(RetryStep.RUN_CHILDREN) as run_step:
+        if run_step:
+          completed_builds, collect_after = self._filter_schedule_wait_builds(
+              pres, self._get_child_specs(), extra_props=extra_child_props)
+        else:
+          completed_builds = self._collect_builds(
+              self.m.checkpoint.builder_children())
+          collect_after = []
 
     self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,

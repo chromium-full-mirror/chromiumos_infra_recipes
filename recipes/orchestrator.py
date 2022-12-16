@@ -14,6 +14,7 @@ from typing import Callable, Dict
 from google.protobuf.json_format import MessageToDict
 
 from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -97,12 +98,14 @@ def DoRunSteps(api: RecipeApi):
 
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:
-    # Don't want to run tests on the public orchestrator, and unlike other
-    # orchestrators without testing we can't run the test plan generator because
-    # it requires access to internal repos.
-    api.orch_menu.plan_and_run_tests(
-        container_metadata=metadata,
-        ignore_gerrit_changes=api.orch_menu.is_release_orchestrator)
+    with api.checkpoint.retry(RetryStep.LAUNCH_TESTS) as run_step:
+      if run_step:
+        # Don't want to run tests on the public orchestrator, and unlike other
+        # orchestrators without testing we can't run the test plan generator because
+        # it requires access to internal repos.
+        api.orch_menu.plan_and_run_tests(
+            container_metadata=metadata,
+            ignore_gerrit_changes=api.orch_menu.is_release_orchestrator)
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
     api.cros_lkgm.collect_public_build()

@@ -37,6 +37,7 @@ STEP_CASCADES = {
 ORIGINAL_BUILD_PROPERTIES = [
     # Of the form (recipe, trigger_step, property name)
     ('orchestrator', RetryStep.CREATE_BUILDSPEC, 'buildspec_gs_uri'),
+    ('orchestrator', RetryStep.RUN_CHILDREN, 'child_builds'),
     ('build_release', RetryStep.STAGE_ARTIFACTS, 'artifact_link'),
     ('build_release', RetryStep.PUSH_IMAGES, 'signing_instructions_uris'),
 ]
@@ -76,10 +77,19 @@ class CheckpointApi(recipe_api.RecipeApi):
     # Output properties from the previous builds.
     for _, _, prop in ORIGINAL_BUILD_PROPERTIES:
       setattr(self, prop, None)
+    self.child_builder_data = None
 
   def is_run_step(self, step: "RetryStep"):
     """Return whether the step will be run in this retry."""
     return not self._retry_run or step in self._run_steps
+
+  def builder_children(self) -> List[int]:
+    """Gets the BBIDs of the child builders that are image builders."""
+    child_builds = []
+    for bbid, build in (self.child_builder_data or {}).items():
+      if build.input.properties['recipe'] == 'build_release':
+        child_builds.append(bbid)
+    return child_builds
 
   def cascade(self, requested_steps: List["RetryStep"]):
     """Process step cascades for the requested steps.
@@ -146,6 +156,11 @@ class CheckpointApi(recipe_api.RecipeApi):
                 raise StepFailure(presentation.step_text)
               setattr(self, prop, self._original_build.output.properties[prop])
               presentation.logs[prop] = getattr(self, prop)
+
+        if self.child_builds is not None:
+          self.child_builder_data = self.m.buildbucket.get_multi(
+              [int(bbid) for bbid in self.child_builds],
+              step_name='get child builder data')
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""

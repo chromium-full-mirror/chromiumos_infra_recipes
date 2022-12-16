@@ -179,8 +179,13 @@ def GenTests(api):
   original_build.input.properties['recipe'] = 'orchestrator'
   original_build.output.properties[
       'buildspec_gs_uri'] = 'gs://chromeos-manifest-versions/foo/1.xml'
+  original_build.output.properties['child_builds'] = ['8922054662172514002']
+
+  child_build = build_pb2.Build(id=8922054662172514002, status='FAILURE')
+  child_build.input.properties['recipe'] = 'build_release'
+
   yield api.orch_menu.test(
-      'release-orchestrator-retry',
+      'release-orchestrator-retry-run-children',
       data.ctp_normal,
       api.properties(
           FullProperties(
@@ -204,6 +209,51 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'set up orchestrator.(RETRY-MODE) not retrying RUN_CHILDREN'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='master',
+          skip_paygen=True),
+      builder='release-main-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+  )
+
+  yield api.orch_menu.test(
+      'release-orchestrator-retry-launch-tests',
+      data.ctp_normal,
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0'))),
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.LAUNCH_TESTS]
+                  },
+              },
+          }),
+      api.buildbucket.simulated_get(
+          original_build, step_name='RUNNING IN RETRY MODE.get original build'),
+      api.buildbucket.simulated_get_multi([
+          child_build
+      ], step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
+                                         ),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(
+          post_process.MustRun,
+          'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
+      api.post_check(post_process.MustRun,
+                     'run builds.(RETRY-MODE) not retrying RUN_CHILDREN'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
