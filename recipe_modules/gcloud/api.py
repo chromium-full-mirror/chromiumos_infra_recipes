@@ -558,7 +558,7 @@ class GcloudApi(recipe_api.RecipeApi):
                   uuid, mount_path)), infra_step=True)
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
-  def set_disk_autodelete(self, instance, disk, zone):
+  def set_disk_autodelete(self, instance, name, zone):
     """Set a disk to autodelete when a GCE instance is deleted.
 
     GCE disks are not default to delete when the instance is
@@ -567,7 +567,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
     Args:
       instance (str): GCE instance on which disk is attached.
-      disk (str): Google Cloud disk name.
+      name (str): Google Cloud disk name.
       zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
@@ -578,7 +578,7 @@ class GcloudApi(recipe_api.RecipeApi):
           'set-disk-auto-delete',
           instance,
           '--auto-delete',
-          '--disk={}'.format(disk),
+          '--device-name={}'.format(name),
           '--zone={}'.format(zone),
       ], infra_step=True)
 
@@ -999,7 +999,7 @@ class GcloudApi(recipe_api.RecipeApi):
         'write overlayfs branch file',
         self.snapshot_version_path.join(self._overlay_branch_file),
         self._branch)
-    self.set_disk_autodelete(instance=self.infra_host, disk=self._disk,
+    self.set_disk_autodelete(instance=self.infra_host, name=self._short_name,
                              zone=self._zone)
 
   def _reset_overlayfs_if_needed(self, cache_name):

@@ -577,7 +577,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-lmno",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-lmno-cros",
+      "--device-name=cros",
       "--zone=us-central1-b"
     ],
     "env": {

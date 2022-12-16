@@ -385,7 +385,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
+      "--device-name=internal-cros",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -1630,7 +1630,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
+      "--device-name=cr",
       "--zone=us-central1-b"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",

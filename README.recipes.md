@@ -5480,7 +5480,7 @@ Args:
   zone (str): GCE zone which the disk is located.
   size (str): New size of the disk in GB.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#560)(self, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#560)(self, instance, name, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 
@@ -5490,7 +5490,7 @@ to ensure the disks are deleted when the instance is removed.
 
 Args:
   instance (str): GCE instance on which disk is attached.
-  disk (str): Google Cloud disk name.
+  name (str): Google Cloud disk name.
   zone (str): GCE zone to create instance (e.g. us-central1-b).
 
 &mdash; **def [set\_gce\_project](/recipe_modules/gcloud/api.py#163)(self, project):**

@@ -228,7 +228,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-cros",
+      "--device-name=cros",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -1091,7 +1091,7 @@
       "set-disk-auto-delete",
       "chromeos-ci-infra-us-central1-b-x16-0-ssdf",
       "--auto-delete",
-      "--disk=chromeos-ci-infra-us-central1-b-x16-0-ssdf-crosstabilize",
+      "--device-name=crosstabilize",
       "--zone=us-central1-b"
     ],
     "env": {

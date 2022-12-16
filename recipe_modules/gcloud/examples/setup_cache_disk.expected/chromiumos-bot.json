@@ -228,7 +228,7 @@
       "set-disk-auto-delete",
       "chromiumos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromiumos-ci-infra-us-central1-b-x16-0-nvcj-cros",
+      "--device-name=cros",
       "--zone=us-central1-b"
     ],
     "env": {
@@ -1084,7 +1084,7 @@
       "set-disk-auto-delete",
       "chromiumos-ci-infra-us-central1-b-x16-0-nvcj",
       "--auto-delete",
-      "--disk=chromiumos-ci-infra-us-central1-b-x16-0-nvcj-crosstabilize",
+      "--device-name=crosstabilize",
       "--zone=us-central1-b"
     ],
     "env": {
