@@ -5,18 +5,24 @@
 
 """API for working with CrOS source."""
 
+from collections import defaultdict
+from collections import namedtuple
 import contextlib
 import multiprocessing
 import re
+from typing import Any, Dict, List, Optional
 
-from collections import defaultdict, namedtuple
 from google.protobuf.json_format import MessageToDict
 
-from recipe_engine.recipe_api import RecipeApi, InfraFailure, StepFailure
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.config_types import Path
 
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Default sync options for syncing the named cache.
 DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
@@ -375,26 +381,28 @@ class CrosSourceApi(RecipeApi):
       return 'INTERNAL'
     return 'CUSTOM'
 
-  def ensure_synced_cache(self, manifest_url=None, init_opts=None,
-                          sync_opts=None, cache_path_override=None,
-                          is_staging=False, projects=None, gitiles_commit=None,
-                          manifest_branch_override=None):
+  def ensure_synced_cache(self, manifest_url: Optional[str] = None,
+                          init_opts: Optional[Dict[str, Any]] = None,
+                          sync_opts: Optional[Dict[str, Any]] = None,
+                          cache_path_override: Optional[Path] = None,
+                          is_staging: bool = False,
+                          projects: Optional[List[str]] = None,
+                          gitiles_commit: Optional[GitilesCommit] = None,
+                          manifest_branch_override: Optional[str] = None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
-      * manifest_url (str): Manifest URL for 'repo.init`.
-      * init_opts (dict): Extra keyword arguments to pass to 'repo.init'.
-      * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
-      * cache_path_override (Path): Path to sync into. If None, the cache_path
-        property is used.
-      * is_staging (bool): Flag to indicate canary staging environment
-      * projects (List[str]): Projects to limit the sync to, or None to sync
-        all projects.
-      * gitiles_commit (GitilesCommit): The gitiles_commit, or None to use the
-      current value.
-      * manifest_branch_override (str): If provided this will override the
-        manifest_branch value in init_opts. If None then use the value returned
-        from configure_builder()
+      manifest_url: Manifest URL for 'repo.init`.
+      init_opts: Extra keyword arguments to pass to 'repo.init'.
+      sync_opts: Extra keyword arguments to pass to 'repo.sync'.
+      cache_path_override: Path to sync into. If None, the cache_path property
+          is used.
+      is_staging: Flag to indicate canary staging environment.
+      projects : Projects to limit the sync to, or None to sync all projects.
+      gitiles_commit: The gitiles_commit, or None to use the current value.
+      manifest_branch_override: If provided, override the manifest_branch value
+          in init_opts. Otherwise, use the value returned from
+          configure_builder().
     """
     # Make sure that there is an active overlayfs.cleanup_context.
     # See crbug.com/1165775.

@@ -8,6 +8,7 @@
 import collections
 import contextlib
 import re
+from typing import Optional
 
 from google.protobuf import json_format
 
@@ -264,33 +265,35 @@ class BuildMenuApi(recipe_api.RecipeApi):
           self.get_dep_graph_and_validate_sdk_reuse()
 
   @contextlib.contextmanager
-  def setup_workspace_and_chroot(self, no_chroot_timeout=False,
-                                 cherry_pick_changes=True, replace=False):
+  def setup_workspace_and_chroot(self, no_chroot_timeout: bool = False,
+                                 cherry_pick_changes: bool = True,
+                                 bootstrap_chroot: bool = False,
+                                 replace: bool = False) -> bool:
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
 
     Args:
-      no_chroot_timeout (bool): whether to allow unlimited time to create the
-          chroot.
-      cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+      no_chroot_timeout: Whether to allow unlimited time to create the chroot.
+      cherry_pick_changes: Whether to apply gerrit changes on top of the
           checkout using cherry-pick. If set to False, will directly checkout
           the changes using the gerrit fetch refs.
-      replace (boolean): Whether to replace the chroot if it already exists.
-          Default: False.
+      bootstrap_chroot: Whether to bootstrap the chroot.
+      replace: Whether to replace the chroot if it already exists.
 
     Returns:
-      (bool): Whether the build is relevant.
+      Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
-      yield self.setup_chroot(no_chroot_timeout, replace=replace)
+      yield self.setup_chroot(no_chroot_timeout, bootstrap=bootstrap_chroot,
+                              replace=replace)
 
   @contextlib.contextmanager
   def setup_workspace(self, cherry_pick_changes=True):
     """Setup the workspace for the builder.
 
     Args:
-      cherry_pick_changes (bool): whether to apply gerrit changes on top of the
+      cherry_pick_changes (bool): Whether to apply gerrit changes on top of the
           checkout using cherry-pick. If set to False, will directly checkout
           the changes using the gerrit fetch refs.
     """
@@ -316,20 +319,20 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
       yield
 
-  def setup_chroot(self, no_chroot_timeout=False, sdk_version=None,
-                   replace=False):
+  def setup_chroot(self, no_chroot_timeout: bool = False,
+                   sdk_version: Optional[str] = None, bootstrap: bool = False,
+                   replace: bool = False) -> bool:
     """Setup the chroot for the builder.
 
     Args:
-      no_chroot_timeout (bool): whether to allow unlimited time to create the
-          chroot.
-      sdk_version (string): Optional. Specific SDK version to include in
-        the sdk CreateRequest, e.g. 2022.01.20.073008.
-      replace (boolean):  Whether to replace the chroot if it already exists.
-          Default: False.
+      no_chroot_timeout: Whether to allow unlimited time to create the chroot.
+      sdk_version: Specific SDK version to include in the sdk CreateRequest:
+        for example, 2022.01.20.073008.
+      bootstrap: Whether to bootstrap the chroot.
+      replace: Whether to replace the chroot if it already exists.
 
     Returns:
-      (bool): Whether the build is relevant.
+      Whether the build is relevant.
     """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
@@ -345,7 +348,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_source.uprev_packages()
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, use_image=self.is_staging,
-          sdk_version=sdk_version,
+          bootstrap=bootstrap, sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
           no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True

@@ -48,7 +48,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Returns:
       A context where source is set up, and the current working directory is the
-      workspace path.  Note that api.cros_source.cleanup_context() is generally
+      workspace path.  Note that api.cros_sdk.cleanup_context() is generally
       going to be needed.
     """
     if not self.m.cros_infra_config.is_configured:
