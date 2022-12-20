@@ -297,6 +297,9 @@ def GenTests(api):
                   'container_version_format':
                       "{staging?}{build-target}-release.{cros-version}",
               },
+              '$chromeos/checkpoint': {
+                  'force_retry_summary': True,
+              },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
@@ -343,6 +346,14 @@ def GenTests(api):
       api.post_process(
           post_process.PropertyEquals, 'artifact_link',
           'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
+      api.post_check(
+          post_process.PropertyEquals, 'retry_summary', {
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
+              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
+              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+          }),
       api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',

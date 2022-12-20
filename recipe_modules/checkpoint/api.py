@@ -54,6 +54,9 @@ class CheckpointApi(recipe_api.RecipeApi):
   def __init__(self, properties: CheckpointProperties, *args, **kwargs):
     super(CheckpointApi, self).__init__(*args, **kwargs)
     self._retry_run = properties.retry
+    self._retry_summary = {}
+    self._do_retry_summary = properties.force_retry_summary or properties.retry
+
     # If CREATE_BUILDSPEC is included we're just doing a full release build
     # so go ahead and turn off retry mode.
     if RetryStep.CREATE_BUILDSPEC in properties.exec_steps.steps:
@@ -64,8 +67,6 @@ class CheckpointApi(recipe_api.RecipeApi):
     if self._original_build_bbid:
       self._original_build_bbid = int(self._original_build_bbid)
     self._original_build = None
-
-    self._retry_summary = {}
 
     # Do step cascades.
     self._run_steps = self.cascade(properties.exec_steps.steps)
@@ -164,9 +165,7 @@ class CheckpointApi(recipe_api.RecipeApi):
 
   def update_summary(self, step: "RetryStep", status: str):
     """Updates the retry_summary output property with the given step/status."""
-    # For now we don't want to alter non-retry builds.
-    # TODO(b/262388770): Remove after additional testing.
-    if not self._retry_run:
+    if not self._do_retry_summary:
       return
     if status not in [
         STATUS_STARTED, STATUS_SUCCESS, STATUS_SKIPPED, STATUS_FAILED
