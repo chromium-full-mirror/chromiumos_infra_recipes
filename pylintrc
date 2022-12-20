@@ -48,7 +48,6 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 #
 #   bad-continuation <-- fights with git cl presubmits.
 #   line-too-long
-#   raise-missing-from <-- when our recipes are py3-only
 #   super-with-arguments <-- when our recipes are py3-only
 #   ...and more based on case by case and workload.
 disable=
@@ -66,7 +65,6 @@ disable=
     missing-docstring,
     no-member,
     no-self-use,
-    raise-missing-from,
     relative-import,
     super-with-arguments,
     too-few-public-methods,

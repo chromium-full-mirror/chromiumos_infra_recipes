@@ -63,8 +63,8 @@ class BreakpadApi(RecipeApi):
       self._download_and_log_gs_url(
           os.path.join(image_archive_path, SYMBOLS_FILE_NAME),
           debug_breakpad_local_path)
-    except StepFailure:
-      raise SymbolsFileNotFoundException('Symbols file not found in GS.')
+    except StepFailure as e:
+      raise SymbolsFileNotFoundException('Symbols file not found in GS.') from e
 
     # Extract debug_breakpad.tar.xz. Has a directory structure debug/breakpad.
     # Note that the `recipe_engine/archive` module cannot handle tar.xz files.

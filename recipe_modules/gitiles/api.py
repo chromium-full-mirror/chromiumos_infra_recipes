@@ -113,7 +113,7 @@ class GitilesApi(recipe_api.RecipeApi):
       # TODO(b/217973414): No need to catch TypeError after we deprecate py2.
       try:
         decoded_data = base64.b64decode(data)
-      except (TypeError, binascii.Error):
-        raise StepFailure('non base64 data returned from gitiles')
+      except (TypeError, binascii.Error) as e:
+        raise StepFailure('non base64 data returned from gitiles') from e
       pres.logs['data'] = decoded_data
       return decoded_data

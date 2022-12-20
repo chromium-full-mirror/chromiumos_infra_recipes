@@ -491,9 +491,9 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
                                       self._get_image_storage_server())
     try:
       metadata.build_dut_topology(self._properties.request.prejob)
-    except MatchDutException:
+    except MatchDutException as e:
       raise self._api.step.InfraFailure(
-          "Failed to match loaded DUT with prejob request.")
+          "Failed to match loaded DUT with prejob request.") from e
     return metadata
 
   @staticmethod

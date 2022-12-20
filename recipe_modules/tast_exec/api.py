@@ -534,8 +534,7 @@ class TastExecApi(RecipeApi):
     try:
       self.m.step('connect via ssh', cmd, timeout=5 * 60)
     except StepFailure as e:
-      raise StepFailure(
-          'Could not connect to the vm instance. This can be '
-          'because the change being tested caused an error '
-          'during boot or potentially an infrastructure '
-          'failure.', e)
+      raise StepFailure('Could not connect to the vm instance. This can be '
+                        'because the change being tested caused an error '
+                        'during boot or potentially an infrastructure '
+                        'failure.') from e

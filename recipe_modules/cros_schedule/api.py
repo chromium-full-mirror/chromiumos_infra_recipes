@@ -59,12 +59,13 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       # Validate you have real json and the expected number of records.
       try:
         json_data = json.loads(returned_data)
-      except ValueError:
-        raise StepFailure('fetch schedule response was not json')
+      except ValueError as e:
+        raise StepFailure('fetch schedule response was not json') from e
       try:
         mstones_returned = len(json_data['mstones'])
-      except KeyError:
-        raise self.m.step.StepFailure('fetch schedule response json format bad')
+      except KeyError as e:
+        raise self.m.step.StepFailure(
+            'fetch schedule response json format bad') from e
       if mstones_returned != fetch_n:
         raise self.m.step.StepFailure(
             'fetch schedule did not return expected number of mstones')

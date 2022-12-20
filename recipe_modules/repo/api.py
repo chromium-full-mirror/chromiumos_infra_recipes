@@ -431,7 +431,7 @@ class RepoApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step(slowest_repos=slowest_repos)
 
     except (KeyError, TypeError, ValueError) as e:
-      raise StepFailure(e)
+      raise StepFailure(e) from e
 
   def create_tmp_manifest(self, manifest_data):
     """Write manifest_data to a temporary manifest file inside the repo root.

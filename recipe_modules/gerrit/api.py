@@ -216,17 +216,17 @@ def _change_labels_satisfy_constraints(change_json, constraints):
   """
   try:
     change_labels = change_json['labels']
-  except KeyError:
+  except KeyError as e:
     raise StepFailure(
         'Gerrit change JSON does not contain key `labels`. Maybe '
         'get_changes() was called without o_params=["LABELS"]?\n\n%s' %
-        change_json)
+        change_json) from e
   for constraint in constraints:
     try:
       label = change_labels[constraint.label.key]
-    except KeyError:
+    except KeyError as e:
       raise StepFailure('Gerrit change labels do not contain key %s: %s' %
-                        (constraint.label.key, change_labels))
+                        (constraint.label.key, change_labels)) from e
     if constraint.type == LabelConstraintType.APPROVED:
       if 'approved' not in label:
         return False

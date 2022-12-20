@@ -73,8 +73,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       raw_config = self._get_gs_config()
       try:
         self._internal_config = json.loads(raw_config)
-      except ValueError:
-        raise StepFailure('config json could not be deserialized')
+      except ValueError as e:
+        raise StepFailure('config json could not be deserialized') from e
       # Do some basic checks on the configuration.
       if ('delta' not in self._internal_config or
           len(self._internal_config['delta']) == 0):

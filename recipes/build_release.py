@@ -82,10 +82,10 @@ def RunSteps(api, properties):
               try:
                 api.cros_test_plan.generate_target_test_requirements_config(
                     paygen=True)
-              except:
+              except Exception as e:
                 raise StepFailure(
                     "testing config doesn't exist for this build target, see go/onboard-to-rubik"
-                )
+                ) from e
 
             return DoRunSteps(api, config, properties)
   finally:
