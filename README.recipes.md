@@ -170,6 +170,7 @@
   * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
   * [checkpoint:examples/retry](#recipes-checkpoint_examples_retry) (Python3 ✅)
+  * [checkpoint:tests/build_target_retry_props](#recipes-checkpoint_tests_build_target_retry_props) (Python3 ✅)
   * [checkpoint:tests/builder_children](#recipes-checkpoint_tests_builder_children) (Python3 ✅)
   * [checkpoint:tests/cascade](#recipes-checkpoint_tests_cascade) (Python3 ✅)
   * [checkpoint:tests/update_summary](#recipes-checkpoint_tests_update_summary) (Python3 ✅)
@@ -1565,40 +1566,48 @@ A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#98)(self):**
+&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#102)(self):**
 
 Gets the BBIDs of the child builders that are image builders.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#123)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#127)(self, builder: str):**
+
+Return the `checkpoint` module properties to set for the child builder.
+
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#144)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
 
-&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#110)(self):**
+&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#114)(self):**
 
 Returns the list of child builders that failed.
 
 Returns: (List[str]) names of child builders that failed, e.g.
   eve-release-main.
 
-&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#90)(self, step: 'RetryStep'):**
+&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#90)(self):**
+
+Return whether the build is a retry build.
+
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#94)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#149)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#170)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#211)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#232)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#102)(self):**
+&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#106)(self):**
 
 Gets the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#198)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#219)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -7011,7 +7020,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#903)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#909)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7077,7 +7086,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#827)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#833)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
 
 Plan, schedule, and run tests.
 
@@ -7095,11 +7104,11 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#755)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#761)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#761)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#767)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -9605,6 +9614,13 @@ Checks a project conforms to its program's constraints.
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/checkpoint/examples/retry.py#27)(api: RecipeApi):**
+### *recipes* / [checkpoint:tests/build\_target\_retry\_props](/recipe_modules/checkpoint/tests/build_target_retry_props.py)
+
+[DEPS](/recipe_modules/checkpoint/tests/build_target_retry_props.py#12): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/checkpoint/tests/build_target_retry_props.py#22)(api: RecipeApi):**
 ### *recipes* / [checkpoint:tests/builder\_children](/recipe_modules/checkpoint/tests/builder_children.py)
 
 [DEPS](/recipe_modules/checkpoint/tests/builder_children.py#12): [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

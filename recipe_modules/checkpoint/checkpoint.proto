@@ -69,8 +69,8 @@ message CheckpointProperties {
     // May cause cascading retries, i.e. you can't generate new payloads without testing them.
     RetrySteps exec_steps = 3;
 
-   // Build-target specific retry steps. Only relevant if the build being retried is the orchestrator.
-    map<string, RetrySteps> build_target_exec_steps = 4;
+    // Builder specific retry steps. Only relevant if the build being retried is the orchestrator.
+    map<string, RetrySteps> builder_exec_steps = 4;
 
     // Whether to populate retry_summary. Irrespective of whether or not the
     // build is a retry.

@@ -675,6 +675,12 @@ class OrchMenuApi(RecipeApi):
       # Add in extra_props.
       if extra_props:
         for _, req in enumerate(new_build_requests):
+          if self.m.checkpoint.is_retry():
+            # Propagate retry properties.
+            retry_props = self.m.checkpoint.builder_retry_props(
+                req.builder.builder)
+            if retry_props:
+              req.properties['$chromeos/checkpoint'] = retry_props
           # Only set the value if it's not set already.
           # We don't want to clobber anything.
           for key, val in extra_props.items():

@@ -279,7 +279,7 @@ def GenTests(api):
   child_build.input.properties['recipe'] = 'build_release'
   child_builds.append(child_build)
   child_build = build_pb2.Build(id=8922054662172514003, status='SUCCESS',
-                                builder={'builder': 'eve-release-main'})
+                                builder={'builder': 'octopus-release-main'})
   child_build.input.properties['recipe'] = 'build_release'
   child_builds.append(child_build)
 
@@ -300,6 +300,11 @@ def GenTests(api):
                   'exec_steps': {
                       'steps': [RetryStep.RUN_FAILED_CHILDREN]
                   },
+                  'builder_exec_steps': {
+                      'octopus-release-main': {
+                          'steps': [RetryStep.PAYGEN],
+                      },
+                  }
               },
           }),
       api.buildbucket.simulated_get(

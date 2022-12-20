@@ -76,9 +76,9 @@ class CheckpointApi(recipe_api.RecipeApi):
 
     # Do step cascades.
     self._run_steps = self.cascade(properties.exec_steps.steps)
-    self._build_target_run_steps = {
-        bt: self.cascade(steps.steps)
-        for bt, steps in properties.build_target_exec_steps.items()
+    self._builder_run_steps = {
+        builder: self.cascade(steps.steps)
+        for builder, steps in properties.builder_exec_steps.items()
     }
 
     # Output properties from the previous builds.
@@ -86,6 +86,10 @@ class CheckpointApi(recipe_api.RecipeApi):
       setattr(self, prop, None)
     self.child_builder_data = {}
     self._builder_children = {}
+
+  def is_retry(self) -> bool:
+    """Return whether the build is a retry build."""
+    return self._retry_run
 
   def is_run_step(self, step: "RetryStep"):
     """Return whether the step will be run in this retry."""
@@ -119,6 +123,23 @@ class CheckpointApi(recipe_api.RecipeApi):
       if build.status != common_pb2.SUCCESS:
         failed_children.append(build.builder.builder)
     return failed_children
+
+  def builder_retry_props(self, builder: str) -> dict:
+    """Return the `checkpoint` module properties to set for the child builder."""
+    original_build_bbid = None
+    for bbid, build in self.child_builder_data.items():
+      if build.builder.builder == builder:
+        original_build_bbid = bbid
+        break
+    # If we have no build to retry from, launch a non-retry build.
+    if not original_build_bbid:
+      return None
+    return {
+        'retry': True,
+        'original_build_bbid': str(original_build_bbid),
+        # Default to the generic exec_steps.
+        'exec_steps': self._builder_run_steps.get(builder, self._run_steps)
+    }
 
   def cascade(self, requested_steps: List["RetryStep"]):
     """Process step cascades for the requested steps.
@@ -169,9 +190,9 @@ class CheckpointApi(recipe_api.RecipeApi):
           {
               'original_build_bbid': self._original_build_bbid,
               'run_steps': self._retry_steps_to_strings(self._run_steps),
-              'build_target_run_steps': {
+              'builder_run_steps': {
                   k: self._retry_steps_to_strings(steps)
-                  for k, steps in self._build_target_run_steps.items()
+                  for k, steps in self._builder_run_steps.items()
               }
           }, indent=2)
 

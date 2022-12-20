@@ -18,7 +18,7 @@
       "@@@STEP_LOG_LINE@retry plan@    \"COLLECT_SIGNING\",@@@",
       "@@@STEP_LOG_LINE@retry plan@    \"PAYGEN\"@@@",
       "@@@STEP_LOG_LINE@retry plan@  ],@@@",
-      "@@@STEP_LOG_LINE@retry plan@  \"build_target_run_steps\": {}@@@",
+      "@@@STEP_LOG_LINE@retry plan@  \"builder_run_steps\": {}@@@",
       "@@@STEP_LOG_LINE@retry plan@}@@@",
       "@@@STEP_LOG_END@retry plan@@@",
       "@@@STEP_LINK@previous build@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
