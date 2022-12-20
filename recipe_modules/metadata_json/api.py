@@ -22,7 +22,7 @@ class MetadataJsonApi(RecipeApi):
   """A module to write metadata.json into GS for GoldenEye consumption."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(MetadataJsonApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._metadata = {}
     self._add_defunct_entries()
     self._properties = properties

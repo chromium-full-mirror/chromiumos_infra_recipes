@@ -37,7 +37,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
   """A module to use build history to avoid redundant builds."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosHistoryApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._use_group_key = not properties.disable_group_key
     self._lookback_seconds = properties.lookback_seconds or 5 * 24 * 60 * 60
 

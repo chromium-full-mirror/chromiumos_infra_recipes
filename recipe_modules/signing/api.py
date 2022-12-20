@@ -31,7 +31,7 @@ class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate communication with the signing fleet."""
 
   def __init__(self, properties: SigningProperties, *args, **kwargs):
-    super(SigningApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._timeout: int = properties.timeout or 4 * 60 * 60
     self._sleep_duration: int = properties.sleep_duration or 5 * 60
 

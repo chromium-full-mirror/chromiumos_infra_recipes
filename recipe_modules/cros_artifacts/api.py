@@ -76,7 +76,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   UploadedArtifacts = UploadedArtifacts
 
   def __init__(self, props, *args, **kwargs):
-    super(CrosArtifactsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
     self._max_concurrent_bundling_requests = (
         props.max_concurrent_bundling_requests or

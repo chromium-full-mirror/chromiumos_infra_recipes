@@ -27,7 +27,7 @@ class SkylabApi(recipe_api.RecipeApi):
   UnitHwTest = structs.UnitHwTest
 
   def __init__(self, properties, **kwargs):
-    super(SkylabApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._exclude_sub_invs = properties.exclude_sub_invs

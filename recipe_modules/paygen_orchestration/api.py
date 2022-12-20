@@ -43,7 +43,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
   """A module for CrOS-specific paygen orchestration steps."""
 
   def __init__(self, properties: PaygenOrchestratorProperties, *args, **kwargs):
-    super(PaygenOrchestrationApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._internal_config = None
     self._paygen_json_gs_path = PAYGEN_JSON_GS_PATH
     self._max_dlc_batch_size = properties.max_dlc_batch_size or None

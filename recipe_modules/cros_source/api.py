@@ -52,7 +52,7 @@ class CrosSourceApi(RecipeApi):
   ])
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosSourceApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._snapshot_cas = (
         properties.snapshot_cas
         if properties.HasField('snapshot_cas') else None)

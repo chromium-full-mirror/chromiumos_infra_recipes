@@ -4049,11 +4049,11 @@ Much of the inspiration for this module came from:
 As long as there are two versions of the the path construction any changes
 to one of these needs to be reflected in the other.
 
-#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#626)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#625)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Apis for dealing with stored images, payloads, and artifacts.
 
-&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#656)(self, prefix_uri, parse_types=None):**
+&mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#655)(self, prefix_uri, parse_types=None):**
 
 Discover and return all the GS artifacts found in a given ArtifactRoot.
 
@@ -5210,14 +5210,14 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [GceProvider](/recipe_modules/gce_provider/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GceProvider](/recipe_modules/gce_provider/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that interacts with the GCE Provider config service.
 
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#74)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#73)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -5229,7 +5229,7 @@ Returns:
     configs: Configs, list of GCE Provide Config objects.
     missing_configs: list[str] of ids for which there is no config.
 
-&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#36)(self, bid, config):**
+&mdash; **def [update\_gce\_config](/recipe_modules/gce_provider/api.py#35)(self, bid, config):**
 
 Function to update the config in GCE Provider.
 

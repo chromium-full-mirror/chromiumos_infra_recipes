@@ -17,7 +17,7 @@ class TooManyAttempts(Error):
   """The transaction could not be completed in the allowed number of retries."""
 
   def __init__(self):
-    super(TooManyAttempts, self).__init__(self.__doc__)
+    super().__init__(self.__doc__)
 
 
 class GitTxnApi(recipe_api.RecipeApi):

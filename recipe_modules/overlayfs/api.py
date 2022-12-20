@@ -17,7 +17,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
 
   def __init__(self, props, *args, **kwargs):
     """Initialize OverlayfsApi."""
-    super(OverlayfsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._cleanup_stack = [[]]
     self.random_work_path = props.random_work_path
 

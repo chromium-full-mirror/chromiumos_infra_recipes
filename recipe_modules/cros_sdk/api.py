@@ -32,7 +32,7 @@ class CrosSdkApi(RecipeApi):
   """A module for interacting with cros_sdk."""
 
   def __init__(self, props, *args, **kwargs):
-    super(CrosSdkApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     # TODO(b/169266654): Make this a git footer configurable value.
     self._force_off_toolchain_changed = props.force_off_toolchain_changed
     self._chroot_initialized = False

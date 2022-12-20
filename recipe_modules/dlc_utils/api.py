@@ -16,7 +16,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
   """A module handle special operations around DLCs."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(DlcUtilsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._dlc_directories = properties.dlc_directories or DEFAULT_DLC_DIRECTORIES
     self._dlc_file_names = properties.dlc_file_names or DEFAULT_DLC_FILE_NAMES
 

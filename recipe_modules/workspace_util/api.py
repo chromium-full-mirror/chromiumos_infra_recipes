@@ -14,7 +14,7 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module workspace setup and manipulation."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(WorkspaceUtilApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._keep_all_changes = properties.keep_all_changes
 
   def initialize(self):

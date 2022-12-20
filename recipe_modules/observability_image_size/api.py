@@ -16,7 +16,7 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
   """Collect image size data."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(ObservabilityImageSizeApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     # TODO(b/224589938): Determine what these IDs should be
     self._pubsub_project_id = properties.pubsub_project_id or "cros-build-telemetry"
     self._pubsub_topic_id = properties.pubsub_topic_id or "image-size-events"

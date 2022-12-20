@@ -11,7 +11,7 @@ class DirmdApi(recipe_api.RecipeApi):
   """A module for using the dirmd tool."""
 
   def __init__(self, properties, **kwargs):
-    super(DirmdApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cipd_package = properties.dirmd_cipd_package or 'infra/tools/dirmd/${platform}'
     self._cipd_ref = properties.dirmd_cipd_ref or 'latest'
     self._dirmd_path = None

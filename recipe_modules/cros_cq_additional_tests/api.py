@@ -28,7 +28,7 @@ class CrosCqAddnlTestsMissingBuildTargetsError(Exception):
   test suites"""
 
   def __init__(self, _not_runnable_addtnl_tests):
-    super(CrosCqAddnlTestsMissingBuildTargetsError, self).__init__()
+    super().__init__()
     self._not_runnable_addtnl_tests = _not_runnable_addtnl_tests
 
   @property
@@ -43,7 +43,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
   CrosCqAddnlTestsMissingBuildTargetsError = CrosCqAddnlTestsMissingBuildTargetsError
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosCqAdditionalTests, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
     self._not_runnable_addtnl_tests = []
 

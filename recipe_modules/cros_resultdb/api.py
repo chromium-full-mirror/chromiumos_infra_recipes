@@ -41,7 +41,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
   """Module for chromium tests on skylab to upload result to Result DB."""
 
   def __init__(self, **kwargs):
-    super(ResultDBCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._result_adapter = None
 
   @property

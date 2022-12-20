@@ -17,7 +17,7 @@ class UrlsApi(recipe_api.RecipeApi):
 
   # pylint: disable=unused-argument
   def __init__(self, properties, **kwargs):
-    super(UrlsApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
 
   def get_build_link_map(self, build):
     """Returns the title->URL to the given buildbucket build.

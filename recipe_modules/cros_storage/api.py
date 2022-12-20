@@ -202,7 +202,7 @@ class SignedImage(Image):
       image_type (common_pb2.ImageType): The image type.
       key (str): The key the image was signed with (e.g. 'mp', 'mp-v4').
     """
-    super(SignedImage, self).__init__(artifact_root, image_type)
+    super().__init__(artifact_root, image_type)
     self._key = key
 
 
@@ -278,7 +278,7 @@ class UnsignedImage(Image):
       image_type (common_pb2.ImageType): The image type.
       milestone (str): The milestone of image (e.g. 'R84', 'R34').
     """
-    super(UnsignedImage, self).__init__(artifact_root, image_type)
+    super().__init__(artifact_root, image_type)
     self._milestone = milestone
 
 
@@ -341,8 +341,7 @@ class DLCImage(Image):
       dlc_package (str): The DLC package name (e.g. 'package').
       dlc_image (str): The name of the dlc image (e.g. 'dlc.img').
     """
-    super(DLCImage, self).__init__(artifact_root,
-                                   ImageType.Value('IMAGE_TYPE_DLC'))
+    super().__init__(artifact_root, ImageType.Value('IMAGE_TYPE_DLC'))
     self._artifact_root = artifact_root
     self._dlc_id = dlc_id
     self._dlc_package = dlc_package
@@ -493,7 +492,7 @@ class DeltaPayload(Payload):
       src_image (Image): A representation of the image the payload updates from.
       unique_id (str): A random value appended to payloads at generation time.
     """
-    super(DeltaPayload, self).__init__(tgt_image, unique_id)
+    super().__init__(tgt_image, unique_id)
     self._src_image = src_image
 
 
@@ -540,7 +539,7 @@ class FullDLCPayload(DLCPayload):
     values = m.groupdict()
 
     tgt_dlc_image = DLCImage(tgt_ar, values['dlc_id'], values['dlc_package'],
-                             super(FullDLCPayload, cls)._DEFAULT_DLC_IMAGE_NAME)
+                             super()._DEFAULT_DLC_IMAGE_NAME)
     return FullDLCPayload(tgt_dlc_image, values['unique_id'])
 
   @property
@@ -619,7 +618,7 @@ class DeltaDLCPayload(DLCPayload):
       src_image (Image): A representation of the image the payload updates from.
       unique_id (str): A random value appended to payloads at generation time.
     """
-    super(DeltaDLCPayload, self).__init__(tgt_image, unique_id)
+    super().__init__(tgt_image, unique_id)
     self._src_image = src_image
 
 

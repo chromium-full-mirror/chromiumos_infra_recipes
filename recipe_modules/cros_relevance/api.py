@@ -38,7 +38,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
   FORCE_RELEVANT_BUILDS_FOOTER = 'Force-Relevant-Builds'
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosRelevanceApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
 
   def initialize(self):

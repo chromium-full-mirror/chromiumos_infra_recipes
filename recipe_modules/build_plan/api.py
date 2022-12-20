@@ -18,7 +18,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(BuildPlanApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
 
   # A Git footer that can be included in commit messages to tell the cq run to not

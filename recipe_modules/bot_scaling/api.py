@@ -37,7 +37,7 @@ class BotScalingApi(recipe_api.RecipeApi):
   """A module that determines how to scale bot groups."""
 
   def __init__(self, *args, **kwargs):
-    super(BotScalingApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._hours_between_builds = None
 
   def drop_cpu_cores(self, min_cpus_left=4, max_drop_ratio=0.75,

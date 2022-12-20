@@ -23,7 +23,7 @@ class TastResultsApi(recipe_api.RecipeApi):
 
   def __init__(self, props, *args, **kwargs):
     """Initialize TastResultsApi."""
-    super(TastResultsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._archive_gs_bucket = props.archive_gs_bucket or 'chromeos-vmtest-archive'
 
   @exponential_retry(retries=3,

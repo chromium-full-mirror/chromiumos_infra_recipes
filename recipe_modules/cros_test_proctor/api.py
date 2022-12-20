@@ -35,7 +35,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   MetaTestTuple = structs.MetaTestTuple
 
   def __init__(self, properties, **kwargs):
-    super(CrosTestProctorApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self.timeout = properties.timeout
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=9 * 60 * 60)

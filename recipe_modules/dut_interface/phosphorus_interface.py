@@ -38,10 +38,8 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
     * test (skylab_test_runner.Request.Test): The actual test request.
     * image_storage_server (str): Image storage server info.
     """
-    super(PhosphorusTestMetadata,
-          self).__init__(test_id=test_id, test=test,
-                         gs_url=interface.logs_gs_url(),
-                         image_storage_server=image_storage_server)
+    super().__init__(test_id=test_id, test=test, gs_url=interface.logs_gs_url(),
+                     image_storage_server=image_storage_server)
 
     self.load_response = interface.load_skylab_local_state(
         test=test, test_id=self.passthrough_test_id)
@@ -139,7 +137,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
   _SECONDS_IN_30_MINUTES = 30 * 60
 
   def __init__(self, api, properties):
-    super(PhosphorusInterface, self).__init__(api, properties)
+    super().__init__(api, properties)
     self._dut_hostname = None
 
   def submit_pre_job(self, metadata, max_duration_seconds):

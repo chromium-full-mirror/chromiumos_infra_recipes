@@ -46,7 +46,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   access the Chrome Browser infradata/config repo"""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosInfraConfigApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     # Map from BuilderConfig's id.name to BuilderConfig, lazily loaded.
     self._name_to_builder_config = {}
 

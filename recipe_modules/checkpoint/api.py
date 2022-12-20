@@ -58,7 +58,7 @@ class CheckpointApi(recipe_api.RecipeApi):
   # TODO(b/262388770): Improve documentaton here, and link to a dev guide.
 
   def __init__(self, properties: CheckpointProperties, *args, **kwargs):
-    super(CheckpointApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._retry_run = properties.retry
     self._retry_summary = {}
     self._do_retry_summary = properties.force_retry_summary or properties.retry

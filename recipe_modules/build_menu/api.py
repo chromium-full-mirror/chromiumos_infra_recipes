@@ -37,7 +37,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   ]
 
   def __init__(self, props, *args, **kwargs):
-    super(BuildMenuApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._container_version_fmt = props.container_version_format
     self._chroot_created = False
     self._dep_graph = None

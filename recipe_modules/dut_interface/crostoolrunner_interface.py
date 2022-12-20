@@ -43,10 +43,8 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     * test (skylab_test_runner.Request.Test): The actual test request.
     * image_storage_server (str): Image storage server info.
     """
-    super(CrosToolRunnerTestMetadata,
-          self).__init__(test_id=test_id, test=test,
-                         gs_url=interface.logs_gs_url(),
-                         image_storage_server=image_storage_server)
+    super().__init__(test_id=test_id, test=test, gs_url=interface.logs_gs_url(),
+                     image_storage_server=image_storage_server)
 
     self.artifact_dir = artifact_dir
     self.autotest_keyvals = autotest_keyvals
@@ -110,7 +108,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     * api (RecipeScriptApi): Ubiquitous recipe API.
     * properties (TestRunnerProperties): Input properties to the recipe.
     """
-    super(CrosToolRunnerInterface, self).__init__(api, properties)
+    super().__init__(api, properties)
     self.cft_test_request = self._properties.cft_test_request
     self._vm_provisioned = None
 

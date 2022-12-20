@@ -67,7 +67,7 @@ class PhosphorusResult(dut_results.DUTResult):  # pragma: no cover
     * data (skylab_test_runner.result.Result): Phosphorus metadata for a
     result response.
     """
-    super(PhosphorusResult, self).__init__(data)
+    super().__init__(data)
 
   def is_failure(self):
     verdicts = [

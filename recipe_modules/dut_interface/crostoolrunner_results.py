@@ -107,7 +107,7 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     Args:
     * data: Not used for now.
     """
-    super(CrosToolRunnerResult, self).__init__(data)
+    super().__init__(data)
     self.gs_url = None
     self.stainless_url = None
 

@@ -43,7 +43,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     self._builder_threshold_percentage = properties.builder_threshold_percentage
     self._public_build = None
     self._public_build_results = None
-    super(CrosLkgmApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
   @property
   def has_public_build(self):

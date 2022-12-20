@@ -23,7 +23,7 @@ EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 class ExonerateApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
-    super(ExonerateApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._enable_exoneration = properties.enable_exoneration
     self._dry_run = properties.dry_run
     self._exoneration_configs = {}

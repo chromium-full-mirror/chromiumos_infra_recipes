@@ -12,7 +12,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_runner commands"""
 
   def __init__(self, properties, **kwargs):
-    super(CrosTestRunnerCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cipd_dir = None
     self._cipd_label = str(properties.version.cipd_label) or None
     self._cipd_package = str(properties.version.cipd_package) or \

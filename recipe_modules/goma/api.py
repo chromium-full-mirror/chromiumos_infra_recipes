@@ -36,7 +36,7 @@ class GomaApi(recipe_api.RecipeApi):
   """A module for working with goma."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(GomaApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._client_version = properties.client_version or 'release'
     self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
     self._enable_goma_client_json = properties.enable_goma_client_json

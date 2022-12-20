@@ -65,7 +65,7 @@ def _set_step_execution_result_fields(
 class AnalysisServiceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties: AnalysisServiceProperties, *args, **kwargs):
-    super(AnalysisServiceApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
     self._pubsub_topic_id = (
         properties.pubsub_topic_id or "analysis-service-events")

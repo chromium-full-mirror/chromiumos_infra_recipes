@@ -204,7 +204,7 @@ class CrosBuildApiApi(RecipeApi):
       setattr(self, stub.__name__, stub(self))
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosBuildApiApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._capture_stdout_stderr = properties.capture_stdout_stderr
     self._log_level = properties.log_level or 'debug'
     self._api_endpoints = None

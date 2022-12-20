@@ -12,7 +12,7 @@ class RemoteexecApi(recipe_api.RecipeApi):
   """A module for working with re-client for remote execution."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(RemoteexecApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._reclient_version = properties.reclient_version
     self._reproxy_cfg_file = properties.reproxy_cfg_file
     self._reclient_dir = None

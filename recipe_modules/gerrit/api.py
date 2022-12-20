@@ -248,7 +248,7 @@ class GerritApi(RecipeApi):
 
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
-    super(GerritApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
     self._gerrit_patch_sets = None
     self._GET_CHANGE_DESCRIPTION_CACHE = {}

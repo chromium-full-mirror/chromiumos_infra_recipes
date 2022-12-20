@@ -56,7 +56,7 @@ class RepoApi(recipe_api.RecipeApi):
   LocalManifest = LocalManifest
 
   def __init__(self, properties, *args, **kwargs):
-    super(RepoApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._remove_manifests_git = properties.remove_manifests_git
     self._disable_repo_verify = properties.disable_repo_verify

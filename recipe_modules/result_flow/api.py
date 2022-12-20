@@ -19,7 +19,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
   """Module for issuing result flow commands"""
 
   def __init__(self, properties, **kwargs):
-    super(ResultFlowCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cmd = None
     self._version = str(properties.version.cipd_label) or 'latest'
     if not self._version:  # pragma: no cover

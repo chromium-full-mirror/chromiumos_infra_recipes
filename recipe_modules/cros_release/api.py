@@ -48,7 +48,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       raise StepFailure('attempting to sign type not in supported sign types')
 
   def __init__(self, properties, **kwargs):
-    super(CrosReleaseApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._release_bucket = properties.release_bucket
     self._src_paygen_bucket = properties.src_paygen_bucket
     self._channels = properties.channels

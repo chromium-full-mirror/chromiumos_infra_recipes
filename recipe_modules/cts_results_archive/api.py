@@ -14,7 +14,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
   """API to archive test results to CTS specific buckets"""
 
   def __init__(self, properties, **kwargs):
-    super(CTSResultsArchive, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._properties = properties
 
   def archive(self, d_dir):

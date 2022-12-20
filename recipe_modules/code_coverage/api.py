@@ -44,7 +44,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
   """This module contains apis to generate code coverage data."""
 
   def __init__(self, props, *args, **kwargs):
-    super(CodeCoverageApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     # Temp dir for metadata.
     self._metadata_dir = None
     # The bucket to which code coverage data should be uploaded.

@@ -175,7 +175,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                 [follow_on_orch], 'run follow on orchestrator.collect'))
 
     # Call recipe_test_api.test().
-    return super(OrchMenuTestApi, self).test(name, ret, *args)
+    return super().test(name, ret, *args)
 
   def get_default_module_properties(self, with_manifest_refs=False,
                                     with_history=False,

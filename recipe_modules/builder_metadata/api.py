@@ -13,7 +13,7 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
   """A module to get builder metadata."""
 
   def __init__(self, *args, **kwargs):
-    super(BuilderMetadataApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._cached_metadata = None
 
   def look_up_builder_metadata(self):

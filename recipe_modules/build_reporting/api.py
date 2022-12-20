@@ -88,7 +88,7 @@ class _MessageDelegate():
   def __setattr__(self, attr, value):
     if attr in ['_msg', '_send_func']:
       # set them to self.
-      super(_MessageDelegate, self).__setattr__(attr, value)
+      super().__setattr__(attr, value)
     else:
       setattr(self._msg, attr, value)
 
@@ -146,7 +146,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_target = build_target
 
   def __init__(self, properties, *args, **kwargs):
-    super(BuildReportingApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
     self._pubsub_project = properties.pubsub_project
     self._pubsub_topic = properties.pubsub_topic

@@ -45,7 +45,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
   CONFIG_PROJECT = "chromeos/infra/config"
 
   def __init__(self, properties, **kwargs):
-    super(CrosReleaseConfigApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._reviewers = properties.reviewers
     self._ccs = properties.ccs
     self._auto_submit = properties.auto_submit

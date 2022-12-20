@@ -83,7 +83,7 @@ class TastExecApi(RecipeApi):
       return '{}:{}'.format(self.host, self.port)
 
   def __init__(self, properties, *args, **kwargs):
-    super(TastExecApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
     self._vm_system_services_timeout = properties.vm_system_services_timeout or 10 * 60
     self._should_retry = properties.should_retry

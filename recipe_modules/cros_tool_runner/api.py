@@ -13,7 +13,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
   """Module for issuing CrosToolRunner commands"""
 
   def __init__(self, properties, env_vars, **kwargs):
-    super(CrosToolRunnerCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cmd = None
     self._version = str(properties.version.cipd_label)
     self._config = properties.config

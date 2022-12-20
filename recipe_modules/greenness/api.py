@@ -22,7 +22,7 @@ class GreennessApi(recipe_api.RecipeApi):
   """A module to calculate greenness metric."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(GreennessApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._publish_property = properties.publish_property
     # _greenness_dict contains a map target -> (score, critical)
     self._greenness_dict = OrderedDict()

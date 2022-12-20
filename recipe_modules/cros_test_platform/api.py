@@ -22,7 +22,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
   """Module for issuing cros_test_platform commands"""
 
   def __init__(self, properties, **kwargs):
-    super(CrosTestPlatformCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cmd = None
     # TODO(crbug.com/1030538): Remove the default once the label is populated
     # from the config.

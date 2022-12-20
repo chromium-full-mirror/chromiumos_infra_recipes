@@ -15,7 +15,7 @@ class ServiceVersionCommand(recipe_api.RecipeApi):
   """Module for issuing ServiceVersion commands"""
 
   def __init__(self, properties, **kwargs):
-    super(ServiceVersionCommand, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._version = properties.version
 
   def validate_service_version_if_exists(self):

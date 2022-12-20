@@ -12,7 +12,7 @@ class DebugSymbols(recipe_api.RecipeApi):
   """Module for working with debug symbols."""
 
   def __init__(self, properties, **kwargs):
-    super(DebugSymbols, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._cipd_ref = properties.cipd_ref
     self._gs_path = properties.gs_path
     self._worker_count = properties.worker_count

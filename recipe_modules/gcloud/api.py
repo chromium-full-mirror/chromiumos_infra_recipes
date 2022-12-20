@@ -42,7 +42,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     """Initialize GcloudApi."""
-    super(GcloudApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._attached_disks = {}
     self._branch = None
     self._cache_mounted = False

@@ -14,7 +14,7 @@ class ManifestDoctorApi(recipe_api.RecipeApi):
   """A module for calling manifest_doctor."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(ManifestDoctorApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
 
   def initialize(self):

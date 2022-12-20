@@ -60,7 +60,7 @@ class DeferralsApi(RecipeApi):
   """A module for deferring actions, such as raising Exceptions."""
 
   def __init__(self, *args, **kwargs):
-    super(DeferralsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._deferred_exceptions = []
 
   @contextlib.contextmanager

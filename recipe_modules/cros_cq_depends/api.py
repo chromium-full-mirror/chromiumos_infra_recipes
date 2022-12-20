@@ -20,7 +20,7 @@ class CrosCqDependsApi(RecipeApi):
   """A module for checking that Cq-Depend has been fulfilled."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosCqDependsApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._allow_missing_depends = properties.allow_missing_depends
 
   def _gather_deps(self, manifest_diffs, dep_log):

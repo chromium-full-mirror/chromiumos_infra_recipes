@@ -26,7 +26,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   """A module for uploading package prebuilts."""
 
   def __init__(self, properties, **kwargs):
-    super(CrosPrebuiltsApi, self).__init__(**kwargs)
+    super().__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
     self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts

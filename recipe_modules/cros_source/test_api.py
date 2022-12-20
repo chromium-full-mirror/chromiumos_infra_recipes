@@ -13,7 +13,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
   gitiles_timeout_seconds = 3 * 60
 
   def __init__(self, *args, **kwargs):
-    super(CrosSourceTestApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._manifest_branch = None
 
   @property
@@ -53,7 +53,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
       data += self.m.properties(
           **{'$chromeos/cros_source': cros_source_properties})
 
-    return super(CrosSourceTestApi, self).test(name, data, *args)
+    return super().test(name, data, *args)
 
   @recipe_test_api.mod_test_data
   @staticmethod

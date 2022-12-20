@@ -15,7 +15,7 @@ class SwarmingCli(recipe_api.RecipeApi):
   """A module that queries Swarming via the CLI."""
 
   def __init__(self, *args, **kwargs):
-    super(SwarmingCli, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._cipd_bin = None
 
   def _ensure_cipd_bin(self):

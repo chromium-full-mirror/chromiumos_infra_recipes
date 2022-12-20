@@ -36,7 +36,7 @@ class CrosVersionApi(RecipeApi):
   Version = Version
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosVersionApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._remove_snapshot_from_version = properties.remove_snapshot_from_version
     self._properties = properties
     self._version = None

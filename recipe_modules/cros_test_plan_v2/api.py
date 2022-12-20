@@ -43,7 +43,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
   """A module for generating and parsing test plans for CTP v2."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosTestPlanV2Api, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
 
   def initialize(self):

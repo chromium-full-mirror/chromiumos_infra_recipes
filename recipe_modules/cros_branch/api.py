@@ -20,7 +20,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
   """A module for calling cros branch."""
 
   def __init__(self, properties, *args, **kwargs):
-    super(CrosBranchApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._properties = properties
 
   def initialize(self):

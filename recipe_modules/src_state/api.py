@@ -37,7 +37,7 @@ class SrcStateApi(recipe_api.RecipeApi):
   ManifestProject = common.ManifestProject
 
   def __init__(self, properties, *args, **kwargs):
-    super(SrcStateApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self.properties = properties
 
   def initialize(self):

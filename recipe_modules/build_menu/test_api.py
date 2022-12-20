@@ -79,4 +79,4 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     if pointless:
       ret += self.set_pointless_return(True)
     # Call recipe_test_api.test().
-    return super(BuildMenuTestApi, self).test(name, ret, *args)
+    return super().test(name, ret, *args)

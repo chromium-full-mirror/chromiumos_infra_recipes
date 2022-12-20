@@ -315,7 +315,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
   PaygenTestConfig = PaygenTestConfig
 
   def __init__(self, properties: PaygenTestingProperties, *args, **kwargs):
-    super(PaygenTestingApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._test_request_opts = properties.test_request_opts
     self._quota_scheduler_account = QS_ACCOUNT
     self._quota_scheduler_label_pool = LABEL_POOL

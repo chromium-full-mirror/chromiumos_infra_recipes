@@ -67,7 +67,7 @@ class ChromeApi(recipe_api.RecipeApi):
     return self._gclient_sync_timeout_seconds
 
   def __init__(self, properties, *args, **kwargs):
-    super(ChromeApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._deps_cas = (
         properties.deps_cas if properties.HasField('deps_cas') else None)
     self._version = properties.version

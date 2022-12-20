@@ -120,7 +120,7 @@ class OrchMenuApi(RecipeApi):
   """
 
   def __init__(self, properties, *args, **kwargs):
-    super(OrchMenuApi, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     self._update_manifest_refs = False
     self._external_gitiles_commit = None
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
