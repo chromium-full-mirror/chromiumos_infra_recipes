@@ -36,7 +36,7 @@ QS_ACCOUNT = 'legacypool-bvt'
 LABEL_POOL = 'quota'
 
 
-class PaygenTestConfig(object):
+class PaygenTestConfig():
   """A single test configuration.
 
   Stores and generates arguments for running autoupdate_EndToEndTest.

@@ -42,7 +42,7 @@ def _verify_proto_endpoint(instance, method):
   return service, method_descriptor
 
 
-class Stub(object):
+class Stub():
   """A simple client stub for the build API.
 
   This class should have one subclass for each service. It determines the exact
@@ -162,7 +162,7 @@ class CrosBuildApiApi(RecipeApi):
   """
 
   @functools.total_ordering
-  class Version(object):
+  class Version():
 
     def __init__(self, major=1, minor=1, bug=0):
       self.major = major

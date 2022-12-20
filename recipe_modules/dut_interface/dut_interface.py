@@ -8,7 +8,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class DUTTestMetadata(object):  # pragma: no cover
+class DUTTestMetadata():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   DUMMY_TEST_ID = 'original_test'
@@ -53,7 +53,7 @@ class DUTTestMetadata(object):  # pragma: no cover
     return 'https://stainless.corp.google.com/browse/%s' % gs_dir[len('gs://'):]
 
 
-class DUTInterface(object):  # pragma: no cover
+class DUTInterface():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   def __init__(self, api, properties):

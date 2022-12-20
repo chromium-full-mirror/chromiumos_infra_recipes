@@ -37,7 +37,7 @@ CHROMEOS_BRANCH_VERSION_STRING_RES = [
 
 
 @total_ordering
-class Version(object):
+class Version():
   __slots__ = ('chrome_branch', 'build', 'branch', 'patch', 'snapshot')
 
   @classmethod

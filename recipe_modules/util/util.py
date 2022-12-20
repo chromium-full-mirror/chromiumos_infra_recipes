@@ -20,7 +20,7 @@ _NO_TEST_DATA.__new__.__defaults__ = (False,)
 
 # Shamelessly stolen from recipe_engine/util.py, which we should not be using.
 # This differs in that it does not call logging.exception.
-class exponential_retry(object):
+class exponential_retry():
   """Decorator which retries the function if an exception is encountered."""
 
   def __init__(self, retries=None, delay=None, condition=None):

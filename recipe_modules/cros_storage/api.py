@@ -32,7 +32,7 @@ class UnsupportedImageTypeException(Exception):
   """Throw this if trying to create image with unsuported ImageType."""
 
 
-class ArtifactRoot(object):
+class ArtifactRoot():
   """The directory root of the build."""
 
   _URI_TEMPLATE = 'gs://%(bucket)s/%(channel)s/%(build_target_name)s/%(version)s'
@@ -109,7 +109,7 @@ class ArtifactRoot(object):
     }
 
 
-class Image(object):
+class Image():
   """Base class of an image of a particular type resident in storage."""
 
   # The following image types are currently supported in this module.
@@ -349,7 +349,7 @@ class DLCImage(Image):
     self._dlc_image = dlc_image
 
 
-class Payload(object):
+class Payload():
   """Base class of a payload of a particular type resident in storage."""
 
   @property

@@ -62,7 +62,7 @@ def make_oneup():
   return closure
 
 
-class _MessageDelegate(object):
+class _MessageDelegate():
   """
   MessageDelegate wraps a protobuf message, adding a publish() function.
 
@@ -367,7 +367,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       Handle which is used to set the step status.
     """
 
-    class Handle(object):
+    class Handle():
 
       # The default status.
       status = self.STEP_SUCCESS
@@ -413,7 +413,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       Handle which is used to publish to GS.
     """
 
-    class Handle(object):
+    class Handle():
       pass
 
     try:

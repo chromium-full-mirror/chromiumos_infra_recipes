@@ -88,7 +88,7 @@ class FutureUtilsApi(recipe_api.RecipeApi):
     return CallResponse(req, resp, call_count, errored)
 
 
-class ParallelRunner(object):
+class ParallelRunner():
   """Parallel runner class.
 
   This class encapsulates all the parallel runs that should be grouped together.

@@ -28,7 +28,7 @@ _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
 
-class BuildsStatus(object):
+class BuildsStatus():
   """The running status of the builds.
 
   Properties:

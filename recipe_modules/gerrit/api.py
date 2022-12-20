@@ -22,7 +22,7 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
 
 
-class PatchSet(object):
+class PatchSet():
   """PatchSet represents a single Gerrit patchset."""
 
   INFO_ATTRS = ('project', 'branch', 'subject')

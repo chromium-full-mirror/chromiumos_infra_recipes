@@ -86,7 +86,7 @@ class NoFilesToUploadFailure(recipe_api.StepFailure):
 
 # The age of the branches is such that we do not even have a Build API for the
 # most part.
-class FirmwareBuilder(object):
+class FirmwareBuilder():
 
   def __init__(self, api, properties):
     self.m = api

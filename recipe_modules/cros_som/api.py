@@ -18,7 +18,7 @@ from recipe_engine import recipe_api
 KEY_PREFIX = 'chromeos.buildbucket:'
 
 
-class SomAnnotation(object):
+class SomAnnotation():
   """Represents a single Sheriff-o-Matic annotation."""
 
   def __init__(self, annotation):

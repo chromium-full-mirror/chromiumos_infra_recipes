@@ -11,7 +11,7 @@ from abc import abstractmethod
 from google.protobuf import json_format
 
 
-class DUTPrejobResponse(object):  # pragma: no cover
+class DUTPrejobResponse():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   def __init__(self, test_id, data):
@@ -50,7 +50,7 @@ class DUTPrejobResponse(object):  # pragma: no cover
     """
 
 
-class DUTTestResponse(object):  # pragma: no cover
+class DUTTestResponse():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   def __init__(self, test_id, data):
@@ -89,7 +89,7 @@ class DUTTestResponse(object):  # pragma: no cover
     """
 
 
-class DUTFetchCrashResponse(object):  # pragma: no cover
+class DUTFetchCrashResponse():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   def __init__(self, test_id, data):
@@ -103,7 +103,7 @@ class DUTFetchCrashResponse(object):  # pragma: no cover
     self.test_id = test_id
 
 
-class DUTResult(object):  # pragma: no cover
+class DUTResult():  # pragma: no cover
   __metaclass__ = ABCMeta
 
   def __init__(self, data):

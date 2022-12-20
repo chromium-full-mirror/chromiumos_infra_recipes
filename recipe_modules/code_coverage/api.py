@@ -9,7 +9,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 
-class CoverageFileSettings(object):
+class CoverageFileSettings():
   """Contains parameters used to drive different coverage upload workflows."""
 
   def __init__(self, should_clean, filter_coverage_to_cl_files,

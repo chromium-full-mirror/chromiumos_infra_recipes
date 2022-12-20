@@ -25,7 +25,7 @@ default_branch = 'main'
 default_ref = 'refs/heads/{}'.format(default_branch)
 
 
-class ManifestProject(object):
+class ManifestProject():
   """Information about a manifest.
 
   Attributes:

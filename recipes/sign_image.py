@@ -51,7 +51,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = SignImageProperties
 
 
-class _BucketBase(object):
+class _BucketBase():
 
   def __init__(self, bucket: str, base: str):
     self.bucket = bucket.strip('/')

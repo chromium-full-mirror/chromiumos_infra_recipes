@@ -85,7 +85,7 @@ def RunSteps(api, properties):
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
     # same key, knowing that the impl of this module calls dict.items().
-    class FakeDict(object):
+    class FakeDict():
 
       def __init__(self):
         pass

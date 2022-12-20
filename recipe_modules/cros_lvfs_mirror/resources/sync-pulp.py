@@ -75,7 +75,7 @@ except NameError:
   FileNotFoundError = IOError  # pylint: disable=redefined-builtin
 
 
-class Pulp(object):
+class Pulp():
 
   def __init__(self, url, existent):
     self.url = url

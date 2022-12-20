@@ -16,7 +16,7 @@ import subprocess
 import time
 
 
-class _Timer(object):
+class _Timer():
 
   def __init__(self):
     self._time = None

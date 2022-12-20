@@ -22,7 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BuildFactoryProperties
 
 
-class FactoryBuilder(object):
+class FactoryBuilder():
   """Class to contain useful information about the factory builder."""
 
   def __init__(self, api, props):

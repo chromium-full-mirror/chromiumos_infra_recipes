@@ -27,7 +27,7 @@ GCE_VM_PORT = '22'
 class TastExecApi(RecipeApi):
   """A module to execute tast commands."""
 
-  class TastInputs(object):
+  class TastInputs():
     """Common inputs for TastExecApi methods.
 
     Args:
@@ -60,7 +60,7 @@ class TastExecApi(RecipeApi):
       return 'gs://{}/{}/'.format(self.build_payload.artifacts_gs_bucket,
                                   self.build_payload.artifacts_gs_path)
 
-  class VmInfo(object):
+  class VmInfo():
     """Info about a VM that has been launched.
 
     Args:
