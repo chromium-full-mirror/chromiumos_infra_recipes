@@ -6,8 +6,8 @@
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 
+from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 
 DEPS = [
     'recipe_engine/assertions',

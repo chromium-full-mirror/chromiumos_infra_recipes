@@ -15,9 +15,9 @@ from collections import namedtuple
 from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.test_platform.request import Request

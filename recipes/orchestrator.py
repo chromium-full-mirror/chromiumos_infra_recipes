@@ -13,8 +13,8 @@ from typing import Callable, Dict
 
 from google.protobuf.json_format import MessageToDict
 
+from PB.chromiumos.checkpoint import RetryStep
 from PB.recipe_engine import result as result_pb2
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation

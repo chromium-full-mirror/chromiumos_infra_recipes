@@ -10,8 +10,9 @@ from typing import List
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
+from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties, RetryStep
+from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties
 
 STATUS_STARTED = "STARTED"
 STATUS_SUCCESS = "SUCCESS"

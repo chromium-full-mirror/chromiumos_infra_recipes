@@ -7,12 +7,12 @@ import copy
 
 from google.protobuf import json_format
 
+from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.recipe_engine.result import RawResult
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
 
 from recipe_engine import post_process

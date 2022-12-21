@@ -9,6 +9,7 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine.result import RawResult
@@ -17,7 +18,6 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure

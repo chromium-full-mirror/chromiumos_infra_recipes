@@ -1560,54 +1560,54 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#102)(self):**
+&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#103)(self):**
 
 Gets the BBIDs of the child builders that are image builders.
 
-&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#127)(self, builder: str):**
+&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#128)(self, builder: str):**
 
 Return the `checkpoint` module properties to set for the child builder.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#144)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#145)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns: (List["RetryStep"]) all the steps that are meant to be run.
 
-&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#114)(self):**
+&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#115)(self):**
 
 Returns the list of child builders that failed.
 
 Returns: (List[str]) names of child builders that failed, e.g.
   eve-release-main.
 
-&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#90)(self):**
+&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#91)(self):**
 
 Return whether the build is a retry build.
 
-&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#94)(self, step: 'RetryStep'):**
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#95)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#170)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#171)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#232)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#233)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#106)(self):**
+&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#107)(self):**
 
 Gets the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#219)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#220)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)

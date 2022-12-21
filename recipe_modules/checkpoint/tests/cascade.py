@@ -6,7 +6,7 @@
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 
-from PB.recipe_modules.chromeos.checkpoint.checkpoint import RetryStep
+from PB.chromiumos.checkpoint import RetryStep
 from PB.recipe_modules.chromeos.checkpoint.tests.cascade import TestProperties
 
 DEPS = [
