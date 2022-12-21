@@ -610,12 +610,6 @@ def GenTests(api):
       with_history=True, git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
 
-  yield api.orch_menu.test(
-      'lts-pupr-noop', data.ctp_normal,
-      api.post_check(post_process.DoesNotRun, 'run builds|schedule new builds'),
-      builder='release-R90-13816.B-cq-orchestrator', cq=True,
-      tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
-
   # Process-child
   yield api.orch_menu.test(
       'with-process-child', data.ctp_normal,
