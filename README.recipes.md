@@ -1594,7 +1594,7 @@ Return whether the step will be run in this retry.
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#233)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#236)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
@@ -1602,7 +1602,7 @@ Context to handle retry logic / status reporting.
 
 Gets the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#220)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#223)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)

@@ -185,6 +185,9 @@ class CheckpointApi(recipe_api.RecipeApi):
         raise StepFailure('could not fetch build %s' %
                           self._original_build_bbid)
 
+      self.m.easy.set_properties_step(retry_summary={},
+                                      step_name='update retry summary')
+
       presentation.links['previous build'] = self.m.buildbucket.build_url(
           build_id=self._original_build_bbid)
       presentation.logs['retry plan'] = json.dumps(

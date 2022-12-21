@@ -89,6 +89,14 @@
   },
   {
     "cmd": [],
+    "name": "RUNNING IN RETRY MODE.update retry summary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@retry_summary@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RUNNING IN RETRY MODE.verify previous build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
