@@ -259,7 +259,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         # need to do so before leaving the context.
         if (self._chroot_created and not self._dep_graph and
             self.m.workspace_util.patch_sets):
-          self.get_dep_graph([])
+          self.get_dep_graph()
 
   @contextlib.contextmanager
   def setup_workspace_and_chroot(self, no_chroot_timeout=False,
@@ -359,14 +359,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     return relevance != Relevance.POINTLESS
 
-  def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
-                                            packages=None):
+  def setup_sysroot_and_determine_relevance(self, with_sysroot=True):
     """Setup the sysroot for the builder and determine build relevance.
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
           (Some builders do not require a sysroot.)
-      packages (list[PackageInfo]): Used to override the list of packages.
 
     Returns:
       An object containing:
@@ -404,11 +402,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.metadata_json.upload_to_gs(config, [self.build_target],
                                           partial=True)
 
-    # TODO(crbug/1081828): After 2020-11-12, if there is no sysroot, that's ok.
-    # Note: the dependency graph requires a sysroot prior to
-    # crrev.com/c/2197226.
-    packages = packages or config.build.install_packages.packages
-    dep_graph = self.get_dep_graph(packages)
+    dep_graph = self.get_dep_graph()
 
     relevant = True
     # Only CQ and Postsubmit builders undergo a relevancy check.
@@ -453,18 +447,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if not relevant:
       self.m.buildbucket.hide_current_build_in_gerrit()
 
+    packages = self.config_or_default.build.install_packages.packages
     return _env_info(not relevant, packages)
 
-  def get_dep_graph(self, packages):
+  def get_dep_graph(self):
     """Fetch the dependency graph, and validate the SDK for reuse.
-
-    Args:
-      packages (list[PackageInfo]): list of packages.  Default is the list for
-          this build_target.
 
     Returns:
       The dependency graph from cros_relevance.get_dependency_graph.
     """
+    config = self.config_or_default
+    packages = config.build.install_packages.packages
+
     self._dep_graph = (
         self._dep_graph or self.m.cros_relevance.get_dependency_graph(
             sysroot=self.sysroot, chroot=self.chroot, packages=packages))
