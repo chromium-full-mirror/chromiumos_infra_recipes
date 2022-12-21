@@ -1199,14 +1199,13 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
+          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          [], 'https://chromium-review.googlesource.com', {}),
+          [], 'https://chromium-review.googlesource.com'),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
-          [], 'https://chrome-internal-review.googlesource.com', {}),
+          [], 'https://chrome-internal-review.googlesource.com'),
       api.post_check(post_process.DoesNotRun, 'outdated CLs'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
@@ -1235,10 +1234,10 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host', [],
-          'https://chromium-review.googlesource.com', {}),
+          'https://chromium-review.googlesource.com'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chrome-internal host', [],
-          'https://chrome-internal-review.googlesource.com', {}),
+          'https://chrome-internal-review.googlesource.com'),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
       api.post_check(
@@ -1361,8 +1360,7 @@ def GenTests(api: RecipeTestApi):
           value_dict),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
+          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
       api.post_check(
@@ -1389,8 +1387,7 @@ def GenTests(api: RecipeTestApi):
           changes, value_dict),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
+          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(
           post_process.StepSuccess,
@@ -1476,12 +1473,10 @@ def GenTests(api: RecipeTestApi):
           changes, value_dict),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
+          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          value_dict),
+          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.post_check(post_process.MustRun,
                      'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
   )

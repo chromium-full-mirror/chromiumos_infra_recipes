@@ -11,6 +11,7 @@ import enum
 import json
 import functools
 import re
+from typing import Any, Dict, List, Optional, Tuple
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
@@ -19,6 +20,11 @@ from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
+
+# ChangeInfo is a json representation of a single Gerrit change, as returned by
+# the Gerrit API. It is documented at:
+# https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+ChangeInfo = Dict[str, Any]
 
 
 class PatchSet():
@@ -204,22 +210,23 @@ class LabelConstraintType(enum.Enum):
 LabelConstraint = collections.namedtuple('LabelConstraint', ('label', 'type'))
 
 
-def _change_labels_satisfy_constraints(change_json, constraints):
-  """Determine whether the Gerrit change JSON meet the label constraints.
+def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
+                                          constraints: List[LabelConstraint]
+                                         ) -> bool:
+  """Return whether or not the Gerrit change JSON meet the label constraints.
 
   Args:
-    change_json (dict): JSON representing a Gerrit change, as returned by
-      api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
-    constraints (list[LabelConstraint]): The constraints to compare against the
-      change.
+    change_info: JSON-like dict representing a single Gerrit change, as returnedby
+      by api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
+    constraints: The constraints to compare against the change.
   """
   try:
-    change_labels = change_json['labels']
+    change_labels = change_info['labels']
   except KeyError as e:
     raise StepFailure(
         'Gerrit change JSON does not contain key `labels`. Maybe '
         'get_changes() was called without o_params=["LABELS"]?\n\n%s' %
-        change_json) from e
+        change_info) from e
   for constraint in constraints:
     try:
       label = change_labels[constraint.label.key]
@@ -385,7 +392,7 @@ class GerritApi(RecipeApi):
       return GerritChange(host=host, project=project, change=int(change),
                           patchset=int(patchset.lstrip('/')) if patchset else 0)
 
-    # Otherwise, it's a dumb one.
+    # Otherwise, it's a simple one.
     match = re.match(r'(?:https://)?([^/]+)/(\d+)', gerrit_change_url)
     assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
     host, change = match.groups()
@@ -730,7 +737,6 @@ class GerritApi(RecipeApi):
           change as well.
       project_path (Path): If set, will use this as the project path rather than
         any value inferred from the gerrit_change.
-
     """
     with self.m.step.nest('set CL %d description' %
                           gerrit_change.change) as pres:
@@ -787,33 +793,32 @@ class GerritApi(RecipeApi):
             if attempt == retries:
               raise ex
 
-  def query_changes(self, host, query_params, label_constraints=None):
-    """Query gerrit for the given changes.
+  def query_changes(self, host: str, query_params: List[Tuple[str, str]],
+                    label_constraints: Optional[List[LabelConstraint]] = None
+                   ) -> List[GerritChange]:
+    """Query gerrit for change meeting certain constraints, and return them.
 
     Args:
-      host (str): The Gerrit host to query.
-      query_params (list[(str, str)]): Query parameters as list of (key, value)
-          tuples to form a query as documented here:
+      host: The Gerrit host to query.
+      query_params: Query parameters as list of (key, value) tuples to form a
+          query, as documented here:
           https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
-      label_constraints (list[LabelConstraint]): Constraints on the changes'
-          labels, to be used as a filter before returning.
-
-    Returns:
-      list[GerritChange]: Changes that match the query.
+      label_constraints: Constraints on the changes' labels, to be used as a
+          filter before returning.
     """
+    HTTPS = 'https://'
     with self.m.step.nest('query %s' % host) as presentation:
       o_params = ['LABELS'] if label_constraints else None
       results = self.m.depot_tools_gerrit.get_changes(host, query_params,
                                                       o_params=o_params)
-      prefix = 'https://'
       if label_constraints:
         results = [
             r for r in results
-            if _change_labels_satisfy_constraints(r, label_constraints)
+            if _do_change_labels_satisfy_constraints(r, label_constraints)
         ]
       changes = [
           GerritChange(
-              host=host[len(prefix):] if host.startswith(prefix) else host,
+              host=host[len(HTTPS):] if host.startswith(HTTPS) else host,
               project=result['project'],
               change=int(result['_number']),
           ) for result in results

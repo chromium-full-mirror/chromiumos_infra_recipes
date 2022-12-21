@@ -55,33 +55,6 @@ gerrit_changes_json = [
 gerrit_changes_json_no_labels = copy.deepcopy(gerrit_changes_json)
 _ = [chg.pop('labels') for chg in gerrit_changes_json_no_labels]
 
-values_dict = {
-    91827:
-        dict(
-            status='NEW', created='2021-01-25 13:11:20.000000000',
-            change_id='Ideadbeef', project='chromium/src',
-            has_review_started=False, branch='main', subject='Overridden title',
-            revisions={
-                '184ebe53805e102605d11f6b143486d15c23a09c': {
-                    '_number': '23981',
-                    'commit': {
-                        'message': 'Overridden change commit message',
-                    }
-                }
-            }),
-    91828:
-        dict(
-            status='MERGED',
-            created='2021-02-25 13:11:20.000000000',
-            submitted='2021-02-26 13:11:20.000000000',
-            change_id='Ideadbeef02',
-            project='chromium/src',
-            has_review_started=True,
-            branch='main',
-            subject='Overridden title',
-        )
-}
-
 
 def RunSteps(api, expected_change_numbers, label_constraints):
   changes = api.gerrit.query_changes('https://chromium-review.googlesource.com',
@@ -106,7 +79,7 @@ def GenTests(api):
       'basic',
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json_no_labels,
-          'https://chromium-review.googlesource.com', values_dict),
+          'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827, 91828]),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
@@ -114,8 +87,7 @@ def GenTests(api):
   yield api.test(
       'require-cq-approved',
       api.gerrit.set_query_changes_response(
-          '', gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          values_dict),
+          '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827],
                      label_constraints=[require_cq_approved]),
       api.post_check(post_process.StatusSuccess),
@@ -124,8 +96,7 @@ def GenTests(api):
   yield api.test(
       'require-cq-unapproved',
       api.gerrit.set_query_changes_response(
-          '', gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          values_dict),
+          '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91828],
                      label_constraints=[require_cq_unapproved]),
       api.post_check(post_process.StatusSuccess),
@@ -135,7 +106,7 @@ def GenTests(api):
       'labels-not-present',
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json_no_labels,
-          'https://chromium-review.googlesource.com', values_dict),
+          'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
                      label_constraints=[require_cq_approved]),
       api.post_check(post_process.StepFailure,
@@ -145,8 +116,7 @@ def GenTests(api):
   yield api.test(
       'specific-label-missing',
       api.gerrit.set_query_changes_response(
-          '', gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          values_dict),
+          '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
                      label_constraints=[require_botcommit_approved]),
       api.post_check(post_process.StepFailure,
@@ -156,8 +126,7 @@ def GenTests(api):
   yield api.test(
       'invalid-constraint-type',
       api.gerrit.set_query_changes_response(
-          '', gerrit_changes_json, 'https://chromium-review.googlesource.com',
-          values_dict),
+          '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
                      label_constraints=[bogus_constraint_type]),
       api.post_check(post_process.StepFailure,

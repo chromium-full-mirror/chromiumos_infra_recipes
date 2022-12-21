@@ -5601,15 +5601,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#240)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#247)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#248)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#255)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#750)(self, gerrit_change, message=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#756)(self, gerrit_change, message=None):**
 
 Abandon the given change.
 
@@ -5617,7 +5617,7 @@ Args:
   gerrit_change (GerritChange): The change to abandon.
   message (str): Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#673)(self, gerrit_change, comment, project_path=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#680)(self, gerrit_change, comment, project_path=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -5630,7 +5630,7 @@ Args:
 Returns:
   str: The new message ref (primarily for testing).
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#430)(self, gerrit_changes, test_output_data=None):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#437)(self, gerrit_changes, test_output_data=None):**
 
 Checks if the provided changes can be merged onto their Git branches.
 
@@ -5640,7 +5640,7 @@ Args:
 Raises:
   StepFailure if the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#472)(self, project, reviewers=None, ccs=None, topic=None, ref=None, hashtags=None, project_path=None):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#479)(self, project, reviewers=None, ccs=None, topic=None, ref=None, hashtags=None, project_path=None):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -5664,7 +5664,7 @@ Args:
 Returns:
   GerritChange: The newly created change.
 
-&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#339)(self, change, include_files=False, test_output_data=None, include_commit_info=False):**
+&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#346)(self, change, include_files=False, test_output_data=None, include_commit_info=False):**
 
 Fetch and return PatchSet associated with the given GerritChange.
 
@@ -5680,7 +5680,7 @@ Args:
 Returns:
   PatchSet: The corresponding PatchSet.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#284)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#291)(self, gerrit_changes, include_files=False, include_commit_info=False, include_messages=False, test_output_data=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -5696,13 +5696,13 @@ Args:
 Returns:
   List[PatchSet]: List of PatchSets in requested order.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_patch\_sets](/recipe_modules/gerrit/api.py#255)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_patch\_sets](/recipe_modules/gerrit/api.py#262)(self):**
 
 The gerrit patches last fetched.
 
 These may or may not include files, but always include commit info.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#693)(self, gerrit_change, memoize=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#700)(self, gerrit_change, memoize=False):**
 
 Get the description of the given Gerrit change.
 
@@ -5713,7 +5713,7 @@ Args:
 Returns:
   str: The change description.
 
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#364)(self, gerrit_change_url):**
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#371)(self, gerrit_change_url):**
 
 Parse GerritChange proto from a gerrit change URL.
 
@@ -5727,7 +5727,7 @@ Args:
 Returns:
   GerritChange: The parsed proto.
 
-&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#394)(self, gerrit_change):**
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#401)(self, gerrit_change):**
 
 Transform a GerritChange proto into a Gerrit change URL.
 
@@ -5737,7 +5737,7 @@ Args:
 Returns:
   str: The Gerrit URL.
 
-&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#415)(self, gerrit_change):**
+&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#422)(self, gerrit_change):**
 
 Transform a GerritChange proto into a fully qualified host.
 
@@ -5747,22 +5747,19 @@ Args:
 Returns:
   str: The fully qualified Gerrit host.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#790)(self, host, query_params, label_constraints=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#796)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
-Query gerrit for the given changes.
+Query gerrit for change meeting certain constraints, and return them.
 
 Args:
-  host (str): The Gerrit host to query.
-  query_params (list[(str, str)]): Query parameters as list of (key, value)
-      tuples to form a query as documented here:
+  host: The Gerrit host to query.
+  query_params: Query parameters as list of (key, value) tuples to form a
+      query, as documented here:
       https://gerrit-review.googlesource.com/Documentation/user-search.html#search-operators
-  label_constraints (list[LabelConstraint]): Constraints on the changes'
-      labels, to be used as a filter before returning.
+  label_constraints: Constraints on the changes' labels, to be used as a
+      filter before returning.
 
-Returns:
-  list[GerritChange]: Changes that match the query.
-
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#721)(self, gerrit_change, description, amend_local=False, project_path=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#728)(self, gerrit_change, description, amend_local=False, project_path=None):**
 
 Set the description of the given Gerrit change.
 
@@ -5775,7 +5772,7 @@ Args:
   project_path (Path): If set, will use this as the project path rather than
     any value inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#621)(self, gerrit_change, labels, branch=None, ref=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#628)(self, gerrit_change, labels, branch=None, ref=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -5791,7 +5788,7 @@ Args:
 Returns:
   str: The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#553)(self, gerrit_change, labels):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#560)(self, gerrit_change, labels):**
 
 Set the given labels for the given Gerrit change.
   set_change_labels only works when the change exists in the local checkout.
@@ -5804,7 +5801,7 @@ Args:
 Returns:
   str: The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#764)(self, gerrit_change, retries=0, project_path=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#770)(self, gerrit_change, retries=0, project_path=None):**
 
 Submits the given change.
 
@@ -11431,7 +11428,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#86)(api, expected_change_numbers, label_constraints):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/query_changes.py#59)(api, expected_change_numbers, label_constraints):**
 ### *recipes* / [gerrit:examples/set\_change\_description](/recipe_modules/gerrit/examples/set_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/set_change_description.py#10): [gerrit](#recipe_modules-gerrit)

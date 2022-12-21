@@ -493,11 +493,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                   '_account_id': 1337
               }
           }
-        values_dict = {12345: {}}
         test_datas.append(
             api.gerrit.set_query_changes_response(
                 '.'.join(['commit changes', project.name]), changes_json,
-                project.review_host, values_dict, iteration=iteration))
+                project.review_host, iteration=iteration))
     return sum(test_datas[1:], test_datas[0])
 
   yield api.test('dont-commit', api.time.seed(1613694623.0),
