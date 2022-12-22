@@ -28,25 +28,25 @@ def RunSteps(api: RecipeApi):
 
   api.assertions.assertEqual(
       api.checkpoint.builder_retry_props('dedede-release-main'), {
-          'retry':
-              True,
-          'original_build_bbid':
-              '8922054662172514002',
-          'exec_steps': [
-              RetryStep.DEBUG_SYMBOLS, RetryStep.COLLECT_SIGNING,
-              RetryStep.PAYGEN
-          ],
+          'retry': True,
+          'original_build_bbid': '8922054662172514002',
+          'exec_steps': {
+              'steps': [
+                  RetryStep.DEBUG_SYMBOLS, RetryStep.COLLECT_SIGNING,
+                  RetryStep.PAYGEN
+              ]
+          },
       })
   api.assertions.assertEqual(
       api.checkpoint.builder_retry_props('eve-release-main'), {
-          'retry':
-              True,
-          'original_build_bbid':
-              '8922054662172514003',
-          'exec_steps': [
-              RetryStep.RUN_CHILDREN, RetryStep.RUN_FAILED_CHILDREN,
-              RetryStep.LAUNCH_TESTS, RetryStep.PAYGEN
-          ],
+          'retry': True,
+          'original_build_bbid': '8922054662172514003',
+          'exec_steps': {
+              'steps': [
+                  RetryStep.RUN_CHILDREN, RetryStep.RUN_FAILED_CHILDREN,
+                  RetryStep.LAUNCH_TESTS, RetryStep.PAYGEN
+              ]
+          },
       })
 
 

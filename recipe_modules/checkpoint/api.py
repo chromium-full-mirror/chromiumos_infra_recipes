@@ -139,7 +139,9 @@ class CheckpointApi(recipe_api.RecipeApi):
         'retry': True,
         'original_build_bbid': str(original_build_bbid),
         # Default to the generic exec_steps.
-        'exec_steps': self._builder_run_steps.get(builder, self._run_steps)
+        'exec_steps': {
+            'steps': self._builder_run_steps.get(builder, self._run_steps)
+        }
     }
 
   def cascade(self, requested_steps: List["RetryStep"]):

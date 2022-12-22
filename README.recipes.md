@@ -1569,7 +1569,7 @@ Gets the BBIDs of the child builders that are image builders.
 
 Return the `checkpoint` module properties to set for the child builder.
 
-&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#145)(self, requested_steps: List['RetryStep']):**
+&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#147)(self, requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
@@ -1590,11 +1590,11 @@ Return whether the build is a retry build.
 
 Return whether the step will be run in this retry.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#171)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#173)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#236)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#238)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
@@ -1602,7 +1602,7 @@ Context to handle retry logic / status reporting.
 
 Gets the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#223)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#225)(self, step: 'RetryStep', status: str):**
 
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
