@@ -804,7 +804,8 @@
       "@@@STEP_LOG_LINE@skylab_result@    \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@      {@@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.dummy_id\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_PASS\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"humanReadableSummary\": \"reason\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@      }@@@",
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
@@ -828,7 +829,8 @@
       "@@@STEP_LOG_LINE@skylab_result@      \"testCases\": [@@@",
       "@@@STEP_LOG_LINE@skylab_result@        {@@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.dummy_id\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_PASS\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_PASS\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"humanReadableSummary\": \"reason\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@        }@@@",
       "@@@STEP_LOG_LINE@skylab_result@      ]@@@",
       "@@@STEP_LOG_LINE@skylab_result@    }@@@",
@@ -842,7 +844,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkEEKwjAUROlCxA/VEly5FFymia0ieAwvUGob0kCSX/LTSu/oobTgskvfYpjVGxjYA4NtrIeIeTs4N1WmzRK2gxQ2fcDRkEGfJYd3Ag9NdyGaLqBTSDwqityiJtGgc+i58qMo5OXKZcFlKeQPvhAz57K8sbGLsZ+1FGvjrSLKGwx9rhG1Vd/uxDPgi9R/d49rWAVVt1NxghSD0cbXtprNbPGPD9B/VD8=\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytUMEKwjAUYwcVH0xlx+HJe9e6KYKf4Q9I3UpXaPtGXzfZP/pRbuBRPJlDCAQSEthDDpso+4hF0zs33k2zS/JlUJLQZ1tIYd0FHAwZ9JPxSuCm6cp53QZ0ColFRZFZ1MRrdA49U37gpTidmSiZqLj4gH2hGcequmRDG2M3x1KUxltFVNQYukIjaqsm7fgj4JPUf3sPK1hMS5uxZJBiMNp4ae9zcvbzlze1SVm3\"@@@"
     ]
   },
   {

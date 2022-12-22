@@ -1671,8 +1671,10 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
           else:
             test_verdict = Result.Autotest.TestCase.VERDICT_PASS
           test_cases.append(
-              Result.Autotest.TestCase(name=resp.data.test_case_id.value,
-                                       verdict=test_verdict))
+              Result.Autotest.TestCase(
+                  name=resp.data.test_case_id.value, verdict=test_verdict,
+                  human_readable_summary=_get_failure_reason_from_test_result(
+                      resp)))
       # Parse log data
       if ctr_result.gs_url:
         log_data.gs_url = ctr_result.gs_url
@@ -1762,6 +1764,24 @@ def _get_prejob_failure_reason_from_ctr_results(ctr_result):
 
   return ctr_api.provision_service.InstallFailure.Reason.Name(
       ctr_result.prejob_response.prejob_dut_responses[0].data.failure.reason)
+
+
+def _get_failure_reason_from_test_result(test_result):
+  """Return failure reason from ctr test result if any.
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+      * test_result (CrosToolRunnerTestDUTResponse): The result of a single test.
+    """
+
+  if not test_result:
+    return ""  # pragma: nocover
+  if not test_result.data:
+    return ""  # pragma: nocover
+  if not test_result.data.reason:
+    return ""  # pragma: nocover
+
+  return test_result.data.reason
 
 
 def RunSteps(api, properties):
