@@ -13,6 +13,7 @@ from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 CONFIG = "release/release_builders.textpb"
 STABILIZE_CONFIG = "release/stabilize_builders.textpb"
@@ -123,8 +124,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
         ccs=self._get_emails(self._ccs))
     if self._auto_submit:
       self.m.gerrit.set_change_labels(change, {
-          self.m.gerrit.Label.BOT_COMMIT: 1,
-          self.m.gerrit.Label.COMMIT_QUEUE: 2,
+          Label.BOT_COMMIT: 1,
+          Label.COMMIT_QUEUE: 2,
       })
 
   def update_config(self, branch):

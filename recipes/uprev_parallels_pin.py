@@ -18,6 +18,7 @@ import re
 from collections import namedtuple
 from typing import Dict, Optional
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
@@ -295,8 +296,8 @@ def commit_pin_uprev(api: RecipeApi, properties: UprevParallelsPinProperties,
           change = api.gerrit.create_change(project=project.name,
                                             topic=properties.topic)
           labels = {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
+              Label.BOT_COMMIT: 1,
+              Label.COMMIT_QUEUE: 2,
           }
           api.gerrit.set_change_labels(change, labels)
 

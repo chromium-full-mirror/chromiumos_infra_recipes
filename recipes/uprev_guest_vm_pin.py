@@ -31,6 +31,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -386,8 +387,8 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
           change = api.gerrit.create_change(project=project.name, topic=package)
 
           labels = {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
+              Label.BOT_COMMIT: 1,
+              Label.COMMIT_QUEUE: 2,
           }
           api.gerrit.set_change_labels(change, labels)
           api.gerrit.submit_change(change)

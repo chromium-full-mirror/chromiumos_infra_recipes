@@ -18,6 +18,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
 from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -133,7 +134,7 @@ def DoRunSteps(api, properties):
       # Create a CL, and submit if needed.
       change = api.gerrit.create_change(info.path, hashtags=[android_package])
       if submit_uprev:
-        api.gerrit.set_change_labels(change, {api.gerrit.Label.BOT_COMMIT: 1})
+        api.gerrit.set_change_labels(change, {Label.BOT_COMMIT: 1})
         api.gerrit.submit_change(change)
 
         # The dashboard takes the commit hash of the LKGB update we just published

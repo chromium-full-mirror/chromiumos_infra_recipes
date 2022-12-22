@@ -9,6 +9,7 @@ import re
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.cros_version.version import Version
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
 CHROMEOS_VERSION_FILE = 'chromeos/config/chromeos_version.sh'
@@ -203,8 +204,8 @@ class CrosVersionApi(RecipeApi):
               ref=self.m.git.get_branch_ref(push_branch),
               project_path=overlay_path)
           labels = {
-              self.m.gerrit.Label.BOT_COMMIT: 1,
-              self.m.gerrit.Label.VERIFIED: 1,
+              Label.BOT_COMMIT: 1,
+              Label.VERIFIED: 1,
           }
           self.m.gerrit.set_change_labels_remote(change, labels)
           self.m.gerrit.submit_change(change, project_path=overlay_path)

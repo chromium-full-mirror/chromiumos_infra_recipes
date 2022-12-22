@@ -7,7 +7,7 @@ import copy
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
-from RECIPE_MODULES.chromeos.gerrit.api import Label, LabelConstraint, LabelConstraintType
+from RECIPE_MODULES.chromeos.gerrit.api import Label, LabelConstraint, LabelConstraintKind
 
 DEPS = [
     'recipe_engine/assertions',
@@ -68,12 +68,12 @@ def RunSteps(api, expected_change_numbers, label_constraints):
 def GenTests(api):
   # Define constraints
   require_cq_approved = LabelConstraint(label=Label.COMMIT_QUEUE,
-                                        type=LabelConstraintType.APPROVED)
+                                        kind=LabelConstraintKind.APPROVED)
   require_cq_unapproved = LabelConstraint(label=Label.COMMIT_QUEUE,
-                                          type=LabelConstraintType.UNAPPROVED)
+                                          kind=LabelConstraintKind.UNAPPROVED)
   require_botcommit_approved = LabelConstraint(
-      label=Label.BOT_COMMIT, type=LabelConstraintType.APPROVED)
-  bogus_constraint_type = LabelConstraint(label=Label.COMMIT_QUEUE, type=-1)
+      label=Label.BOT_COMMIT, kind=LabelConstraintKind.APPROVED)
+  bogus_constraint_type = LabelConstraint(label=Label.COMMIT_QUEUE, kind=-1)
 
   yield api.test(
       'basic',

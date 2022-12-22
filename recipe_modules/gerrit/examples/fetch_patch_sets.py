@@ -5,6 +5,9 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
+from recipe_engine import post_process
+from recipe_engine.recipe_api import InfraFailure
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
@@ -14,8 +17,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-step_name = 'testing'
-changes = [
+CHANGES = [
     GerritChange(host='chromium-review.googlesource.com', change=91827,
                  patchset=1),
     GerritChange(host='example.com', change=2, patchset=3),
@@ -89,11 +91,9 @@ def _get_values_dict(api):
 
 
 def RunSteps(api):
-  # TODO(evanhernandez): These tests could use some work.
-
   with api.step.nest('test fetch_patch_sets'):
-    patches = api.gerrit.fetch_patch_sets(changes)
-  api.assertions.assertEqual(len(patches), len(changes))
+    patches = api.gerrit.fetch_patch_sets(CHANGES)
+  api.assertions.assertEqual(len(patches), len(CHANGES))
 
   values_dict = _get_values_dict(api)
   for patch in patches:
@@ -124,7 +124,7 @@ def RunSteps(api):
                      project=patch.project, patchset=patch.patch_set))
 
   with api.step.nest('test fetch_patch_sets_from_change'):
-    for change, patch in zip(changes, patches):
+    for change, patch in zip(CHANGES, patches):
       patch_set = api.gerrit.fetch_patch_set_from_change(change)
       api.assertions.assertEqual(patch_set.change_id, patch.change_id)
       values = values_dict.get(patch.change_id,
@@ -155,19 +155,36 @@ def RunSteps(api):
   api.assertions.assertEqual(patch.git_fetch_ref, 'refs/changes/27/91827/1')
 
   # Missing result
-  try:
-    api.gerrit.fetch_patch_sets(changes, test_output_data={'changes': [{}]})
-  except api.step.StepFailure:
-    pass
+  with api.assertions.assertRaises(api.step.StepFailure):
+    api.gerrit.fetch_patch_sets(CHANGES, test_output_data={'changes': [{}]})
 
   # Missing result
-  try:
-    with api.step.nest('test fetch_patch_sets_from_change missing'):
-      # Fetch for wrong patchset. Should raise an error.
-      change = GerritChange(host='google.com', change=2, patchset=4)
+  with api.step.nest('test fetch_patch_sets_from_change missing'):
+    # Fetch for wrong patchset. Should raise an error.
+    change = GerritChange(host='google.com', change=2, patchset=4)
+    with api.assertions.assertRaises(api.step.StepFailure):
       api.gerrit.fetch_patch_set_from_change(change)
-  except api.step.StepFailure:
-    pass
+
+  # Missing commit info
+  with api.step.nest('test fetch_patch_sets without commit_info'):
+    test_response = {
+        'changes': [{
+            'host': 'https://chromium-review.googlesource.com',
+            'change_number': 12345,
+            'patch_set': 1,
+            'info': {
+                '_number': 12345,
+            },
+            'revision_info': {
+                '_number': 1,
+            },
+        }]
+    }
+    patch_sets = api.gerrit.fetch_patch_sets(CHANGES,
+                                             test_output_data=test_response)
+    patch_set = patch_sets[0]
+    with api.assertions.assertRaises(InfraFailure):
+      _ = patch_set.commit_info
 
   api.gerrit.test_api.test_patch_set()
 
@@ -176,11 +193,12 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.gerrit.set_gerrit_fetch_changes_response('test fetch_patch_sets',
-                                                   changes,
+                                                   CHANGES,
                                                    _get_values_dict(api)),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'test fetch_patch_sets_from_change', changes, _get_values_dict(api)),
+          'test fetch_patch_sets_from_change', CHANGES, _get_values_dict(api)),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'test fetch_patch_sets_from_change missing', changes,
+          'test fetch_patch_sets_from_change missing', CHANGES,
           _get_values_dict(api)),
+      api.post_check(post_process.StatusSuccess),
   )

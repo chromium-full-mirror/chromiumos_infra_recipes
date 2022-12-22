@@ -5,6 +5,7 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 DEPS = [
     'recipe_engine/assertions',
@@ -28,8 +29,8 @@ def RunSteps(api):
       patchset=3,
   )
   labels = {
-      api.gerrit.Label.CODE_REVIEW: 2,
-      api.gerrit.Label.VERIFIED: 1,
+      Label.CODE_REVIEW: 2,
+      Label.VERIFIED: 1,
   }
   ref = api.gerrit.set_change_labels(gerrit_change, labels)
   api.assertions.assertEqual(ref,

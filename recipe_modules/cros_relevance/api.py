@@ -536,7 +536,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Returns the union of all paths in the list of patchsets.
 
     Args:
-      patch_sets (List[gerrit.PatchSet]): List of Gerrit Patchsets to be applied
+      patch_sets (List[PatchSet]): List of Gerrit Patchsets to be applied
         to the build, if any.
 
     Returns:
@@ -560,7 +560,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     Args:
       sysroot (Sysroot): The Sysroot being used.
       chroot (chromiumos.Chroot): The chroot it is being run in.
-      patch_sets (List[gerrit.PatchSet]): The changes applied to the build.
+      patch_sets (List[PatchSet]): The changes applied to the build.
         Used to determine the affected paths. If empty / None returns package
         dependencies for all paths.
       packages (list[chromiumos.PackageInfo]): The list of packages for which to

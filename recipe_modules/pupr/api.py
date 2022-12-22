@@ -139,7 +139,7 @@ class PuprApi(recipe_api.RecipeApi):
     """Examine open CLs for the HASHTAG_FREEZE_RETRIES hashtag.
 
     Args:
-      changes (List[gerrit.PatchSet]): List of CLs.
+      changes (List[PatchSet]): List of CLs.
 
     Returns:
       bool: Whether or not a HASHTAG_FREEZE_RETRIES hashtag is present.
@@ -164,7 +164,7 @@ class PuprApi(recipe_api.RecipeApi):
         follows when no CL exists. If FULL_RUN, we will look for any successful
         dry runs, allowing us to retry the latest one as a full run. If no
         successful dry run is found or if DRY_RUN, we will look for a failed CL.
-      open_cls (List[gerrit.PatchSet]): List of CLs.
+      open_cls (List[PatchSet]): List of CLs.
 
     Returns:
       (PatchSet, int, str, bool): (The CL to be retried (or None if no retry),

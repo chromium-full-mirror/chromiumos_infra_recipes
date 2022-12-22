@@ -28,7 +28,7 @@ from recipe_engine.recipe_test_api import StepTestData
 from recipe_engine.recipe_test_api import TestData
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
-from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintType
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintKind
 
 
 DEPS = [
@@ -196,7 +196,7 @@ class RepoProject():
       api: The recipe modules API.
     """
     cq_unapproved_constraint = LabelConstraint(
-        label=Label.COMMIT_QUEUE, type=LabelConstraintType.UNAPPROVED)
+        label=Label.COMMIT_QUEUE, kind=LabelConstraintKind.UNAPPROVED)
     changes = self._get_stardoctor_cls(
         api, label_constraints=[cq_unapproved_constraint])
     for change in changes:
@@ -212,7 +212,7 @@ class RepoProject():
       Open StarDoctor CLs currently CQ-approved.
     """
     cq_approved_constraint = LabelConstraint(label=Label.COMMIT_QUEUE,
-                                             type=LabelConstraintType.APPROVED)
+                                             kind=LabelConstraintKind.APPROVED)
     return self._get_stardoctor_cls(api,
                                     label_constraints=[cq_approved_constraint])
 

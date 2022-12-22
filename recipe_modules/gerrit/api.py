@@ -5,38 +5,47 @@
 
 """APIs for managing Gerrit changes."""
 
-import collections
 from datetime import timedelta
 import enum
 import json
 import functools
 import re
-from typing import Any, Dict, List, Optional, Tuple
+import typing
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.config_types import Path
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
 
-# ChangeInfo is a json representation of a single Gerrit change, as returned by
+# JSONObject is a JSON object: a dict where all keys are strings, and the types
+# of the values vary (and can themselves be JSONObject).
+# The Gerrit API uses lots of these: for example, FileInfo and ChangeInfo at:
+# https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html
+JSONObject = Dict[str, Any]
+
+# ChangeInfo is a JSON representation of a single Gerrit change, as returned by
 # the Gerrit API. It is documented at:
 # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
-ChangeInfo = Dict[str, Any]
+ChangeInfo = JSONObject
 
 
-class PatchSet():
+class PatchSet:
   """PatchSet represents a single Gerrit patchset."""
 
   INFO_ATTRS = ('project', 'branch', 'subject')
 
-  def __init__(self, change):
+  def __init__(self, change: JSONObject):
     """Initialize PatchSet.
 
     Args:
-      change (dict): Change data as returned by gerrit-fetch-changes.
+      change: Change data as returned by gerrit-fetch-changes.
     """
     self.host = change['host']
     self._change_info = change['info']
@@ -44,8 +53,8 @@ class PatchSet():
     self._patch_set = self._rev_info.get('_number', 0)
 
   @property
-  def short_host(self):
-    """Returns the "short host" name for this PatchSet.
+  def short_host(self) -> str:
+    """Return the "short host" name for this PatchSet.
 
     This will be the full host name if it does not match a common host suffix.
     """
@@ -57,58 +66,58 @@ class PatchSet():
     return host
 
   @property
-  def project(self):
-    """Returns the PatchSet project."""
+  def project(self) -> str:
+    """Return the PatchSet's project."""
     return self._change_info['project']
 
   @property
-  def current_revision(self):
-    """Returns the PatchSet current_revision."""
+  def current_revision(self) -> str:
+    """Return the PatchSet's current_revision."""
     return self._change_info['current_revision']
 
   @property
-  def branch(self):
-    """Returns the PatchSet branch."""
+  def branch(self) -> str:
+    """Return the PatchSet's branch."""
     return self._change_info['branch']
 
   @property
-  def subject(self):
-    """Returns the PatchSet subject."""
+  def subject(self) -> str:
+    """Return the PatchSet's subject."""
     return self._change_info['subject']
 
   @property
   def change_id(self) -> int:
-    """Returns the int Change Number."""
+    """Return the Patch Set's change number."""
     return self._change_info['_number']
 
   @property
-  def display_id(self):
-    """Returns a unique ID for this PatchSet for UI purposes."""
-    return '%s:%d' % (self.short_host, self.change_id)
+  def display_id(self) -> str:
+    """Return a unique ID for this PatchSet for UI purposes."""
+    return f'{self.short_host}:{self.change_id}'
 
   @property
-  def display_url(self):
-    """Returns a URL where this PatchSet can be viewed."""
-    return 'https://%s/c/%d' % (self.host, self.change_id)
+  def display_url(self) -> str:
+    """Return a URL where this PatchSet can be viewed."""
+    return f'https://{self.host}/c/{self.change_id}'
 
   @property
   def created(self) -> str:
-    """Returns the date string with when PatchSet was created."""
+    """Return the date string with when PatchSet was created."""
     return self._change_info['created']
 
   @property
   def updated(self) -> str:
-    """Returns the date string with when PatchSet was last updated."""
+    """Return the date string with when PatchSet was last updated."""
     return self._change_info['updated']
 
   @property
-  def patch_set(self):
-    """Returns the int patch set number for this PatchSet."""
+  def patch_set(self) -> int:
+    """Return the patch set number for this PatchSet."""
     return self._patch_set
 
   @property
-  def submitted(self) -> str:
-    """Returns the date string with when PatchSet was submitted (merged).
+  def submitted(self) -> Optional[str]:
+    """Return the date string with when this PatchSet was submitted (merged).
 
     Returns None if the PatchSet hasn't been merged.
 
@@ -117,18 +126,18 @@ class PatchSet():
     return self._change_info.get('submitted', None)
 
   @property
-  def hashtags(self):
-    """Returns the hashtags associated with this PatchSet."""
+  def hashtags(self) -> List[str]:
+    """Return the hashtags associated with this PatchSet."""
     return self._change_info['hashtags']
 
   @property
-  def messages(self):
-    """Returns the messages associated with this PatchSet."""
+  def messages(self) -> Optional[List[JSONObject]]:
+    """Return the messages associated with this PatchSet."""
     return self._change_info['messages']
 
   @property
-  def git_fetch_url(self):
-    """Returns a URL where 'git fetch' can access this PatchSet."""
+  def git_fetch_url(self) -> str:
+    """Return a URL where `git fetch` can access this PatchSet."""
     url = self._rev_info.get('fetch', {}).get('http', {}).get('url')
     if url is None:
       # No explicit fetch URL; build one ourselves.
@@ -136,8 +145,8 @@ class PatchSet():
     return url
 
   @property
-  def git_fetch_ref(self):
-    """Returns a ref where 'git fetch' can access this PatchSet."""
+  def git_fetch_ref(self) -> str:
+    """Return a ref where `git fetch` can access this PatchSet."""
     ref = self._rev_info.get('fetch', {}).get('http', {}).get('ref')
     if ref is None:
       # No explicit fetch ref; use the RevisionInfo ref.
@@ -145,8 +154,8 @@ class PatchSet():
     return ref
 
   @property
-  def file_infos(self):
-    """Returns a dict of {<path>: <FileInfo>}.
+  def file_infos(self) -> Optional[Dict[str, JSONObject]]:
+    """Return a dict of {<path>: <FileInfo>} for all files modified by this PS.
 
     Will return None if file info wasn't requested. See `include_files` on
     `gerrit.fetch_patch_sets`.
@@ -156,24 +165,29 @@ class PatchSet():
     return self._rev_info.get('files')
 
   @property
-  def commit_info(self):
-    """Returns the CommitInfo for a patchet.
-
-    Will return None if commit info wasn't requested. See `include_commit_info`
-    on `gerrit.fetch_patch_sets`.
+  def commit_info(self) -> JSONObject:
+    """Return the CommitInfo for this PatchSet.
 
     See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#commit-info
+
+    Raises:
+      InfraFailure: If commit info wasn't requested when the patch set was
+      fetched. See `include_commit_info` on `gerrit.fetch_patch_sets`.
     """
-    return self._rev_info.get('commit')
+    if 'commit' not in self._rev_info:
+      raise InfraFailure(
+          f'No commit info for PatchSet {self.display_id}. '
+          'Try adding include_commit_info=True into gerrit.fetch_patch_sets().')
+    return self._rev_info['commit']
 
   def to_gerrit_change_proto(self) -> GerritChange:
-    """Returns a GerritChange proto constructed from this patchset."""
+    """Return a GerritChange proto constructed from this patchset."""
     return GerritChange(host=self.host, change=self.change_id,
                         project=self.project, patchset=self.patch_set)
 
 
 class Label(enum.Enum):
-  """Describes some valid Gerrit labels. Not necessarily exhaustive."""
+  """Describe some valid Gerrit labels. Not necessarily exhaustive."""
 
   # Whether or not the change can skip submit approvals.
   BOT_COMMIT = 1
@@ -189,25 +203,25 @@ class Label(enum.Enum):
   VERIFIED = 4
 
   @property
-  def key(self):
-    # FOO_BAR must be Foo-Bar when set via Gerrit.
+  def key(self) -> str:
+    """Return the label in a format readable by the Gerrit API.
+
+    Gerrit expects labels to be in hyphenated camel case: Foo-Bar, Bot-Commit.
+    """
     return '-'.join(
         [word.title() for word in self.name.split('_') if word.strip()])
 
 
-class LabelConstraintType(enum.Enum):
-  """When querying changes, types of constraint one can apply to a label."""
+class LabelConstraintKind(enum.Enum):
+  """When querying changes, kinds of constraint one can apply to a label."""
   APPROVED = 1
   UNAPPROVED = 2
 
 
-# LabelConstraints enable recipes to specify constraints when querying Gerrit
-# regarding the status of votes on labels: for example, requiring that a label
-# be approved or unapproved.
-# Args:
-#   label (Label)
-#   type (LabelConstraintType)
-LabelConstraint = collections.namedtuple('LabelConstraint', ('label', 'type'))
+class LabelConstraint(NamedTuple):
+  """Constraint for Gerrit query results by label status, like (un)approved."""
+  label: Label
+  kind: LabelConstraintKind
 
 
 def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
@@ -216,7 +230,7 @@ def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
   """Return whether or not the Gerrit change JSON meet the label constraints.
 
   Args:
-    change_info: JSON-like dict representing a single Gerrit change, as returnedby
+    change_info: JSON-like dict representing a single Gerrit change, as returned
       by api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
     constraints: The constraints to compare against the change.
   """
@@ -233,53 +247,36 @@ def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
     except KeyError as e:
       raise StepFailure('Gerrit change labels do not contain key %s: %s' %
                         (constraint.label.key, change_labels)) from e
-    if constraint.type == LabelConstraintType.APPROVED:
+    if constraint.kind == LabelConstraintKind.APPROVED:
       if 'approved' not in label:
         return False
-    elif constraint.type == LabelConstraintType.UNAPPROVED:
+    elif constraint.kind == LabelConstraintKind.UNAPPROVED:
       if 'approved' in label:
         return False
     else:
-      raise StepFailure('Unexpected LabelConstraintType: %d' % constraint.type)
+      raise StepFailure(f'Unexpected LabelConstraintKind: {constraint.kind}')
   return True
 
 
 class GerritApi(RecipeApi):
   """A module for Gerrit helpers."""
 
-  PatchSet = PatchSet
-  Label = Label
-  LabelConstraintType = LabelConstraintType
-  LabelConstraint = LabelConstraint
-
   def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
     super().__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
-    self._gerrit_patch_sets = None
     self._GET_CHANGE_DESCRIPTION_CACHE = {}
 
-  @property
-  def gerrit_patch_sets(self):
-    """The gerrit patches last fetched.
+  def _gerrit_fetch_changes(self, request: JSONObject,
+                            gerrit_changes: List[GerritChange],
+                            test_output_data: Optional[Callable] = None
+                           ) -> JSONObject:
+    """Call the gerrit-fetch-changes support tool directly.
 
-    These may or may not include files, but always include commit info.
-    """
-    if self._gerrit_patch_sets is None:
-      self.fetch_patch_sets(self.m.src_state.gerrit_changes,
-                            include_commit_info=True)
-    return self._gerrit_patch_sets
-
-  def _gerrit_fetch_changes(self, request, gerrit_changes,
-                            test_output_data=None):
-    """Call gerrit-fetch-changes support tool.
-
-    Args:
-      request (dict): Input data.
-      test_output_data (dict): Test output for gerrit-fetch-changes.
+    This tool is located at infra/recipes/support/gerrit-fetch-changes/.
 
     Returns:
-      dict: Output data.
+      The JSON dict outputted by gerrit-fetch-changes.
     """
     if test_output_data is None:
       test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(
@@ -288,22 +285,24 @@ class GerritApi(RecipeApi):
                                test_output_data=test_output_data,
                                timeout=10 * 60)
 
-  def fetch_patch_sets(self, gerrit_changes, include_files=False,
-                       include_commit_info=False, include_messages=False,
-                       test_output_data=None):
+  def fetch_patch_sets(
+      self, gerrit_changes: List[GerritChange], include_files: bool = False,
+      include_commit_info: bool = False, include_messages: bool = False,
+      test_output_data: Optional[Callable] = None) -> List[PatchSet]:
     """Fetch and return PatchSets from Gerrit.
 
-    The step fails if any patch set is not found.
-
     Args:
-      gerrit_changes (List[GerritChange]): Buildbucket GerritChanges to fetch.
-      include_files (bool): If True, include information about changed files.
-      include_commit_info (bool): If True, include information about the commit.
-      include_messages (bool): If True, include messages attached to the commit.
-      test_output_data (dict): Test output for gerrit-fetch-changes.
+      gerrit_changes: Buildbucket GerritChanges to fetch.
+      include_files: If True, include information about changed files.
+      include_commit_info: If True, include information about the commit.
+      include_messages: If True, include messages attached to the commit.
+      test_output_data: Test output for gerrit-fetch-changes.
 
     Returns:
-      List[PatchSet]: List of PatchSets in requested order.
+      List of PatchSets in requested order.
+
+    Raises:
+      StepFailure: If any of the requested patch sets is not found.
     """
     requests = []
     for gerrit_change in gerrit_changes:
@@ -339,26 +338,25 @@ class GerritApi(RecipeApi):
               json.dumps(r, sort_keys=True)) for r in missing_responses
       ]
       raise StepFailure('missing gerrit patch(es)')
-    if include_commit_info:
-      self._gerrit_patch_sets = patch_sets
     return patch_sets
 
-  def fetch_patch_set_from_change(self, change, include_files=False,
-                                  test_output_data=None,
-                                  include_commit_info=False):
+  def fetch_patch_set_from_change(self, change: GerritChange,
+                                  include_files: bool = False,
+                                  include_commit_info: bool = False,
+                                  test_output_data: Optional[Callable] = None
+                                 ) -> PatchSet:
     """Fetch and return PatchSet associated with the given GerritChange.
 
     Assumes that change.patchset is set (which is not always the case).
-    The step fails if the specific patch set is not found.
 
     Args:
-      gerrit_changes (GerritChange): Buildbucket GerritChange to fetch.
-      include_files (bool): If True, include information about changed files.
-      test_output_data (dict): Test output for gerrit-fetch-changes.
-      include_commit_info (bool): If True, include information about the commit.
+      gerrit_changes: Buildbucket GerritChange to fetch.
+      include_files: If True, include information about changed files.
+      test_output_data: Test output for gerrit-fetch-changes.
+      include_commit_info: If True, include information about the commit.
 
-    Returns:
-      PatchSet: The corresponding PatchSet.
+    Raises:
+      StepFailure: If the requested patch set is not found.
     """
     patch_sets = self.fetch_patch_sets([change], include_files=include_files,
                                        test_output_data=test_output_data,
@@ -368,18 +366,18 @@ class GerritApi(RecipeApi):
       raise StepFailure('missing gerrit patch')
     return patch_sets[0]
 
-  def parse_gerrit_change(self, gerrit_change_url):
-    """Parse GerritChange proto from a gerrit change URL.
+  def parse_gerrit_change(self, gerrit_change_url: str) -> GerritChange:
+    """Return a GerritChange proto, parsed from the gerrit change URL.
 
-    This function expects the URL to be formatted as:
+    This function expects the URL to be in one of these formats:
 
-      https://<host>-review.googlesource.com/c/<project>/+/<change number>
+      https://<host>/c/<project>/+/<change-number>
+      https://<host>/<change-number>
 
-    Args:
-      gerrit_change_url (str): The change URL.
-
-    Returns:
-      GerritChange: The parsed proto.
+    ...where <host> is something like 'chromium-review.googlesource.com',
+    <project> is something like 'chromiumos/chromite',
+    and <change-number> is something like 12345.
+    The https:// is optional.
     """
     assert gerrit_change_url, 'gerrit change URL must be nonempty'
     gerrit_change_url = gerrit_change_url.rstrip('/')
@@ -392,56 +390,45 @@ class GerritApi(RecipeApi):
       return GerritChange(host=host, project=project, change=int(change),
                           patchset=int(patchset.lstrip('/')) if patchset else 0)
 
-    # Otherwise, it's a simple one.
+    # Otherwise, it's a short one.
     match = re.match(r'(?:https://)?([^/]+)/(\d+)', gerrit_change_url)
     assert match, 'malformed gerrit change URL: %s' % gerrit_change_url
     host, change = match.groups()
     return GerritChange(host=host, change=int(change))
 
-  def parse_gerrit_change_url(self, gerrit_change):
-    """Transform a GerritChange proto into a Gerrit change URL.
-
-    Args:
-      gerrit_change (GerritChange): The change in question.
-
-    Returns:
-      str: The Gerrit URL.
-    """
+  def parse_gerrit_change_url(self, gerrit_change: GerritChange) -> str:
+    """Return a Gerrit change URL, parsed from a GerritChange proto."""
     assert gerrit_change.host, 'found GerritChange with no host'
     assert gerrit_change.change, 'found GerritChange with no change number'
 
     qualified_host = self.parse_qualified_gerrit_host(gerrit_change)
-    if gerrit_change.project:
-      url = '%s/c/%s/+/%d' % (qualified_host, gerrit_change.project.strip('/'),
-                              gerrit_change.change)
-      if gerrit_change.patchset:
-        url = '%s/%d' % (url, gerrit_change.patchset)
-      return url
-    return '%s/%d' % (qualified_host, gerrit_change.change)
+    if not gerrit_change.project:
+      return f'{qualified_host}/{gerrit_change.change}'
+    project = gerrit_change.project.strip('/')
+    url = f'{qualified_host}/c/{project}/+/{gerrit_change.change}'
+    if gerrit_change.patchset:
+      url = f'{url}/{gerrit_change.patchset}'
+    return url
 
-  def parse_qualified_gerrit_host(self, gerrit_change):
-    """Transform a GerritChange proto into a fully qualified host.
-
-    Args:
-      gerrit_change (GerritChange): The change in question.
-
-    Returns:
-      str: The fully qualified Gerrit host.
-    """
+  def parse_qualified_gerrit_host(self, gerrit_change: GerritChange) -> str:
+    """Return a fully qualified host parsed from a GerritChange proto."""
     host = gerrit_change.host
     for prefix in ('http://', 'https://'):
       if host.startswith(prefix):
         host = host[len(prefix):]
     return 'https://' + host
 
-  def assert_changes_submittable(self, gerrit_changes, test_output_data=None):
-    """Checks if the provided changes can be merged onto their Git branches.
+  def assert_changes_submittable(
+      self, gerrit_changes: List[GerritChange],
+      test_output_data: Union[Callable, Dict, List, None] = None):
+    """Check whether the given changes can be merged onto their Git branches.
 
     Args:
-      gerrit_changes (list(common_pb2.GerritChange)): the changes to check
+      gerrit_changes: The changes to check.
+      test_output_data: Mock response for the git-test-submit support tool.
 
     Raises:
-      StepFailure if the changes cannot be merged.
+      StepFailure if any of the changes cannot be merged.
     """
     with self.m.step.nest('check for merge conflicts') as presentation:
       changes = []
@@ -476,29 +463,30 @@ class GerritApi(RecipeApi):
       presentation.step_text = 'confirmed no merge conflicts'
       return
 
-  def create_change(self, project, reviewers=None, ccs=None, topic=None,
-                    ref=None, hashtags=None, project_path=None):
+  def create_change(self, project: Union[str, Path],
+                    reviewers: Optional[List[str]] = None,
+                    ccs: Optional[List[str]] = None,
+                    topic: Optional[str] = None, ref: Optional[str] = None,
+                    hashtags: Optional[List[str]] = None,
+                    project_path: Path = None) -> GerritChange:
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
     is always used as the CL description.
 
     Args:
-      project (str|Path): Any path within the project of interest, or the
-        project name.
-      reviewers (list[str]): List of reviewer emails. If specified, gerrit will
-          email the reviewers.
-      ccs (list[str]): List of cc emails. If specified, gerrit will cc the
-          individuals.
-      topic (str): Topic to set for the CL.
+      project: Any path within the project of interest, or the project name.
+      reviewers: List of emails to mark as reviewers on Gerrit.
+      ccs: List of emails to mark as cc on Gerrit.
+      topic: Topic to set for the CL.
       ref: --target-branch argument to be passed to git cl upload. Should be
-        a full git ref, e.g. refs/heads/main (NOT just 'main').
-      hashtags (list[str]): List of hashtags to set for the CL.
-      project_path (Path): If set, will use this as the project path rather than
-        any value inferred from the gerrit_change.
+        a full git ref, such as 'refs/heads/main' -- NOT just 'main'.
+      hashtags: List of hashtags to set for the CL.
+      project_path: If set, will use this as the project path rather than any
+        value inferred from the gerrit_change.
 
     Returns:
-      GerritChange: The newly created change.
+      The newly created change.
     """
     with self.m.step.nest('create gerrit change for %s' % project) as pres:
       project_info = None
@@ -557,40 +545,42 @@ class GerritApi(RecipeApi):
         change.project = project_info.name if project_info else project
         return change
 
-  def set_change_labels_remote(self, gerrit_change, labels):
+  def set_change_labels_remote(self, gerrit_change: GerritChange,
+                               labels: Dict[Label, int]) -> str:
     """Set the given labels for the given Gerrit change.
-      set_change_labels only works when the change exists in the local checkout.
-      This function should be used in other cases.
+
+    set_change_labels only works when the change exists in the local checkout.
+    This function should be used in other cases.
 
     Args:
-      gerrit_change (GerritChange): The change of interest.
-      labels (dict): Mapping from label (Label) to value (int).
+      gerrit_change: The change of interest.
+      labels: Mapping from label to value.
 
     Returns:
-      str: The applied labels (primarily for testing).
+      The applied labels (primarily for testing).
     """
-    # Convert Labels to strs so labels can be easily used outside of gerrit module
-    labels = {label.key: value for label, value in labels.items()}
+    # Convert Labels to strings so they can be easily used outside this module.
+    str_labels = {label.key: value for label, value in labels.items()}
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
-      pres.logs['labels'] = self.m.json.dumps(labels)
+      pres.logs['labels'] = self.m.json.dumps(str_labels)
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
       change_num = gerrit_change.change
 
-      applied_labels = self._do_set_change_labels(change_num, labels,
+      applied_labels = self._do_set_change_labels(change_num, str_labels,
                                                   gerrit_change.host)
       return applied_labels
 
   @exponential_retry(retries=5, delay=timedelta(seconds=5))
-  def _do_set_change_labels(self, change_num, labels, gerrit_host,
-                            test_output_data=None):
+  def _do_set_change_labels(self, change_num: int, labels: Dict[Label, int],
+                            gerrit_host: str,
+                            test_output_data: Optional[Dict] = None) -> str:
     """Set the labels on a gerrit change using Gerrit and Gitiles REST API.
 
     Args:
-      change_num (int): The number of the change to label.
-      labels (dict): Mapping from label (Label) to value (int).
-      gerrit_host (str): Base URL to curl against.
-      credential_cookie_location (str): Path to git credential cookie.
-      test_output_data (dict): Test output for set_change_labels.
+      change_num: The number of the change to label.
+      labels: Mapping from label (Label) to value (int).
+      gerrit_host: Base URL to curl against.
+      test_output_data: Test output for set_change_labels.
 
     Returns:
       str: JSON containing the applied labels (primarily for testing).
@@ -625,20 +615,22 @@ class GerritApi(RecipeApi):
                                    ok_ret={0}, test_stdout=test_output_data)
     return data.decode()
 
-  def set_change_labels(self, gerrit_change, labels, branch=None, ref=None):
+  def set_change_labels(self, gerrit_change: GerritChange,
+                        labels: Dict[Label, int], branch: Optional[str] = None,
+                        ref: Optional[str] = None) -> str:
     """(Deprecated) Set the given labels for the given Gerrit change.
 
       This function is deprecated. Use `set_change_labels_remote` where
       possible.
 
     Args:
-      gerrit_change (GerritChange): The change of interest.
-      labels (dict): Mapping from label (Label) to value (int).
-      branch (str): The remote branch to update.
-      ref (str): The remote ref to update.
+      gerrit_change: The change of interest.
+      labels: Mapping from label (Label) to value (int).
+      branch: The remote branch to update.
+      ref: The remote ref to update.
 
     Returns:
-      str: The ref used to push the labels.
+      The ref used to push the labels.
     """
     with self.m.step.nest('set labels on CL %d' % gerrit_change.change) as pres:
       full_labels = sorted(
@@ -652,8 +644,8 @@ class GerritApi(RecipeApi):
       if branch is None:
         branch = project_info.branch.split('/')[-1]
       ref = ref or 'refs/for/%s' % branch
-      ref = '%s%%%s' % (ref, ','.join(['l=%s' % label for label in full_labels
-                                      ]))
+      full_labels_joined = ','.join([f'l={label}' for label in full_labels])
+      ref = f'{ref}%{full_labels_joined}'
 
       if not ref.startswith('HEAD:'):
         ref = 'HEAD:%s' % ref
@@ -663,31 +655,21 @@ class GerritApi(RecipeApi):
         self.m.git.push(project_info.remote, ref)
       return ref
 
-  def _get_project_path(self, gerrit_change):
-    """Return the path of the project associated with the given gerrit_change.
-
-    Args:
-      gerrit_change (GerritChange): The change of interest.
-
-    Returns:
-      Path: The path of the project.
-    """
+  def _get_project_path(self, gerrit_change: GerritChange) -> Path:
+    """Return the path of the project associated with the gerrit_change."""
     with self.m.context(cwd=self.m.src_state.workspace_path):
       project_info = self.m.repo.project_info(gerrit_change.project)
-
     return self.m.src_state.workspace_path.join(project_info.path)
 
-  def add_change_comment(self, gerrit_change, comment, project_path=None):
+  def add_change_comment(self, gerrit_change: GerritChange, comment: str,
+                         project_path: Optional[Path] = None):
     """Add a comment to the given Gerrit change.
 
     Args:
-      gerrit_change (GerritChange): The change to post to.
-      comment (str): The comment to post.
-      project_path (Path): If set, will use this as the project path rather than
-        any value inferred from the gerrit_change.
-
-    Returns:
-      str: The new message ref (primarily for testing).
+      gerrit_change: The change to post to.
+      comment: The comment to post.
+      project_path: If set, will use this as the project path rather than any
+        value inferred from the gerrit_change.
     """
     with self.m.step.nest('comment on CL %d' % gerrit_change.change) as pres:
       pres.logs['comment text'] = [comment]
@@ -697,15 +679,17 @@ class GerritApi(RecipeApi):
       with self.m.context(cwd=cwd):
         self.m.git_cl('comment', ['-i', gerrit_change.change, '-a', comment])
 
-  def get_change_description(self, gerrit_change, memoize=False):
+  def get_change_description(self, gerrit_change: GerritChange,
+                             memoize: bool = False) -> str:
     """Get the description of the given Gerrit change.
 
     Args:
-      gerrit_change (GerritChange): The change of interest.
-      memoize (bool): Should we consult a local cache for the change id instead
-          of fetching from gerrit.
+      gerrit_change: The change of interest.
+      memoize: Whether to consult a local cache for the change ID instead of
+        fetching from gerrit.
+
     Returns:
-      str: The change description.
+      The change description.
     """
     if memoize and gerrit_change.change in self._GET_CHANGE_DESCRIPTION_CACHE:
       return self._GET_CHANGE_DESCRIPTION_CACHE[gerrit_change.change]
@@ -716,7 +700,7 @@ class GerritApi(RecipeApi):
       pres.links['gerrit change'] = gerrit_change_url
       patch_set = self.fetch_patch_sets([gerrit_change],
                                         include_commit_info=True)[0]
-      description = patch_set.commit_info.get('message')
+      description = typing.cast(str, patch_set.commit_info.get('message'))
       # Make sure that there is a trailing newline.
       description = (
           description if description.endswith('\n') else description + '\n')
@@ -725,18 +709,19 @@ class GerritApi(RecipeApi):
         self._GET_CHANGE_DESCRIPTION_CACHE[gerrit_change.change] = description
       return description
 
-  def set_change_description(self, gerrit_change, description,
-                             amend_local=False, project_path=None):
+  def set_change_description(self, gerrit_change: GerritChange,
+                             description: str, amend_local: bool = False,
+                             project_path: Optional[Path] = None):
     """Set the description of the given Gerrit change.
 
     Args:
-      gerrit_change (GerritChange): The change of interest.
-      description (str): The new description, in full. Be sure this still
-          includes the Change-Id and other essential metadata.
-      amend_local (bool): Should you amend the description of the HEAD local
-          change as well.
-      project_path (Path): If set, will use this as the project path rather than
-        any value inferred from the gerrit_change.
+      gerrit_change: The change of interest.
+      description: The new description, in full. Be sure this still includes the
+        Change-Id and other essential metadata.
+      amend_local: Whether to amend the description of the HEAD local change as
+        as well.
+      project_path: If set, use this as the project path rather than any value
+        inferred from the gerrit_change.
     """
     with self.m.step.nest('set CL %d description' %
                           gerrit_change.change) as pres:
@@ -753,12 +738,13 @@ class GerritApi(RecipeApi):
         if amend_local:
           self.m.git.amend_head_message(description)
 
-  def abandon_change(self, gerrit_change, message=None):
+  def abandon_change(self, gerrit_change: GerritChange,
+                     message: Optional[str] = None):
     """Abandon the given change.
 
     Args:
-      gerrit_change (GerritChange): The change to abandon.
-      message (str): Optional message to post to change.
+      gerrit_change: The change to abandon.
+      message: Optional message to post to change.
     """
     with self.m.step.nest('abandon CL %d' % gerrit_change.change) as pres:
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
@@ -767,15 +753,15 @@ class GerritApi(RecipeApi):
           self.parse_qualified_gerrit_host(gerrit_change), gerrit_change.change,
           message=message)
 
-  def submit_change(self, gerrit_change, retries=0, project_path=None):
-    """Submits the given change.
+  def submit_change(self, gerrit_change: GerritChange, retries: int = 0,
+                    project_path: Optional[Path] = None):
+    """Submit the given change.
 
     Args:
-      gerrit_change (GerritChange): The change to submit.
-      retries (int): How many times to retry `git cl land` should it fail.
-      project_path (Path): If set, will use this as the project path rather than
-        any value inferred from the gerrit_change.
-
+      gerrit_change: The change to submit.
+      retries: How many times to retry `git cl land` should it fail.
+      project_path: If set, use this as the project path rather than any value
+        inferred from the gerrit_change.
     """
     with self.m.step.nest('submit CL %d' % gerrit_change.change) as pres:
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)

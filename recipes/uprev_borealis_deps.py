@@ -6,6 +6,7 @@
 """Recipe for upreving Borealis build dependencies."""
 from typing import Optional
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 from PB.recipes.chromeos.uprev_borealis_deps import (UprevBorealisDepsProperties
@@ -116,8 +117,8 @@ def _CreateCL(api: RecipeApi, project: ProjectInfo,
                                         topic=GERRIT_CL_TOPIC,
                                         reviewers=GERRIT_CL_REVIEWERS)
       labels = {
-          api.gerrit.Label.BOT_COMMIT: 1,
-          api.gerrit.Label.COMMIT_QUEUE: 2,
+          Label.BOT_COMMIT: 1,
+          Label.COMMIT_QUEUE: 2,
       }
       api.gerrit.set_change_labels(change, labels)
       if presentation:

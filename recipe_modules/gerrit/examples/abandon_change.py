@@ -13,8 +13,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  _ = api.gerrit.gerrit_patch_sets
-
   gerrit_change = GerritChange(
       host='chromium-review.googlesource.com',
       project='project',

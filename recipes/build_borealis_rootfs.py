@@ -11,6 +11,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 from PB.recipes.chromeos.build_borealis_rootfs import (
     BuildBorealisRootfsProperties)
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -135,8 +136,8 @@ def DoRunSteps(api, properties):
           change = api.gerrit.create_change(project=project.name,
                                             topic=package_name)
           labels = {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
+              Label.BOT_COMMIT: 1,
+              Label.COMMIT_QUEUE: 2,
           }
           api.gerrit.set_change_labels(change, labels)
 

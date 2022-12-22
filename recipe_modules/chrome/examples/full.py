@@ -15,6 +15,7 @@ from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.chrome.examples.test import TestInputProperties
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 DEPS = [
     'recipe_engine/assertions',
@@ -49,10 +50,10 @@ def RunSteps(api, properties):
       files (list[str]): list of modified files.
 
     Returns:
-      A gerrit.PatchSet.
+      A PatchSet.
     """
     project = 'chromiumos/overlays/chromiumos-overlay'
-    return api.gerrit.PatchSet(
+    return PatchSet(
         dict(host='test', info=dict(project=project), patch_set='3',
              revision_info=dict(files={f: {} for f in files})))
 

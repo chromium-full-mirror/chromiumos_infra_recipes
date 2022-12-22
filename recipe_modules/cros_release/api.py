@@ -19,9 +19,9 @@ from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_HPS_FIRMWARE,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_GSC_FIRMWARE)
-from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
-
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 
 # Supported image types for signing.
@@ -144,8 +144,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                     ref=self.m.git.get_branch_ref(branch),
                     project_path=manifest_versions_checkout)
                 labels = {
-                    self.m.gerrit.Label.BOT_COMMIT: 1,
-                    self.m.gerrit.Label.VERIFIED: 1,
+                    Label.BOT_COMMIT: 1,
+                    Label.VERIFIED: 1,
                 }
                 self.m.gerrit.set_change_labels_remote(change, labels)
                 self.m.gerrit.submit_change(

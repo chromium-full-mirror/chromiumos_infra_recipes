@@ -5,6 +5,7 @@
 
 import collections
 
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
 
 DEPS = [
@@ -19,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   change_info = {1: {"change_id": 1, "hashtags": [HASHTAG_FREEZE_RETRIES]}}
   open_cls = [
-      api.gerrit.PatchSet(
+      PatchSet(
           collections.defaultdict(str, {
               "change_number": k,
               "info": v,

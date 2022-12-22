@@ -21,6 +21,7 @@ from collections import OrderedDict
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -455,8 +456,8 @@ def _create_cl(api, _properties, commit_info, branch_name, cl_config):
       if change and cl_config.send_to_cq:
         with api.step.nest('send to CQ'):
           api.gerrit.set_change_labels(change, {
-              api.gerrit.Label.BOT_COMMIT: 1,
-              api.gerrit.Label.COMMIT_QUEUE: 2,
+              Label.BOT_COMMIT: 1,
+              Label.COMMIT_QUEUE: 2,
           })
 
 

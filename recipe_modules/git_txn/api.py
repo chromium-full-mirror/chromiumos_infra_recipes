@@ -8,6 +8,8 @@
 import re
 from recipe_engine import recipe_api
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+
 
 class Error(recipe_api.StepFailure):
   """Base error for this module."""
@@ -88,7 +90,7 @@ class GitTxnApi(recipe_api.RecipeApi):
         # Retrieve GerritChange from the stdout
         change_url = self._get_change_url(push_stderr)
         change = self.m.gerrit.parse_gerrit_change(change_url)
-        label = {self.m.gerrit.Label.BOT_COMMIT: 1}
+        label = {Label.BOT_COMMIT: 1}
         self.m.gerrit.set_change_labels_remote(change, label)
         self.m.gerrit.submit_change(change, retries=3)
       return True

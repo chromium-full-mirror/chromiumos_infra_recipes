@@ -6,18 +6,32 @@
 """Module to help with test cases that rely on the gerrit module."""
 
 import itertools
-from typing import List
+from typing import Dict, Iterable, List, Optional
 
 from recipe_engine import recipe_test_api
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
+from RECIPE_MODULES.chromeos.gerrit.api import JSONObject
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 
 class ChangesTestApi(recipe_test_api.RecipeTestApi):
 
-  def _test_fetch_changes_response(self, request, gerrit_change,
-                                   values_dict=None):
+  def _test_fetch_changes_response(self, request: JSONObject,
+                                   gerrit_change: GerritChange,
+                                   values_dict: Optional[JSONObject] = None
+                                  ) -> JSONObject:
+    """Create and return a sample response for gerrit-fetch-changes.
+
+    Args:
+      request: A single change request that would be passed into the
+        gerrit-fetch-changes tool.
+      gerrit_change: The Gerrit change corresponding to that request, as would
+        be passed into fetch_patch_sets().
+      values_dict: Dict containing values for gerrit-fetch-changes to return.
+        If not passed in, or if any fields are empty, defaults will be set.
+    """
     project = gerrit_change.project if gerrit_change else ''
     values = dict(project=project or 'chromium/src')
     values.update(values_dict or {})
@@ -78,21 +92,21 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         })
     return resp
 
-  def set_gerrit_fetch_changes_response(self, step_name, changes, values_dict,
-                                        iteration=1):
-    """Set the response from gerrit-fetch-changes.
+  def set_gerrit_fetch_changes_response(self, step_name: str,
+                                        changes: List[GerritChange],
+                                        values_dict: Dict[int, JSONObject],
+                                        iteration: int = 1
+                                       ) -> recipe_test_api.TestData:
+    """Return a TestData that sets the response from gerrit-fetch-changes.
 
     Args:
-      step_name (str): name of the step calling gerrit.fetch_patch_sets.
-      changes (list[GerritChange]): The list of changes which will be found.
-      values_dict (dict): Dictionary of {change_number: values} to provide field
-          values to _test_fetch_changes_response.
-      iteration (int): Which call this applies to for this step/endpoint.
-
-    Returns:
-      (StepTestData) test data instance for the test.
+      step_name: name of the step calling gerrit.fetch_patch_sets.
+      changes: The list of changes which will be found.
+      values_dict: Dictionary of {change_number: values} to provide field values
+          to _test_fetch_changes_response for each requested change.
+      iteration: Which call this applies to for this step/endpoint.
     """
-    iteration = '' if iteration == 1 else ' (%d)' % iteration
+    iteration_str = '' if iteration == 1 else f' ({iteration})'
     respList = []
     for change in changes:
       request = dict(host=change.host, change_number=change.change,
@@ -103,31 +117,38 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
           self._test_fetch_changes_response(request, change, values))
 
     respDict = dict(changes=respList)
-    prefix = '%s.' % step_name if step_name else ''
-    step_name = '%sgerrit-fetch-changes%s' % (prefix, iteration)
+    prefix = f'{step_name}.' if step_name else ''
+    step_name = f'{prefix}gerrit-fetch-changes{iteration_str}'
     return self.step_data(step_name, stdout=self.m.json.output(respDict))
 
   def set_query_changes_response(self, step_name: str,
                                  changes: List[ChangeInfo], host_url: str,
                                  iteration: int = 1
                                 ) -> recipe_test_api.StepTestData:
-    """Set the response from the depot_tools API's get_changes().
+    """Return a TestData that sets the depot_tools API's get_changes() response.
 
     Args:
       step_name: name of the step calling gerrit.query_changes.
       change_infos: The list of changes which will be found.
       host_url: URL for the Gerrit host.
       iteration: Which call this applies to for this step/endpoint.
-
-    Returns:
-      Test data instance for the test.
     """
-    iteration = '' if iteration == 1 else ' (%d)' % iteration
-    prefix = '%s.' % step_name if step_name else ''
-    step_name = '%squery %s%s.gerrit changes' % (prefix, host_url, iteration)
+    iteration_str = '' if iteration == 1 else f' ({iteration})'
+    prefix = f'{step_name}.' if step_name else ''
+    step_name = f'{prefix}query {host_url}{iteration_str}.gerrit changes'
     return self.override_step_data(step_name, self.m.json.output(changes))
 
-  def test_gerrit_fetch_changes(self, request, gerrit_changes):
+  def test_gerrit_fetch_changes(self, request: JSONObject,
+                                gerrit_changes: List[GerritChange]
+                               ) -> JSONObject:
+    """Return a sample value request for _gerrit_fetch_changes().
+
+    Args:
+      request: The request object that would be passed into
+        _gerrit_fetch_changes().
+      gerrit_changes: The Gerrit changes that would be passed into
+        _gerrit_fetch_changes().
+    """
     return {
         'changes':
             list(
@@ -135,7 +156,8 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                     itertools.zip_longest(request['changes'], gerrit_changes)))
     }
 
-  def test_patch_set(self):
+  def test_patch_set(self) -> PatchSet:
+    """Return a sample patch set."""
     return PatchSet(
         self._test_fetch_changes_response(
             {
@@ -144,44 +166,43 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
                 'patch_set': 1,
             }, None))
 
-  def test_gerrit_change_url(self):
+  def test_gerrit_change_url(self) -> str:
+    """Return a sample URL for a Gerrit change."""
     return 'https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1'
 
-  def test_gerrit_change_description(self):
+  def test_gerrit_change_description(self) -> str:
+    """Return a sample description (commit message) for a Gerrit change."""
     return 'a quick description\n\nChange-Id: deadbeef\n'
 
-  def test_changes_are_submittable(self, errors=()):
-    """Test output for changes_are_submitted.
+  def test_changes_are_submittable(self,
+                                   errors: Iterable[str] = ()) -> JSONObject:
+    """Return a sample output for the git-test-submit support tool.
 
     Args:
-      errors (list(str)): errors that the support binary reports.
+      errors: Errors that the support binary should report.
     """
-    return {'errors': errors}
+    return {'errors': list(errors)}
 
-  def simulated_changes_are_submittable(self, submittable=True):
-    """Simulates the step_data for invoking git-test-submit binary.
+  def simulated_changes_are_submittable(self, submittable: bool = True
+                                       ) -> recipe_test_api.TestData:
+    """Return a TestData that sets the response for git-test-submit.
 
     Args:
-      submittable (bool): whether the binary should return that the CLs can be
+      submittable: Whether the binary should return that the CLs can be
           cherry-picked.
-
-    Returns:
-      bool
     """
-    output = {'errors': []}
+    output: JSONObject = {'errors': []}
     if not submittable:
       output['errors'].append('some cherry pick error line 1\nline2')
     return self.step_data('check for merge conflicts.git-test-submit',
                           stdout=self.m.json.output(output))
 
-  def simulated_create_change(self, step_name, gerrit_change_url):
-    """Simulates creation of a Gerrit change.
+  def simulated_create_change(self, step_name: str, gerrit_change_url: str
+                             ) -> recipe_test_api.TestData:
+    """Return a TestData that sets the response for create_change().
 
     Args:
-      step_name (str): Step name to set step_data for.
-      gerrit_change_url (GerritChange): Fake upload URL for the change..
-
-    Returns:
-      StepData: Resulting step data.
+      step_name: Step name to set step_data for.
+      gerrit_change_url: Fake upload URL for the change.
     """
     return self.m.git_cl.output(step_name + '.git_cl status', gerrit_change_url)

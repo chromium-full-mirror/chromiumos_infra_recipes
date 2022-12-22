@@ -232,7 +232,7 @@ class ChromeApi(recipe_api.RecipeApi):
     information populated.
 
     Args:
-      patch_sets (list[gerrit.PatchSet]): List of patch sets (with FileInfo).
+      patch_sets (list[PatchSet]): List of patch sets (with FileInfo).
 
     Returns:
       A bool that indicates a rebuild should be triggered.
@@ -322,7 +322,7 @@ class ChromeApi(recipe_api.RecipeApi):
     Args:
       build_target (chromiumos.BuildTarget): Build target of the build.
       chroot (chromiumos.Chroot): Information on the chroot for the build.
-      patch_sets (list[gerrit.PatchSet]): A list of patch sets to examine.
+      patch_sets (list[PatchSet]): A list of patch sets to examine.
 
     Returns:
       bool: If we upreved the local Chrome.
@@ -350,7 +350,7 @@ class ChromeApi(recipe_api.RecipeApi):
     Args:
       request (InstallPackagesRequest): InstallPackagesRequest for the build.
       dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
-      patch_sets (list[gerrit.PatchSet]): Applied patchsets.  Default: the list
+      patch_sets (list[PatchSet]): Applied patchsets.  Default: the list
         from workspace_util.
 
     Returns:
@@ -395,7 +395,7 @@ class ChromeApi(recipe_api.RecipeApi):
       request (InstallPackagesRequest): InstallPackagesRequest for the build.
       dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
       presentation (StepPresentation): Step to update.
-      patch_sets (list[gerrit.PatchSet]): Applied patchsets.  Default: the list
+      patch_sets (list[PatchSet]): Applied patchsets.  Default: the list
         from workspace_util.
 
     Returns:
