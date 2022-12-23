@@ -1553,6 +1553,17 @@
     ]
   },
   {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/mergeable"
+    ],
+    "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.curl https://chromium-review.googlesource.com/changes/1/revisions/current/mergeable",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1",
     "~followup_annotations": [

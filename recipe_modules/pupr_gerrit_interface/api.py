@@ -378,9 +378,11 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         return
 
       if self.rebase_before_retry:
-        self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
-                                          patch_set_to_retry.change_id)
-        self.upload_new_patch_set(patch_set_to_retry)
+        if not self.m.gerrit.get_change_mergeable(patch_set_to_retry.change_id,
+                                                  patch_set_to_retry.host):
+          self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
+                                            patch_set_to_retry.change_id)
+          self.upload_new_patch_set(patch_set_to_retry)
 
       self.retry_cl(patch_set_to_retry, cq_label)
 

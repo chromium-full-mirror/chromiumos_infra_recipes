@@ -1082,6 +1082,9 @@ def GenTests(api: RecipeTestApi):
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
           changes, value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          'chromium-review.googlesource.com', 1, 'current', False),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
           gerrit_changes_json, 'https://chromium-review.googlesource.com'),

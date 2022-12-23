@@ -399,6 +399,7 @@
   * [gerrit:examples/create_change](#recipes-gerrit_examples_create_change) (Python3 ✅)
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets) (Python3 ✅)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description) (Python3 ✅)
+  * [gerrit:examples/get_change_mergeable](#recipes-gerrit_examples_get_change_mergeable) (Python3 ✅)
   * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes) (Python3 ✅)
   * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes) (Python3 ✅)
   * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change) (Python3 ✅)
@@ -5758,6 +5759,18 @@ Args:
 
 Returns:
   The change description.
+
+&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#816)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+
+Get the mergeable status of the given Gerrit change.
+
+Args:
+  change_num: The number of the change to check.
+  gerrit_host: Base URL to curl against.
+  revision: The revision of the change to check.
+
+Returns:
+  Whether the revision of the change is mergeable.
 
 &mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#369)(self, gerrit_change_url: str):**
 
@@ -11558,6 +11571,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_description.py#16)(api):**
+### *recipes* / [gerrit:examples/get\_change\_mergeable](/recipe_modules/gerrit/examples/get_change_mergeable.py)
+
+[DEPS](/recipe_modules/gerrit/examples/get_change_mergeable.py#9): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_mergeable.py#23)(api, remote, expected):**
 ### *recipes* / [gerrit:examples/has\_chromite\_changes](/recipe_modules/gerrit/examples/has_chromite_changes.py)
 
 [DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

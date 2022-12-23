@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://mygithost.google.com/somerepo/changes/1/revisions/current/mergeable"
+    ],
+    "name": "curl https://mygithost.google.com/somerepo/changes/1/revisions/current/mergeable"
+  },
+  {
+    "name": "$result"
+  }
+]

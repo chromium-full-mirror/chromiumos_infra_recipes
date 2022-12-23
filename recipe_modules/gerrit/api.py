@@ -813,6 +813,42 @@ class GerritApi(RecipeApi):
 
       return changes
 
+  def get_change_mergeable(self, change_num: int, gerrit_host: str,
+                           revision: str = 'current') -> bool:
+    """Get the mergeable status of the given Gerrit change.
+
+    Args:
+      change_num: The number of the change to check.
+      gerrit_host: Base URL to curl against.
+      revision: The revision of the change to check.
+
+    Returns:
+      Whether the revision of the change is mergeable.
+    """
+    # "Get Mergeable" endpoint:
+    # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-mergeable
+    get_url = f'https://{gerrit_host}/changes/{change_num}/revisions/{revision}/mergeable'
+    curl_params = ['-f']
+
+    data = self.m.easy.stdout_step(f'curl {get_url}',
+                                   ['curl'] + curl_params + [get_url]).decode()
+    # Trim the magic prefix in the response.
+    # See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+    # TODO(b:264623293): replace this with removeprefix() when we're on Python 3.9.
+    if data.startswith(')]}\''):
+      data = data[4:]
+
+    try:
+      result = self.m.json.loads(data)['mergeable']
+    except KeyError as e:
+      raise StepFailure('The response does not contain "mergeable" key: %s' %
+                        data) from e
+    if not isinstance(result, bool):
+      raise StepFailure(
+          f'"mergeable" value is not a bool: {data} (type: {type(result)})')
+
+    return result
+
 
 def change_info_to_gerrit_change(change_info: ChangeInfo,
                                  host: str) -> GerritChange:

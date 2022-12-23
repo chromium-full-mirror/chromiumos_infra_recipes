@@ -6,7 +6,7 @@
 """Module to help with test cases that rely on the gerrit module."""
 
 import itertools
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Union
 
 from recipe_engine import recipe_test_api
 
@@ -137,6 +137,38 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     prefix = f'{step_name}.' if step_name else ''
     step_name = f'{prefix}query {host_url}{iteration_str}.gerrit changes'
     return self.override_step_data(step_name, self.m.json.output(changes))
+
+  def set_get_change_mergeable(self, step_name: str, gerrit_host: str,
+                               change_num: int, revision: str,
+                               value: Union[bool, None, str], iteration: int = 1
+                              ) -> recipe_test_api.StepTestData:
+    """Set the response from the Gerrit's Get Mergeable API.
+
+    Args:
+      step_name: Name of the step calling gerrit.get_change_mergeable.
+      gerrit_host: URL for the Gerrit host.
+      change_num: The number of the change to check.
+      revision: The revision of the change to check.
+      value: The response. None and str values are only for the module unit
+          test to emulate a malformed response from the API endpoint.
+          If None, the "mergeable" field in the JSON response is omitted.
+      iteration: Which call this applies to for this step/endpoint.
+
+    Returns:
+      Test data instance for the tests.
+    """
+    iteration = '' if iteration == 1 else ' (%d)' % iteration
+    prefix = '%s.' % step_name if step_name else ''
+    url = 'https://%s/changes/%s/revisions/%s/mergeable' % (
+        gerrit_host, change_num, revision)
+    step_name = '%scurl %s%s' % (prefix, url, iteration)
+    if value is None:
+      values = dict()
+    else:
+      values = dict(mergeable=value)
+    return self.override_step_data(
+        step_name,
+        stdout=self.m.raw_io.output(')]}\'\n' + self.m.json.dumps(values)))
 
   def test_gerrit_fetch_changes(self, request: JSONObject,
                                 gerrit_changes: List[GerritChange]
