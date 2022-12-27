@@ -13,4 +13,9 @@ message SigningProperties {
 
   // How long to sleep between polls (in seconds).
   int32 sleep_duration = 2;
+
+  // Whether to throw an error on ImageAlreadyExistsError errors.
+  // Primarily used when we want to reinitiate signing (because of failed
+  // artifacts) without failing on the originally-successful artifacts.
+  bool ignore_already_exists_errors = 3;
 }

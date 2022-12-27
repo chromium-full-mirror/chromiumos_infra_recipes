@@ -40,6 +40,12 @@ _FAILED = {
         'details': 'failed for reason foo'
     },
 }
+_FAILED_ALREADY_EXISTS = {
+    'status': {
+        'status': 'failed',
+        'details': '...in SignArtifacts\n    raise ImageAlreadyExistsError...'
+    },
+}
 
 _PASSED_COMPLETE = {
     'release_directory': 'directory1/directory2/releases',
@@ -49,17 +55,18 @@ _PASSED_COMPLETE = {
 }
 _FAILED_COMPLETE = {
     'release_directory': 'directory1/directory2/releases',
-    'status': {
-        'status': 'failed',
-        'details': 'failed for reason foo'
-    },
+    **_FAILED
+}
+_FAILED_ALREADY_EXISTS_COMPLETE = {
+    'release_directory': 'directory1/directory2/releases',
+    **_FAILED_ALREADY_EXISTS
 }
 
 
 def RunSteps(api: RecipeApi):
   metadata = api.signing.wait_for_signing([
       'gs://bucket/directory1/directory2/releases/file1.instructions',
-      'gs://bucket/directory1/directory2/releases/file2.instructions'
+      'gs://bucket/directory1/directory2/releases/file2.instructions',
   ])
   with api.step.nest("verify results") as child_step:
     child_step.step_summary_text = api.signing.get_signed_build_metadata(
@@ -201,6 +208,42 @@ def GenTests(api: RecipeTestApi):
               'gs://bucket/directory1/directory2/releases/file2.instructions':
                   'FAILED'
           }),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Failed test with ImageAlreadyExistsError error.
+  yield api.test(
+      'signing-failed-already-exists',
+      api.properties(
+          **{
+              "$chromeos/signing":
+                  SigningProperties(timeout=5, ignore_already_exists_errors=True
+                                   )
+          }),
+      api.signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _RUNNING),
+      api.signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file1.instructions.json',
+          _PASSED, run=2),
+      api.signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _RUNNING),
+      api.signing.mock_meta(
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
+          _FAILED_ALREADY_EXISTS, run=2),
+      step_passed('verify results.parse metadata'),
+      api.post_check(StepMetaEquals, 'verify results',
+                     [_PASSED_COMPLETE, _FAILED_ALREADY_EXISTS_COMPLETE]),
+      step_passed('verify results'),
+      api.post_check(
+          post_process.PropertyEquals, 'signing_summary', {
+              'gs://bucket/directory1/directory2/releases/file1.instructions':
+                  'PASSED',
+              'gs://bucket/directory1/directory2/releases/file2.instructions':
+                  'PREVIOUSLY_PASSED'
+          }),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 

@@ -33,6 +33,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'orch_menu',
+    'signing',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
 ]
@@ -89,6 +90,11 @@ def DoRunSteps(api: RecipeApi):
     extra_child_props['$chromeos/cros_source'][
         'use_external_source_cache'] = True
 
+  if api.signing.ignore_already_exists_errors:
+    extra_child_props['$chromeos/signing'] = {
+        'ignore_already_exists_errors': True,
+    }
+
   builds_status = api.orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
@@ -135,8 +141,12 @@ def GenTests(api: RecipeTestApi):
   yield api.orch_menu.test(
       'release-orchestrator', data.ctp_normal,
       api.properties(
-          **{"$chromeos/orch_menu": OrchMenuProperties(skip_paygen=True)}),
-      api.post_check(post_process.StatusSuccess),
+          **{
+              "$chromeos/orch_menu": OrchMenuProperties(skip_paygen=True),
+              '$chromeos/signing': {
+                  'ignore_already_exists_errors': True,
+              }
+          }), api.post_check(post_process.StatusSuccess),
       builder='release-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 

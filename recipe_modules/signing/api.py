@@ -34,6 +34,7 @@ class SigningApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._timeout: int = properties.timeout or 4 * 60 * 60
     self._sleep_duration: int = properties.sleep_duration or 5 * 60
+    self.ignore_already_exists_errors: bool = properties.ignore_already_exists_errors
 
   def wait_for_signing(self, instructions_list: List[str]
                       ) -> Dict[str, InstructionsMetadata]:
@@ -155,13 +156,19 @@ class SigningApi(recipe_api.RecipeApi):
       # "Timed Out".
       status = 'PASSED'
       if not self.signing_succeeded(metadata):
-        failed = True
         if self.signing_failed(metadata):
-          pres.logs[instructions] = self.get_failure(metadata)
+          failure = self.get_failure(metadata)
+          pres.logs[instructions] = failure
           status = 'FAILED'
+          # If ignore_already_exists_errors is set, don't go red.
+          if self.ignore_already_exists_errors and 'ImageAlreadyExistsError' in failure:
+            status = 'PREVIOUSLY_PASSED'
+          else:
+            failed = True
         else:
           pres.logs[instructions] = 'Timed Out.'
           status = 'TIMED_OUT'
+          failed = True
       signing_summary[instructions] = status
     self.m.easy.set_properties_step(signing_summary=signing_summary)
     if failed:
