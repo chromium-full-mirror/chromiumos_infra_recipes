@@ -117,6 +117,13 @@ def GenTests(api: RecipeTestApi):
       step_passed('verify results.parse metadata'),
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _PASSED_COMPLETE]),
+      api.post_check(
+          post_process.PropertyEquals, 'signing_summary', {
+              'gs://bucket/directory1/directory2/releases/file1.instructions':
+                  'PASSED',
+              'gs://bucket/directory1/directory2/releases/file2.instructions':
+                  'PASSED'
+          }),
       api.post_check(post_process.MustRun,
                      'wait for signing to complete.sleep 300'),
       api.post_process(post_process.DropExpectation),
@@ -157,6 +164,13 @@ def GenTests(api: RecipeTestApi):
           # Until a signing is finalized it won't populate the meta map.
           [None, None]),
       step_failed('verify results'),
+      api.post_check(
+          post_process.PropertyEquals, 'signing_summary', {
+              'gs://bucket/directory1/directory2/releases/file1.instructions':
+                  'TIMED_OUT',
+              'gs://bucket/directory1/directory2/releases/file2.instructions':
+                  'TIMED_OUT'
+          }),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -180,6 +194,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _FAILED_COMPLETE]),
       step_failed('verify results'),
+      api.post_check(
+          post_process.PropertyEquals, 'signing_summary', {
+              'gs://bucket/directory1/directory2/releases/file1.instructions':
+                  'PASSED',
+              'gs://bucket/directory1/directory2/releases/file2.instructions':
+                  'FAILED'
+          }),
       api.post_process(post_process.DropExpectation),
   )
 

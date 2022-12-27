@@ -146,18 +146,24 @@ class SigningApi(recipe_api.RecipeApi):
       pres: StepPresentation):
     """Verifies that the signing operation succeeded."""
     failed = False
+    signing_summary = {}
     for (instructions, metadata) in instructions_metadata.items():
       # Once we've waited our timeout period, signing can be in one of a variety
       # of states: succeeded, failed, still running (i.e. timed out), still
       # pending (i.e. also timed out), or other partial states (i.e. timed out).
       # We consider "passed" success, "failed" a failure, and anything else
       # "Timed Out".
+      status = 'PASSED'
       if not self.signing_succeeded(metadata):
         failed = True
         if self.signing_failed(metadata):
           pres.logs[instructions] = self.get_failure(metadata)
+          status = 'FAILED'
         else:
           pres.logs[instructions] = 'Timed Out.'
+          status = 'TIMED_OUT'
+      signing_summary[instructions] = status
+    self.m.easy.set_properties_step(signing_summary=signing_summary)
     if failed:
       raise recipe_api.StepFailure(
           'One or more signing requests failed or timed out. '

@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.signing.signing import (SigningProperties)
 DEPS = [
     'cros_build_api',
     'depot_tools/gsutil',
+    'easy',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',

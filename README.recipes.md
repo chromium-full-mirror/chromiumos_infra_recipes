@@ -8070,7 +8070,7 @@ Module for issuing ServiceVersion commands
 Validate the caller's service version if they sent one.
 ### *recipe_modules* / [signing](/recipe_modules/signing)
 
-[DEPS](/recipe_modules/signing/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/signing/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -8078,7 +8078,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to encapsulate communication with the signing fleet.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#207)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#213)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the failure of signing.
 
@@ -8101,7 +8101,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#191)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#197)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -8111,7 +8111,7 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#179)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#185)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a failed signing operation.
 
@@ -8121,7 +8121,7 @@ Args:
 Returns:
   True/False whether the signing failed.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#167)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#173)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a successful signing operation.
 

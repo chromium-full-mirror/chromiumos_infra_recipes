@@ -11005,6 +11005,14 @@
   },
   {
     "cmd": [],
+    "name": "get signed build metadata.set signing_summary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@signing_summary@{\"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions\": \"PASSED\", \"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions\": \"PASSED\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update retry summary (8)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"STARTED\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
