@@ -126,12 +126,6 @@ message BranchPolicy {
   // kernel repo branches associated with it. You should check the
   // policy for reference names for your specific repo carefully.
   //
-  // TODO(crbug/1126855): Delete this paragraph once transition is finished.
-  // In particular, while the master -> main conversion is ongoing,
-  // some Chrome OS repositories will have a mismatch between the
-  // names of the primary manifest branch and the primary repository
-  // branch.
-  //
   // To generically specify a mapping for Chrome version to Chrome OS release
   // branch, such that 'refs/tags/86.0.4240.33' maps to 'release-R86-13421.B',
   // use pattern='refs/tags/([0-9]*).*' and repl='release-R\1-*.B'.

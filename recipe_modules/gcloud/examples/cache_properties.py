@@ -20,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  api.gcloud.setup_cache_disk(cache_name='chromiumos', branch='master',
+  api.gcloud.setup_cache_disk(cache_name='chromiumos', branch='main',
                               recipe_mount=True)
   api.assertions.assertEqual(api.gcloud.branch, 'main')
 

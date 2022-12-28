@@ -167,8 +167,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master',
-          skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -215,8 +214,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master',
-          skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -257,8 +255,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master',
-          skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -327,8 +324,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master',
-          skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -357,7 +353,7 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='master'),
+          bump_version=True, manifest_versions_branch='main'),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
