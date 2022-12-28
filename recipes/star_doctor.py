@@ -14,7 +14,6 @@ from typing import Generator, List, Optional, Set
 import base64
 import functools
 import json
-import six
 
 from google.protobuf.text_format import MessageToString
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -164,7 +163,7 @@ class RepoProject():
 
     with api.step.nest(step_name) as presentation:
       with api.context(cwd=self.checkout_path):
-        branch = six.ensure_str(api.git.current_branch())
+        branch = api.git.current_branch()
         changed_files = api.git.get_working_dir_diff_files()
 
         # If there aren't leftover files when we subtract the irrelevant ones.
@@ -185,8 +184,7 @@ class RepoProject():
             field='url', fast=True,
             step_test_data=functools.partial(api.raw_io.test_api.stream_output,
                                              'https://crrev.com/i/somenumber'))
-        presentation.links['change uploaded'] = six.ensure_str(
-            gerrit_change_url)
+        presentation.links['change uploaded'] = gerrit_change_url.decode()
 
   def _abandon_stale_changes(self, api: RecipeApi) -> None:
     """Abandon older changes that never landed.

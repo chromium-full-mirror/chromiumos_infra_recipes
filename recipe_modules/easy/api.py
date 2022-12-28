@@ -5,8 +5,6 @@
 
 """APIs for easy steps."""
 
-import six
-
 from recipe_engine import recipe_api
 from google.protobuf import json_format
 
@@ -35,11 +33,11 @@ class EasyApi(recipe_api.RecipeApi):
     step = self.m.step(step_name, cmd=None)
     for k, v in kwargs.items():
       if isinstance(v, bytes):
-        v = six.ensure_str(v)
+        v = v.decode()
       elif isinstance(v, list):
         for i, elem in enumerate(v):
           if isinstance(elem, bytes):
-            v[i] = six.ensure_str(elem)
+            v[i] = elem.decode()
       step.presentation.properties[k] = v
     return step
 

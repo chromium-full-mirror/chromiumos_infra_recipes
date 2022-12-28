@@ -11,7 +11,6 @@ import enum
 import json
 import functools
 import re
-import six
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
@@ -537,12 +536,11 @@ class GerritApi(RecipeApi):
           issue_map = self.m.git_cl.issues()
           if ref in issue_map:
             issue = issue_map[ref]
-        gerrit_change_url = six.ensure_str(
-            self.m.git_cl.status(
-                field='url', fast=True, issue=issue,
-                step_test_data=functools.partial(
-                    self.m.raw_io.test_api.stream_output,
-                    self.test_api.test_gerrit_change_url())))
+        gerrit_change_url = self.m.git_cl.status(
+            field='url', fast=True, issue=issue,
+            step_test_data=functools.partial(
+                self.m.raw_io.test_api.stream_output,
+                self.test_api.test_gerrit_change_url())).decode()
         pres.links['gerrit change'] = gerrit_change_url
 
         # The URL does not always include the project name, so always set it.
@@ -618,7 +616,7 @@ class GerritApi(RecipeApi):
     data = self.m.easy.stdout_step('curl %s' % post_url,
                                    ['curl'] + curl_params + [post_url],
                                    ok_ret={0}, test_stdout=test_output_data)
-    return six.ensure_str(data)
+    return data.decode()
 
   def set_change_labels(self, gerrit_change, labels, branch=None, ref=None):
     """(Deprecated) Set the given labels for the given Gerrit change.

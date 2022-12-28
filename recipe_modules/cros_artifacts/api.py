@@ -7,7 +7,6 @@
 
 import collections
 import time
-import six
 
 from google.protobuf import json_format
 
@@ -898,7 +897,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('upload {} metadata'.format(name)):
       # Wrap target up into a BuildTarget proto if needed
-      if isinstance(target, six.string_types):
+      if isinstance(target, str):
         target = common_pb.BuildTarget(name=target)
 
       # Add a .jsonpb extension to the filename if we don't have one.

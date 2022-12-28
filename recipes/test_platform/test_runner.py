@@ -4,12 +4,10 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS Skylab Test Runner."""
-import base64
 import datetime
 import json
 import os
 import time
-import six
 
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 from RECIPE_MODULES.chromeos.dut_interface import error_messages
@@ -234,8 +232,7 @@ def set_output_properties(api, result):
       if result is None:
         step.step_text = 'Empty Results'
       else:
-        step.properties['compressed_result'] = six.ensure_str(
-            result.serialize())
+        step.properties['compressed_result'] = result.serialize().decode()
 
 
 def _collect_tests_for_phosphorus(request):
@@ -867,8 +864,7 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'result_file': test_result_file,
           'artifact_directory': None,
       }
-      api.cros_resultdb.upload(
-          config, six.ensure_binary(str(result.get_stainless_log_url())))
+      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
   except api.step.StepFailure:
     # Marks the step status as Failure only and bypass the exception.
     api.step.active_result.presentation.status = api.step.FAILURE
@@ -932,9 +928,7 @@ def _upload_incomplete_test_to_resultdb(api, test_metadata, result,
           'result_file': incomplete_test_result_file,
           'artifact_directory': None,
       }
-      api.cros_resultdb.upload(
-          config,
-          six.ensure_binary(str(autotest_result.log_data.stainless_url)))
+      api.cros_resultdb.upload(config, autotest_result.log_data.stainless_url)
   except api.step.StepFailure:
     # Marks the step status as Failure only and bypass the exception.
     api.step.active_result.presentation.status = api.step.FAILURE
@@ -1065,8 +1059,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   # Uploads test results to ResultDB only when the test result file exists.
   result_file_content = _read_test_result_file(api, result_file)
   if result_file_content:
-    api.cros_resultdb.upload(
-        config, six.ensure_binary(str(result.get_stainless_log_url())))
+    api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
 
   # Uploads an additional Autotest wrapper result for Tast test.
   if is_tast_result:
@@ -3685,20 +3678,19 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_logs_archive_step(),
   )
 
-  rdb_settings = api.json.dumps({
+  rdb_settings = {
       'result_format': 'tast',
       'base_tags': ['test_suite:lacros_all_tast_tests'],
       'base_variant': {
           'test_suite': 'lacros_all_tast_tests',
       },
-  })
+  }
   yield api.test(
       'chromium-test-upload-result-to-rdb',
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb(
-          'resultdb_settings=%s' %
-          six.ensure_str(base64.b64encode(six.ensure_binary(rdb_settings)))),
+          api.cros_resultdb.resultdb_settings_arg(rdb_settings)),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
@@ -3728,8 +3720,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_rdb(
-          'resultdb_settings=%s' %
-          six.ensure_str(base64.b64encode(six.ensure_binary(rdb_settings)))),
+          api.cros_resultdb.resultdb_settings_arg(rdb_settings)),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),

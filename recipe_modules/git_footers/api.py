@@ -5,8 +5,6 @@
 
 """API wrapping the git_footers script.."""
 
-import six
-
 from recipe_engine import recipe_api
 
 
@@ -33,7 +31,7 @@ class GitFootersApi(recipe_api.RecipeApi):
 
     if result.retcode == 1:
       return None
-    stdout = six.ensure_str(result.stdout)
+    stdout = result.stdout.decode()
     return [l.strip() for l in stdout.splitlines() if l.strip()]
 
   def from_gerrit_change(self, gerrit_change, key=None, memoize=True, **kwargs):

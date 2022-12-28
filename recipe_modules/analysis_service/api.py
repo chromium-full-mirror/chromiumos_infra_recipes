@@ -6,7 +6,6 @@
 import base64
 from typing import Any, Optional, Tuple
 
-import six
 from google.protobuf import json_format
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -273,6 +272,6 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       # It will be unencoded by the publish-message support binary before it
       # is published.
       event_serialized = analysis_service_event.SerializeToString()
-      event_b64 = six.ensure_str(base64.b64encode(event_serialized))
+      event_b64 = base64.b64encode(event_serialized).decode()
       self.m.cloud_pubsub.publish_message(self._pubsub_project_id,
                                           self._pubsub_topic_id, event_b64)

@@ -7,7 +7,6 @@ import base64
 import json
 import zlib
 
-import six
 from RECIPE_MODULES.chromeos.skylab import structs
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
@@ -83,10 +82,10 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
   def base64_compress_dict(some_dict):
     """Compress a dict into zlib format, and then base64-encode it."""
     dict_json = json.dumps(some_dict)
-    return base64.b64encode(zlib.compress(six.ensure_binary(dict_json)))
+    return base64.b64encode(zlib.compress(dict_json.encode()))
 
   @staticmethod
-  def base64_compress_proto(proto):
+  def base64_compress_proto(proto) -> bytes:
     """Serialize a proto to binary, compress it into zlib, and b64-encode it."""
     wire_format = proto.SerializeToString(deterministic=True)
     return base64.b64encode(zlib.compress(wire_format))
@@ -108,12 +107,12 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         json.dumps({'tagged_responses': responses_blob}), ExecuteResponses(),
         ignore_unknown_fields=True)
     second_responses_blob = self.marshal_responses(responses_obj)
-    comp_string = self.base64_compress_proto(responses_obj)
-    overall = {'compressed_responses': six.ensure_str(comp_string)}
+    comp_string = self.base64_compress_proto(responses_obj).decode()
+    overall = {'compressed_responses': comp_string}
     if _json:
       overall['responses'] = second_responses_blob
-      overall['compressed_json_responses'] = six.ensure_str(
-          self.base64_compress_dict(second_responses_blob))
+      overall['compressed_json_responses'] = self.base64_compress_dict(
+          second_responses_blob).decode()
     return json_format.Parse(json.dumps(overall), struct_pb2.Struct())
 
   def _responses_json_dict(self, names, task_state):

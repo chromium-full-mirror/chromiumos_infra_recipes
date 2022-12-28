@@ -15,7 +15,7 @@
 
 import collections
 import textwrap
-from six.moves.urllib import parse as urlparse
+from urllib.parse import urlparse
 
 from recipe_engine import post_process
 
@@ -85,7 +85,7 @@ def require(cond, message):
 
 def split_overlay_project(api, repo):
   """Take a private overlay URL and parse out project name."""
-  parts = urlparse.urlparse(repo)
+  parts = urlparse(repo)
   require(
       parts.netloc == api.src_state.internal_manifest.host,
       "overlay isn't in internal repo",

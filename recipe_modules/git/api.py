@@ -5,17 +5,10 @@
 
 """API for working with git."""
 
-# TODO (b/217973414): Remove future aliases and reenable these pylint checks
-# when Py2 compatibility has been removed.
-# pylint: disable=wrong-import-order,wrong-import-position
-from future.standard_library import install_aliases
-install_aliases()
-
 from collections import namedtuple
 import contextlib
 from datetime import timedelta
-import six
-from urllib.parse import urlparse  # pylint: disable=no-name-in-module
+from urllib.parse import urlparse
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
@@ -48,7 +41,7 @@ class GitApi(recipe_api.RecipeApi):
       name = 'git'
       # Add first non-flag argument to name.
       for arg in args:
-        if isinstance(arg, six.string_types) and arg[:1] != '-':
+        if isinstance(arg, str) and arg[:1] != '-':
           name += ' ' + arg
           break
     if test_stdout is not None:

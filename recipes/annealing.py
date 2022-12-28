@@ -19,8 +19,8 @@ The annealing builders run in serial and do the following:
 import base64
 import collections
 import json
+import urllib
 import zlib
-from six.moves import urllib
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties

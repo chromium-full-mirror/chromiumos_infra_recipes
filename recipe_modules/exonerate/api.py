@@ -5,7 +5,6 @@
 # found in the LICENSE file.
 
 from collections import defaultdict
-import six
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
@@ -55,7 +54,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
         repo=CONFIG_INTERNAL_REPO, step_test_data=mock_data)
     if bin_proto:
-      return TestDisablementCfg.FromString(six.ensure_binary(bin_proto))
+      return TestDisablementCfg.FromString(bin_proto)
     return TestDisablementCfg()
 
   def get_tastless_name(self, test_name):

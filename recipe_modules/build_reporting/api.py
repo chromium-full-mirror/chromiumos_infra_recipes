@@ -23,7 +23,6 @@ the unfiltered top-level topic for all builds.
 import base64
 import contextlib
 
-import six
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 from google.protobuf.json_format import MessageToJson
 
@@ -213,9 +212,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
           self.pubsub_topic,
           # The publish-message binary requires that messages be base64 encoded to
           # avoid issues with binary data and strings.
-          six.ensure_str(
-              base64.b64encode(
-                  self._build_report.SerializeToString(deterministic=True))),
+          base64.b64encode(
+              self._build_report.SerializeToString(deterministic=True)
+          ).decode(),
           ordering_key=str(self.m.buildbucket.build.id or 'led-launch'),
           endpoint=PUBSUB_ENDPOINT,
           raise_on_failed_publish=raise_on_failed_publish,

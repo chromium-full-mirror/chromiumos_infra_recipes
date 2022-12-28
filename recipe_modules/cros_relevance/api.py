@@ -7,7 +7,6 @@
 from collections import namedtuple
 from typing import List
 
-import six
 from google.protobuf import json_format
 
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
@@ -48,20 +47,18 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     # Toolchain changes have been detected.
     self._toolchain_cls_applied = False
 
-    self._build_planner_cipd_package = six.ensure_str(
-        self._properties.build_plan_generator_cipd_package.encode('utf-8') or
-        "chromiumos/infra/build_plan_generator/${platform}")
-    self._pointless_build_checker_cipd_package = six.ensure_str(
-        self._properties.pointless_build_checker_cipd_package.encode('utf-8') or
-        "chromiumos/infra/pointless_build_checker/${platform}")
+    self._build_planner_cipd_package = (
+        self._properties.build_plan_generator_cipd_package or
+        'chromiumos/infra/build_plan_generator/${platform}')
+    self._pointless_build_checker_cipd_package = (
+        self._properties.pointless_build_checker_cipd_package or
+        'chromiumos/infra/pointless_build_checker/${platform}')
 
-    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
-    self._build_planner_cipd_ref = six.ensure_str(
-        self._properties.build_plan_generator_cipd_ref.encode('utf-8') or
-        default_ref)
-    self._pointless_build_checker_cipd_ref = six.ensure_str(
-        self._properties.pointless_build_checker_cipd_ref.encode('utf-8') or
-        default_ref)
+    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
+    self._build_planner_cipd_ref = (
+        self._properties.build_plan_generator_cipd_ref or default_ref)
+    self._pointless_build_checker_cipd_ref = (
+        self._properties.pointless_build_checker_cipd_ref or default_ref)
 
   @property
   def toolchain_cls_applied(self):

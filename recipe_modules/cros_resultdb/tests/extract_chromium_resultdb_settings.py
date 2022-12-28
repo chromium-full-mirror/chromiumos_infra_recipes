@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import base64
-import six
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,22 +16,16 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  test_args = 'resultdb_settings=%s' % six.ensure_str(
-      base64.b64encode(
-          six.ensure_binary(
-              api.json.dumps({
-                  'base_tags': ['test_suite:fake-suite'],
-                  'result_format': 'tast',
-                  'result_file': './path/to/results.json'
-              }))))
+  test_args = api.cros_resultdb.test_api.resultdb_settings_arg({
+      'base_tags': ['test_suite:fake-suite'],
+      'result_format': 'tast',
+      'result_file': './path/to/results.json'
+  })
   config = api.cros_resultdb.extract_chromium_resultdb_settings(test_args)
   api.cros_resultdb.upload(config)
 
-  bad_test_args = 'not_resultdb_settings=%s' % six.ensure_str(
-      base64.b64encode(
-          six.ensure_binary(api.json.dumps({
-              'result_format': 'tast',
-          }))))
+  bad_test_args = 'bad_' + api.cros_resultdb.test_api.resultdb_settings_arg(
+      {'result_format': 'tast'})
   api.assertions.assertRaises(
       ValueError, api.cros_resultdb.extract_chromium_resultdb_settings,
       bad_test_args)
@@ -40,4 +33,5 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  yield api.test('basic', api.buildbucket.ci_build())
+  yield api.test('basic', api.buildbucket.ci_build(),
+                 api.post_check(post_process.StatusSuccess))

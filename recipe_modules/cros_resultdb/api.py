@@ -6,7 +6,6 @@ import base64
 import os
 import re
 
-import six
 from google.protobuf import field_mask_pb2
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import ParseDict
@@ -118,7 +117,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       raise ValueError('test_args should contain resultdb_settings to '
                        'upload result to resultdb. Got %s')
 
-    rdb_config = self.m.json.loads(six.ensure_str(rdb_settings))
+    rdb_config = self.m.json.loads(rdb_settings.decode())
     rdb_config['base_tags'] = [
         tuple(x.split(':', 1)) for x in rdb_config.get('base_tags', [])
     ]
@@ -341,11 +340,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     Args:
       stainless_url (string): Link to the Stainless logs for the test run.
     """
-    artifact = {
-        'stainless_logs': {
-            'contents': six.ensure_binary(stainless_url)
-        }
-    }
+    artifact = {'stainless_logs': {'contents': stainless_url.encode()}}
     self.m.resultdb.upload_invocation_artifacts(artifact)
 
   def apply_exonerations(self, invocation_ids, default_behavior=Request.Params

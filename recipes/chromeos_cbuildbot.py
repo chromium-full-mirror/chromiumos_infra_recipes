@@ -4,7 +4,6 @@
 
 import json
 import re
-import six
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -68,7 +67,7 @@ def DoRunSteps(api, properties):
   cbb_extra_args = api.properties.get('cbb_extra_args', [])
 
   # If cbb_extra_args is a non-empty string, translate from json to list.
-  if cbb_extra_args and isinstance(cbb_extra_args, six.string_types):
+  if cbb_extra_args and isinstance(cbb_extra_args, str):
     cbb_extra_args = json.loads(cbb_extra_args)
 
   # Apply our adjusted configuration.

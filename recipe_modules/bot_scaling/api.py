@@ -8,7 +8,6 @@ from collections import namedtuple
 import decimal
 import itertools
 import math
-import six
 
 from PB.chromiumos.bot_scaling import (ApplicationUtilization, BotPolicy,
                                        ReducedBotPolicyCfg, ResourceUtilization,
@@ -266,13 +265,13 @@ class BotScalingApi(recipe_api.RecipeApi):
       # therefore we only need to count the first returned count.
       if not bot_stats_hold:
         bot_stats_hold = self._bot_swarming_stats(
-            six.ensure_str(policy.bot_group),
+            policy.bot_group,
             self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
             policy.scaling_restriction.bot_floor,
             policy.scaling_restriction.bot_ceiling)
       for state in TASK_STATES:
         task_stats_hold = self._task_swarming_stats(
-            six.ensure_str(policy.bot_group), state, task_stats_hold,
+            policy.bot_group, state, task_stats_hold,
             self.m.swarming_cli.get_task_counts(dim, state,
                                                 policy.lookback_hours,
                                                 policy.swarming_instance))

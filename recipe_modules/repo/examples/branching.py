@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import six
-
 from google.protobuf import json_format
 from PB.recipe_modules.chromeos.repo.examples.branching import BranchingProperties
 from PB.recipe_modules.chromeos.repo.examples.branching import BranchProjects
@@ -29,8 +27,7 @@ def RunSteps(api, properties):
   with api.context(cwd=repo_root):
     sync_opts = json_format.MessageToDict(properties.sync_opts,
                                           preserving_proto_field_name=True)
-    api.repo.sync_manifest(properties.manifest_url,
-                           six.ensure_str(properties.manifest_data),
+    api.repo.sync_manifest(properties.manifest_url, properties.manifest_data,
                            **sync_opts)
 
     if properties.HasField('start_args'):

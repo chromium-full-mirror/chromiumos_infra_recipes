@@ -8,7 +8,6 @@
 from collections import OrderedDict
 import contextlib
 from typing import Dict, Generator, List, Optional, Tuple
-import six
 
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
@@ -370,9 +369,7 @@ def _update_skipped_verifiers(api: RecipeApi,
 
       verifiers[skip_builder].skipped = True
 
-    builders = [
-        six.ensure_str(v.name) for v in verifiers.values() if not v.skipped
-    ]
+    builders = [v.name for v in verifiers.values() if not v.skipped]
     presentation.step_text = 'Non-skipped builders: {}'.format(builders)
     presentation.logs['Skipped builders'] = skip_builders
 

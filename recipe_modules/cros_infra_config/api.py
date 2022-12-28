@@ -3,7 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import six
+import typing
+from typing import Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
@@ -109,10 +110,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @property
   def experiments(self):
     """Return the list of experiments active for this build."""
-    return [
-        six.ensure_str(x.encode('utf-8'))
-        for x in self.m.buildbucket.build.input.experiments
-    ]
+    return list(self.m.buildbucket.build.input.experiments)
 
   @property
   def experiments_for_child_build(self):
@@ -202,7 +200,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def download_binproto(self, filename, step_test_data, timeout=None,
-                        repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):
+                        repo=CHROME_OS_INFRA_CONFIG_REPO_URL,
+                        message=None) -> bytes:
     """Helper method to fetch a file from gitiles."""
     if self._config_ref.startswith('refs/changes/') and message:
       # If we are running with a CL for the config_ref, convert the jsonpb proto
@@ -211,12 +210,13 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           repo, filename + '.cfg', branch=self._config_ref,
           step_test_data=step_test_data, timeout=timeout or
           self.test_api.gitiles_timeout_seconds).encode('utf-8')
-      return Parse(data, message).SerializeToString()
+      return _ensure_binary(Parse(data, message).SerializeToString())
 
-    return self.m.depot_gitiles.download_file(
-        repo, filename + '.binaryproto', branch=self._config_ref,
-        step_test_data=step_test_data, timeout=timeout or
-        self.test_api.gitiles_timeout_seconds)
+    return _ensure_binary(
+        self.m.depot_gitiles.download_file(
+            repo, filename + '.binaryproto', branch=self._config_ref,
+            step_test_data=step_test_data, timeout=timeout or
+            self.test_api.gitiles_timeout_seconds))
 
   @exponential_retry(retries=3,
                      condition=lambda e: getattr(e, 'had_timeout', False))
@@ -255,16 +255,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # once for each builder.
       with self.m.step.nest('read builder configs'), self.m.context(
           infra_steps=True):
-        builder_cfgs_file_contents = six.ensure_binary(
-            self._fetch_builder_configs())
+        builder_cfgs_file_contents = self._fetch_builder_configs()
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
         name_to_builder_config[config.id.name] = config
       # Override the ref from generated builder_config for (staging-)
       # release-main-orchestrator if experiment is enabled.
       if self._properties.release_tot_builds_snapshot:
-        builder_name = six.ensure_str('{}release-main-orchestrator'.format(
-            'staging-' if self._is_staging else ''))
+        staging_prefix = 'staging-' if self._is_staging else ''
+        builder_name = f'{staging_prefix}release-main-orchestrator'
         name_to_builder_config[
             builder_name].orchestrator.gitiles_commit.ref = 'refs/heads/{}snapshot'.format(
                 'staging-' if self._is_staging else '')
@@ -353,10 +352,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       SuiteRetryCfg as defined in the config repo.
     """
     return SuiteRetryCfg.FromString(
-        six.ensure_binary(
-            self.download_binproto('testingconfig/generated/vm_retry',
-                                   self.test_api.vm_retry_test_data,
-                                   message=SuiteRetryCfg())))
+        self.download_binproto('testingconfig/generated/vm_retry',
+                               self.test_api.vm_retry_test_data,
+                               message=SuiteRetryCfg()))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.
@@ -365,10 +363,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       TrackingPolicyCfg as defined in the config repo.
     """
     return TrackingPolicyCfg.FromString(
-        six.ensure_binary(
-            self.download_binproto('testingconfig/generated/dut_tracking',
-                                   self.test_api.dut_tracking_test_data,
-                                   message=TrackingPolicyCfg())))
+        self.download_binproto('testingconfig/generated/dut_tracking',
+                               self.test_api.dut_tracking_test_data,
+                               message=TrackingPolicyCfg()))
 
   def _has_valid_commit(self, config, commit, manifest):
     """Determine if the builder has a valid commit.
@@ -656,3 +653,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         critical = Trinary.NO
 
     self.m.buildbucket.build.critical = critical
+
+
+def _ensure_binary(input_text: Union[str, bytes]) -> bytes:
+  """Return input_text as bytes, regardless of its initial type.
+
+  TODO(crbug/1403876): Remove this when depot_gitiles.download_file() has a
+  consistent return type.
+  """
+  if isinstance(input_text, bytes):
+    return input_text
+  input_str = typing.cast(str, input_text)
+  return input_str.encode()

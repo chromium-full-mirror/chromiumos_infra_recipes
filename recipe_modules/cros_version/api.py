@@ -6,7 +6,6 @@
 """API for working with CrOS version numbers."""
 
 import re
-import six
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.cros_version.version import Version
@@ -51,13 +50,13 @@ class CrosVersionApi(RecipeApi):
 
   def initialize(self):
     """Initializes the module."""
-    self._version_bumper_cipd_package = six.ensure_str(
-        self._properties.version_bumper_cipd_package.encode('utf-8') or
+    self._version_bumper_cipd_package = (
+        self._properties.version_bumper_cipd_package or
         'chromiumos/infra/version_bumper/${platform}')
 
     default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._version_bumper_cipd_ref = six.ensure_str(
-        self._properties.version_bumper_cipd_ref.encode('utf-8') or default_ref)
+    self._version_bumper_cipd_ref = (
+        self._properties.version_bumper_cipd_ref or default_ref)
 
   def read_workspace_version(self, name='read chromeos version'):
     """Read the Chrome OS version from the workspace.

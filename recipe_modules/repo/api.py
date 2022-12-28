@@ -15,8 +15,6 @@ import json
 import re
 from xml.etree import cElementTree as ElementTree
 
-import six
-
 from google.protobuf.json_format import MessageToDict
 from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
@@ -110,7 +108,7 @@ class RepoApi(recipe_api.RecipeApi):
       name = 'repo'
       # Add first non-flag argument to name.
       for arg in args:
-        if isinstance(arg, six.string_types) and arg[:1] != '-':
+        if isinstance(arg, str) and arg[:1] != '-':
           name += ' ' + arg
           break
     kwargs.setdefault('infra_step', True)
@@ -219,7 +217,7 @@ class RepoApi(recipe_api.RecipeApi):
     if reference is not None:
       cmd += ['--reference', reference]
     if groups is not None:
-      assert not isinstance(groups, six.string_types)
+      assert not isinstance(groups, str)
       cmd += ['--groups', ','.join(groups)]
     if depth is not None:
       cmd += ['--depth', '%d' % depth]
@@ -538,7 +536,7 @@ class RepoApi(recipe_api.RecipeApi):
         step_test_data=step_test_data)
 
     infos = []
-    lines = six.ensure_str(step_data.stdout).strip().split('\n')
+    lines = step_data.stdout.strip().split('\n')
 
     # If nothing was matched, return the empty infos.
     if len(lines) == 1 and lines[0] == '':
@@ -586,7 +584,7 @@ class RepoApi(recipe_api.RecipeApi):
           cmd, stderr=self.m.raw_io.output_text(add_output_log=True),
           ok_ret=[0, 1])
 
-      stderr = six.ensure_str(step_data.stderr)
+      stderr = step_data.stderr
       if stderr.strip():
         errmsg = 'project {} not found'.format(project)
         # Non-empty stderr
@@ -614,7 +612,7 @@ class RepoApi(recipe_api.RecipeApi):
       cmd += projects
     stdout = self.m.easy.stdout_step('repo info', cmd,
                                      test_stdout=lambda: test_data)
-    return six.ensure_str(stdout).strip()
+    return stdout.decode().strip()
 
   def ensure_pinned_manifest(self, projects=None, regexes=None, test_data=None,
                              step_name=None):

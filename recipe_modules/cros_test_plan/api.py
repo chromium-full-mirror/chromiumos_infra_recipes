@@ -6,7 +6,6 @@
 
 import json
 
-import six
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
@@ -29,14 +28,13 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._test_planner_path = None
-    self._test_planner_cipd_package = six.ensure_str(
-        self._properties.test_plan_generator_cipd_package.encode('utf-8') or
+    self._test_planner_cipd_package = (
+        self._properties.test_plan_generator_cipd_package or
         'chromiumos/infra/test_plan_generator/${platform}')
 
     default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._test_planner_cipd_ref = six.ensure_str(
-        self._properties.test_plan_generator_cipd_ref.encode('utf-8') or
-        default_ref)
+    self._test_planner_cipd_ref = (
+        self._properties.test_plan_generator_cipd_ref or default_ref)
 
   def get_target_test_requirements(self, builders=None):
     """Fetch target test requirements config.

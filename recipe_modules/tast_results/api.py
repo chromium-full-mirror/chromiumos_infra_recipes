@@ -4,8 +4,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import six
-
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
@@ -258,7 +256,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         return [], False
 
       test_map = {
-          six.ensure_str(t.name): t
+          t.name: t
           for t in task_result.test_cases
           if t.verdict in FAILURE_VERDICTS
       }

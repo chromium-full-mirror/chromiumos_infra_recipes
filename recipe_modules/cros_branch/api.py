@@ -6,7 +6,6 @@
 """API wrapping the cros branch tool."""
 
 import re
-import six
 
 from PB.chromiumos.branch import Branch
 
@@ -27,13 +26,13 @@ class CrosBranchApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._branch_util_path = None
 
-    self._branch_util_cipd_package = six.ensure_str(
-        self._properties.branch_util_cipd_package.encode('utf-8') or
-        "chromiumos/infra/branch_util/${platform}")
+    self._branch_util_cipd_package = (
+        self._properties.branch_util_cipd_package or
+        'chromiumos/infra/branch_util/${platform}')
 
-    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
-    self._branch_util_cipd_ref = six.ensure_str(
-        self._properties.branch_util_cipd_ref.encode('utf-8') or default_ref)
+    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
+    self._branch_util_cipd_ref = (
+        self._properties.branch_util_cipd_ref or default_ref)
 
   def __call__(self, cmd, step_name=None, force=False, push=False, **kwargs):
     """Call cros branch with the given args.

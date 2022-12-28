@@ -3,7 +3,6 @@
 # found in the LICENSE file.
 
 import re
-import six
 
 from recipe_engine.config import config_item_context, ConfigGroup
 from recipe_engine.config import Dict, Single, List, Set
@@ -23,11 +22,10 @@ def BaseConfig(CBB_CONFIG=None, CBB_BRANCH=None, CBB_BUILD_NUMBER=None,
                CBB_MAIN_BUILD_ID=None, CBB_EXTRA_ARGS=None, **_kwargs):
   cgrp = ConfigGroup(
       # Base mapping of repository key to repository name.
-      repositories=Dict(value_type=Set(six.string_types[0])),
+      repositories=Dict(value_type=Set(str)),
 
       # Checkout Chromite at this branch. "origin/" will be prepended.
-      chromite_branch=Single(six.string_types[0], empty_val=CBB_BRANCH or
-                             'main'),
+      chromite_branch=Single(str, empty_val=CBB_BRANCH or 'main'),
 
       # Should the Chrome version be supplied to cbuildbot?
       use_chrome_version=Single(bool),
@@ -39,16 +37,16 @@ def BaseConfig(CBB_CONFIG=None, CBB_BRANCH=None, CBB_BUILD_NUMBER=None,
       # cbuildbot tool flags.
       cbb=ConfigGroup(
           # The Chromite configuration to use.
-          config=Single(six.string_types[0], empty_val=CBB_CONFIG),
+          config=Single(str, empty_val=CBB_CONFIG),
 
           # If supplied, forward to cbuildbot as '--master-build-id'.
-          build_id=Single(six.string_types[0], empty_val=CBB_MAIN_BUILD_ID),
+          build_id=Single(str, empty_val=CBB_MAIN_BUILD_ID),
 
           # If supplied, forward to cbuildbot as '--buildnumber'.
           build_number=Single(int, empty_val=CBB_BUILD_NUMBER),
 
           # If supplied, forward to cbuildbot as '--chrome_version'.
-          chrome_version=Single(six.string_types[0]),
+          chrome_version=Single(str),
 
           # If True, add cbuildbot flag: '--debug'.
           debug=Single(bool, empty_val=CBB_DEBUG),
@@ -57,14 +55,13 @@ def BaseConfig(CBB_CONFIG=None, CBB_BRANCH=None, CBB_BUILD_NUMBER=None,
           clobber=Single(bool, empty_val=CBB_CLOBBER),
 
           # The (optional) configuration repository to use.
-          config_repo=Single(six.string_types[0]),
+          config_repo=Single(str),
 
           # If supplied, forward to cbuildbot as '--buildbucket-id'
-          buildbucket_id=Single(six.string_types[0],
-                                empty_val=CBB_BUILDBUCKET_ID),
+          buildbucket_id=Single(str, empty_val=CBB_BUILDBUCKET_ID),
 
           # Extra arguments passed to cbuildbot.
-          extra_args=List(six.string_types[0]),
+          extra_args=List(str),
       ),
 
       # If "chromite_branch" includes a branch version, this will be set to the

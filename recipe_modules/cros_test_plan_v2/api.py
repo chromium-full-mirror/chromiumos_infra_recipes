@@ -6,7 +6,6 @@ import base64
 import re
 from collections import namedtuple, defaultdict
 
-import six
 from google.protobuf import json_format
 from google.protobuf import text_format
 
@@ -282,7 +281,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       * Path to the file where the protobuf was written.
     """
     test_output_contents = base64.b64encode(
-        six.ensure_binary(json_format.MessageToJson(test_output_message)))
+        json_format.MessageToJson(test_output_message).encode())
     contents = self.m.gitiles.get_file(host, project, path, public=False,
                                        test_output_data=test_output_contents)
 

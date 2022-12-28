@@ -7,7 +7,6 @@
 
 from datetime import datetime
 import json
-import six
 
 from google.protobuf.json_format import Parse
 
@@ -54,7 +53,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
 
       # json_to_proto can't handle null/None values, so replace with empty
       # strings.
-      returned_data = six.ensure_str(returned_data).replace('null', '""')
+      returned_data = returned_data.decode().replace('null', '""')
 
       # Validate you have real json and the expected number of records.
       try:
