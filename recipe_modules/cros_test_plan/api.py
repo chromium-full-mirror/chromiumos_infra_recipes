@@ -18,6 +18,17 @@ from recipe_engine import recipe_api
 
 CONFIG_INTERNAL_CHECKOUT = 'src/config-internal'
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
+HELP_STDOUT = """Generate testing config for specified release builders.
+
+Usage: ./generate_test_config [options]
+Usage: ./generate_test_config [options] all
+Usage: ./generate_test_config [options] coral-release-main,staging-kevin-release-main
+
+Options:
+  ...
+  -b, --branch                  Tell the tool what branch we're on. Only for
+"""
+
 
 class CrosTestPlanApi(recipe_api.RecipeApi):
   """A module for generating and parsing test plans."""
@@ -107,6 +118,19 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]
           if paygen:
             cmd.append('--paygen')
+
+          # If --branch is supported on this branch, use it.
+          # TODO(b/262388770): Maybe in many years we can do this
+          # unconditionally.
+          help_message = self.m.easy.stdout_step(
+              'get supported flags',
+              ['./board_config/generate_test_config', '-h'],
+              test_stdout=HELP_STDOUT)
+          config = self.m.cros_infra_config.config
+          if '--branch' in str(help_message) and config:
+            branch = config.orchestrator.gitiles_commit.ref
+            if branch:
+              cmd.extend(['--branch', branch[len('refs/heads/'):]])
 
           def test_stdout():
             if paygen:

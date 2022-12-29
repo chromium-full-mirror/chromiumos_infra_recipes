@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/raw_io',
     'recipe_engine/properties',
+    'build_menu',
     'cros_test_plan',
     'gitiles',
     'repo',
@@ -169,7 +170,7 @@ def GenTests(api):
                          '[CLEANUP]/chromiumos_workspace/src/config-internal'
                      ]))
 
-  yield api.test(
+  yield api.build_menu.test(
       'generate-test-config-child',
       api.properties(
           **{
@@ -192,10 +193,14 @@ def GenTests(api):
                                builder='eve-release-main'),
       api.step_data('generate target test requirements.generate_test_config',
                     stdout=api.raw_io.output(generate_test_config_output)),
-      api.post_check(
-          post_process.StepCommandContains,
-          'generate target test requirements.generate_test_config',
-          ['./board_config/generate_test_config', 'eve-release-main']))
+      api.post_check(post_process.StepCommandContains,
+                     'generate target test requirements.generate_test_config', [
+                         './board_config/generate_test_config',
+                         'eve-release-main',
+                         '--branch',
+                         'main',
+                     ]), build_target='staging-eve',
+      builder='staging-eve-release-main', bucket='release')
 
   yield api.test(
       'staging',

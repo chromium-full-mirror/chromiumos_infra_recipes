@@ -3384,8 +3384,36 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
+      "-h"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check that test config exists.generate target test requirements.get supported flags",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./board_config/generate_test_config",
       "kukui-release-main",
-      "--paygen"
+      "--paygen",
+      "--branch",
+      "main"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "env": {
