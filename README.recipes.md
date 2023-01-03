@@ -9668,13 +9668,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#21)(api):**
 ### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)
 
-[DEPS](/recipes/cipd_uprev.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/cipd_uprev.py#10): [deferrals](#recipe_modules-deferrals), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#85)(api, properties):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#95)(api, properties):**
 
-&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#40)(api, instruction):**
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#43)(api, instruction):**
 
 Get the current version of the ref.
 
@@ -9686,7 +9686,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#59)(api, instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#62)(api, instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -9699,7 +9699,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/cipd_uprev.py#23)(api, instruction):**
+&mdash; **def [validate](/recipes/cipd_uprev.py#26)(api, instruction):**
 
 Validate instructions for uprevving a specific package.
 

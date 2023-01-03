@@ -9,9 +9,12 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/cipd',
+    'recipe_engine/json',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
+    'deferrals',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -71,10 +74,17 @@ def uprev_package(api, instruction, package_tags=None):
   package_tags = package_tags or {}
   with api.step.nest(
       'apply the "%s" ref of the "%s" package to "%s"' %
-      (instruction.ref, instruction.package_name, instruction.version)):
+      (instruction.ref, instruction.package_name, instruction.version)) as pres:
     for tag_key, tag_value in package_tags.items():
-      api.cipd.set_tag(instruction.package_name, instruction.version,
-                       {tag_key: tag_value})
+      try:
+        api.cipd.set_tag(instruction.package_name, instruction.version,
+                         {tag_key: tag_value})
+      except Exception as e:
+        pres.step_text = 'Failed to set cipd tag. Check the stdout for the step for errors.'
+        # We don't want an infra failure, so turn it into a StepFailure.
+        raise StepFailure(
+            'Failed to set cipd tag. Check the stdout for the step for errors.'
+        ) from e
     instance_id = api.cipd.set_ref(instruction.package_name,
                                    instruction.version,
                                    [instruction.ref]).instance_id
@@ -84,22 +94,24 @@ def uprev_package(api, instruction, package_tags=None):
 
 def RunSteps(api, properties):
   release_tag_time = api.time.utcnow().isoformat()
-  for instruction in properties.config.instructions:
-    with api.step.nest('package %s' % instruction.package_name):
-      validate(api, instruction)
-      properties.response.old_versions.extend(
-          [get_current_instance(api, instruction)])
-      package_tags = {}
-      if properties.config.release_version_tag:
-        release_tag_key = properties.config.release_version_tag
-        if release_tag_key == _CI_RELEASE_VERSION_TAG:
-          release_tag_value = 'ci_{}'
-        else:
-          release_tag_value = 'ctp_{}'
-        package_tags[release_tag_key] = release_tag_value.format(
-            release_tag_time)
-      properties.response.new_versions.extend(
-          [uprev_package(api, instruction, package_tags)])
+  with api.deferrals.raise_exceptions_at_end():
+    for instruction in properties.config.instructions:
+      with api.step.nest('package %s' % instruction.package_name):
+        validate(api, instruction)
+        properties.response.old_versions.extend(
+            [get_current_instance(api, instruction)])
+        package_tags = {}
+        if properties.config.release_version_tag:
+          release_tag_key = properties.config.release_version_tag
+          if release_tag_key == _CI_RELEASE_VERSION_TAG:
+            release_tag_value = 'ci_{}'
+          else:
+            release_tag_value = 'ctp_{}'
+          package_tags[release_tag_key] = release_tag_value.format(
+              release_tag_time)
+        with api.deferrals.defer_exceptions():
+          package = uprev_package(api, instruction, package_tags)
+          properties.response.new_versions.extend([package])
 
 
 def GenTests(api):
@@ -133,6 +145,27 @@ def GenTests(api):
                           package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
                           ref='foo-recipe-ref', version='foo-recipe-version'),
                   ], release_version_tag='ctp_release_version'))),
+  )
+
+  yield api.test(
+      'basic-with-tag-error',
+      api.time.seed(123),
+      api.properties(
+          cipd_uprev.Properties(
+              config=cipd_uprev.Config(
+                  instructions=[
+                      cipd_uprev.Instruction(
+                          package_name='chromiumos/infra/phosphorus/linux-amd64',
+                          ref='foo-phosphorus-ref',
+                          version='foo-phosphorus-version'),
+                      cipd_uprev.Instruction(
+                          package_name='infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
+                          ref='foo-recipe-ref', version='foo-recipe-version'),
+                  ], release_version_tag='ctp_release_version'))),
+      api.step_data(
+          'package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.apply the "foo-recipe-ref" ref of the "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes" package to "foo-recipe-version".cipd set-tag infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
+          api.json.output({})),
+      api.post_check(post_process.StatusFailure),
   )
 
   yield api.test(
