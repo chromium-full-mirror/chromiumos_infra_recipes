@@ -873,7 +873,20 @@
     "name": "execution steps.original_test.read autotest keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@keyval@@@"
+      "@@@STEP_LOG_END@keyval@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@{@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@        [@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@            \"test_suite\", @@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@            \"lacros_all_tast_tests\"@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@        ]@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@    ], @@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@        \"test_suite\": \"lacros_all_tast_tests\"@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@    }, @@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@extracted configs from test_args@}@@@",
+      "@@@STEP_LOG_END@extracted configs from test_args@@@"
     ]
   },
   {

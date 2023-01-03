@@ -960,8 +960,14 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
   if (test_metadata.test.autotest.test_args and
       'resultdb_settings' in test_metadata.test.autotest.test_args):
+    # Extract rdb config from test args.
     config = api.cros_resultdb.extract_chromium_resultdb_settings(
         test_metadata.test.autotest.test_args)
+    pres = api.step.active_result.presentation
+    pres.logs['extracted configs from test_args'] = api.json.dumps(
+        config, indent=4)
+
+    # Modify extracted configs if necessary.
     result_format = config.get('result_format')
     artifact_directory = config.get('artifact_directory')
     if result_format in {'tast', 'gtest', 'native'}:
@@ -971,6 +977,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       config[
           'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
               base_dir, result_format, artifact_directory)
+
+    # Upload to rdb using extracted configs.
     api.cros_resultdb.upload(config,
                              step_name='upload chromium test results to rdb')
     return

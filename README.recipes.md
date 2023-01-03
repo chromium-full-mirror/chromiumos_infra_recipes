@@ -3352,11 +3352,11 @@ Get the path to the test results artifact directory on the drone.
 Currently only supports Tast and Gtest.
 
 Args:
-  base_dir (Path): The path of the base test results on the drone server.
+  base_dir (str): The path of the base test results on the drone server.
       For example, Chromium gtest result can be found at
       base_dir/autoserv_test/chromium/results.
   result_format (str): The format of the test results.
-  artifact_directory (Path): rel path relative to autotest result folder.
+  artifact_directory (str): rel path relative to autotest result folder.
       ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
       it to pass the runtime result path to adapter. So we do
       not accept user defined artifact fed to this module.
@@ -12721,7 +12721,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1780)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1788)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#162)(api, interface, test_metadata, result):**
 
@@ -12737,7 +12737,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1629)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1637)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -12749,7 +12749,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1376)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1384)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -12765,7 +12765,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1296)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1304)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -12781,7 +12781,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1267)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1275)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -12818,7 +12818,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1698)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1706)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
