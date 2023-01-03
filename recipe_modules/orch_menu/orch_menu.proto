@@ -64,4 +64,7 @@ message OrchMenuProperties {
 
   // Whether to skip paygen. Only used for release builders.
   bool skip_paygen = 11;
+
+  // Whether to schedule a public build. Only used for release builders.
+  bool schedule_public_build = 12;
 }

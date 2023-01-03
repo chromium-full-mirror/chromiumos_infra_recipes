@@ -142,11 +142,16 @@ def GenTests(api: RecipeTestApi):
       'release-orchestrator', data.ctp_normal,
       api.properties(
           **{
-              "$chromeos/orch_menu": OrchMenuProperties(skip_paygen=True),
+              "$chromeos/orch_menu":
+                  OrchMenuProperties(skip_paygen=True,
+                                     schedule_public_build=True),
               '$chromeos/signing': {
                   'ignore_already_exists_errors': True,
               }
-          }), api.post_check(post_process.StatusSuccess),
+          }),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.schedule public build'),
+      api.post_check(post_process.StatusSuccess),
       builder='release-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 

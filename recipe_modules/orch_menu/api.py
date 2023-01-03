@@ -264,14 +264,10 @@ class OrchMenuApi(RecipeApi):
                 self.m.cros_release.create_buildspec(
                     dry_run=is_staging,
                     gs_location=self._properties.buildspec_gs_path, **kwargs)
-                branch = config.orchestrator.gitiles_commit.ref
-                if branch.startswith('refs/heads/'):
-                  branch = branch[len('refs/heads/'):]
-                with self.m.checkpoint.retry(
-                    RetryStep.PUBLIC_BUILD_LKGM) as run_step:
-                  if run_step:
-                    if self.m.cros_source.is_tot or branch.startswith(
-                        'release-'):
+                if self._properties.schedule_public_build:
+                  with self.m.checkpoint.retry(
+                      RetryStep.PUBLIC_BUILD_LKGM) as run_step:
+                    if run_step:
                       self.m.cros_lkgm.schedule_public_build()
             else:
               self.m.cros_release.buildspec = ManifestLocation(

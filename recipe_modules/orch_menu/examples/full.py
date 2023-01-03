@@ -157,6 +157,8 @@ def GenTests(api):
           post_process.MustRun,
           'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
       ),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.schedule public build'),
       api.post_check(
           post_process.StepCommandContains,
           'set up orchestrator.create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml',
@@ -167,7 +169,8 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True,
+          schedule_public_build=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -255,7 +258,8 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True,
+          schedule_public_build=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -353,7 +357,8 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='main'),
+          bump_version=True, manifest_versions_branch='main',
+          schedule_public_build=True),
       builder='release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -372,10 +377,13 @@ def GenTests(api):
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.schedule public build'),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', 'dry-run only'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'), bump_version=True),
+          update_manifest_refs=dict(test='refs/heads/test'), bump_version=True,
+          schedule_public_build=True),
       builder='staging-release-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
