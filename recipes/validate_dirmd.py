@@ -10,6 +10,8 @@ files in projects touched by the input CLs.
 """
 
 from recipe_engine import post_process
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
 
 DEPS = [
     'depot_tools/depot_tools',
@@ -30,7 +32,14 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   with api.workspace_util.setup_workspace(), api.workspace_util.sync_to_commit(
   ):
-    api.workspace_util.apply_changes()
+    api.workspace_util.apply_changes(ignore_missing_projects=True)
+
+    if not api.workspace_util.patch_sets:
+      return result_pb2.RawResult(
+          status=common_pb2.SUCCESS,
+          summary_markdown='No patchsets applied (possibly because input GerritChanges are not in a project / branch in the manifest)'
+      )
+
     # Get the ProjectInfos of the input patch sets, de-duped and sorted.
     project_infos = sorted(
         set(
@@ -39,6 +48,7 @@ def RunSteps(api):
                     patch.project for patch in api.workspace_util.patch_sets
                 ],
             )))
+
 
     # For each project, try both dirmd and test_plan validation. Catch step
     # step failures and turn them into failures.Failure objects with links to
@@ -89,17 +99,23 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.post_check(post_process.StatusSuccess),
-  )
-
   # Populate logdog fields on the build message so link components are filled
   # out.
-  build_message = api.buildbucket.ci_build_message(build_id=123)
+  build_message = api.buildbucket.try_build_message(
+      build_id=123, gerrit_changes=[
+          common_pb2.GerritChange(
+              host='https://chromium-review.googlesource.com',
+              project='project-a', change=123, patchset=4),
+      ])
   build_message.infra.logdog.hostname = 'logs.chromium.org'
   build_message.infra.logdog.project = 'chromeos'
   build_message.infra.logdog.prefix = 'logdog/prefix'
+
+  yield api.test(
+      'basic',
+      api.buildbucket.build(build_message),
+      api.post_check(post_process.StatusSuccess),
+  )
 
   # Step data for dirmd and test_plan validation failures.
   dirmd_glob_paths = api.step_data(
@@ -148,5 +164,15 @@ def GenTests(api):
       api.post_check(
           post_process.ResultReasonRE,
           '(?s)1 dirmd validation failed.*1 test_plan validation failed.*'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'all input changes discarded',
+      api.buildbucket.build(build_message),
+      api.repo.project_infos_step_data(
+          'cherry-pick gerrit changes.apply gerrit patch sets',
+          [dict(project='otherproject')]),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

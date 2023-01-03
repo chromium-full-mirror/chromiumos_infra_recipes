@@ -1141,7 +1141,9 @@ class CrosSourceApi(RecipeApi):
       patch_sets (list[PatchSet]): The PatchSets to apply.
       ignore_missing_projects (bool): Whether to ignore projects that are not
         in the source tree.  (For example, the builder uses the external
-        manifest, but the CQ run includes private changes.)
+        manifest, but the CQ run includes private changes.) Note that for a
+        given PatchSet if project is in the manifest but the branch is not, the
+        PatchSet will still be ignored.
       project_path (str): The path to use when applying the patch, or none to
         use find_project_paths.
       name (str): The name for the step, or None.
@@ -1152,15 +1154,25 @@ class CrosSourceApi(RecipeApi):
     """
     with self.m.step.nest(name or 'apply gerrit patch sets') as pres:
       if ignore_missing_projects:
-        synced_projects = set(p.name for p in self.m.repo.project_infos())
+        # The branch returned by repo.project_infos contains 'refs/heads/', but
+        # the branch in patch_sets does not. Strip the 'refs/heads/' here. If
+        # there is no branch in the ProjectInfo use the default branch.
+        synced_projects = set((p.name, p.branch.replace('refs/heads/', '') if p
+                               .branch else self.m.src_state.default_branch)
+                              for p in self.m.repo.project_infos())
+
         # Only retain patches to synced projects.  Mark as discarded any patches
         # to other projects, unless they have already been applied (manifest
-        # patches).
+        # patches). Note that we check if the specific branch is synced for the
+        # project.
         discard = [
-            p for p in patch_sets if p.project not in synced_projects and
+            p for p in patch_sets
+            if (p.project, p.branch) not in synced_projects and
             p.display_id not in self._applied_patches
         ]
-        patch_sets = [p for p in patch_sets if p.project in synced_projects]
+        patch_sets = [
+            p for p in patch_sets if (p.project, p.branch) in synced_projects
+        ]
         if discard:
           pres.step_text = 'Discarded changes: {}'.format(', '.join(
               p.display_id for p in discard))
