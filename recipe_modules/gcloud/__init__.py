@@ -18,7 +18,6 @@ DEPS = [
     'cros_infra_config',
     'easy',
     'overlayfs',
-    'repo',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

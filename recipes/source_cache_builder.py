@@ -9,7 +9,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
 from PB.recipes.chromeos.source_cache_builder import (
-    SourceCacheBuilderProperties)
+    SourceCacheBuilderProperties, SyncCommand)
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -97,7 +97,7 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
         mount_path = api.gcloud.snapshot_builder_mount_path.join(
             cache.cache_name)
         try:
-          if cache.command == 'repo':
+          if cache.command == SyncCommand.REPO:
             with api.context(cwd=mount_path):
               sync_opts = dict(force_sync=True, detach=True, jobs=20,
                                retry_fetches=8, timeout=10800,
@@ -125,7 +125,7 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
                 with api.step.nest('git clone manifest-versions'):
                   api.git.clone(repo_url=api.cros_release.MANIFEST_VERSIONS_URL,
                                 target_path=manifest_dir)
-          if cache.command == 'gclient':
+          if cache.command == SyncCommand.GCLIENT:
             # Chrome cache consists of a local repo cache and src,
             # both mounted via a single disk. We change into the
             # source directory to sync.
@@ -191,7 +191,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='release-R90-13816.B',
                   disk_type='pd-ssd',
@@ -210,14 +210,14 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
               ),
               dict(
                   cache_name='chromeos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -234,21 +234,21 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromeos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
               ),
               dict(
                   cache_name='chrome',
-                  command='gclient',
+                  command='GCLIENT',
                   recovery_snapshot='chrome_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
               ),
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromiumos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -266,7 +266,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -287,7 +287,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -335,7 +335,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -377,7 +377,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',
@@ -397,7 +397,7 @@ def GenTests(api: RecipeTestApi):
           cache_definition=[
               dict(
                   cache_name='chromiumos',
-                  command='repo',
+                  command='REPO',
                   recovery_snapshot='chromeos_default_recovery_snapshot',
                   branch='main',
                   disk_type='pd-ssd',

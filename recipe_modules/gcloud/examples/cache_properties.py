@@ -41,7 +41,6 @@ def GenTests(api):
           'source cache.setup source cache disk.create disk with empty checkout.create empty disk',
           ['--image']),
       api.post_check(post_process.StepSuccess, 'source cache.chown the disk'),
-      api.post_check(post_process.StepSuccess, 'source cache.repo init'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
@@ -58,7 +57,6 @@ def GenTests(api):
           retcode=3),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'source cache.chown the disk'),
-      api.post_check(post_process.StepSuccess, 'source cache.repo init'),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )

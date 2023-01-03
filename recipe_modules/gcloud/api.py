@@ -1124,17 +1124,6 @@ class GcloudApi(recipe_api.RecipeApi):
           self.m.file.write_text('write version file', local_version_path,
                                  snapshot)
 
-      # Special case for when there is no cache mounted, we need to make sure
-      # we repo init that disk.
-      if self.cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
-        # Make sure we repo init in the correct directory.
-        with self.m.context(
-            cwd=self.m.path.abs_to_path(
-                self.snapshot_builder_mount_path.join(mount_path))):
-          self.m.repo.init(
-              'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
-          )
-
       if not recipe_mount:
         self._reset_overlayfs_if_needed(cache_name)
       return recipe_mount_path
