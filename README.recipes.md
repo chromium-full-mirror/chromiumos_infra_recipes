@@ -4945,6 +4945,32 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#446)(self, hw_test_result):**
+
+Checks to see if hw result is exonerable.
+
+Args:
+  hw_test_result(Skylab_Result): skylab result.
+
+Returns:
+  True if and only if the result is a failure AND exonerable.
+  Note that it will return False if result is a success.
+
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#482)(self, vm_build):**
+
+Checks to see if the VM test is exonerable.
+
+Args:
+  vm_build(build_pb2.Build): vm result from the proctor.
+
+Returns:
+  True if and only if the result is a failure AND exonerable.
+  Note that it will return False if the result itself is a success.
+
+&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#66)(self, mock_data=None):**
+
+Load configs from binary/json files.
+
 &mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#114)(self):**
 
 Write exoneration stats to output properties.

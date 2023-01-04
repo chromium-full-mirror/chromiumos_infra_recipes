@@ -63,10 +63,10 @@ class ExonerateApi(recipe_api.RecipeApi):
       return test_name[5:]
     return test_name
 
-  def _load_configs(self):
+  def load_configs(self, mock_data=None):
     """Load configs from binary/json files."""
     self._exoneration_configs = {}
-    exoneration_cfg = self.fetch_config()
+    exoneration_cfg = self.fetch_config(mock_data)
 
     for exoneration in exoneration_cfg.disablements:
       targets = []
@@ -251,7 +251,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     new_test_results = []
     with self.m.step.nest('exonerate hw tests') as pres:
       if not self._configs_loaded:
-        self._load_configs()
+        self.load_configs()
         pres.logs['configs'] = self._get_printable_configs()
 
       for skylab_res in hw_test_results:
@@ -355,7 +355,7 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('exonerate vm tests') as pres:
       if not self._configs_loaded:
-        self._load_configs()
+        self.load_configs()
         pres.logs['configs'] = self._get_printable_configs()
 
       for build in vm_builds:
@@ -423,3 +423,87 @@ class ExonerateApi(recipe_api.RecipeApi):
     ]
     md_string += ', '.join(all_links)
     return md_string
+
+  def _is_test_name_exonerable(self, test_name, build_target):
+    """Checks to see if test is exonerable.
+
+    Args:
+      test_name[str]: Name of the test
+      build_target[str]: Name of the build_target
+
+    Returns: True if test_name is exonerable for the specific build_target.
+    """
+    if test_name == 'tast':
+      return True
+    if test_name not in self._exoneration_configs:
+      return False
+    targets = self._exoneration_configs[test_name]
+    if targets == []:
+      # If targets is empty, match universally.
+      return True
+    return build_target in targets
+
+  def is_hw_result_exonerable(self, hw_test_result) -> bool:
+    """ Checks to see if hw result is exonerable.
+
+    Args:
+      hw_test_result(Skylab_Result): skylab result.
+
+    Returns:
+      True if and only if the result is a failure AND exonerable.
+      Note that it will return False if result is a success.
+
+    """
+    if (hw_test_result.status == common_pb2.SUCCESS or
+        not hw_test_result.task.test.common.critical.value):
+      # If a result is successful, technically its not exonerable.
+      return False
+    if not self._configs_loaded:
+      self.load_configs()
+
+    build_target = hw_test_result.task.unit.common.build_target.name
+    child_results = hw_test_result.child_results
+    if not child_results:
+      return False
+    exonerated = False
+    for result in child_results:
+      if result.state.verdict == TaskState.VERDICT_PASSED:
+        continue
+      test_cases = result.test_cases
+      for test_case in test_cases:
+        test_name = self.get_tastless_name(test_case.name)
+        if (test_case.verdict == TaskState.VERDICT_UNSPECIFIED or
+            test_case.verdict == TaskState.VERDICT_FAILED):
+          if not self._is_test_name_exonerable(test_name, build_target):
+            return False
+          exonerated = True
+    return exonerated
+
+  def is_vm_test_build_exonerable(self, vm_build):
+    """Checks to see if the VM test is exonerable.
+
+    Args:
+      vm_build(build_pb2.Build): vm result from the proctor.
+
+    Returns:
+      True if and only if the result is a failure AND exonerable.
+      Note that it will return False if the result itself is a success.
+    """
+    if (vm_build.status == common_pb2.SUCCESS or
+        vm_build.critical == common_pb2.NO or
+        'failed_test_cases' not in vm_build.output.properties):
+      return False
+    if not self._configs_loaded:
+      self.load_configs()
+
+    build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
+    prop_struct = vm_build.output.properties['failed_test_cases']
+    all_test_cases = json_format.MessageToDict(prop_struct)
+    if not all_test_cases:
+      return False
+    for test_case in all_test_cases:
+      if test_case[
+          'verdict'] == 'VERDICT_FAILED' and not self._is_test_name_exonerable(
+              test_case['name'], build_target):
+        return False
+    return True

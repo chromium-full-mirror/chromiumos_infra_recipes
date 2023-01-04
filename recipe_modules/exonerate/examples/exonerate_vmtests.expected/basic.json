@@ -1,23 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "exonerate vm tests",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
-      "@@@STEP_LOG_LINE@configs@test1: []@@@",
-      "@@@STEP_LOG_LINE@configs@test2: []@@@",
-      "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
-      "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
-      "@@@STEP_LOG_END@configs@@@",
-      "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty@@@",
-      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on betty@@@",
-      "@@@STEP_LOG_END@exoneration logs@@@",
-      "@@@STEP_LOG_LINE@exonerated tests@arc.Boot:\t['betty']@@@",
-      "@@@STEP_LOG_LINE@exonerated tests@test2:\t['betty']@@@",
-      "@@@STEP_LOG_END@exonerated tests@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -29,10 +11,19 @@
       "--format",
       "text"
     ],
-    "name": "exonerate vm tests.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
-    "timeout": 180,
+    "name": "fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
+    "timeout": 180
+  },
+  {
+    "cmd": [],
+    "name": "exonerate vm tests",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on betty@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@arc.Boot:\t['betty']@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test2:\t['betty']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
     ]
   },
   {

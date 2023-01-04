@@ -39,6 +39,8 @@ def RunSteps(api):
   suite_name = 'betty.tast_vm.tast_vm_default'
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
+  api.assertions.assertEqual(
+      api.exonerate.is_vm_test_build_exonerable(build), True)
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [suite_name])
@@ -49,6 +51,8 @@ def RunSteps(api):
 
   # Case where the VM test is non-critical
   build.critical = common_pb2.NO
+  api.assertions.assertEqual(
+      api.exonerate.is_vm_test_build_exonerable(build), False)
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])
@@ -65,10 +69,23 @@ def RunSteps(api):
   suite_name = 'betty.tast_vm.tast_vm_default'
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
+  api.assertions.assertEqual(
+      api.exonerate.is_vm_test_build_exonerable(build), False)
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.FAILURE)
+
+  # non exonerable failed_test_cases.
+  build = api.exonerate.test_api.fake_vm_build()
+  failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
+      name='non_exonerable_for_eternity', verdict=TaskState.VERDICT_FAILED,
+      human_readable_summary='something very wrong here')
+  failed_test_case_dict1 = json_format.MessageToDict(failed_test_case_result1)
+  build.output.properties.update(
+      {'failed_test_cases': [failed_test_case_dict1]})
+  api.assertions.assertEqual(
+      api.exonerate.is_vm_test_build_exonerable(build), False)
 
   api.exonerate.print_stats()
 

@@ -68,7 +68,13 @@ def RunSteps(api):
                                         status=common_pb2.SUCCESS,
                                         child_results=child_results[:1]),
   ]
+  # Testing for exoneration fail. (As the result was a success to begin with)
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[1])
+  api.assertions.assertEqual(is_exonerable, False)
   # Testing the case of exoneration
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
+  api.assertions.assertEqual(is_exonerable, True)
+
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   # Testing the markdown output.
@@ -78,7 +84,6 @@ def RunSteps(api):
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, ['target.hw.bvt-cq'])
   api.assertions.assertEqual(len(hw_test_failures[0].child_results), 3)
-
   child_results = [
       ExecuteResponse.TaskResult(name='suite1', state=pass_state,
                                  test_cases=passing_test_cases),
@@ -92,6 +97,8 @@ def RunSteps(api):
                                         child_results=child_results),
   ]
   # Testing the case where test doesn't get exonerated
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
+  api.assertions.assertEqual(is_exonerable, False)
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertTrue(
@@ -105,6 +112,10 @@ def RunSteps(api):
                                         status=common_pb2.FAILURE,
                                         child_results=[])
   ]
+
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
+  api.assertions.assertEqual(is_exonerable, False)
+
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertEqual(exonerated_test_names, [])
@@ -118,6 +129,9 @@ def RunSteps(api):
           task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
           child_results=child_results_with_empty_test_cases)
   ]
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
+  api.assertions.assertEqual(is_exonerable, False)
+
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertEqual(exonerated_test_names, [])
@@ -132,6 +146,9 @@ def RunSteps(api):
           task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
           child_results=child_results_with_incomplete_test_cases)
   ]
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
+  api.assertions.assertEqual(is_exonerable, False)
+
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
   api.assertions.assertEqual(exonerated_test_names, [])
