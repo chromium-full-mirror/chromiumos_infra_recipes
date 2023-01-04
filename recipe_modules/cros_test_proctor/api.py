@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from collections import defaultdict
+from collections import OrderedDict
 
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
 from google.protobuf import duration_pb2
@@ -424,21 +425,42 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of tests collected.
     """
-    hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
-    tast_vm_results = list(
-        self.m.buildbucket.collect_builds([vt.id for vt in test_tasks.tast_vm],
-                                          step_name='collect tast vm tests',
-                                          timeout=int(
-                                              timeout.seconds)).values())
-    tast_gce_results = list(
-        self.m.buildbucket.collect_builds([vt.id for vt in test_tasks.tast_gce],
-                                          step_name='collect tast GCE tests',
-                                          timeout=int(
-                                              timeout.seconds)).values())
 
-    return self.MetaTestTuple(skylab=hw_results, autotest_vm=[],
-                              tast_vm=tast_vm_results or [],
-                              tast_gce=tast_gce_results)
+    def collect_vm_tests(build_ids, vm_test_type, timeout):
+      timeout = int(timeout.seconds)
+      step_name = 'collect %s tests' % vm_test_type
+      return list(
+          self.m.buildbucket.collect_builds(build_ids, step_name=step_name,
+                                            timeout=timeout).values())
+
+    results = OrderedDict({
+        'skylab': [],
+        'autotest_vm': [],
+        'tast_vm': [],
+        'tast_gce': []
+    })
+
+    def update_results(key, resp):
+      results[key] = resp
+
+    runner = self.m.future_utils.create_parallel_runner()
+    # Collect hw test results.
+    runner.run_function_async(
+        lambda _, _2: self.m.skylab.wait_on_suites(test_tasks.skylab, timeout),
+        None, success_handler=lambda resp: update_results('skylab', resp))
+    # Collect tast vm test results.
+    runner.run_function_async(
+        lambda _, _2: collect_vm_tests([vt.id for vt in test_tasks.tast_vm],
+                                       'tast vm', timeout), None,
+        success_handler=lambda resp: update_results('tast_vm', resp))
+    # Collect tast GCE test results.
+    runner.run_function_async(
+        lambda _, _2: collect_vm_tests([vt.id for vt in test_tasks.tast_gce],
+                                       'tast GCE', timeout), None,
+        success_handler=lambda resp: update_results('tast_gce', resp))
+
+    runner.wait_for_and_get_responses()
+    return self.MetaTestTuple(**results)
 
   def get_test_failures(self, test_results):
     """Logs all test failures to the UI and raises on failed tests.

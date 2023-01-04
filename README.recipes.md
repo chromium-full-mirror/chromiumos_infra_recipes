@@ -4351,13 +4351,13 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#443)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#465)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4366,7 +4366,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#140)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#141)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4394,14 +4394,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#116)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#117)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#367)(self, test_plan, passed_tests, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#368)(self, test_plan, passed_tests, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4424,7 +4424,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#52)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#53)(self, test_summary):**
 
 Set the test_summary for this build.
 

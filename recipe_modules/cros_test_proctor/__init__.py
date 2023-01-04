@@ -25,6 +25,7 @@ DEPS = [
     'git_footers',
     'greenness',
     'failures',
+    'future_utils',
     'naming',
     'skylab',
     'src_state',
