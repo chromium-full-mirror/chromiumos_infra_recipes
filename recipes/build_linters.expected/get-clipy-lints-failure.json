@@ -4406,26 +4406,62 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check"
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.depgraph relevance check",
+    "name": "cq relevance check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\014fake-project\\030\\001 \\001\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chrome-internal.googlesource.com\\022\\032chromeos/manifest-internal\\032\\021snapshot-HEAD-SHA\\\"\\023refs/heads/snapshot\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@affected_paths {@@@",
+      "@@@STEP_LOG_LINE@relevance_input@  path: \"src/fake-project/my/fake/file\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq relevance check.get affected paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "fake-project",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cq relevance check.get affected paths.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@fake-project|src/fake-project|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -4436,7 +4472,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      ":6\n4\n chromium-review.googlesource.com\u0012\ffake-project\u0018\u0001 \u0001Bh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshotJ\u0011\n\u000fsome/source/dir",
+      "J\u0011\n\u000fsome/source/dirZ\u001f\n\u001dsrc/fake-project/my/fake/file",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4453,9 +4489,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "pointless build check.depgraph relevance check.write input binaryproto",
+    "name": "cq relevance check.write input binaryproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -4481,9 +4517,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "pointless build check.depgraph relevance check.run check",
+    "name": "cq relevance check.run check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -4511,14 +4547,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "pointless build check.depgraph relevance check.read output file",
+    "name": "cq relevance check.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "pointless build check.set properties",
+    "name": "cq relevance check.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@build is relevant@@@",

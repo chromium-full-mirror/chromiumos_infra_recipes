@@ -418,12 +418,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # latest postsubmit image. See b/205142684.
       self.m.cros_tags.add_tags_to_current_build(**dict(
           relevance='{}relevant'.format('' if relevant else 'not ')))
-    elif (config.id.type == BuilderConfig.Id.CQ and
-          'chromeos.build_menu.is_cq_build_relevant' in
-          self.m.cros_infra_config.experiments):
-      relevant = self.m.cros_relevance.is_cq_build_relevant(
-          self.m.workspace_util.patch_sets, dep_graph.target,
-          force_relevant=self._force_relevant_build)
     elif config.id.type == BuilderConfig.Id.CQ:
       # In the cases where force_relevant is True:
       # 1. input_properties.force_relevant_build is True, and/or
@@ -436,18 +430,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # 4. The gerrit change contains the appropriate footer. The footers are read
       #    in the orchestrator and passed in as an input property (1) therefore we
       #    do not need to read the footers here.
-      relevant = not self.m.cros_relevance.is_cq_build_pointless(
-          self.gerrit_changes, self.gitiles_commit, dep_graph=dep_graph.target,
+      relevant = self.m.cros_relevance.is_cq_build_relevant(
+          self.m.workspace_util.patch_sets, dep_graph.target,
           force_relevant=self._force_relevant_build)
-
-      # TODO(b/217773020): Experiment calling the pointless build checker with a
-      # list of paths.
-      if self.m.cros_infra_config.is_staging:
-        exp_relevant = self.m.cros_relevance.is_cq_build_relevant(
-            self.m.workspace_util.patch_sets, dep_graph.target,
-            force_relevant=self._force_relevant_build)
-        self.m.easy.set_properties_step(
-            cq_relevance_experiment_result=exp_relevant)
 
     if not relevant:
       self.m.buildbucket.hide_current_build_in_gerrit()

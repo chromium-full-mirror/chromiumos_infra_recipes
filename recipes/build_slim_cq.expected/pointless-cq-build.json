@@ -4586,130 +4586,7 @@
   },
   {
     "cmd": [],
-    "name": "pointless build check"
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.depgraph relevance check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n chromium-review.googlesource.com\\022\\tproject-a\\030\\300\\304\\007 \\007\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\n\\031chromium.googlesource.com\\022\\023chromiumos/manifest\\032\\031staging-snapshot-HEAD-SHA\\\"\\033refs/heads/staging-snapshot\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  path: \"some/source/dir\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      ":5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Bj\nh\n\u0019chromium.googlesource.com\u0012\u0013chromiumos/manifest\u001a\u0019staging-snapshot-HEAD-SHA\"\u001brefs/heads/staging-snapshotJ\u0011\n\u000fsome/source/dir",
-      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "pointless build check.depgraph relevance check.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/pointless_build_checker",
-      "check-build",
-      "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",
-      "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "pointless build check.depgraph relevance check.run check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "pointless build check.depgraph relevance check.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.set properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@build is irrelevant@@@",
-      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@",
-      "@@@SET_BUILD_PROPERTY@relevant_build@false@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cq build relevancy check",
+    "name": "cq relevance check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"some/source/dir\"@@@",
@@ -4719,13 +4596,14 @@
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
+      "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
       "@@@STEP_LOG_END@relevance_output@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "cq build relevancy check.get affected paths",
+    "name": "cq relevance check.get affected paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -4760,7 +4638,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cq build relevancy check.get affected paths.repo forall",
+    "name": "cq relevance check.get affected paths.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
@@ -4776,7 +4654,7 @@
       "/path/to/tmp/json",
       "copy",
       "J\u0011\n\u000fsome/source/dirZ\u001c\n\u001asrc/project-a/my/fake/file",
-      "[CLEANUP]/pointless-build-_tmp_4/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4792,7 +4670,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cq build relevancy check.write input binaryproto",
+    "name": "cq relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -4802,9 +4680,9 @@
       "[START_DIR]/cipd/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_4/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_4/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4820,7 +4698,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cq build relevancy check.run check",
+    "name": "cq relevance check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -4833,7 +4711,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_4/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_3/output.binaryproto",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4850,16 +4728,19 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cq build relevancy check.read output file",
+    "name": "cq relevance check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set cq_relevance_experiment_result",
+    "name": "cq relevance check.set properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@cq_relevance_experiment_result@true@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@build is irrelevant@@@",
+      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@false@@@"
     ]
   },
   {

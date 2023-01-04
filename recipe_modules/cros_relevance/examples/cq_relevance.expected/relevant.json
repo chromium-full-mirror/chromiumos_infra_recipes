@@ -1,132 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "pointless build check"
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.depgraph relevance check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030{\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gerrit_changes {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\030\\310\\003\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@gitiles_commit {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  serialized_proto: \"\\032\\007my hash\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
-      "@@@STEP_LOG_LINE@relevance_input@  path: \"happy/source/dir\"@@@",
-      "@@@STEP_LOG_LINE@relevance_input@}@@@",
-      "@@@STEP_LOG_END@relevance_input@@@",
-      "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
-      "@@@STEP_LOG_LINE@relevance_output@}@@@",
-      "@@@STEP_LOG_END@relevance_output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.depgraph relevance check.ensure binaries",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd",
-      "-ensure-file",
-      "chromiumos/infra/build_plan_generator/${platform} prod\nchromiumos/infra/pointless_build_checker/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "pointless build check.depgraph relevance check.ensure binaries.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_plan_generator/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }, @@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/pointless_build_checker/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      ":\u0004\n\u0002\u0018{:\u0005\n\u0003\u0018\ufffd\u0003B\u000b\n\t\u001a\u0007my hashJ\u0012\n\u0010happy/source/dir",
-      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "pointless build check.depgraph relevance check.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/pointless_build_checker",
-      "check-build",
-      "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
-      "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "pointless build check.depgraph relevance check.run check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "pointless build check.depgraph relevance check.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.set properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@build is relevant@@@",
-      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
-      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
-    ]
-  },
-  {
     "cmd": [
       "python3",
       "-u",
@@ -271,7 +144,7 @@
   },
   {
     "cmd": [],
-    "name": "cq build relevancy check",
+    "name": "cq relevance check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@relevance_input@relevant_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"happy/source/dir\"@@@",
@@ -290,7 +163,7 @@
   },
   {
     "cmd": [],
-    "name": "cq build relevancy check.get affected paths",
+    "name": "cq relevance check.get affected paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -313,7 +186,7 @@
       ]
     },
     "infra_step": true,
-    "name": "cq build relevancy check.get affected paths.repo forall",
+    "name": "cq relevance check.get affected paths.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
@@ -338,11 +211,52 @@
       ]
     },
     "infra_step": true,
-    "name": "cq build relevancy check.get affected paths.repo forall (2)",
+    "name": "cq relevance check.get affected paths.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq relevance check.ensure binaries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "chromiumos/infra/build_plan_generator/${platform} prod\nchromiumos/infra/pointless_build_checker/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "cq relevance check.ensure binaries.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_plan_generator/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/pointless_build_checker/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -354,10 +268,10 @@
       "/path/to/tmp/json",
       "copy",
       "J\u0012\n\u0010happy/source/dirZ\u001f\n\u001dsrc/chromium/src/my/fake/fileZ\u001f\n\u001dsrc/chromium/src/my/fake/file",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
-    "name": "cq build relevancy check.write input binaryproto",
+    "name": "cq relevance check.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -367,12 +281,12 @@
       "[START_DIR]/cipd/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto"
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
-    "name": "cq build relevancy check.run check",
+    "name": "cq relevance check.run check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -385,13 +299,23 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/pointless-build-_tmp_2/output.binaryproto",
+      "[CLEANUP]/pointless-build-_tmp_1/output.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "cq build relevancy check.read output file",
+    "name": "cq relevance check.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cq relevance check.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@build is relevant@@@",
+      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
     ]
   },
   {

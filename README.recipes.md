@@ -929,20 +929,20 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#889)(self):**
+&mdash; **def [add\_child\_build\_ids\_to\_output\_property](/recipe_modules/build_menu/api.py#874)(self):**
 
 Add child build ids to output property of current build.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#74)(self):**
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#720)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#705)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#501)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#486)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -951,7 +951,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#603)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#588)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -964,7 +964,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#558)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#543)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1012,7 +1012,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#734)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#719)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1047,7 +1047,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#458)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#443)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1061,7 +1061,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#64)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#514)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#499)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1084,7 +1084,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#146)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#918)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#903)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1094,7 +1094,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#898)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#883)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1107,7 +1107,7 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#618)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#603)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1179,7 +1179,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#588)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#573)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1188,7 +1188,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#674)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#659)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
@@ -1211,14 +1211,14 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#857)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#842)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#838)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#823)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1999,7 +1999,7 @@ Args:
 
 Returns:
   PrepareForToolchainBuildResponse.BuildRelevance indicating that the build
-  is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
+  is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
 &mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1150)(self, gs_bucket, gs_path):**
@@ -3111,7 +3111,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#442)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#405)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3125,7 +3125,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#493)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#456)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3136,7 +3136,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#471)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#434)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3173,7 +3173,7 @@ Args:
 Returns:
   list[str]: the names of the child builders that must be run.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#556)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#519)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3194,28 +3194,6 @@ Returns:
 
 Initializes the module.
 
-&mdash; **def [is\_cq\_build\_pointless](/recipe_modules/cros_relevance/api.py#225)(self, gerrit_changes, gitiles_commit, dep_graph, force_relevant=False, test_value=None):**
-
-Determines if build(s) can be terminated early.
-
-If build_target is set, then the chromiumos workspace must have been
-checked out prior to calling this method. This is a requirement for
-BuildDependencyGraph checks.
-
-Args:
-  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
-      applied for the build, if any.
-  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
-      snapshot Gitiles commit.
-  dep_graph (chromite.api.DepGraph): The dependency graph to compare the
-      Gerrit changes against to test for build relevancy.
-  force_relevant (bool): Whether to always declare the build relevant.
-  test_value (bool): The answer to use for testing.  Default: build is not
-      pointless.
-
-Returns:
-  bool: Whether the build can be terminated early.
-
 &mdash; **def [is\_cq\_build\_relevant](/recipe_modules/cros_relevance/api.py#175)(self, patch_sets: List[PatchSet], dep_graph: DepGraph, force_relevant: bool=False, is_pointless_test_value: bool=False):**
 
 Determines if changes are relevant to the CQ run.
@@ -3235,7 +3213,7 @@ Args:
 Returns:
   bool: Whether the changes are relevant to the CQ run.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#417)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#380)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3252,7 +3230,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#274)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#237)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 

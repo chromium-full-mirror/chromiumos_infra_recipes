@@ -195,9 +195,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     if force_relevant or self.toolchain_cls_applied:
       return True
 
-    # TODO(b/217773020): Consider renaming the step name. Keeping it as is at
-    # the moment since some queries may depend on the step name.
-    with self.m.step.nest('cq build relevancy check') as presentation:
+    with self.m.step.nest('cq relevance check') as presentation:
 
       if not patch_sets:
         presentation.step_text: 'no changes to check for relevancy'
@@ -217,43 +215,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
       response = self._call_pointless_build_checker(check_request, presentation,
                                                     is_pointless_test_value)
+      relevant = not bool(response.build_is_pointless.value)
 
-      return not bool(response.build_is_pointless.value)
-
-  # TODO(b/217773020): Delete this function in favor of is_cq_build_relevant
-  # once we are able to confirm parity in staging.
-  def is_cq_build_pointless(self, gerrit_changes, gitiles_commit, dep_graph,
-                            force_relevant=False, test_value=None):
-    """Determines if build(s) can be terminated early.
-
-    If build_target is set, then the chromiumos workspace must have been
-    checked out prior to calling this method. This is a requirement for
-    BuildDependencyGraph checks.
-
-    Args:
-      gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
-          applied for the build, if any.
-      gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
-          snapshot Gitiles commit.
-      dep_graph (chromite.api.DepGraph): The dependency graph to compare the
-          Gerrit changes against to test for build relevancy.
-      force_relevant (bool): Whether to always declare the build relevant.
-      test_value (bool): The answer to use for testing.  Default: build is not
-          pointless.
-
-    Returns:
-      bool: Whether the build can be terminated early.
-    """
-    if force_relevant or self.toolchain_cls_applied:
-      return False
-
-    with self.m.step.nest('pointless build check'):
-      # We need to invert the value of test_value, since we were asked if the
-      # build was pointless, and we're calling a function that returns True if
-      # the build is relevant.  We want to pass True in the case where the
-      # argument is None.
-      relevant = self.is_depgraph_affected(gerrit_changes, gitiles_commit,
-                                           dep_graph, test_value=not test_value)
       # Do this in a step instead of a presentaion to avoid multiple lines in
       # the output properties (in led jobs).
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
@@ -262,7 +225,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                              relevant_build=relevant)
       step.presentation.step_text = ('build is relevant'
                                      if relevant else 'build is irrelevant')
-      return not relevant
+      return relevant
 
   def _format_pkgs(self, pkg_list):
     print_lines = []

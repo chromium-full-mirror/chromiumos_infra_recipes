@@ -1,27 +1,5 @@
 [
   {
-    "cmd": [],
-    "name": "pointless build check"
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.depgraph relevance check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no changes to check for relevancy@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "pointless build check.set properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@build is irrelevant@@@",
-      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@",
-      "@@@SET_BUILD_PROPERTY@relevant_build@false@@@"
-    ]
-  },
-  {
     "cmd": [
       "python3",
       "-u",
@@ -85,7 +63,7 @@
   },
   {
     "cmd": [],
-    "name": "cq build relevancy check"
+    "name": "cq relevance check"
   },
   {
     "name": "$result"

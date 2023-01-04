@@ -42,11 +42,6 @@ def RunSteps(api, properties):
           ]),
       ])
 
-  pointless = api.cros_relevance.is_cq_build_pointless(
-      properties.gerrit_changes, bbcommon_pb2.GitilesCommit(id='my hash'),
-      dep_graph=dep_graph, force_relevant=force_relevant,
-      test_value=properties.expected)
-  api.assertions.assertEqual(properties.expected, pointless)
   patch_sets = api.gerrit.fetch_patch_sets(properties.gerrit_changes)
   relevant = api.cros_relevance.is_cq_build_relevant(
       patch_sets, dep_graph, force_relevant,
@@ -64,9 +59,7 @@ def GenTests(api):
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
               ], expected=False)),
-      api.post_check(
-          post_process.MustRun,
-          'pointless build check.depgraph relevance check.run check'),
+      api.post_check(post_process.MustRun, 'cq relevance check.run check'),
   )
 
   yield api.test(
@@ -77,9 +70,7 @@ def GenTests(api):
                   bbcommon_pb2.GerritChange(change=123),
                   bbcommon_pb2.GerritChange(change=456),
               ], expected=False)),
-      api.post_check(
-          post_process.MustRun,
-          'pointless build check.depgraph relevance check.run check'),
+      api.post_check(post_process.MustRun, 'cq relevance check.run check'),
   )
 
   yield api.test(

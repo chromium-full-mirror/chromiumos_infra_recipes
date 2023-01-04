@@ -117,9 +117,6 @@ def GenTests(api):
           BuildPlanTest(manifest_branch='BRANCH',
                         test_builder_ids=[BuilderConfig.Id(name=_BUILDER_NAME)],
                         expected_builders=[_BUILDER_NAME])),
-      #api.post_check(
-      #    post_process.MustRun,
-      #    'pointless build check.depgraph relevance check.run check'),
   )
 
   yield api.test(

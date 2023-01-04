@@ -1016,7 +1016,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     Returns:
       PrepareForToolchainBuildResponse.BuildRelevance indicating that the build
-      is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
+      is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
       build check applies), or POINTLESS (just exit now.)
     """
     with self.m.step.nest(name or 'prepare artifacts') as presentation:
@@ -1052,7 +1052,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     Returns:
       PrepareForToolchainBuildResponse.BuildRelevance indicating that the build
-      is NEEDED (regardless of the pointless build check), UNKNOWN (pointless
+      is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
       build check applies), or POINTLESS (just exit now.)
     """
     # By default, artifacts will get 'UNKNOWN'.

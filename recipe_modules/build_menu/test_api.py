@@ -24,8 +24,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
         self.m.file.read_raw(content=resp.SerializeToString()))
 
   def set_pointless_return(self, value):
-    return self.depgraph_relevance_return(
-        'pointless build check.depgraph relevance check', value)
+    return self.depgraph_relevance_return('cq relevance check', value)
 
   def set_toolchain_cls_return(self, value):
     return self.depgraph_relevance_return(
