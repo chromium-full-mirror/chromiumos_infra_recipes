@@ -18,12 +18,14 @@ from PB.test_platform.skylab_local_state.load import Dut as LoadDut
 from PB.test_platform.skylab_local_state.load import LoadResponse
 from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
 
+from recipe_engine.recipe_api import StepFailure
+
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
                                    ['test_dut_responses', 'any_test_failed'])
 PrejobResponsesTuple = namedtuple(
     'PrejobResponsesTuple', ['prejob_dut_responses', 'any_provision_failed'])
 
-
+HOUR = 60 * 60
 
 
 class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
@@ -231,7 +233,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('Prototype GCE shutdown'):
       self._vm_shutdown_and_cleanup()
 
-  def submit_pre_job(self, metadata, max_duration_seconds=0):
+  def submit_pre_job(self, metadata, max_duration_seconds):
     """Submits a Prejob execution on the DUT.
 
     Args:
@@ -244,29 +246,40 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
       * api.test.StepFailure If prejob fails.
     """
-    del max_duration_seconds
 
     if self._vm_is_vmtest():
       with self._api.step.nest('Prototype GCE provision') as step:
         return self._vm_direct_provision(metadata)
-
     with self._api.step.nest('CrosToolRunner: run provision') as step:
-      with self._api.context(infra_steps=True):
-        self.cft_test_request.primary_dut.provision_state.update_firmware = \
-          self.should_update_os_bundled_firmware(self.cft_test_request.primary_dut)
-        provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
-            ctr.CrosToolRunnerProvisionRequest.Device(
-                dut=metadata.primary_dut, provision_state=self.cft_test_request
-                .primary_dut.provision_state, container_metadata_key=self
-                .cft_test_request.primary_dut.container_metadata_key)
-        ])
-        prejob_response = self._process_prejob_response(
-            self._api.cros_tool_runner.provision(provision_request))
+      deadline = self._get_context_deadline(max_duration_seconds, step)
+      try:
+        with self._api.context(infra_steps=True, deadline=deadline):
+          self.cft_test_request.primary_dut.provision_state.update_firmware = \
+            self.should_update_os_bundled_firmware(self.cft_test_request.primary_dut)
+          provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
+              ctr.CrosToolRunnerProvisionRequest.Device(
+                  dut=metadata.primary_dut, provision_state=self
+                  .cft_test_request.primary_dut.provision_state,
+                  container_metadata_key=self.cft_test_request.primary_dut
+                  .container_metadata_key)
+          ])
+          prejob_response = self._process_prejob_response(
+              self._api.cros_tool_runner.provision(provision_request))
 
-        if prejob_response.any_provision_failed:
-          step.presentation.status = self._api.step.FAILURE
+          if prejob_response.any_provision_failed:
+            step.presentation.status = self._api.step.FAILURE
 
-        return prejob_response
+          return prejob_response
+      except StepFailure as e:  # pragma: nocover
+        if (e.exc_result is not None and e.exc_result.had_timeout):
+          # This will make sure that the failure doesn't incorrectly present as an
+          # infra_failure. We don't want to present an infra_failure because
+          # nothing on our end has gone wrong and this will shield us from
+          # potential misfiled bugs.
+          step.presentation.staus = self._api.step.FAILURE
+          e = StepFailure("Prejob execution time limit of %.1f hours reached" %
+                          (max_duration_seconds / HOUR))
+        raise e
 
   def run_test(self, metadata, container_image_info=None):
     """Submits a test execution on the DUT.

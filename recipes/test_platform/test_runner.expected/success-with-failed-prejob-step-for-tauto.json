@@ -373,7 +373,11 @@
     "cmd": [],
     "name": "execution steps.original_test.Phosphorus: run prejob",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@deadline information@start: Mon May 14 12:53:24 2012@@@",
+      "@@@STEP_LOG_LINE@deadline information@end: Mon May 14 13:38:24 2012@@@",
+      "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",
+      "@@@STEP_LOG_END@deadline information@@@"
     ]
   },
   {
@@ -398,7 +402,7 @@
       "@@@STEP_LOG_LINE@request@  \"desiredProvisionableLabels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"label1\": \"value1\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:24Z\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:26Z\",@@@",
       "@@@STEP_LOG_LINE@request@  \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"@@@",
@@ -423,6 +427,10 @@
     ],
     "infra_step": true,
     "luci_context": {
+      "deadline": {
+        "grace_period": 30.0,
+        "soft_deadline": 1337002704.5
+      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -435,7 +443,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:26Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

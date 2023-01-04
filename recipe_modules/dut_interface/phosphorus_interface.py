@@ -8,6 +8,7 @@ from collections import namedtuple
 
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 from RECIPE_MODULES.chromeos.dut_interface.phosphorus_results import PhosphorusResult, PhosphorusPrejobDUTResponse, PhosphorusTestDUTResponse, PhosphorusFetchCrashDUTResponse
+from recipe_engine.recipe_api import StepFailure
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from PB.test_platform import phosphorus
@@ -17,6 +18,8 @@ DeviceUnderTest = namedtuple(
     'DeviceUnderTest', ['hostname', 'board', 'model', 'software_dependencies'])
 MatchRequest = namedtuple(
     'MatchRequest', ['board', 'model', 'software_dependencies', 'is_primary'])
+
+HOUR = 60 * 60
 
 
 class MatchDutException(Exception):
@@ -157,22 +160,34 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           update_firmware=self.should_update_os_bundled_firmware(target))
       addtional_targets.append(t)
 
-    with self._api.step.nest('Phosphorus: run prejob'):
-      with self._api.context(infra_steps=True):
-        prejob_request = phosphorus.prejob.PrejobRequest(
-            config=metadata.phosphorus_config,
-            dut_hostname=metadata.primary_dut.hostname,
-            desired_provisionable_labels=prejob_properties.provisionable_labels,
-            existing_provisionable_labels=metadata.load_response
-            .provisionable_labels,
-            software_dependencies=prejob_properties.software_dependencies,
-            update_firmware=self.should_update_os_bundled_firmware(
-                metadata.primary_dut), use_tls=prejob_properties.use_tls,
-            addtional_targets=addtional_targets)
-        prejob_request.deadline.MergeFrom(
-            self.get_deadline(max_duration_seconds))
-        return PhosphorusPrejobDUTResponse(
-            metadata.test_id, self._api.phosphorus.prejob(prejob_request))
+    with self._api.step.nest('Phosphorus: run prejob') as step:
+      deadline = self._get_context_deadline(max_duration_seconds, step)
+      try:
+        with self._api.context(infra_steps=True, deadline=deadline):
+          prejob_request = phosphorus.prejob.PrejobRequest(
+              config=metadata.phosphorus_config,
+              dut_hostname=metadata.primary_dut.hostname,
+              desired_provisionable_labels=prejob_properties
+              .provisionable_labels, existing_provisionable_labels=metadata
+              .load_response.provisionable_labels,
+              software_dependencies=prejob_properties.software_dependencies,
+              update_firmware=self.should_update_os_bundled_firmware(
+                  metadata.primary_dut), use_tls=prejob_properties.use_tls,
+              addtional_targets=addtional_targets)
+          prejob_request.deadline.MergeFrom(
+              self.get_deadline(max_duration_seconds))
+          return PhosphorusPrejobDUTResponse(
+              metadata.test_id, self._api.phosphorus.prejob(prejob_request))
+      except StepFailure as e:  # pragma: nocover
+        if (e.exc_result is not None and e.exc_result.had_timeout):
+          # This will make sure that the failure doesn't incorrectly present as an
+          # infra_failure. We don't want to present an infra_failure because
+          # nothing on our end has gone wrong and this will shield us from
+          # potential misfiled bugs.
+          step.presentation.staus = self._api.step.FAILURE
+          e = StepFailure("Prejob execution time limit of %.1f hours reached" %
+                          (max_duration_seconds / HOUR))
+        raise e
 
   def run_test(self, metadata, container_image_info):
     with self._api.step.nest('Phosphorus: run test'):

@@ -5,7 +5,11 @@
 
 """Plugable interface for the DUT."""
 
+import time
+
 from abc import ABCMeta, abstractmethod
+
+from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 
 
 class DUTTestMetadata():  # pragma: no cover
@@ -268,6 +272,47 @@ class DUTInterface():  # pragma: no cover
     Returns:
       processed test responses: (test_responses_for_output_props, test_response_for_result_uploading)
     """
+
+  def _format_time(self, given_time):
+    """Uniformally format time into a human readable form.
+
+    Args:
+      * time (float): Float time in time.time() form.
+      * step (StepPresentation): The step to add this log under.
+
+    Return:
+      string: locally formatting time in the form of (day_of_week month day
+      hour:time:second year)
+    """
+    utctime = time.gmtime(given_time)
+    return time.asctime(utctime)
+
+  def _get_context_deadline(self, limit_seconds, step):
+    """Form a deadline to be used by recipe_engine/context.
+
+    Args:
+      * limit_seconds (int): Number of seconds that the process will be allowed to
+        run.
+      step (StepPresentation): The step to add this log under.
+
+    Returns:
+      * sections_pb2.Deadline: A luci representation of a deadline. Includes a UTC
+        time and a grace period.
+    """
+    current_time = self._api.time.time()
+
+    # Make the deadline
+    deadline = sections_pb2.Deadline()
+    deadline.soft_deadline = current_time + limit_seconds
+    deadline.grace_period = 30.0
+
+    # Add deadline information to the step logs.
+    step.presentation.logs[
+        'deadline information'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (
+            self._format_time(current_time),
+            self._format_time(deadline.soft_deadline), str(limit_seconds))
+
+    return deadline
 
   def is_within_deadline(self):
     """Determines if a test is within deadline.

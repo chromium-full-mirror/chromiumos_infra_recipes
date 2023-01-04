@@ -70,7 +70,8 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-HOUR = 60 * 60
+MINUTE = 60
+HOUR = 60 * MINUTE
 
 PROPERTIES = TestRunnerProperties
 _DUMMY_TEST_ID = dut_interface.DUTTestMetadata.DUMMY_TEST_ID
@@ -78,7 +79,7 @@ _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
 _DUT_STATE_READY = 'ready'
 _24_HOURS = 24 * HOUR
 _RESULT_PUBLISHING_LIMIT = 2 * HOUR
-
+_PROVISION_DEADLINE = 45 * MINUTE
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
 
@@ -1349,7 +1350,13 @@ def execution_steps_with_phosphorus(api, properties):
 
         dut_state = _DUT_STATE_NEEDS_REPAIR
         max_duration_sec = int(
-            properties.config.harness.prejob_deadline_seconds or _24_HOURS)
+            properties.config.harness.prejob_deadline_seconds or
+            _PROVISION_DEADLINE)
+
+        # Allow users to set custom provision deadline so long as it is greater
+        # or less than the maximum allowed.
+        if max_duration_sec > _PROVISION_DEADLINE:
+          max_duration_sec = _PROVISION_DEADLINE
 
         if interface.is_within_deadline():
           result = _execution_steps_for_test_with_phosphorus(
@@ -1424,8 +1431,13 @@ def execution_steps_with_ctr(api, properties):
     interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata)
 
     dut_state = _DUT_STATE_NEEDS_REPAIR
-    max_duration_sec = (
-        properties.config.harness.prejob_deadline_seconds or _24_HOURS)
+    max_duration_sec = int(properties.config.harness.prejob_deadline_seconds or
+                           _PROVISION_DEADLINE)
+
+    # Allow users to set custom provision deadline so long as it is greater
+    # or less than the maximum allowed.
+    if max_duration_sec > _PROVISION_DEADLINE:
+      max_duration_sec = _PROVISION_DEADLINE
 
     if interface.is_within_deadline():
       result = _execution_steps_for_test_with_ctr(
@@ -2060,17 +2072,22 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     """))
 
   # Required for initial module set up.
-  def _misc_properties(cft_is_enabled=False, use_result_publishing_limit=False):
+  def _misc_properties(cft_is_enabled=False, use_result_publishing_limit=False,
+                       non_compliant_prejob_deadline=False):
     if cft_is_enabled:
       return _misc_properties_for_ctr(
-          use_result_publishing_limit=use_result_publishing_limit)
+          use_result_publishing_limit=use_result_publishing_limit,
+          non_compliant_prejob_deadline=non_compliant_prejob_deadline)
     return _misc_properties_for_phosphorus(
-        use_result_publishing_limit=use_result_publishing_limit)
+        use_result_publishing_limit=use_result_publishing_limit,
+        non_compliant_prejob_deadline=non_compliant_prejob_deadline)
 
-  def _misc_properties_for_ctr(use_result_publishing_limit=False):
+  def _misc_properties_for_ctr(use_result_publishing_limit=False,
+                               non_compliant_prejob_deadline=False):
     return (api.properties(
         _get_test_runner_properties(
-            use_result_publishing_limit=use_result_publishing_limit), **{
+            use_result_publishing_limit=use_result_publishing_limit,
+            non_compliant_prejob_deadline=non_compliant_prejob_deadline), **{
                 '$chromeos/phosphorus':
                     PhosphorusProperties(
                         version=PhosphorusProperties.Version(
@@ -2093,10 +2110,15 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                                             SWARMING_TASK_ID='dummy-task-id1',
                                             SKYLAB_DUT_ID='dummy-dut-id')))
 
-  def _get_test_runner_properties(use_result_publishing_limit=False):
+  def _get_test_runner_properties(use_result_publishing_limit=False,
+                                  non_compliant_prejob_deadline=False):
     experiments = []
     if use_result_publishing_limit:
       experiments.append(TestRunnerProperties.USE_RESULT_PUBLISHING_LIMIT)
+
+    prejob_deadline = HOUR
+    if non_compliant_prejob_deadline:
+      prejob_deadline = _24_HOURS
     return TestRunnerProperties(
         config={
             'lab': {
@@ -2106,7 +2128,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             },
             'harness': {
                 'autotest_dir': '/path/to/autotest',
-                'prejob_deadline_seconds': 60 * 60,
+                'prejob_deadline_seconds': prejob_deadline,
             },
             'output': {
                 'log_data_gs_root': 'gs://chromeos-test-logs/common-env',
@@ -2117,10 +2139,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             },
         }, experiments=experiments)
 
-  def _misc_properties_for_phosphorus(use_result_publishing_limit=False):
+  def _misc_properties_for_phosphorus(use_result_publishing_limit=False,
+                                      non_compliant_prejob_deadline=False):
     return (api.properties(
         _get_test_runner_properties(
-            use_result_publishing_limit=use_result_publishing_limit), **{
+            use_result_publishing_limit=use_result_publishing_limit,
+            non_compliant_prejob_deadline=non_compliant_prejob_deadline), **{
                 '$chromeos/phosphorus':
                     PhosphorusProperties(
                         version=PhosphorusProperties.Version(
@@ -2653,6 +2677,20 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'success',
       _set_build(bid=42),
       _misc_properties(),
+      _request_properties(),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+  yield api.test(
+      'success-misconfigured-prejob',
+      _set_build(bid=42),
+      _misc_properties(non_compliant_prejob_deadline=True),
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
@@ -3897,6 +3935,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())
+
+  yield api.test(
+      'success-with-ctr-misconfigured-prejob', _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True, non_compliant_prejob_deadline=True),
+      _crossystem_keyval_file_step_data_for_ctr(),
+      _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
+      _successful_run_test_step_for_ctr())
 
   yield api.test(
       'success-with-ctr-result-publishing-experiment', _set_build(bid=42),
