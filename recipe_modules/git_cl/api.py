@@ -6,6 +6,7 @@
 """API for working with git cl."""
 
 import re
+from typing import Any, Dict, List, Optional
 
 from recipe_engine import recipe_api
 
@@ -26,38 +27,42 @@ class GitClApi(recipe_api.RecipeApi):
       return self.m.depot_tools_git_cl(*args, stdout=self.m.raw_io.output(),
                                        **kwargs)
 
-  def __getattr__(self, name):
+  def __getattr__(self, name: str) -> Any:
     attr = getattr(self.m.depot_tools_git_cl, name)
 
     assert callable(attr), 'unexpected uncallable attr'
 
     # Ensure depot_tools is on path.
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs) -> Any:
       with self.m.depot_tools.on_path():
         return attr(*args, **kwargs)
 
     return wrapper
 
-  def upload(self, topic=None, reviewers=None, ccs=None, hashtags=None,
-             send_mail=False, target_branch=None, dry_run=False, **kwargs):
+  def upload(self, topic: Optional[str] = None,
+             reviewers: Optional[List[str]] = None,
+             ccs: Optional[List[str]] = None,
+             hashtags: Optional[List[str]] = None, send_mail: bool = False,
+             target_branch: Optional[str] = None, dry_run: bool = False,
+             **kwargs) -> str:
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
     confirmations and address nits.
 
     Args:
-      topic (str): Optional --topic to set.
-      reviewers (list[str]): Optional list of --reviewers to set.
-      ccs (list[str]): Optional list of --cc to set.
-      hashtags (list[str]): Optional list of --hashtags to set.
-      send_mail (bool): If true, set --send-mail.
-      target_branch (str): Optional --target-branch to send to. Needs to be a
-        full ref (e.g. refs/heads/branch), not the branch name (e.g. branch).
-      kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
-      dry_run (bool): If true, set --cq-dry-run.
+      topic: --topic to set.
+      reviewers: list of --reviewers to set.
+      ccs: list of --cc to set.
+      hashtags: list of --hashtags to set.
+      send_mail: If true, set --send-mail.
+      target_branch: --target-branch to send to. Needs to be a full ref (e.g.
+        refs/heads/branch), not the branch name (e.g. branch).
+      kwargs: Forwarded to recipe_engine/step. May NOT set stdout.
+      dry_run: If true, set --cq-dry-run.
 
     Returns:
-      str: The command output.
+      The command output.
     """
     args = ['--bypass-hooks', '--force']
 
@@ -92,7 +97,8 @@ class GitClApi(recipe_api.RecipeApi):
 
     return self('upload', args, **kwargs).stdout.strip()
 
-  def status(self, field=None, fast=False, issue=None, **kwargs):
+  def status(self, field: str = None, fast: bool = False, issue: str = None,
+             **kwargs) -> str:
     """Run `git cl status` with given arguments.
 
     Args:
@@ -102,7 +108,7 @@ class GitClApi(recipe_api.RecipeApi):
       kwargs: Passed to recipe_engine/step. May NOT set stdout.
 
     Returns:
-      str: The command output.
+      The command output.
     """
     args = []
 
@@ -119,7 +125,7 @@ class GitClApi(recipe_api.RecipeApi):
 
     return self('status', args, **kwargs).stdout.strip()
 
-  def issues(self):
+  def issues(self) -> Dict[(str, str)]:
     """Run `git cl issue`.
 
     Returns:

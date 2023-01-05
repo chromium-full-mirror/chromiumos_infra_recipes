@@ -6306,11 +6306,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for working with git cl.
 
-#### **class [GitClApi](/recipe_modules/git_cl/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitClApi](/recipe_modules/git_cl/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with git cl.
 
-&mdash; **def [issues](/recipe_modules/git_cl/api.py#122)(self):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#128)(self):**
 
 Run `git cl issue`.
 
@@ -6318,7 +6318,7 @@ Returns:
   dict: Map between ref and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#95)(self, field=None, fast=False, issue=None, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#100)(self, field: str=None, fast: bool=False, issue: str=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -6329,9 +6329,9 @@ Args:
   kwargs: Passed to recipe_engine/step. May NOT set stdout.
 
 Returns:
-  str: The command output.
+  The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#41)(self, topic=None, reviewers=None, ccs=None, hashtags=None, send_mail=False, target_branch=None, dry_run=False, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#42)(self, topic: Optional[str]=None, reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, hashtags: Optional[List[str]]=None, send_mail: bool=False, target_branch: Optional[str]=None, dry_run: bool=False, \*\*kwargs):**
 
 Run `git cl upload`.
 
@@ -6339,18 +6339,18 @@ Run `git cl upload`.
 confirmations and address nits.
 
 Args:
-  topic (str): Optional --topic to set.
-  reviewers (list[str]): Optional list of --reviewers to set.
-  ccs (list[str]): Optional list of --cc to set.
-  hashtags (list[str]): Optional list of --hashtags to set.
-  send_mail (bool): If true, set --send-mail.
-  target_branch (str): Optional --target-branch to send to. Needs to be a
-    full ref (e.g. refs/heads/branch), not the branch name (e.g. branch).
-  kwargs (dict): Forwarded to recipe_engine/step. May NOT set stdout.
-  dry_run (bool): If true, set --cq-dry-run.
+  topic: --topic to set.
+  reviewers: list of --reviewers to set.
+  ccs: list of --cc to set.
+  hashtags: list of --hashtags to set.
+  send_mail: If true, set --send-mail.
+  target_branch: --target-branch to send to. Needs to be a full ref (e.g.
+    refs/heads/branch), not the branch name (e.g. branch).
+  kwargs: Forwarded to recipe_engine/step. May NOT set stdout.
+  dry_run: If true, set --cq-dry-run.
 
 Returns:
-  str: The command output.
+  The command output.
 ### *recipe_modules* / [git\_footers](/recipe_modules/git_footers)
 
 [DEPS](/recipe_modules/git_footers/__init__.py#6): [gerrit](#recipe_modules-gerrit), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11692,32 +11692,32 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/git/tests/set_upstream.py#23)(api):**
 ### *recipes* / [git\_cl:examples/forwarding](/recipe_modules/git_cl/examples/forwarding.py)
 
-[DEPS](/recipe_modules/git_cl/examples/forwarding.py#6): [git\_cl](#recipe_modules-git_cl)
+[DEPS](/recipe_modules/git_cl/examples/forwarding.py#13): [git\_cl](#recipe_modules-git_cl)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#13)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/forwarding.py#20)(api: RecipeApi):**
 ### *recipes* / [git\_cl:examples/issues](/recipe_modules/git_cl/examples/issues.py)
 
-[DEPS](/recipe_modules/git_cl/examples/issues.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git_cl/examples/issues.py#13): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/issues.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/issues.py#23)(api: RecipeApi):**
 ### *recipes* / [git\_cl:examples/status](/recipe_modules/git_cl/examples/status.py)
 
-[DEPS](/recipe_modules/git_cl/examples/status.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/git_cl/examples/status.py#13): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/status.py#21)(api: RecipeApi):**
 ### *recipes* / [git\_cl:examples/upload](/recipe_modules/git_cl/examples/upload.py)
 
-[DEPS](/recipe_modules/git_cl/examples/upload.py#6): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/git_cl/examples/upload.py#13): [git\_cl](#recipe_modules-git_cl), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#21)(api: RecipeApi):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#13): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

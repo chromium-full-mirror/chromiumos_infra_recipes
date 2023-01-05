@@ -3,6 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Generator
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+
 DEPS = [
     'git_cl',
 ]
@@ -10,9 +17,12 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> None:
   api.git_cl.get_description(patch_url='foo')
 
 
-def GenTests(api):
-  yield api.test('basic')
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
+  yield api.test(
+      'basic',
+      api.post_check(post_process.StatusSuccess),
+  )
