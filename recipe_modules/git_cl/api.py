@@ -44,7 +44,7 @@ class GitClApi(recipe_api.RecipeApi):
              ccs: Optional[List[str]] = None,
              hashtags: Optional[List[str]] = None, send_mail: bool = False,
              target_branch: Optional[str] = None, dry_run: bool = False,
-             **kwargs) -> str:
+             use_local_diff: bool = False, **kwargs) -> str:
     """Run `git cl upload`.
 
     --force and --bypass-hooks are always set to remove the need to enter
@@ -60,6 +60,8 @@ class GitClApi(recipe_api.RecipeApi):
         refs/heads/branch), not the branch name (e.g. branch).
       kwargs: Forwarded to recipe_engine/step. May NOT set stdout.
       dry_run: If true, set --cq-dry-run.
+      use_local_diff: If true, use git diff args to upload the local diff
+        instead of diff taken against tip-of-branch.
 
     Returns:
       The command output.
@@ -94,6 +96,10 @@ class GitClApi(recipe_api.RecipeApi):
 
     if dry_run:
       args.append('--cq-dry-run')
+
+    if use_local_diff:
+      args.append('HEAD~')
+      args.append('HEAD')
 
     return self('upload', args, **kwargs).stdout.strip()
 

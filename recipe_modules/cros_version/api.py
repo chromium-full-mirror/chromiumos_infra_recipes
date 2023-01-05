@@ -130,7 +130,7 @@ class CrosVersionApi(RecipeApi):
 
         self._version_bumper_path = cipd_dir.join('version_bumper')
 
-  def bump_version(self, dry_run=True):
+  def bump_version(self, dry_run=True, use_local_diff=False):
     """Bumps the chromeos version (as represented in chromeos_version.sh)
       and pushes the change to the chromiumos-overlay repo.
 
@@ -139,6 +139,8 @@ class CrosVersionApi(RecipeApi):
 
       Args:
         dry_run (bool): Whether the git push is --dry-run.
+        use_local_diff (bool): If true, use the local diff instead of diff
+          taken against tip-of-branch for the version bump CL.
     """
     with self.m.step.nest('bump version') as pres:
       if self.m.cq.active and not dry_run:
@@ -189,7 +191,7 @@ class CrosVersionApi(RecipeApi):
           change = self.m.gerrit.create_change(
               'chromiumos/overlays/chromiumos-overlay',
               ref=self.m.git.get_branch_ref(push_branch),
-              project_path=overlay_path)
+              project_path=overlay_path, use_local_diff=use_local_diff)
           if dry_run:
             pres.step_text = 'dry-run only'
             self.m.gerrit.abandon_change(change, message='dry-run only')

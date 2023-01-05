@@ -3239,7 +3239,9 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/main"
+      "refs/heads/main",
+      "HEAD~",
+      "HEAD"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "env_suffixes": {

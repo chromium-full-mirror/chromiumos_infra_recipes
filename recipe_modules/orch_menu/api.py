@@ -257,7 +257,12 @@ class OrchMenuApi(RecipeApi):
             if run_step:
               with self.m.workspace_util.sync_to_commit(staging=is_staging):
                 bump_version = self._properties.bump_version and not is_staging
-                self.m.cros_version.bump_version(dry_run=not bump_version)
+                # Release orchestrators may build for a pinned manifest that is
+                # behind tip-of-branch and need to create a version bump CL
+                # using a local diff to ensure other files are not included.
+                use_local_diff = self.is_release_orchestrator
+                self.m.cros_version.bump_version(dry_run=not bump_version,
+                                                 use_local_diff=use_local_diff)
                 kwargs = {}
                 if self._properties.manifest_versions_branch:
                   kwargs['branch'] = self._properties.manifest_versions_branch

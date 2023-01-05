@@ -463,12 +463,11 @@ class GerritApi(RecipeApi):
       presentation.step_text = 'confirmed no merge conflicts'
       return
 
-  def create_change(self, project: Union[str, Path],
-                    reviewers: Optional[List[str]] = None,
-                    ccs: Optional[List[str]] = None,
-                    topic: Optional[str] = None, ref: Optional[str] = None,
-                    hashtags: Optional[List[str]] = None,
-                    project_path: Path = None) -> GerritChange:
+  def create_change(
+      self, project: Union[str, Path], reviewers: Optional[List[str]] = None,
+      ccs: Optional[List[str]] = None, topic: Optional[str] = None,
+      ref: Optional[str] = None, hashtags: Optional[List[str]] = None,
+      project_path: Path = None, use_local_diff: bool = False) -> GerritChange:
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -484,6 +483,8 @@ class GerritApi(RecipeApi):
       hashtags: List of hashtags to set for the CL.
       project_path: If set, will use this as the project path rather than any
         value inferred from the gerrit_change.
+      use_local_diff: If true, use the local diff instead of diff taken against
+        tip-of-branch for the CL.
 
     Returns:
       The newly created change.
@@ -523,7 +524,7 @@ class GerritApi(RecipeApi):
 
         self.m.git_cl.upload(reviewers=reviewers, ccs=ccs, topic=topic,
                              hashtags=hashtags, send_mail=True,
-                             target_branch=ref)
+                             target_branch=ref, use_local_diff=use_local_diff)
         issue = None
         if ref:
           # Try to find the issue number for the appropriate branch, which
