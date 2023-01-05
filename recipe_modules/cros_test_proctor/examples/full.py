@@ -309,3 +309,16 @@ def GenTests(api):
           [], step_name='run tests.collect tests.collect tast vm tests'),
       api.buildbucket.simulated_collect_output(
           [], step_name='run tests.collect tests.collect tast GCE tests'))
+
+  yield api.test(
+      'collect-vm-test-failures',
+      api.step_data('run tests.collect tests.collect tast vm tests.wait',
+                    retcode=1),
+      api.post_check(post_process.MustRun,
+                     'run tests.collect tests.get tast vm tests'),
+      api.step_data('run tests.collect tests.collect tast GCE tests.wait',
+                    retcode=1),
+      api.post_check(post_process.MustRun,
+                     'run tests.collect tests.get tast GCE tests'),
+      api.post_process(post_process.DropExpectation),
+  )

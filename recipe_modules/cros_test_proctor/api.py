@@ -428,10 +428,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     def collect_vm_tests(build_ids, vm_test_type, timeout):
       timeout = int(timeout.seconds)
-      step_name = 'collect %s tests' % vm_test_type
-      return list(
-          self.m.buildbucket.collect_builds(build_ids, step_name=step_name,
-                                            timeout=timeout).values())
+      try:
+        step_name = 'collect %s tests' % vm_test_type
+        return list(
+            self.m.buildbucket.collect_builds(build_ids, step_name=step_name,
+                                              timeout=timeout).values())
+      except recipe_api.StepFailure:
+        step_name = 'get %s tests' % vm_test_type
+        return list(
+            self.m.buildbucket.get_multi(build_ids,
+                                         step_name=step_name).values())
 
     results = OrderedDict({
         'skylab': [],
