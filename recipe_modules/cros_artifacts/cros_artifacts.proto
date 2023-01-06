@@ -13,4 +13,7 @@ message CrosArtifactsProperties {
   // Path to upload artifacts. If not set, defaults to whatever is set in code,
   // i.e. {builder}/{version}-{bid}.
   string gs_upload_path = 2;
+
+  // If True, skip copying artifacts to canonical location.
+  bool skip_publish = 3;
 }

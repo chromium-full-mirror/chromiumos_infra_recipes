@@ -82,6 +82,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS)
 
     self._gs_upload_path = props.gs_upload_path
+    self._skip_publish = props.skip_publish
     self._timestamp_micros = int(time.time() * 1000)
 
   @property
@@ -93,6 +94,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   def gs_upload_path(self):
     """Return the gs upload path, if one was set in properties."""
     return self._gs_upload_path or None
+
+  @property
+  def skip_publish(self):
+    """Return whether to skip publish, if set in properties."""
+    return self._skip_publish or False
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -858,17 +864,22 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           presentation.step_text = 'Not publishing artifacts in dry run'
           return uploaded_artifacts
 
-      # Now publish any artifacts that have publishing information.  This is
-      # done here (rather than adding api.cros_artifacts.publish_artifacts)
-      # because we know that we just uploaded all of the artifacts to GS
-      # successfully, and can therefore copy them GS->GS, and avoid
-      # re-uploading. Publishing is intentionally nested under upload
-      # artifacts.
-      links = self._publish_artifacts(builder_name, sysroot.build_target, kind,
-                                      artifacts_info, upload_uri,
-                                      files_by_artifact)
-      for k, v in sorted(links.items()):
-        presentation.links[k] = v
+      # Builders can specify not to publish artifacts (e.g. tryjob artifacts).
+      if self.skip_publish:
+        with self.m.step.nest('skip publish artifacts') as presentation:
+          presentation.step_text = 'skip_publish property set'
+      else:
+        # Now publish any artifacts that have publishing information.  This is
+        # done here (rather than adding api.cros_artifacts.publish_artifacts)
+        # because we know that we just uploaded all of the artifacts to GS
+        # successfully, and can therefore copy them GS->GS, and avoid
+        # re-uploading. Publishing is intentionally nested under upload
+        # artifacts.
+        links = self._publish_artifacts(builder_name, sysroot.build_target,
+                                        kind, artifacts_info, upload_uri,
+                                        files_by_artifact)
+        for k, v in sorted(links.items()):
+          presentation.links[k] = v
     if failed_artifacts:
       raise StepFailure("Failed to generate: {}".format(
           ", ".join(failed_artifacts)))

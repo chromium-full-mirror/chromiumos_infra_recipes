@@ -5,11 +5,13 @@
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 from PB.chromiumos.common import BuildTarget
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
 ]
@@ -125,4 +127,26 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReason,
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'some-failed-skip-publish',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          SOME_FAILED_RESPONSE),
+      api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(post_process.StepFailure,
+                     'upload artifacts.call artifacts service'),
+      api.post_check(post_process.StepTextEquals,
+                     'upload artifacts.call artifacts service',
+                     'Failed to generate: SIMPLE_CHROME_SYSROOT'),
+      api.post_check(post_process.StatusFailure),
+      api.post_check(post_process.ResultReason,
+                     'Failed to generate: SIMPLE_CHROME_SYSROOT'),
+      api.properties(**{
+          '$chromeos/cros_artifacts':
+              CrosArtifactsProperties(skip_publish=True),
+      }),
+      api.post_check(post_process.MustRun,
+                     'upload artifacts.skip publish artifacts'),
       api.post_process(post_process.DropExpectation))

@@ -6,6 +6,7 @@
 from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 
 from recipe_engine import post_process
 
@@ -13,6 +14,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/raw_io',
+    'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
 ]
@@ -116,3 +118,14 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           parent_step_name='upload artifacts.call artifacts service',
           endpoint='ArtifactsService/Get', retcode=1))
+
+  yield api.test(
+      'skip-publish',
+      api.properties(**{
+          '$chromeos/cros_artifacts':
+              CrosArtifactsProperties(skip_publish=True),
+      }),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_process(post_process.DropExpectation),
+  )
