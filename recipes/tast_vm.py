@@ -16,6 +16,8 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'bot_scaling',
+    'cros_infra_config',
     'failures',
     'tast_exec',
     'tast_results',
@@ -27,6 +29,10 @@ PROPERTIES = TastVmProperties
 
 
 def RunSteps(api: RecipeApi, properties: TastVmProperties):
+
+  if api.cros_infra_config.is_staging:  #pragma: no cover
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.90)
+
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
   api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
 
