@@ -8520,7 +8520,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#497)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#498)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -8539,7 +8539,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#386)(self, qcow_image_path, private_key_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#387)(self, qcow_image_path, private_key_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -8582,7 +8582,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#470)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#471)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -8592,7 +8592,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#245)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#246)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -8605,7 +8605,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#212)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#213)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 

@@ -203,9 +203,10 @@ class TastExecApi(RecipeApi):
     return failures, empty_result
 
   def _retry_iter(self, suite_name, vm_context, tast_inputs, tag):
-    with self.m.step.nest('%s tast iteration' % tag):
+    with self.m.step.nest('%s tast iteration' % tag) as pres:
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
       tests = self.run_direct_vm(vm_context, test_results_dir, tast_inputs)
+      pres.logs['tests'] = tests
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests)
 

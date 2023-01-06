@@ -179,7 +179,10 @@
   },
   {
     "cmd": [],
-    "name": "first tast iteration"
+    "name": "first tast iteration",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@tests@@@"
+    ]
   },
   {
     "cmd": [
@@ -959,7 +962,10 @@
   },
   {
     "cmd": [],
-    "name": "second tast iteration"
+    "name": "second tast iteration",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@tests@@@"
+    ]
   },
   {
     "cmd": [
@@ -2942,7 +2948,10 @@
   },
   {
     "cmd": [],
-    "name": "first tast iteration (2)"
+    "name": "first tast iteration (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@tests@@@"
+    ]
   },
   {
     "cmd": [
@@ -3653,7 +3662,10 @@
   },
   {
     "cmd": [],
-    "name": "second tast iteration (2)"
+    "name": "second tast iteration (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@tests@@@"
+    ]
   },
   {
     "cmd": [

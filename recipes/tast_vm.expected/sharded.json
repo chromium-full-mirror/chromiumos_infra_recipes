@@ -113,7 +113,8 @@
     "cmd": [],
     "name": "run tast tests.first tast iteration",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@tests@@@"
     ]
   },
   {
