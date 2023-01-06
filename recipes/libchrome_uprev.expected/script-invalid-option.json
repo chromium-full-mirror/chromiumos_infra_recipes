@@ -2009,7 +2009,11 @@
       "--recipe"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "name": "generate uprev commit"
+    "name": "generate uprev commit",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output_text@%submit,r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2408,7 +2412,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "invalid push option (\"['submit']\"): only r(eviewer), topic, l(abel) options are allowed"
+      "humanReason": "invalid push option (\"['submit']\"): only cc, r(eviewer), topic, l(abel) options are allowed"
     },
     "name": "$result"
   }

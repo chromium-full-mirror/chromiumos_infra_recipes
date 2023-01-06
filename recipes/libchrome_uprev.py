@@ -28,7 +28,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PUSH_OPTION_LABEL_RE = re.compile(
-    r'(Auto-Submit|Verified|Commit-Queue)([+-][12])')
+    r'(Auto-Submit|Verified|Commit-Queue|Bot-Commit)([+-][12])')
 
 
 def RunSteps(api: RecipeApi):
@@ -43,15 +43,18 @@ def RunSteps(api: RecipeApi):
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
-        step_data = api.cros_sdk.run('generate uprev commit', [
-            'vpython3',
-            '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
-            '--head',
-            '--track_active',
-            '--recipe',
-        ], stdout=api.raw_io.output_text())
+        step_data = api.cros_sdk.run(
+            'generate uprev commit', [
+                'vpython3',
+                '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
+                '--head',
+                '--track_active',
+                '--recipe',
+            ], stdout=api.raw_io.output_text(add_output_log=True))
+        ret = step_data.stdout.strip().splitlines()
 
-        push_options = step_data.stdout.strip()
+        # only the last line is the push options; earlier lines are logs
+        push_options = ret[-1] if ret else ''
 
         with api.step.nest('validate push options'):
           if not push_options.startswith('%'):
@@ -62,16 +65,16 @@ def RunSteps(api: RecipeApi):
             if not option:
               continue
             option = option.split('=')
-            if option[0] not in ['r', 'topic', 'l']:
+            if option[0] not in ['r', 'topic', 'l', 'cc']:
               raise StepFailure(
-                  'invalid push option ("{}"): only r(eviewer), topic, l(abel) '
-                  'options are allowed'.format(option))
+                  'invalid push option ("{}"): only cc, r(eviewer), topic, '
+                  'l(abel) options are allowed'.format(option))
             if option[0] == 'l' and (len(option) < 2 or
                                      not PUSH_OPTION_LABEL_RE.match(option[1])):
               raise StepFailure(
                   'invalid label-type push option ("{}"): '
-                  'only Auto-Submit, Verified, Commit-Queue labels with value '
-                  'are allowed'.format(option[1]))
+                  'only Auto-Submit, Verified, Commit-Queue, Bot-Commit labels '
+                  'with value are allowed'.format(option[1]))
 
         with api.step.nest('push uprev commit'):
           api.git.push(project_info.remote, 'HEAD:refs/for/main' + push_options,
