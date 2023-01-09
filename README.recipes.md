@@ -180,6 +180,8 @@
   * [chrome:tests/gclient_retry](#recipes-chrome_tests_gclient_retry) (Python3 ✅)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot) (Python3 ✅)
   * [chromite:examples/full](#recipes-chromite_examples_full) (Python3 ✅)
+  * [chromiumos_codesearch](#recipes-chromiumos_codesearch) (Python3 ✅) &mdash; Recipe for enabling cross-references in code search for ChromiumOS.
+  * [chromiumos_codesearch_initiator](#recipes-chromiumos_codesearch_initiator) (Python3 ✅) &mdash; Initialize ChromiumOS codesearch builders to create kzips.
   * [cipd_uprev](#recipes-cipd_uprev) (Python3 ✅)
   * [cl_factory](#recipes-cl_factory) (Python3 ✅) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full) (Python3 ✅)
@@ -9674,6 +9676,40 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#21)(api):**
+### *recipes* / [chromiumos\_codesearch](/recipes/chromiumos_codesearch.py)
+
+[DEPS](/recipes/chromiumos_codesearch.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for enabling cross-references in code search for ChromiumOS.
+
+Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
+package_index, and generates then uploads a KZIP to GS.
+
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#116)(api, codesearch_mirror_revision, codesearch_mirror_revision_timestamp, manifest_hash):**
+
+&mdash; **def [gclient\_config](/recipes/chromiumos_codesearch.py#103)(api):**
+
+Generate a gclient configuration to check out infra/infra.
+
+Return: (config) A gclient recipe module configuration.
+### *recipes* / [chromiumos\_codesearch\_initiator](/recipes/chromiumos_codesearch_initiator.py)
+
+[DEPS](/recipes/chromiumos_codesearch_initiator.py#13): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Initialize ChromiumOS codesearch builders to create kzips.
+
+Checks out chromiumos manifest repo and uses the latest snapshot commit hash
+to initialize chromiumos codesearch builders.
+
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch_initiator.py#55)(api):**
+
+&mdash; **def [latestRefInfo](/recipes/chromiumos_codesearch_initiator.py#37)(api, clone_dir, repo, branch):**
+
+Return the hash and timestamp of the latest commit on a branch.
 ### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)
 
 [DEPS](/recipes/cipd_uprev.py#10): [deferrals](#recipe_modules-deferrals), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -13159,6 +13195,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/624e7eec34af9b8ef1d02ada6ce9c0f490a0c3d0/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/624e7eec34af9b8ef1d02ada6ce9c0f490a0c3d0/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/624e7eec34af9b8ef1d02ada6ce9c0f490a0c3d0/recipes/README.recipes.md#recipe_modules-tryserver
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/970633c6e943f4b146ee86365a3aa3de52bcb5ea/recipes/README.recipes.md#recipe_modules-codesearch
 [infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/970633c6e943f4b146ee86365a3aa3de52bcb5ea/recipes/README.recipes.md#recipe_modules-docker
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/46fb59926a25ef9214c5aa9bfe38b92c105f5320/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/46fb59926a25ef9214c5aa9bfe38b92c105f5320/README.recipes.md#recipe_modules-assertions
