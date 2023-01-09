@@ -6,6 +6,7 @@
 import base64
 import zlib
 
+from typing import List
 from RECIPE_MODULES.chromeos.skylab import structs
 from google.protobuf import json_format
 
@@ -324,6 +325,34 @@ class SkylabApi(recipe_api.RecipeApi):
 
       self.m.greenness.update_hwtest_info(results)
       presentation.logs['return value'] = [str(r) for r in results]
+      return results
+
+  def get_previous_results(self, task_ids: List[str],
+                           unit_hw_tests: List[structs.UnitHwTest]
+                          ) -> List[structs.SkylabResult]:
+    """Get the results from the previous tasks with the specified task_ids.
+
+    Args:
+      task_ids: The list of Skylab task IDs for which to retrieve results.
+      unit_hw_tests: The list of unit_hw_tests for which to retrieve results.
+
+    Returns:
+      The list of Skylab results for the specified unit_hw_tests that ran in
+      the tasks with the specified task_ids.
+    """
+    with self.m.step.nest('get previous skylab tasks v2'):
+      hw_test_builds = self.m.buildbucket.get_multi(task_ids)
+      results = []
+      for build in hw_test_builds.values():
+        build_url = self.m.buildbucket.build_url(build_id=build.id)
+        response = self._get_multi_response_binary(build)
+        for uht in unit_hw_tests:
+          disp_name = _request_tag(uht.hw_test)
+          if disp_name in response:
+            result = response.get(disp_name)
+            task = self.SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
+                                   unit=uht.unit)
+            results.append(self._translate_result(result, task))
       return results
 
   def _get_multi_response_binary(self, build):

@@ -92,17 +92,21 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
 
   def test_with_multi_response(
       self, bid, names, task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
-      exclude_json=False):
+      exclude_json=False, test_cases_verdict=TaskState.VERDICT_PASSED):
     return self._with_multi_response(bid, names, task_state,
-                                     _json=not exclude_json)
+                                     _json=not exclude_json,
+                                     test_cases_verdict=test_cases_verdict)
 
-  def _with_multi_response(self, bid, names, task_state, _json=True):
+  def _with_multi_response(self, bid, names, task_state, _json=True,
+                           test_cases_verdict=TaskState.VERDICT_PASSED):
     return build_pb2.Build(
         id=bid, output=build_pb2.Build.Output(
-            properties=self._multi_response(names, task_state, _json)))
+            properties=self._multi_response(names, task_state, _json,
+                                            test_cases_verdict)))
 
-  def _multi_response(self, names, task_state, _json):
-    responses_blob = self._responses_json_dict(names, task_state)
+  def _multi_response(self, names, task_state, _json, test_cases_verdict):
+    responses_blob = self._responses_json_dict(names, task_state,
+                                               test_cases_verdict)
     responses_obj = json_format.Parse(
         json.dumps({'tagged_responses': responses_blob}), ExecuteResponses(),
         ignore_unknown_fields=True)
@@ -115,11 +119,12 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
           second_responses_blob).decode()
     return json_format.Parse(json.dumps(overall), struct_pb2.Struct())
 
-  def _responses_json_dict(self, names, task_state):
-    response_obj = json.loads(self._response_json(task_state))
+  def _responses_json_dict(self, names, task_state, test_cases_verdict):
+    response_obj = json.loads(
+        self._response_json(task_state, test_cases_verdict))
     return {name: response_obj for name in names}
 
-  def _response_json(self, task_state):
+  def _response_json(self, task_state, test_cases_verdict):
     return """{
     "state": {
         "verdict": "%s",
@@ -128,7 +133,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
     "taskResults": [
         {
             "state": {
-                "verdict": "VERDICT_PASSED",
+                "verdict": "%s",
                 "lifeCycle": "LIFE_CYCLE_COMPLETED"
             },
             "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
@@ -137,11 +142,11 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
             "testCases": [
                 {
                     "name": "tast",
-                    "verdict": "VERDICT_PASSED"
+                    "verdict": "%s"
                 },
                 {
                     "name": "tast.camera.TakesGreatPhotos",
-                    "verdict": "VERDICT_PASSED"
+                    "verdict": "%s"
                 }
             ]
         }
@@ -150,4 +155,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
 """ % (
         task_state.verdict,
         task_state.life_cycle,
+        test_cases_verdict,
+        test_cases_verdict,
+        test_cases_verdict,
     )

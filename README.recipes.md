@@ -241,6 +241,7 @@
   * [cros_history:examples/get_matching_builds](#recipes-cros_history_examples_get_matching_builds) (Python3 ✅)
   * [cros_history:examples/get_passed_builds](#recipes-cros_history_examples_get_passed_builds) (Python3 ✅)
   * [cros_history:examples/get_passed_tests](#recipes-cros_history_examples_get_passed_tests) (Python3 ✅)
+  * [cros_history:examples/get_prev_failed_now_exon](#recipes-cros_history_examples_get_prev_failed_now_exon) (Python3 ✅)
   * [cros_history:examples/get_snapshot_builds](#recipes-cros_history_examples_get_snapshot_builds) (Python3 ✅)
   * [cros_history:examples/get_test_failure_builders](#recipes-cros_history_examples_get_test_failure_builders) (Python3 ✅)
   * [cros_history:examples/get_upreved_pkgs](#recipes-cros_history_examples_get_upreved_pkgs) (Python3 ✅)
@@ -523,6 +524,8 @@
   * [signing:tests/get_failure](#recipes-signing_tests_get_failure) (Python3 ✅) &mdash; Verify that method get_failure has error handling.
   * [signing:tests/invalid_file_format](#recipes-signing_tests_invalid_file_format) (Python3 ✅) &mdash; Verify that instructions files are in the appropriate format.
   * [signing:tests/sequence_error](#recipes-signing_tests_sequence_error) (Python3 ✅) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
+  * [skylab:examples/get_previous_results](#recipes-skylab_examples_get_previous_results) (Python3 ✅)
+  * [skylab:examples/get_previous_results_empty_arg](#recipes-skylab_examples_get_previous_results_empty_arg) (Python3 ✅)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites) (Python3 ✅)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites) (Python3 ✅)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg) (Python3 ✅)
@@ -2526,15 +2529,15 @@ Args:
 &emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#507)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
-[DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#49)(self, snapshot_id):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#53)(self, snapshot_id):**
 
 Find the annealing build that created snapshot with given ID.
 
@@ -2544,7 +2547,28 @@ Args:
 Returns:
   build_pb2.Build of the annealing build or None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#232)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/cros_history/api.py#182)(self, test_plan: GenerateTestPlanResponse, hw_build_ids: List[str]):**
+
+Get the results from the previous failed hardware tests that can now be exonerated.
+
+Args:
+  test_plan: The test plan for which to retrieve results.
+  hw_build_ids: The IDs of the previous builds to retrieve results for.
+
+Returns:
+  A list of the exonerable hardware test results.
+
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/cros_history/api.py#207)(self, build_ids: List[str]):**
+
+Get the results from the previous failed VM test builds that can now be exonerated.
+
+Args:
+  build_ids: The IDs of the previous builds to retrieve results for.
+
+Returns:
+  A list of the exonerable VM test builds.
+
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#337)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2557,7 +2581,7 @@ Args:
 Returns:
   list[Build] which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#83)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#87)(self, tags=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -2567,14 +2591,26 @@ Args:
 Returns:
   list([build_pb2.Build]): Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#154)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#158)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#193)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#225)(self, test_plan: GenerateTestPlanResponse):**
+
+Get the tests  from the previous failed runs that are now exonerable.
+
+Args:
+  test_plan: The test plan which contains the tests for which to retrieve
+  the results from previous runs.
+
+Returns:
+  A tuple containing the list of exonerable VM test builds and the list
+  of exonerable HW test results.
+
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#298)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2590,14 +2626,14 @@ Args:
 Returns:
   list[Build] builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#124)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#128)(self):**
 
 Get builders with the given patches that failed tests in the last run.
 
 Returns:
   set[str]: Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#68)(self, annealing_build):**
+&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#72)(self, annealing_build):**
 
 Retrieve the packages upreved by the annealing build.
 
@@ -2607,14 +2643,14 @@ Args:
 Returns:
   list(PackageCPV) of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#260)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#365)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#178)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#283)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -2624,7 +2660,7 @@ have passed and which have not.
 Args:
   tests (sequence[str]): (Unique) names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#48)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -8227,11 +8263,23 @@ Returns
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#43)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [get\_previous\_results](/recipe_modules/skylab/api.py#330)(self, task_ids: List[str], unit_hw_tests: List[structs.UnitHwTest]):**
+
+Get the results from the previous tasks with the specified task_ids.
+
+Args:
+  task_ids: The list of Skylab task IDs for which to retrieve results.
+  unit_hw_tests: The list of unit_hw_tests for which to retrieve results.
+
+Returns:
+  The list of Skylab results for the specified unit_hw_tests that ran in
+  the tasks with the specified task_ids.
+
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#44)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -8248,7 +8296,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#95)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#96)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -8266,11 +8314,11 @@ Args:
 Returns:
   list[SkylabTask]: with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#39)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#40)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#290)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#291)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -10357,6 +10405,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_tests.py#16)(api):**
+### *recipes* / [cros\_history:examples/get\_prev\_failed\_now\_exon](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py)
+
+[DEPS](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#10): [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#19)(api):**
 ### *recipes* / [cros\_history:examples/get\_snapshot\_builds](/recipe_modules/cros_history/examples/get_snapshot_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_snapshot_builds.py#12): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -12566,6 +12621,20 @@ Verify that wait_for_signing is required before retrieving signed build
 metadata.
 
 &mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
+### *recipes* / [skylab:examples/get\_previous\_results](/recipe_modules/skylab/examples/get_previous_results.py)
+
+[DEPS](/recipe_modules/skylab/examples/get_previous_results.py#8): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/get_previous_results.py#18)(api):**
+### *recipes* / [skylab:examples/get\_previous\_results\_empty\_arg](/recipe_modules/skylab/examples/get_previous_results_empty_arg.py)
+
+[DEPS](/recipe_modules/skylab/examples/get_previous_results_empty_arg.py#6): [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/get_previous_results_empty_arg.py#15)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#12): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

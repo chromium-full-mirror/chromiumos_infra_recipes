@@ -1,0 +1,57 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/test_exoneration.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
+    "timeout": 180
+  },
+  {
+    "cmd": [],
+    "name": "get previous failed and now exonerable suites",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 0 vm suite and 0 hw suite@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get previous failed and now exonerable suites.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "get previous failed and now exonerable suites.find matching builds.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
