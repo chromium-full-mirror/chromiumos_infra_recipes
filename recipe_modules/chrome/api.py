@@ -82,13 +82,16 @@ class ChromeApi(recipe_api.RecipeApi):
     return self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
 
-  def cache_sync(self, cache_path):
+  def cache_sync(self, cache_path, sync=True, step_name='sync chrome'):
     """Sync Chrome cache using existing cached repositories.
 
     Args:
       cache_path (Path): Path to mount of cache.
+      sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
+      step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
+
     """
-    with self.m.step.nest('sync chrome'):
+    with self.m.step.nest(step_name):
       src_dir = cache_path.join('src')
       self.m.file.ensure_directory('ensure chrome src directory', src_dir)
       self.m.file.ensure_directory('ensure chrome cache directory',
@@ -118,20 +121,22 @@ class ChromeApi(recipe_api.RecipeApi):
             'populate git cache',
             ['python', self.m.depot_tools.root.join('git_cache.py')] +
             cache_cmd, infra_step=True)
-        gclient_sync_cmd = [
-            'sync',
-            '--reset',
-            '--with_branch_heads',
-            '--with_tags',
-            '--verbose',
-        ]
-        self.m.step(
-            'gclient sync',
-            ['python', self.m.depot_tools.root.join('gclient.py')] +
-            gclient_sync_cmd, infra_step=True,
-            timeout=self.gclient_sync_timeout_seconds)
+        if sync:
+          gclient_sync_cmd = [
+              'sync',
+              '--reset',
+              '--with_branch_heads',
+              '--with_tags',
+              '--verbose',
+          ]
+          self.m.step(
+              'gclient sync',
+              ['python', self.m.depot_tools.root.join('gclient.py')] +
+              gclient_sync_cmd, infra_step=True,
+              timeout=self.gclient_sync_timeout_seconds)
 
-  def sync(self, chrome_root, chroot, build_target, internal):
+  def sync(self, chrome_root, chroot, build_target, internal,
+           cache_dir=CHROMIUM_CACHE_DIR):
     """Sync Chrome source code.
 
     Must be run with cwd inside a chromiumos source root.
@@ -141,6 +146,7 @@ class ChromeApi(recipe_api.RecipeApi):
       chroot (chromiumos.Chroot): Information on the chroot for the build.
       build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
+      cache_dir (str): Path of the chrome cache. Defaults to '/preload/chrome_cache'.
     """
     with self.m.step.nest('sync chrome') as pres:
       if self._version or self._deps_cas:
@@ -153,7 +159,7 @@ class ChromeApi(recipe_api.RecipeApi):
       # Similar to what you would get with self.m.gclient.checkout approach
       # but here we up the job parallelism for a speed boost.
       with self.m.context(cwd=chrome_root):
-        cfg = self.m.gclient.make_config(CACHE_DIR=CHROMIUM_CACHE_DIR)
+        cfg = self.m.gclient.make_config(CACHE_DIR=cache_dir)
         cfg.target_os = ['chromeos']
         soln = cfg.solutions.add()
         soln.name = 'src'

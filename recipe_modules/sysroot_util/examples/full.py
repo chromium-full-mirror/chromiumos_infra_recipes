@@ -114,6 +114,14 @@ def GenTests(api):
 
   yield api.test('basic', test_build())
 
+  yield api.test(
+      'chrome-cache-experiment',
+      test_build(),
+      api.buildbucket.ci_build(
+          builder='atlas-cq',
+          experiments=['chromeos.sysroot_util.chrome_cache']),
+  )
+
   yield api.test('cq-build', test_build(cq=True))
 
   yield api.test(
