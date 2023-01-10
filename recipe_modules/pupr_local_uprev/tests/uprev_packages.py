@@ -54,15 +54,14 @@ def RunSteps(api: RecipeApi, additional_commit_message: str,
              expect_none_response: Optional[EbuildsByProject]):
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
-      workspace_path=api.cros_source.workspace_path,
       additional_commit_message=additional_commit_message,
       allow_partial_uprev=allow_partial_uprev,
+      packages=PACKAGES,
       build_targets=BUILD_TARGETS,
   )
 
   # Act
-  ebuilds_by_project = api.pupr_local_uprev.uprev_packages(
-      PACKAGES, VERSIONS, TOPIC)
+  ebuilds_by_project = api.pupr_local_uprev.uprev_packages(VERSIONS, TOPIC)
 
   # Assert
   if expect_none_response:

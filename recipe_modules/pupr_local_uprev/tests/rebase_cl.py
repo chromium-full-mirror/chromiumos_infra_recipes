@@ -39,10 +39,10 @@ PACKAGES = [PACKAGE_CHROME, PACKAGE_LACROS]
 
 def RunSteps(api: RecipeApi):
   api.pupr_local_uprev.set_generator_attributes(
-      workspace_path=api.cros_source.workspace_path,
+      packages=PACKAGES,
       build_targets=BUILD_TARGETS,
   )
-  api.pupr_local_uprev.rebase_cl(PACKAGES, OPEN_CHANGES, 'cool_topic', 1234)
+  api.pupr_local_uprev.rebase_cl(OPEN_CHANGES, 'cool_topic', 1234)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

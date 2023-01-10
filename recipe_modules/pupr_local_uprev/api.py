@@ -41,51 +41,49 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
   def __init__(self, *args, **kwargs):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
-    self._workspace_path: Optional[Path] = None
     self._additional_commit_message = ''
     self._allow_partial_uprev = False
+    self.packages: List[PackageInfo] = []
     self._build_targets: List[BuildTarget] = []
 
   @property
   def workspace_path(self) -> Path:
-    """The checkout path where the build is processed."""
-    assert self._workspace_path is not None
-    return self._workspace_path
+    """Return the checkout path where the build is processed."""
+    return self.m.cros_source.workspace_path
 
   def set_generator_attributes(
-      self, workspace_path: Path, additional_commit_message: str = '',
+      self, additional_commit_message: str = '',
       allow_partial_uprev: bool = False,
+      packages: Optional[List[PackageInfo]] = None,
       build_targets: Optional[List[BuildTarget]] = None):
     """Set attributes whose values are determined in Generator.
 
     Args:
-      workspace_path: The checkout path where the build is processed.
       additional_commit_message: Additional text to be added in the commit
         description.
       allow_partial_uprev: Whether to generate CLs when either of the packages
         had no modified file.
+      packages: The packages that this build should uprev.
       build_targets: The build targets to uprev. Only relevant if required by
         endpoint.
 
-    TODO(b/262302698): All of these attributes except for workspace_path should
-    be moved from generator.proto to pupr_local_uprev.proto.
+    TODO(b/262302698): All of these attributes should be moved from
+    generator.proto to pupr_local_uprev.proto.
     """
-    self._workspace_path = workspace_path
     self._additional_commit_message = additional_commit_message
     self._allow_partial_uprev = allow_partial_uprev
+    self.packages = packages if packages is not None else []
     self._build_targets = build_targets if build_targets is not None else []
 
   def uprev_packages(
       self,
-      packages: List[PackageInfo],
       versions: List[UprevVersionedPackageRequest.GitRef],
       topic: str,
       change_id: Optional[str] = None,
   ) -> Optional[EbuildsByProject]:
-    """Try the uprev for the given packages. If successful, commit the uprev.
+    """Try to uprev the specified packages. If successful, commit the uprev.
 
     Args:
-      packages: The packages to try uprevving.
       versions: The versions to consider for an update.
       change_id: If not None, set Change-Id to the commit message, so that the
         commit is uploaded as a new patch set of an existing Change. When this
@@ -100,7 +98,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """
     modified_package_names: List[str] = []
     all_valid_responses: List[UprevPackagesResponse] = []
-    for package in packages:
+    for package in self.packages:
       package_responses = self._uprev_package(package, versions)
       if package_responses:
         all_valid_responses.extend(package_responses)
@@ -257,12 +255,11 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
     return ebuilds_by_project
 
-  def rebase_cl(self, packages: List[PackageInfo],
-                open_changes: List[GerritChange], topic: str, change_num: int):
+  def rebase_cl(self, open_changes: List[GerritChange], topic: str,
+                change_num: int):
     """Create a new uprev patch (locally) for change_id.
 
     Args:
-      packages: List of packages to try uprevving in the new patch.
       open_changes: List of currently open uprev CLs.
       change_num: Change number of the CL to rebase, as in crrev.com/c/#####.
       topic: A short string with which to tag all generated commits.
@@ -281,8 +278,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_project = self.uprev_packages(packages, existing_versions,
-                                               topic, change_id=change_id)
+      ebuilds_by_project = self.uprev_packages(existing_versions, topic,
+                                               change_id=change_id)
       if not ebuilds_by_project:
         raise StepFailure('The uprev had no file.')
       if len(ebuilds_by_project.keys()) > 1:

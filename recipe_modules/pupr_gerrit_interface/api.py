@@ -1,0 +1,406 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Module to interface with Gerrit for PUpr (Parallel Uprevs)."""
+
+from typing import Dict, List, Optional
+
+from google.protobuf.json_format import MessageToDict
+from recipe_engine import recipe_api
+from recipe_engine.config_types import Path
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipes.chromeos.generator import ABANDON
+from PB.recipes.chromeos.generator import BranchPolicy
+from PB.recipes.chromeos.generator import DRY_RUN
+from PB.recipes.chromeos.generator import FULL_RUN
+from PB.recipes.chromeos.generator import NO_RETRY
+from PB.recipes.chromeos.generator import OUTDATED_ABANDON
+from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
+from PB.recipes.chromeos.generator import OutdatedClsPolicy
+from PB.recipes.chromeos.generator import RetryClPolicy
+from PB.recipes.chromeos.generator import SUBMIT
+from PB.recipes.chromeos.generator import SendToCqPolicy
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+
+# HOSTS_REMOTES contains tuples (host, remote) representing our Gerrit
+# instances, where host the section of the Gerrit URL that would be formatted
+# into f'https://{host}-review.googlesource.com', and remote is the name of that
+# host's corresponding git remote.
+HOSTS_REMOTES = (('chromium', 'cros'), ('chrome-internal', 'cros-internal'))
+
+# ProjectsByRemote maps Git remotes to repo projects relevant to this PUpr.
+ProjectsByRemote = Dict[str, List[ProjectInfo]]
+
+
+class PuprGerritInterfaceApi(recipe_api.RecipeApi):
+  """A module to interface between PUpr builders and Gerrit."""
+
+  def __init__(self, *args, **kwargs):
+    """Initialize the module's attributes."""
+    super().__init__(*args, **kwargs)
+    self.rebase_before_retry = False
+
+  @property
+  def workspace_path(self) -> Path:
+    """Return the checkout path where the build is processed."""
+    return self.m.cros_source.workspace_path
+
+  def set_generator_attributes(self, rebase_before_retry: bool):
+    """Set attributes whose values are determined in Generator.
+
+    Args:
+      rebase_before_retry: Whether to rebase open changes before retrying. See
+        documentation in generator.proto.
+
+    TODO(b/259445191): All of these attributes should be moved from
+      generator.proto to pupr_local_uprev.proto.
+    """
+    self.rebase_before_retry = rebase_before_retry
+
+  def sort_projects_by_remote(self,
+                              projects: List[ProjectInfo]) -> ProjectsByRemote:
+    """Return a dict which sorts the given projects by their remote."""
+    projects_by_remote: ProjectsByRemote = {}
+    for project in projects:
+      remote = project.remote
+      if remote not in projects_by_remote:
+        projects_by_remote[remote] = []
+      projects_by_remote[remote].append(project)
+    return projects_by_remote
+
+  def find_open_uprev_cls(self, projects_by_remote: ProjectsByRemote,
+                          topic: str) -> List[GerritChange]:
+    """Return any open uprev CLs matching the right projects and topic.
+
+    Args:
+      projects_by_remote: A mapping from Git remotes to repo projects on that
+        remote that are relevant to this PUpr.
+      topic: A string to match against CLs' Gerrit topic, which is used to
+        identify relevant PUpr CLs.
+    """
+    open_changes: List[GerritChange] = []
+    with self.m.step.nest('find open uprev CLs'):
+      for host, remote in HOSTS_REMOTES:
+        with self.m.step.nest('find CLs from {} host'.format(host)):
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          for project in projects_by_remote.get(remote, []):
+            open_changes.extend(
+                self.m.gerrit.query_changes(host_url,
+                                            [('topic', topic),
+                                             ('project', project.name),
+                                             ('branch', project.branch_name),
+                                             ('status', 'open')]))
+    return open_changes
+
+  def handle_open_changes(self, open_changes: List[GerritChange],
+                          projects_by_remote: ProjectsByRemote,
+                          policy: BranchPolicy, topic: str,
+                          retry_only_run: bool) -> bool:
+    """Abandon or retry already-open uprev CLs.
+
+    Args:
+      open_changes: A list of currently open, relevant PUpr CLs.
+      projects_by_remote: A mapping from Git remotes to repo projects on
+        that remote that are relevant to this PUpr.
+      policy: The policy selected by this PUpr run.
+      topic: A short string with which to tag all generated uprev commits.
+      retry_only_run: this weirdly named property only causes a run in
+        `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
+
+    Returns:
+      A bool stating whether any open CLs remain after abandoning.
+    """
+    most_recent_uprev = self._find_most_recently_merged_uprev(
+        projects_by_remote, topic) if open_changes else None
+    outdated_cls = self._get_outdated_cls(open_changes, most_recent_uprev)
+    abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev,
+                                      policy.outdated_cls_policy,
+                                      retry_only_run)
+    self.apply_retry_policy(open_changes, most_recent_uprev, policy, topic,
+                            retry_only_run)
+    return len(abandoned_cls) < len(open_changes)
+
+  def _find_most_recently_merged_uprev(self,
+                                       projects_by_remote: ProjectsByRemote,
+                                       topic: str) -> PatchSet:
+    """Return the most recently merged relevant uprev.
+
+    Args:
+      projects_by_remote: A mapping from Git remotes to repo projects on that
+        remote that are relevant to this PUpr.
+    """
+    most_recent_uprev: Optional[PatchSet] = None
+    with self.m.step.nest('examine outdated CLs'):
+      for host, remote in HOSTS_REMOTES:
+        with self.m.step.nest('merged CLs from {} host (within 30 days)'.format(
+            host)) as presentation:
+          host_url = 'https://{}-review.googlesource.com'.format(host)
+          merged_changes = []
+          for project in projects_by_remote.get(remote, []):
+            merged_changes.extend(
+                self.m.gerrit.query_changes(host_url,
+                                            [('topic', topic),
+                                             ('project', project.name),
+                                             ('branch', project.branch_name),
+                                             ('status', 'merged'),
+                                             ('-age', '30d')]))
+          if merged_changes:
+            presentation.logs['merged CLs'] = [
+                self.m.gerrit.parse_gerrit_change_url(cl)
+                for cl in merged_changes
+            ]
+            # Must fetch to get submitted times from the "PatchSets", which are
+            # really instances of ChangeInfo.
+            merged_change_infos = self.m.gerrit.fetch_patch_sets(merged_changes)
+            merged_change_infos.sort(key=lambda ci: ci.submitted, reverse=True)
+            if merged_change_infos:
+              most_recent_uprev = merged_change_infos[0]
+              presentation.logs['most recent merged cl'] = [
+                  most_recent_uprev.display_id
+              ]
+          else:
+            presentation.step_text = 'no merged CLs found'
+            presentation.status = self.m.step.WARNING
+    return most_recent_uprev
+
+  def _get_outdated_cls(
+      self,
+      open_changes: List[GerritChange],
+      most_recent_uprev: Optional[PatchSet],
+  ) -> List[PatchSet]:
+    """Query Gerrit to return all CLs older than the most recently merged.
+
+    Args:
+      open_changes: A list of currently open, relevant PUpr CLs.
+      most_recent_uprev: The relevant uprev CL which was most recently merged.
+
+    Returns:
+      A list of CLs which were created before most_recent_uprev was either
+      created or submitted. (We compare against most_recent_uprev's either
+      created timestamp or submitted timestamp, depending on
+      self.rebase_before_retry.)
+    """
+    if not most_recent_uprev:
+      return []
+    open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes)
+    with self.m.step.nest('outdated CLs') as presentation:
+      outdated_cls = [
+          cl for cl in open_patch_sets
+          if cl.created < self._get_outdated_timestamp(most_recent_uprev)
+      ]
+      presentation.logs['outdated CLs'] = [cl.display_id for cl in outdated_cls]
+    return outdated_cls
+
+  def _abandon_cls(self, outdated_cls: List[PatchSet],
+                   obviating_uprev: PatchSet,
+                   outdated_cls_policy: OutdatedClsPolicy, retry_only_run: bool,
+                   step_name: Optional[str] = None) -> List[PatchSet]:
+    """Abandon uprev CLs according to the outdated_cls_policy.
+
+    Args:
+      outdated_cls: Open uprev CLs that are behind the most recent merge.
+      obviating_uprev: The CL which makes outdated_cls outdated. Used for adding
+        comments on the outdated CLs.
+      outdated_cls_policy: This PUpr's policy for dealing with outdated CLs.
+      retry_only_run: this weirdly named property only causes a run in
+        `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
+      step_name: Option to override the default step name for this method.
+
+    Returns:
+      List of CLs which have been abandoned.
+    """
+    if not outdated_cls:
+      return []
+    abandoned_cls: List[PatchSet] = []
+    if step_name is None:
+      step_name = 'act on outdated CLs with policy: {}'.format(
+          OutdatedClsPolicy.Name(outdated_cls_policy))
+    with self.m.step.nest(step_name):
+      for outdated_cl in outdated_cls:
+        if outdated_cls_policy == OUTDATED_LEAVE_COMMENT and not retry_only_run:
+          outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                      'PUpr has been set to remind you that it'
+                                      ' likely should be abandoned.').format(
+                                          obviating_uprev.display_url)
+          self.m.gerrit.add_change_comment(outdated_cl.to_gerrit_change_proto(),
+                                           outdated_comment_message)
+        elif outdated_cls_policy == OUTDATED_ABANDON:
+          outdated_comment_message = ('This CL has been obviated by: {}\n\n'
+                                      'PUpr has been set to abandon.').format(
+                                          obviating_uprev.display_url)
+          self.m.gerrit.abandon_change(outdated_cl.to_gerrit_change_proto(),
+                                       message=outdated_comment_message)
+          abandoned_cls.append(outdated_cl)
+    return abandoned_cls
+
+  def create_uprev_cls(self, repo_projects: List[ProjectInfo],
+                       open_changes: List[GerritChange], existing_cls: bool,
+                       policy: BranchPolicy, topic: str):
+    """Create appropriate CLs for the uprevs."""
+    send_to_cq_policy = (
+        policy.existing_cls_policy
+        if existing_cls else policy.no_existing_cls_policy)
+
+    with self.m.step.nest('generate CLs'):
+      changes = []
+      for project in sorted(repo_projects):
+        changes.append(
+            self.m.gerrit.create_change(
+                project.path,
+                reviewers=[reviewer.email for reviewer in policy.reviewers],
+                topic=topic,
+            ))
+      self.m.easy.set_properties_step(
+          generated_cls=[MessageToDict(change) for change in changes])
+
+    if changes:
+      with self.m.step.nest('cq-depend generated CLs'):
+        cq_depends = self.m.cros_cq_depends.get_mutual_cq_depend(changes)
+        for change, cq_depend in zip(changes, cq_depends):
+          with self.m.step.nest('set cq-depend for {} CL'.format(
+              change.project)) as presentation:
+            if not cq_depend:
+              presentation.step_text = 'empty Cq-Depend, skipping'
+              continue
+            description = self.m.gerrit.get_change_description(change)
+            description = self.m.git_footers.edit_add_change_description(
+                description, 'Cq-Depend', cq_depend)
+            self.m.gerrit.set_change_description(change, description,
+                                                 amend_local=True)
+
+    with self.m.step.nest('update CL labels'):
+      for change in changes:
+        # First post explanatory message.
+        message_lines = [
+            'Found {} open CL(s) for Gerrit topic {}:'.format(
+                len(open_changes), topic),
+            '\n'.join(map(self.m.gerrit.parse_gerrit_change_url, open_changes)),
+            'Send-to-cq policy for this case is {}.'.format(
+                SendToCqPolicy.Name(send_to_cq_policy))
+        ]
+
+        message_lines.append({
+            DRY_RUN: 'Therefore, marking CL as CQ+1',
+            FULL_RUN: 'Therefore, marking CL as CQ+2',
+            ABANDON: 'Therefore, abandoning the CL',
+            SUBMIT: 'Therefore, will attempt to directly submit the CL.',
+        }.get(
+            send_to_cq_policy,
+            'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
+            'Reviewers may also want to abandon the open CL(s).',
+        ))
+
+        message = '\n'.join(message_lines)
+        if send_to_cq_policy == ABANDON:
+          self.m.gerrit.abandon_change(change, message=message)
+        else:
+          self.m.gerrit.add_change_comment(change, message)
+
+        # Then set labels.
+        labels = {
+            DRY_RUN: {
+                Label.BOT_COMMIT: 1,
+                Label.COMMIT_QUEUE: 1,
+            },
+            FULL_RUN: {
+                Label.BOT_COMMIT: 1,
+                Label.COMMIT_QUEUE: 2,
+            },
+            SUBMIT: {
+                Label.BOT_COMMIT: 1,
+            },
+        }.get(send_to_cq_policy)
+
+        if labels is not None:
+          self.m.gerrit.set_change_labels(change, labels)
+
+      if send_to_cq_policy == SUBMIT:
+        with self.m.step.nest('submit CL'):
+          self.m.gerrit.submit_change(change)
+
+  def upload_new_patch_set(self, gerrit_patch_set: PatchSet):
+    """Upload a new revision onto an existing Gerrit PatchSet."""
+    step_name = f'upload patch set for Change-Id {gerrit_patch_set.change_id}'
+    with self.m.step.nest(step_name), self.m.context(cwd=self.workspace_path):
+      gerrit_change = gerrit_patch_set.to_gerrit_change_proto()
+      project = self.m.repo.project_info(gerrit_change.project)
+      repo_path = self.m.path.join(self.workspace_path, project.path)
+      with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
+        self.m.git_cl.upload(send_mail=True)
+
+  def retry_cl(self, patch_set: PatchSet, cq_label: int):
+    """Retry sending the CL through CQ by setting its Gerrit labels."""
+    with self.m.step.nest('retry CL {}'.format(patch_set.change_id)):
+      labels = {
+          Label.BOT_COMMIT: 1,
+          Label.COMMIT_QUEUE: cq_label,
+      }
+      gerrit_change = patch_set.to_gerrit_change_proto()
+      with self.m.context(cwd=self.workspace_path):
+        project = self.m.repo.project_info(gerrit_change.project)
+        repo_path = self.m.path.join(self.workspace_path, project.path)
+        with self.m.context(cwd=self.m.path.abs_to_path(repo_path)):
+          self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
+
+  def apply_retry_policy(self, open_changes: List[GerritChange],
+                         most_recent_uprev: List[PatchSet],
+                         policy: BranchPolicy, topic: str,
+                         retry_only_run: bool):
+    """Retry any open uprev CLs based on the retry policy."""
+    if policy.retry_cl_policy == NO_RETRY:
+      return
+    with self.m.step.nest('apply retry policy {}'.format(
+        RetryClPolicy.Name(policy.retry_cl_policy))) as presentation:
+      if not open_changes:
+        return
+      open_patch_sets = self.m.gerrit.fetch_patch_sets(open_changes,
+                                                       include_messages=True)
+      if most_recent_uprev:
+        open_patch_sets = [
+            ps for ps in open_patch_sets
+            if ps.created > self._get_outdated_timestamp(most_recent_uprev)
+        ]
+      if self.m.pupr.retries_frozen(open_patch_sets):
+        return
+
+      patch_set_to_retry, cq_label, message, cl_passed_dry_run = \
+          self.m.pupr.identify_retry(policy.retry_cl_policy,
+                                     policy.no_existing_cls_policy,
+                                     open_patch_sets)
+      presentation.step_text = message
+
+      if not patch_set_to_retry:
+        return
+
+      if self.rebase_before_retry:
+        self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
+                                          patch_set_to_retry.change_id)
+        self.upload_new_patch_set(patch_set_to_retry)
+
+      self.retry_cl(patch_set_to_retry, cq_label)
+
+      if cl_passed_dry_run:
+        cls_to_abandon = [cl for cl in open_patch_sets \
+            if cl.created < patch_set_to_retry.created]
+        self._abandon_cls(cls_to_abandon, patch_set_to_retry,
+                          policy.outdated_cls_policy, retry_only_run,
+                          step_name='abandon CLs before passed CQ+1 CL')
+
+  def _get_outdated_timestamp(self, most_recent_uprev: PatchSet) -> str:
+    """Determine the cutoff time at which CLs become outdated.
+
+    Args:
+      most_recent_uprev: The most recently merged relevant uprev.
+
+    Returns:
+      A timestamp string, in the same format as PatchSet.created, after which
+      any CL would be considered outdated.
+    """
+    if self.rebase_before_retry:
+      return most_recent_uprev.created
+    return most_recent_uprev.submitted

@@ -87,6 +87,7 @@
   * [phosphorus](#recipe_modules-phosphorus) (Python3 ✅)
   * [portage](#recipe_modules-portage) (Python3 ✅) &mdash; APIs for CrOS Portage.
   * [pupr](#recipe_modules-pupr) (Python3 ✅) &mdash; APIs for PUpr.
+  * [pupr_gerrit_interface](#recipe_modules-pupr_gerrit_interface) (Python3 ✅) &mdash; Module to interface with Gerrit for PUpr (Parallel Uprevs).
   * [pupr_local_uprev](#recipe_modules-pupr_local_uprev) (Python3 ✅) &mdash; Module to create uprevs on the local checkout for PUpr (Parallel Uprevs).
   * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
   * [remoteexec](#recipe_modules-remoteexec) (Python3 ✅) &mdash; API for working with re-client for remote execution.
@@ -489,6 +490,10 @@
   * [project_buildspec](#recipes-project_buildspec) (Python3 ✅) &mdash; Recipe for invoking the per project buildspec tool.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry) (Python3 ✅)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen) (Python3 ✅)
+  * [pupr_gerrit_interface:tests/create_uprev_cls](#recipes-pupr_gerrit_interface_tests_create_uprev_cls) (Python3 ✅) &mdash; Verify that create_uprev_cls() runs the expected process.
+  * [pupr_gerrit_interface:tests/find_open_uprev_cls](#recipes-pupr_gerrit_interface_tests_find_open_uprev_cls) (Python3 ✅) &mdash; Verify that find_open_uprev_cls() finds CLs as expected.
+  * [pupr_gerrit_interface:tests/handle_open_changes](#recipes-pupr_gerrit_interface_tests_handle_open_changes) (Python3 ✅) &mdash; Verify that handle_open_changes() runs the expected process.
+  * [pupr_gerrit_interface:tests/upload_new_patch_set](#recipes-pupr_gerrit_interface_tests_upload_new_patch_set) (Python3 ✅) &mdash; Verify that upload_new_patch_set() runs the expected process.
   * [pupr_local_uprev:tests/rebase_cl](#recipes-pupr_local_uprev_tests_rebase_cl) (Python3 ✅) &mdash; Verify that rebase_cl() locally rebases existing commits as expected.
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
@@ -7623,9 +7628,85 @@ Args:
 
 Returns:
   bool: Whether or not a HASHTAG_FREEZE_RETRIES hashtag is present.
+### *recipe_modules* / [pupr\_gerrit\_interface](/recipe_modules/pupr_gerrit_interface)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/__init__.py#5): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [pupr](#recipe_modules-pupr), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Module to interface with Gerrit for PUpr (Parallel Uprevs).
+
+#### **class [PuprGerritInterfaceApi](/recipe_modules/pupr_gerrit_interface/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to interface between PUpr builders and Gerrit.
+
+&mdash; **def [\_\_init\_\_](/recipe_modules/pupr_gerrit_interface/api.py#43)(self, \*args, \*\*kwargs):**
+
+Initialize the module's attributes.
+
+&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#350)(self, open_changes: List[GerritChange], most_recent_uprev: List[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
+
+Retry any open uprev CLs based on the retry policy.
+
+&mdash; **def [create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#241)(self, repo_projects: List[ProjectInfo], open_changes: List[GerritChange], existing_cls: bool, policy: BranchPolicy, topic: str):**
+
+Create appropriate CLs for the uprevs.
+
+&mdash; **def [find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#76)(self, projects_by_remote: ProjectsByRemote, topic: str):**
+
+Return any open uprev CLs matching the right projects and topic.
+
+Args:
+  projects_by_remote: A mapping from Git remotes to repo projects on that
+    remote that are relevant to this PUpr.
+  topic: A string to match against CLs' Gerrit topic, which is used to
+    identify relevant PUpr CLs.
+
+&mdash; **def [handle\_open\_changes](/recipe_modules/pupr_gerrit_interface/api.py#100)(self, open_changes: List[GerritChange], projects_by_remote: ProjectsByRemote, policy: BranchPolicy, topic: str, retry_only_run: bool):**
+
+Abandon or retry already-open uprev CLs.
+
+Args:
+  open_changes: A list of currently open, relevant PUpr CLs.
+  projects_by_remote: A mapping from Git remotes to repo projects on
+    that remote that are relevant to this PUpr.
+  policy: The policy selected by this PUpr run.
+  topic: A short string with which to tag all generated uprev commits.
+  retry_only_run: this weirdly named property only causes a run in
+    `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
+
+Returns:
+  A bool stating whether any open CLs remain after abandoning.
+
+&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#336)(self, patch_set: PatchSet, cq_label: int):**
+
+Retry sending the CL through CQ by setting its Gerrit labels.
+
+&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_gerrit_interface/api.py#53)(self, rebase_before_retry: bool):**
+
+Set attributes whose values are determined in Generator.
+
+Args:
+  rebase_before_retry: Whether to rebase open changes before retrying. See
+    documentation in generator.proto.
+
+TODO(b/259445191): All of these attributes should be moved from
+  generator.proto to pupr_local_uprev.proto.
+
+&mdash; **def [sort\_projects\_by\_remote](/recipe_modules/pupr_gerrit_interface/api.py#65)(self, projects: List[ProjectInfo]):**
+
+Return a dict which sorts the given projects by their remote.
+
+&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#326)(self, gerrit_patch_set: PatchSet):**
+
+Upload a new revision onto an existing Gerrit PatchSet.
+
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_gerrit_interface/api.py#48)(self):**
+
+Return the checkout path where the build is processed.
 ### *recipe_modules* / [pupr\_local\_uprev](/recipe_modules/pupr_local_uprev)
 
-[DEPS](/recipe_modules/pupr_local_uprev/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/pupr_local_uprev/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -7639,12 +7720,11 @@ A module to create local uprevs for PUpr.
 
 Initialize the module's attributes.
 
-&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#260)(self, packages: List[PackageInfo], open_changes: List[GerritChange], topic: str, change_num: int):**
+&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#258)(self, open_changes: List[GerritChange], topic: str, change_num: int):**
 
 Create a new uprev patch (locally) for change_id.
 
 Args:
-  packages: List of packages to try uprevving in the new patch.
   open_changes: List of currently open uprev CLs.
   change_num: Change number of the CL to rebase, as in crrev.com/c/#####.
   topic: A short string with which to tag all generated commits.
@@ -7654,28 +7734,27 @@ Raises:
     only uprevs some packages and allow_partial_uprev is False, or if the
     uprev requires a multi-repo commit.
 
-&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_local_uprev/api.py#55)(self, workspace_path: Path, additional_commit_message: str='', allow_partial_uprev: bool=False, build_targets: Optional[List[BuildTarget]]=None):**
+&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_local_uprev/api.py#54)(self, additional_commit_message: str='', allow_partial_uprev: bool=False, packages: Optional[List[PackageInfo]]=None, build_targets: Optional[List[BuildTarget]]=None):**
 
 Set attributes whose values are determined in Generator.
 
 Args:
-  workspace_path: The checkout path where the build is processed.
   additional_commit_message: Additional text to be added in the commit
     description.
   allow_partial_uprev: Whether to generate CLs when either of the packages
     had no modified file.
+  packages: The packages that this build should uprev.
   build_targets: The build targets to uprev. Only relevant if required by
     endpoint.
 
-TODO(b/262302698): All of these attributes except for workspace_path should
-be moved from generator.proto to pupr_local_uprev.proto.
+TODO(b/262302698): All of these attributes should be moved from
+generator.proto to pupr_local_uprev.proto.
 
-&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#78)(self, packages: List[PackageInfo], versions: List[UprevVersionedPackageRequest.GitRef], topic: str, change_id: Optional[str]=None):**
+&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#78)(self, versions: List[UprevVersionedPackageRequest.GitRef], topic: str, change_id: Optional[str]=None):**
 
-Try the uprev for the given packages. If successful, commit the uprev.
+Try to uprev the specified packages. If successful, commit the uprev.
 
 Args:
-  packages: The packages to try uprevving.
   versions: The versions to consider for an update.
   change_id: If not None, set Change-Id to the commit message, so that the
     commit is uploaded as a new patch set of an existing Change. When this
@@ -7690,7 +7769,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_local_uprev/api.py#49)(self):**
 
-The checkout path where the build is processed.
+Return the checkout path where the build is processed.
 ### *recipe_modules* / [recipe\_analyze](/recipe_modules/recipe_analyze)
 
 [DEPS](/recipe_modules/recipe_analyze/__init__.py#5): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11369,7 +11448,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#28)(api, properties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#64): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#63): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -11381,7 +11460,7 @@ and tags the appropriate reviewers. Think of it as the CrOS autoroller.
 
 See go/pupr and go/pupr-generator for rationale and design decisions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#104)(api: RecipeApi, properties: GeneratorProperties):**
+&mdash; **def [RunSteps](/recipes/generator.py#98)(api: RecipeApi, properties: GeneratorProperties):**
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)
@@ -12213,6 +12292,44 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#20)(api):**
+### *recipes* / [pupr\_gerrit\_interface:tests/create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#23): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Verify that create_uprev_cls() runs the expected process.
+
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#38)(api: recipe_api.RecipeApi, policy: any, existing_cls: bool, projects: int):**
+### *recipes* / [pupr\_gerrit\_interface:tests/find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py#20): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Verify that find_open_uprev_cls() finds CLs as expected.
+
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py#49)(api: recipe_api.RecipeApi, projects: List[ProjectInfo], expected_gerrit_changes_serialized: List[bytes]):**
+
+Run the test logic.
+### *recipes* / [pupr\_gerrit\_interface:tests/handle\_open\_changes](/recipe_modules/pupr_gerrit_interface/tests/handle_open_changes.py)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/handle_open_changes.py#28): [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Verify that handle_open_changes() runs the expected process.
+
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/handle_open_changes.py#57)(api: recipe_api.RecipeApi, existing_cls_policy: any, no_existing_cls_policy: any, retry_cl_policy: any, outdated_cls_policy: any, expected: bool, retry_only: bool, rebase_before_retry: bool, changes: int):**
+### *recipes* / [pupr\_gerrit\_interface:tests/upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py#16): [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Verify that upload_new_patch_set() runs the expected process.
+
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py#21)(api: recipe_api.RecipeApi):**
 ### *recipes* / [pupr\_local\_uprev:tests/rebase\_cl](/recipe_modules/pupr_local_uprev/tests/rebase_cl.py)
 
 [DEPS](/recipe_modules/pupr_local_uprev/tests/rebase_cl.py#19): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev)

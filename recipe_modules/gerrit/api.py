@@ -792,7 +792,6 @@ class GerritApi(RecipeApi):
       label_constraints: Constraints on the changes' labels, to be used as a
           filter before returning.
     """
-    HTTPS = 'https://'
     with self.m.step.nest('query %s' % host) as presentation:
       o_params = ['LABELS'] if label_constraints else None
       results = self.m.depot_tools_gerrit.get_changes(host, query_params,
@@ -803,11 +802,8 @@ class GerritApi(RecipeApi):
             if _do_change_labels_satisfy_constraints(r, label_constraints)
         ]
       changes = [
-          GerritChange(
-              host=host[len(HTTPS):] if host.startswith(HTTPS) else host,
-              project=result['project'],
-              change=int(result['_number']),
-          ) for result in results
+          change_info_to_gerrit_change(change_info, host)
+          for change_info in results
       ]
 
       presentation.step_text = 'found %d matching CLs' % len(changes)
@@ -816,3 +812,14 @@ class GerritApi(RecipeApi):
         presentation.links['found CL %d' % change.change] = change_url
 
       return changes
+
+
+def change_info_to_gerrit_change(change_info: ChangeInfo,
+                                 host: str) -> GerritChange:
+  """Return a GerritChange containing the data from a ChangeInfo."""
+  HTTPS = 'https://'
+  return GerritChange(
+      host=host[len(HTTPS):] if host.startswith(HTTPS) else host,
+      project=change_info['project'],
+      change=int(change_info['_number']),
+  )
