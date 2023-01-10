@@ -225,14 +225,7 @@ def RunSteps(api, properties):
       )
 
       # Add cq-depends on the new binhost CLs.
-      # new_binhost_cls has the URIs of the binhost CLs.
-      # We need the short_host:change_id representation.
-      binhost_changes = [
-          api.gerrit.parse_gerrit_change(cl) for cl in new_binhost_cls
-      ]
-      binhost_patchsets = api.gerrit.fetch_patch_sets(binhost_changes)
-      depends_str = "".join("Cq-Depend: %s\n" % (change.display_id,)
-                            for change in binhost_patchsets)
+      depends_str = "".join(f"Cq-Depend: {cl}\n" for cl in new_binhost_cls)
       description = _insert_before_change_id(central_cl.display_id, description,
                                              depends_str)
       api.gerrit.set_change_description(gerrit_change, description)

@@ -467,8 +467,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'location': 2,  # chromiumos.Path.Location.OUTSIDE
         })
     responses['CreateBinhostCLs'] = jsonify(cls=[
-        'https://test-review.googlesource.com/c/binhostcls/+/1',
-        'https://test-review.googlesource.com/c/binhostcls/+/8',
+        'binhostcls:1',
+        'binhostcls:8',
     ])
     responses['UploadPrebuiltPackages'] = '{}'
     return responses
