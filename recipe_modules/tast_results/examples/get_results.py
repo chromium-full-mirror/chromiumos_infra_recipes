@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
     'tast_results',
+    'cros_tags',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -21,12 +22,13 @@ def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
 
   # Test not having any tests to run (like in an empty shard).
-  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1', [])
+  task_result = api.tast_results.get_results(
+      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', [])
   api.assertions.assertEqual(task_result.state.verdict,
                              TaskState.VERDICT_PASSED)
 
-  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1',
-                                             ['arc.Boot'])
+  task_result = api.tast_results.get_results(
+      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', ['arc.Boot'])
   failures, test_cases = api.tast_results.get_failures(task_result)
   api.tast_results.print_results(failures, False)
   api.assertions.assertEqual(test_cases[0]['name'], 'arc.Boot')
@@ -45,7 +47,7 @@ def RunSteps(api):
   api.assertions.assertEqual(failures[0].fatal, True)
   api.assertions.assertEqual(failures[0].title, 'arc.Boot')
   task_result = api.tast_results.get_results(
-      temp_dir, 'fancy-suite', '1',
+      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1',
       ['arc.Boot', 'arc.StartStop', 'some.Test', 'some.OtherTest'])
   failures, test_cases = api.tast_results.get_failures(task_result)
   api.assertions.assertEqual(len(failures), 4)
@@ -75,6 +77,26 @@ def RunSteps(api):
 
 
 def GenTests(api):
+
+  def _set_build(bid, tags=None, experiments=None, swarming_tags=None,
+                 ancestor_buildbucket_ids=None, properties=None):
+    # tags is a dict, convert that into [StringPair].
+    bb_tags = api.cros_tags.tags(**tags) if tags else []
+    build_msg = api.buildbucket.ci_build_message(
+        build_id=bid, tags=bb_tags, experiments=experiments, project='chromeos',
+        bucket='vmtest', builder='reven-vmtest-direct-tast-vm')
+    if swarming_tags:
+      build_msg.infra.swarming.bot_dimensions.extend(
+          api.cros_tags.tags(**swarming_tags))
+    build_msg.infra.swarming.parent_run_id = 'parent-task-id1'
+
+    if ancestor_buildbucket_ids:
+      build_msg.ancestor_ids.extend(ancestor_buildbucket_ids)
+
+    if properties:
+      build_msg.input.properties.update(properties)
+    return api.buildbucket.build(build_msg)
+
   build = api.buildbucket.ci_build_message()
   build.input.properties['buildTarget'] = {'name': 'amd64-generic'}
   yield api.test('basic', api.buildbucket.build(build))
@@ -83,3 +105,19 @@ def GenTests(api):
 
   build.critical = common_pb2.NO
   yield api.test('non-critical', api.buildbucket.build(build))
+
+  yield api.test(
+      'success-with-full-tags-for-resultdb',
+      _set_build(
+          bid=42, swarming_tags={
+              'pool': 'ChromeOSSkylab',
+              'kernel': '5.4.151-16902-g93699f4e73de',
+          }, ancestor_buildbucket_ids=[123, 456], properties={
+              'buildPayload': {
+                  "artifactsGsPath": "novato-postsubmit/R111-15302.0.0",
+              },
+              'buildTarget': {
+                  'name': 'amd64-generic'
+              }
+          }),
+  )
