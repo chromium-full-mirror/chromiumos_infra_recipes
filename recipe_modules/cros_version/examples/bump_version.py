@@ -68,6 +68,10 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
                      ['chromiumos/infra/version_bumper/${platform} staging']),
+      api.post_check(
+          post_process.MustRun,
+          'bump version.commit chromeos/config/chromeos_version.sh.abandon CL 1.gerrit abandon'
+      ),
   )
 
   yield api.test(

@@ -163,24 +163,11 @@ class CrosVersionApi(RecipeApi):
       ]
       self.m.step('go version_bumper', cmd)
 
-      # If dry-run (i.e. staging) we aren't going to commit this change.
-      # All we want to do is exercise this code path, so stash the results
-      # afterwards to restore the version to the original one.
-      if dry_run:
-        with self.m.context(cwd=overlay_path):
-          self.m.git.stash()
-
       # Update the version in output properties.
       new_version = self.read_workspace_version(name='read updated version')
       self.m.easy.set_properties_step(
           chromeos_version=str(new_version),
           full_version=new_version.legacy_version)
-
-      if dry_run:
-        pres.step_text = 'dry-run only'
-        # If we're dry running, we don't want to keep our version changes, so
-        # exit before we commit them.
-        return
 
       # Stage, commit, and push changes.
       with self.m.context(cwd=overlay_path):
@@ -203,12 +190,16 @@ class CrosVersionApi(RecipeApi):
               'chromiumos/overlays/chromiumos-overlay',
               ref=self.m.git.get_branch_ref(push_branch),
               project_path=overlay_path)
-          labels = {
-              Label.BOT_COMMIT: 1,
-              Label.VERIFIED: 1,
-          }
-          self.m.gerrit.set_change_labels_remote(change, labels)
-          self.m.gerrit.submit_change(change, project_path=overlay_path)
+          if dry_run:
+            pres.step_text = 'dry-run only'
+            self.m.gerrit.abandon_change(change, message='dry-run only')
+          else:
+            labels = {
+                Label.BOT_COMMIT: 1,
+                Label.VERIFIED: 1,
+            }
+            self.m.gerrit.set_change_labels_remote(change, labels)
+            self.m.gerrit.submit_change(change, project_path=overlay_path)
           # Reset to the remote branch.
           # We need to do this so that the local checkout has the correct SHA
           # for the version bump SHA (gerrit.create_change will push the local
