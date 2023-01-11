@@ -223,7 +223,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     return exonerable_vm_results
 
   def get_prev_failed_now_exonerable_test_results(
-      self, test_plan: GenerateTestPlanResponse
+      self, test_plan: GenerateTestPlanResponse, dry_run=False
   ) -> Tuple[List[build_pb2.Build], List[skylab_structs.SkylabResult]]:
     """Get the tests  from the previous failed runs that are now exonerable.
 
@@ -278,6 +278,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
           test_plan, hw_build_ids)
       presentation.step_text = _get_step_text(exonerable_vms, exonerable_hw_res)
       _log_results(exonerable_vms, exonerable_hw_res)
+      if dry_run:
+        return [], []
       return exonerable_vms, exonerable_hw_res
 
   def set_passed_tests(self, tests):

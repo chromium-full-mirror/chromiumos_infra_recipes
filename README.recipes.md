@@ -2639,7 +2639,7 @@ Args:
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#337)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#339)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2669,7 +2669,7 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#225)(self, test_plan: GenerateTestPlanResponse):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#225)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests  from the previous failed runs that are now exonerable.
 
@@ -2681,7 +2681,7 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#298)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#300)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2714,14 +2714,14 @@ Args:
 Returns:
   list(PackageCPV) of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#365)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#367)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#283)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#285)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -4455,7 +4455,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 #### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#471)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#520)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4464,7 +4464,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#141)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#142)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4492,14 +4492,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#117)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#118)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#368)(self, test_plan, passed_tests, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#396)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4508,6 +4508,10 @@ Args:
       be scheduled.
   passed_tests (list[string]): A list of names for the tests that
       have passed before.
+  previously_failed_now_exonerable_hw_suites (list[string]): Previously
+      failed tests that are now eligible for exoneration.
+  previously_failed_now_exonerable_vm_suites (list[string]): Previously
+      failed tests that are now eligible for exoneration.
   timeout (Duration): Timeout in duration_pb2.Duration.
   snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
       the included builds were created.
@@ -4522,7 +4526,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#53)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#54)(self, test_summary):**
 
 Set the test_summary for this build.
 
@@ -5073,7 +5077,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#493)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#495)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -10655,11 +10659,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_passed_tests.py#16)(api):**
 ### *recipes* / [cros\_history:examples/get\_prev\_failed\_now\_exon](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py)
 
-[DEPS](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#10): [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#13): [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#23)(api, dry_run_exonerate_retried_suites):**
 ### *recipes* / [cros\_history:examples/get\_snapshot\_builds](/recipe_modules/cros_history/examples/get_snapshot_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_snapshot_builds.py#12): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -11302,7 +11306,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#30)(api, passed_tests, is_retry):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#32)(api, passed_tests, is_retry, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites):**
 ### *recipes* / [cros\_test\_runner:examples/full](/recipe_modules/cros_test_runner/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_runner/examples/full.py#8): [cros\_test\_runner](#recipe_modules-cros_test_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

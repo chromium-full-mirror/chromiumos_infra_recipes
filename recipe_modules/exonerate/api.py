@@ -465,6 +465,8 @@ class ExonerateApi(recipe_api.RecipeApi):
       Note that it will return False if result is a success.
 
     """
+    if not self._enable_exoneration:
+      return False
     if (hw_test_result.status == common_pb2.SUCCESS or
         not hw_test_result.task.test.common.critical.value):
       # If a result is successful, technically its not exonerable.
@@ -500,6 +502,9 @@ class ExonerateApi(recipe_api.RecipeApi):
       True if and only if the result is a failure AND exonerable.
       Note that it will return False if the result itself is a success.
     """
+    if not self._enable_exoneration:
+      return False
+
     if (vm_build.status == common_pb2.SUCCESS or
         vm_build.critical == common_pb2.NO or
         'failed_test_cases' not in vm_build.output.properties):
