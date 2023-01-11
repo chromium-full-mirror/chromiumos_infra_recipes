@@ -92,9 +92,17 @@ class UrlsApi(recipe_api.RecipeApi):
               case_name += ': ' + tc.human_readable_summary
             link_map[case_name] = task_result.task_url
       else:
+        # When per-test results are not available.
         task_name = (
             task_result.name + self.get_state_suffix(task_result.state))
-        if task_result.state.verdict in failure_verdicts:
+        for tc in task_result.prejob_steps:
+          if tc.verdict in failure_verdicts:
+            summary = tc.human_readable_summary.lower()
+            summary = summary[7:] if summary.startswith('reason_') else summary
+            fail_text = task_result.name + ' - ' + summary
+            link_map[fail_text] = task_result.task_url
+        if not link_map:
+          # If it was not a prejob failure, link to the task.
           link_map[task_name] = task_result.task_url
 
     return link_map

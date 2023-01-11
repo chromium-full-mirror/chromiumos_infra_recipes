@@ -47,6 +47,25 @@ def RunSteps(api):
   child_result1.state.verdict = TaskState.VERDICT_FAILED
   child_result1.name = 'first test'
   child_result1.task_url = 'link.com'
+  prejob_step1 = child_result1.prejob_steps.add()
+  prejob_step1.verdict = TaskState.VERDICT_FAILED
+  prejob_step1.name = 'provision'
+  prejob_step1.human_readable_summary = 'REASON_DUT_UNREACHABLE_POST_PROVISION'
+
+  expected_map = {
+      'first test - dut_unreachable_post_provision': 'link.com',
+  }
+  skylab_result = api.skylab.test_api.skylab_result(
+      task=skylab_task, status=common_pb2.FAILURE,
+      child_results=response.task_results)
+  api.assertions.assertEqual(
+      api.urls.get_skylab_result_link_map(skylab_result), expected_map)
+
+  response = ExecuteResponse()
+  child_result1 = response.task_results.add()
+  child_result1.state.verdict = TaskState.VERDICT_FAILED
+  child_result1.name = 'first test'
+  child_result1.task_url = 'link.com'
   child_result2 = response.task_results.add()
   child_result2.state.verdict = TaskState.VERDICT_FAILED
   child_result2.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
