@@ -489,6 +489,7 @@
     "name": "execution steps.CrosToolRunner: run provision",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@REASON_PROVISIONING_FAILED@@@",
       "@@@STEP_LOG_LINE@deadline information@start: Mon May 14 12:53:24 2012@@@",
       "@@@STEP_LOG_LINE@deadline information@end: Mon May 14 13:38:24 2012@@@",
       "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",

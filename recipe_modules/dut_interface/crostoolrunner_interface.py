@@ -17,13 +17,15 @@ from PB.test_platform import phosphorus
 from PB.test_platform.skylab_local_state.load import Dut as LoadDut
 from PB.test_platform.skylab_local_state.load import LoadResponse
 from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
+from PB.chromiumos.test import api as ctr_api
 
 from recipe_engine.recipe_api import StepFailure
 
 RunTestResponsesTuple = namedtuple('RunTestResponsesTuple',
                                    ['test_dut_responses', 'any_test_failed'])
 PrejobResponsesTuple = namedtuple(
-    'PrejobResponsesTuple', ['prejob_dut_responses', 'any_provision_failed'])
+    'PrejobResponsesTuple',
+    ['prejob_dut_responses', 'any_provision_failed', 'failure_reason'])
 
 HOUR = 60 * 60
 
@@ -207,7 +209,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     metadata.primary_dut.chromeos.ssh.address = extip
 
-    return PrejobResponsesTuple([], False)
+    return PrejobResponsesTuple([], False, '')
 
   def _vm_shutdown_and_cleanup(self):
     """Shutsdown and cleanup environment on GCE."""
@@ -268,6 +270,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
           if prejob_response.any_provision_failed:
             step.presentation.status = self._api.step.FAILURE
+            step.presentation.step_summary_text = prejob_response.failure_reason
 
           return prejob_response
       except StepFailure as e:  # pragma: nocover
@@ -783,7 +786,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     del test_metadata
 
     return PrejobResponsesTuple(
-        [CrosToolRunnerPrejobDUTResponse.build_aborted_response('dut')], True)
+        [CrosToolRunnerPrejobDUTResponse.build_aborted_response('dut')], True,
+        'REASON_PROVISIONING_FAILED')
 
   def process_test_responses(self, cros_test_responses):
     """Process test responses from run_test.
@@ -902,13 +906,18 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     prejob_dut_responses = []
     any_provision_failed = False
+    failure_reason = ''
     for each_resp in prejob_resp.responses:
       prejob_dut_resp = CrosToolRunnerPrejobDUTResponse(each_resp.id.value,
                                                         each_resp)
       prejob_dut_responses.append(prejob_dut_resp)
       if prejob_dut_resp.is_failure():
         any_provision_failed = True
-    return PrejobResponsesTuple(prejob_dut_responses, any_provision_failed)
+        if each_resp.failure and each_resp.failure.reason:
+          failure_reason = ctr_api.provision_service.InstallFailure.Reason.Name(
+              each_resp.failure.reason)
+    return PrejobResponsesTuple(prejob_dut_responses, any_provision_failed,
+                                failure_reason)
 
   def _process_run_test_response(self, runtest_resp):
     """Process run_test responses received from cros_tool_runner.
