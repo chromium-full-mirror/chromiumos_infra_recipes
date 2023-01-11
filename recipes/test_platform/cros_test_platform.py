@@ -7,6 +7,7 @@
 
 import collections
 import json
+import math
 import re
 
 from google.protobuf import duration_pb2
@@ -58,6 +59,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'recipe_engine/time',
     'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
@@ -409,23 +411,13 @@ def _enumerate_cft_tests(api, requests):
         suite_name = r.test_plan.suite[0].name
 
       autotest_invocations = []
-      for test_suite in test_finder_result.test_suites:
-        for test_case in test_suite.test_cases.test_cases:
-          autotest_invocation = EnumerationResponse.AutotestInvocation(
-              test=test_metadata.AutotestTest(
-                  name=test_case.id.value,
-                  dependencies=[
-                      test_metadata.AutotestTaskDependency(label=dep.value)
-                      for dep in test_case.dependencies
-                  ],
-                  execution_environment=1,
-                  # TODO (b/254684984): Remove these default values in long term
-                  allow_retries=True,
-                  max_retries=1,
-              ),
-              result_keyvals={'suite': suite_name},
-          )
-          autotest_invocations.append(autotest_invocation)
+      tag_criteria = r.test_plan.tag_criteria
+      if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
+        autotest_invocations = _build_tast_invocations(
+            api, r, test_finder_result.test_suites, suite_name)
+      else:
+        autotest_invocations = _build_autotest_invocations(
+            test_finder_result.test_suites, suite_name)
       if autotest_invocations:
         tagged_responses[t] = EnumerationResponse(
             autotest_invocations=autotest_invocations)
@@ -450,6 +442,151 @@ def _enumerate_cft_tests(api, requests):
     return tagged_responses
 
 
+def _build_tast_invocations(api, request, test_suites, suite_name):
+  """Creates a list of EnumerationResponse.AutotestInvocation with logic for tast such as bucketing and sharding.
+
+  Args:
+    * test_suites: List[test_suite].
+    * suite_name: string.
+
+  Returns: List[EnumerationResponse.AutotestInvocation].
+  """
+  with api.step.nest("Shard test cases") as step:
+    seed = request.test_plan.seed
+    if seed is None or seed == 0:
+      seed = int(api.time.time())
+    step.presentation.logs["shard seed"] = json.dumps({"seed": seed},
+                                                      separators=(',', ': '),
+                                                      indent=2)
+    api.random.seed(seed)
+    autotest_invocations = []
+    for test_suite in test_suites:
+      test_buckets = _bucket_by_dependencies(
+          list(test_suite.test_cases.test_cases))
+      shards = []
+      for bucket in test_buckets:
+        shards.extend(_shard_test_cases(api, bucket))
+      step.presentation.tags["shard_count"] = str(len(shards))
+      step.presentation.tags["unique_dependencies_count"] = str(
+          len(test_buckets))
+      for i, shard in enumerate(shards):
+        shard_name = '%s-shard-%d' % (suite_name, i)
+        test_names = [test_case.id.value for test_case in shard]
+        shard_dependencies = _shard_dependencies(shard)
+        step.presentation.logs[shard_name] = json.dumps(
+            {
+                "shardName": shard_name,
+                "dependencies": shard_dependencies,
+                "testNames": test_names,
+            }, separators=(',', ': '), indent=2)
+        autotest_invocation = EnumerationResponse.AutotestInvocation(
+            test=test_metadata.AutotestTest(
+                name=shard_name,
+                names=test_names,
+                dependencies=[
+                    test_metadata.AutotestTaskDependency(label=dep)
+                    for dep in shard_dependencies
+                ],
+                execution_environment=1,
+                # TODO (b/254684984): Remove these default values in long term
+                allow_retries=True,
+                max_retries=1,
+            ),
+            result_keyvals={'suite': suite_name},
+        )
+        autotest_invocations.append(autotest_invocation)
+    return autotest_invocations
+
+
+def _build_autotest_invocations(test_suites, suite_name):
+  """Creates a list of EnumerationResponse.AutotestInvocation with logic for autotest.
+
+  Args:
+    * test_suites: List[test_suite].
+    * suite_name: string.
+
+  Returns: List[EnumerationResponse.AutotestInvocation].
+  """
+  autotest_invocations = []
+  for test_suite in test_suites:
+    for test_case in test_suite.test_cases.test_cases:
+      autotest_invocation = EnumerationResponse.AutotestInvocation(
+          test=test_metadata.AutotestTest(
+              name=test_case.id.value,
+              dependencies=[
+                  test_metadata.AutotestTaskDependency(label=dep.value)
+                  for dep in test_case.dependencies
+              ],
+              execution_environment=1,
+              # TODO (b/254684984): Remove these default values in long term
+              allow_retries=True,
+              max_retries=1,
+          ),
+          result_keyvals={'suite': suite_name},
+      )
+      autotest_invocations.append(autotest_invocation)
+  return autotest_invocations
+
+
+def _bucket_by_dependencies(test_cases):
+  """Creates a list of buckets grouping test_cases by their dependencies.
+
+  Args:
+    * test_cases: List[test_case].
+
+  Returns: List[List[test_case]].
+  """
+  bucket = {}
+  for test_case in test_cases:
+    deps = frozenset(list(dep.value for dep in test_case.dependencies))
+    if deps in bucket:
+      bucket[deps].append(test_case)
+    else:
+      bucket[deps] = [test_case]
+  return list(bucket.values())
+
+
+def _shard_test_cases(api, test_cases):
+  """Create groupings of the test_cases.
+
+  Args:
+    * test_cases (test_cases: List[api.TestCase]): See RunSteps documentation.
+
+  Returns: List[List[api.TestCase]].
+  """
+  api.random.shuffle(test_cases)
+  max_in_shard = 100
+  num_shards = math.ceil(len(test_cases) / max_in_shard)
+  num_in_shard = int(len(test_cases) / num_shards)
+
+  res = []
+  start = 0
+  for _ in range(num_shards):
+    res.append(test_cases[start:start + num_in_shard])
+    start += num_in_shard
+
+  leftover = test_cases[start:]
+  for i, test_case in enumerate(leftover):
+    res[i].append(test_case)
+
+  return res
+
+
+def _shard_dependencies(shard):
+  """Creates a set of dependencies from the shard's test cases.
+
+  Args:
+    * shard: List[test_case].
+
+  Returns: List[test_case.dependency].
+  """
+  deps = set()
+  for test_case in shard:
+    for dep in test_case.dependencies:
+      deps.add(dep.value)
+  return list(deps)
+
+
 def _ctr_test_suite(request):
   """Build a CrosToolRunnerTestFinderRequest from a list of test requests.
 
@@ -466,12 +603,14 @@ def _ctr_test_suite(request):
             for t in request.test_plan.test
         ]))
 
-  tags = ["suite:%s" % s.name for s in request.test_plan.suite]
+  tags = []
   tag_excludes = []
   tag_criteria = request.test_plan.tag_criteria
-  if tag_criteria:
-    tags.extend(tag_criteria.tags)
+  if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
+    tags = tag_criteria.tags
     tag_excludes = tag_criteria.tag_excludes
+  else:
+    tags = ["suite:%s" % s.name for s in request.test_plan.suite]
   return ctr_test_suite.TestSuite(
       test_case_tag_criteria=ctr_test_suite.TestSuite.TestCaseTagCriteria(
           tags=tags, tag_excludes=tag_excludes))
@@ -1128,7 +1267,7 @@ def _software_dependencies_with_milestone_before_108():
 # pylint: disable=dangerous-default-value
 def _test_request(request_name_tag, build_target="foo-build-target",
                   scheduling=_test_scheduling(), individual_test=False,
-                  tag_criteria=None,
+                  tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies()):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
@@ -1155,16 +1294,16 @@ def _test_request(request_name_tag, build_target="foo-build-target",
   return Request(
       params=params, test_plan=Request.TestPlan(
           suite=[Request.Suite(name='%s-suite' % request_name_tag)],
-          tag_criteria=tag_criteria))
+          tag_criteria=tag_criteria, seed=seed))
 
 
 # pylint: disable=dangerous-default-value
 def _cft_test_request(request_name, build_target="foo-build-target",
-                      individual_test=False, tag_criteria=None,
+                      individual_test=False, tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies()):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
-                           tag_criteria=tag_criteria,
+                           tag_criteria=tag_criteria, seed=seed,
                            software_deps=software_deps)
   test_req.params.run_via_cft = True
   return test_req
@@ -1418,6 +1557,35 @@ def _generic_cft_enumerate_response(api):
       }
    ]
 }'''))
+
+
+def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
+  test_cases = ",\n".join([
+      '''{
+      "id":{
+          "value":"foo-test-%s"
+      },
+      "dependencies":[
+          {
+            "value":"foo-dep:bar"
+          }
+      ]
+    }''' % i for i in range(number_of_test_cases)
+  ])
+  return api.step_data(
+      'enumerate CFT tests.call `cros-tool-runner`.test-finder',
+      stdout=api.raw_io.output('''
+{
+   "test_suites":[
+      {
+         "test_cases":{
+            "test_cases":[
+               %s
+            ]
+         }
+      }
+   ]
+}''' % test_cases))
 
 
 def _empty_cft_enumerate_response(api):
@@ -2265,6 +2433,46 @@ def GenTests(api):
                               cipd_label='prod')),
               }), _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-suite-with-tags-with-multiple-tests-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]))
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _multiple_test_cases_cft_enumerate_response(api, 101),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-suite-with-tags-but-no-tests-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]))
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _multiple_test_cases_cft_enumerate_response(api, 0),
       _generic_passing_execute_response(api),
       api.post_check(post_process.StatusSuccess))
 
