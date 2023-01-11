@@ -31,4 +31,7 @@ message TastVmProperties {
   // ShardIndex specifies the index of the shard to used in the current run.
   // Note: This value is 0-indexed.
   int64 shard_index = 6;
+
+  // Which sharding method should we pass to tast.
+  string shard_method = 7;
 }

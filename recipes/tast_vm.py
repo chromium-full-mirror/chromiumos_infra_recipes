@@ -48,6 +48,8 @@ def RunSteps(api: RecipeApi, properties: TastVmProperties):
         '-totalshards={}'.format(properties.total_shards),
         '-shardindex={}'.format(properties.shard_index)
     ])
+  if properties.shard_method:
+    shard_args.extend(['-shardmethod={}'.format(properties.shard_method)])
 
   with api.step.nest('run tast tests'):
     failures, empty_result = api.tast_exec.run_vm(
@@ -77,3 +79,11 @@ def GenTests(api: RecipeTestApi):
               'artifacts_gs_bucket': 'artifacts-bucket',
               'artifacts_gs_path': 'artifacts-path'
           }, total_shards=2, shard_index=0))
+
+  yield api.test(
+      'hash-sharded',
+      api.properties(
+          expressions=['expr'], build_payload={
+              'artifacts_gs_bucket': 'artifacts-bucket',
+              'artifacts_gs_path': 'artifacts-path'
+          }, total_shards=2, shard_index=1, shard_method='hash'))
