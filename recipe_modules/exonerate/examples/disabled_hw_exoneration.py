@@ -58,6 +58,10 @@ def RunSteps(api):
       common_pb2.FAILURE in [f.status for f in hw_test_failures])
   api.assertions.assertEqual(exonerated_test_names, [])
 
+  if not api.exonerate.is_enabled:
+    api.assertions.assertEqual(
+        api.exonerate.is_hw_result_exonerable(hw_test_failures[0]), False)
+
 
 def GenTests(api):
   yield api.test(

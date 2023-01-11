@@ -9192,6 +9192,21 @@
   },
   {
     "cmd": [],
+    "name": "run tests.schedule tests.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.set test_tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [4321, 4321, 4321, 4321], \"tast_vm_tests_builder_ids\": [8922054662172514004, 8922054662172514005, 8922054662172514006]}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests.collect tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

@@ -44,6 +44,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._skylab_task_per_build_target = properties.skylab_task_per_build_target
     self._test_summary = []
     self._not_runnable_addtnl_tests = []
+    self._dry_run_exonerate_retried_suites = properties.dry_run_exonerate_retried_suites
 
   @property
   def test_summary(self):
@@ -174,14 +175,28 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
         # We will not run tests that have already passed for this patch set.
         previously_passed_tests = set()
+        previously_failed_now_exonerable_hw_results = []
+        previously_failed_now_exonerable_vm_builds = []
         is_retry = False
         if enable_history and gerrit_changes:
           is_retry = (self.m.cq.active and self.m.cros_history.is_retry())
           previously_passed_tests = self.m.cros_history.get_passed_tests()
+          previously_failed_now_exonerable_vm_builds, previously_failed_now_exonerable_hw_results = self.m.cros_history.get_prev_failed_now_exonerable_test_results(
+              test_plan, self._dry_run_exonerate_retried_suites)
+        exonerable_vm_suites_names = {
+            self.m.naming.get_vm_test_title(build)
+            for build in previously_failed_now_exonerable_vm_builds
+        }
+        exonerable_hw_suites_names = {
+            str(skylab_res.task.test.common.display_name)
+            for skylab_res in previously_failed_now_exonerable_hw_results
+        }
 
         test_tasks = self.schedule_tests(
             test_plan,
             previously_passed_tests,
+            exonerable_hw_suites_names,
+            exonerable_vm_suites_names,
             self.timeout,
             snapshot,
             is_retry=is_retry,
@@ -228,11 +243,24 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       exonerated_hw_results, exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
           test_results.skylab)
       passed_test_names += exonerated_hw_tests
-      test_results = test_results._replace(skylab=exonerated_hw_results)
       exonerated_vm_results, exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
           test_results.tast_vm)
       passed_test_names += exonerated_vm_tests
-      test_results = test_results._replace(tast_vm=exonerated_vm_results)
+
+      old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
+          previously_failed_now_exonerable_hw_results)
+      passed_test_names += old_exonerated_hw_tests
+
+      old_exonerated_vm_results, old_exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
+          previously_failed_now_exonerable_vm_builds)
+      passed_test_names += old_exonerated_vm_tests
+
+      test_results = test_results._replace(skylab=exonerated_hw_results +
+                                           old_exonerated_hw_results)
+
+      test_results = test_results._replace(tast_vm=exonerated_vm_results +
+                                           old_exonerated_vm_results)
+
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       self.m.greenness.update_vmtest_info(test_results.tast_gce)
@@ -365,9 +393,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     return test_plan
 
-  def schedule_tests(self, test_plan, passed_tests, timeout, snapshot=None,
-                     is_retry=False, run_async=False, container_metadata=None,
-                     require_stable_devices=False):
+  def schedule_tests(self, test_plan, passed_tests,
+                     previously_failed_now_exonerable_hw_suites,
+                     previously_failed_now_exonerable_vm_suites, timeout,
+                     snapshot=None, is_retry=False, run_async=False,
+                     container_metadata=None, require_stable_devices=False):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -375,6 +405,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           be scheduled.
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
+      previously_failed_now_exonerable_hw_suites (list[string]): Previously
+          failed tests that are now eligible for exoneration.
+      previously_failed_now_exonerable_vm_suites (list[string]): Previously
+          failed tests that are now eligible for exoneration.
       timeout (Duration): Timeout in duration_pb2.Duration.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
@@ -389,10 +423,21 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of the tests scheduled.
     """
+
+    def _persist_task_ids_in_properties(test_tasks: structs.MetaTestTuple):
+      skylab_ids = [skylab_task.id for skylab_task in test_tasks.skylab]
+      vm_tests_build_ids = [test.id for test in test_tasks.tast_vm]
+      self.m.easy.set_properties_step(
+          test_tasks={
+              'skylab_builder_ids': skylab_ids,
+              'tast_vm_tests_builder_ids': vm_tests_build_ids,
+          })
+
     test_plan = self._filter_snapshot_test_plan(test_plan)
     skylab_tasks = self._schedule_skylab_tests(
         test_plan,
         passed_tests,
+        previously_failed_now_exonerable_hw_suites,
         timeout,
         is_retry,
         run_async=run_async,
@@ -400,17 +445,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         require_stable_devices=require_stable_devices,
         task_per_build_target=self._skylab_task_per_build_target,
     )
-    tast_vm_tests = self._schedule_tast_vm_tests(test_plan, passed_tests,
-                                                 snapshot, is_retry,
-                                                 run_async=run_async)
+    tast_vm_tests = self._schedule_tast_vm_tests(
+        test_plan, passed_tests, previously_failed_now_exonerable_vm_suites,
+        snapshot, is_retry, run_async=run_async)
 
     tast_gce_tests = self._schedule_tast_gce_tests(test_plan, passed_tests,
                                                    snapshot, is_retry,
                                                    run_async=run_async)
 
-    return self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
-                              tast_vm=tast_vm_tests or [],
-                              tast_gce=tast_gce_tests or [])
+    self.m.easy.set_properties_step()
+    tests_tasks = self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
+                                     tast_vm=tast_vm_tests or [],
+                                     tast_gce=tast_gce_tests or [])
+    _persist_task_ids_in_properties(tests_tasks)
+    return tests_tasks
 
   def _collect_tests(self, test_tasks, timeout):
     """Collect on all tests from test_tasks.
@@ -481,8 +529,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     failures += self.m.failures.get_vm_test_failures(test_results.tast_gce)
     return failures
 
-  def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,
-                             is_retry=False, run_async=False,
+  def _schedule_skylab_tests(self, test_plan, passed_tests,
+                             previously_failed_now_exonerable_hw_suites,
+                             timeout, is_retry=False, run_async=False,
                              container_metadata=None,
                              require_stable_devices=False,
                              task_per_build_target=False):
@@ -493,6 +542,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           be scheduled.
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
+      previously_failed_now_exonerable_hw_suites (list[string]): Previously
+          failed tests that are now eligible for exoneration.
       timeout (Duration): Timeout in duration_pb2.Duration.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): Should the tests be ran async and not cancel
@@ -507,8 +558,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       list[SkylabTask] of the tests scheduled.
     """
-    skylab_tasks = []
 
+    def _is_skippable(test):
+      return (
+          test.common.display_name in passed_tests or
+          test.common.display_name in previously_failed_now_exonerable_hw_suites
+      )
+
+    skylab_tasks = []
     # Record the names of all the tests that are scheduled. This will be set as
     # an output property when testing Recipes only.
     scheduled_test_names = []
@@ -522,7 +579,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           # Do not run non-critical tests on retries.
           if is_retry and not test.common.critical.value:
             continue
-          if test.common.display_name not in passed_tests:
+          if not _is_skippable(test):
             build_target = unit.common.build_target
             tests_to_run[build_target.name].append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
@@ -554,8 +611,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(scheduled_hw_tests=scheduled_test_names)
     return skylab_tasks
 
-  def _schedule_tast_vm_tests(self, test_plan, passed_tests, snapshot,
-                              is_retry=False, run_async=False):
+  def _schedule_tast_vm_tests(self, test_plan, passed_tests,
+                              previously_failed_now_exonerable_vm_suites,
+                              snapshot, is_retry=False, run_async=False):
     """Schedule tast VM Tests from the test_plan.
 
     Args:
@@ -563,6 +621,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           be scheduled.
       passed_tests (list[string]): A list of names for the tests that
           have passed before.
+      previously_failed_now_exonerable_vm_suites (list[string]):
+          Previously failed tests that are now eligible for exoneration.
       snapshot (GitilesCommit): Start ref to be supplied to the tests.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): Should the tests be ran async and not cancel
@@ -591,7 +651,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # Do not run non-critical tests on retries.
         if is_retry and not test.common.critical.value:
           continue
-        if test.common.display_name not in passed_tests:
+        if (test.common.display_name not in passed_tests and
+            test.common.display_name not in
+            previously_failed_now_exonerable_vm_suites):
           test_name = test.common.display_name
           build_target = unit.common.build_target
           expressions = [t.test_expr for t in test.tast_test_expr]
