@@ -300,6 +300,7 @@ Partition name: 'ROOT-B'
       'tast_exits_early',
       api.properties(build_payload=build_payload, poll_interval_in_seconds=0.1,
                      tast_timeout_in_seconds=0),
+      api.tast_exec.simulate_test_list_ret('osinstall.OsInstall'),
       api.step_data(
           'setup vm image.make image into installer.get root-b partition',
           stdout=api.raw_io.output(good_root_b)),
@@ -313,6 +314,7 @@ Partition name: 'ROOT-B'
       'tast_test_fails',
       api.properties(build_payload=build_payload, poll_interval_in_seconds=0.1,
                      tast_timeout_in_seconds=1),
+      api.tast_exec.simulate_test_list_ret('osinstall.OsInstall'),
       api.step_data(
           'setup vm image.make image into installer.get root-b partition',
           stdout=api.raw_io.output(good_root_b)),
@@ -333,6 +335,7 @@ Partition name: 'ROOT-B'
       'success',
       api.properties(build_payload=build_payload, poll_interval_in_seconds=0.1,
                      tast_timeout_in_seconds=1),
+      api.tast_exec.simulate_test_list_ret('osinstall.OsInstall'),
       api.step_data(
           'setup vm image.make image into installer.get root-b partition',
           stdout=api.raw_io.output(good_root_b)),

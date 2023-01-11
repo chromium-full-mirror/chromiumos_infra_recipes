@@ -377,48 +377,6 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/test-artifacts_tmp_1/tast/tast",
-      "-verbose",
-      "run",
-      "-build=false",
-      "-sshretries=2",
-      "-downloadprivatebundles=true",
-      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
-      "-waituntilready",
-      "-continueafterfailure",
-      "-extrauseflags=tast_vm",
-      "-defaultvarsdir=[CLEANUP]/test-artifacts_tmp_1/tast/vars",
-      "-resultsdir",
-      "[CLEANUP]/test-results_tmp_1",
-      "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
-      "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
-      "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/test-artifacts_tmp_1/autotest/utils/frozen_chromite/ssh_keys/testing_rsa",
-      "-totalshards=2",
-      "-shardindex=0",
-      "172.16.0.15:22",
-      "expr"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.first tast iteration.tast run",
-    "timeout": 5400,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
       "ssh",
       "-p",
       "22",
@@ -683,183 +641,8 @@
     "cmd": [],
     "name": "run tast tests.first tast iteration.process tast output",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.first tast iteration.process tast output.read streamed_results.jsonl",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
-      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
-      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.first tast iteration.process tast output.upload test results to rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_1\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
-      "@@@STEP_LOG_LINE@config@        \"test_config\": \"\"@@@",
-      "@@@STEP_LOG_LINE@config@    }, @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
-      "@@@STEP_LOG_LINE@config@}@@@",
-      "@@@STEP_LOG_END@config@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.first tast iteration.process tast output.upload test results to rdb.ensure result_adapter",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/result_adapter",
-      "-ensure-file",
-      "infra/tools/result_adapter/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.first tast iteration.process tast output.upload test results to rdb.ensure result_adapter.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "rdb",
-      "stream",
-      "-var",
-      "test_config:",
-      "-coerce-negative-duration",
-      "-exonerate-unexpected-pass",
-      "--",
-      "[START_DIR]/cipd/result_adapter/result_adapter",
-      "tast",
-      "-result-file",
-      "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
-      "-artifact-directory",
-      "[CLEANUP]/test-results_tmp_1",
-      "--",
-      "echo"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.first tast iteration.process tast output.upload test results to rdb.run rdb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.first tast iteration.process tast output.GS upload first_results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-o",
-      "GSUtil:parallel_composite_upload_threshold=50M",
-      "-m",
-      "----",
-      "rsync",
-      "-r",
-      "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive/builder/0/first_results"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.first tast iteration.process tast output.GS upload first_results.gsutil rsync",
-    "timeout": 120,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@no tests ran@@@"
     ]
   },
   {
@@ -867,71 +650,7 @@
     "name": "run tast tests.tests to retry",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
-      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
-      "@@@STEP_LOG_LINE@retry_config@}@@@",
-      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
-      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@retry_config@}@@@",
-      "@@@STEP_LOG_LINE@retry_config@reason_scenarios {@@@",
-      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@retry_config@}@@@",
-      "@@@STEP_LOG_END@retry_config@@@",
-      "@@@STEP_LOG_LINE@failed_tests@{'arc.Boot': name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
-      "@@@STEP_LOG_LINE@failed_tests@}@@@",
-      "@@@STEP_LOG_END@failed_tests@@@",
-      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
-      "@@@STEP_LOG_LINE@matches@<->reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
-      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
-      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
-      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
-      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
-      "@@@STEP_LOG_END@matches@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/vm_retry.binaryproto",
-      "--format",
-      "text"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:0",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tast tests.tests to retry.fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_TEXT@All tests passed!@@@"
     ]
   },
   {
@@ -939,16 +658,8 @@
     "name": "run tast tests.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@",
-      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tast tests.set greenness",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@66@@@"
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[]@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[]@@@"
     ]
   },
   {
@@ -1058,17 +769,7 @@
     "cmd": [],
     "name": "print results",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "print results.arc.Boot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Lost SSH connection to VM@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results/tests/arc.Boot@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@all tests passed!@@@"
     ]
   },
   {
@@ -1099,10 +800,6 @@
     "name": "delete image"
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "1 vm test failed\n\n- arc.Boot: [Lost SSH connection to VM](https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/0/first_results/tests/arc.Boot)"
-    },
     "name": "$result"
   }
 ]

@@ -19,6 +19,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   temp_dir = api.path.mkdtemp(prefix='test-results')
+
+  # Test not having any tests to run (like in an empty shard).
+  task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1', [])
+  api.assertions.assertEqual(task_result.state.verdict,
+                             TaskState.VERDICT_PASSED)
+
   task_result = api.tast_results.get_results(temp_dir, 'fancy-suite', '1',
                                              ['arc.Boot'])
   failures, test_cases = api.tast_results.get_failures(task_result)

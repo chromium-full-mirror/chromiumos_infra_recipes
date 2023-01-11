@@ -96,11 +96,13 @@ def GenTests(api):
       'basic', api.buildbucket.ci_build(),
       api.properties(**{'$chromeos/tast_exec': {
           'should_retry': True
-      }}), api.post_check(post_process.MustRun, 'second tast iteration'))
+      }}), api.tast_exec.simulate_test_list_ret('some.test'),
+      api.post_check(post_process.MustRun, 'second tast iteration'))
 
   yield api.test(
       'public',
       api.buildbucket.ci_build(),
+      api.tast_exec.simulate_test_list_ret('some.test'),
       api.properties(**{'$chromeos/tast_exec': {
           'public_builder': True
       }}),

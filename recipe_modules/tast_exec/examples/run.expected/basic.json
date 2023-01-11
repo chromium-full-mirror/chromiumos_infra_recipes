@@ -181,6 +181,7 @@
     "cmd": [],
     "name": "first tast iteration",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
       "@@@STEP_LOG_END@tests@@@"
     ]
   },
@@ -847,6 +848,64 @@
     ]
   },
   {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.test\", \"variant\": {\"def\": {\"test_config\": \"tast_vm\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "first tast iteration.process tast output.GS upload first_results",
     "~followup_annotations": [
@@ -964,6 +1023,7 @@
     "cmd": [],
     "name": "second tast iteration",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
       "@@@STEP_LOG_END@tests@@@"
     ]
   },
@@ -1578,6 +1638,64 @@
     "name": "second tast iteration.process tast output.upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.test\", \"variant\": {\"def\": {\"test_config\": \"tast_vm\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
@@ -2950,6 +3068,7 @@
     "cmd": [],
     "name": "first tast iteration (2)",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
       "@@@STEP_LOG_END@tests@@@"
     ]
   },
@@ -3547,6 +3666,64 @@
     ]
   },
   {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.test\", \"variant\": {\"def\": {\"test_config\": \"tast_vm\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "first tast iteration (2).process tast output.GS upload first_results",
     "~followup_annotations": [
@@ -3664,6 +3841,7 @@
     "cmd": [],
     "name": "second tast iteration (2)",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
       "@@@STEP_LOG_END@tests@@@"
     ]
   },
@@ -4258,6 +4436,64 @@
     "name": "second tast iteration (2).process tast output.upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.test\", \"variant\": {\"def\": {\"test_config\": \"tast_vm\"}}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@          \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"test_config\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        }@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {

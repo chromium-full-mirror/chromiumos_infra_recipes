@@ -340,6 +340,7 @@ def GenTests(api):
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props),
       api.phosphorus.properties(),
+      api.tast_exec.simulate_test_list_ret('pita.CreateFromIso.uprev'),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data(
           'invoke tast.process tast output.read streamed_results.jsonl',
@@ -380,6 +381,7 @@ def GenTests(api):
       'tast-no-image',
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props), api.phosphorus.properties(),
+      api.tast_exec.simulate_test_list_ret('pita.CreateFromIso.uprev'),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data(
           'invoke tast.process tast output.read streamed_results.jsonl',
@@ -393,6 +395,7 @@ def GenTests(api):
       'success',
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**good_props), api.phosphorus.properties(),
+      api.tast_exec.simulate_test_list_ret('pita.CreateFromIso.uprev'),
       api.step_data(
           'invoke tast.process tast output.read streamed_results.jsonl',
           api.file.read_text(successJsonl)),

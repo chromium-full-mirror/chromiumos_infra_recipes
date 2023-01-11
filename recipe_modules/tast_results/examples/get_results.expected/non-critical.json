@@ -1,7 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "process tast output"
+    "name": "process tast output",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no tests ran@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process tast output (2)"
   },
   {
     "cmd": [
@@ -27,7 +34,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output.read streamed_results.jsonl",
+    "name": "process tast output (2).read streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
@@ -38,7 +45,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output.upload test results to rdb",
+    "name": "process tast output (2).upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
@@ -55,7 +62,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output.upload test results to rdb.ensure result_adapter",
+    "name": "process tast output (2).upload test results to rdb.ensure result_adapter",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -86,7 +93,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "process tast output (2).upload test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -134,14 +141,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output.upload test results to rdb.run rdb",
+    "name": "process tast output (2).upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "process tast output.exonerate ResultDB results",
+    "name": "process tast output (2).exonerate ResultDB results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -171,7 +178,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output.exonerate ResultDB results.rdb query",
+    "name": "process tast output (2).exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -179,7 +186,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output.GS upload 1_results",
+    "name": "process tast output (2).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/1_results@@@"
@@ -214,7 +221,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output.GS upload 1_results.gsutil rsync",
+    "name": "process tast output (2).GS upload 1_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -366,7 +373,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2)"
+    "name": "process tast output (3)"
   },
   {
     "cmd": [
@@ -392,7 +399,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).read streamed_results.jsonl",
+    "name": "process tast output (3).read streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
@@ -403,7 +410,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2).upload test results to rdb",
+    "name": "process tast output (3).upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
@@ -450,7 +457,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).upload test results to rdb.run rdb",
+    "name": "process tast output (3).upload test results to rdb.run rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -476,7 +483,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).upload missing test cases (count: 3)",
+    "name": "process tast output (3).upload missing test cases (count: 3)",
     "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"arc.StartStop\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.Test\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"testId\": \"some.OtherTest\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\", \"test_config\": \"fancy-suite\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -558,7 +565,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2).exonerate ResultDB results",
+    "name": "process tast output (3).exonerate ResultDB results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -588,7 +595,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).exonerate ResultDB results.rdb query",
+    "name": "process tast output (3).exonerate ResultDB results.rdb query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -596,7 +603,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2).GS upload 1_results",
+    "name": "process tast output (3).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/1_results@@@"
@@ -631,7 +638,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "process tast output (2).GS upload 1_results.gsutil rsync",
+    "name": "process tast output (3).GS upload 1_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

@@ -259,7 +259,8 @@ class TastExecApi(RecipeApi):
     tast_inputs = tast_inputs.copy()
     tast_inputs.test_artifacts_dir = tast_inputs.test_artifacts_dir.join('tast')
     tests = self._list_tests(dut_name, tast_inputs)
-    self._run_tests(dut_name, tast_inputs, test_results_dir)
+    if tests:
+      self._run_tests(dut_name, tast_inputs, test_results_dir)
     return tests
 
   @staticmethod
@@ -326,7 +327,8 @@ class TastExecApi(RecipeApi):
     keyfile_args + \
     tast_inputs.shard_args + \
     [dut_name] + \
-    list(tast_inputs.expressions), timeout=5 * 60).decode('utf-8')
+    list(tast_inputs.expressions), timeout=5 * 60,
+    test_stdout=self._test_data.get('simulate_test_list_ret')).decode('utf-8')
 
     tests = [t.strip() for t in list_stdout.splitlines()]
     return tests

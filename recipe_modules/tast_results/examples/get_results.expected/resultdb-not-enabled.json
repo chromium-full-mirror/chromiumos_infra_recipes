@@ -1,7 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "process tast output"
+    "name": "process tast output",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no tests ran@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process tast output (2)"
   },
   {
     "cmd": [
@@ -15,7 +22,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process tast output.read streamed_results.jsonl",
+    "name": "process tast output (2).read streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
@@ -26,7 +33,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output.GS upload 1_results",
+    "name": "process tast output (2).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1_results@@@"
@@ -49,7 +56,7 @@
       "gs://chromeos-vmtest-archive//0/1_results"
     ],
     "infra_step": true,
-    "name": "process tast output.GS upload 1_results.gsutil rsync",
+    "name": "process tast output (2).GS upload 1_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -177,7 +184,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2)"
+    "name": "process tast output (3)"
   },
   {
     "cmd": [
@@ -191,7 +198,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "process tast output (2).read streamed_results.jsonl",
+    "name": "process tast output (3).read streamed_results.jsonl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
@@ -202,7 +209,7 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2).GS upload 1_results",
+    "name": "process tast output (3).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive//0/1_results@@@"
@@ -225,7 +232,7 @@
       "gs://chromeos-vmtest-archive//0/1_results"
     ],
     "infra_step": true,
-    "name": "process tast output (2).GS upload 1_results.gsutil rsync",
+    "name": "process tast output (3).GS upload 1_results.gsutil rsync",
     "timeout": 120,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

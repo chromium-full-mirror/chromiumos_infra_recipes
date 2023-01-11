@@ -16,6 +16,7 @@ from PB.tast.test_result import TestResult
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
+
 class TastResultsApi(recipe_api.RecipeApi):
   """A module to process tast-results/ directory."""
 
@@ -63,7 +64,15 @@ class TastResultsApi(recipe_api.RecipeApi):
       Currently this is a TaskResult.
       https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
     """
-    with self.m.step.nest('process tast output'):
+    with self.m.step.nest('process tast output') as pres:
+      if not tests:
+        pres.step_text = 'no tests ran'
+        return ExecuteResponse.TaskResult(
+            name=suite_name,
+            state=TaskState(verdict=TaskState.VERDICT_PASSED,
+                            life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+            log_url=None, attempt=0, test_cases=[])
+
       test_results = self._read_results_json(test_results_path)
       test_cases = [self.convert_to_testcaseresult(r) for r in test_results]
       reported_tests = {tc.name for tc in test_cases}
