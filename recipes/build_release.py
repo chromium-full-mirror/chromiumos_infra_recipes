@@ -216,49 +216,64 @@ def DoRunSteps(api, config, properties):
   if api.checkpoint.is_run_step(RetryStep.STAGE_ARTIFACTS):
     unit_test_future = api.futures.spawn(_run_and_report_unit_tests)
 
-  with api.checkpoint.retry(RetryStep.COLLECT_SIGNING) as run_step:
-    if run_step:
-      # Signing does not work in staging, so we shouldn't wait for it in that case.
-      # We also can't sign anything if push_and_sign_images returned 0 instructions.
-      # Otherwise, wait for signing to complete.
-      if not api.cros_infra_config.is_staging and instructions:
-        with api.step.nest('get signed build metadata') as pres:
-          # Wait for signing to complete. Note - "complete" does not mean "passed",
-          # it means "signing returned a terminal state or timed out".
-          metadata = api.signing.wait_for_signing(instructions)
-          # Get the signed build metadata now that it is complete.
-          signed_build_metadata_list = api.signing.get_signed_build_metadata(
-              metadata)
-          # Publish any signed build metadata we have on the pubsub.
-          api.build_reporting.publish_signed_build_metadata(
-              signed_build_metadata_list)
+  exp = None
+  try:
+    with api.checkpoint.retry(RetryStep.COLLECT_SIGNING) as run_step:
+      if run_step:
+        # Signing does not work in staging, so we shouldn't wait for it in that case.
+        # We also can't sign anything if push_and_sign_images returned 0 instructions.
+        # Otherwise, wait for signing to complete.
+        if not api.cros_infra_config.is_staging and instructions:
+          with api.step.nest('get signed build metadata') as pres:
+            # Wait for signing to complete. Note - "complete" does not mean "passed",
+            # it means "signing returned a terminal state or timed out".
+            metadata = api.signing.wait_for_signing(instructions)
+            # Get the signed build metadata now that it is complete.
+            signed_build_metadata_list = api.signing.get_signed_build_metadata(
+                metadata)
+            # Publish any signed build metadata we have on the pubsub.
+            api.build_reporting.publish_signed_build_metadata(
+                signed_build_metadata_list)
 
-          # Now that we've published informational artifacts, we need to fail the
-          # build if the outcome was anything other than "passed".
-          api.signing.verify_signing_success(metadata, pres)
+            # Now that we've published informational artifacts, we need to fail the
+            # build if the outcome was anything other than "passed".
+            api.signing.verify_signing_success(metadata, pres)
 
-      elif not instructions:
-        with api.step.nest('skipping signing') as pres:
-          pres.step_text = (
-              'no signing instructions generated'
-              if api.checkpoint.is_run_step(RetryStep.PUSH_IMAGES) else
-              'no signing instructions retrieved from original build')
+        elif not instructions:
+          with api.step.nest('skipping signing') as pres:
+            pres.step_text = (
+                'no signing instructions generated'
+                if api.checkpoint.is_run_step(RetryStep.PUSH_IMAGES) else
+                'no signing instructions retrieved from original build')
 
-  with api.checkpoint.retry(RetryStep.PAYGEN) as run_step:
-    if run_step:
-      # With signing complete, we can start payload generation (only if there were
-      # signed images generated). We _do_ want this in staging.
-      if not properties.skip_paygen and instructions:
-        api.cros_release.run_payload_generation()
-      else:
-        with api.step.nest('skipping payloads') as pres:
-          if properties.skip_paygen:
-            pres.step_text = 'property `skip_paygen` was set'
-          else:
-            pres.step_text = 'no payloads generated since no signed images'
+    with api.checkpoint.retry(RetryStep.PAYGEN) as run_step:
+      if run_step:
+        # With signing complete, we can start payload generation (only if there were
+        # signed images generated). We _do_ want this in staging.
+        if not properties.skip_paygen and instructions:
+          api.cros_release.run_payload_generation()
+        else:
+          with api.step.nest('skipping payloads') as pres:
+            if properties.skip_paygen:
+              pres.step_text = 'property `skip_paygen` was set'
+            else:
+              pres.step_text = 'no payloads generated since no signed images'
+  except Exception as e:  #pylint: disable=broad-except
+    # Defer any failures until after ebuild tests.
+    # Failed steps within the try block will still marked appropriately.
+    exp = e
 
   # Wait for unit tests to finish.
   unit_test_future.result()
+
+  # Defer raising any exception that occurred while ebuild tests are running
+  # until after we've collected ebuild tests.
+  # We don't currently have means of retrying ebuild tests -- if they fail,
+  # the build is doomed. As such, we want to a) make a best effort at finishing
+  # tests and b) make it clear to users that the ebuild failure is the critical
+  # one.
+  if exp:
+    raise exp
 
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
