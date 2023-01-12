@@ -8,6 +8,8 @@
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
+from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_FAILED, STATUS_SUCCESS
+
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import common
@@ -216,7 +218,16 @@ def DoRunSteps(api, config, properties):
   def _run_and_report_unit_tests():
     """Helper function to run unit tests in a step_reporting wrapper."""
     with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
-      return api.build_menu.unit_test_images(config=config)
+      results = None
+      try:
+        results = api.build_menu.unit_test_images(config=config)
+      except:
+        # Add EBUILD_TESTS status to the retry_summary. b/265306388 for context.
+        api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_FAILED)
+        raise
+      else:
+        api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_SUCCESS)
+      return results
 
   # TODO(b/262388770): Properly support ebuild tests within checkpoint.
   # For now, they're only run if the artifacts are built in the same run.
@@ -374,6 +385,7 @@ def GenTests(api):
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
               RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
+              RetryStep.Name(RetryStep.EBUILD_TESTS): "SUCCESS",
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
               RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
@@ -542,6 +554,49 @@ def GenTests(api):
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
+      bucket='release',
+      builder='kukui-release-main',
+      build_target='kukui',
+  )
+
+  yield api.build_menu.test(
+      'ebuild-tests-failure',
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'force_retry_summary': True,
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
+      api.signing.setup_mocks(),
+      api.cros_build_api.set_api_return(
+          'run ebuild tests',
+          endpoint='TestService/BuildTargetUnitTest',
+          retcode=1,
+      ),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.StepFailure, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.StatusFailure),
+      api.post_check(
+          post_process.PropertyEquals, 'retry_summary', {
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
+              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
+              RetryStep.Name(RetryStep.EBUILD_TESTS): "FAILED",
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
+              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+          }),
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',

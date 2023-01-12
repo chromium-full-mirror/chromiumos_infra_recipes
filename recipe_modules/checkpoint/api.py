@@ -14,11 +14,6 @@ from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties
 
-STATUS_STARTED = "STARTED"
-STATUS_SUCCESS = "SUCCESS"
-STATUS_SKIPPED = "SKIPPED"
-STATUS_FAILED = "FAILED"
-
 STEP_CASCADES = {
     # Orchestrator steps
     RetryStep.CREATE_BUILDSPEC: [RetryStep.RUN_CHILDREN],
@@ -49,6 +44,11 @@ ORIGINAL_BUILD_PROPERTIES = [
      'signing_instructions_uris'),
 ]
 
+STATUS_STARTED = "STARTED"
+STATUS_SUCCESS = "SUCCESS"
+STATUS_SKIPPED = "SKIPPED"
+STATUS_FAILED = "FAILED"
+
 
 class CheckpointApi(recipe_api.RecipeApi):
   """A module for managing release build checkpoints.
@@ -57,7 +57,6 @@ class CheckpointApi(recipe_api.RecipeApi):
   """
 
   # TODO(b/262388770): Improve documentaton here, and link to a dev guide.
-
   def __init__(self, properties: CheckpointProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._retry_run = properties.retry
