@@ -487,6 +487,9 @@
   {
     "cmd": [],
     "name": "execution steps.CrosToolRunner: run provision",
+    "tags": {
+      "provision_failure": "REASON_PROVISIONING_FAILED"
+    },
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_SUMMARY_TEXT@REASON_PROVISIONING_FAILED@@@",

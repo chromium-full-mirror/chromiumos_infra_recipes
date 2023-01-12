@@ -271,6 +271,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           if prejob_response.any_provision_failed:
             step.presentation.status = self._api.step.FAILURE
             step.presentation.step_summary_text = prejob_response.failure_reason
+            step.presentation.tags[
+                'provision_failure'] = prejob_response.failure_reason
 
           return prejob_response
       except StepFailure as e:  # pragma: nocover
