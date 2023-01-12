@@ -175,10 +175,14 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
             api.futures.spawn(api.gcloud.delete_disk, disk=disk, zone=zone))
       api.futures.wait(futures)
   # return RawResult directly to set the markdown (only with luciexe)
+  markdown = ''
+  if step_failures:
+    markdown = api.failures.format_step_failures(step_failures=step_failures)
+  elif full_sync:
+    markdown = 'full sync'
   return result_pb2.RawResult(
       status=common_pb2.FAILURE if step_failures else common_pb2.SUCCESS,
-      summary_markdown=api.failures.format_step_failures(
-          step_failures=step_failures))
+      summary_markdown=markdown)
 
 
 def GenTests(api: RecipeTestApi):
