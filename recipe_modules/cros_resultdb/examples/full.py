@@ -218,7 +218,11 @@ def GenTests(api):
           post_process.StepCommandContains,
           'upload test results to rdb.run rdb', [
               '-result-file',
-              '/base/dir/autoserv_test/chromium/results/native_results.jsonl'
+              '/base/dir/autoserv_test/chromium/results/native_results.jsonl',
+              '-artifact-directory',
+              '/base/dir/autoserv_test/',
+              '-trim-artifact-prefix',
+              '/usr/local/autotest/results/lxc_job_folder',
           ]),
       api.post_process(post_process.DropExpectation),
   )

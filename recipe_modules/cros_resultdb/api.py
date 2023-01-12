@@ -285,6 +285,17 @@ class ResultDBCommand(recipe_api.RecipeApi):
           config.get('artifact_directory')
       ]
 
+    # Skylab tests are running in a SSP container, hence the artifact
+    # path has a constant prefix of the container. Instruct the result
+    # adapters to ignore it.
+    # TODO(crbug/1406710): Extend this flag to all adapters. As of 23Q1
+    # browser GPU test is the only user.
+    if config.get('result_format') == 'native':
+      result_adapter.extend([
+          '-trim-artifact-prefix',
+          '/usr/local/autotest/results/lxc_job_folder',
+      ])
+
     # Skylab tests can not wrap directly by rdb now. We only care the
     # result file from the test runs.
     rdb_cmd = result_adapter + ['--'] + ['echo']
