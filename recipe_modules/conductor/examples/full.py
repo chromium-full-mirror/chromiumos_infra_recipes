@@ -1,0 +1,78 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from google.protobuf import json_format
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+
+from PB.chromiumos.conductor import CollectConfig, RetryRule
+from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/file',
+    'recipe_engine/properties',
+    'conductor',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+
+def RunSteps(api: RecipeApi):
+  bbids = api.conductor.collect('child builds', ["123", "456"], dryrun=True,
+                                step_name='conductor collect')
+  api.assertions.assertEqual(bbids, [123, 457])
+
+
+collect_config = CollectConfig(rules=[RetryRule(cutoff_seconds=1)])
+
+
+def GenTests(api: RecipeTestApi):
+  yield api.test(
+      'basic',
+      api.properties(
+          **{
+              '$chromeos/conductor':
+                  ConductorProperties(
+                      enable_conductor=True, polling_interval_seconds=120,
+                      collect_configs={'child builds': collect_config})
+          }),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure conductor.ensure_installed',
+                     ['chromiumos/infra/conductor/${platform} prod']),
+      api.post_check(post_process.StepCommandContains, 'write input json',
+                     [json_format.MessageToJson(collect_config)]),
+      api.post_check(post_process.StepCommandContains, 'conductor collect',
+                     ['collect', '--input_json']),
+      api.post_check(
+          post_process.StepCommandContains, 'conductor collect',
+          ['--bbids', '123,456', '--polling_interval', '120', '--dryrun']),
+      api.step_data('read output json', api.file.read_text('["123", "457"]')),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-ref',
+      api.properties(
+          **{
+              '$chromeos/conductor': {
+                  'conductor_cipd_package': 'chromiumos/infra/conductor_foo',
+                  'conductor_cipd_ref': 'bar',
+                  'enable_conductor': True,
+                  'collect_configs': {
+                      'child builds': {},
+                  },
+              },
+          }),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure conductor.ensure_installed',
+                     ['chromiumos/infra/conductor_foo bar']),
+      api.step_data('read output json', api.file.read_text('["123", "457"]')),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )

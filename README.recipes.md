@@ -18,6 +18,7 @@
   * [chromite](#recipe_modules-chromite) (Python3 ✅)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) (Python3 ✅) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage) (Python3 ✅)
+  * [conductor](#recipe_modules-conductor) (Python3 ✅) &mdash; API wrapping the conductor tool.
   * [cros_artifacts](#recipe_modules-cros_artifacts) (Python3 ✅) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_branch](#recipe_modules-cros_branch) (Python3 ✅) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) (Python3 ✅) &mdash; API for working with the protobuf-based Build API.
@@ -191,6 +192,10 @@
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full) (Python3 ✅)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json) (Python3 ✅)
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov) (Python3 ✅)
+  * [conductor:examples/full](#recipes-conductor_examples_full) (Python3 ✅)
+  * [conductor:tests/no_bbids](#recipes-conductor_tests_no_bbids) (Python3 ✅)
+  * [conductor:tests/no_config](#recipes-conductor_tests_no_config) (Python3 ✅)
+  * [conductor:tests/not_enabled](#recipes-conductor_tests_not_enabled) (Python3 ✅)
   * [config_backfill](#recipes-config_backfill) (Python3 ✅) &mdash; Copy legacy configuration and generate backfilled configuration.
   * [config_postsubmit](#recipes-config_postsubmit) (Python3 ✅) &mdash; Run miscellaneous actions on project repos.
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json) (Python3 ✅)
@@ -1913,6 +1918,47 @@ Uploads firmware lcov code coverage.
 Args:
   tarfile (Path): path to tarfile.
   step_name (str): name for the step.
+### *recipe_modules* / [conductor](/recipe_modules/conductor)
+
+[DEPS](/recipe_modules/conductor/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+API wrapping the conductor tool.
+
+#### **class [ConductorApi](/recipe_modules/conductor/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for calling conductor.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#48)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
+
+Call conductor with the given args.
+
+Args:
+  cmd: Command to be run with conductor
+  step_name: Message to use for step. Optional.
+  timeout: Timeout, in seconds. Defaults to one hour.
+  kwargs: Keyword arguments for recipe_engine/step.
+
+&mdash; **def [collect](/recipe_modules/conductor/api.py#65)(self, collect_name: str, bbids: List[Union[(str, int)]], dryrun: bool=False, \*\*kwargs):**
+
+Calls `conductor collect` with the given args.
+
+Args:
+  collect_name: Name of this collection (used to find collect config).
+  bbids: List of BBIDs to collect.
+  dryrun: Whether or not to dryrun retries.
+
+Returns:
+  Final set of BBIDs.
+
+&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#43)(self, collect_name: str):**
+
+&emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#39)(self):**
+
+&mdash; **def [initialize](/recipe_modules/conductor/api.py#27)(self):**
+
+Initializes the module.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#9): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9973,6 +10019,34 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py#18)(api):**
+### *recipes* / [conductor:examples/full](/recipe_modules/conductor/examples/full.py)
+
+[DEPS](/recipe_modules/conductor/examples/full.py#15): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/conductor/examples/full.py#25)(api: RecipeApi):**
+### *recipes* / [conductor:tests/no\_bbids](/recipe_modules/conductor/tests/no_bbids.py)
+
+[DEPS](/recipe_modules/conductor/tests/no_bbids.py#10): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/conductor/tests/no_bbids.py#19)(api: RecipeApi):**
+### *recipes* / [conductor:tests/no\_config](/recipe_modules/conductor/tests/no_config.py)
+
+[DEPS](/recipe_modules/conductor/tests/no_config.py#10): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/conductor/tests/no_config.py#19)(api: RecipeApi):**
+### *recipes* / [conductor:tests/not\_enabled](/recipe_modules/conductor/tests/not_enabled.py)
+
+[DEPS](/recipe_modules/conductor/tests/not_enabled.py#10): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/conductor/tests/not_enabled.py#18)(api: RecipeApi):**
 ### *recipes* / [config\_backfill](/recipes/config_backfill.py)
 
 [DEPS](/recipes/config_backfill.py#32): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
