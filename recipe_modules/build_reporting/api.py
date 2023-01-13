@@ -242,6 +242,17 @@ class BuildReportingApi(recipe_api.RecipeApi):
     build_report.status.CopyFrom(build_status)
     self.publish(build_report)
 
+  def publish_branch(self, branch: str):
+    """Publish the build's branch.
+
+    Args:
+      branch: The branch.
+    """
+    build_report = BuildReport()
+    config = build_report.config
+    config.branch.name = branch
+    self.publish(build_report)
+
   def publish_versions(self, gtv_response):
     """Publish and merge versions, sourced from a GetTargetVersionsRequest.
 

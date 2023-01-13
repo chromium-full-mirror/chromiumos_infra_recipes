@@ -62,6 +62,9 @@ def RunSteps(api):
       "3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60",
   )
 
+  # Publish the branch.
+  api.build_reporting.publish_branch('main')
+
   # Publish the versions.
   vers = GetTargetVersionsResponse(
       android_version='5812377', android_branch_version='git_nyc',

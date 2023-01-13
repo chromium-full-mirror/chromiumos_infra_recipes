@@ -1364,7 +1364,7 @@ Create BuildReport instance that can be .published().
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#305)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#316)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1399,7 +1399,14 @@ Args:
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#269)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#245)(self, branch: str):**
+
+Publish the build's branch.
+
+Args:
+  branch: The branch.
+
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#280)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1415,7 +1422,7 @@ Raises:
 Return:
   None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#424)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#435)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1424,14 +1431,14 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#504)(self, dlc_locations):**
+&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#515)(self, dlc_locations):**
 
 Publish DLC locations to pubsub.
 
 Args:
   dlc_locations (List[str]): List of DLC locations in GS.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#444)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#455)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
@@ -1442,7 +1449,7 @@ Args:
 
 Publish and merge build status.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#404)(self, gs_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#415)(self, gs_path=None):**
 
 Create a context manager to automatically publish to gs.
 
@@ -1452,7 +1459,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#490)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#501)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1460,7 +1467,7 @@ Args:
   toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
     usage.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#245)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#256)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1482,7 +1489,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#344)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#355)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -9623,15 +9630,15 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#27)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#104)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#110)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#59)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#60)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
