@@ -561,8 +561,8 @@ class OrchMenuApi(RecipeApi):
               pres, child_specs, extra_props=extra_child_props)
         else:
           results_step_name = '(RETRY-MODE) check build results from previous builds'
-          completed_builds = self._collect_builds(
-              self.m.checkpoint.builder_children())
+          completed_builds = self.m.buildbucket.get_multi(
+              self.m.checkpoint.builder_children()).values()
           collect_after = []
 
     self._collect_and_check_build_results(
@@ -574,8 +574,8 @@ class OrchMenuApi(RecipeApi):
         RetryStep.RUN_FAILED_CHILDREN) and successful_child_bbids:
       with self.m.step.nest('(RETRY-MODE) previously successful builds'):
         # Include the successful builds from the original build.
-        previously_successful_builds = self._collect_builds(
-            successful_child_bbids)
+        previously_successful_builds = self.m.buildbucket.get_multi(
+            successful_child_bbids).values()
         completed_builds += previously_successful_builds
         self._collect_and_check_build_results(
             previously_successful_builds,
@@ -707,13 +707,21 @@ class OrchMenuApi(RecipeApi):
         b.id
         for b in collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT]
     ]
-    completed_builds += self._collect_builds(build_ids)
+    completed_builds += self._collect_builds(build_ids,
+                                             collect_name='child builds')
     return completed_builds, collect_when_dict[
         BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST]
 
-  def _collect_builds(self, build_ids):
+  def _collect_builds(self, build_ids, collect_name=None):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
     try:
+      if self.m.conductor.enabled and self.m.conductor.collect_config(
+          collect_name):
+        bbids = self.m.conductor.collect(collect_name, build_ids,
+                                         timeout=60 * 60 * 36)
+        return self.m.buildbucket.get_multi(
+            bbids, step_name='get', url_title_fn=self.m.naming.get_build_title,
+            fields=fields).values()
       return self.m.buildbucket.collect_builds(
           build_ids, timeout=60 * 60 * 36, step_name='collect',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()

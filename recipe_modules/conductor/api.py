@@ -56,11 +56,8 @@ class ConductorApi(recipe_api.RecipeApi):
       kwargs: Keyword arguments for recipe_engine/step.
     """
     self._ensure_conductor()
-    self.m.step(
-        step_name or 'conductor: %s' % cmd[0], [self._conductor_path] + cmd,
-        timeout=timeout,
-        stdout=self.m.raw_io.output_text(name='conductor stdout',
-                                         add_output_log=True), **kwargs)
+    self.m.step(step_name or 'conductor: %s' % cmd[0],
+                [self._conductor_path] + cmd, timeout=timeout, **kwargs)
 
   def collect(self, collect_name: str, bbids: List[Union[str, int]],
               dryrun: bool = False, **kwargs) -> List[int]:

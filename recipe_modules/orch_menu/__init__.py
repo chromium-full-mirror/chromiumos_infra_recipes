@@ -19,6 +19,7 @@ DEPS = [
     'build_menu',
     'build_plan',
     'checkpoint',
+    'conductor',
     'cros_artifacts',
     'cros_history',
     'cros_infra_config',

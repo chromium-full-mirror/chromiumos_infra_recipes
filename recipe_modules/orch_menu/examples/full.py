@@ -307,6 +307,12 @@ def GenTests(api):
                       },
                   }
               },
+              '$chromeos/conductor': {
+                  'enable_conductor': True,
+                  'collect_configs': {
+                      'child builds': {},
+                  },
+              },
           }),
       api.buildbucket.simulated_get(
           original_build, step_name='RUNNING IN RETRY MODE.get original build'),
