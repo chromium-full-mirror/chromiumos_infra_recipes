@@ -72,6 +72,8 @@ def RunSteps(api, properties):
           '-totalshards={}'.format(properties.total_shards),
           '-shardindex={}'.format(properties.shard_index)
       ])
+    if properties.shard_method:
+      shard_args.extend(['-shardmethod={}'.format(properties.shard_method)])
 
     with api.step.nest('run tast tests'):
       failures, empty_result = api.tast_exec.run_vm(
@@ -110,3 +112,7 @@ def GenTests(api):
 
   yield api.test('sharded', api.buildbucket.generic_build(build_id=0), props,
                  api.properties(total_shards=2, shard_index=0))
+
+  yield api.test(
+      'sharded-hashed', api.buildbucket.generic_build(build_id=0), props,
+      api.properties(total_shards=2, shard_index=0, shard_method='hash'))
