@@ -74,11 +74,6 @@ def RunSteps(api, properties):
 
       goma = api.cros_sdk.goma_config()
       api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
-      if api.goma.goma_client_json:
-        api.assertions.assertEqual(goma.goma_client_json,
-                                   str(api.goma.goma_client_json))
-      else:
-        api.assertions.assertEqual(goma.goma_client_json, '')
       api.assertions.assertEqual(goma.stats_file, 'stats.binaryproto')
       api.assertions.assertEqual(goma.counterz_file, 'counterz.binaryproto')
 
@@ -104,16 +99,6 @@ def GenTests(api):
               '$chromeos/goma':
                   GomaProperties(
                       goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }))
-  yield api.test(
-      'goma-client-json',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                      enable_goma_client_json=True,
                   ),
           }))
 

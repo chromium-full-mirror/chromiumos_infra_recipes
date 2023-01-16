@@ -24,12 +24,6 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   else:
     api.assertions.assertEqual(api.goma.goma_dir, None)
-  if properties.expected_goma_client_json:
-    api.assertions.assertEqual(api.goma.goma_client_json,
-                               properties.expected_goma_client_json)
-  else:
-    api.assertions.assertEqual(api.goma.goma_client_json, None)
-
   api.assertions.assertEqual(
       str(api.goma.default_bqupload_dir), '[CACHE]/goma/bqupload')
 
@@ -55,25 +49,5 @@ def GenTests(api):
       api.properties(
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.DEFAULT,
-          )),
-  )
-
-  expected_goma_client_json = (
-      '/creds/service_accounts/service-account-goma-client.json')
-
-  yield api.test(
-      'basic-goma-client-json',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                      enable_goma_client_json=True,
-                  )
-          }),
-      api.properties(
-          TestInputProperties(
-              expected_goma_approach=common.GomaConfig.RBE_PROD,
-              expected_goma_client_json=expected_goma_client_json,
           )),
   )

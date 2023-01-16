@@ -32,7 +32,6 @@ def RunSteps(api, properties):
     api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   else:
     api.assertions.assertEqual(api.goma.goma_dir, None)
-  api.assertions.assertEqual(api.goma.goma_client_json, None)
   api.assertions.assertEqual(api.goma.goma_approach,
                              properties.expected_goma_approach)
   api.assertions.assertEqual(

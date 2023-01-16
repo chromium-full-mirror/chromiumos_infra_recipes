@@ -10,5 +10,7 @@ import "chromiumos/common.proto";
 
 message TestInputProperties {
   .chromiumos.GomaConfig.GomaApproach expected_goma_approach = 1;
-  string expected_goma_client_json = 2;
+
+  reserved 2;
+  reserved "expected_goma_client_json";
 }

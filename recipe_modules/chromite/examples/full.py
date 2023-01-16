@@ -69,22 +69,6 @@ def GenTests(api):
           git_repo='https://chromium.googlesource.com/chromiumos/manifest',
           revision='deadbeef'),
   )
-  yield api.test(
-      'goma-client-json',
-      api.properties(cbb_config='auron-paladin'),
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                      enable_goma_client_json=True,
-                  )
-          }),
-      api.buildbucket.try_build(
-          'basic',
-          git_repo='https://chromium.googlesource.com/chromiumos/manifest',
-          revision='deadbeef'),
-  )
 
   yield api.test(
       'pass-repo-sync-args',
