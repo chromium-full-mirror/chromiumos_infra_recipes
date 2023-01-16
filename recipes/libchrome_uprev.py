@@ -20,6 +20,7 @@ DEPS = [
     'git',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'repo',
@@ -43,6 +44,7 @@ def RunSteps(api: RecipeApi):
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
+        emerge_log = api.path.mkstemp('emerge_libchrome_log_')
         step_data = api.cros_sdk.run(
             'generate uprev commit', [
                 'vpython3',
@@ -50,7 +52,14 @@ def RunSteps(api: RecipeApi):
                 '--head',
                 '--track_active',
                 '--recipe',
+                '--emerge_log={}'.format(emerge_log),
             ], stdout=api.raw_io.output_text(add_output_log=True))
+
+        with api.step.nest('output emerge libchrome log') as presentation:
+          emerge_log_text = api.file.read_text('read log', emerge_log,
+                                               test_data='')
+          presentation.logs['emerge libchrome'] = emerge_log_text
+
         ret = step_data.stdout.strip().splitlines()
 
         # only the last line is the push options; earlier lines are logs
