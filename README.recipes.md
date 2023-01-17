@@ -9051,38 +9051,38 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for various support functions for building.
 
-#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [WorkspaceUtilApi](/recipe_modules/workspace_util/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#93)(self, changes=None, name='cherry-pick gerrit changes', ignore_missing_projects=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#107)(self, changes: Optional[List[GerritChange]]=None, name: str='cherry-pick gerrit changes', ignore_missing_projects: bool=False):**
 
 Apply gerrit changes.
 
 Args:
-  changes (list[GerritChanges]): Changes to apply.  Default: changelist
-      saved in cros_infra_config.configure_builder().
-  name (string): Step name.  Default: "setup source".
-  ignore_missing_projects (bool): If true, changes to projects that are
-      not currently checked out (as determined by repo forall) will not be
-      applied. An example of when this is useful: it is possible that
-      changes includes changes to repos this builder is not allowed to read
-      (e.g. because of Cq-Depend grouping); the changes will be discarded
-      instead of failing during application.
+  changes: Changes to apply. Default: changelist saved in
+    cros_infra_config.configure_builder().
+  name: Step name.
+  ignore_missing_projects: If true, changes to projects that are not
+    currently checked out (as determined by repo forall) will not be
+    applied. An example of when this is useful: it is possible that changes
+    includes changes to repos this builder is not allowed to read (e.g.
+    because of Cq-Depend grouping); the changes will be discarded instead
+    of failing during application.
 
-&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#122)(self, change=None, name='checkout gerrit change'):**
+&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#137)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
-  Differs from apply_changes in that the change is directly checked out,
-  not cherry picked (so the patchset parent will be accurate). Used for
-  things like tricium where line number matters.
+Differs from apply_changes in that the change is directly checked out, not
+cherry picked, so the patchset parent will be accurate. Used for things like
+tricium where line number matters.
 
 Args:
-  change (GerritChange): Change to check out.
-  name (string): Step name.  Default: "checkout gerrit change".
+  change: Change to check out.
+  name: Step name.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#139)(self, chroot, gitiles_commit=None, gerrit_changes=None, test_value=None, name=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#155)(self, chroot: Chroot, gitiles_commit: Optional[GitilesCommit]=None, gerrit_changes: Optional[List[GerritChange]]=None, test_value: Optional[bool]=None, name: Optional[str]=None):**
 
 Check for toolchain changes.
 
@@ -9090,53 +9090,52 @@ If there are any changes that affect the toolchain, set that workspace
 attribute.
 
 Args:
-  gitiles_commit (GitilesCommit): The gitiles commit to use, or none to use
-      the value from config.
-  gerrit_changes (list[GerritChange]): The gerrit changes in use, None to
-      use the changes already applied via apply_changes().
-  chroot (Chroot): The chroot for the build.
-  name (str): The name for the step, or None for default.
-  test_value (bool): The value to use for tests.  Default: No toolchain
-      changes detected unless step data is provided elsewhere.
+  chroot: The chroot for the build.
+  gitiles_commit: The gitiles commit to use, or None to use the value from
+    config.
+  gerrit_changes: The gerrit changes in use, or None to use the changes
+    already applied via apply_changes().
+  name: The name for the step, or None for default.
+  test_value: The value to use for tests, or None to detect toolchain
+    changes unless step data is provided elsewhere.
 
 Returns:
-  (bool) whether there are toolchain patches applied.
+  Whether there are toolchain patches applied.
 
-&mdash; **def [initialize](/recipe_modules/workspace_util/api.py#20)(self):**
-
-&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [patch\_sets](/recipe_modules/workspace_util/api.py#38)(self):**
 
 The patch sets (with commit and file info) applied to the build.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#41)(self, default_main=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/workspace_util/api.py#52)(self, default_main: bool=False):**
 
 Prepare the source checkout for building.
 
 Args:
-  default_main (bool): Whether to checkout tip-of-tree instead of snapshot
-    when no gitiles_commit was provided.
+  default_main: Whether to checkout tip-of-tree instead of snapshot when no
+    gitiles_commit was provided.
 
-Returns:
-  A context where source is set up, and the current working directory is the
-  workspace path.  Note that api.cros_sdk.cleanup_context() is generally
-  going to be needed.
+Yields:
+  A context where source is set up, and the current working directory is
+  the workspace path. Note that api.cros_sdk.cleanup_context() is
+  generally going to be needed.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#59)(self, commit=None, staging=False, projects=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_commit](/recipe_modules/workspace_util/api.py#70)(self, commit: Optional[GitilesCommit]=None, staging: bool=False, projects: Optional[List[str]]=None):**
 
 Sync the source tree.
 
-This context manager syncs the workspace path.
-
 Args:
-  commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-      saved in cros_infra_config.configure_builder().
-  staging (bool): Whether this is a staging build.  Default: False.
-  projects (List[str]): Project names or paths to return info for. Defaults
-    to all projects.
+  commit: The gitiles_commit to sync to. Default: commit saved in
+    cros_infra_config.configure_builder().
+  staging: Whether this is a staging build.
+  projects: Project names or paths to return info for. Defaults to all
+    projects.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#176)(self, manifest_groups, local_manifests=None, cache_path_override=None, gitiles_commit=None, manifest_branch=None):**
+Yields:
+  A context manager which syncs the workspace path.
 
-Returns a context with manifest groups checked out to cwd.
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#195)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
+
+Return a context with manifest groups checked out to cwd.
 
 The subset of repos in the external manifest + local_manifests matching
 manifest_groups are synced. For example, say the external manifest contains
@@ -9160,21 +9159,21 @@ the time to delete unused repos (which are present because of caching) is
 much larger than the time to sync the used repos.
 
 Args:
-  manifest_groups (list[str]): List of manifest groups to checkout.
-  local_manifests (list[repo.LocalManifest]): A list of local manifests to
-      add or None if not syncing a local manifest.
-  cache_path_override (Path): Path to sync into. If None, the default
-      caching of cros_source.ensure_synced_cache is used.
-  gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
-      commit saved in cros_infra_config.configure_builder().
-  manifest_branch (str): Branch to checkout. See the `--manifest-branch`
-      option of `repo init` for details and defaults.
+  manifest_groups: List of manifest groups to checkout.
+  local_manifests: A list of local manifests to add, or None if not syncing
+    a local manifest.
+  cache_path_override: Path to sync into. If None, the default caching of
+    cros_source.ensure_synced_cache is used.
+  gitiles_commit: The gitiles_commit to sync to. Default: commit saved in
+    cros_infra_config.configure_builder().
+  manifest_branch: Branch to checkout. See the `--manifest-branch` option
+    of `repo init` for details and defaults.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#32)(self):**
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/workspace_util/api.py#43)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/workspace_util/api.py#48)(self):**
 ## Recipes
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
@@ -13462,32 +13461,32 @@ files in projects touched by the input CLs.
 &mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/full.py#9): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/workspace_util/examples/full.py#16): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#34)(api: RecipeApi, properties: TestInputProperties):**
 ### *recipes* / [workspace\_util:examples/manifest\_branch](/recipe_modules/workspace_util/examples/manifest_branch.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/manifest_branch.py#6): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/workspace_util/examples/manifest_branch.py#13): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_branch.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_branch.py#23)(api: RecipeApi):**
 ### *recipes* / [workspace\_util:examples/manifest\_groups](/recipe_modules/workspace_util/examples/manifest_groups.py)
 
-[DEPS](/recipe_modules/workspace_util/examples/manifest_groups.py#9): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/workspace_util/examples/manifest_groups.py#16): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/manifest_groups.py#33)(api: RecipeApi, properties: TestInputProperties):**
 ### *recipes* / [workspace\_util:tests/only\_checked\_out\_projects](/recipe_modules/workspace_util/tests/only_checked_out_projects.py)
 
-[DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#10): [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#15): [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#27)(api: RecipeApi):**
 
 [depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/86cfa62b0785d066d4970123a01994f699f2023d/recipes/README.recipes.md#recipe_modules-bot_update
 [depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/86cfa62b0785d066d4970123a01994f699f2023d/recipes/README.recipes.md#recipe_modules-depot_tools

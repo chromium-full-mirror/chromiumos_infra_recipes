@@ -6,50 +6,61 @@
 """API for various support functions for building."""
 
 import contextlib
+from typing import Any, Dict, Generator, List, Optional
+
+from PB.chromiumos.common import Chroot
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.workspace_util.workspace_util import \
+    WorkspaceUtilProperties
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+from RECIPE_MODULES.chromeos.repo.api import LocalManifest
 
 from recipe_engine import recipe_api
+from recipe_engine.config_types import Path
 
 
 class WorkspaceUtilApi(recipe_api.RecipeApi):
   """A module workspace setup and manipulation."""
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: WorkspaceUtilProperties, *args: Any,
+               **kwargs: Any) -> None:
     super().__init__(*args, **kwargs)
     self._keep_all_changes = properties.keep_all_changes
+    self._patch_sets: List[PatchSet] = []
 
-  def initialize(self):
-    self._patch_sets = []
     # Changes applied in apply_changes().
-    self._applied_changes = []
+    self._applied_changes: List[GerritChange] = []
+
     # Changes that have been checked for toolchain effects.
-    self.checked_changes = []
+    self.checked_changes: List[GerritChange] = []
 
   @property
-  def patch_sets(self):
+  def patch_sets(self) -> List[PatchSet]:
     """The patch sets (with commit and file info) applied to the build."""
     return self._patch_sets
 
   @property
-  def toolchain_cls_applied(self):
+  def toolchain_cls_applied(self) -> bool:
     """Whether there are toolchain CLs applied to the source tree."""
     return self.m.cros_relevance.toolchain_cls_applied
 
   @property
-  def workspace_path(self):
+  def workspace_path(self) -> Path:
     return self.m.src_state.workspace_path
 
   @contextlib.contextmanager
-  def setup_workspace(self, default_main=False):
+  def setup_workspace(self, default_main: bool = False) -> Generator:
     """Prepare the source checkout for building.
 
     Args:
-      default_main (bool): Whether to checkout tip-of-tree instead of snapshot
-        when no gitiles_commit was provided.
+      default_main: Whether to checkout tip-of-tree instead of snapshot when no
+        gitiles_commit was provided.
 
-    Returns:
-      A context where source is set up, and the current working directory is the
-      workspace path.  Note that api.cros_sdk.cleanup_context() is generally
-      going to be needed.
+    Yields:
+      A context where source is set up, and the current working directory is
+      the workspace path. Note that api.cros_sdk.cleanup_context() is
+      generally going to be needed.
     """
     if not self.m.cros_infra_config.is_configured:
       self.m.cros_source.configure_builder(default_main=default_main)
@@ -57,17 +68,20 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       yield
 
   @contextlib.contextmanager
-  def sync_to_commit(self, commit=None, staging=False, projects=None):
+  def sync_to_commit(self, commit: Optional[GitilesCommit] = None,
+                     staging: bool = False,
+                     projects: Optional[List[str]] = None) -> Generator:
     """Sync the source tree.
 
-    This context manager syncs the workspace path.
-
     Args:
-      commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-          saved in cros_infra_config.configure_builder().
-      staging (bool): Whether this is a staging build.  Default: False.
-      projects (List[str]): Project names or paths to return info for. Defaults
-        to all projects.
+      commit: The gitiles_commit to sync to. Default: commit saved in
+        cros_infra_config.configure_builder().
+      staging: Whether this is a staging build.
+      projects: Project names or paths to return info for. Defaults to all
+        projects.
+
+    Yields:
+      A context manager which syncs the workspace path.
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     commit = commit or self.m.src_state.gitiles_commit
@@ -90,20 +104,21 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       self.m.cros_source.sync_checkout(commit, manifest_url, projects=projects)
       yield
 
-  def apply_changes(self, changes=None, name='cherry-pick gerrit changes',
-                    ignore_missing_projects=False):
+  def apply_changes(self, changes: Optional[List[GerritChange]] = None,
+                    name: str = 'cherry-pick gerrit changes',
+                    ignore_missing_projects: bool = False) -> None:
     """Apply gerrit changes.
 
     Args:
-      changes (list[GerritChanges]): Changes to apply.  Default: changelist
-          saved in cros_infra_config.configure_builder().
-      name (string): Step name.  Default: "setup source".
-      ignore_missing_projects (bool): If true, changes to projects that are
-          not currently checked out (as determined by repo forall) will not be
-          applied. An example of when this is useful: it is possible that
-          changes includes changes to repos this builder is not allowed to read
-          (e.g. because of Cq-Depend grouping); the changes will be discarded
-          instead of failing during application.
+      changes: Changes to apply. Default: changelist saved in
+        cros_infra_config.configure_builder().
+      name: Step name.
+      ignore_missing_projects: If true, changes to projects that are not
+        currently checked out (as determined by repo forall) will not be
+        applied. An example of when this is useful: it is possible that changes
+        includes changes to repos this builder is not allowed to read (e.g.
+        because of Cq-Depend grouping); the changes will be discarded instead
+        of failing during application.
     """
     changes = self.m.src_state.gerrit_changes if changes is None else changes
     if not changes:
@@ -119,16 +134,17 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       if not self._keep_all_changes:
         self.m.src_state.gerrit_changes = self._applied_changes
 
-  def checkout_change(self, change=None, name='checkout gerrit change'):
+  def checkout_change(self, change: Optional[GerritChange] = None,
+                      name: str = 'checkout gerrit change') -> None:
     """Check out a gerrit change using the gerrit refs/changes/... workflow.
 
-      Differs from apply_changes in that the change is directly checked out,
-      not cherry picked (so the patchset parent will be accurate). Used for
-      things like tricium where line number matters.
+    Differs from apply_changes in that the change is directly checked out, not
+    cherry picked, so the patchset parent will be accurate. Used for things like
+    tricium where line number matters.
 
     Args:
-      change (GerritChange): Change to check out.
-      name (string): Step name.  Default: "checkout gerrit change".
+      change: Change to check out.
+      name: Step name.
     """
     if not change:
       return
@@ -136,25 +152,28 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest(name):
       self.m.cros_source.checkout_gerrit_change(change)
 
-  def detect_toolchain_cls(self, chroot, gitiles_commit=None,
-                           gerrit_changes=None, test_value=None, name=None):
+  def detect_toolchain_cls(self, chroot: Chroot,
+                           gitiles_commit: Optional[GitilesCommit] = None,
+                           gerrit_changes: Optional[List[GerritChange]] = None,
+                           test_value: Optional[bool] = None,
+                           name: Optional[str] = None) -> bool:
     """Check for toolchain changes.
 
     If there are any changes that affect the toolchain, set that workspace
     attribute.
 
     Args:
-      gitiles_commit (GitilesCommit): The gitiles commit to use, or none to use
-          the value from config.
-      gerrit_changes (list[GerritChange]): The gerrit changes in use, None to
-          use the changes already applied via apply_changes().
-      chroot (Chroot): The chroot for the build.
-      name (str): The name for the step, or None for default.
-      test_value (bool): The value to use for tests.  Default: No toolchain
-          changes detected unless step data is provided elsewhere.
+      chroot: The chroot for the build.
+      gitiles_commit: The gitiles commit to use, or None to use the value from
+        config.
+      gerrit_changes: The gerrit changes in use, or None to use the changes
+        already applied via apply_changes().
+      name: The name for the step, or None for default.
+      test_value: The value to use for tests, or None to detect toolchain
+        changes unless step data is provided elsewhere.
 
     Returns:
-      (bool) whether there are toolchain patches applied.
+      Whether there are toolchain patches applied.
     """
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
     gerrit_changes = gerrit_changes or self._applied_changes
@@ -174,10 +193,13 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       return changed
 
   @contextlib.contextmanager
-  def sync_to_manifest_groups(self, manifest_groups, local_manifests=None,
-                              cache_path_override=None, gitiles_commit=None,
-                              manifest_branch=None):
-    """Returns a context with manifest groups checked out to cwd.
+  def sync_to_manifest_groups(
+      self, manifest_groups: List[str],
+      local_manifests: Optional[List[LocalManifest]] = None,
+      cache_path_override: Optional[Path] = None,
+      gitiles_commit: Optional[GitilesCommit] = None,
+      manifest_branch: Optional[str] = None) -> Generator:
+    """Return a context with manifest groups checked out to cwd.
 
     The subset of repos in the external manifest + local_manifests matching
     manifest_groups are synced. For example, say the external manifest contains
@@ -201,18 +223,18 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     much larger than the time to sync the used repos.
 
     Args:
-      manifest_groups (list[str]): List of manifest groups to checkout.
-      local_manifests (list[repo.LocalManifest]): A list of local manifests to
-          add or None if not syncing a local manifest.
-      cache_path_override (Path): Path to sync into. If None, the default
-          caching of cros_source.ensure_synced_cache is used.
-      gitiles_commit (GitilesCommit): The gitiles_commit to sync to.  Default:
-          commit saved in cros_infra_config.configure_builder().
-      manifest_branch (str): Branch to checkout. See the `--manifest-branch`
-          option of `repo init` for details and defaults.
+      manifest_groups: List of manifest groups to checkout.
+      local_manifests: A list of local manifests to add, or None if not syncing
+        a local manifest.
+      cache_path_override: Path to sync into. If None, the default caching of
+        cros_source.ensure_synced_cache is used.
+      gitiles_commit: The gitiles_commit to sync to. Default: commit saved in
+        cros_infra_config.configure_builder().
+      manifest_branch: Branch to checkout. See the `--manifest-branch` option
+        of `repo init` for details and defaults.
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
-    init_opts = {
+    init_opts: Dict[str, Any] = {
         'groups': manifest_groups,
     }
 

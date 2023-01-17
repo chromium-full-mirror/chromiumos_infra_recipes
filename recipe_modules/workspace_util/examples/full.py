@@ -3,8 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Any, Generator
+
 from PB.recipe_modules.chromeos.workspace_util.examples.test import TestInputProperties
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
+
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/assertions',
@@ -24,7 +31,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = TestInputProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: TestInputProperties) -> None:
   commit = api.buildbucket.gitiles_commit
   changes = api.buildbucket.build.input.gerrit_changes
 
@@ -51,35 +58,32 @@ def RunSteps(api, properties):
                              api.workspace_util.toolchain_cls_applied)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
-  def test(name, *args, **kwargs):
+  def test(name: str, *test_case_args: Any, toolchain_cls_applied: bool = False,
+           ignore_missing_projects: bool = False,
+           **test_build_kwargs: Any) -> TestData:
     """A test, with properties
 
     This function creates a test child_build from kwargs, and then calls
     api.test() to create the TestData for a test.
 
-    The following arguments are consumed by this method:
-      toolchain_cls_applied (bool): Whether there are toolchain_cls.
-      ignore_missing_projects (bool): Value to pass to apply_changes.
-
     Args:
-      *args (list):  Arguments to pass to test_api.test.
-      kwargs (dict): Arguments to pass to test_util.test_build.
+      name: Name of the test case.
+      *test_case_args: Arguments to pass to api.test.
+      toolchain_cls_applied: Whether there are toolchain_cls.
+      ignore_missing_projects: Value to pass to apply_changes.
+      **test_build_kwargs: Keyword arguments to pass to test_util.test_build.
 
     Returns:
-      (recipe_test_api.TestData) TestData for the test.
+      TestData for the test.
     """
-    # The combination of *args and **kwargs above makes this the least messy way
-    # to have our own parameters, with defaults.
-    toolchain_cls_applied = kwargs.pop('toolchain_cls_applied', False)
-    ignore_missing_projects = kwargs.pop('ignore_missing_projects', False)
-
-    cq = kwargs.get('cq', False)
+    cq = test_build_kwargs.get('cq', False)
     build_target = 'atlas' if cq else 'amd64-generic'
-    has_cls = cq or kwargs.get('extra_changes')
+    has_cls = cq or test_build_kwargs.get('extra_changes')
 
-    ret = api.test_util.test_child_build(build_target, **kwargs).build
+    ret = api.test_util.test_child_build(build_target,
+                                         **test_build_kwargs).build
 
     resp = PointlessBuildCheckResponse()
     resp.build_is_pointless.value = not toolchain_cls_applied
@@ -92,19 +96,27 @@ def GenTests(api):
       ret += api.step_data(
           'detect toolchain change.path relevancy check.read output file',
           api.file.read_raw(content=resp.SerializeToString()))
-    return api.test(name, ret, *args)
+    return api.test(name, ret, *test_case_args)
 
   # The default Postsubmit build.
-  yield test('has-commit-and-no-changes',)
+  yield test('has-commit-and-no-changes',
+             api.post_check(post_process.StatusSuccess))
 
   # The default CQ build.
-  yield test('has-changes-and-no-commit', cq=True)
+  yield test('has-changes-and-no-commit',
+             api.post_check(post_process.StatusSuccess), cq=True)
 
-  yield test('ignore-missing-projects', cq=True, ignore_missing_projects=True)
+  yield test('ignore-missing-projects',
+             api.post_check(post_process.StatusSuccess), cq=True,
+             ignore_missing_projects=True)
 
-  yield test('has-no-commit-and-no-changes', revision=None)
+  yield test('has-no-commit-and-no-changes',
+             api.post_check(post_process.StatusSuccess), revision=None)
 
-  yield test('has-toolchain-changes', cq=True, toolchain_cls_applied=True)
+  yield test('has-toolchain-changes',
+             api.post_check(post_process.StatusSuccess), cq=True,
+             toolchain_cls_applied=True)
 
-  yield test('release', git_repo=api.src_state.external_manifest.url,
+  yield test('release', api.post_check(post_process.StatusSuccess),
+             git_repo=api.src_state.external_manifest.url,
              git_ref='refs/heads/release-R86.13421.B')

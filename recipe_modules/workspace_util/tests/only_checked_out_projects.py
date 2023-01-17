@@ -3,9 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Generator
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/assertions',
@@ -19,7 +24,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> None:
   changes = [
       common_pb2.GerritChange(host='chrome-internal-review.googlesource.com',
                               project='chromiumos/config', change=123),
@@ -38,7 +43,7 @@ def RunSteps(api):
                                    name='successful apply changes')
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'basic',
       api.step_data(
@@ -68,6 +73,7 @@ def GenTests(api):
           'json.output',
           ['"change_number": 123', '"change_number": 456'],
       ),
+      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -87,4 +93,5 @@ def GenTests(api):
           'successful apply changes.apply gerrit patch sets',
           'Discarded changes: chrome-internal:123, chrome-internal:456, chrome-internal:789',
       ),
+      api.post_check(post_process.StatusSuccess),
   )
