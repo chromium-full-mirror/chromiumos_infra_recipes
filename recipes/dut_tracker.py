@@ -9,7 +9,13 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
+from typing import Generator, List
+
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 from PB.chromiumos.dut_tracking import MAX_PEND_TIME
+from PB.chromiumos.dut_tracking import TrackingPolicyCfg
 
 DEPS = [
     'recipe_engine/step',
@@ -23,7 +29,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 TASK_STATES = ['RUNNING', 'PENDING']
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> None:
   with api.step.nest('get config'):
     tracking_policies = (
         api.cros_infra_config.get_dut_tracking_config().policies)
@@ -65,9 +71,9 @@ def RunSteps(api):
     api.easy.set_properties_step(**props)
 
 
-def _bind_dimensions(dimensions):
+def _bind_dimensions(dimensions: TrackingPolicyCfg) -> List[str]:
   return ['{}:{}'.format(d.name, d.value) for d in dimensions]
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('basic')

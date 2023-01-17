@@ -11305,7 +11305,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/dut_interface/tests/full.py#23)(api, properties):**
 ### *recipes* / [dut\_tracker](/recipes/dut_tracker.py)
 
-[DEPS](/recipes/dut_tracker.py#14): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/dut_tracker.py#20): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -11314,7 +11314,7 @@ Recipe for the Star Doctor.
 Automatically updates binary config files and updates Goldeneye config
 json files.
 
-&mdash; **def [RunSteps](/recipes/dut_tracker.py#26)(api):**
+&mdash; **def [RunSteps](/recipes/dut_tracker.py#32)(api: RecipeApi):**
 ### *recipes* / [easy:examples/full](/recipe_modules/easy/examples/full.py)
 
 [DEPS](/recipe_modules/easy/examples/full.py#11): [easy](#recipe_modules-easy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
