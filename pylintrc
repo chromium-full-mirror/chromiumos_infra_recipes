@@ -64,7 +64,6 @@ disable=
     missing-docstring,
     no-member,
     no-self-use,
-    relative-import,
     too-few-public-methods,
     too-many-arguments,
     too-many-boolean-expressions,
