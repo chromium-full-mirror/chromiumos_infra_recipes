@@ -90,6 +90,33 @@ def GenTests(api):
       api.test_util.test_child_build('amd64-generic').build)
 
   yield api.build_menu.test(
+      'conductor',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/conductor': {
+                  'enable_conductor': True,
+                  'collect_configs': {
+                      'paygen-orch': {},
+                  },
+              },
+          }),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator'),
+      api.post_check(
+          post_process.MustRun,
+          'generate payloads.running paygen orchestrator.conductor: collect'),
+      api.post_check(
+          post_process.LogContains,
+          'push images.call chromite.api.ImageService/PushImage', 'request',
+          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+      api.post_check(post_process.DoesNotRun,
+                     'generate payloads.inspect failure'),
+      api.test_util.test_child_build('amd64-generic').build)
+
+  yield api.build_menu.test(
       'paygen-failure',
       api.properties(
           **{

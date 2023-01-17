@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gsutil',
+    'conductor',
     'cros_infra_config',
     'cros_release_util',
     'cros_sdk',

@@ -213,10 +213,21 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           tags=self.m.buildbucket.tags(
               parent_buildbucket_id=str(self.m.buildbucket.build.id)),
       )
-      builds = self.m.buildbucket.run(
-          [request],
-          timeout=self.m.paygen_orchestration.paygen_orchestrator_timeout_sec,
-          step_name='running paygen orchestrator')
+
+      builds = None
+      timeout = self.m.paygen_orchestration.paygen_orchestrator_timeout_sec
+      if self.m.conductor.enabled and self.m.conductor.collect_config(
+          'paygen-orch'):
+        with self.m.step.nest('running paygen orchestrator'):
+          bbids = [b.id for b in self.m.buildbucket.schedule([request])]
+          bbids = self.m.conductor.collect('paygen-orch', bbids,
+                                           timeout=timeout)
+          builds = list(
+              self.m.buildbucket.get_multi(
+                  bbids, step_name='get', url_title_fn=lambda b: None).values())
+      else:
+        builds = self.m.buildbucket.run([request], timeout=timeout,
+                                        step_name='running paygen orchestrator')
 
       paygen_orch_build = builds[0]
       if paygen_orch_build.status != common_pb2.SUCCESS:

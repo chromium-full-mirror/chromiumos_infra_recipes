@@ -393,9 +393,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             self.m.buildbucket.schedule(req_chunk, step_name='schedule'))
       self._present_paygen_request_urls(batches, builds)
 
-      build_dict = self.m.buildbucket.collect_builds(
-          [b.id for b in builds], timeout=self.paygen_children_timeout_sec,
-          step_name='collect', url_title_fn=lambda b: None)
+      bbids = [b.id for b in builds]
+      if self.m.conductor.enabled and self.m.conductor.collect_config('paygen'):
+        bbids = self.m.conductor.collect('paygen', bbids, timeout=60 * 60 * 36)
+        build_dict = self.m.buildbucket.get_multi(bbids, step_name='get',
+                                                  url_title_fn=lambda b: None)
+      else:
+        build_dict = self.m.buildbucket.collect_builds(
+            bbids, timeout=self.paygen_children_timeout_sec,
+            step_name='collect', url_title_fn=lambda b: None)
     return [build_dict[b.id] for b in builds]
 
   def _present_paygen_request_urls(
