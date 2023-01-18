@@ -314,7 +314,7 @@
     "cmd": [
       "sudo",
       "--non-interactive",
-      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "test-finder",
       "-docker_key_file",

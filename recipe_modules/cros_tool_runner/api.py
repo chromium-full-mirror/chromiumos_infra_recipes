@@ -74,6 +74,10 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           # Container cache service info.
           "CONTAINER_CACHE_SERVICE_PORT",
           "CONTAINER_CACHE_SERVICE_HOST",
+
+          # Reousce limits for docker.
+          "DRONE_AGENT_BOT_BLKIO_READ_BPS",
+          "DRONE_AGENT_BOT_BLKIO_WRITE_BPS"
       ]
       cmd = [
           "sudo",
