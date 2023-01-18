@@ -5,10 +5,14 @@
 
 """Recipe for syncing remote, distributed tarballs to our local cache."""
 
-from PB.recipes.chromeos.dupit import DupitProperties
+from typing import Generator
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+from PB.recipes.chromeos.dupit import DupitProperties
 
 DEPS = [
     'recipe_engine/properties',
@@ -22,7 +26,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = DupitProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: DupitProperties) -> None:
   with api.step.nest('validate properties'):
     if not properties.mirrors:
       raise StepFailure('must set mirrors')
@@ -56,7 +60,7 @@ def RunSteps(api, properties):
     raise StepFailure('all mirrors failed')
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   good_props = {
       'mirrors': [
           {

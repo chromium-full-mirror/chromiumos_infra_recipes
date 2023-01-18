@@ -11304,13 +11304,13 @@ Tests to verify dlc_utils.get_dlcs_in_path.
 &mdash; **def [mock\_dlc\_scaling](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#112)(api, failed=False):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
-[DEPS](/recipes/dupit.py#13): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/dupit.py#17): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for syncing remote, distributed tarballs to our local cache.
 
-&mdash; **def [RunSteps](/recipes/dupit.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipes/dupit.py#29)(api: RecipeApi, properties: DupitProperties):**
 ### *recipes* / [dut\_interface:tests/full](/recipe_modules/dut_interface/tests/full.py)
 
 [DEPS](/recipe_modules/dut_interface/tests/full.py#12): [dut\_interface](#recipe_modules-dut_interface), [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
