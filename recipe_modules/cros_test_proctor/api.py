@@ -645,6 +645,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # an output property when testing Recipes only.
     scheduled_test_names = []
 
+    exps = self.m.cros_infra_config.experiments_for_child_build
+    footer_exps = self.m.git_footers.get_footer_values(
+        self.m.src_state.gerrit_changes, CROS_EXPERIMENTS_FOOTER,
+        step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
+    exps.update({x: True for x in footer_exps})
+
     tags = self.m.cros_tags.make_schedule_tags(snapshot)
     tags.extend(self.m.cros_tags.tags(**{'hide-in-gerrit': 'true'}))
 
@@ -672,7 +678,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   gitiles_commit=snapshot,
                   builder=self._tast_gce_builder(build_target, expressions),
                   bucket=self._vm_bucket, critical=test.common.critical.value,
-                  properties=self._with_props_for_child_build(
+                  experiments=exps, properties=self._with_props_for_child_build(
                       json_format.MessageToDict(
                           GceTestProperties(
                               name=test_name, build_target=build_target,
