@@ -11,19 +11,24 @@ import re
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
-
 from PB.chromite.api import test_metadata
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
-from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
-from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import CrosToolRunnerProperties
-from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
-from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformProperties
-from PB.recipes.chromeos.test_platform.cros_test_postprocess import CrosTestPostprocessRequest
-from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult as PostProcessTestResult
+from PB.go.chromium.org.luci.resultdb.proto.v1 import (
+    invocation as invocation_pb2,)
+from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import (
+    CrosToolRunnerProperties,)
+from PB.recipe_modules.chromeos.service_version.service_version import (
+    ServiceVersionProperties,)
+from PB.recipes.chromeos.test_platform.cros_test_platform import (
+    CrosTestPlatformProperties,)
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import (
+    CrosTestPostprocessRequest,)
+from PB.recipes.chromeos.test_platform.cros_test_postprocess import (
+    TestResult as PostProcessTestResult,)
 from PB.test_platform import result_flow as result_flow_pb2
 from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.config.config import Config
@@ -41,6 +46,7 @@ from PB.test_platform.taskstate import TaskState
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
+
 
 DEPS = [
     'depot_tools/gsutil',
@@ -321,6 +327,27 @@ def _build_supports_cros_test_finder(r):
   return False  # pragma: no cover
 
 
+# TODO(b/265483258): Remove this once LTS hits 108.
+def _should_cft_be_turned_off_for_build(r):
+  """Whether the given request supports turning off cft. As all Rubik builds
+  supports container creation and 108 is the first milestone that is full rubik,
+  any build < 108 should support turning off cft (if necessary) in CTP.
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: bool
+  """
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build':
+      # this regex is trying to find all `*/R{dd/ddd}-d*' pattern in build.
+      # example build: 'foo-build-target-postsubmit/R108-33333.0.0-112318231231'.
+      # from the pattern, we can retrieve the build milestone (108 for the example).
+      build_number_matches = re.findall(r'/R(\d{2,3})-\d*', dep.chromeos_build)
+      return int(next(iter(build_number_matches), 108)) < 108
+  return False  # pragma: no cover
+
+
 def _enumerate_non_cft_tests(api, requests):
   """Resolve non-CFT requests into list of tests and their metadata.
 
@@ -529,7 +556,8 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
   missing = (set(requests.keys()) - set(error_in_requests.keys())) - set(
       enumerations.keys())
   if missing:
-    raise StepFailure('No enumerations for requests tagged %s' % missing)
+    raise StepFailure('No enumerations for requests tagged %s' %
+                      sorted(missing))
 
 
 def RunSteps(api, properties):
@@ -546,6 +574,8 @@ def RunSteps(api, properties):
     # {tag: error(str)} dict that will store error msg for respective tag.
     error_in_requests = {}
     add_container_metadata(api, requests, error_in_requests)
+    _validate_request_error_and_turn_off_cft_if_necessary(
+        api, requests, error_in_requests)
     enumerations = enumerate_tests(api, requests, error_in_requests)
     responses = execute(
         api,
@@ -586,6 +616,47 @@ def _error_response():
           state=TaskState(verdict="VERDICT_FAILED",
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ))
+
+
+def _validate_request_error_and_turn_off_cft_if_necessary(
+    api, requests, error_in_requests):
+  """validate request error and turn off cft if necessary.
+
+  Args:
+    * api (RecipeApi): Recipe api object.
+    * requests: ExecuteRequests.tagged_requests.
+    * error_in_requests: {tag: error(str)} dict.
+  """
+  # retrun if there was no container metadata error
+  if not error_in_requests:
+    return
+
+  cft_turned_off_tags_list = []
+  with api.step.nest('determine if cft should be turned off') as step:
+    for t, _ in error_in_requests.items():
+      if requests[t].params.run_via_cft and _should_cft_be_turned_off_for_build(
+          requests[t]):
+        # add to the list
+        cft_turned_off_tags_list.append(t)
+        # turn off cft
+        requests[t].params.run_via_cft = False
+
+    if cft_turned_off_tags_list:
+      # Delete the entry from error dict so non-cft workflow picks this up
+      for tag in cft_turned_off_tags_list:
+        del error_in_requests[tag]
+
+      # Log the tags and set step tags to be used for queries
+      step.presentation.tags['cft_turned_off_tags_list'] = ','.join(
+          cft_turned_off_tags_list)
+      step.presentation.logs[
+          'requests_for_which_cft_is_turned_off'] = '\n'.join(
+              cft_turned_off_tags_list)
+    else:
+      step.presentation.logs[
+          'summary'] = 'No requests were modified to turn off cft.'
+
+  return
 
 
 def add_container_metadata(api, requests, error_in_requests):
@@ -1029,7 +1100,7 @@ def _test_scheduling():
 def _default_software_dependencies():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build="foo-build-target-postsubmit/R106-33333.0.0-112318231231",
+          chromeos_build="foo-build-target-postsubmit/R108-33333.0.0-112318231231",
       ),
       Request.Params.SoftwareDependency(
           ro_firmware_build="single-ro-firmware",
@@ -1040,9 +1111,25 @@ def _default_software_dependencies():
   ]
 
 
+def _software_dependencies_with_milestone_before_108():
+  return [
+      Request.Params.SoftwareDependency(
+          chromeos_build="foo-build-target-postsubmit/R107-33333.0.0-112318231231",
+      ),
+      Request.Params.SoftwareDependency(
+          ro_firmware_build="single-ro-firmware",
+      ),
+      Request.Params.SoftwareDependency(
+          rw_firmware_build="single-rw-firmware",
+      ),
+  ]
+
+
+# pylint: disable=dangerous-default-value
 def _test_request(request_name_tag, build_target="foo-build-target",
                   scheduling=_test_scheduling(), individual_test=False,
-                  tag_criteria=None):
+                  tag_criteria=None,
+                  software_deps=_default_software_dependencies()):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1056,7 +1143,7 @@ def _test_request(request_name_tag, build_target="foo-build-target",
           container_metadata_url='gs://%s-container-metadata-url' %
           request_name_tag),
       scheduling=scheduling,
-      software_dependencies=_default_software_dependencies(),
+      software_dependencies=software_deps,
   )
   if individual_test:
     return Request(
@@ -1071,11 +1158,14 @@ def _test_request(request_name_tag, build_target="foo-build-target",
           tag_criteria=tag_criteria))
 
 
+# pylint: disable=dangerous-default-value
 def _cft_test_request(request_name, build_target="foo-build-target",
-                      individual_test=False, tag_criteria=None):
+                      individual_test=False, tag_criteria=None,
+                      software_deps=_default_software_dependencies()):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
-                           tag_criteria=tag_criteria)
+                           tag_criteria=tag_criteria,
+                           software_deps=software_deps)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -2284,6 +2374,26 @@ def GenTests(api):
       ), _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_check(post_process.StatusFailure))
+
+  yield api.test(
+      'cft-test-execution-with-failed-metadata-reading-and-cft-is-turned-off',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _test_request('foo'),
+                  'cft-default':
+                      _cft_test_request(
+                          request_name='foo',
+                          software_deps=_software_dependencies_with_milestone_before_108(
+                          ))
+              }, config=_test_config('foo'))),
+      api.step_data(
+          'retrieve container metadata'
+          '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
+          .format(tag='foo'),
+          retcode=1,
+      ), api.post_check(post_process.StatusFailure))
 
   yield api.test(
       'cft-test-execution-with-no-valid-container-metadata-for-build-target',

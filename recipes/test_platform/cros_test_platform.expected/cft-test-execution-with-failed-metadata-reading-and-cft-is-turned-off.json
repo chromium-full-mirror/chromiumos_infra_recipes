@@ -109,6 +109,68 @@
   },
   {
     "cmd": [],
+    "name": "retrieve container metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@unique container metadata urls in request@gs://foo-container-metadata-url@@@",
+      "@@@STEP_LOG_END@unique container metadata urls in request@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieve container metadata.get container metadata from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Infra Failure: Step('retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url') (retcode: 1)@@@",
+      "@@@STEP_LOG_END@container metadata error@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://foo-container-metadata-url"
+    ],
+    "infra_step": true,
+    "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "assign container metadata to requests"
+  },
+  {
+    "cmd": [],
+    "name": "assign container metadata to requests.cft-default",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Error while retrieving container metadata from gs://foo-container-metadata-url: Infra Failure: Step('retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url') (retcode: 1)@@@",
+      "@@@STEP_LOG_END@container metadata error@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine if cft should be turned off",
+    "tags": {
+      "cft_turned_off_tags_list": "cft-default"
+    },
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@requests_for_which_cft_is_turned_off@cft-default@@@",
+      "@@@STEP_LOG_END@requests_for_which_cft_is_turned_off@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate tests"
   },
   {
@@ -166,7 +228,21 @@
       "@@@STEP_LOG_END@cmd@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"first\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"cft-default\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\",@@@",
       "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
@@ -196,7 +272,7 @@
     ],
     "infra_step": true,
     "name": "enumerate tests.call binary.enumerate",
-    "stdin": "{\n  \"taggedRequests\": {\n    \"first\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    },\n    \"cft-default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -204,7 +280,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "No enumerations for requests tagged ['first']"
+      "humanReason": "No enumerations for requests tagged ['cft-default', 'default']"
     },
     "name": "$result"
   }
