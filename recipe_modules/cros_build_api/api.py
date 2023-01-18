@@ -373,7 +373,8 @@ class CrosBuildApiApi(RecipeApi):
 
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False, timeout=None,
-               response_lambda=None, pkg_logs_lambda=None, step_text=None):
+               response_lambda=None, pkg_logs_lambda=None, step_text=None,
+               use_chromite_head=False):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -399,6 +400,13 @@ class CrosBuildApiApi(RecipeApi):
           function which takes information about a failed package and its log
           and produces the {cp} name of the package and the log's contents.
       step_text (str): text to put on the step for the call.
+      use_chromite_head (bool): Whether to use chromite-HEAD instead of the
+          default branched chromite. Intended for use in the new signing flow.
+          Note: There are some instances where the build API makes other calls
+          within the build API. This will NOT work with that flow, and thus
+          should ONLY be used with calls that do not make other calls. It also
+          shouldn't be used in conjunction with calls not using chromite-HEAD
+          if you're expecting state to carry across the calls.
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -439,16 +447,22 @@ class CrosBuildApiApi(RecipeApi):
         cmd.append(str(tee_script))
         cmd.append(logfile_path)
 
+      chromite_location = 'chromite' if not use_chromite_head else 'infra/chromite-HEAD'
       cmd.extend([
-          self.m.src_state.workspace_path.join('chromite/bin/build_api'),
-          '--input-json', input_path, '--output-json', output_path,
-          '--log-level', self._log_level, endpoint
+          self.m.src_state.workspace_path.join(
+              f'{chromite_location}/bin/build_api'), '--input-json', input_path,
+          '--output-json', output_path, '--log-level', self._log_level, endpoint
       ])
       file_contents = None
 
       # build_api needs to invoke other chromite/bin binaries, hence this dir
       # needs to be on the PATH.
-      chromite_bin_dir = self.m.src_state.workspace_path.join('chromite/bin')
+      # There is a good chance this will not work with chromite-HEAD because the
+      # build-api has explicit path references. For now, rely on the fact that
+      # chromite-HEAD will only be used for signing, which will never call other
+      # build-api calls internally, and use chromite_location for safety.
+      chromite_bin_dir = self.m.src_state.workspace_path.join(
+          f'{chromite_location}/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         try:
           output_proto = reflection.MakeClass(output_type)()

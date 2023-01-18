@@ -221,6 +221,7 @@
   * [cros_build_api:examples/set_api_return](#recipes-cros_build_api_examples_set_api_return) (Python3 ✅)
   * [cros_build_api:examples/set_upreved_ebuilds](#recipes-cros_build_api_examples_set_upreved_ebuilds) (Python3 ✅)
   * [cros_build_api:tests/bad_retcodes](#recipes-cros_build_api_tests_bad_retcodes) (Python3 ✅)
+  * [cros_build_api:tests/chromite_head](#recipes-cros_build_api_tests_chromite_head) (Python3 ✅)
   * [cros_build_api:tests/failed_pkg_data_names](#recipes-cros_build_api_tests_failed_pkg_data_names) (Python3 ✅)
   * [cros_build_api:tests/failed_pkg_log_retrieval](#recipes-cros_build_api_tests_failed_pkg_log_retrieval) (Python3 ✅)
   * [cros_build_api:tests/failed_pkg_names](#recipes-cros_build_api_tests_failed_pkg_names) (Python3 ✅)
@@ -2282,7 +2283,7 @@ The version is always queried, and the result cached.
 Returns:
   CrosBuildApi.Version, the version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#374)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None, step_text=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#374)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None, step_text=None, use_chromite_head=False):**
 
 Call the build API with the given input proto.
 
@@ -2309,6 +2310,13 @@ Args:
       function which takes information about a failed package and its log
       and produces the {cp} name of the package and the log's contents.
   step_text (str): text to put on the step for the call.
+  use_chromite_head (bool): Whether to use chromite-HEAD instead of the
+      default branched chromite. Intended for use in the new signing flow.
+      Note: There are some instances where the build API makes other calls
+      within the build API. This will NOT work with that flow, and thus
+      should ONLY be used with calls that do not make other calls. It also
+      shouldn't be used in conjunction with calls not using chromite-HEAD
+      if you're expecting state to carry across the calls.
 
 Returns:
   google.protobuf: The parsed response proto.
@@ -2359,7 +2367,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#533)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#547)(self, stub, method):**
 
 Verifies that the given endpoint can be called.
 
@@ -2390,7 +2398,7 @@ Returns:
 
 Log level used when calling Build API
 
-&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#530)(self, output_proto, response_lambda):**
+&mdash; **def [response\_step\_name](/recipe_modules/cros_build_api/api.py#544)(self, output_proto, response_lambda):**
 
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#235)(self):**
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -10329,6 +10337,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/bad_retcodes.py#20)(api):**
+### *recipes* / [cros\_build\_api:tests/chromite\_head](/recipe_modules/cros_build_api/tests/chromite_head.py)
+
+[DEPS](/recipe_modules/cros_build_api/tests/chromite_head.py#15): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/chromite_head.py#26)(api: RecipeApi, use_chromite_head: bool):**
 ### *recipes* / [cros\_build\_api:tests/failed\_pkg\_data\_names](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
