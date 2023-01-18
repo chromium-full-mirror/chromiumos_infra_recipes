@@ -70,10 +70,15 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         raise ValueError('request is not of type %s' % request_type)
       presentation.logs['request'] = [json_format.MessageToJson(request)]
       self.ensure_cros_tool_runner()
+      preserve_env = [
+          # Container cache service info.
+          "CONTAINER_CACHE_SERVICE_PORT",
+          "CONTAINER_CACHE_SERVICE_HOST",
+      ]
       cmd = [
           "sudo",
           "--non-interactive",
-          "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST",
+          "--preserve-env={}".format(",".join(preserve_env)),
           self._cmd,
           subcommand,
           '-docker_key_file',
