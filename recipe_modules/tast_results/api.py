@@ -422,7 +422,7 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     kernel_version = self.m.cros_tags.get_values('kernel', bot_dimensions)
     if kernel_version:
-      base_tags.append(('kernel_version', kernel_version))
+      base_tags.append(('kernel_version', kernel_version[0]))
 
     return base_tags
 
