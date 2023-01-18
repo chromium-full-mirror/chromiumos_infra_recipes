@@ -87,6 +87,27 @@ def GenTests(api):
                                                 'schedule tast GCE tests'),
   )
 
+  # TODO(b/262614499): Remove after experiment completion.
+  yield api.test(
+      'sharding-exp',
+      api.buildbucket.ci_build(
+          experiments=['chromeos.cros_test_proctor.hash_sharding']),
+      api.post_check(PropertyEquals, 'scheduled_hw_tests', all_hw_test_names),
+      api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
+                     all_tast_vm_test_names),
+      api.post_check(PropertyEquals, 'scheduled_tast_gce_tests',
+                     all_tast_gce_test_names),
+      api.buildbucket.simulated_schedule_output(tast_vm_test_response,
+                                                'schedule tast vm tests'),
+      api.buildbucket.simulated_schedule_output(tast_gce_test_response,
+                                                'schedule tast GCE tests'),
+      api.post_process(LogContains, 'schedule tast vm tests', 'request',
+                       ['"shardMethod\": \"hash\"']),
+      api.post_process(LogContains, 'schedule tast GCE tests', 'request',
+                       ['"shardMethod\": \"hash\"']),
+      api.post_process(DropExpectation),
+  )
+
   # Non-critical tests are not run on retries.
   passed_tests = [
       'htarget.hw.bvt-cq',

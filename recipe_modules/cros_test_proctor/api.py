@@ -597,6 +597,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           expressions = [t.test_expr for t in test.tast_test_expr]
           total_shards = test.tast_test_shard.total_shards
           shard_index = test.tast_test_shard.shard_index
+          shard_method = ('hash'
+                          if 'chromeos.cros_test_proctor.hash_sharding' in exps
+                          else None)
           requests.append(
               self.m.buildbucket.schedule_request(
                   gitiles_commit=snapshot,
@@ -609,7 +612,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               build_payload=unit.common.build_payload,
                               expressions=expressions,
                               total_shards=total_shards,
-                              shard_index=shard_index))), tags=tags,
+                              shard_index=shard_index,
+                              shard_method=shard_method))), tags=tags,
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
           scheduled_test_names.append(test.common.display_name)
@@ -665,6 +669,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           expressions = [t.test_expr for t in test.tast_test_expr]
           total_shards = test.tast_test_shard.total_shards
           shard_index = test.tast_test_shard.shard_index
+          shard_method = ('hash'
+                          if 'chromeos.cros_test_proctor.hash_sharding' in exps
+                          else None)
           gce_metadata = test.gce_metadata
           properties_gce_metadata = GceTestProperties.GceMetadata(
               project=gce_metadata.project,
@@ -686,6 +693,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               expressions=expressions,
                               total_shards=total_shards,
                               shard_index=shard_index,
+                              shard_method=shard_method,
                               gce_metadata=properties_gce_metadata))),
                   tags=tags, swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
