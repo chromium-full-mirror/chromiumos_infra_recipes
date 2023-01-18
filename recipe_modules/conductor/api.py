@@ -103,9 +103,9 @@ class ConductorApi(recipe_api.RecipeApi):
     self(cmd, **kwargs)
 
     data = self.m.file.read_text('read output json', output_json_file,
-                                 test_data='["123"]')
-    bbids = json.loads(data)
-    return [int(bbid) for bbid in bbids] if bbids else None
+                                 test_data='{"bbids":["123"]}')
+    output = json.loads(data)
+    return [int(bbid) for bbid in output.get('bbids', [])]
 
   def _ensure_conductor(self):
     """Ensure the conductor cli is installed."""

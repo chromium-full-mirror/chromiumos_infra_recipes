@@ -589,7 +589,7 @@
     "name": "generate payloads.running paygen orchestrator.read output json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@output.json@[\"123\"]@@@",
+      "@@@STEP_LOG_LINE@output.json@{\"bbids\":[\"123\"]}@@@",
       "@@@STEP_LOG_END@output.json@@@"
     ]
   },

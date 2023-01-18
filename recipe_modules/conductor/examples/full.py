@@ -41,6 +41,7 @@ def GenTests(api: RecipeTestApi):
                       enable_conductor=True, polling_interval_seconds=120,
                       collect_configs={'child builds': collect_config})
           }),
+      api.conductor.set_collect_output([123, 457]),
       api.post_check(post_process.StepCommandContains,
                      'ensure conductor.ensure_installed',
                      ['chromiumos/infra/conductor/${platform} prod']),
@@ -51,7 +52,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains, 'conductor collect',
           ['--bbids', '123,456', '--polling_interval', '120', '--dryrun']),
-      api.step_data('read output json', api.file.read_text('["123", "457"]')),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
@@ -69,10 +69,10 @@ def GenTests(api: RecipeTestApi):
                   },
               },
           }),
+      api.conductor.set_collect_output([123, 457]),
       api.post_check(post_process.StepCommandContains,
                      'ensure conductor.ensure_installed',
                      ['chromiumos/infra/conductor_foo bar']),
-      api.step_data('read output json', api.file.read_text('["123", "457"]')),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

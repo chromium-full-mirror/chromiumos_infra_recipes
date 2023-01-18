@@ -4,8 +4,6 @@
 
 # pylint: disable=protected-access
 
-import json
-
 from PB.recipes.chromeos.paygen import PaygenProperties
 
 from recipe_engine import post_process
@@ -16,6 +14,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/file',
     'recipe_engine/properties',
+    'conductor',
     'paygen_orchestration',
 ]
 
@@ -33,7 +32,7 @@ def RunSteps(api: RecipeApi):
   api.paygen_orchestration.run_paygen_builders(paygen_requests)
 
 
-test_bbids = json.dumps([str(8922054662172514000 + i) for i in range(805)])
+test_bbids = [str(8922054662172514000 + i) for i in range(805)]
 
 
 def GenTests(api: RecipeTestApi):
@@ -52,7 +51,7 @@ def GenTests(api: RecipeTestApi):
                   },
               },
           }),
-      api.step_data('running children.read output json',
-                    api.file.read_text(test_bbids)),
+      api.conductor.set_collect_output(test_bbids,
+                                       step_name='running children'),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
