@@ -36,6 +36,8 @@ class ConductorApi(recipe_api.RecipeApi):
     self._conductor_cipd_ref = (
         self._properties.conductor_cipd_ref or default_ref)
 
+    self._report = {}
+
   @property
   def enabled(self) -> bool:
     return self._properties.enable_conductor
@@ -105,6 +107,13 @@ class ConductorApi(recipe_api.RecipeApi):
     data = self.m.file.read_text('read output json', output_json_file,
                                  test_data='{"bbids":["123"]}')
     output = json.loads(data)
+
+    report = output.get('report', None)
+    if report:
+      self._report[collect_name] = report
+      self.m.easy.set_properties_step(conductor_report=self._report,
+                                      step_name='update conductor report')
+
     return [int(bbid) for bbid in output.get('bbids', [])]
 
   def _ensure_conductor(self):

@@ -1928,7 +1928,7 @@ Args:
   step_name (str): name for the step.
 ### *recipe_modules* / [conductor](/recipe_modules/conductor)
 
-[DEPS](/recipe_modules/conductor/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/conductor/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -1938,7 +1938,7 @@ API wrapping the conductor tool.
 
 A module for calling conductor.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#48)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#50)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
 
 Call conductor with the given args.
 
@@ -1948,7 +1948,7 @@ Args:
   timeout: Timeout, in seconds. Defaults to one hour.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [collect](/recipe_modules/conductor/api.py#62)(self, collect_name: str, bbids: List[Union[(str, int)]], dryrun: bool=False, \*\*kwargs):**
+&mdash; **def [collect](/recipe_modules/conductor/api.py#64)(self, collect_name: str, bbids: List[Union[(str, int)]], dryrun: bool=False, \*\*kwargs):**
 
 Calls `conductor collect` with the given args.
 
@@ -1960,9 +1960,9 @@ Args:
 Returns:
   Final set of BBIDs.
 
-&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#43)(self, collect_name: str):**
+&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#45)(self, collect_name: str):**
 
-&emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#39)(self):**
+&emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#41)(self):**
 
 &mdash; **def [initialize](/recipe_modules/conductor/api.py#27)(self):**
 

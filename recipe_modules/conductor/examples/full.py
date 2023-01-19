@@ -30,6 +30,20 @@ def RunSteps(api: RecipeApi):
 
 collect_config = CollectConfig(rules=[RetryRule(cutoff_seconds=1)])
 
+TEST_REPORT = {
+    "builders": {
+        "adlrvp-release-main": {
+            "builds": [{
+                "bbid": 8792359518877252753,
+                "status": "SUCCESS",
+                "retry": False
+            }],
+            "retry_count": 0
+        },
+    },
+    "retry_count": 0
+}
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
@@ -41,7 +55,7 @@ def GenTests(api: RecipeTestApi):
                       enable_conductor=True, polling_interval_seconds=120,
                       collect_configs={'child builds': collect_config})
           }),
-      api.conductor.set_collect_output([123, 457]),
+      api.conductor.set_collect_output([123, 457], report=TEST_REPORT),
       api.post_check(post_process.StepCommandContains,
                      'ensure conductor.ensure_installed',
                      ['chromiumos/infra/conductor/${platform} prod']),
@@ -52,6 +66,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains, 'conductor collect',
           ['--bbids', '123,456', '--polling_interval', '120', '--dryrun']),
+      api.post_check(post_process.PropertyEquals, 'conductor_report',
+                     {'child builds': TEST_REPORT}),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
