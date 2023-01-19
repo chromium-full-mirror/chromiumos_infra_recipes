@@ -8968,7 +8968,7 @@ Args:
 Returns:
   str->str: title->URL pointing to the build milo page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#131)(self, gs_path):**
+&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#134)(self, gs_path):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -8979,7 +8979,7 @@ Returns:
   str: URL pointing to the Cloud Storage Browser page for the
     object.
 
-&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#151)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
+&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#154)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
 
 Returns the LogDog URL for a step's log.
 
@@ -9023,7 +9023,7 @@ Args:
 Returns:
   str: URL pointing to the skylab swarming task page.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#110)(self, task_state):**
+&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#113)(self, task_state):**
 
 String suffix to supply info about the task.
 

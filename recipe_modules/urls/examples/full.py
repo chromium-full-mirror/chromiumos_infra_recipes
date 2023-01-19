@@ -51,6 +51,9 @@ def RunSteps(api):
   prejob_step1.verdict = TaskState.VERDICT_FAILED
   prejob_step1.name = 'provision'
   prejob_step1.human_readable_summary = 'REASON_DUT_UNREACHABLE_POST_PROVISION'
+  test_case0 = child_result1.test_cases.add()
+  test_case0.name = 'shard'
+  test_case0.verdict = TaskState.VERDICT_UNSPECIFIED
 
   expected_map = {
       'first test - dut_unreachable_post_provision': 'link.com',

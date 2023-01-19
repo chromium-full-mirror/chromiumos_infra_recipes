@@ -2693,8 +2693,10 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/repohooks/pre-upload.py",
-      "--pre-submit"
+      "git",
+      "cl",
+      "presubmit",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/p1",
     "env_suffixes": {
@@ -2717,7 +2719,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run presubmit checks.checking src/p1.repo presubmit",
+    "name": "run presubmit checks.checking src/p1.git cl presubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2899,8 +2901,10 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/src/repohooks/pre-upload.py",
-      "--pre-submit"
+      "git",
+      "cl",
+      "presubmit",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/p2",
     "env_suffixes": {
@@ -2923,7 +2927,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run presubmit checks.checking src/p2.repo presubmit",
+    "name": "run presubmit checks.checking src/p2.git cl presubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

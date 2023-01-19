@@ -83,7 +83,10 @@ class UrlsApi(recipe_api.RecipeApi):
     link_map = {}
     for task_result in skylab_result.child_results:
       # Return per-test case results if possible.
-      if (task_result.test_cases and
+      test_cases_empty = len(task_result.test_cases) == 0 or (
+          len(task_result.test_cases) == 1 and
+          task_result.test_cases[0].verdict == TaskState.VERDICT_UNSPECIFIED)
+      if (not test_cases_empty and
           task_result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED):
         for tc in task_result.test_cases:
           if tc.verdict in failure_verdicts:
