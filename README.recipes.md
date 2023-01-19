@@ -9675,13 +9675,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#42)(api):**
 ### *recipes* / [build\_sdk](/recipes/build_sdk.py)
 
-[DEPS](/recipes/build_sdk.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_sdk.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe that builds a ChromiumOS SDK and cross-compilers.
 
-&mdash; **def [RunSteps](/recipes/build_sdk.py#27)(api: RecipeApi, properties: BuildSDKProperties):**
+&mdash; **def [RunSteps](/recipes/build_sdk.py#34)(api: RecipeApi, properties: BuildSDKProperties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

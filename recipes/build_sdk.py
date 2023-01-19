@@ -5,7 +5,11 @@
 
 """Recipe that builds a ChromiumOS SDK and cross-compilers."""
 
+from typing import List
+
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
+from PB.chromite.api.sdk import BuildSdkToolchainRequest
+from PB.chromiumos import common as common_pb2
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
 
 from recipe_engine import post_process
@@ -22,6 +26,9 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildSDKProperties
+
+# LLVM_NEXT_USE_FLAG is the name of the USE flag for llvm-next builds.
+LLVM_NEXT_USE_FLAG = 'llvm-next'
 
 
 def RunSteps(api: RecipeApi, properties: BuildSDKProperties):
@@ -41,16 +48,38 @@ class BuildSDKRun:
     with self.m.build_menu.configure_builder(missing_ok=True), \
         self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True, replace=True):
       self._build_sdk_packages()
+      self._build_toolchain()
 
   def _build_sdk_packages(self):
     """Build all packages for the SDK build target."""
     request = BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
     self.m.cros_build_api.SdkService.BuildPrebuilts(request)
 
+  def _build_toolchain(self) -> List[common_pb2.Path]:
+    """Build cross-compiling toolchains for the SDK."""
+    request = BuildSdkToolchainRequest(chroot=self.m.cros_sdk.chroot)
+    if self.properties.use_llvm_next:
+      request.use_flags.add(flag=LLVM_NEXT_USE_FLAG)
+    response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
+    return response.generated_files
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic', api.properties(build_target={'name': 'amd64-host'}),
-      api.post_check(post_process.MustRun,
+      api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildPrebuilts'),
+      api.post_check(post_process.StepSuccess,
+                     'call chromite.api.SdkService/BuildSdkToolchain'),
       api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'llvm-next',
+      api.properties(build_target={'name': 'amd64-host'}, use_llvm_next=True),
+      api.post_check(post_process.StepSuccess,
+                     'call chromite.api.SdkService/BuildSdkToolchain'),
+      api.post_check(post_process.LogContains,
+                     'call chromite.api.SdkService/BuildSdkToolchain',
+                     'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
+      api.post_process(post_process.DropExpectation),
+  )
