@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 from collections import namedtuple
-from typing import List, Tuple
+from typing import List, Optional
 
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
@@ -31,23 +31,6 @@ EBUILD_PATH = 'chromeos-base/{package_name}/{package_name}-9999.ebuild'
 
 class AndroidApi(recipe_api.RecipeApi):
 
-  def _get_android_metadata(self, chroot: Chroot,
-                            sysroot: Sysroot) -> Tuple[str, str]:
-    """Retrieve Android metadata from the given sysroot.
-
-    Args:
-      chroot: Information on the chroot for the build.
-      sysroot: The Sysroot being used.
-
-    Returns:
-      (android_package, android_version)
-      Both can be empty in case Android isn't installed.
-    """
-    metadata = self.m.cros_build_api.PackageService.GetAndroidMetadata(
-        GetAndroidMetadataRequest(build_target=sysroot.build_target,
-                                  chroot=chroot))
-    return metadata.android_package, metadata.android_version
-
   def uprev_if_unstable_ebuild_changed(self, chroot: Chroot, sysroot: Sysroot,
                                        patch_sets: List[PatchSet]):
     """Uprev Android if changes are found in the unstable ebuild.
@@ -58,14 +41,15 @@ class AndroidApi(recipe_api.RecipeApi):
       patch_sets: List of patch sets (with FileInfo).
     """
     with self.m.step.nest('check if an android uprev is required') as pres:
-      android_package, android_version = self._get_android_metadata(
-          chroot, sysroot)
-
-      if not android_package:
+      metadata = self.m.cros_build_api.PackageService.GetAndroidMetadata(
+          GetAndroidMetadataRequest(build_target=sysroot.build_target,
+                                    chroot=chroot))
+      if not metadata.android_package:
         pres.step_text = 'no android packages are being built'
         return
 
-      unstable_ebuild = EBUILD_PATH.format(package_name=android_package)
+      unstable_ebuild = EBUILD_PATH.format(
+          package_name=metadata.android_package)
 
       uprev = False
       for patch_set in patch_sets:
@@ -82,10 +66,11 @@ class AndroidApi(recipe_api.RecipeApi):
 
     # We don't care if there's an actual uprev as long as there's no error. For
     # example, uprev is skipped when the CL itself includes a manual uprev.
-    self.uprev(chroot, sysroot, android_package, android_version)
+    self.uprev(chroot, sysroot, metadata.android_package,
+               metadata.android_version, metadata.android_branch)
 
   def uprev(self, chroot: Chroot, sysroot: Sysroot, android_package: str,
-            android_version: str) -> bool:
+            android_version: str, android_branch: Optional[str]) -> bool:
     """Uprev the given Android package to the given version.
 
     Args:
@@ -93,6 +78,7 @@ class AndroidApi(recipe_api.RecipeApi):
       sysroot: The Sysroot being used.
       android_package: The Android package to uprev (e.g. android-vm-rvc).
       android_version: The Android version to uprev to (e.g. 7123456).
+      android_branch: The Android branch, or chromite default if set to None.
 
     Returns:
       If the android package has been uprevved.
@@ -101,6 +87,7 @@ class AndroidApi(recipe_api.RecipeApi):
       request = MarkStableRequest(
           chroot=chroot,
           package_name=android_package,
+          android_build_branch=android_branch,
           android_version=android_version,
           build_targets=[sysroot.build_target],
           skip_commit=True,
@@ -119,36 +106,43 @@ class AndroidApi(recipe_api.RecipeApi):
       raise StepFailure('MarkStable returned unhandled status %s' %
                         MarkStableStatusType.Name(response.status))
 
-  def get_latest_build(self, android_package: str) -> str:
+  def get_latest_build(self, android_package: str,
+                       android_branch: Optional[str]) -> str:
     """Retrieves the latest Android version for the given Android package.
 
     Args:
       android_package: The Android package.
+      android_branch: The Android branch, or chromite default if set to None.
 
     Returns:
       The latest Android version (build ID).
     """
     with self.m.step.nest('get latest android build') as pres:
-      request = GetLatestBuildRequest(android_package=android_package)
+      request = GetLatestBuildRequest(android_package=android_package,
+                                      android_build_branch=android_branch)
       response = self.m.cros_build_api.AndroidService.GetLatestBuild(request)
 
-      pres.step_text = 'found ab/{} for package {}'.format(
-          response.android_version, android_package)
+      pres.step_text = 'found ab/{} for package {} branch {}'.format(
+          response.android_version, android_package, android_branch or
+          'default')
       return response.android_version
 
-  def write_lkgb(self, android_package: str, android_version: str) -> List[str]:
+  def write_lkgb(self, android_package: str, android_version: str,
+                 android_branch: Optional[str]) -> List[str]:
     """Sets LKGB of given Android package to given version.
 
     Args:
       android_package: The Android package to set LKGB for.
       android_version: The LKGB Android version.
+      android_branch: The LKGB Android branch.
 
     Returns:
       List of modified files.
     """
     with self.m.step.nest('write android lkgb') as pres:
       request = WriteLKGBRequest(android_package=android_package,
-                                 android_version=android_version)
+                                 android_version=android_version,
+                                 android_branch=android_branch)
       response = self.m.cros_build_api.AndroidService.WriteLKGB(request)
 
       if not response.modified_files:

@@ -106,6 +106,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-vm-rvc\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBuildBranch\": \"git_rvc-arc\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7123456\",@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -127,7 +128,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {},\n  \"packageName\": \"android-vm-rvc\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"skipCommit\": true\n}",
+      "{\n  \"chroot\": {},\n  \"packageName\": \"android-vm-rvc\",\n  \"androidBuildBranch\": \"git_rvc-arc\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"skipCommit\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,

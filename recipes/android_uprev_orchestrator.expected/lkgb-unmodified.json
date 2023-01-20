@@ -2469,7 +2469,7 @@
     "cmd": [],
     "name": "get latest android build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found ab/7123456 for package android-package@@@"
+      "@@@STEP_TEXT@found ab/7123456 for package android-package branch default@@@"
     ]
   },
   {

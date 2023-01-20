@@ -51,7 +51,8 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
   api.build_menu.bootstrap_sysroot(config)
   revved = api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot,
                              properties.android_package,
-                             properties.android_version)
+                             properties.android_version,
+                             properties.android_branch)
   if not revved and not properties.always_build:
     return
 
@@ -83,6 +84,7 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   uprev_props = api.properties(android_package='android-package',
+                               android_branch='android-branch',
                                android_version='7123456')
 
   # Normal Android uprev build.

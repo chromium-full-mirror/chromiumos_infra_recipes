@@ -750,17 +750,18 @@ Args:
 
 #### **class [AndroidApi](/recipe_modules/android/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#122)(self, android_package: str):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#109)(self, android_package: str, android_branch: Optional[str]):**
 
 Retrieves the latest Android version for the given Android package.
 
 Args:
   android_package: The Android package.
+  android_branch: The Android branch, or chromite default if set to None.
 
 Returns:
   The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#87)(self, chroot: Chroot, sysroot: Sysroot, android_package: str, android_version: str):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#72)(self, chroot: Chroot, sysroot: Sysroot, android_package: str, android_version: str, android_branch: Optional[str]):**
 
 Uprev the given Android package to the given version.
 
@@ -769,11 +770,12 @@ Args:
   sysroot: The Sysroot being used.
   android_package: The Android package to uprev (e.g. android-vm-rvc).
   android_version: The Android version to uprev to (e.g. 7123456).
+  android_branch: The Android branch, or chromite default if set to None.
 
 Returns:
   If the android package has been uprevved.
 
-&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#51)(self, chroot: Chroot, sysroot: Sysroot, patch_sets: List[PatchSet]):**
+&mdash; **def [uprev\_if\_unstable\_ebuild\_changed](/recipe_modules/android/api.py#34)(self, chroot: Chroot, sysroot: Sysroot, patch_sets: List[PatchSet]):**
 
 Uprev Android if changes are found in the unstable ebuild.
 
@@ -782,13 +784,14 @@ Args:
   sysroot: The Sysroot being used.
   patch_sets: List of patch sets (with FileInfo).
 
-&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#139)(self, android_package: str, android_version: str):**
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#130)(self, android_package: str, android_version: str, android_branch: Optional[str]):**
 
 Sets LKGB of given Android package to given version.
 
 Args:
   android_package: The Android package to set LKGB for.
   android_version: The LKGB Android version.
+  android_branch: The LKGB Android branch.
 
 Returns:
   List of modified files.

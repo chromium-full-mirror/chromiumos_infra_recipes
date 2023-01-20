@@ -69,13 +69,14 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
   android_package = properties.android_package
   if not android_package:
     raise StepFailure('android_package not set')
+  android_branch = properties.android_branch
 
   api.cros_source.ensure_synced_cache(
       projects=_SYNC_PROJECTS, is_staging=api.cros_infra_config.is_staging)
 
   android_version = (
       properties.android_version or
-      api.android.get_latest_build(android_package))
+      api.android.get_latest_build(android_package, android_branch))
 
   submit_uprev = properties.submit_uprev
   always_build = properties.always_build
@@ -96,7 +97,8 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
 
   # Update LKGB here. If no files were modified i.e. LKGB is already the same
   # version, there's nothing to do (unless |always_build| is set).
-  modified_files = api.android.write_lkgb(android_package, android_version)
+  modified_files = api.android.write_lkgb(android_package, android_version,
+                                          android_branch)
   if not modified_files and not always_build:
     return
 
@@ -105,6 +107,8 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
       'android_version': android_version,
       'always_build': always_build,
   }
+  if android_branch:
+    extra_child_props['android_branch'] = android_branch
 
   # Run the child builders.
   builds_status = api.orch_menu.plan_and_run_children(
@@ -166,7 +170,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.orch_menu.test(
       'basic', data.ctp_normal,
-      api.properties(android_package='android-package', submit_uprev=True),
+      api.properties(android_package='android-package',
+                     android_branch='android-branch', submit_uprev=True),
       api.post_check(post_process.MustRun, 'run builds'),
       api.post_check(post_process.MustRun,
                      'commit and generate CL.submit CL 1'), with_history=True,

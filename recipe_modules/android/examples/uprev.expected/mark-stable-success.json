@@ -14,6 +14,7 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
       "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-package\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBuildBranch\": \"android-branch\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\",@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -42,7 +43,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {},\n  \"packageName\": \"android-package\",\n  \"androidVersion\": \"android-version\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"skipCommit\": true\n}",
+      "{\n  \"chroot\": {},\n  \"packageName\": \"android-package\",\n  \"androidBuildBranch\": \"android-branch\",\n  \"androidVersion\": \"android-version\",\n  \"buildTargets\": [\n    {\n      \"name\": \"build_target\"\n    }\n  ],\n  \"skipCommit\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

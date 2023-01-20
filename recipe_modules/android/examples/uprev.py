@@ -18,7 +18,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   chroot = Chroot()
   sysroot = Sysroot(build_target=BuildTarget(name='build_target'))
-  api.android.uprev(chroot, sysroot, 'android-package', 'android-version')
+  api.android.uprev(chroot, sysroot, 'android-package', 'android-version',
+                    'android-branch')
 
 
 def GenTests(api: RecipeTestApi):

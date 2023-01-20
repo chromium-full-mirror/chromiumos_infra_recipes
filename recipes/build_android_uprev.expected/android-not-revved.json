@@ -4022,6 +4022,7 @@
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"packageName\": \"android-package\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBuildBranch\": \"android-branch\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7123456\",@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -4045,7 +4046,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"packageName\": \"android-package\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"amd64-generic\"\n    }\n  ],\n  \"skipCommit\": true\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"packageName\": \"android-package\",\n  \"androidBuildBranch\": \"android-branch\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"amd64-generic\"\n    }\n  ],\n  \"skipCommit\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

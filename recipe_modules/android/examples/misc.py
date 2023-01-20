@@ -13,8 +13,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):
-  api.android.get_latest_build('android-package')
-  api.android.write_lkgb('android-package', 'android-version')
+  api.android.get_latest_build('android-package', 'android-branch')
+  api.android.write_lkgb('android-package', 'android-version', 'android-branch')
 
 
 def GenTests(api: RecipeTestApi):

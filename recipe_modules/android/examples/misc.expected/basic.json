@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get latest android build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found ab/7123456 for package android-package@@@"
+      "@@@STEP_TEXT@found ab/7123456 for package android-package branch android-branch@@@"
     ]
   },
   {
@@ -12,6 +12,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBuildBranch\": \"android-branch\",@@@",
       "@@@STEP_LOG_LINE@request@  \"androidPackage\": \"android-package\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -27,7 +28,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"androidPackage\": \"android-package\"\n}",
+      "{\n  \"androidBuildBranch\": \"android-branch\",\n  \"androidPackage\": \"android-package\"\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -99,7 +100,8 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"androidPackage\": \"android-package\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"android-version\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"androidBranch\": \"android-branch\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"modified_files\": [\"[CLEANUP]/chromiumos_workspace/src/overlay/modified-file\"]}@@@",
@@ -114,7 +116,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"androidPackage\": \"android-package\",\n  \"androidVersion\": \"android-version\"\n}",
+      "{\n  \"androidPackage\": \"android-package\",\n  \"androidVersion\": \"android-version\",\n  \"androidBranch\": \"android-branch\"\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,

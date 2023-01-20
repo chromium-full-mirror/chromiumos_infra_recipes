@@ -11,6 +11,9 @@ message AndroidUprevProperties {
   string android_package = 1;
   string android_version = 2;
 
+  // The Android branch to use, or chromite default (ToT) if unspecified.
+  string android_branch = 5;
+
   // Orchestrator only: whether to actually submit an uprev on successful run.
   bool submit_uprev = 3;
 
