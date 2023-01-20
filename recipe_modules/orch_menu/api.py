@@ -686,14 +686,21 @@ class OrchMenuApi(RecipeApi):
       with self.m.step.nest('schedule new builds') as presentation:
         if log_msg:
           presentation.step_text = log_msg
+
+        # Spawn off the child builds in greenlets!
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
+          futures = []
           for new_build_request in new_build_requests:
             # Request new builds and add to total existing.
-            existing_builds += self.m.buildbucket.schedule(
-                [new_build_request], url_title_fn=self.m.naming.get_build_title,
-                step_name=new_build_request.builder.builder)
+            futures.append(
+                self.m.futures.spawn(
+                    self.m.buildbucket.schedule, [new_build_request],
+                    url_title_fn=self.m.naming.get_build_title,
+                    step_name=new_build_request.builder.builder))
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
+          for f in self.m.futures.iwait(futures):
+            existing_builds += f.result()
 
     collect_when_dict = defaultdict(list)
     child_specs_dict = {cs.name: cs for cs in child_specs}

@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cq',
+    'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/properties',
