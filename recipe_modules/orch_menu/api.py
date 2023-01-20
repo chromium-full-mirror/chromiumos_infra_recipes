@@ -869,7 +869,7 @@ class OrchMenuApi(RecipeApi):
             testable_builds or self._builds_status.testable_builds,
             self.gitiles_commit,
             gerrit_changes,
-            False,            # self._properties.enable_history,
+            self._properties.enable_history,
             require_stable_devices=self.config.orchestrator
             .require_stable_devices,
             run_async=self._properties.run_tests_async,
