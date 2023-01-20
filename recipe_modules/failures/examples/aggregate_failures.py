@@ -15,20 +15,20 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  failures = []
-  result = api.failures.aggregate_failures(failures)
-  api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
-  api.assertions.assertEqual(result.summary_markdown, '')
-  failures = [
+  results = api.failures.Results(failures=[], successes={})
+  final_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
+  api.assertions.assertEqual(final_result.summary_markdown, '')
+  results.failures = [
       api.failures.Failure(kind='kind', title='title',
                            link_map={'title': 'url'}, fatal=False, id='my id'),
   ]
-  result = api.failures.aggregate_failures(failures)
-  api.assertions.assertEqual(result.status, common_pb2.SUCCESS)
-  api.assertions.assertEqual(result.summary_markdown,
+  final_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
+  api.assertions.assertEqual(final_result.summary_markdown,
                              '1 non-critical kind failed')
 
-  failures = [
+  results.failures = [
       api.failures.Failure(kind='build', title='build-a',
                            link_map={'build page': 'build-a.com'}, fatal=True,
                            id='id-0'),
@@ -54,45 +54,49 @@ def RunSteps(api):
                            link_map={'test-y': 'test-y.com'}, fatal=False,
                            id='id-7'),
   ]
-  result = api.failures.aggregate_failures(failures)
-  api.assertions.assertEqual(result.status, common_pb2.FAILURE)
+  results.successes = {'build': 28, 'very_different_kind_of_test': 1}
+  final_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
   api.assertions.assertEqual(
-      result.summary_markdown, '''\
-2 builds failed (1 additional non-critical failure)
+      final_result.summary_markdown, '''\
+2 out of 30 builds failed (1 additional non-critical failure)
 
 - build-a: [build page](build-a.com)
 
 - build-b: [build page](build-b.com)
 
-1 different_kind_of_test failed
+1 out of 1 different_kind_of_test failed
 
 - test-x: [test-x](test-x.com)
 
-1 test failed (2 additional non-critical failures)
+1 out of 1 test failed (2 additional non-critical failures)
 
 - test-a: [subtest-1](test-a.com)
 
 1 non-critical very_different_kind_of_test failed''')
 
-  failures = [
+  results.failures = [
       api.failures.Failure(kind='build', title='build-a', link_map={
           'build page': 'build-a.com'
       }, fatal=True, id='my id'),
   ] * 50
-  result = api.failures.aggregate_failures(failures)
-  api.assertions.assertEqual(result.status, common_pb2.FAILURE)
-  api.assertions.assertIn('40 others', result.summary_markdown)
+  final_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
+  api.assertions.assertIn('40 others', final_result.summary_markdown)
 
   # Try to exceed the 4000 limit with really long test links.
   really_long_text = 'All code and no test makes failures a dull module.' * 4000
-  failures = [
+  results.failures = [
       api.failures.Failure(
           kind='test', title='test-a', link_map={
               'subtest-1': 'testlink.com',
               'subtest-2': really_long_text,
           }, fatal=True, id='id-3'),
   ]
-  result = api.failures.aggregate_failures(failures)
+  final_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
+  api.assertions.assertEqual(final_result.summary_markdown,
+                             '1 out of 1 test failed\n\n...')
 
 
 def GenTests(api):

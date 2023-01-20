@@ -4,10 +4,14 @@
 # found in the LICENSE file.
 
 """API for raising failures and presenting them in cute ways."""
+from __future__ import annotations
 
 import collections
 import contextlib
 import operator
+
+from typing import Dict, List
+from dataclasses import dataclass, field
 
 from PB.chromiumos.common import ImageType
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -35,6 +39,47 @@ class FailuresApi(RecipeApi):
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
+  @dataclass
+  class Results():
+    """A class for keeping aggregated results from executions."""
+
+    failures: List[FailuresApi.Failure] = field(default_factory=List)
+    successes: Dict[str, int] = field(default_factory=Dict)
+
+    def add_failures(self, failures: List[FailuresApi.Failure]) -> None:
+      """Append failures to the list.
+
+      Args:
+        failures (List[FailuresApi.Failure]): A List of Failure objects to
+          append.
+      """
+      if failures:
+        self.failures += failures
+
+    def add_successes(self, successes: Dict[str, int]) -> None:
+      """Update the successes numbers.
+
+      Args:
+        successes (Dict[str, int]): A Dict of success count per test kind to be
+          updated with.
+      """
+      if successes:
+        self.successes = {
+            i: self.successes.get(i, 0) + successes.get(i, 0)
+            for i in set(self.successes).union(successes)
+        }
+
+    def add_results(self, results: FailuresApi.Results) -> None:
+      """Update the results.
+
+      Args:
+        results (Results): an object containing the list[Failure] of all
+          failures discovered in the given runs and a Dict mapping a task kind
+          with the number of successes.
+      """
+      self.add_failures(results.failures)
+      self.add_successes(results.successes)
+
   def _proto_to_step_status(self, proto_status):
     """Convert from common_pb2.Status to api.step status.
 
@@ -61,10 +106,10 @@ class FailuresApi(RecipeApi):
         presentation.links[link_text] = link_url
       return
 
-  def _get_failures(self, kind, runs, get_status, is_critical, get_title,
-                    get_link_map, get_id):
+  def _get_results(self, kind, runs, get_status, is_critical, get_title,
+                   get_link_map, get_id):
     with self.m.step.nest('{} results'.format(kind)) as results_pres:
-      critical_failures = []
+      results = self.Results(failures=[], successes={})
       failed_runs = [
           run for run in runs if get_status(run) != common_pb2.SUCCESS
       ]
@@ -81,19 +126,24 @@ class FailuresApi(RecipeApi):
         only_infra_failure &= (status == common_pb2.INFRA_FAILURE)
 
         if critical:
-          critical_failures.append(
+          results.failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
                            fatal=True, id=fail_id))
 
       success_runs = [run for run in runs if run not in failed_runs]
+      results.successes = {kind: 0}
       for success_run in sorted(success_runs, key=get_title):
         title = get_title(success_run)
         link_map = get_link_map(success_run)
         status = get_status(success_run)
+        critical = is_critical(success_run)
+
+        if critical:
+          results.successes[kind] += 1
 
         self._present_run(title, link_map, status)
 
-      if not critical_failures:
+      if not results.failures:
         status = self.m.step.SUCCESS
         step_text = 'all critical {}s succeeded'.format(kind)
       else:
@@ -103,7 +153,7 @@ class FailuresApi(RecipeApi):
 
       results_pres.status = status
       results_pres.step_text = step_text
-      return critical_failures
+      return results
 
   @contextlib.contextmanager
   def ignore_exceptions(self):
@@ -219,13 +269,15 @@ class FailuresApi(RecipeApi):
       presentation.logs['list of failed images'] = failed_types
       raise StepFailure(message)
 
-  def aggregate_failures(self, failures, ignore_build_test_failures=False):
+  def aggregate_failures(self, results, ignore_build_test_failures=False):
     """Returns a recipe result based on the given failures.
 
     Only fatal failures cause the whole recipe to fail.
 
     Args:
-      failures (list[Failure]): All failures encountered during execution.
+      results (Results): An object containg all failures encountered during
+        execution and a dictionary mapping a test kind with the number
+        of successes. Only tests considered as critical are counted.
       ignore_build_test_failures (bool): If True, we will still produce a summary
         of failures if present, but we will not set the build status to FAILURE.
 
@@ -233,9 +285,9 @@ class FailuresApi(RecipeApi):
       RawResult: The recipe result, including a human-readable failure summary.
     """
 
-    fatal_failures = [failure for failure in failures if failure.fatal]
+    fatal_failures = [failure for failure in results.failures if failure.fatal]
     non_fatal_failures = [
-        failure.kind for failure in failures if not failure.fatal
+        failure.kind for failure in results.failures if not failure.fatal
     ]
     exoneration_summary = self.m.exonerate.get_exoneration_markdown()
 
@@ -246,10 +298,10 @@ class FailuresApi(RecipeApi):
 
     # The summary markdown will look roughly as follows:
     #
-    # 1 build failed (1 additional non-critical failure)
+    # 1 out of 10 build failed (1 additional non-critical failure)
     # - chromeos.cq.nami-cq: <a>build page<\a>
     #
-    # 2 hw tests failed
+    # 2 out of 20 hw tests failed
     # - hw.coral.bvt-cq: <a>Graphics_Something<\a>
     # - hw.coral.bvt-tast-cq: <a>Cheets_SomethingElse<\a>
     # ...
@@ -257,9 +309,16 @@ class FailuresApi(RecipeApi):
     for kind in sorted(failures_by_kind):
       failure_group = sorted(failures_by_kind[kind],
                              key=operator.attrgetter('title'))
-      count = len(failure_group)
-      main_line = '{} {} failed'.format(count,
-                                        kind + 's' if count > 1 else kind)
+      failure_count = len(failure_group)
+      total_count = failure_count
+      if kind in results.successes:
+        total_count += results.successes[kind]
+
+      main_line = '{} out of {} {} failed'.format(
+          failure_count,
+          total_count,
+          kind + 's' if total_count > 1 else kind,
+      )
       if kind in non_fatal_failures_count_by_kind:
         non_fatal_count = non_fatal_failures_count_by_kind[kind]
         main_line += ' ({} additional non-critical failure{})'.format(
@@ -274,8 +333,8 @@ class FailuresApi(RecipeApi):
         for link_text, link_url in failure.link_map.items():
           line += ' [{}]({})'.format(link_text, link_url)
         lines.append(line)
-      if count > truncate_max:
-        lines.append('- ...and {} others'.format(count - truncate_max))
+      if failure_count > truncate_max:
+        lines.append('- ...and {} others'.format(failure_count - truncate_max))
       summary_lines.extend(lines)
 
     for kind in non_fatal_failures_count_by_kind:
@@ -319,7 +378,7 @@ class FailuresApi(RecipeApi):
     summary_markdown = summary_markdown.strip()
     return summary_markdown
 
-  def get_build_failures(self, builds, refresh_configs=False):
+  def get_build_results(self, builds, refresh_configs=False):
     """Verify all builds completed successfully.
 
     Args:
@@ -327,35 +386,39 @@ class FailuresApi(RecipeApi):
       refresh_configs (bool): Whether to update configs and adjust is_critical.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs.
+      A Results object containing the list[Failure] of all failures discovered
+      in the given runs and a dict mapping a task kind with the number of
+      successes.
     """
     get_id = lambda b: b.builder.builder
-    ret = self._get_failures('build', builds, self.get_build_status,
-                             self.m.buildbucket.is_critical,
-                             self.m.naming.get_build_title,
-                             self.m.urls.get_build_link_map, get_id)
+    results = self._get_results('build', builds, self.get_build_status,
+                                self.m.buildbucket.is_critical,
+                                self.m.naming.get_build_title,
+                                self.m.urls.get_build_link_map, get_id)
     if refresh_configs:
       self.m.cros_infra_config.force_reload()
       child_configs = self.m.cros_infra_config.safe_get_builder_configs(
           [b.builder.builder for b in builds])
-      ret = self.update_non_critical_build_failures(ret, child_configs)
-    return ret
+      results.failures = self.update_non_critical_build_failures(
+          results.failures, child_configs)
+    return results
 
-  def get_hw_test_failures(self, hw_tests):
+  def get_hw_test_results(self, hw_tests):
     """Logs hardware test status to UI, and raises on failed tests.
 
     Args:
       hw_tests (list[SkylabResult]): List of Skylab suite results.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs filtered
-      by baseline failures.
+      A Results object containing the list[Failure] of all failures discovered
+      in the given runs and a dict mapping a task kind with the number of
+      successes.
     """
     get_id = self.m.naming.get_skylab_result_title
-    return self._get_failures('hw test', hw_tests, self.get_hwtest_status,
-                              self.is_hw_test_critical,
-                              self.m.naming.get_skylab_result_title,
-                              self.m.urls.get_skylab_result_link_map, get_id)
+    return self._get_results('hw test', hw_tests, self.get_hwtest_status,
+                             self.is_hw_test_critical,
+                             self.m.naming.get_skylab_result_title,
+                             self.m.urls.get_skylab_result_link_map, get_id)
 
   def get_additional_hw_test_not_run_failures(self, not_runnable_addtnl_tests):
 
@@ -387,21 +450,22 @@ class FailuresApi(RecipeApi):
         results_pres.step_text = 'Build targets for tests was not built or failed building'
     return critical_failures
 
-  def get_vm_test_failures(self, vm_tests):
+  def get_vm_test_results(self, vm_tests):
     """Logs VM test status to UI, and raises on failed tests.
 
     Args:
       vm_tests (list[Build]): List of VM test buildbucket results.
 
     Returns:
-      list[Failure]: All failures discovered in the given runs filtered
-      by baseline failures.
+      A Results object containing the list[Failure] of all failures discovered
+      in the given runs and a dict mapping a task kind with the number of
+      successes.
     """
     get_id = self.m.naming.get_vm_test_title
-    return self._get_failures('vm test', vm_tests, self.get_build_status,
-                              self.m.buildbucket.is_critical,
-                              self.m.naming.get_vm_test_title,
-                              self.m.urls.get_vm_test_link_map, get_id)
+    return self._get_results('vm test', vm_tests, self.get_build_status,
+                             self.m.buildbucket.is_critical,
+                             self.m.naming.get_vm_test_title,
+                             self.m.urls.get_vm_test_link_map, get_id)
 
   def get_build_status(self, build):
     """Retrieve the status of the build.

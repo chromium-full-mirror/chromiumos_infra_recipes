@@ -7,6 +7,7 @@ import collections
 
 from PB.chromiumos import builder_config
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.failures.examples.build_failures import BuildProperties
 
 DEPS = [
@@ -40,11 +41,18 @@ def RunSteps(api, properties):
                            api.urls.get_build_link_map(x), x.critical,
                            x.builder.builder) for x in expected_failing_builds
   ]
+  expected_successful_builds = [
+      f for f in properties.builds if f.status == common_pb2.SUCCESS
+  ]
 
   api.assertions.assertEqual(
       expected_failures,
-      api.failures.get_build_failures(properties.builds,
-                                      properties.refresh_config))
+      api.failures.get_build_results(properties.builds,
+                                     properties.refresh_config).failures)
+  api.assertions.assertEqual(
+      api.failures.get_build_results(properties.builds,
+                                     properties.refresh_config).successes,
+      {'build': len(expected_successful_builds)})
 
 
 def GenTests(api):
@@ -81,8 +89,8 @@ def GenTests(api):
 
     Args:
       name (str): The test name.
-      builds (list[builder_info]): The builds to for get_build_failures().
-      refresh_config (bool): Whether to have get_build_failures refresh the
+      builds (list[builder_info]): The builds to for get_build_results().
+      refresh_config (bool): Whether to have get_build_results refresh the
         config.
       expected_failing_builds (list[builder_info]): The builds that we expect to
         have failed.

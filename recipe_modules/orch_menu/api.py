@@ -354,7 +354,11 @@ class OrchMenuApi(RecipeApi):
       # Set child output ids if any
       self.m.build_menu.add_child_build_ids_to_output_property()
 
-    raw_result = self.m.failures.aggregate_failures(self.builds_status.failures,
+    results = self.m.failures.Results(
+        failures=self.builds_status.failures,
+        successes={'build': len(self.builds_status.completed_builds)})
+
+    raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)
     if include_build_details:
       summary_markdown = "Full version: {}".format(
@@ -750,7 +754,7 @@ class OrchMenuApi(RecipeApi):
         if not ps_relevant_builds:
           self.m.easy.set_properties_step(all_builds_irrelevant=True)
 
-      failures = self.m.failures.get_build_failures(builds)
+      failures = self.m.failures.get_build_results(builds).failures
       self.builds_status.update(completed=builds, failures=failures)
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
@@ -968,7 +972,7 @@ class OrchMenuApi(RecipeApi):
                                            fields=fields).values())
 
         failures = (
-            self.m.failures.get_build_failures(builds)
+            self.m.failures.get_build_results(builds).failures
             if check_failures else [])
         self._builds_status.update(builds, failures)
       return builds[0]

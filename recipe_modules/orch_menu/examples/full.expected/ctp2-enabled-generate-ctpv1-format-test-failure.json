@@ -12900,7 +12900,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:"
+      "humanReason": "3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:"
     },
     "name": "$result"
   }

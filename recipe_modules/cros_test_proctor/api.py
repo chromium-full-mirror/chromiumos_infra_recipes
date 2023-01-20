@@ -476,9 +476,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       list[Failure]: All failures discovered in the given run.
     """
-    failures = self.m.failures.get_hw_test_failures(test_results.skylab)
-    failures += self.m.failures.get_vm_test_failures(test_results.tast_vm)
-    failures += self.m.failures.get_vm_test_failures(test_results.tast_gce)
+    failures = self.m.failures.get_hw_test_results(test_results.skylab).failures
+    failures += self.m.failures.get_vm_test_results(
+        test_results.tast_vm).failures
+    failures += self.m.failures.get_vm_test_results(
+        test_results.tast_gce).failures
     return failures
 
   def _schedule_skylab_tests(self, test_plan, passed_tests, timeout,

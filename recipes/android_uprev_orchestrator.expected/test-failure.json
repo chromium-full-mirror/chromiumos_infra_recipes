@@ -17605,7 +17605,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:\n\n1 non-critical build failed"
+      "humanReason": "3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:\n\n1 non-critical build failed"
     },
     "name": "$result"
   }

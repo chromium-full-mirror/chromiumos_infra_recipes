@@ -65,6 +65,23 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "hw test results (5)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 hw tests failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "hw test results (5).target.hw.bvt-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@suite page@https://google.com@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

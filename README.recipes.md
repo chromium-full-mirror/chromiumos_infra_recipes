@@ -380,6 +380,7 @@
   * [failures:examples/image_test_failures](#recipes-failures_examples_image_test_failures) (Python3 ✅)
   * [failures:examples/is_critical_test_failure](#recipes-failures_examples_is_critical_test_failure) (Python3 ✅)
   * [failures:examples/package_failures](#recipes-failures_examples_package_failures) (Python3 ✅)
+  * [failures:examples/results](#recipes-failures_examples_results) (Python3 ✅)
   * [failures:examples/step_failures](#recipes-failures_examples_step_failures) (Python3 ✅)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures) (Python3 ✅)
   * [failures:examples/update_non_critical_test_failures](#recipes-failures_examples_update_non_critical_test_failures) (Python3 ✅)
@@ -5075,25 +5076,27 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for raising failures and presenting them in cute ways.
 
-#### **class [FailuresApi](/recipe_modules/failures/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [FailuresApi](/recipe_modules/failures/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#222)(self, failures, ignore_build_test_failures=False):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#272)(self, results, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
 Only fatal failures cause the whole recipe to fail.
 
 Args:
-  failures (list[Failure]): All failures encountered during execution.
+  results (Results): An object containg all failures encountered during
+    execution and a dictionary mapping a test kind with the number
+    of successes. Only tests considered as critical are counted.
   ignore_build_test_failures (bool): If True, we will still produce a summary
     of failures if present, but we will not set the build status to FAILURE.
 
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#574)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#638)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -5102,9 +5105,9 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#360)(self, not_runnable_addtnl_tests):**
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#423)(self, not_runnable_addtnl_tests):**
 
-&mdash; **def [get\_build\_failures](/recipe_modules/failures/api.py#322)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#381)(self, builds, refresh_configs=False):**
 
 Verify all builds completed successfully.
 
@@ -5113,9 +5116,11 @@ Args:
   refresh_configs (bool): Whether to update configs and adjust is_critical.
 
 Returns:
-  list[Failure]: All failures discovered in the given runs.
+  A Results object containing the list[Failure] of all failures discovered
+  in the given runs and a dict mapping a task kind with the number of
+  successes.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#406)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#470)(self, build):**
 
 Retrieve the status of the build.
 
@@ -5125,7 +5130,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_failures](/recipe_modules/failures/api.py#344)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#406)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -5133,10 +5138,11 @@ Args:
   hw_tests (list[SkylabResult]): List of Skylab suite results.
 
 Returns:
-  list[Failure]: All failures discovered in the given runs filtered
-  by baseline failures.
+  A Results object containing the list[Failure] of all failures discovered
+  in the given runs and a dict mapping a task kind with the number of
+  successes.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#432)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#496)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -5146,7 +5152,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_failures](/recipe_modules/failures/api.py#390)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_results](/recipe_modules/failures/api.py#453)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -5154,17 +5160,18 @@ Args:
   vm_tests (list[Build]): List of VM test buildbucket results.
 
 Returns:
-  list[Failure]: All failures discovered in the given runs filtered
-  by baseline failures.
+  A Results object containing the list[Failure] of all failures discovered
+  in the given runs and a dict mapping a task kind with the number of
+  successes.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#108)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#158)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#454)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#518)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -5174,7 +5181,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#466)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#530)(self, hw_test):**
 
 Determine if the hw test failed and was critical.
 
@@ -5184,7 +5191,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#417)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#481)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -5194,7 +5201,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#443)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#507)(self, hw_test):**
 
 Determine if the hw test was critical.
 
@@ -5204,7 +5211,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#196)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#246)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -5219,11 +5226,11 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#193)(self, enclosing_step, packages):**
+&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#243)(self, enclosing_step, packages):**
 
-&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#190)(self, enclosing_step, packages):**
+&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#240)(self, enclosing_step, packages):**
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#495)(self, failures, fresh_builder_configs, presentation=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#559)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -5238,7 +5245,7 @@ Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
       statuses possibly updated.
 
-&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#532)(self, failures, test_plan_summary, presentation=None):**
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#596)(self, failures, test_plan_summary, presentation=None):**
 
 If tests are now non-critical, failures are non-fatal.
 
@@ -7129,7 +7136,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1052)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1056)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7181,7 +7188,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#167)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#645)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#649)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -7195,7 +7202,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#976)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#980)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
 
 Plan, schedule, and run tests.
 
@@ -7213,7 +7220,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#605)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#609)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -7225,11 +7232,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#904)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#908)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#910)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#914)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -8838,8 +8845,8 @@ Args:
   tast_inputs (TastInputs): Common inputs for running tast tests.
 
 Returns:
-  A tuple of list(Failures) and a bool indicating whether
-    the results were empty.
+  A tuple of list(Failures), a bool indicating whether the results were
+   empty and a dict mapping a task kind with the number of successes.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
 [DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -8865,6 +8872,19 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#183)(self, task_result, exclude_tests=None):**
+
+Convert TaskResult into api.failures.Results object and dicts.
+
+Args:
+  task_result (TaskResult): TaskResult to be converted.
+  exclude_tests list(str): List of names of tests to be
+    excluded.
+
+Returns:
+  A tuple of api.failures.Results object and list(dict) representing
+  failed test cases excluding the ones provided.
+
 &mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#158)(self, test_result):**
 
 Convert Tast's result into CTP format.
@@ -8885,19 +8905,6 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [get\_failures](/recipe_modules/tast_results/api.py#183)(self, task_result, exclude_tests=None):**
-
-Convert TaskResult into api.failures.Failure objects and dicts.
-
-Args:
-  task_result (TaskResult): TaskResult to be converted.
-  exclude_tests list(str): List of names of tests to be
-    excluded.
-
-Returns:
-  A tuple of list(Failure) and list(dict) representing
-  failed test cases excluding the ones provided.
-
 &mdash; **def [get\_results](/recipe_modules/tast_results/api.py#68)(self, test_results_path, suite_name, tag, tests):**
 
 Return the test results decoded from the streamed_results.jsonl.
@@ -8913,7 +8920,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#268)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#272)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -8924,7 +8931,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#217)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#221)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -8932,14 +8939,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#242)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#246)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#480)(self, test_results_path, suite_name, missing_test_names, tag):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#484)(self, test_results_path, suite_name, missing_test_names, tag):**
 
 Upload the test results to ResultDB.
 
@@ -11450,11 +11457,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#17)(api):**
 ### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/build_failures.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/build_failures.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#29)(api, properties):**
 ### *recipes* / [failures:examples/hw\_test\_failures](/recipe_modules/failures/examples/hw_test_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/hw_test_failures.py#8): [failures](#recipe_modules-failures), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11490,6 +11497,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/package_failures.py#18)(api):**
+### *recipes* / [failures:examples/results](/recipe_modules/failures/examples/results.py)
+
+[DEPS](/recipe_modules/failures/examples/results.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/results.py#15)(api):**
 ### *recipes* / [failures:examples/step\_failures](/recipe_modules/failures/examples/step_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/step_failures.py#6): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

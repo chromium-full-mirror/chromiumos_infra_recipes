@@ -11993,7 +11993,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 build failed\n\n- amd64-generic-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
+      "humanReason": "1 out of 3 builds failed\n\n- amd64-generic-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
     },
     "name": "$result"
   }

@@ -59,43 +59,52 @@ def RunSteps(api):
     #    without needing to investigate individual steps.
     # 2. To present all failures from a run, not just the first failed
     #    validation.
-    failures = []
+    validation_kinds = ['dirmd validation', 'test_plan validation']
+    results = api.failures.Results(
+        failures=[], successes={
+            validation_kinds[0]: 0,
+            validation_kinds[1]: 0
+        })
     for pi in project_infos:
       with api.step.nest('validate {}'.format(pi.name)):
         full_path = api.workspace_util.workspace_path.join(pi.path)
+        kind = validation_kinds[0]
         try:
           api.dirmd.validate_dir(full_path)
+          results.successes[kind] += 1
         except api.step.StepFailure as ex:
           # We want to link to the stdout of the actual step that failed, not
           # the nested step created above, so set use_top_level_step=False.
           logdog_url = api.urls.get_logdog_url(ex.result, 'stdout',
                                                use_top_level_step=False)
-          failures.append(
+          results.failures.append(
               api.failures.Failure(
-                  kind='dirmd validation',
+                  kind=kind,
                   title=pi.name,
                   link_map={'stdout': logdog_url},
                   fatal=True,
                   id=pi.name,
               ))
 
+        kind = validation_kinds[1]
         try:
           api.cros_test_plan_v2.validate(full_path)
+          results.successes[kind] += 1
         except api.step.StepFailure as ex:
           # We want to link to the stdout of the actual step that failed, not
           # the nested step created above, so set use_top_level_step=False.
           logdog_url = api.urls.get_logdog_url(ex.result, 'stdout',
                                                use_top_level_step=False)
-          failures.append(
+          results.failures.append(
               api.failures.Failure(
-                  kind='test_plan validation',
+                  kind=kind,
                   title=pi.name,
                   link_map={'stdout': logdog_url},
                   fatal=True,
                   id=pi.name,
               ))
 
-    return api.failures.aggregate_failures(failures)
+    return api.failures.aggregate_failures(results)
 
 
 def GenTests(api):
@@ -137,7 +146,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.post_check(
           post_process.ResultReason,
-          '1 dirmd validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/dirmd_validate_[CLEANUP]_chromiumos_workspace_src_project-a/dirmd_validate/stdout)'
+          '1 out of 1 dirmd validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/dirmd_validate_[CLEANUP]_chromiumos_workspace_src_project-a/dirmd_validate/stdout)'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -149,7 +158,7 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.post_check(
           post_process.ResultReason,
-          '1 test_plan validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/test_plan_validate_[CLEANUP]_chromiumos_workspace_src_project-a/stdout)'
+          '1 out of 1 test_plan validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/test_plan_validate_[CLEANUP]_chromiumos_workspace_src_project-a/stdout)'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -163,7 +172,8 @@ def GenTests(api):
       api.post_check(post_process.StatusFailure),
       api.post_check(
           post_process.ResultReasonRE,
-          '(?s)1 dirmd validation failed.*1 test_plan validation failed.*'),
+          '(?s)1 out of 1 dirmd validation failed.*1 out of 1 test_plan validation failed.*'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

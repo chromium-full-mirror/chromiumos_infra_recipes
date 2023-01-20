@@ -342,7 +342,7 @@ def GenTests(api):
   )
 
   summary = ('Full version: R99-1234.56.0'
-             '\n\n3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+             '\n\n3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
              '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
@@ -442,7 +442,7 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
-  summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+  summary = ('3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
              '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
@@ -483,7 +483,7 @@ def GenTests(api):
           ]),
   }
   summary = (
-      '1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
+      '1 out of 1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
   )
   yield api.orch_menu.test(
       'non-crit-test-check-updates-some', data.ctp_failure,
@@ -677,7 +677,7 @@ def GenTests(api):
       bucket='toolchain', builder='orderfile-generate-orchestrator')
 
   summary = (
-      '1 build failed\n\n- amd64-generic-postsubmit: [build page](https://'
+      '1 out of 3 builds failed\n\n- amd64-generic-postsubmit: [build page](https://'
       'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
       'critical-child-builder-fails',
@@ -783,7 +783,7 @@ def GenTests(api):
       extra_changes=gerrit_changes,
   )
 
-  summary = ('3 hw tests failed\n\n- htarget.hw.bvt-cq:'
+  summary = ('3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
              '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(

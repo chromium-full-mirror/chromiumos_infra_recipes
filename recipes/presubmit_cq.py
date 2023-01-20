@@ -94,7 +94,7 @@ def RunSteps(api: RecipeApi, properties: PresubmitCqProperties):
 
   with api.step.nest('check results') as presentation:
     return api.failures.aggregate_failures(
-        api.failures.get_build_failures([output]))
+        api.failures.get_build_results([output]))
 
 
 def GenTests(api: RecipeTestApi):

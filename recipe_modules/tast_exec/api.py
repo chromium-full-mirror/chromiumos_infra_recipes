@@ -165,8 +165,8 @@ class TastExecApi(RecipeApi):
       tast_inputs (TastInputs): Common inputs for running tast tests.
 
     Returns:
-      A tuple of list(Failures) and a bool indicating whether
-        the results were empty.
+      A tuple of list(Failures), a bool indicating whether the results were
+       empty and a dict mapping a task kind with the number of successes.
     """
     task_result = self._retry_iter(suite_name, vm_context, tast_inputs, 'first')
     tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
@@ -175,7 +175,7 @@ class TastExecApi(RecipeApi):
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
     if not self._should_retry:
       tests_to_retry = []
-    failures, failed_test_cases = self.m.tast_results.get_failures(
+    results, failed_test_cases = self.m.tast_results.convert_results(
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
     if tests_to_retry:
@@ -185,11 +185,11 @@ class TastExecApi(RecipeApi):
                                            'second')
       if retry_task_result.test_cases:
         all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
-      retry_failures, retry_tcs = self.m.tast_results.get_failures(
+      retry_results, retry_tcs = self.m.tast_results.convert_results(
           retry_task_result)
       empty_result = \
           retry_task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-      failures += retry_failures
+      results.add_results(retry_results)
       failed_test_cases += retry_tcs
 
     self.m.easy.set_properties_step(all_test_cases=all_test_cases,
@@ -200,7 +200,7 @@ class TastExecApi(RecipeApi):
       self.m.easy.set_properties_step(greenness=greenness)
     self.m.tast_results.record_logs(SYS_LOG_DIR)
 
-    return failures, empty_result
+    return results, empty_result
 
   def _retry_iter(self, suite_name, vm_context, tast_inputs, tag):
     with self.m.step.nest('%s tast iteration' % tag) as pres:

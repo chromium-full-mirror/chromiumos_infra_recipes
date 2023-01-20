@@ -29,8 +29,8 @@ def RunSteps(api):
 
   task_result = api.tast_results.get_results(
       temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', ['arc.Boot'])
-  failures, test_cases = api.tast_results.get_failures(task_result)
-  api.tast_results.print_results(failures, False)
+  results, test_cases = api.tast_results.convert_results(task_result)
+  api.tast_results.print_results(results.failures, False)
   api.assertions.assertEqual(test_cases[0]['name'], 'arc.Boot')
   # fake test case code.
 
@@ -42,18 +42,18 @@ def RunSteps(api):
       state=TaskState(verdict=TaskState.VERDICT_UNSPECIFIED))
   api.tast_results.get_tests_to_retry(empty_task_result)
 
-  api.assertions.assertEqual(len(failures), 1)
-  api.assertions.assertEqual(failures[0].kind, 'vm test')
-  api.assertions.assertEqual(failures[0].fatal, True)
-  api.assertions.assertEqual(failures[0].title, 'arc.Boot')
+  api.assertions.assertEqual(len(results.failures), 1)
+  api.assertions.assertEqual(results.failures[0].kind, 'vm test')
+  api.assertions.assertEqual(results.failures[0].fatal, True)
+  api.assertions.assertEqual(results.failures[0].title, 'arc.Boot')
   task_result = api.tast_results.get_results(
       temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1',
       ['arc.Boot', 'arc.StartStop', 'some.Test', 'some.OtherTest'])
-  failures, test_cases = api.tast_results.get_failures(task_result)
-  api.assertions.assertEqual(len(failures), 4)
-  api.assertions.assertEqual(failures[0].kind, 'vm test')
-  api.assertions.assertEqual(failures[0].fatal, True)
-  api.assertions.assertEqual(failures[0].title, 'arc.Boot')
+  results, test_cases = api.tast_results.convert_results(task_result)
+  api.assertions.assertEqual(len(results.failures), 4)
+  api.assertions.assertEqual(results.failures[0].kind, 'vm test')
+  api.assertions.assertEqual(results.failures[0].fatal, True)
+  api.assertions.assertEqual(results.failures[0].title, 'arc.Boot')
   api.assertions.assertEqual(test_cases[1]['name'], 'arc.StartStop')
   api.assertions.assertEqual(test_cases[1]['humanReadableSummary'],
                              u'Test did not run')
@@ -64,16 +64,16 @@ def RunSteps(api):
           x for x in task_result.test_cases
           if x.verdict == TaskState.VERDICT_PASSED
       ])
-  failures, test_cases = api.tast_results.get_failures(passed_task_result)
+  results, test_cases = api.tast_results.convert_results(passed_task_result)
   api.assertions.assertEqual(test_cases, [])
-  api.tast_results.print_results(failures, False)
+  api.tast_results.print_results(results.failures, False)
   tests, _ = api.tast_results.get_tests_to_retry(passed_task_result)
   api.assertions.assertEqual(tests, [])
   fishy_task_result = ExecuteResponse.TaskResult(name=task_result.name,
                                                  state=task_result.state)
-  failures, test_cases = api.tast_results.get_failures(fishy_task_result)
+  results, test_cases = api.tast_results.convert_results(fishy_task_result)
   api.assertions.assertEqual(test_cases, [])
-  api.tast_results.print_results(failures, True)
+  api.tast_results.print_results(results.failures, True)
 
 
 def GenTests(api):

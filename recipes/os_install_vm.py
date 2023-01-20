@@ -143,9 +143,9 @@ def run_tast(api: RecipeApi, properties: OsInstallVmProperties,
   test_results = api.tast_results.get_results(
       test_results_path=test_results_dir, suite_name='os_install',
       tag='os_install', tests=tests)
-  failures, _unused = api.tast_results.get_failures(test_results)
-  api.tast_results.print_results(failures, False)
-  return api.failures.aggregate_failures(failures)
+  results, _ = api.tast_results.convert_results(test_results)
+  api.tast_results.print_results(results.failures, False)
+  return api.failures.aggregate_failures(results)
 
 
 def RunSteps(api: RecipeApi,

@@ -39,19 +39,22 @@ def RunSteps(api):
 
   # Do the obvious thing without baseline tests: raise critical failures only.
   api.assertions.assertFalse(
-      api.failures.get_hw_test_failures([skylab_success]))
+      api.failures.get_hw_test_results([skylab_success]).failures)
   api.assertions.assertFalse(
-      api.failures.get_hw_test_failures([skylab_failure]))
+      api.failures.get_hw_test_results([skylab_failure]).failures)
   api.assertions.assertEqual(
-      api.failures.get_hw_test_failures([skylab_critical_failure]), [
+      api.failures.get_hw_test_results([skylab_critical_failure]).failures, [
           api.failures.Failure('hw test', 'target.hw.bvt-cq',
                                skylab_critical_link_map, True,
                                'target.hw.bvt-cq')
       ])
+  api.assertions.assertEqual(
+      api.failures.get_hw_test_results([skylab_critical_failure]).successes,
+      {'hw test': 0})
 
   # Return fatal failure when critical failure.
   api.assertions.assertEqual(
-      api.failures.get_hw_test_failures([skylab_critical_failure]), [
+      api.failures.get_hw_test_results([skylab_critical_failure]).failures, [
           api.failures.Failure('hw test', 'target.hw.bvt-cq',
                                skylab_critical_link_map, True,
                                'target.hw.bvt-cq')

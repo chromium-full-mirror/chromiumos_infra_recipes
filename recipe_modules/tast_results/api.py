@@ -180,8 +180,8 @@ class TastResultsApi(recipe_api.RecipeApi):
         human_readable_summary=task_summary,
     )
 
-  def get_failures(self, task_result, exclude_tests=None):
-    """Convert TaskResult into api.failures.Failure objects and dicts.
+  def convert_results(self, task_result, exclude_tests=None):
+    """Convert TaskResult into api.failures.Results object and dicts.
 
     Args:
       task_result (TaskResult): TaskResult to be converted.
@@ -189,18 +189,20 @@ class TastResultsApi(recipe_api.RecipeApi):
         excluded.
 
     Returns:
-      A tuple of list(Failure) and list(dict) representing
+      A tuple of api.failures.Results object and list(dict) representing
       failed test cases excluding the ones provided.
     """
-    failures = []
+    kind = 'vm test'
+    results = self.m.failures.Results(failures=[], successes={kind: 0})
     failed_test_cases = []
+
     exclude_tests = exclude_tests or []
     for test_case in task_result.test_cases:
-      if test_case.verdict == TaskState.VERDICT_FAILED:
-        if test_case.name not in exclude_tests:
-          failures.append(
+      if test_case.name not in exclude_tests:
+        if test_case.verdict == TaskState.VERDICT_FAILED:
+          results.failures.append(
               self.m.failures.Failure(
-                  kind='vm test',
+                  kind=kind,
                   title=test_case.name,
                   link_map={
                       test_case.human_readable_summary[:50]:
@@ -211,8 +213,10 @@ class TastResultsApi(recipe_api.RecipeApi):
                   id=None,
               ))
           failed_test_cases.append(jsonpb.MessageToDict(test_case))
+        else:
+          results.successes[kind] += 1
 
-    return failures, failed_test_cases
+    return results, failed_test_cases
 
   def print_results(self, failures, empty_result):
     """Print results for the user.

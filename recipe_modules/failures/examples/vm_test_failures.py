@@ -31,15 +31,20 @@ def RunSteps(api):
   api.assertions.assertFalse(api.failures.is_critical_test_failure(vm_success))
 
   # Return only critical vm test failures.
-  api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_success]))
-  api.assertions.assertFalse(api.failures.get_vm_test_failures([vm_failure]))
+  api.assertions.assertFalse(
+      api.failures.get_vm_test_results([vm_success]).failures)
+  api.assertions.assertFalse(
+      api.failures.get_vm_test_results([vm_failure]).failures)
   api.assertions.assertEqual(
-      api.failures.get_vm_test_failures([vm_critical_failure]), [
+      api.failures.get_vm_test_results([vm_critical_failure]).failures, [
           api.failures.Failure(
               'vm test', 'target.vm.suite',
               api.urls.get_vm_test_link_map(vm_critical_failure), True,
               'target.vm.suite')
       ])
+  api.assertions.assertEqual(
+      api.failures.get_vm_test_results([vm_critical_failure]).successes,
+      {'vm test': 0})
 
 
 def GenTests(api):

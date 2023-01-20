@@ -17,6 +17,23 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "build results (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results (2).bob-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

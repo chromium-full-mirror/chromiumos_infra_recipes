@@ -220,9 +220,9 @@ def invoke_tast(api, test_artifacts_dir, build_payload, dest_path):
 
     if result.state.verdict != TaskState.VERDICT_PASSED:
       # Tast failed or failed to reach a result.
-      failures, _ = api.tast_results.get_failures(result)
+      results, _ = api.tast_results.convert_results(result)
       is_empty = result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-      api.tast_results.print_results(failures, is_empty)
+      api.tast_results.print_results(results.failures, is_empty)
 
       raise api.step.StepFailure(
           'image build failed: {} failed'.format(_TAST_NAME))
