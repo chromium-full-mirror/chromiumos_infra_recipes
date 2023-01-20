@@ -6,12 +6,20 @@
 	// keep running.
 	// We intentionally put multiple statements on a line to make it fail
 	// lint.
-	"Bootstrap remote debug at point": {
+	"Bootstrap remote debug (PTVSD) at point": {
 		"scope": "python",
 		"prefix": "ptvsd",
 		"body": [
 			"import ptvsd; ptvsd.enable_attach(address=('127.0.0.1', 5678), redirect_output=True); ptvsd.wait_for_attach()",
 		],
 		"description": "Insert PTVSD at cursor position so that when executing, remote debug starts there"
+	},
+	"Bootstrap remote debug (DEBUGPY) at point": {
+		"scope": "python",
+		"prefix": "debugpy",
+		"body": [
+			"import debugpy; debugpy.listen(5678); debugpy.wait_for_client()",
+		],
+		"description": "Insert DEBUGPY at cursor position so that when executing, remote debug starts there"
 	}
 }
