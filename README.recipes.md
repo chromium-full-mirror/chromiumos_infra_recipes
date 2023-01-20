@@ -5179,7 +5179,7 @@ Returns:
 
 &mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#466)(self, hw_test):**
 
-Determine if the vm test failed and was critical.
+Determine if the hw test failed and was critical.
 
 Args:
   hw_test (SkylabResult): The hardware test result in question.
@@ -5199,7 +5199,7 @@ Returns:
 
 &mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#443)(self, hw_test):**
 
-Determine if the vm test was critical.
+Determine if the hw test was critical.
 
 Args:
   hw_test (SkylabResult): The hardware test result in question.

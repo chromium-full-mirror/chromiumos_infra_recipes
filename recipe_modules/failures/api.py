@@ -441,7 +441,7 @@ class FailuresApi(RecipeApi):
     return hw_test.status
 
   def is_hw_test_critical(self, hw_test):
-    """Determine if the vm test was critical.
+    """Determine if the hw test was critical.
 
     Args:
       hw_test (SkylabResult): The hardware test result in question.
@@ -464,7 +464,7 @@ class FailuresApi(RecipeApi):
             self.m.buildbucket.is_critical(build))
 
   def is_critical_hw_test_failure(self, hw_test):
-    """Determine if the vm test failed and was critical.
+    """Determine if the hw test failed and was critical.
 
     Args:
       hw_test (SkylabResult): The hardware test result in question.
