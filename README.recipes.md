@@ -9253,9 +9253,9 @@ Once all builds and tests passed, it submits a CL to update the Android LKGB
 file. The change will in turn trigger the PUpr generator to publish an actual
 Android uprev.
 
-&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#57)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/android_uprev_orchestrator.py#62)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#50)(api, properties):**
+&mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#55)(api, properties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
 [DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

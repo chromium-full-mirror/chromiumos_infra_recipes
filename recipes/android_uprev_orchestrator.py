@@ -44,7 +44,12 @@ PROPERTIES = AndroidUprevProperties
 _OVERLAY_PATH = 'src/private-overlays/project-cheets-private'
 
 # Projects that need to be synced to input manifest.
-_SYNC_PROJECTS = ['chromite', _OVERLAY_PATH]
+_SYNC_PROJECTS = [
+    _OVERLAY_PATH,
+    'chromite',
+    # Chromite reads chromeos_version.sh to determine the milestone.
+    'src/third_party/chromiumos-overlay',
+]
 
 
 def RunSteps(api, properties):

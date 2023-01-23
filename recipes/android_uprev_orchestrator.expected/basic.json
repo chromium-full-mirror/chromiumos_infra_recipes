@@ -1977,8 +1977,9 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromite",
       "src/private-overlays/project-cheets-private",
+      "chromite",
+      "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
       "32",
@@ -2019,8 +2020,9 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "chromite",
       "src/private-overlays/project-cheets-private",
+      "chromite",
+      "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
       "32",
@@ -2076,8 +2078,9 @@
       "--verbose",
       "--force-remove-dirty",
       "--prune",
+      "src/private-overlays/project-cheets-private",
       "chromite",
-      "src/private-overlays/project-cheets-private"
+      "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CACHE]/chromeos",
     "env_suffixes": {
@@ -2191,8 +2194,9 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
+      "src/private-overlays/project-cheets-private",
       "chromite",
-      "src/private-overlays/project-cheets-private"
+      "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
