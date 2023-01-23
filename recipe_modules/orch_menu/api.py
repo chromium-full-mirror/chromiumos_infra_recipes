@@ -18,6 +18,7 @@ from google.protobuf import json_format
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
@@ -526,6 +527,120 @@ class OrchMenuApi(RecipeApi):
           step_name='waiting for existing runs',
           timeout=60 * 60 * 23,
       )
+
+  def _timeout_to_deadline(self, timeout: int) -> sections_pb2.Deadline:
+    """Return a Deadline timeout seconds from now."""
+    deadline = self.m.context.deadline
+    timeout_deadline = self.m.time.time() + timeout
+
+    # If there is currently a deadline, take the min of this deadline and the
+    # current deadline, otherwise take this deadline.
+    deadline.soft_deadline = min(
+        deadline.soft_deadline,
+        timeout_deadline) if deadline.soft_deadline else timeout_deadline
+
+    return deadline
+
+  def _poll_for_output_prop(
+      self,
+      build_ids: List[int],
+      output_property: str,
+      timeout: int,
+      interval: int = 60,
+  ) -> Dict[int, build_pb2.Build]:
+    """Poll until all of build_ids are completed or have set an output property.
+
+    If timeout is reached, the set of currently completed builds will be
+    returned.
+
+    Args:
+      build_ids: Ids of builds to poll.
+      property: Name of the property to poll for. Note that the truthiness of
+        the property will not be checked, just whether it is set.
+      timeout: Maximum time to wait for builds to complete or set property.
+      interval: Delay between requests for the state of the builds.
+
+    Returns:
+      A map from build id -> build_pb2.Build
+    """
+    # TODO(b/261873853): Explore moving this logic into a helper binary, so
+    # there aren't 100s of get_multi calls in the UI while the builds are
+    # being collected.
+    completed_builds: Dict[int, build_pb2.Build] = {}
+    try:
+      with self.m.context(deadline=self._timeout_to_deadline(
+          timeout)), self.m.step.nest('collect'):
+
+        while len(completed_builds) < len(build_ids):
+          builds = self.m.buildbucket.get_multi(
+              build_ids, fields=self.m.buildbucket.DEFAULT_FIELDS | {'tags'})
+
+          # Find all builds that haven't ended or set property as an output.
+          running_builds = []
+          for bid, build in builds.items():
+            if (build.status
+                & common_pb2.ENDED_MASK
+               ) or output_property in build.output.properties:
+              completed_builds[bid] = build
+            else:
+              running_builds.append(build)
+
+          # If there are any running builds, log their ids for debugging and
+          # sleep.
+          if running_builds:
+            self.m.step.active_result.presentation.logs[
+                'running builds'] = ','.join(
+                    [str(b.id) for b in running_builds])
+            self.m.time.sleep(interval)
+
+    # TODO(b/261873853): It seems that context deadlines aren't actually
+    # respected in recipes tests, i.e. we can't actually hit this timeout in
+    # testing. Investigate further.
+    except StepFailure as ex:  #pragma: nocover
+      if not ex.had_timeout:
+        raise
+
+    return completed_builds
+
+  def plan_and_wait_for_images(
+      self,
+      run_step_name: Optional[str] = None,
+      extra_child_props: Optional[Dict[str, Any]] = None,
+  ) -> List[build_pb2.Build]:
+    """Plan and schedule children, and wait until they have produced images.
+
+    Args:
+      run_step_name: Name for "run builds" step, or None.
+      extra_child_props: If set, extra properties to append to the child
+        builder requests.
+
+    Returns:
+      A list of builds that have produced images and are ready for testing.
+    """
+    with self.m.step.nest(run_step_name or 'run builds') as pres:
+      if self._update_manifest_refs:
+        raise ValueError(
+            'currently plan_and_wait_for_images cannot be called when update_manifest_refs is set.'
+        )
+
+      child_specs = self._get_child_specs()
+      collect_now, collect_after = self._filter_schedule_builds(
+          pres, child_specs, extra_props=extra_child_props)
+
+      # It is possible that some of the builds that uploaded testing artifacts
+      # have completed after _poll_for_output_prop. However, we have not
+      # explicitly collected them, so keep them in the running status; these
+      # builds should be collected by later steps, e.g.
+      # _collect_remaining_children.
+      self._builds_status.update(running=collect_now + collect_after)
+
+      # Wait until the children being used for end-to-end tests either complete
+      # or upload testing artifacts.
+      testable_builds = self._poll_for_output_prop(
+          [b.id for b in collect_now], 'image_artifacts_uploaded',
+          timeout=60 * 60 * 36).values()
+
+      return list(testable_builds)
 
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
                             check_critical_step_name=None,
