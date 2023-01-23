@@ -91,12 +91,18 @@ def DoRunSteps(api: RecipeApi):
         'ignore_already_exists_errors': True,
     }
 
-  builds_status = api.orch_menu.plan_and_run_children(
-      extra_child_props=extra_child_props,
-  )
-
-  # Aggregate any metadata produced by the child builds into our own GS bucket
-  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
+  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
+  if async_unit_tests_enabled:
+    testable_builds = api.orch_menu.plan_and_wait_for_images()
+    # Aggregate any metadata produced by the child builds into our own GS bucket
+    metadata = api.orch_menu.aggregate_metadata(testable_builds)
+  else:
+    builds_status = api.orch_menu.plan_and_run_children(
+        extra_child_props=extra_child_props,
+    )
+    # Aggregate any metadata produced by the child builds into our own GS bucket
+    metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
+    testable_builds = builds_status.testable_builds
 
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:
@@ -106,7 +112,7 @@ def DoRunSteps(api: RecipeApi):
         # orchestrators without testing we can't run the test plan generator because
         # it requires access to internal repos.
         api.orch_menu.plan_and_run_tests(
-            container_metadata=metadata,
+            container_metadata=metadata, testable_builds=testable_builds,
             ignore_gerrit_changes=api.orch_menu.is_release_orchestrator)
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
@@ -118,7 +124,7 @@ def DoRunSteps(api: RecipeApi):
       gs_path = 'LATEST-staging' if api.build_menu.is_staging else 'main-release'
       api.cros_artifacts.publish_latest_files('chromeos-image-archive', gs_path)
 
-    api.cros_lkgm.do_lkgm(builds_status.completed_builds,
+    api.cros_lkgm.do_lkgm(api.orch_menu.builds_status.completed_builds,
                           use_branch=not api.cros_source.is_tot)
 
   # Launch any specified follow on orchestrator.
@@ -308,3 +314,15 @@ def GenTests(api: RecipeTestApi):
                            api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True,
                            collect_builds=data.non_crit_fail)
+
+  yield api.orch_menu.test(
+      'async-unit-test-experiment',
+      data.ctp_normal,
+      api.post_check(post_process.MustRun, 'run builds.schedule new builds'),
+      api.post_check(post_process.MustRun,
+                     'run builds.collect.buildbucket.get_multi'),
+      api.post_check(post_process.MustRun, 'aggregating metadata'),
+      api.post_check(post_process.MustRun, 'final build collect.collect.get'),
+      api.post_check(post_process.StatusSuccess),
+      experiments=['chromeos.build_cq.async_unit_tests'],
+  )
