@@ -7,6 +7,8 @@
 
 from __future__ import division
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import contextlib
 from collections import defaultdict
 from collections import namedtuple
@@ -15,11 +17,13 @@ from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.test_platform.request import Request
+from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
@@ -557,8 +561,11 @@ class OrchMenuApi(RecipeApi):
                   if spec.name in self.m.checkpoint.failed_builder_children()
               ]
 
-          completed_builds, collect_after = self._filter_schedule_wait_builds(
+          collect_now, collect_after = self._filter_schedule_builds(
               pres, child_specs, extra_props=extra_child_props)
+          completed_builds = list(
+              self._collect_builds([b.id for b in collect_now],
+                                   collect_name='child builds'))
         else:
           results_step_name = '(RETRY-MODE) check build results from previous builds'
           completed_builds = self.m.buildbucket.get_multi(
@@ -637,9 +644,13 @@ class OrchMenuApi(RecipeApi):
         for cb in self._properties.child_builds
     ] or self.config.orchestrator.child_specs
 
-  def _filter_schedule_wait_builds(self, parent_step, child_specs,
-                                   extra_props=None):
-    """Find the builds we need, filter those already started, run, and collect.
+  def _filter_schedule_builds(
+      self,
+      parent_step: StepPresentation,
+      child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
+      extra_props: Optional[Dict[str, Any]] = None,
+  ) -> Tuple[List[build_pb2.Build], List[build_pb2.Build]]:
+    """Find the builds we need, filter those already started, and run.
 
     Most of the heavy lifting is done in get_build_plan.
 
@@ -649,7 +660,9 @@ class OrchMenuApi(RecipeApi):
       extra_props (dict): Extra properties to append to child requests.
 
     Returns:
-      (list[Build]) List of build results.
+      (list[Build], list[Build]) Two lists of scheduled builds, the first
+        contains builds that have either completed or have COLLECT handling, the
+        second contains builds that have COLLECT_AFTER_HW_TEST handling.
     """
     completed_builds, existing_builds, new_build_requests = (
         self.m.build_plan.get_build_plan(
@@ -709,15 +722,10 @@ class OrchMenuApi(RecipeApi):
       collect_when_dict[self._collect_value(b.builder.builder, child_specs_dict,
                                             child_targets_dict)].append(b)
 
-    # Collect all existing builds, add to completed builds
-    build_ids = [
-        b.id
-        for b in collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT]
-    ]
-    completed_builds += self._collect_builds(build_ids,
-                                             collect_name='child builds')
-    return completed_builds, collect_when_dict[
-        BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST]
+    return (completed_builds +
+            collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
+            collect_when_dict[
+                BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST])
 
   def _collect_builds(self, build_ids, collect_name=None):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
