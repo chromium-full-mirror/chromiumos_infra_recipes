@@ -395,23 +395,16 @@ class GcloudApi(recipe_api.RecipeApi):
       ], infra_step=True)
     self._remove_cleanup_attached_disk(disk, instance, zone)
 
-  def _create_disk_ignoring_already_exists(self, disk, zone, image=None,
-                                           disk_type=None, size=None):
-    """create_disk but with swallowing if the disk already exists.
+  def _wrap_in_disk_exists_swallow(self, func):
+    """Wraps the provided function in an exception handler that swallows.
+
+    Swallows all errors of the type "the resource x already exists".
 
     Args:
-      disk (str): Google Cloud disk name.
-      zone (str): GCE zone to create disk (e.g. us-central1-b).
-      image (str): Image version use to create the disk. If none, will create a
-                   blank disk.
-      disk_type (str): Type of GCE disk to create.
-      size (str): Size of disk in gcloud format (e.g. 100GB).
-
-    Returns:
-      The stdout of the gcloud command.
+      func (Function): Function to try to execute.
     """
     try:
-      self.create_disk(disk, zone, image, disk_type, size)
+      func()
     except self.m.step.StepFailure as e:
       disk_exists = (e.result.stderr and _RE_DISK_EXISTS.search(
           e.result.stderr)) or (e.result.stdout and _RE_DISK_EXISTS.search(
@@ -713,10 +706,12 @@ class GcloudApi(recipe_api.RecipeApi):
       zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('create image from disk', [
-          'gcloud', 'compute', 'images', 'create', image_name,
-          '--source-disk={}'.format(disk), '--source-disk-zone={}'.format(zone)
-      ], infra_step=True)
+      self._wrap_in_disk_exists_swallow(lambda: self.m.step(
+          'create image from disk', [
+              'gcloud', 'compute', 'images', 'create', image_name,
+              '--source-disk={}'.format(disk), '--source-disk-zone={}'.format(
+                  zone)
+          ], infra_step=True))
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def get_expired_images(self, retention_days, prefixes, protected_images=None):
@@ -899,15 +894,12 @@ class GcloudApi(recipe_api.RecipeApi):
     try:
       # The cache image disks are of size 200GB. Gcloud defaults to 100GB
       # for SSDs, so specify a size of 200GB to match the cache disk.
-      self._create_disk_ignoring_already_exists(disk=self._disk,
-                                                zone=self._zone,
-                                                disk_type=disk_type,
-                                                size='200GB')
+      self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
+          disk=self._disk, zone=self._zone, disk_type=disk_type, size='200GB'))
     except self.m.step.StepFailure:
-      self._create_disk_ignoring_already_exists(disk=self._disk,
-                                                zone=self._zone,
-                                                disk_type='pd-standard',
-                                                size='200GB')
+      self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
+          disk=self._disk, zone=self._zone, disk_type='pd-standard',
+          size='200GB'))
     # Attach disk.
     self.attach_disk(name=self._short_name, instance=self.infra_host,
                      disk=self._disk, zone=self._zone)
@@ -977,15 +969,13 @@ class GcloudApi(recipe_api.RecipeApi):
           # exception and create a standard spinning disk. Also catch if the
           # disk is perhaps already in existance (false 404 from earlier check).
           try:
-            self._create_disk_ignoring_already_exists(disk=self._disk,
-                                                      zone=self._zone,
-                                                      image=snapshot,
-                                                      disk_type=disk_type)
+            self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
+                disk=self._disk, zone=self._zone, image=snapshot,
+                disk_type=disk_type))
           except self.m.step.StepFailure:
-            self._create_disk_ignoring_already_exists(disk=self._disk,
-                                                      zone=self._zone,
-                                                      image=snapshot,
-                                                      disk_type='pd-standard')
+            self._wrap_in_disk_exists_swallow(lambda: self.create_disk(
+                disk=self._disk, zone=self._zone, image=snapshot,
+                disk_type='pd-standard'))
         return snapshot or None
 
   def _setup_new_cache_mount_outside_path(self, recipe_mount_path):
