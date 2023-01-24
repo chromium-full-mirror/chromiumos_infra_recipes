@@ -12745,7 +12745,7 @@
       "-n",
       "1000",
       "-fields",
-      "id",
+      "builder.bucket,builder.builder,createTime,endTime,id,startTime,status",
       "-predicate",
       "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
     ],
