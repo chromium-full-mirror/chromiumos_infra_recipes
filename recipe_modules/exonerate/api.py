@@ -228,11 +228,22 @@ class ExonerateApi(recipe_api.RecipeApi):
         new_result.state.verdict = new_verdict
         filtered_results.append(new_result)
 
-    verdicts = [r.state.verdict for r in filtered_results]
-    if TaskState.VERDICT_FAILED in verdicts:
-      new_status = common_pb2.FAILURE
-    else:
-      new_status = common_pb2.SUCCESS
+    # CTP performs retries at the Autotest "test" level
+    # (e.g. critical-chrome-shard-0). Therefore each test may have multiple
+    # attempts represented in child_results.
+    # If the test passed once, we should consider that a success.
+    result_name_to_verdicts_map = {}
+    for result in filtered_results:
+      if result.name not in result_name_to_verdicts_map:
+        result_name_to_verdicts_map[result.name] = []
+      result_name_to_verdicts_map[result.name].append(result.state.verdict)
+
+    new_status = common_pb2.SUCCESS
+    for verdicts in result_name_to_verdicts_map.values():
+      if TaskState.VERDICT_PASSED not in verdicts:
+        new_status = common_pb2.FAILURE
+        break
+
     return filtered_results, new_status
 
   def exonerate_hwtests(self, hw_test_results):

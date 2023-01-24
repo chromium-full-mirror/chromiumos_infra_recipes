@@ -79,7 +79,7 @@
     "cmd": [],
     "name": "set exoneration_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"suiteCount\": \"1\", \"suiteStats\": [{\"count\": \"1\", \"name\": \"target.hw.bvt-cq\"}], \"testCount\": \"3\", \"testStats\": [{\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}, {\"count\": \"1\", \"name\": \"test4\"}, {\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}, {\"count\": \"1\", \"name\": \"test4\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{\"suiteCount\": \"2\", \"suiteStats\": [{\"count\": \"2\", \"name\": \"target.hw.bvt-cq\"}], \"testCount\": \"3\", \"testStats\": [{\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}, {\"count\": \"1\", \"name\": \"test4\"}, {\"count\": \"1\", \"name\": \"test2\"}, {\"count\": \"1\", \"name\": \"test3\"}, {\"count\": \"1\", \"name\": \"test4\"}]}@@@"
     ]
   },
   {

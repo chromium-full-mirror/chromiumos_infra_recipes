@@ -4960,7 +4960,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#238)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#249)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -4971,7 +4971,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#281)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#292)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -4982,7 +4982,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#309)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#320)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -4994,7 +4994,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#340)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#351)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5014,7 +5014,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#410)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#421)(self):**
 
 Return markdown style info about suites that were exonerated.
 
@@ -5028,7 +5028,7 @@ Return test_name without the tast prefix.
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#393)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#404)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5037,7 +5037,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#446)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#457)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5048,7 +5048,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#482)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#493)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
