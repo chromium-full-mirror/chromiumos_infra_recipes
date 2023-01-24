@@ -3837,19 +3837,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevant_builds@no relevant builds@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@0@@@"
-    ]
+    "name": "check build results"
   },
   {
     "cmd": [],

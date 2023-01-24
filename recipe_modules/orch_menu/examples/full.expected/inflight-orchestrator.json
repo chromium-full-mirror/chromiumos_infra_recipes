@@ -4025,10 +4025,10 @@
     "cmd": [],
     "name": "check build results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevant_builds@amd64-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@arm-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@atlas-cq@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@amd64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@atlas-cq@@@",
+      "@@@STEP_LOG_END@cq_relevant_builds@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13670,11 +13670,11 @@
     "name": "final build collect.check build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@amd64-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@arm-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@atlas-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@cave-cq@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
+      "@@@STEP_LOG_LINE@cq_relevant_builds@amd64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@atlas-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@cave-cq@@@",
+      "@@@STEP_LOG_END@cq_relevant_builds@@@"
     ]
   },
   {
@@ -13866,14 +13866,14 @@
     "name": "final build collect (2).check build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@amd64-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@arm-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@atlas-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@cave-cq@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
+      "@@@STEP_LOG_LINE@cq_relevant_builds@@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@amd64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@atlas-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@cave-cq@@@",
+      "@@@STEP_LOG_END@cq_relevant_builds@@@"
     ]
   },
   {

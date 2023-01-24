@@ -2331,19 +2331,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@1@@@"
-    ]
+    "name": "check build results"
   },
   {
     "cmd": [],
@@ -2460,18 +2448,7 @@
     "cmd": [],
     "name": "(RETRY-MODE) previously successful builds.check build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "(RETRY-MODE) previously successful builds.check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -605,23 +605,36 @@ class OrchMenuApi(RecipeApi):
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
     # Assume relevant if the child doesn't have the relevant_build prop.
-    relevant = lambda build: ('relevant_build' not in build.output.properties or
-                              build.output.properties['relevant_build'])
+    cq_relevant = lambda build: ('relevant_build' not in build.output.properties
+                                 or build.output.properties['relevant_build'])
+    ps_relevant = lambda build: ('relevance' not in build.tags or (build.tags[
+        'relevance'] == 'relevant'))
     with self.m.step.nest(results_step_name or 'check build results') as pres:
-      relevant_builds = [
-          x.builder.builder
-          for x in self._builds_status.completed_builds
-          if relevant(x)
-      ]
-      for build in builds:
-        if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
-          pres.text = 'some builds are running/pending'
-        if relevant(build):
-          relevant_builds.append(build.builder.builder)
-      pres.logs['relevant_builds'] = sorted(relevant_builds or
-                                            ['no relevant builds'])
-      self.m.easy.set_properties_step(
-          child_builds_relevant=len(relevant_builds))
+      if self.config.id.type == BuilderConfig.Id.CQ:
+        cq_relevant_builds = [
+            x.builder.builder
+            for x in self._builds_status.completed_builds
+            if cq_relevant(x)
+        ]
+        for build in builds:
+          if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
+            pres.text = 'some builds are running/pending'
+          if cq_relevant(build):
+            cq_relevant_builds.append(build.builder.builder)
+        pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
+                                                 ['no relevant builds'])
+        self.m.easy.set_properties_step(
+            child_builds_relevant=len(cq_relevant_builds))
+
+      if self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
+        ps_relevant_builds = [
+            x.builder.builder
+            for x in self._builds_status.completed_builds
+            if ps_relevant(x)
+        ]
+        if not ps_relevant_builds:
+          self.m.easy.set_properties_step(all_builds_irrelevant=True)
+
       failures = self.m.failures.get_build_failures(builds)
       self.builds_status.update(completed=builds, failures=failures)
 

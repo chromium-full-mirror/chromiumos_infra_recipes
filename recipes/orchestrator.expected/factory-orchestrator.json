@@ -4548,19 +4548,7 @@
     "cmd": [],
     "name": "check build results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevant_builds@amd64-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@arm-generic-cq@@@",
-      "@@@STEP_LOG_LINE@relevant_builds@atlas-cq@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@",
       "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@3@@@"
     ]
   },
   {

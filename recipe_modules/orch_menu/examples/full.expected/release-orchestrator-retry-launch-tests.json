@@ -1992,19 +1992,7 @@
   },
   {
     "cmd": [],
-    "name": "(RETRY-MODE) check build results from previous builds",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@relevant_builds@@@@",
-      "@@@STEP_LOG_END@relevant_builds@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "(RETRY-MODE) check build results from previous builds.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@1@@@"
-    ]
+    "name": "(RETRY-MODE) check build results from previous builds"
   },
   {
     "cmd": [],
