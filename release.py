@@ -30,6 +30,7 @@ STAGING_CHECKS = (
     "staging-Annealing",
     "staging-backfiller",
     "staging-chrome-pupr-generator",
+    "staging-cq-orchestrator",
     "staging-DutTracker",
     "staging-firmware-ti50-postsubmit",
     "staging-manifest-doctor",
@@ -240,7 +241,9 @@ def check_staging_builders(ignore_failures: bool = False):
   """Check for failures in staging builders. Quit early if any problems."""
   print('=== Check staging status ===')
   baddies = []
-  print('Looking for 5 consecutive successes in staging.')
+  print(
+      'Looking for 5 consecutive successes in staging, showing only failures...'
+  )
   for name in STAGING_CHECKS:
     builder = f'chromeos/staging/{name}'
     if has_builder_had_non_success(builder):
@@ -257,8 +260,7 @@ def check_staging_builders(ignore_failures: bool = False):
 
 def has_builder_had_non_success(builder: str) -> bool:
   """Check whether a single builder has had any recent non-successes."""
-  print(f'Checking the status of: {builder} --> ', end='')
-  cmd = ['bb', 'ls', '-n', '5', '-json', builder]
+  cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', builder]
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
   unique_statuses = []
   for line in p.stdout.split('\n'):
@@ -269,8 +271,10 @@ def has_builder_had_non_success(builder: str) -> bool:
       continue
     if status not in unique_statuses:
       unique_statuses.append(status)
-  print(', '.join(unique_statuses))
-  return unique_statuses != ['SUCCESS']
+  if unique_statuses != ['SUCCESS']:
+    print(f'Non-success: {builder} --> {", ".join(unique_statuses)}')
+    return True
+  return False
 
 
 def quit_early_if_no_pending_changes(pending_changes: List[Commit]):
