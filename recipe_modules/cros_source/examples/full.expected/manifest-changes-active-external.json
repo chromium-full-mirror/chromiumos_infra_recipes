@@ -3350,8 +3350,6 @@
     "cmd": [
       "git",
       "clone",
-      "--reference",
-      "[CACHE]/chromeos/manifest-internal",
       "--dissociate",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "[CLEANUP]/chromiumos_workspace/manifest-internal"

@@ -944,9 +944,13 @@ class CrosSourceApi(RecipeApi):
           # Fetch the internal manifest into its path.  Use the (synced) cache
           # as a reference, so that we do not use the network for this.
           self.m.git.clone(
-              manifests.intern.url, target_path=manifests.intern.path,
-              reference=self.cache_path.join(manifests.intern.relpath),
-              dissociate=True, timeout_sec=60 * 60)
+              manifests.intern.url,
+              target_path=manifests.intern.path,
+              # TODO(b/266145294): Find out why it started failing when we pass
+              # in reference.
+              # reference=self.cache_path.join(manifests.intern.relpath),
+              dissociate=True,
+              timeout_sec=60 * 60)
           # Also, check out the correct branch of the internal manifest.
           with self.m.context(cwd=manifests.intern.path):
             self.m.git.checkout(i_branch)
