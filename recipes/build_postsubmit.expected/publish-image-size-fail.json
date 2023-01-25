@@ -3364,7 +3364,7 @@
     "cmd": [],
     "name": "set target_versions",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@target_versions@{\"androidBranchVersion\": \"\", \"androidTargetVersion\": \"\", \"androidVersion\": \"\", \"chromeVersion\": \"\", \"fullVersion\": \"\", \"milestoneVersion\": \"110\", \"platformVersion\": \"15255.0.0\"}@@@"
+      "@@@SET_BUILD_PROPERTY@target_versions@{\"androidBranchVersion\": \"\", \"androidTargetVersion\": \"\", \"androidVersion\": \"\", \"chromeVersion\": \"\", \"fullVersion\": \"\", \"lacrosVersion\": \"\", \"milestoneVersion\": \"110\", \"platformVersion\": \"15255.0.0\"}@@@"
     ]
   },
   {
