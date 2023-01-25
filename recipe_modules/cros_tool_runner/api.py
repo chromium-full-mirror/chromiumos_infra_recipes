@@ -76,7 +76,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           "CONTAINER_CACHE_SERVICE_HOST",
 
           # Docker drone info.
-          "DOCKER_DRONE_IMAGE"
+          "DOCKER_DRONE_IMAGE",
           "DOCKER_DRONE_SERVER_NAME",
 
           # Resource limits for docker.
