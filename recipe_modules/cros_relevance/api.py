@@ -198,7 +198,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     with self.m.step.nest('cq relevance check') as presentation:
 
       if not patch_sets:
-        presentation.step_text: 'no changes to check for relevancy'
+        presentation.step_text = 'no changes to check for relevancy'
         return False
 
       check_request = PointlessBuildCheckRequest(

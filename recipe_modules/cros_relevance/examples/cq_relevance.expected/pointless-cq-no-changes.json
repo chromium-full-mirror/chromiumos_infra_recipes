@@ -63,7 +63,10 @@
   },
   {
     "cmd": [],
-    "name": "cq relevance check"
+    "name": "cq relevance check",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
+    ]
   },
   {
     "name": "$result"
