@@ -8986,56 +8986,6 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.get previous failed and now exonerable suites",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 0 vm suite and 0 hw suite@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tests.schedule tests.get previous failed and now exonerable suites.find matching builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@matching builds@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tests.schedule tests.get previous failed and now exonerable suites.find matching builds.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run tests.schedule tests.schedule hardware tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -10479,21 +10429,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@scheduled_tast_gce_tests@[\"ttarget.tast_gce.sweet\"]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tests.schedule tests.set properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tests.schedule tests.set test_tasks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [4321, 4321, 4321], \"tast_vm_tests_builder_ids\": [8922054662172514001, 8922054662172514002]}@@@"
     ]
   },
   {

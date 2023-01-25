@@ -24,23 +24,18 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = {
     'passed_tests': Property(default=[]),
     'is_retry': Property(default=False),
-    'previously_failed_now_exonerable_hw_suites': Property(default=[]),
-    'previously_failed_now_exonerable_vm_suites': Property(default=[]),
 }
 
 
-def RunSteps(api, passed_tests, is_retry,
-             previously_failed_now_exonerable_hw_suites,
-             previously_failed_now_exonerable_vm_suites):
+def RunSteps(api, passed_tests, is_retry):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
-  _ = api.cros_test_proctor.schedule_tests(
-      test_plan, list(set(passed_tests)),
-      previously_failed_now_exonerable_hw_suites,
-      previously_failed_now_exonerable_vm_suites, api.cros_test_proctor.timeout,
-      snapshot, is_retry=is_retry)
+
+  _ = api.cros_test_proctor.schedule_tests(test_plan, list(set(passed_tests)),
+                                           api.cros_test_proctor.timeout,
+                                           snapshot, is_retry=is_retry)
 
 
 def GenTests(api):
@@ -185,46 +180,3 @@ def GenTests(api):
           MustRun,
           'schedule hardware tests.another_target.buildbucket.schedule'),
       api.post_check(StatusSuccess))
-
-  previously_failed_now_exonerable_hw_suites = [
-      'htarget.hw.bvt-cq',
-      'htarget.hw.some-suite',
-  ]
-  expected_hw_test_names = [
-      'htarget.hw.bvt-inline',
-      'htarget.hw.some-other-suite',
-  ]
-  yield api.test(
-      'dont-run-now-exonerable-hw-tests',
-      api.properties(
-          is_retry=True,
-          previously_failed_now_exonerable_hw_suites=previously_failed_now_exonerable_hw_suites
-      ),
-      api.post_check(PropertyEquals, 'scheduled_hw_tests',
-                     expected_hw_test_names),
-      api.post_check(
-          PropertyEquals, 'test_tasks', {
-              'skylab_builder_ids': [8922054662172514000, 8922054662172514000],
-              'tast_vm_tests_builder_ids':
-                  [8922054662172514001, 8922054662172514002]
-          }))
-  previously_failed_now_exonerable_vm_suites = [
-      'ttarget.tast.sweet_shard_1_of_2',
-      'ttarget.tast.sweet-informational',
-  ]
-  expected_tast_vm_test_names = ['ttarget.tast.sweet_shard_2_of_2']
-  yield api.test(
-      'dont-run-now-exonerable-vm-tests',
-      api.properties(
-          is_retry=True,
-          previously_failed_now_exonerable_vm_suites=previously_failed_now_exonerable_vm_suites
-      ),
-      api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
-                     expected_tast_vm_test_names),
-      api.post_check(
-          PropertyEquals, 'test_tasks', {
-              'skylab_builder_ids': [
-                  8922054662172514000, 8922054662172514000, 8922054662172514000
-              ],
-              'tast_vm_tests_builder_ids': [8922054662172514001]
-          }))

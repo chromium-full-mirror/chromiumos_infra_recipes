@@ -17,7 +17,4 @@ message ProctorProperties {
 
   // Split the skylab invocations by build target.
   bool skylab_task_per_build_target = 3;
-
-  // Whether to run exonerate_retried_suites in dry_run mode
-  bool dry_run_exonerate_retried_suites = 4;
 }

@@ -36,8 +36,6 @@ def RunSteps(api):
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(exonerated_vm_builds[0], build)
-  api.assertions.assertEqual(
-      api.exonerate.is_vm_test_build_exonerable(exonerated_vm_builds[0]), False)
 
 
 def GenTests(api):
