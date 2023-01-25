@@ -448,7 +448,7 @@
     "cmd": [
       "sudo",
       "--non-interactive",
-      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "provision",
       "-docker_key_file",
@@ -538,7 +538,7 @@
     "cmd": [
       "sudo",
       "--non-interactive",
-      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "test",
       "-docker_key_file",
