@@ -6247,7 +6247,7 @@
       "-n",
       "1000",
       "-fields",
-      "builder.bucket,builder.builder,create_time,end_time,id,start_time,status",
+      "id",
       "-predicate",
       "{\"builder\": {\"project\": \"project\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
     ],
