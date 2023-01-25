@@ -27,8 +27,8 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     return self.depgraph_relevance_return('cq relevance check', value)
 
   def set_toolchain_cls_return(self, value):
-    return self.depgraph_relevance_return(
-        'init sdk.detect toolchain change.path relevancy check', not value)
+    return self.depgraph_relevance_return('init sdk.detect toolchain change',
+                                          not value)
 
   def set_build_api_return(self, step, endpoint, data='', iteration=1,
                            retcode=0):

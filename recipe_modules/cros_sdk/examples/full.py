@@ -44,8 +44,7 @@ def RunSteps(api, properties):
 
     chroot = api.cros_sdk.create_chroot(version=properties.sdk_cache_version)
     api.assertions.assertNotEqual(chroot, None)
-    api.cros_sdk.update_chroot(properties.gitiles_commit,
-                               properties.gerrit_changes)
+    api.cros_sdk.update_chroot()
 
     api.assertions.assertEqual(api.cros_sdk.long_timeouts,
                                api.workspace_util.toolchain_cls_applied)
@@ -136,8 +135,7 @@ def GenTests(api):
                   ),
           }),
       api.step_data(
-          'init sdk.detect toolchain change.path relevancy check.'
-          'read output file',
+          'init sdk.detect toolchain change.read output file',
           api.file.read_raw(
               content=PointlessBuildCheckResponse().SerializeToString())),
       api.properties(
@@ -154,8 +152,7 @@ def GenTests(api):
                   ),
           }),
       api.step_data(
-          'init sdk.detect toolchain change.path relevancy check.'
-          'read output file',
+          'init sdk.detect toolchain change.read output file',
           api.file.read_raw(
               content=PointlessBuildCheckResponse().SerializeToString())),
       api.properties(

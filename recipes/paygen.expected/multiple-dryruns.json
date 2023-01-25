@@ -1507,6 +1507,14 @@
   },
   {
     "cmd": [],
+    "name": "initialization.init sdk.detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "doing paygen",
     "~followup_annotations": [
       "@@@STEP_TEXT@number of concurrent requests: 2@@@"

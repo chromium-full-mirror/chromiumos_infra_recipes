@@ -43,7 +43,7 @@ def RunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   with api.build_menu.configure_builder(missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(version=None, timeout_sec=None)
-    api.cros_sdk.update_chroot(None, None, timeout_sec=None)
+    api.cros_sdk.update_chroot(timeout_sec=None)
 
     return DoRunSteps(api, properties)
 

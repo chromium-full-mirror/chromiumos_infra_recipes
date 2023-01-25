@@ -299,6 +299,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "init sdk.detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

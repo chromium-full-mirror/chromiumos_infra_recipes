@@ -9,8 +9,10 @@ import contextlib
 from typing import Any, Dict, Generator, List, Optional
 
 from PB.chromiumos.common import Chroot
+from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.recipe_modules.chromeos.workspace_util.workspace_util import \
     WorkspaceUtilProperties
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
@@ -153,8 +155,6 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       self.m.cros_source.checkout_gerrit_change(change)
 
   def detect_toolchain_cls(self, chroot: Chroot,
-                           gitiles_commit: Optional[GitilesCommit] = None,
-                           gerrit_changes: Optional[List[GerritChange]] = None,
                            test_value: Optional[bool] = None,
                            name: Optional[str] = None) -> bool:
     """Check for toolchain changes.
@@ -164,32 +164,49 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
 
     Args:
       chroot: The chroot for the build.
-      gitiles_commit: The gitiles commit to use, or None to use the value from
-        config.
-      gerrit_changes: The gerrit changes in use, or None to use the changes
-        already applied via apply_changes().
-      name: The name for the step, or None for default.
       test_value: The value to use for tests, or None to detect toolchain
         changes unless step data is provided elsewhere.
+      name: The name for the step, or None for default.
 
     Returns:
       Whether there are toolchain patches applied.
     """
-    gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
-    gerrit_changes = gerrit_changes or self._applied_changes
 
-    # See if there are any new changes to check.
-    to_check = [c for c in gerrit_changes if not c in self.checked_changes]
-    if not to_check:
-      return self.toolchain_cls_applied
+    with self.m.step.nest(name or
+                          'detect toolchain change') as step_presentation:
+      if self.toolchain_cls_applied is not None:
+        return self.toolchain_cls_applied
 
-    with self.m.step.nest(name or 'detect toolchain change') as detect:
-      changed = self.m.cros_relevance.check_for_toolchain_change(
-          gitiles_commit=gitiles_commit, gerrit_changes=gerrit_changes,
-          chroot=chroot, test_value=test_value)
-      self.checked_changes.extend(to_check)
+      if not self.patch_sets:
+        self.m.cros_relevance.toolchain_cls_applied = False
+        step_presentation.step_text = 'no changes to check for relevancy'
+        return self.toolchain_cls_applied
+
+      toolchain_paths_response = \
+        self.m.cros_build_api.DependencyService.GetToolchainPaths(
+          GetToolchainPathsRequest(chroot=chroot))
+      relevant_paths = (x.path for x in toolchain_paths_response.paths)
+
+      affected_paths = self.m.cros_relevance.get_affected_paths(self.patch_sets)
+
+      check_request = PointlessBuildCheckRequest(
+          ignore_known_non_portage_directories=True,
+      )
+      for source_path in affected_paths:
+        affected_path = check_request.affected_paths.add()
+        affected_path.path = source_path
+      for source_path in relevant_paths:
+        relevant_path = check_request.relevant_paths.add()
+        relevant_path.path = source_path
+
+      response = self.m.cros_relevance.call_pointless_build_checker(
+          check_request, step_presentation, not test_value)
+
+      # If build is pointless then nothing has changed in the toolchain.
+      changed = not bool(response.build_is_pointless.value)
+      self.m.cros_relevance.toolchain_cls_applied = changed
       self.m.easy.set_properties_step(testing_toolchain=changed)
-      detect.step_text = 'change detected' if changed else 'no change'
+      step_presentation.step_text = 'change detected' if changed else 'no change'
       return changed
 
   @contextlib.contextmanager

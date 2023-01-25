@@ -79,9 +79,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
             expected_toolchain_cls_applied=toolchain_cls_applied))
 
     if has_cls:
-      ret += api.step_data(
-          'detect toolchain change.path relevancy check.read output file',
-          api.file.read_raw(content=resp.SerializeToString()))
+      ret += api.step_data('detect toolchain change.read output file',
+                           api.file.read_raw(content=resp.SerializeToString()))
     return api.test(name, ret, *test_case_args)
 
   # The default Postsubmit build.

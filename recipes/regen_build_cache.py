@@ -44,7 +44,7 @@ def RunSteps(api: RecipeApi):
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
     api.cros_sdk.create_chroot(version=None, timeout_sec=None)
-    api.cros_sdk.update_chroot(None, None, timeout_sec=None)
+    api.cros_sdk.update_chroot(timeout_sec=None)
 
     with api.step.nest('update metadata'), api.context(
         cwd=api.cros_source.workspace_path):

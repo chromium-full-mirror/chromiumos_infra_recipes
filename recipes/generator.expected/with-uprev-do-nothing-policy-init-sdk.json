@@ -1469,6 +1469,14 @@
   },
   {
     "cmd": [],
+    "name": "init sdk.detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "try uprev chromeos-base/chromite",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@chroot {@@@",

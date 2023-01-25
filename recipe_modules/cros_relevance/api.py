@@ -13,7 +13,6 @@ from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 from PB.chromite.api.depgraph import DepGraph
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
-from PB.chromite.api.depgraph import GetToolchainPathsRequest
 from PB.chromite.api.depgraph import ListRequest
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
@@ -48,8 +47,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """Initializes the module."""
     self._pointless_build_checker_path = None
     self._build_planner_path = None
-    # Toolchain changes have been detected.
-    self._toolchain_cls_applied = False
+    # Toolchain changes have been detected, None if not checked.
+    self._toolchain_cls_applied = None
 
     self._build_planner_cipd_package = (
         self._properties.build_plan_generator_cipd_package or
@@ -71,6 +70,10 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         self._test_data.get('toolchain_cls_applied', None) is not None):
       return self._test_data.get('toolchain_cls_applied')
     return self._toolchain_cls_applied
+
+  @toolchain_cls_applied.setter
+  def toolchain_cls_applied(self, value: bool):
+    self._toolchain_cls_applied = value
 
   def run_build_planner(self, builder_configs, gerrit_changes, gitiles_commit,
                         name=None, test_builder_ids=None):
@@ -220,7 +223,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       check_request = PointlessBuildCheckRequest(
           ignore_known_non_portage_directories=False,
       )
-      affected_paths = self._get_affected_paths(patch_sets)
+      affected_paths = self.get_affected_paths(patch_sets)
       for source_path in affected_paths:
         affected_path = check_request.affected_paths.add()
         affected_path.path = source_path
@@ -229,8 +232,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         relevant_path = check_request.relevant_paths.add()
         relevant_path.path = source_path
 
-      response = self._call_pointless_build_checker(check_request, presentation,
-                                                    is_pointless_test_value)
+      response = self.call_pointless_build_checker(check_request, presentation,
+                                                   is_pointless_test_value)
       relevant = not bool(response.build_is_pointless.value)
 
       # Do this in a step instead of a presentaion to avoid multiple lines in
@@ -337,13 +340,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         new_gc.serialized_proto = (
             bbcommon_pb2.GerritChange.SerializeToString(gc))
 
-      result = self._call_pointless_build_checker(
+      result = self.call_pointless_build_checker(
           check_request, presentation, is_pointless_test_value=not test_value)
 
       return not bool(result.build_is_pointless.value)
 
-  def _call_pointless_build_checker(self, check_request, step_presentation,
-                                    is_pointless_test_value=False):
+  def call_pointless_build_checker(self, check_request, step_presentation,
+                                   is_pointless_test_value=False):
     """Returns the result of calling the Pointless Build Checker.
 
     Args:
@@ -418,35 +421,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                                     relevant_paths, test_value=test_value,
                                     name=(name or 'depgraph relevance check'))
 
-  def check_for_toolchain_change(self, gerrit_changes, gitiles_commit, chroot,
-                                 test_value=None, name=None):
-    """Check for toolchain changes.
-
-    Args:
-      gerrit_changes (list[GerritChange]): The gerrit changes for the build.
-      gitiles_commit (GitilesCommit): The gitiles commit for the build.
-      chroot (Chroot): The SDK for the build.
-      test_value (bool): The answer to use for testing, or None.
-      name (str): The step name to display, or None for default.
-
-    Returns:
-      (bool): Whether there are toolchain_cls applied.
-    """
-    # If there are no Gerrit changes, then the toolchain hasn't changed.
-    if not gerrit_changes:
-      return False
-
-    with self.m.step.nest(name or 'determine toolchain paths'):
-      toolchain_paths_response = \
-        self.m.cros_build_api.DependencyService.GetToolchainPaths(
-          GetToolchainPathsRequest(chroot=chroot))
-
-    self._toolchain_cls_applied |= self._are_paths_affected(
-        gerrit_changes, gitiles_commit,
-        relevant_paths=(x.path for x in toolchain_paths_response.paths),
-        test_value=test_value, ignore_known_non_portage=True)
-    return self._toolchain_cls_applied
-
   def get_dependency_graph(self, sysroot, chroot, packages=None):
     """Calculates the dependency graph for the build target & SDK
 
@@ -511,7 +485,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           gerrit_changes, self.DISALLOW_SLIM_BUILDS_FOOTER)
       return {'all'} if 'all' in builders else builders
 
-  def _get_affected_paths(self, patch_sets):
+  def get_affected_paths(self, patch_sets):
     """Returns the union of all paths in the list of patchsets.
 
     Args:
@@ -552,7 +526,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     with self.m.step.nest('get package dependencies'):
       req = ListRequest(sysroot=sysroot, chroot=chroot, packages=packages,
                         include_rev_deps=include_rev_deps)
-      affected_paths = self._get_affected_paths(patch_sets)
+      affected_paths = self.get_affected_paths(patch_sets)
       for path in affected_paths:
         src_path = req.src_paths.add()
         src_path.path = path

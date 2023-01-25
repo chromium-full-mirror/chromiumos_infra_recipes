@@ -56,6 +56,10 @@ def RunSteps(api: RecipeApi, properties: TestInputProperties) -> None:
   api.workspace_util.detect_toolchain_cls(None)
   api.assertions.assertEqual(properties.expected_toolchain_cls_applied,
                              api.workspace_util.toolchain_cls_applied)
+  # Second run, to check if it returns the same result.
+  api.workspace_util.detect_toolchain_cls(None)
+  api.assertions.assertEqual(properties.expected_toolchain_cls_applied,
+                             api.workspace_util.toolchain_cls_applied)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -93,9 +97,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
             ignore_missing_projects=ignore_missing_projects))
 
     if has_cls:
-      ret += api.step_data(
-          'detect toolchain change.path relevancy check.read output file',
-          api.file.read_raw(content=resp.SerializeToString()))
+      ret += api.step_data('detect toolchain change.read output file',
+                           api.file.read_raw(content=resp.SerializeToString()))
     return api.test(name, ret, *test_case_args)
 
   # The default Postsubmit build.

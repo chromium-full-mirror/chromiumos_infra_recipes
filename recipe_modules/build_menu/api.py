@@ -355,7 +355,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       tc_targets = [self.build_target] if self.build_target.name else None
       tc_targets = None if self._force_empty_toolchain_targets else tc_targets
       self.m.cros_sdk.update_chroot(
-          self.gitiles_commit, self.gerrit_changes,
           toolchain_targets=tc_targets,
           build_source=config.build.sdk_update.compile_source)
 

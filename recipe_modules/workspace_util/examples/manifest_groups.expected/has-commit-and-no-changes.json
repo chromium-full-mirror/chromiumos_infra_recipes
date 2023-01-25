@@ -1002,6 +1002,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "detect toolchain change",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no changes to check for relevancy@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

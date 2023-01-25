@@ -6,6 +6,7 @@
 from PB.recipe_modules.chromeos.workspace_util.workspace_util import WorkspaceUtilProperties
 
 DEPS = [
+    'cros_build_api',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/step',

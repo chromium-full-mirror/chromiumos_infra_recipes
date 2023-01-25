@@ -501,14 +501,12 @@ class CrosSdkApi(RecipeApi):
       self.m.file.symlink('link %s to chroot' % checkout_basename,
                           chroot_path or self._chroot_path, chroot_link)
 
-  def update_chroot(self, commit, changes, build_source=False,
-                    toolchain_targets=None, timeout_sec='DEFAULT',
-                    test_data=None, test_toolchain_cls=None, name=None):
+  def update_chroot(self, build_source=False, toolchain_targets=None,
+                    timeout_sec='DEFAULT', test_data=None,
+                    test_toolchain_cls=None, name=None):
     """Update the chroot.
 
     Args:
-      commit (GitilesCommit): Active gitiles_commit, or None.
-      changes (list[GerritChange]): Active gerrit changes, or None.
       build_source (boolean): Whether to compile from source.  Default: False.
       toolchain_targets (list[BuildTarget]): List of toolchain targets needed,
           or None.
@@ -523,7 +521,7 @@ class CrosSdkApi(RecipeApi):
     with self.m.step.nest(name or 'update sdk') as pres:
       # See if any of the changes affect the toolchain.
       toolchain_cls = self.m.workspace_util.detect_toolchain_cls(
-          self.chroot, commit, changes, test_value=test_toolchain_cls)
+          self.chroot, test_value=test_toolchain_cls)
       if build_source or toolchain_cls:
         self.mark_sdk_as_dirty()
         self._long_timeouts = True
