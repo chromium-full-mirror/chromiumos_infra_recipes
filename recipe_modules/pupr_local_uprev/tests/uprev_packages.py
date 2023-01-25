@@ -5,13 +5,12 @@
 
 """Verify that uprev_packages() creates local uprev commits as expected."""
 
-from typing import Generator, Optional
+from typing import Generator
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from RECIPE_MODULES.chromeos.pupr_local_uprev.api import EbuildsByProject
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
@@ -50,8 +49,7 @@ VERSIONS = [UprevVersionedPackageRequest.GitRef()]
 
 
 def RunSteps(api: RecipeApi, additional_commit_message: str,
-             allow_partial_uprev: bool,
-             expect_none_response: Optional[EbuildsByProject]):
+             allow_partial_uprev: bool, expect_none_response: bool):
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
       additional_commit_message=additional_commit_message,

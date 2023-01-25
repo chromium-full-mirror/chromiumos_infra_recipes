@@ -56,7 +56,6 @@ from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.git.api import Reference
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
-from RECIPE_MODULES.chromeos.pupr_local_uprev.api import EbuildsByProject
 from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
@@ -115,7 +114,7 @@ class GeneratorRun:
 
     self.workspace_path: Optional[Path] = None
     self._policy: Optional[BranchPolicy] = None
-    self.ebuilds_by_project: Optional[EbuildsByProject] = None
+    self._modified_projects: Optional[List[ProjectInfo]] = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -201,8 +200,8 @@ class GeneratorRun:
               path=self.properties.retry_ref.path,
           )
       ]
-    assert self.ebuilds_by_project is not None
-    return list(self.ebuilds_by_project)
+    assert self._modified_projects is not None
+    return self._modified_projects
 
   def run(self):
     """Run the Generator."""
@@ -239,8 +238,8 @@ class GeneratorRun:
           self.m.cros_sdk.create_chroot(use_image=False)
 
       if not self.retry_only_run:
-        self.ebuilds_by_project = self.uprev_packages()
-        if self.ebuilds_by_project is None:
+        self._modified_projects = self.uprev_packages()
+        if self._modified_projects is None:
           return
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
@@ -255,7 +254,7 @@ class GeneratorRun:
                                                       do_open_cls_remain,
                                                       self.policy, self.topic)
 
-  def uprev_packages(self) -> EbuildsByProject:
+  def uprev_packages(self) -> Optional[List[ProjectInfo]]:
     """Uprev packages on the local filesystem."""
     return self.m.pupr_local_uprev.uprev_packages(self.target_versions,
                                                   self.topic)

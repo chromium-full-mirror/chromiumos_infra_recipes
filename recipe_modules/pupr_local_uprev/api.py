@@ -5,9 +5,10 @@
 
 """Module to create uprevs on the local checkout for PUpr (Parallel Uprevs)."""
 
+from collections import defaultdict
 import json
 import re
-from typing import DefaultDict, List, NamedTuple, Optional
+from typing import Any, DefaultDict, List, NamedTuple, Optional
 
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
@@ -32,13 +33,10 @@ class Ebuild(NamedTuple):
   commit_info: str
 
 
-EbuildsByProject = DefaultDict[ProjectInfo, List[Ebuild]]
-
-
 class PuprLocalUprevApi(recipe_api.RecipeApi):
   """A module to create local uprevs for PUpr."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, *args: Any, **kwargs: Any):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
     self._additional_commit_message = ''
@@ -51,11 +49,11 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     """Return the checkout path where the build is processed."""
     return self.m.cros_source.workspace_path
 
-  def set_generator_attributes(
-      self, additional_commit_message: str = '',
-      allow_partial_uprev: bool = False,
-      packages: Optional[List[PackageInfo]] = None,
-      build_targets: Optional[List[BuildTarget]] = None):
+  def set_generator_attributes(self, additional_commit_message: str = '',
+                               allow_partial_uprev: bool = False,
+                               packages: Optional[List[PackageInfo]] = None,
+                               build_targets: Optional[List[BuildTarget]] = None
+                              ) -> None:
     """Set attributes whose values are determined in Generator.
 
     Args:
@@ -80,7 +78,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       versions: List[UprevVersionedPackageRequest.GitRef],
       topic: str,
       change_id: Optional[str] = None,
-  ) -> Optional[EbuildsByProject]:
+  ) -> Optional[List[ProjectInfo]]:
     """Try to uprev the specified packages. If successful, commit the uprev.
 
     Args:
@@ -91,8 +89,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       topic: A short string with which to tag all generated commits.
 
     Returns:
-      If packages are successfully uprevved, return a dict of
-        {ProjectInfo: Ebuild} for all modified uprevs.
+      If packages are successfully uprevved, return a list of ProjectInfos
+        for all repo projects with modified code.
       If not all packages are uprevved and allow_partial_uprev==False, return
         None. This signifies that the PUpr run should terminate immediately.
     """
@@ -139,7 +137,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
       if not response.responses:
         presentation.step_text = 'no new versions for {}'.format(cpv)
-        return None
+        return []
 
       valid_responses: List[UprevPackagesResponse] = []
       with self.m.step.nest('verify updates'):
@@ -167,8 +165,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
   def _commit_uprevs(self, versions: List[UprevVersionedPackageRequest.GitRef],
                      uprev_packages_responses: List[UprevPackagesResponse],
                      modified_package_names: List[str], topic: str,
-                     change_id: Optional[str] = None
-                    ) -> Optional[EbuildsByProject]:
+                     change_id: Optional[str] = None) -> List[ProjectInfo]:
     """Commit the uprevs on the local filesystem.
 
     Args:
@@ -182,7 +179,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       topic: A short string with which to tag all generated commits.
 
     Returns:
-      ebuilds_by_project, or None. If None, pupr should return immediately.
+      A list of ProjectInfos for repo projects with modified code.
     """
     with self.m.step.nest('commit uprev'):
       # Flatten the list of modified files, and get the project info for them.
@@ -193,7 +190,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
                    commit_info=uprev_resp.additional_commit_info)
             for ebuild in uprev_resp.modified_ebuilds)
       with self.m.context(cwd=self.workspace_path):
-        ebuilds_by_project = EbuildsByProject(list)
+        ebuilds_by_project: DefaultDict[ProjectInfo, List[Ebuild]]
+        ebuilds_by_project = defaultdict(list)
         for ebuild in modified_ebuilds:
           dirname = self.m.path.dirname(ebuild.path)
           project_info = self.m.repo.project_infos(projects=[dirname])[0]
@@ -253,10 +251,10 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
           self.m.git.add([e.path for e in ebuilds])
           self.m.git.commit(commit_message)
 
-    return ebuilds_by_project
+    return list(ebuilds_by_project)
 
   def rebase_cl(self, open_changes: List[GerritChange], topic: str,
-                change_num: int):
+                change_num: int) -> None:
     """Create a new uprev patch (locally) for change_id.
 
     Args:
@@ -278,14 +276,14 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       change_id = _extract_metadata(description, 'Change-Id: (.*)')
       existing_versions = _deserialize_versions(
           _extract_metadata(description, UPREV_VERSION_LABEL + ': (.*)'))
-      ebuilds_by_project = self.uprev_packages(existing_versions, topic,
-                                               change_id=change_id)
-      if not ebuilds_by_project:
+      modified_projects = self.uprev_packages(existing_versions, topic,
+                                              change_id=change_id)
+      if not modified_projects:
         raise StepFailure('The uprev had no file.')
-      if len(ebuilds_by_project.keys()) > 1:
+      if len(modified_projects) > 1:
         raise StepFailure(
             'The uprev requires multi-repo commit. Cannot be rebased. {}'
-            .format(sorted(ebuilds_by_project.keys())))
+            .format(sorted(modified_projects)))
 
   def _uprev_response_has_changes(self, response: UprevVersionedPackageResponse
                                  ) -> bool:
