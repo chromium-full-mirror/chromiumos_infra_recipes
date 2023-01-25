@@ -10,8 +10,9 @@ consistent.
 """
 
 import json
-import os
 from typing import Callable, List
+
+from RECIPE_MODULES.chromeos.util.util import read_test_file
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import Build as Build_pb2
@@ -26,23 +27,9 @@ from recipe_engine import recipe_test_api
 from recipe_engine.recipe_test_api import TestData
 
 
-def _read_test_file(filename: str) -> str:
-  """Read the content of a file in this directory.
-
-  Args:
-    filename: The basename of the file (located in this directory) to read.
-
-  Returns:
-    The contents of the file.
-  """
-  with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                         filename)) as f:
-    return f.read().strip()
-
-
 def _example_big_config() -> str:
   """Multiply paygen config for summary markdown truncate testing."""
-  data = json.loads(_read_test_file('test_paygen.json'))
+  data = json.loads(read_test_file('test_paygen.json', __file__))
   # 99 total.
   data['delta'] = data['delta'] * 33
   return json.dumps(data)
@@ -51,8 +38,8 @@ def _example_big_config() -> str:
 class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   """Helper class for testing Chrome OS Paygen Recipes."""
 
-  EXAMPLE_PAYGEN_JSON = _read_test_file('test_paygen.json')
-  NO_DELTA_PAYGEN_JSON = _read_test_file('test_no_deltas.json')
+  EXAMPLE_PAYGEN_JSON = read_test_file('test_paygen.json', __file__)
+  NO_DELTA_PAYGEN_JSON = read_test_file('test_no_deltas.json', __file__)
 
   EXAMPLE_PAYGEN_JSON_BIG = _example_big_config()
 
@@ -63,7 +50,8 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   ]
 
   # Pull out useful configs for testing get_requests (and others).
-  EXAMPLE_SINGLE_PAYGEN_CONFIG = _read_test_file('test_single_cfg.json')
+  EXAMPLE_SINGLE_PAYGEN_CONFIG = read_test_file('test_single_cfg.json',
+                                                __file__)
 
   # The following examples are to be used in conjunction with the above.
   SIGNED_SRC = SignedImage_pb2(

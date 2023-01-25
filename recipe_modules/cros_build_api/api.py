@@ -209,6 +209,8 @@ class CrosBuildApiApi(RecipeApi):
     self._log_level = properties.log_level or 'debug'
     self._api_endpoints = None
     self._version = None
+    self._publish_emerge_stats_to_bq = properties.publish_emerge_stats_to_bq
+    self._publish_emerge_stats_to_prop = properties.publish_emerge_stats_to_prop
 
   @property
   def log_level(self):
@@ -486,8 +488,10 @@ class CrosBuildApiApi(RecipeApi):
                                                    logfile_path,
                                                    test_data=test_teelog_data)
               # Much of the build api calls emerge, collect stats!
-              self.m.portage.publish_prebuilt_stats(
-                  endpoint, file_contents.decode('utf-8'))
+              self.m.portage.publish_emerge_stats(
+                  endpoint, file_contents.decode('utf-8'),
+                  publish_to_bq=self._publish_emerge_stats_to_bq,
+                  set_output_prop=self._publish_emerge_stats_to_prop)
               if file_contents:
                 presentation.logs['stdout'] = file_contents
 

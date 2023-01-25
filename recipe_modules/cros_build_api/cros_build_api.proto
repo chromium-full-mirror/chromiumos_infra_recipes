@@ -20,4 +20,11 @@ message CrosBuildApiProperties {
   // strings specified in chromite/lib/commandline.py, and the value will be
   // used as a string by recipe_modules/cros_build_api/api.py.
   string log_level = 2;
+  // Publish emerge stats to BigQuery. The recipe will scrape the bapi
+  // output and determine what actions emerge took and process durations
+  // and other valuable insights. It will then push to a table 'portage_stats'
+  // inside of the cloud project configured.
+  bool publish_emerge_stats_to_bq = 3;
+  // Also add the emerge stats to an output property.
+  bool publish_emerge_stats_to_prop = 4;
 }

@@ -10,10 +10,9 @@ message TestMetricsInputProperties {
   // The step_name to test.
   string step_name = 1;
 
-  oneof test_oneof {
-    // The build api stdout to feed to the test.
-    string bapi_stdout = 2;
-    // Tests exception handling.
-    int32 bad_input = 3;
-  }
+  // The build api stdout.
+  string bapi_stdout = 2;
+
+  // The expected property to compare against.
+  string expected = 3;
 }

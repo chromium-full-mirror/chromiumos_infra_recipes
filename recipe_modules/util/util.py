@@ -10,6 +10,7 @@
 from collections import namedtuple
 import datetime
 import functools
+import os
 import random
 import time
 
@@ -65,3 +66,18 @@ class exponential_retry():
           retry_delay = datetime.timedelta(milliseconds=new_retry_ms)
 
     return wrapper
+
+
+def read_test_file(filename: str, fdir: str) -> str:
+  """Read the content of a file in a directory.
+
+  Args:
+    filename: The basename of the file (located in this directory) to read.
+    fdir: The directory of the file, consumers might pass in `__file__`.
+
+  Returns:
+    The contents of the file, stripped.
+  """
+  with open(os.path.join(os.path.abspath(os.path.dirname(fdir)),
+                         filename)) as f:
+    return f.read().strip()

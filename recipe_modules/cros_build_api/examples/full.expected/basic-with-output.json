@@ -79,17 +79,9 @@
   },
   {
     "cmd": [],
-    "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.adding prebuilt metrics",
+    "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.adding emerge metrics",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "call chromite.api.BinhostService/PrepareBinhostsUploads.adding prebuilt metrics.set portage prebuilt stats",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@prebuilt_stats@{}@@@"
     ]
   },
   {
