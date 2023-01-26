@@ -261,19 +261,21 @@ class OrchMenuApi(RecipeApi):
           with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
             if run_step:
               with self.m.workspace_util.sync_to_commit(staging=is_staging):
-                bump_version = self._properties.bump_version and not is_staging
-                # Release orchestrators may build for a pinned manifest that is
-                # behind tip-of-branch and need to create a version bump CL
-                # using a local diff to ensure other files are not included.
-                use_local_diff = self.is_release_orchestrator
-                self.m.cros_version.bump_version(dry_run=not bump_version,
-                                                 use_local_diff=use_local_diff)
-                kwargs = {}
-                if self._properties.manifest_versions_branch:
-                  kwargs['branch'] = self._properties.manifest_versions_branch
-                self.m.cros_release.create_buildspec(
-                    dry_run=is_staging,
-                    gs_location=self._properties.buildspec_gs_path, **kwargs)
+                # If we're syncing to a specific manifest, don't bump the version.
+                if not self.m.cros_source.sync_to_manifest:
+                  bump_version = self._properties.bump_version and not is_staging
+                  # Release orchestrators may build for a pinned manifest that is
+                  # behind tip-of-branch and need to create a version bump CL
+                  # using a local diff to ensure other files are not included.
+                  use_local_diff = self.is_release_orchestrator
+                  self.m.cros_version.bump_version(
+                      dry_run=not bump_version, use_local_diff=use_local_diff)
+                  kwargs = {}
+                  if self._properties.manifest_versions_branch:
+                    kwargs['branch'] = self._properties.manifest_versions_branch
+                  self.m.cros_release.create_buildspec(
+                      dry_run=is_staging,
+                      gs_location=self._properties.buildspec_gs_path, **kwargs)
                 if self._properties.schedule_public_build:
                   with self.m.checkpoint.retry(
                       RetryStep.PUBLIC_BUILD_LKGM) as run_step:
