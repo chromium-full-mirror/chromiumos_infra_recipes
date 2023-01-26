@@ -199,7 +199,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "found no scheduler triggers"
+      "humanReason": "found no triggers"
     },
     "name": "$result"
   }

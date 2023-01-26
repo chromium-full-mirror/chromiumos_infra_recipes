@@ -302,7 +302,7 @@ class GeneratorRun:
     """
     with self.m.step.nest('validate triggers') as presentation:
       if not self.triggers:
-        raise StepFailure('found no scheduler triggers')
+        raise StepFailure('found no triggers')
       if self._has_cron_trigger:
         presentation.step_text = 'has cron trigger, running in retry-only mode'
       else:
