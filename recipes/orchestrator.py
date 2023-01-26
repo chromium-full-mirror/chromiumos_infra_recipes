@@ -72,10 +72,6 @@ def DoRunSteps(api: RecipeApi):
     if api.orch_menu.skip_paygen:
       extra_child_props['skip_paygen'] = True
 
-  if api.orch_menu.is_factory_orchestrator:
-    extra_child_props['$chromeos/cros_source'] = MessageToDict(
-        CrosSourceProperties(sync_to_manifest=api.cros_release.buildspec))
-
   if api.orch_menu.is_postsubmit_orchestrator:
     extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
         CrosRelevanceProperties(force_postsubmit_relevance=True))
