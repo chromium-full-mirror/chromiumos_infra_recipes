@@ -2030,7 +2030,9 @@
       "upload",
       "--bypass-hooks",
       "--force",
-      "--send-mail"
+      "--send-mail",
+      "--message",
+      "rebased by https://cr-buildbucket.appspot.com/build/0"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
     "env_suffixes": {

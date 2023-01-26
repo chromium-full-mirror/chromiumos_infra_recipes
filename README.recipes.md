@@ -6535,7 +6535,7 @@ API for working with git cl.
 
 A module for interacting with git cl.
 
-&mdash; **def [issues](/recipe_modules/git_cl/api.py#134)(self):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#140)(self):**
 
 Run `git cl issue`.
 
@@ -6543,7 +6543,7 @@ Returns:
   dict: Map between ref and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#106)(self, field: str=None, fast: bool=False, issue: str=None, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#112)(self, field: str=None, fast: bool=False, issue: str=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -6556,7 +6556,7 @@ Args:
 Returns:
   The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#42)(self, topic: Optional[str]=None, reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, hashtags: Optional[List[str]]=None, send_mail: bool=False, target_branch: Optional[str]=None, dry_run: bool=False, use_local_diff: bool=False, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#42)(self, topic: Optional[str]=None, reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, hashtags: Optional[List[str]]=None, send_mail: bool=False, target_branch: Optional[str]=None, dry_run: bool=False, use_local_diff: bool=False, message: Optional[str]=None, \*\*kwargs):**
 
 Run `git cl upload`.
 
@@ -6575,6 +6575,7 @@ Args:
   dry_run: If true, set --cq-dry-run.
   use_local_diff: If true, use git diff args to upload the local diff
     instead of diff taken against tip-of-branch.
+  message: Message for patchset. (-m)
 
 Returns:
   The command output.
@@ -7982,7 +7983,7 @@ Returns:
   bool: Whether or not a HASHTAG_FREEZE_RETRIES hashtag is present.
 ### *recipe_modules* / [pupr\_gerrit\_interface](/recipe_modules/pupr_gerrit_interface)
 
-[DEPS](/recipe_modules/pupr_gerrit_interface/__init__.py#5): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [pupr](#recipe_modules-pupr), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/pupr_gerrit_interface/__init__.py#5): [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [pupr](#recipe_modules-pupr), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -7996,7 +7997,7 @@ A module to interface between PUpr builders and Gerrit.
 
 Initialize the module's attributes.
 
-&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#350)(self, open_changes: List[GerritChange], most_recent_uprev: List[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
+&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#351)(self, open_changes: List[GerritChange], most_recent_uprev: List[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
 
 Retry any open uprev CLs based on the retry policy.
 
@@ -8030,7 +8031,7 @@ Args:
 Returns:
   A bool stating whether any open CLs remain after abandoning.
 
-&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#336)(self, patch_set: PatchSet, cq_label: int):**
+&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#337)(self, patch_set: PatchSet, cq_label: int):**
 
 Retry sending the CL through CQ by setting its Gerrit labels.
 
@@ -8049,7 +8050,7 @@ TODO(b/259445191): All of these attributes should be moved from
 
 Return a dict which sorts the given projects by their remote.
 
-&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#326)(self, gerrit_patch_set: PatchSet):**
+&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#326)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
 
 Upload a new revision onto an existing Gerrit PatchSet.
 
@@ -12182,7 +12183,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#33)(api: RecipeApi, expected_output: bytes, use_local_diff: bool):**
+&mdash; **def [RunSteps](/recipe_modules/git_cl/examples/upload.py#35)(api: RecipeApi, expected_output: bytes, use_local_diff: bool, message: Optional[str]):**
 ### *recipes* / [git\_footers:examples/full](/recipe_modules/git_footers/examples/full.py)
 
 [DEPS](/recipe_modules/git_footers/examples/full.py#13): [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
