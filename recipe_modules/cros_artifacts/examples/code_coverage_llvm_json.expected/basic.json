@@ -4066,6 +4066,15 @@
   },
   {
     "cmd": [],
+    "name": "upload artifacts.Set common coverage builder output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@code_coverage_paths@[\"gs://chromeos-throwaway/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/coverage.tbz2\"]@@@",
+      "@@@SET_BUILD_PROPERTY@code_coverage_type@\"LLVM\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload artifacts.upload code coverage data",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

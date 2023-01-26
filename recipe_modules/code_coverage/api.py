@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import copy
+import os
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -97,7 +98,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         absolute_cs_settings=CoverageFileSettings(True, False, True),
     )
 
-  def upload_code_coverage(self, tarfile, coverage_type,
+  def upload_code_coverage(self, tarfile, coverage_type, upload_uri,
                            step_name='upload code coverage data'):
     """Uploads code coverage llvm json and golang.
 
@@ -105,6 +106,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
         coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
+        upload_uri (Path): artifact upload uri
+                           (eg gs://chromeos-image-archive/buildername/id)
     """
     # Settings for capturing incremental coverage.
     incremental_settings = CoverageFileSettings(False, True, False)
@@ -112,6 +115,13 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     absolute_settings = CoverageFileSettings(False, False, True)
     # Settings for capturing absolute coverage on Chromium dashboard.
     absolute_chromium_settings = CoverageFileSettings(False, False, True)
+    tarfile_name = os.path.basename(str(tarfile))
+    coverage_artifact_path = f'{upload_uri}/{tarfile_name}'
+    code_coverage_paths = [coverage_artifact_path]
+    self.m.easy.set_properties_step(
+        'Set common coverage builder output properties',
+        code_coverage_type=coverage_type,
+        code_coverage_paths=code_coverage_paths)
 
     self.process_coverage_data(tarfile, coverage_type, step_name,
                                incremental_settings, absolute_settings,
@@ -290,6 +300,13 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
       build = self.m.buildbucket.build
 
+      self.m.easy.set_properties_step(
+          'Set absolute coverage builder specific output properties',
+          abs_code_coverage_host=PUBLIC_CODE_HOST,
+          abs_code_coverage_project=CODESEARCH_PROJECT,
+          abs_code_coverage_ref=DEFAULT_CODE_BRANCH,
+          abs_code_coverage_commit_id=codesearch_commit_id,
+      )
       chunks_file = self._chunk_coverage_file(absolute_coverage_file,
                                               coverage_type)
 
@@ -317,7 +334,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                 '--ref',
                 # self._branch,
                 # TODO(b/189193947): must be main for code search integration.
-                'refs/heads/main',
+                DEFAULT_CODE_BRANCH,
                 '--uploader_name',
                 build.builder.builder,
                 '--uploader_id',

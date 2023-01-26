@@ -20,6 +20,7 @@ DEPS = [
     'gitiles',
     'cros_infra_config',
     'gerrit',
+    'easy',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

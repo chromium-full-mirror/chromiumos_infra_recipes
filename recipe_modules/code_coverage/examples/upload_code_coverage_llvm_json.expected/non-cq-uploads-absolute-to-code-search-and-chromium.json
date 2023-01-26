@@ -5538,6 +5538,14 @@
   },
   {
     "cmd": [],
+    "name": "Set common coverage builder output properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@code_coverage_paths@[\"gs://chromeos-image-archive/buildername//coverage.tbz2\"]@@@",
+      "@@@SET_BUILD_PROPERTY@code_coverage_type@\"LLVM\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload code coverage data"
   },
   {
@@ -5698,6 +5706,17 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload code coverage data.upload absolute coverage to Code Search.Set absolute coverage builder specific output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@abs_code_coverage_commit_id@\"abcd1234\"@@@",
+      "@@@SET_BUILD_PROPERTY@abs_code_coverage_host@\"chromium\"@@@",
+      "@@@SET_BUILD_PROPERTY@abs_code_coverage_project@\"chromiumos/codesearch\"@@@",
+      "@@@SET_BUILD_PROPERTY@abs_code_coverage_ref@\"refs/heads/main\"@@@"
     ]
   },
   {

@@ -22,7 +22,9 @@ def RunSteps(api):
     api.build_menu.bootstrap_sysroot()
     api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
-    api.code_coverage.upload_code_coverage('[START_DIR]/coverage.tbz2', 'LLVM')
+    api.code_coverage.upload_code_coverage(
+        '[START_DIR]/coverage.tbz2', 'LLVM',
+        "gs://chromeos-image-archive/buildername/")
 
 
 def GenTests(api):
@@ -73,6 +75,10 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'upload code coverage data.upload absolute coverage to Code Search.Chunking coverage file'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'upload code coverage data.upload absolute coverage to Code Search.Set absolute coverage builder specific output properties'
       ),
       cq=False,
       input_properties={
