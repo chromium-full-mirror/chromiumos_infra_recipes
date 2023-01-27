@@ -18,9 +18,9 @@ DEPS = [
     'cros_source',
     'src_state',
     'git',
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
-    'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'repo',
@@ -44,7 +44,6 @@ def RunSteps(api: RecipeApi):
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
-        emerge_log = api.path.mkstemp('emerge_libchrome_log_')
         step_data = api.cros_sdk.run(
             'generate uprev commit', [
                 'vpython3',
@@ -52,14 +51,7 @@ def RunSteps(api: RecipeApi):
                 '--head',
                 '--track_active',
                 '--recipe',
-                '--emerge_log={}'.format(emerge_log),
             ], stdout=api.raw_io.output_text(add_output_log=True))
-
-        with api.step.nest('output emerge libchrome log') as presentation:
-          emerge_log_text = api.file.read_text('read log', emerge_log,
-                                               test_data='')
-          presentation.logs['emerge libchrome'] = emerge_log_text
-
         ret = step_data.stdout.strip().splitlines()
 
         # only the last line is the push options; earlier lines are logs
@@ -85,9 +77,14 @@ def RunSteps(api: RecipeApi):
                   'only Auto-Submit, Verified, Commit-Queue, Bot-Commit labels '
                   'with value are allowed'.format(option[1]))
 
+        patchset_description = 'm=' + 'Generated_by%3A_https%3A%2F%2Fcr%2Dbuildbucket%2Eappspot%2Ecom%2Fbuild%2F{}'.format(
+            api.buildbucket.build.id)
+
         with api.step.nest('push uprev commit'):
-          api.git.push(project_info.remote, 'HEAD:refs/for/main' + push_options,
-                       dry_run=api.build_menu.is_staging)
+          api.git.push(
+              project_info.remote,
+              'HEAD:refs/for/main' + push_options + patchset_description,
+              dry_run=api.build_menu.is_staging)
 
 
 def GenTests(api: RecipeTestApi):

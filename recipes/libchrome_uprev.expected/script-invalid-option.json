@@ -2070,41 +2070,13 @@
       "../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py",
       "--head",
       "--track_active",
-      "--recipe",
-      "--emerge_log=[CLEANUP]/emerge_libchrome_log__tmp_1"
+      "--recipe"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate uprev commit",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output_text@%submit,r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "output emerge libchrome log",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@emerge libchrome@@@@",
-      "@@@STEP_LOG_END@emerge libchrome@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/emerge_libchrome_log__tmp_1",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "output emerge libchrome log.read log",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@emerge_libchrome_log__tmp_1@@@"
     ]
   },
   {
