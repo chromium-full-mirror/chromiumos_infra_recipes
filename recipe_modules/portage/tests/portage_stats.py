@@ -32,7 +32,7 @@ def RunSteps(api, properties):
                                             set_output_prop=True,
                                             publish_to_bq=True)
   if properties.expected:
-    assert result == json.loads(properties.expected)
+    api.assertions.assertEqual(result, json.loads(properties.expected))
 
 
 def GenTests(api):
