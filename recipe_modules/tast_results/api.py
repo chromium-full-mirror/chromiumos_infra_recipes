@@ -503,7 +503,8 @@ class TastResultsApi(recipe_api.RecipeApi):
     }
     self.m.cros_resultdb.upload(config)
     self.m.cros_resultdb.report_missing_test_cases(missing_test_names,
-                                                   config.get('base_variant'))
+                                                   config.get('base_variant'),
+                                                   config.get('base_tags'))
     if not self.m.buildbucket.is_critical():
       behavior = TestPlatformRequest.Params.TestExecutionBehavior.NON_CRITICAL
       self.m.cros_resultdb.apply_exonerations(
