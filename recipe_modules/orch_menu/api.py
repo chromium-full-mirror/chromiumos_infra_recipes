@@ -354,7 +354,7 @@ class OrchMenuApi(RecipeApi):
       self.m.greenness.print_step()
       self.m.exonerate.print_stats()
       # Set child output ids if any
-      self.m.build_menu.add_child_build_ids_to_output_property()
+      self.m.build_menu.add_child_info_to_output_property()
 
     results = self.m.failures.Results(
         failures=self.builds_status.failures,

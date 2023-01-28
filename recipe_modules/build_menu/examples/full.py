@@ -65,7 +65,7 @@ def DoRunSteps(api, config, properties):
       _ = api.build_menu.artifacts_gs_path()
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
-      api.build_menu.add_child_build_ids_to_output_property()
+      api.build_menu.add_child_info_to_output_property()
       if properties.publish_image_sizes:
         api.build_menu.publish_image_size_data(config)
 
@@ -76,7 +76,6 @@ def DoRunSteps(api, config, properties):
 
     if config and config.id.type == BuilderConfig.Id.Type.RELEASE:
       api.build_menu.publish_latest_files('bucket', '{gs_path}')
-
 
 def GenTests(api):
 
@@ -91,8 +90,14 @@ def GenTests(api):
       (TestData): Test data for 'buildbucket.search' step.
     """
     return api.buildbucket.simulated_search_results([
-        build_pb2.Build(id=101, builder={'builder': builder}),
-        build_pb2.Build(id=102, builder={'builder': builder})
+        build_pb2.Build(id=101, builder={
+            'builder': builder,
+            'bucket': 'cq'
+        }),
+        build_pb2.Build(id=102, builder={
+            'builder': builder,
+            'bucket': 'cq'
+        })
     ])
 
   def check_child_build_output_properties(check, steps,
@@ -100,13 +105,18 @@ def GenTests(api):
     """
     Validation of child build ids in build output properties.
     """
-    child_builds = post_process.GetBuildProperties(steps).get('child_builds')
-    if child_builds:
+    child_builds = post_process.GetBuildProperties(steps).get(
+        'child_build_info')
+    child_build_ids = post_process.GetBuildProperties(steps).get('child_builds')
+    if child_builds or child_build_ids:
       check(
           expect_child_builds and len(child_builds) == 2 and
-          child_builds[0] == '101' and child_builds[1] == '102')
+          child_builds[0]['id'] == '101' and child_builds[1]['id'] == '102' and
+          child_build_ids[0] == '101' and child_build_ids[1] == '102')
     else:
       check(not expect_child_builds)
+
+
 
   yield api.build_menu.test(
       'cq-build',
