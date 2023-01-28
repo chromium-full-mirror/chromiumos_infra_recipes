@@ -193,6 +193,7 @@
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json) (Python3 ✅)
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov) (Python3 ✅)
   * [conductor:examples/full](#recipes-conductor_examples_full) (Python3 ✅)
+  * [conductor:tests/conductor_failures](#recipes-conductor_tests_conductor_failures) (Python3 ✅)
   * [conductor:tests/no_bbids](#recipes-conductor_tests_no_bbids) (Python3 ✅)
   * [conductor:tests/no_config](#recipes-conductor_tests_no_config) (Python3 ✅)
   * [conductor:tests/not_enabled](#recipes-conductor_tests_not_enabled) (Python3 ✅)
@@ -10063,6 +10064,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/conductor/examples/full.py#25)(api: RecipeApi):**
+### *recipes* / [conductor:tests/conductor\_failures](/recipe_modules/conductor/tests/conductor_failures.py)
+
+[DEPS](/recipe_modules/conductor/tests/conductor_failures.py#13): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/conductor/tests/conductor_failures.py#23)(api: RecipeApi):**
 ### *recipes* / [conductor:tests/no\_bbids](/recipe_modules/conductor/tests/no_bbids.py)
 
 [DEPS](/recipe_modules/conductor/tests/no_bbids.py#10): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -2242,6 +2242,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run builds.read conductor output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -2265,9 +2272,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.read output json",
+    "name": "run builds.read conductor output.read output json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@output.json@{\"bbids\":[\"123\"]}@@@",
       "@@@STEP_LOG_END@output.json@@@"
     ]

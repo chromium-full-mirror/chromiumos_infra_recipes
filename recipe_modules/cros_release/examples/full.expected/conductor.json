@@ -563,6 +563,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "generate payloads.running paygen orchestrator.read conductor output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -586,9 +593,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "generate payloads.running paygen orchestrator.read output json",
+    "name": "generate payloads.running paygen orchestrator.read conductor output.read output json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@output.json@{\"bbids\":[\"123\"]}@@@",
       "@@@STEP_LOG_END@output.json@@@"
     ]

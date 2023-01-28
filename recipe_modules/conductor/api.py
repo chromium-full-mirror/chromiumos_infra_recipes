@@ -102,19 +102,34 @@ class ConductorApi(recipe_api.RecipeApi):
       ]
     if dryrun:
       cmd += ['--dryrun']
-    self(cmd, **kwargs)
 
-    data = self.m.file.read_text('read output json', output_json_file,
-                                 test_data='{"bbids":["123"]}')
-    output = json.loads(data)
+    # Try except so that the step turns red but does not doom the build.
+    try:
+      self(cmd, **kwargs)
+    except:  #pylint: disable=bare-except
+      pass
 
-    report = output.get('report', None)
-    if report:
-      self._report[collect_name] = report
-      self.m.easy.set_properties_step(conductor_report=self._report,
-                                      step_name='update conductor report')
+    with self.m.step.nest('read conductor output') as presentation:
+      try:
+        data = self.m.file.read_text('read output json', output_json_file,
+                                     test_data='{"bbids":["123"]}')
+        output = json.loads(data)
 
-    return [int(bbid) for bbid in output.get('bbids', [])]
+        report = output.get('report', None)
+        if report:
+          self._report[collect_name] = report
+          self.m.easy.set_properties_step(conductor_report=self._report,
+                                          step_name='update conductor report')
+
+        conductor_bbids = [int(bbid) for bbid in output.get('bbids', [])]
+        if not conductor_bbids:
+          presentation.status = self.m.step.FAILURE
+          presentation.step_text = "conductor reported no bbids, falling back to original bbids"
+          conductor_bbids = bbids
+        return [int(bbid) for bbid in conductor_bbids]
+      except:  #pylint: disable=bare-except
+        presentation.step_text = "couldn't parse output, falling back to original bbids"
+        return [int(bbid) for bbid in bbids]
 
   def _ensure_conductor(self):
     """Ensure the conductor cli is installed."""

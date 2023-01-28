@@ -14,7 +14,8 @@ class ConductorTest(recipe_test_api.RecipeTestApi):
 
   def set_collect_output(self, bbids: List, report: Dict = None,
                          step_name: str = ''):
-    step_name = '%sread output json' % (step_name + '.' if step_name else '')
+    step_name = '%sread conductor output.read output json' % (
+        step_name + '.' if step_name else '')
     output = {'bbids': [str(bbid) for bbid in bbids]}
     if report:
       output['report'] = report
