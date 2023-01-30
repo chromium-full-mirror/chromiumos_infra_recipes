@@ -213,6 +213,7 @@
   * [chromiumos_codesearch_initiator](#recipes-chromiumos_codesearch_initiator) &mdash; Initialize ChromiumOS codesearch builders to create kzips.
   * [cipd_uprev](#recipes-cipd_uprev)
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
+  * [clean_up_lkgm_uprev_cls](#recipes-clean_up_lkgm_uprev_cls) &mdash; Recipe that tests chromite.
   * [clean_vm_images](#recipes-clean_vm_images) &mdash; Recipe for cleaning up stale GCP VM images.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cloud_pubsub:tests/raises_on_failed_publish](#recipes-cloud_pubsub_tests_raises_on_failed_publish)
@@ -309,6 +310,7 @@
   * [cros_infra_config:tests/release_tot_builds_snapshot](#recipes-cros_infra_config_tests_release_tot_builds_snapshot)
   * [cros_infra_config:tests/set_build_criticality](#recipes-cros_infra_config_tests_set_build_criticality)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
+  * [cros_lkgm:examples/cleanup_cls](#recipes-cros_lkgm_examples_cleanup_cls)
   * [cros_lkgm:examples/do_lkgm](#recipes-cros_lkgm_examples_do_lkgm)
   * [cros_lkgm:examples/full](#recipes-cros_lkgm_examples_full)
   * [cros_lkgm:tests/collect_public_build](#recipes-cros_lkgm_tests_collect_public_build)
@@ -3258,18 +3260,25 @@ Args:
 [DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_schedule](#recipe_modules-cros_schedule), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#96)(self):**
+&mdash; **def [cleanup\_cls](/recipe_modules/cros_lkgm/api.py#164)(self):**
+
+Performs the LGKM cleaning-up process.
+
+This does only the cleaning-up process of LKGM CLs, in contrast that
+`do_lkgm` does the actual uprev process as well.
+
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#98)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#124)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#126)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
@@ -3281,11 +3290,11 @@ Args:
   use_branch (bool): if set, upload the LKGM CL to the Chrome branch
     (e.g. refs/branch-heads/5204) instead of ToT.
 
-&emsp; **@property**<br>&mdash; **def [has\_public\_build](/recipe_modules/cros_lkgm/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [has\_public\_build](/recipe_modules/cros_lkgm/api.py#48)(self):**
 
 Check if a public build was scheduled.
 
-&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#51)(self):**
+&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#53)(self):**
 
 Schedules a public build.
 
@@ -11336,6 +11345,16 @@ TEST=None'   -p 'reviewers=["reviewer@google.com"]'   -p 'hashtags=["mondo-updat
 For more details on the input properties, see cl_factory.proto.
 
 &mdash; **def [RunSteps](/recipes/cl_factory.py#72)(api: RecipeApi, properties: ClFactoryProperties):**
+### *recipes* / [clean\_up\_lkgm\_uprev\_cls](/recipes/clean_up_lkgm_uprev_cls.py)
+
+[DEPS](/recipes/clean_up_lkgm_uprev_cls.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe that tests chromite.
+
+This recipe lives on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [RunSteps](/recipes/clean_up_lkgm_uprev_cls.py#30)(api: RecipeApi):**
 ### *recipes* / [clean\_vm\_images](/recipes/clean_vm_images.py)
 
 [DEPS](/recipes/clean_vm_images.py#18): [build\_menu](#recipe_modules-build_menu), [vmlab](#recipe_modules-vmlab)
@@ -12045,6 +12064,12 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/utils.py#16)(api):**
+### *recipes* / [cros\_lkgm:examples/cleanup\_cls](/recipe_modules/cros_lkgm/examples/cleanup_cls.py)
+
+[DEPS](/recipe_modules/cros_lkgm/examples/cleanup_cls.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_lkgm/examples/cleanup_cls.py#15)(api):**
 ### *recipes* / [cros\_lkgm:examples/do\_lkgm](/recipe_modules/cros_lkgm/examples/do_lkgm.py)
 
 [DEPS](/recipe_modules/cros_lkgm/examples/do_lkgm.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

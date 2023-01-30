@@ -30,6 +30,8 @@ chromeos-base/chromeos-chrome/chromeos-chrome-106.0.5204.0_rc-r1.ebuild
 chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild
 """
 
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
 
 class CrosLkgmApi(recipe_api.RecipeApi):
   """A module to handle the LGKM process and other interactions between the
@@ -158,6 +160,28 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     if not self._full_run:
       cmd.append('--dryrun')
     self.m.step('call chrome_chromeos_lkgm', cmd)
+
+  def cleanup_cls(self):
+    """Performs the LGKM cleaning-up process.
+
+    This does only the cleaning-up process of LKGM CLs, in contrast that
+    `do_lkgm` does the actual uprev process as well.
+    """
+    with self.m.step.nest('clean up LKGM CLs') as presentation:
+      if not self._enable_lkgm:
+        presentation.step_text = 'LKGM is not enabled. Do nothing.'
+        return
+
+      script_path = self.m.cros_source.workspace_path.join(
+          'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
+      cmd = [
+          script_path,
+          '--buildbucket-id',
+          self.m.buildbucket.build.id,
+      ]
+      if not self._full_run:
+        cmd.append('--dryrun')
+      self.m.step('call chrome_chromeos_lkgm', cmd)
 
   def _is_lkgm_candidate(self, release_build_results):
     """Determines if the build is an LKGM candidate based on child build results.
