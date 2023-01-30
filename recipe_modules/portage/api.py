@@ -125,8 +125,6 @@ class PortageApi(recipe_api.RecipeApi):
         for similar_statlines in seen_dict.values():
           # Assert there's one start and one end.
           if len(similar_statlines) != 2:
-            self.m.easy.set_properties_step('set failed portage stats',
-                                            failed_portage_stats=True)
             raise StepFailure('incoherent stdout from bapi'
                               ' -- uncertain start or end:\n{}'.format(
                                   str(similar_statlines)))
@@ -200,7 +198,9 @@ class PortageApi(recipe_api.RecipeApi):
             ])
 
       except Exception as e:  # pylint: disable=broad-except
-        pres.status = self.m.step.INFRA_FAILURE
+        self.m.easy.set_properties_step('set failed portage stats',
+                                        failed_portage_stats=True)
+        pres.status = self.m.step.SUCCESS
         pres.step_summary_text = 'Failure to publish portage stats'
         pres.logs['exception'] = str(e)
 
