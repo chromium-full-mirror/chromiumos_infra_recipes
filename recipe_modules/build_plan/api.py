@@ -254,13 +254,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
       presentation.logs['filter log'] = filter_log
 
-      # TODO(b/211620738): Add 2 additional queries to change snapshot based
-      # historic greenness for unfinished or failed snapshots.
       if cq_looks_enabled:
-        with self.m.step.nest('CQ looks'):
-          if snapshot_ids:
-            self.m.looks_for_green.get_unfinished_or_failed_snapshot_ids(
-                snapshot_ids)
+        with self.m.step.nest('looks for green'):
+          is_snap_orch_green = self.m.looks_for_green.is_snap_orch_green()
+          self.m.easy.set_properties_step(
+              **{'looks_for_green': {
+                  'is_snap_orch_green': is_snap_orch_green
+              }})
 
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.

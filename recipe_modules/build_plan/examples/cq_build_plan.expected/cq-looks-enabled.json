@@ -1027,19 +1027,18 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.CQ looks",
+    "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.CQ looks.unfinished or failed snapshots",
+    "name": "filter builds.looks for green.checking latest snapshot greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@For snapshot  in the last 14 hours, did not find any builds. Treating as unfinished.@@@",
-      "@@@STEP_LOG_LINE@unfinished or failed snapshots@CQ looks: Found 1 unfinished and 0 failed snapshots.@@@",
-      "@@@STEP_LOG_END@unfinished or failed snapshots@@@"
+      "@@@STEP_LOG_LINE@latest snapshot greenness@latest snapshot-orchestrator go/bbid/123 has aggregate greenness of 100@@@",
+      "@@@STEP_LOG_END@latest snapshot greenness@@@"
     ]
   },
   {
@@ -1051,11 +1050,11 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "1",
       "-fields",
-      "builder,critical,id,status,tags",
+      "id,output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T09:50:17Z\"}, \"tags\": [{\"key\": \"snapshot\"}]}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1070,10 +1069,20 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.CQ looks.unfinished or failed snapshots.buildbucket.search",
+    "name": "filter builds.looks for green.checking latest snapshot greenness.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"123\", \"output\": {\"properties\": {\"greenness\": {\"aggregateMetric\": 100.0}}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.set looks_for_green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"is_snap_orch_green\": true}@@@"
     ]
   },
   {

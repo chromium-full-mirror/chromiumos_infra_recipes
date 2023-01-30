@@ -12,83 +12,56 @@ from google.protobuf import timestamp_pb2
 from recipe_engine import recipe_api
 
 
-class CqLooksApi(recipe_api.RecipeApi):
-  """A module to look for green CQ snapshots."""
+class LooksForGreenApi(recipe_api.RecipeApi):
+  """A module to look for green snapshots."""
 
-  def get_unfinished_or_failed_snapshot_ids(self, snapshot_ids):
-    """Returns a set of unfinished or failed snapshot ids.
+  def get_latest_snapshot_greenness(self):
+    '''Returns aggregate greenness of latest complete snapshot-orchestrator.
 
-    Args:
-      snapshot_ids (set): The set of snapshot ids to be used in build plan.
+    Use common_pb2.ENDED_MASK to identify completed builds and limits return to
+    1 build to get the latest build.
 
     Returns:
-      A tuple of two sets:
-        A set of snapshot ids referring to builds that are unfinished.
-        A set of snapshot ids referring to builds that are failed.
-    """
-    with self.m.step.nest('unfinished or failed snapshots') as presentation:
-      cqlooks_log = []
-      fields = frozenset({'id', 'status', 'builder', 'tags', 'critical'})
+      aggGreen (int): for latest snapshot-orchestrator, or -1 if not found.
+    '''
+    with self.m.step.nest('checking latest snapshot greenness') as presentation:
+      fields = frozenset({'id', 'output.properties'})
       # TODO(b/211620738): Parameterize LOOKBACK_HOURS in config.
-      LOOKBACK_HOURS = 14
-      unfinished, failed = set(), set()
-      build_predicates = []
-      for sid in sorted(list(snapshot_ids)):
-        predicate = builds_service_pb2.BuildPredicate(
-            create_time=common_pb2.TimeRange(
-                start_time=timestamp_pb2.Timestamp(
-                    seconds=self.m.buildbucket.build.create_time.ToSeconds() -
-                    LOOKBACK_HOURS * 60 * 60,
-                )), tags=self.m.buildbucket.tags(snapshot=str(sid)))
-        predicate.builder.project = self.m.buildbucket.build.builder.project
-        predicate.builder.bucket = 'postsubmit'
-        build_predicates.append(predicate)
-      builds = self.m.buildbucket.search(build_predicates, fields=fields)
-      # Filter out non-critical builds as we can't set this in BuildPredicate.
-      # Filter out non-snapshot builds which use snapshot id as their buildspec.
-      builds = [
-          b for b in builds if b.critical == common_pb2.YES and
-          b.builder.builder.endswith("-snapshot")
-      ]
-
-      # Format the build results for easier lookup by snapshot id.
-      builds_by_snapshot_ids = {}
-      for build in builds:
-        for tag in build.tags:
-          if tag.key == 'snapshot':
-            try:
-              builds_by_snapshot_ids[tag.value].append(build.status)
-            except KeyError:
-              builds_by_snapshot_ids[tag.value] = [build.status]
-
-      for sid in sorted(list(snapshot_ids)):
-        if sid in sorted(builds_by_snapshot_ids.keys()):
-          builds = builds_by_snapshot_ids[sid]
-          cqlooks_log.append(
-              'For snapshot {} in the last {} hours, found {} build(s)'.format(
-                  sid, LOOKBACK_HOURS, len(builds)))
-          for build_status in builds:
-            if build_status in [common_pb2.FAILURE, common_pb2.INFRA_FAILURE]:
-              failed.add(sid)
-            elif build_status in [
-                common_pb2.SCHEDULED, common_pb2.STARTED,
-                common_pb2.STATUS_UNSPECIFIED, common_pb2.CANCELED
-            ]:
-              unfinished.add(sid)
-            else:
-              cqlooks_log.append('Snapshot {} is green for build(s) {}'.format(
-                  sid, builds))
-        else:
-          cqlooks_log.append(
-              'For snapshot {} in the last {} hours, did not find any builds. Treating as unfinished.'
-              .format(sid, LOOKBACK_HOURS))
-          unfinished.add(sid)
-
-      if unfinished or failed:
-        cqlooks_log.append(
-            "CQ looks: Found {} unfinished and {} failed snapshots.".format(
-                len(unfinished), len(failed)))
+      LOOKBACK_HOURS = 10
+      predicate = builds_service_pb2.BuildPredicate(
+          create_time=common_pb2.TimeRange(
+              start_time=timestamp_pb2.Timestamp(
+                  seconds=self.m.buildbucket.build.create_time.ToSeconds() -
+                  LOOKBACK_HOURS * 60 * 60,
+              )), status=common_pb2.ENDED_MASK)
+      predicate.builder.project = self.m.buildbucket.build.builder.project
+      # TODO(b/211620738): Use staging builder for staging env.
+      predicate.builder.bucket = 'postsubmit'
+      predicate.builder.builder = 'snapshot-orchestrator'
+      result = self.m.buildbucket.search([predicate], limit=1, fields=fields)
+      if result:
+        bbid = result[0].id
+        out_props = result[0].output.properties
+        try:
+          aggGreen = int(out_props['greenness']['aggregateMetric'])
+        except ValueError:
+          aggGreen = -1
+        presentation.logs[
+            'latest snapshot greenness'] = f'latest snapshot-orchestrator go/bbid/{bbid} has aggregate greenness of {aggGreen}'
       else:
-        cqlooks_log.append("CQ looks: All snapshots green. Proceeding.")
-      presentation.logs['unfinished or failed snapshots'] = cqlooks_log
-      return unfinished, failed
+        presentation.logs['latest snapshot greenness'] = 'found no builds'
+        aggGreen = -1
+      return aggGreen
+
+  def is_snap_orch_green(self):
+    '''Returns whether the last snapshot-orchestrator greenness is higher than
+
+    greenness threshold.
+
+    Returns:
+      (bool) Whether last snap-orch run is green
+    '''
+    # TODO(b/211620738): Parameterize GREENNESS_THRESHOLD in config.
+    GREENNESS_THRESHOLD = 80
+    latest_greenness = self.get_latest_snapshot_greenness()
+    return latest_greenness >= GREENNESS_THRESHOLD

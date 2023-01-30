@@ -452,7 +452,7 @@
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
-  * [looks_for_green:examples/full](#recipes-looks_for_green_examples_full) (Python3 ✅)
+  * [looks_for_green:tests/get_latest_snapshot_greenness](#recipes-looks_for_green_tests_get_latest_snapshot_greenness) (Python3 ✅)
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) (Python3 ✅) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full) (Python3 ✅)
@@ -6847,21 +6847,28 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CqLooksApi](/recipe_modules/looks_for_green/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module to look for green CQ snapshots.
+A module to look for green snapshots.
 
-&mdash; **def [get\_unfinished\_or\_failed\_snapshot\_ids](/recipe_modules/looks_for_green/api.py#18)(self, snapshot_ids):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#18)(self):**
 
-Returns a set of unfinished or failed snapshot ids.
+Returns aggregate greenness of latest complete snapshot-orchestrator.
 
-Args:
-  snapshot_ids (set): The set of snapshot ids to be used in build plan.
+Use common_pb2.ENDED_MASK to identify completed builds and limits return to
+1 build to get the latest build.
 
 Returns:
-  A tuple of two sets:
-    A set of snapshot ids referring to builds that are unfinished.
-    A set of snapshot ids referring to builds that are failed.
+  aggGreen (int): for latest snapshot-orchestrator, or -1 if not found.
+
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#56)(self):**
+
+Returns whether the last snapshot-orchestrator greenness is higher than
+
+greenness threshold.
+
+Returns:
+  (bool) Whether last snap-orch run is green
 ### *recipe_modules* / [manifest\_doctor](/recipe_modules/manifest_doctor)
 
 [DEPS](/recipe_modules/manifest_doctor/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12050,13 +12057,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Runs the presubmit for a project with checkout per local manifest.
 
 &mdash; **def [RunSteps](/recipes/local_manifest_presubmit.py#44)(api: RecipeApi, properties: LocalManifestPresubmitProperties):**
-### *recipes* / [looks\_for\_green:examples/full](/recipe_modules/looks_for_green/examples/full.py)
+### *recipes* / [looks\_for\_green:tests/get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py)
 
-[DEPS](/recipe_modules/looks_for_green/examples/full.py#12): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#10): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/examples/full.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#25)(api, expected_greenness, expected_is_snap_orch_green):**
 ### *recipes* / [lvfs\_mirror](/recipes/lvfs_mirror.py)
 
 [DEPS](/recipes/lvfs_mirror.py#12): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)

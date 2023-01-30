@@ -387,6 +387,8 @@ def GenTests(api):
           'buildbucket.search'),
   )
 
+  output = build_pb2.Build.Output()
+  output.properties['greenness'] = {'aggregateMetric': 100}
   yield api.test(
       'cq-looks-enabled',
       api.cq(run_mode=api.cq.FULL_RUN),
@@ -414,4 +416,8 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds=[build_pb2.Build(id=123, output=output)],
+          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+      ),
   )
