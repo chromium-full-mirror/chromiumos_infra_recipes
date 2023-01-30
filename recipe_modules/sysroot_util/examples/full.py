@@ -122,6 +122,19 @@ def GenTests(api):
           experiments=['chromeos.sysroot_util.chrome_cache']),
   )
 
+  yield api.test(
+      'chrome-cache-experiment-with-purge',
+      test_build(),
+      api.buildbucket.ci_build(
+          builder='atlas-cq', experiments=[
+              'chromeos.sysroot_util.chrome_cache',
+              'chromeos.sysroot_util.chrome_cache_purge'
+          ]),
+      api.post_process(post_process.MustRun,
+                       'install packages.deleting chrome checkout'),
+      api.post_process(post_process.DropExpectation),
+  )
+
   yield api.test('cq-build', test_build(cq=True))
 
   yield api.test(

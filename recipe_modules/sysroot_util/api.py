@@ -185,80 +185,89 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     name = name or 'install packages'
     if timeout_sec == 'DEFAULT':
       timeout_sec = None if self.m.cros_sdk.long_timeouts else 8 * 60 * 60
-      with self.m.step.nest(name) as presentation:
-        toolchain_cls = self.m.workspace_util.toolchain_cls_applied
-        if self.m.cros_sdk.force_off_toolchain_changed:
-          presentation.step_text = 'Forcing toolchain_changed=False'
-          toolchain_cls = False
 
-        def _InstallPackagesRequest(dryrun=False):
-          """Helper to make InstallPackagesRequest."""
-          return InstallPackagesRequest(
-              chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
-              packages=packages, package_indexes=package_indexes,
-              flags=InstallPackagesRequest.Flags(
-                  compile_source=install_packages.compile_source,
-                  use_goma=self.m.cros_sdk.has_goma_config(),
-                  toolchain_changed=toolchain_cls,
-                  dryrun=dryrun), use_flags=config.build.use_flags,
-              goma_config=self.m.cros_sdk.goma_config())
+    with self.m.step.nest(name) as presentation:
+      toolchain_cls = self.m.workspace_util.toolchain_cls_applied
+      if self.m.cros_sdk.force_off_toolchain_changed:
+        presentation.step_text = 'Forcing toolchain_changed=False'
+        toolchain_cls = False
 
-        with self.m.step.nest('check chrome source needed') as check_pres:
-          if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                               dep_graph, check_pres):
-            # This will change the return from _InstallPackagesRequest().
-            chrome_root = self.m.path['start_dir'].join('chrome')
-            if 'chromeos.sysroot_util.chrome_cache' in self.m.cros_infra_config.experiments:
-              self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
-                                       step_name="populate chrome cache")
-              self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
-                                 self.sysroot.build_target,
-                                 config.chrome.internal,
-                                 cache_dir=chrome_root.join('chrome_cache'))
-            else:
-              self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
-                                 self.sysroot.build_target,
-                                 config.chrome.internal)
-            self.m.cros_sdk.set_chrome_root(chrome_root)
-            if install_packages.use_remoteexec:
-              self.m.cros_sdk.configure_remoteexec()
-            elif not install_packages.disable_goma:
-              self.m.cros_sdk.configure_goma()
+      def _InstallPackagesRequest(dryrun=False):
+        """Helper to make InstallPackagesRequest."""
+        return InstallPackagesRequest(
+            chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
+            packages=packages, package_indexes=package_indexes,
+            flags=InstallPackagesRequest.Flags(
+                compile_source=install_packages.compile_source,
+                use_goma=self.m.cros_sdk.has_goma_config(),
+                toolchain_changed=toolchain_cls,
+                dryrun=dryrun), use_flags=config.build.use_flags,
+            goma_config=self.m.cros_sdk.goma_config())
 
-        if self.m.cq.active:
-          self.m.android.uprev_if_unstable_ebuild_changed(
-              chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
-              patch_sets=self.m.workspace_util.patch_sets)
+      chrome_root = None
+      with self.m.step.nest('check chrome source needed') as check_pres:
+        if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
+                                             dep_graph, check_pres):
+          # This will change the return from _InstallPackagesRequest().
+          chrome_root = self.m.path['start_dir'].join('chrome')
+          if 'chromeos.sysroot_util.chrome_cache' in self.m.cros_infra_config.experiments:
+            self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
+                                     step_name="populate chrome cache")
+            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
+                               self.sysroot.build_target,
+                               config.chrome.internal,
+                               cache_dir=chrome_root.join('chrome_cache'))
+          else:
+            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
+                               self.sysroot.build_target,
+                               config.chrome.internal)
+          self.m.cros_sdk.set_chrome_root(chrome_root)
+          if install_packages.use_remoteexec:
+            self.m.cros_sdk.configure_remoteexec()
+          elif not install_packages.disable_goma:
+            self.m.cros_sdk.configure_goma()
 
-        # Final round of preparation to build artifacts.  Some artifacts need
-        # to use portage (or a chroot and/or sysroot) in order to fully prepare,
-        # so they have to finish preparation inside the SDK.
-        #
-        # We don't care what the return value is, since we're committed to
-        # running at least install packages at this point.  Let the module know
-        # that we are forcing relevance.
-        if artifact_build:
-          self.m.sysroot_util.update_for_artifact_build(
-              self.m.cros_sdk.chroot, config.artifacts, force_relevance=True,
-              name='prepare artifacts final')
-        install_pkg_request = _InstallPackagesRequest(dryrun=dryrun)
-        response = self.m.cros_build_api.SysrootService.InstallPackages(
-            install_pkg_request,
-            response_lambda=self.m.cros_build_api.failed_pkg_data_names,
-            pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
-            timeout=timeout_sec)
+      if self.m.cq.active:
+        self.m.android.uprev_if_unstable_ebuild_changed(
+            chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
+            patch_sets=self.m.workspace_util.patch_sets)
 
-        # Process goma response to upload logs, stats, and counterz.
-        if self.m.cros_sdk.has_goma_config():
-          self.m.goma.process_artifacts(
-              response, install_pkg_request.goma_config.log_dir.dir,
-              self.sysroot.build_target.name,
-              self.m.cros_infra_config.is_staging)
+      # Final round of preparation to build artifacts.  Some artifacts need
+      # to use portage (or a chroot and/or sysroot) in order to fully prepare,
+      # so they have to finish preparation inside the SDK.
+      #
+      # We don't care what the return value is, since we're committed to
+      # running at least install packages at this point.  Let the module know
+      # that we are forcing relevance.
+      if artifact_build:
+        self.m.sysroot_util.update_for_artifact_build(
+            self.m.cros_sdk.chroot, config.artifacts, force_relevance=True,
+            name='prepare artifacts final')
+      install_pkg_request = _InstallPackagesRequest(dryrun=dryrun)
+      response = self.m.cros_build_api.SysrootService.InstallPackages(
+          install_pkg_request,
+          response_lambda=self.m.cros_build_api.failed_pkg_data_names,
+          pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
+          timeout=timeout_sec)
 
-        pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
-                                                     response,
-                                                     self.m.file.read_raw)
-        self.m.failures.set_compile_failed_packages(presentation, pkgs)
+      # Process goma response to upload logs, stats, and counterz.
+      if self.m.cros_sdk.has_goma_config():
+        self.m.goma.process_artifacts(
+            response, install_pkg_request.goma_config.log_dir.dir,
+            self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
+
+      pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
+                                                   response,
+                                                   self.m.file.read_raw)
+      # If our experiments are enabled, clean up the chrome cache checkout.
+      if (chrome_root and 'chromeos.sysroot_util.chrome_cache' in
+          self.m.cros_infra_config.experiments and
+          'chromeos.sysroot_util.chrome_cache_purge' in
+          self.m.cros_infra_config.experiments):
+        self.m.file.rmtree('deleting chrome checkout', chrome_root)
+        # Set the chrome root to None so it isn't used later.
+        self.m.cros_sdk.set_chrome_root(None)
+      self.m.failures.set_compile_failed_packages(presentation, pkgs)
 
   def build_images(self, image_types, builder_path, disable_rootfs_verification,
                    disk_layout, base_is_recovery=False, version=None,
