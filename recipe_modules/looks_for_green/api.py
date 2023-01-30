@@ -15,6 +15,13 @@ from recipe_engine import recipe_api
 class LooksForGreenApi(recipe_api.RecipeApi):
   """A module to look for green snapshots."""
 
+  def __init__(self, properties, **kwargs):
+    super().__init__(**kwargs)
+    self._enable_looks_for_green = properties.enable_looks_for_green
+    self._dry_run = properties.dry_run
+    self._lookback_hours = properties.lookback_hours or 10
+    self._greenness_threshold = properties.greenness_threshold or 80
+
   def get_latest_snapshot_greenness(self):
     '''Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -26,13 +33,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     with self.m.step.nest('checking latest snapshot greenness') as presentation:
       fields = frozenset({'id', 'output.properties'})
-      # TODO(b/211620738): Parameterize LOOKBACK_HOURS in config.
-      LOOKBACK_HOURS = 10
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
                   seconds=self.m.buildbucket.build.create_time.ToSeconds() -
-                  LOOKBACK_HOURS * 60 * 60,
+                  self._lookback_hours * 60 * 60,
               )), status=common_pb2.ENDED_MASK)
       predicate.builder.project = self.m.buildbucket.build.builder.project
       # TODO(b/211620738): Use staging builder for staging env.
@@ -61,7 +66,5 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Returns:
       (bool) Whether last snap-orch run is green
     '''
-    # TODO(b/211620738): Parameterize GREENNESS_THRESHOLD in config.
-    GREENNESS_THRESHOLD = 80
     latest_greenness = self.get_latest_snapshot_greenness()
-    return latest_greenness >= GREENNESS_THRESHOLD
+    return latest_greenness >= self._greenness_threshold

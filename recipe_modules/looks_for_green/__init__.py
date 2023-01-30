@@ -3,9 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = LooksForGreenProperties

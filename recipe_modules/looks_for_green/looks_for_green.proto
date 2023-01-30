@@ -1,0 +1,24 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.looks_for_green;
+
+message LooksForGreenProperties {
+  // Whether to actually look-for-green.
+  // Used to flag the feature and unittesting.
+  bool enable_looks_for_green = 1;
+
+  // Whether to run in dry_run mode. Looks-for-green logic will be
+  // executed but snapshot won't be changed.
+  bool dry_run = 2;
+
+  // Maximum hours to look back for a known-green snapshot.
+  int32 lookback_hours = 3;
+
+  // Threshold at which a snapshot is called "green". Score is assigned by the
+  // greenness module - greenness is [0,100].
+  int32 greenness_threshold = 4;
+}
