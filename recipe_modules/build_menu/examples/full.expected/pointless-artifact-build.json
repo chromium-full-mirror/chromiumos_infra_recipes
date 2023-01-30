@@ -3787,7 +3787,8 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -3795,13 +3796,15 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+      "DEPOT_TOOLS_COLLECT_METRICS": "0",
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/toolchain/orderfile-generate-toolchain/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },
@@ -3868,7 +3871,8 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
@@ -3885,13 +3889,15 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+      "DEPOT_TOOLS_COLLECT_METRICS": "0",
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/toolchain/orderfile-generate-toolchain/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },

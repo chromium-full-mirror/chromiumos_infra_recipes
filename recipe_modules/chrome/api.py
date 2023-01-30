@@ -205,11 +205,7 @@ class ChromeApi(recipe_api.RecipeApi):
           def _call_chrome_sync(self):
             try:
               # Writes out the .gclient file.
-              self.m.step(
-                  'gclient config',
-                  ['python',
-                   self.m.depot_tools.root.join('gclient.py')] + config_cmd,
-                  infra_step=True)
+              self.m.gclient('config', config_cmd, infra_step=True)
 
               # Reads what we just wrote for user consumption.
               gclient_text = (
@@ -219,11 +215,9 @@ class ChromeApi(recipe_api.RecipeApi):
               pres.logs['gclient configuration'] = gclient_text.splitlines()
 
               # Finally, start the sync.
-              self.m.step(
-                  'gclient sync',
-                  ['python',
-                   self.m.depot_tools.root.join('gclient.py')] + sync_cmd,
-                  infra_step=True, timeout=self.gclient_sync_timeout_seconds)
+
+              self.m.gclient('sync', sync_cmd, infra_step=True,
+                             timeout=self.gclient_sync_timeout_seconds)
             except StepFailure:
               self.m.file.rmcontents('clean up root path and retry',
                                      chrome_root)

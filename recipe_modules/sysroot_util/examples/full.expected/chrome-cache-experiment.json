@@ -1294,18 +1294,23 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
       "cache_dir = '[START_DIR]/chrome/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "project/ci/atlas-cq/8945511751514863184"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },
@@ -1369,7 +1374,8 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
@@ -1385,11 +1391,15 @@
       "src@version"
     ],
     "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "project/ci/atlas-cq/8945511751514863184"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },
