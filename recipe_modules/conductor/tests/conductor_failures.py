@@ -21,7 +21,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):
-  bbids = api.conductor.collect('child builds', ["123", "456"], dryrun=True,
+  bbids = api.conductor.collect('child builds', ["123", "456"],
                                 step_name='conductor collect')
   api.assertions.assertEqual(bbids, [123, 456])
 

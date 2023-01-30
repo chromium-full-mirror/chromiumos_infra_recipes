@@ -62,13 +62,12 @@ class ConductorApi(recipe_api.RecipeApi):
                 [self._conductor_path] + cmd, timeout=timeout, **kwargs)
 
   def collect(self, collect_name: str, bbids: List[Union[str, int]],
-              dryrun: bool = False, **kwargs) -> List[int]:
+              **kwargs) -> List[int]:
     """Calls `conductor collect` with the given args.
 
     Args:
       collect_name: Name of this collection (used to find collect config).
       bbids: List of BBIDs to collect.
-      dryrun: Whether or not to dryrun retries.
 
     Returns:
       Final set of BBIDs.
@@ -100,7 +99,7 @@ class ConductorApi(recipe_api.RecipeApi):
           '--polling_interval',
           str(self._properties.polling_interval_seconds)
       ]
-    if dryrun:
+    if self._properties.conductor_dryrun:
       cmd += ['--dryrun']
 
     # Try except so that the step turns red but does not doom the build.

@@ -1951,14 +1951,13 @@ Args:
   timeout: Timeout, in seconds. Defaults to one hour.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [collect](/recipe_modules/conductor/api.py#64)(self, collect_name: str, bbids: List[Union[(str, int)]], dryrun: bool=False, \*\*kwargs):**
+&mdash; **def [collect](/recipe_modules/conductor/api.py#64)(self, collect_name: str, bbids: List[Union[(str, int)]], \*\*kwargs):**
 
 Calls `conductor collect` with the given args.
 
 Args:
   collect_name: Name of this collection (used to find collect config).
   bbids: List of BBIDs to collect.
-  dryrun: Whether or not to dryrun retries.
 
 Returns:
   Final set of BBIDs.

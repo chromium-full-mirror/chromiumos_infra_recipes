@@ -21,6 +21,9 @@ message ConductorProperties {
     // instead of the native buildbucket collect function.
     bool enable_conductor = 3;
 
+    // Whether to pass --dryrun to the conductor.
+    bool conductor_dryrun = 6;
+
     // Seconds to wait between polling builders.
     int32 polling_interval_seconds = 4;
 
