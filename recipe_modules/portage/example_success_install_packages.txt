@@ -10002,13 +10002,13 @@ Total: 1283 packages (1283 new, 1023 binaries), Size of downloads: 10244742 KiB
 >>> 17:47:18.740 Installing (876 of 1283) chromeos-base/system_api-0.0.1-r5080::chromiumos to /build/eve/
 >>> 17:47:18.740 Jobs: 961 of 1283 complete, 4 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:18.752 Jobs: 961 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
->>> 17:47:18.755 Completed (967 of 1283) dev-python/ws4py-0.5.1-r1::chromiumos to /build/eve/
+>>> 17:47:18 Completed (967 of 1283) dev-python/ws4py-0.5.1-r1::chromiumos to /build/eve/
 >>> 17:47:18.755 Jobs: 961 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:18.759 Jobs: 962 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:20.035 Completed (968 of 1283) dev-python/requests-2.24.0::portage-stable to /build/eve/
 >>> 17:47:20.035 Jobs: 962 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:20.044 Jobs: 963 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
->>> 17:47:21.021 Completed (954 of 1283) chromeos-base/autotest-0.0.2-r17085::chromiumos to /build/eve/
+>>> 17:47:21 Completed (954 of 1283) chromeos-base/autotest-0.0.2-r17085::chromiumos to /build/eve/
 >>> 17:47:21.021 Jobs: 963 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:21.025 Jobs: 964 of 1283 complete, 3 running           Load avg: 42.9, 29.8, 18.1
 >>> 17:47:21.066 Jobs: 964 of 1283 complete, 4 running           Load avg: 42.9, 29.8, 18.1

@@ -105,6 +105,14 @@ class PortageApi(recipe_api.RecipeApi):
     Returns:
       The current value of the output property.
     """
+
+    def _parse_time(time_str):
+      try:
+        return datetime.strptime(time_str, '%H:%M:%S.%f')
+      except ValueError:
+        # Will reraise if we still can't parse it.
+        return datetime.strptime(time_str, '%H:%M:%S')
+
     # Gathering/setting these metrics shouldn't be allowed to fail the build.
     with self.m.step.nest('adding emerge metrics') as pres:
       try:
@@ -137,8 +145,8 @@ class PortageApi(recipe_api.RecipeApi):
               x for x in similar_statlines if x['state'] in self._END_STATES
           ][0]
 
-          start = datetime.strptime(start_str['time'], '%H:%M:%S.%f')
-          end = datetime.strptime(end_str['time'], '%H:%M:%S.%f')
+          start = _parse_time(start_str['time'])
+          end = _parse_time(end_str['time'])
 
           # if end < start, assume we started a day ago.
           if end < start:
