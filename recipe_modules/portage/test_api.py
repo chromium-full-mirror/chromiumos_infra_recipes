@@ -28,3 +28,8 @@ class PortageTestApi(recipe_test_api.RecipeTestApi):
 
   EXAMPLE_BROKEN_INSTALL_PACKAGES = read_test_file(
       'example_broken_install_packages.txt', __file__)
+
+  EXAMPLE_DOUBLE_EMERGE_INIT_SDK = read_test_file(
+      'example_double_emerge_init_sdk.txt', __file__)
+  EXAMPLE_DOUBLE_EMERGE_INIT_SDK_EXPECTED = read_test_file(
+      'example_double_emerge_init_sdk_expected.json', __file__)

@@ -11,7 +11,6 @@ import json
 import re
 
 from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
 
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
@@ -106,6 +105,15 @@ class PortageApi(recipe_api.RecipeApi):
       The current value of the output property.
     """
 
+    def _soft_fail(msg):
+      self.m.easy.set_properties_step('set failed portage stats',
+                                      failed_portage_stats=True)
+      pres.step_text = 'Soft failure finding portage stats -- {}'.format(msg)
+
+    def _get_key(group_dict):
+      return group_dict['category'] + group_dict['package'] + group_dict[
+          'version']
+
     def _parse_time(time_str):
       try:
         return datetime.strptime(time_str, '%H:%M:%S.%f')
@@ -116,80 +124,77 @@ class PortageApi(recipe_api.RecipeApi):
     # Gathering/setting these metrics shouldn't be allowed to fail the build.
     with self.m.step.nest('adding emerge metrics') as pres:
       try:
-        # seen_dict are the packages that we've noticed in the output.
-        seen_dict = defaultdict(list)
+        # seen are the packages that we've noticed in the output.
+        # ready have seen enough about a package to be 'complete'.
+        seen, ready = defaultdict(list), []
 
         # Keep a consistent insert time.
         insert_time = self.m.time.utcnow()
 
         # Pass one, look at the durations.
         lines = step_stdout.splitlines()
-        for line in [l for l in lines if self._DURATION_REGEX.match(l)]:
-          group_dict = self._DURATION_REGEX.search(line).groupdict()
-          dict_key = group_dict['category'] + group_dict[
-              'package'] + group_dict['version']
-          seen_dict[dict_key].append(group_dict)
+        for line in lines:
+          # Usually first in the logs.
+          if self._PORTAGE_EMERGE_TYPE_RE.match(line):
+            group_dict = self._PORTAGE_EMERGE_TYPE_RE.search(line).groupdict()
+            key = _get_key(group_dict)
 
-        for similar_statlines in seen_dict.values():
-          # Assert there's one start and one end.
-          if len(similar_statlines) != 2:
-            raise StepFailure('incoherent stdout from bapi'
-                              ' -- uncertain start or end:\n{}'.format(
-                                  str(similar_statlines)))
+            # If we see a package again, we didn't properly close the last one.
+            if key in seen:
+              del seen[key]
+              _soft_fail('unclosed package: {}'.format(key))
+            else:
+              # Initialize the seen entry with this group_dict's contents..
+              seen[key].append(group_dict)
 
-          # Set the start and the end matches, we previously asserted two exist.
-          start_str = [
-              x for x in similar_statlines if x['state'] in self._START_STATES
-          ][0]
-          end_str = [
-              x for x in similar_statlines if x['state'] in self._END_STATES
-          ][0]
+          elif self._DURATION_REGEX.match(line):
+            group_dict = self._DURATION_REGEX.search(line).groupdict()
+            key = _get_key(group_dict)
+            seen[key].append(group_dict)
 
-          start = _parse_time(start_str['time'])
-          end = _parse_time(end_str['time'])
+            # Have an emerge type, start, and a stop, thus process and pop.
+            if len(seen[key]) == 3:
+              similar_list = seen[key]
+              emerge_entry = similar_list[0]
+              start_entry = similar_list[1]
+              end_entry = similar_list[2]
 
-          # if end < start, assume we started a day ago.
-          if end < start:
-            start -= timedelta(days=1)
-          total_duration = end - start
+              start = _parse_time(start_entry['time'])
+              end = _parse_time(end_entry['time'])
 
-          result = similar_statlines[0]
-          # We only ammend the first found (usually start?) with additional
-          # info. We'll strip the 'end' status from the array and move this
-          # start to be directly keyed in the dict.
-          result['duration'] = int(total_duration / timedelta(milliseconds=1))
-          result['start'] = str(start)
-          result['end'] = str(end)
-          result['insert_time'] = str(insert_time)
+              # if end < start, assume we started a day ago.
+              if end < start:
+                start -= timedelta(days=1)
+              total_duration = end - start
 
-        # Pass two look at the emerge method updating the same dict info...
-        for line in [l for l in lines if self._PORTAGE_EMERGE_TYPE_RE.match(l)]:
-          group_dict = self._PORTAGE_EMERGE_TYPE_RE.search(line).groupdict()
-          dict_key = group_dict['category'] + group_dict[
-              'package'] + group_dict['version']
+              # Add additional info to the start of compile dict and push
+              # to the ready array.
+              result = similar_list[1]
+              result['start'] = str(start)
+              result['end'] = str(end)
+              result['duration'] = int(total_duration /
+                                       timedelta(milliseconds=1))
+              result['insert_time'] = str(insert_time)
+              result['emerge_type'] = emerge_entry['emerge_type']
+              result['bbid'] = self.m.buildbucket.build.id
+              result['bucket'] = self.m.buildbucket.build.builder.bucket
+              result['builder'] = self.m.buildbucket.build.builder.builder
+              result['step_name'] = step_name
+              result.pop('state')
+              result.pop('time')
+              # Add to completed results and remove the key (so future emerges
+              # can use the same key).
+              ready.append(result)
+              del seen[key]
 
-          # This is totally normal if we failed half way.
-          if not dict_key in seen_dict:
-            continue
+        if seen:
+          # TODO(b/266749698): Catch packages that are not outputting emerge
+          # method. These should be relatively rare and not the bulk of runtime.
+          _soft_fail('unclosed packages')
 
-          seen_dict[dict_key][0]['emerge_type'] = group_dict['emerge_type']
-
-        # Strip all but the element we've been amending (see note above).
-        stat_list = []
-        for stat in seen_dict.values():
-          # Strip some things we've collected and no longer need.
-          pack_stat = stat[0]
-          pack_stat.pop('state')
-          pack_stat.pop('time')
-          pack_stat['bbid'] = self.m.buildbucket.build.id
-          pack_stat['bucket'] = self.m.buildbucket.build.builder.bucket
-          pack_stat['builder'] = self.m.buildbucket.build.builder.builder
-          pack_stat['step_name'] = step_name
-          stat_list.append(pack_stat)
-
-        if stat_list:
+        if ready:
           # Set the internal tracked dict.
-          self._portage_emerge_stats[step_name] = stat_list
+          self._portage_emerge_stats[step_name] = ready
 
           if set_output_prop:
             # Set the internal running copy and set the output prop.
@@ -197,7 +202,7 @@ class PortageApi(recipe_api.RecipeApi):
                 'set portage stats', portage_stats=self._portage_emerge_stats)
           if publish_to_bq:
             # Do the BQ insert.
-            jsonl = '\n'.join([json.dumps(x) for x in stat_list])
+            jsonl = '\n'.join([json.dumps(x) for x in ready])
             tmp_file = self.m.path.mkstemp()
             self.m.file.write_text('write bq jsonl', tmp_file, jsonl)
             self.m.step('load json', [
@@ -209,7 +214,7 @@ class PortageApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step('set failed portage stats',
                                         failed_portage_stats=True)
         pres.status = self.m.step.SUCCESS
-        pres.step_summary_text = 'Failure to publish portage stats'
+        pres.step_text = 'Failure to publish portage stats'
         pres.logs['exception'] = str(e)
 
       return self._portage_emerge_stats

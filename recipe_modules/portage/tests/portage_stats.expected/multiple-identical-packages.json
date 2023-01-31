@@ -15,6 +15,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "adding emerge metrics.set failed portage stats (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_portage_stats@true@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

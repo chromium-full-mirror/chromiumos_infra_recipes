@@ -24,6 +24,11 @@ _BAD_TYPE = '1'
 _FOOLED_OUTPUT = '''
 [58787/86177] CXX obj/content/browser/browser/push_messaging_context.o
 '''
+_MULTIPLE_IDENTICAL = '''
+[binary  N     ] sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/ USE="kvm_host -auto_seed_etc_files" 60 KiB
+[binary  N     ] sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/ USE="kvm_host -auto_seed_etc_files" 60 KiB
+[binary  N     ] sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/ USE="kvm_host -auto_seed_etc_files" 60 KiB
+'''
 
 
 def RunSteps(api, properties):
@@ -43,6 +48,28 @@ def GenTests(api):
               step_name='test',
               bapi_stdout=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES,
               expected=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED)),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'two-emerge-init-sdk',
+      api.properties(
+          TestMetricsInputProperties(
+              step_name='test',
+              bapi_stdout=api.portage.EXAMPLE_DOUBLE_EMERGE_INIT_SDK,
+              expected=api.portage.EXAMPLE_DOUBLE_EMERGE_INIT_SDK_EXPECTED)),
+      api.post_check(post_process.StepTextContains, 'adding emerge metrics',
+                     ['Soft failure finding portage stats']),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'fatal-is-non-fatal',
+      api.properties(
+          TestMetricsInputProperties(
+              step_name='test',
+              bapi_stdout=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES,
+              expected=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED)),
+      # Oh no bigquery just refused to write!
+      api.step_data('adding emerge metrics.load json', retcode=1),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
@@ -83,5 +110,13 @@ def GenTests(api):
       'bad-type',
       api.properties(
           TestMetricsInputProperties(step_name='test', bapi_stdout=_BAD_TYPE)),
+      api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'multiple-identical-packages',
+      api.properties(
+          TestMetricsInputProperties(step_name='test',
+                                     bapi_stdout=_MULTIPLE_IDENTICAL)),
       api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
       api.post_check(post_process.StatusSuccess))
