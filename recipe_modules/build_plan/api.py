@@ -254,13 +254,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
       presentation.logs['filter log'] = filter_log
 
-      if cq_looks_enabled:
-        with self.m.step.nest('looks for green'):
-          is_snap_orch_green = self.m.looks_for_green.is_snap_orch_green()
-          self.m.easy.set_properties_step(
-              **{'looks_for_green': {
-                  'is_snap_orch_green': is_snap_orch_green
-              }})
+
+      # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
+      with self.m.failures.ignore_exceptions():
+        if cq_looks_enabled:
+          with self.m.step.nest('looks for green'):
+            self.m.looks_for_green.is_snap_orch_green()
 
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
