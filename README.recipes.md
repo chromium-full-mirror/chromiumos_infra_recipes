@@ -4873,7 +4873,7 @@ APIs for easy steps.
 
 A module for easy steps.
 
-&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#164)(self, log_if_no_parent: bool=True):**
+&mdash; **def [log\_parent\_step](/recipe_modules/easy/api.py#167)(self, log_if_no_parent: bool=True):**
 
 Creates a short step to log the current builder's parent build ID.
 
@@ -4896,7 +4896,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#102)(self, name: str, cmd: List[str], step_test_data: Optional[Any]=None, test_stdout: Optional[Union[(str, Any)]]=None, ignore_exceptions: bool=False, \*\*kwargs):**
+&mdash; **def [stdout\_json\_step](/recipe_modules/easy/api.py#102)(self, name: str, cmd: List[str], step_test_data: Optional[Any]=None, test_stdout: Optional[Union[(str, Any)]]=None, ignore_exceptions: bool=False, add_json_log: bool=True, \*\*kwargs):**
 
 Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -4906,12 +4906,13 @@ Args:
   * step_test_data: Should be 'callable', See 'step.__call__'.
   * test_stdout: Data to return in tests.a
   * ignore_exceptions: Should we ignore any exceptions.
+  * add_json_log: Log the content of the output json.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:
   dict|list: JSON-deserialized stdout data.
 
-&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#133)(self, name: str, cmd: List[str], message_type: type, test_output: Optional[Any]=None, parse_before_str: str='', \*\*kwargs):**
+&mdash; **def [stdout\_jsonpb\_step](/recipe_modules/easy/api.py#136)(self, name: str, cmd: List[str], message_type: type, test_output: Optional[Any]=None, parse_before_str: str='', \*\*kwargs):**
 
 Runs an easy.step and returns stdout jsonpb-deserialized proto data.
 
@@ -8557,7 +8558,7 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#42)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/support/api.py#42)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, add_json_log=True, \*\*kwargs):**
 
 Run a tool from the support package.
 
@@ -8567,6 +8568,7 @@ Args:
   test_output_data (dict|list|Callable): Data to return in tests.
   infra_step (bool): Whether or not this is an infrastructure step.
   timeout (int): Timeout of the step in seconds.
+  add_json_log (bool): Log the content of the output json.
   * kwargs: Keyword arguments to pass to the 'step' call.
 
 Returns:

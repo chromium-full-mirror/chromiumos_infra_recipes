@@ -103,6 +103,7 @@ class EasyApi(recipe_api.RecipeApi):
                        step_test_data: Optional[Any] = None,
                        test_stdout: Optional[Union[str, Any]] = None,
                        ignore_exceptions: bool = False,
+                       add_json_log: bool = True,
                        **kwargs) -> Union[Dict, List]:
     """Runs an easy.step and returns stdout data deserialized from JSON.
 
@@ -112,6 +113,7 @@ class EasyApi(recipe_api.RecipeApi):
       * step_test_data: Should be 'callable', See 'step.__call__'.
       * test_stdout: Data to return in tests.a
       * ignore_exceptions: Should we ignore any exceptions.
+      * add_json_log: Log the content of the output json.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -126,7 +128,8 @@ class EasyApi(recipe_api.RecipeApi):
     ok_ret = {0}
     if ignore_exceptions:
       ok_ret = 'any'
-    sd = self.step(name, cmd, stdout=self.m.json.output(),
+    sd = self.step(name, cmd,
+                   stdout=self.m.json.output(add_json_log=add_json_log),
                    step_test_data=step_test_data, ok_ret=ok_ret, **kwargs)
     return sd.stdout
 

@@ -40,7 +40,7 @@ class SupportApi(recipe_api.RecipeApi):
     self._ensured = True
 
   def call(self, tool, input_data, test_output_data=None, infra_step=True,
-           timeout=None, **kwargs):
+           timeout=None, add_json_log=True, **kwargs):
     """Run a tool from the support package.
 
     Args:
@@ -49,6 +49,7 @@ class SupportApi(recipe_api.RecipeApi):
       test_output_data (dict|list|Callable): Data to return in tests.
       infra_step (bool): Whether or not this is an infrastructure step.
       timeout (int): Timeout of the step in seconds.
+      add_json_log (bool): Log the content of the output json.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -60,4 +61,4 @@ class SupportApi(recipe_api.RecipeApi):
                                         stdin_json=input_data,
                                         test_stdout=test_output_data,
                                         infra_step=infra_step, timeout=timeout,
-                                        **kwargs)
+                                        add_json_log=add_json_log, **kwargs)
