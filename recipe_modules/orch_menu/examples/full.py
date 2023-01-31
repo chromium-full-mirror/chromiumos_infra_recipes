@@ -59,6 +59,8 @@ def RunSteps(api, properties):
                                properties.is_release_orchestrator)
     _ = api.orch_menu.is_public_orchestrator
     _ = api.orch_menu.is_factory_orchestrator
+    is_cq_orch = build.builder.builder == 'cq-orchestrator'
+    api.assertions.assertEqual(api.orch_menu.is_cq_orchestrator, is_cq_orch)
     is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
     api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
                                is_postsubmit_orch)

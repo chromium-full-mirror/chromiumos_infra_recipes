@@ -1941,7 +1941,7 @@ API wrapping the conductor tool.
 
 A module for calling conductor.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#50)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#51)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
 
 Call conductor with the given args.
 
@@ -1951,7 +1951,7 @@ Args:
   timeout: Timeout, in seconds. Defaults to one hour.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [collect](/recipe_modules/conductor/api.py#64)(self, collect_name: str, bbids: List[Union[(str, int)]], \*\*kwargs):**
+&mdash; **def [collect](/recipe_modules/conductor/api.py#65)(self, collect_name: str, bbids: List[Union[(str, int)]], \*\*kwargs):**
 
 Calls `conductor collect` with the given args.
 
@@ -1962,7 +1962,7 @@ Args:
 Returns:
   Final set of BBIDs.
 
-&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#45)(self, collect_name: str):**
+&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#45)(self, collect_name: Union[(str, None)]):**
 
 &emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#41)(self):**
 
@@ -7143,7 +7143,7 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1058)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1066)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7156,15 +7156,15 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#163)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#164)(self):**
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#191)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#196)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#183)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#188)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#143)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#144)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#329)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#337)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -7177,25 +7177,27 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#151)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#152)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#155)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#156)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#147)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#148)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#139)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#140)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#159)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#168)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#171)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#160)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#179)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#176)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#184)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#167)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#180)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#651)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#172)(self):**
+
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#659)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -7209,7 +7211,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#982)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#990)(self, testable_builds=None, container_metadata=None, ignore_gerrit_changes=False):**
 
 Plan, schedule, and run tests.
 
@@ -7227,7 +7229,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#611)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#619)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -7239,11 +7241,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#910)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#918)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#916)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#924)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -7260,7 +7262,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#215)(self, test_footers=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#220)(self, test_footers=None):**
 
 Initial setup steps for the orchestrator.
 
@@ -7279,7 +7281,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#187)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#192)(self):**
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

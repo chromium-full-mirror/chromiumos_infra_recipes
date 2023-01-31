@@ -6,7 +6,7 @@
 """API wrapping the conductor tool."""
 
 import json
-from typing import List, Union
+from typing import List, Optional, Union
 
 from google.protobuf import json_format
 
@@ -42,8 +42,9 @@ class ConductorApi(recipe_api.RecipeApi):
   def enabled(self) -> bool:
     return self._properties.enable_conductor
 
-  def collect_config(self, collect_name: str) -> CollectConfig:
-    if not self._properties.collect_configs:
+  def collect_config(self,
+                     collect_name: Union[str, None]) -> Optional[CollectConfig]:
+    if not self._properties.collect_configs or not collect_name:
       return None
     return self._properties.collect_configs.get(collect_name, None)
 

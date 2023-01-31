@@ -27,6 +27,8 @@ def RunSteps(api: RecipeApi):
                                 step_name='conductor collect')
   api.assertions.assertEqual(bbids, [123, 457])
 
+  api.assertions.assertEqual(api.conductor.collect_config(None), None)
+
 
 collect_config = CollectConfig(rules=[RetryRule(cutoff_seconds=1)])
 

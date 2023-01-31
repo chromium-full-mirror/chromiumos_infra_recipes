@@ -130,6 +130,7 @@ class OrchMenuApi(RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
+    self._is_cq_orchestrator = False
     self._is_release_orchestrator = False
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
@@ -163,6 +164,10 @@ class OrchMenuApi(RecipeApi):
   @property
   def builds_status(self):
     return self._builds_status
+
+  @property
+  def is_cq_orchestrator(self):
+    return self._is_cq_orchestrator
 
   @property
   def is_release_orchestrator(self):
@@ -254,6 +259,9 @@ class OrchMenuApi(RecipeApi):
         self._update_manifest_refs &= (external_commit.id != '')
 
         is_staging = self.m.cros_infra_config.is_staging
+
+        if config and config.id.type == BuilderConfig.Id.CQ:
+          self._is_cq_orchestrator = True
 
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:

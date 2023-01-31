@@ -92,7 +92,7 @@ def DoRunSteps(api: RecipeApi):
     }
 
   async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
-  if async_unit_tests_enabled:
+  if api.orch_menu.is_cq_orchestrator and async_unit_tests_enabled:
     testable_builds = api.orch_menu.plan_and_wait_for_images()
     # Aggregate any metadata produced by the child builds into our own GS bucket
     metadata = api.orch_menu.aggregate_metadata(testable_builds)
@@ -324,5 +324,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'aggregating metadata'),
       api.post_check(post_process.MustRun, 'final build collect.collect.get'),
       api.post_check(post_process.StatusSuccess),
+      builder='cq-orchestrator',
       experiments=['chromeos.build_cq.async_unit_tests'],
   )
