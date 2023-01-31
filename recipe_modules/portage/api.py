@@ -111,8 +111,9 @@ class PortageApi(recipe_api.RecipeApi):
       pres.step_text = 'Soft failure finding portage stats -- {}'.format(msg)
 
     def _get_key(group_dict):
-      return group_dict['category'] + group_dict['package'] + group_dict[
-          'version']
+      return '|'.join([
+          group_dict['category'], group_dict['package'], group_dict['version']
+      ])
 
     def _parse_time(time_str):
       try:
