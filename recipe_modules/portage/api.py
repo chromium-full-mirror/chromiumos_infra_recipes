@@ -209,7 +209,7 @@ class PortageApi(recipe_api.RecipeApi):
             self.m.step('load json', [
                 'bq', 'load', '--source_format=NEWLINE_DELIMITED_JSON',
                 self._BQ_TABLE_NAME, tmp_file
-            ])
+            ], timeout=60)
 
       except Exception as e:  # pylint: disable=broad-except
         self.m.easy.set_properties_step('set failed portage stats',

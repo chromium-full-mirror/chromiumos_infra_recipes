@@ -971,6 +971,7 @@
       "[CLEANUP]/tmp_tmp_1"
     ],
     "name": "adding emerge metrics.load json",
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
