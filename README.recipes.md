@@ -8770,7 +8770,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#500)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#501)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -8789,7 +8789,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#389)(self, qcow_image_path, private_key_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#390)(self, qcow_image_path, private_key_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -8832,7 +8832,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#473)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#474)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 

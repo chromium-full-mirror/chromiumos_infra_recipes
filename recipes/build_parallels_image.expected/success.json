@@ -254,6 +254,7 @@
       "-waituntilready",
       "-continueafterfailure",
       "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
       "-defaultvarsdir=[CLEANUP]/test-artifacts_tmp_1/tast/vars",
       "-resultsdir",
       "[CLEANUP]/tast-results_tmp_1",

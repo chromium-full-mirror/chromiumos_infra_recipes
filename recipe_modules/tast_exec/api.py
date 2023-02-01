@@ -371,6 +371,7 @@ class TastExecApi(RecipeApi):
         '-waituntilready', \
         '-continueafterfailure', \
         '-extrauseflags=tast_vm', \
+        '-var=setup.FieldTrialConfig=disable',
         '-defaultvarsdir={}'.format(str(tast_dir.join('vars'))), \
         '-resultsdir', str(test_results_dir), \
         '-remotebundledir={}'.format(
