@@ -128,11 +128,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
           or 'chromeos.cros_infra_config.cq_looks' in child_exps:
         # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
         # wait-only CQ looks behaviors.
-        cq_looks_enabled = True
-        snapshot_ids = set()
         filter_log.append('CQ looks experiment enabled')
+        # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
+        with self.m.failures.ignore_exceptions():
+          with self.m.step.nest('looks for green'):
+            self.m.looks_for_green.is_snap_orch_green()
       else:
-        cq_looks_enabled = False
         filter_log.append('CQ looks experiment not enabled')
 
       for child_spec in child_specs:
@@ -207,15 +208,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
             BuilderConfig.General.PUBLIC):
           child_build_snapshot = external_snapshot
 
-        # If CQ Looks is enabled, collect a set of snapshot ids that will be
-        # used in this build plan so we can validate they are green snapshots.
-        # TODO(b/211620738): Refine to consider history of snapshots within
-        # lookback window.
-        if cq_looks_enabled:
-          filter_log.append('CQ looks: found snapshot {} for build {}'.format(
-              child_build_snapshot.id, child_spec.name))
-          snapshot_ids.add(child_build_snapshot.id)
-
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
         # Technically per current approaches a bisecting orchestrator doing hw
@@ -253,13 +245,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 can_outlive_parent=can_outlive_parent))
 
       presentation.logs['filter log'] = filter_log
-
-
-      # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
-      with self.m.failures.ignore_exceptions():
-        if cq_looks_enabled:
-          with self.m.step.nest('looks for green'):
-            self.m.looks_for_green.is_snap_orch_green()
 
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.
