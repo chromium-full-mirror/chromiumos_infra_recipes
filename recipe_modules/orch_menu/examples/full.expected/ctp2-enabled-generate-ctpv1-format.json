@@ -7567,9 +7567,9 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4)",
+    "name": "run tests.schedule tests.generate hw test plans.fetch gitiles file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@data@{@@@",
       "@@@STEP_LOG_LINE@data@  \"boardPriorities\": [@@@",
       "@@@STEP_LOG_LINE@data@    {@@@",
@@ -7600,9 +7600,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (4).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -7629,9 +7629,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.write input files.write board_priority.cfg",
+    "name": "run tests.schedule tests.generate hw test plans.write board_priority.cfg",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

@@ -373,14 +373,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             test_output_message=self.test_api.dut_attribute_list(),
         )
 
-        board_priority_list_path = self._download_config_pb(
-            'chrome-internal.googlesource.com',
-            'chromeos/config-internal',
-            'board_config/generated/board_priority.cfg',
-            host_input_path,
-            test_output_message=self.test_api.board_priority_list(),
-        )
-
       out_path = (
           self.m.path.join(host_input_path, "generatetestplanresp.binaryproto")
           if self.generate_ctpv1_format else self.m.path.join(
@@ -394,7 +386,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           '-dutattributes': dut_attribute_list_path,
           '-buildmetadata': build_metadata_list_path,
           '-configbundlelist': config_bundle_list_path,
-          '-boardprioritylist': board_priority_list_path,
           '-out': out_path,
       }
 
@@ -403,6 +394,15 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       args = ['generate', '-alsologtostderr', '-v', '2']
 
       if self.generate_ctpv1_format:
+        board_priority_list_path = self._download_config_pb(
+            'chrome-internal.googlesource.com',
+            'chromeos/config-internal',
+            'board_config/generated/board_priority.cfg',
+            host_input_path,
+            test_output_message=self.test_api.board_priority_list(),
+        )
+        arg_to_host_path['-boardprioritylist'] = board_priority_list_path
+
         req_path = host_input_path.join('generatetestplanreq.binaryproto')
         self.m.file.write_raw(
             'write generatetestplanreq binaryproto', req_path,
