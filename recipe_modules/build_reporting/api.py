@@ -422,15 +422,22 @@ class BuildReportingApi(recipe_api.RecipeApi):
     Return:
       Handle which is used to publish to GS.
     """
-
-    class Handle():
-      pass
-
+    exception = None
     try:
-      yield Handle
+      yield
+    except Exception as e:  #pylint: disable=broad-except
+      exception = e
     finally:
-      # Publish the final step time.
-      self._upload_to_gs(gs_path or self.m.build_menu.artifacts_gs_path())
+      try:
+        # Publish the final step time.
+        self._upload_to_gs(gs_path or self.m.build_menu.artifacts_gs_path())
+      except Exception as e:
+        # Swallow in favor of actual exception.
+        if exception:
+          raise exception  # pylint: disable=raise-missing-from
+        raise
+      if exception:
+        raise exception
 
   def publish_build_target_and_model_metadata(self, branch, builder_metadata):
     """Publish and merge info about the build target and models of a build.

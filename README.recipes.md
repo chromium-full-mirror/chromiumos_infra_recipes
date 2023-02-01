@@ -161,6 +161,7 @@
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2) (Python3 ✅)
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full) (Python3 ✅)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full) (Python3 ✅)
+  * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs) (Python3 ✅)
   * [build_sdk](#recipes-build_sdk) (Python3 ✅) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
   * [build_slim_cq](#recipes-build_slim_cq) (Python3 ✅) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_toolchain](#recipes-build_toolchain) (Python3 ✅) &mdash; Builds and uploads the Chromium OS toolchain.
@@ -1429,7 +1430,7 @@ Raises:
 Return:
   None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#435)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#442)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1438,14 +1439,14 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#515)(self, dlc_locations):**
+&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#522)(self, dlc_locations):**
 
 Publish DLC locations to pubsub.
 
 Args:
   dlc_locations (List[str]): List of DLC locations in GS.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#455)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#462)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
@@ -1466,7 +1467,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#501)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#508)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -9752,6 +9753,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#42)(api):**
+### *recipes* / [build\_reporting:tests/publish\_to\_gs](/recipe_modules/build_reporting/tests/publish_to_gs.py)
+
+[DEPS](/recipe_modules/build_reporting/tests/publish_to_gs.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_to_gs.py#18)(api):**
 ### *recipes* / [build\_sdk](/recipes/build_sdk.py)
 
 [DEPS](/recipes/build_sdk.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
