@@ -65,7 +65,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       presentation.links['archive_link'] = pantheon_url
       return pantheon_url
 
-  def get_results(self, test_results_path, suite_name, tag, tests):
+  def get_results(self, test_results_path, suite_name, tag, tests,
+                  new_invocation=False):
     """Return the test results decoded from the streamed_results.jsonl.
 
     Args:
@@ -73,6 +74,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       suite_name (str): Name of the whole test suite.
       tag (str): Tag for this execution. Used to distinguish archive folders.
       tests list(str): List of tests that should have been executed.
+      new_invocation (bool): Whether the test results should be uploaded in a
+          new invocation.
 
     Returns:
       A consolidated Data Structure summarizing all results from a run.
@@ -96,7 +99,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       ]
 
       self.upload_to_resultdb(test_results_path, suite_name, missing_test_names,
-                              tag)
+                              tag, new_invocation=new_invocation)
 
       # If even one test failed, the suite should report failure.
       all_verdicts = [t.verdict for t in test_cases]
@@ -482,7 +485,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     return base_variant
 
   def upload_to_resultdb(self, test_results_path, suite_name,
-                         missing_test_names, tag):
+                         missing_test_names, tag, new_invocation=False):
     """Upload the test results to ResultDB.
 
     Args:
@@ -500,6 +503,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         'artifact_directory': self.m.path.abspath(test_results_path),
         'base_variant': self._generate_resultdb_variant_def(suite_name),
         'base_tags': self._generate_resultdb_base_tags(tag),
+        'include': new_invocation,
     }
     self.m.cros_resultdb.upload(config)
     self.m.cros_resultdb.report_missing_test_cases(missing_test_names,

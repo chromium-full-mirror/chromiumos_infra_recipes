@@ -8770,7 +8770,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#501)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#505)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -8789,7 +8789,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#390)(self, qcow_image_path, private_key_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#394)(self, qcow_image_path, private_key_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -8832,7 +8832,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#474)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#478)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -8842,7 +8842,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#246)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#250)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -8855,7 +8855,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#213)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#215)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -8864,6 +8864,8 @@ Args:
     by create_qemu_vm_context/create_gce_vm_context.
   test_results_dir (Path): Path to store tast results.
   tast_inputs (TastInputs): Common inputs for running tast tests.
+  new_invocation (bool): Whether the test results should be uploaded in a
+      new invocation.
 
 Returns:
   list[str]: The list of tests that met the specified expression(s).
@@ -8906,7 +8908,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#183)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#186)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -8919,7 +8921,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#158)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#161)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -8929,7 +8931,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#142)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#145)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -8939,7 +8941,7 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#68)(self, test_results_path, suite_name, tag, tests):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#68)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -8948,13 +8950,15 @@ Args:
   suite_name (str): Name of the whole test suite.
   tag (str): Tag for this execution. Used to distinguish archive folders.
   tests list(str): List of tests that should have been executed.
+  new_invocation (bool): Whether the test results should be uploaded in a
+      new invocation.
 
 Returns:
   A consolidated Data Structure summarizing all results from a run.
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#272)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#275)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -8965,7 +8969,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#221)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#224)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -8973,14 +8977,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#246)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#249)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#484)(self, test_results_path, suite_name, missing_test_names, tag):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#487)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
 
 Upload the test results to ResultDB.
 

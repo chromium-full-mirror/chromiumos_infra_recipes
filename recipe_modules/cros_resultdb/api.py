@@ -319,7 +319,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         location_tags_file=config.get('location_tags_file'),
         require_build_inv=True,
         exonerate_unexpected_pass=config.get('exonerate_unexpected_pass', True),
-        include=(realm != ''),
+        include=config.get('include', False) or (realm != ''),
         realm=realm,
     )
     # Even rdb failed we should complete the test runner build, so that

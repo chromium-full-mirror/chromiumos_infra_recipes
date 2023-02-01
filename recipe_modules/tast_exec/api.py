@@ -182,7 +182,7 @@ class TastExecApi(RecipeApi):
       tast_inputs = tast_inputs.copy()
       tast_inputs.expressions = tests_to_retry
       retry_task_result = self._retry_iter(suite_name, vm_context, tast_inputs,
-                                           'second')
+                                           'second', new_invocation=True)
       if retry_task_result.test_cases:
         all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
       retry_results, retry_tcs = self.m.tast_results.convert_results(
@@ -202,13 +202,15 @@ class TastExecApi(RecipeApi):
 
     return results, empty_result
 
-  def _retry_iter(self, suite_name, vm_context, tast_inputs, tag):
+  def _retry_iter(self, suite_name, vm_context, tast_inputs, tag,
+                  new_invocation=False):
     with self.m.step.nest('%s tast iteration' % tag) as pres:
       test_results_dir = self.m.path.mkdtemp(prefix='test-results')
       tests = self.run_direct_vm(vm_context, test_results_dir, tast_inputs)
       pres.logs['tests'] = tests
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
-                                             tests)
+                                             tests,
+                                             new_invocation=new_invocation)
 
   def run_direct_vm(self, vm_context, test_results_dir, tast_inputs):
     """Run tast tests in a VM without retries or results processing.
@@ -218,6 +220,8 @@ class TastExecApi(RecipeApi):
         by create_qemu_vm_context/create_gce_vm_context.
       test_results_dir (Path): Path to store tast results.
       tast_inputs (TastInputs): Common inputs for running tast tests.
+      new_invocation (bool): Whether the test results should be uploaded in a
+          new invocation.
 
     Returns:
       list[str]: The list of tests that met the specified expression(s).
