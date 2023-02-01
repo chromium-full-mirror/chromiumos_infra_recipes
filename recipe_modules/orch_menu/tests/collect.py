@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
 
@@ -31,8 +33,7 @@ def RunSteps(api, properties):
   # pylint: disable=protected-access
   api.assertions.assertEqual(
       properties.expected_collect,
-      api.orch_menu._collect_value(build.builder.builder, child_specs_dict,
-                                   child_targets_dict))
+      api.orch_menu._collect_value(build, child_specs_dict, child_targets_dict))
 
 
 def GenTests(api):
@@ -40,27 +41,30 @@ def GenTests(api):
   ChildSpec = BuilderConfig.Orchestrator.ChildSpec
   CollectHandling = ChildSpec.CollectHandling
   build_target = 'amd64-generic'
-  builder = '%s-postsubmit' % build_target
+  builders = ['%s-postsubmit' % build_target, '%s-slim-cq' % build_target]
 
-  # Iterate through all of the possible cases for child_specs_dict and
+  # Iterate through all of the possible cases for builder, child_specs_dict, and
   # child_targets_dict, and verify that we get the right answer each time.
-  for spec_name, spec_value in CollectHandling.items():
-    for target_name, target_value in CollectHandling.items():
-      if spec_value:
-        expected_collect = spec_value
-      elif target_value:
-        expected_collect = target_value
-      else:
-        expected_collect = ChildSpec.COLLECT
-      properties = CollectProperties(expected_collect=expected_collect)
-      if spec_value:
-        properties.child_spec.name = builder
-        properties.child_spec.collect_handling = spec_value
-      if target_value:
-        properties.child_target.name = build_target
-        properties.child_target.collect_handling = target_value
+  for builder in builders:
+    for spec_name, spec_value in CollectHandling.items():
+      for target_name, target_value in CollectHandling.items():
+        if spec_value:
+          expected_collect = spec_value
+        elif target_value:
+          expected_collect = target_value
+        else:
+          expected_collect = ChildSpec.COLLECT
+        properties = CollectProperties(expected_collect=expected_collect)
+        if spec_value:
+          properties.child_spec.name = builder
+          properties.child_spec.collect_handling = spec_value
+        if target_value:
+          properties.child_target.name = build_target
+          properties.child_target.collect_handling = target_value
 
-      yield api.orch_menu.test(
-          '%s-%s' % (spec_name, target_name),
-          api.test_util.test_child_build(build_target, builder=builder).build,
-          api.properties(properties))
+        yield api.orch_menu.test(
+            '%s-%s-%s' % (builder, spec_name, target_name),
+            api.test_util.test_child_build(build_target, builder=builder).build,
+            api.properties(properties),
+            api.post_process(post_process.DropExpectation),
+        )

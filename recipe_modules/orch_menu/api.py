@@ -861,7 +861,7 @@ class OrchMenuApi(RecipeApi):
     child_specs_dict = {cs.name: cs for cs in child_specs}
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
     for b in existing_builds:
-      collect_when_dict[self._collect_value(b.builder.builder, child_specs_dict,
+      collect_when_dict[self._collect_value(b, child_specs_dict,
                                             child_targets_dict)].append(b)
 
     return (completed_builds +
@@ -887,15 +887,21 @@ class OrchMenuApi(RecipeApi):
           build_ids, step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
 
-  def _collect_value(self, builder_name, child_specs_dict, child_targets_dict):
+  def _collect_value(
+      self,
+      build: build_pb2.Build,
+      child_specs_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
+      child_targets_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
+  ) -> BuilderConfig.Orchestrator.ChildSpec:
     """Returns whether the orchestrator should collect the build, and when.
 
     Args:
-      builder_name (str): the name of the builder to check whether to collect.
-      child_specs_dict (dict): mapping of builder name to ChildSpec.
-      child_targets_dict (dict): fuzzy mapping of build_target to ChildSpec.
+      build: the build to check whether to collect.
+      child_specs_dict: mapping of builder name to ChildSpec.
+      child_targets_dict: fuzzy mapping of build_target to ChildSpec.
         Fuzzy in the sense that it just chops off from the last '-' to the end
-        of the string. Intended to pick up the *-snapshot cases. See more below.
+        of the builder name. Intended to pick up the *-snapshot cases. See more
+        below.
 
     Returns:
       (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
@@ -903,13 +909,17 @@ class OrchMenuApi(RecipeApi):
     """
     values = BuilderConfig.Orchestrator.ChildSpec
     ret = values.COLLECT
-    child_spec = child_specs_dict.get(builder_name)
+    child_spec = child_specs_dict.get(build.builder.builder)
     if not child_spec:
       # Missed lookup, the existing build name was not a name in child_specs.
-      # The usual case would be existing build has a *-snapshot name but the
-      # orchestrator's child has a *-postsubmit name.
-      # TODO(crbug/991996): Refactor: use something other than string manip.
-      child_spec = child_targets_dict.get(builder_name.rsplit('-', 1)[0])
+      # The usual case could be existing build has a *-snapshot name but the
+      # orchestrator's child has a *-postsubmit name, or a slim-cq build which
+      # doesn't have an explicit ChildSpec.
+      build_target = self._get_property(
+          "$chromeos/build_menu.build_target.name", build.input.properties)
+      if build_target:
+        child_spec = child_targets_dict.get(build_target)
+
     if child_spec:
       return child_spec.collect_handling or ret
     # Missed lookup even after fallback for *-snapshot.
@@ -1063,21 +1073,8 @@ class OrchMenuApi(RecipeApi):
         self.m.greenness.update_build_info(completed_builds)
     return self._builds_status
 
-  def aggregate_metadata(self, child_builds):
-    """Aggregate metadata payloads from children.
-
-    Pull metadata message of each type from children and merge the messages
-    together.  Upload the resulting message as our own metadata.
-
-    Args:
-      child_builds ([BuildStatus]): BuildStatus instances for child builds
-
-    Returns:
-      (ContainerMetadata): Aggregated container metadata
-    """
-
-    def get_property(pathspec, props):
-      """Get a value from a property by pathspec.
+  def _get_property(self, pathspec, props):
+    """Get a value from a property by pathspec.
 
       Input and output properties are protobuffer.Struct instances, so
       normal python .get() methods don't work on them, so we have to walk the
@@ -1090,11 +1087,23 @@ class OrchMenuApi(RecipeApi):
       Return:
         Value of field if found, otherwise None.
       """
-      obj = props
-      for key in pathspec.split('.'):
-        obj = obj[key] if key in obj else []
-      return obj or None
+    obj = props
+    for key in pathspec.split('.'):
+      obj = obj[key] if key in obj else []
+    return obj or None
 
+  def aggregate_metadata(self, child_builds):
+    """Aggregate metadata payloads from children.
+
+    Pull metadata message of each type from children and merge the messages
+    together.  Upload the resulting message as our own metadata.
+
+    Args:
+      child_builds ([BuildStatus]): BuildStatus instances for child builds
+
+    Returns:
+      (ContainerMetadata): Aggregated container metadata
+    """
     # Iterate over each metadata payload defined in the metadata module.
     with self.m.step.nest('aggregating metadata') as aggregate_step:
       for metadata_info in self.m.metadata.METADATA_PAYLOADS.values():
@@ -1119,13 +1128,14 @@ class OrchMenuApi(RecipeApi):
               # If no build-target is set on the child build, then it's not an
               # actual build (not compiling an image), so skip it.
               input_props = build.input.properties
-              build_target = get_property('build_target.name', input_props)
+              build_target = self._get_property('build_target.name',
+                                                input_props)
               if not build_target:
                 child_step.step_summary_text = 'no build-target set, skipping'
                 continue
 
               # If the child wasn't asked to build containers then skip it.
-              container_version_format = get_property(
+              container_version_format = self._get_property(
                   '$chromeos/build_menu.container_version_format',
                   input_props,
               )
@@ -1140,8 +1150,9 @@ class OrchMenuApi(RecipeApi):
               # and use them to piece together the full path to the metadata
               # payload.
               output_props = build.output.properties
-              gs_bucket = get_property('artifacts.gs_bucket', output_props)
-              gs_path = get_property('artifacts.gs_path', output_props)
+              gs_bucket = self._get_property('artifacts.gs_bucket',
+                                             output_props)
+              gs_path = self._get_property('artifacts.gs_path', output_props)
 
               if not (gs_bucket and gs_path):
                 child_step.step_summary_text = 'no artifacts path, skipping'
