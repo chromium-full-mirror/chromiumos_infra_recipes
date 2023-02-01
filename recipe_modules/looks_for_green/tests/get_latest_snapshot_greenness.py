@@ -15,12 +15,14 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/time',
+    'cros_infra_config',
     'looks_for_green',
 ]
 
 PROPERTIES = {
     'expected_greenness': Property(default=0),
     'expected_is_snap_orch_green': Property(default=True),
+    'expected_staging': Property(default=False)
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -31,11 +33,14 @@ TEST_START_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613754627)
 TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 
-def RunSteps(api, expected_greenness, expected_is_snap_orch_green):
+def RunSteps(api, expected_greenness, expected_is_snap_orch_green,
+             expected_staging):
   agg_greenness = api.looks_for_green.get_latest_snapshot_greenness()
   api.assertions.assertEqual(expected_greenness, agg_greenness)
   is_snap_orch_green = api.looks_for_green.is_snap_orch_green()
   api.assertions.assertEqual(expected_is_snap_orch_green, is_snap_orch_green)
+  api.assertions.assertEqual(expected_staging, api.cros_infra_config.is_staging)
+
 
 def GenTests(api):
   output = build_pb2.Build.Output()
@@ -45,6 +50,34 @@ def GenTests(api):
       'success',
       api.properties(expected_greenness=100, expected_is_snap_orch_green=True),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ], step_name='checking latest snapshot greenness.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ],
+          step_name='checking latest snapshot greenness (2).buildbucket.search'
+      ),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'staging',
+      api.properties(expected_greenness=100, expected_is_snap_orch_green=True,
+                     expected_staging=True),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.ci_build(
+          project='chromeos',
+          bucket='staging',
+          builder='staging-cq-orchestrator',
+      ),
       api.buildbucket.simulated_search_results(
           builds=[
               build_pb2.Build(id=123, output=output,

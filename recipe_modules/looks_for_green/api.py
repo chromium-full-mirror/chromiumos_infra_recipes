@@ -41,6 +41,27 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       self._now = self.m.time.utcnow().replace(microsecond=0)
     return self._now
 
+  @property
+  def _greenness_bucket(self):
+    '''Returns bucket to query for greenness.
+
+    Returns:
+      (string)
+    '''
+    return 'staging' if self.m.cros_infra_config.is_staging else 'postsubmit'
+
+  @property
+  def _greenness_builder(self):
+    '''Returns builder to query for greenness.
+
+    Using staging-postsubmit-orchestrator since snapshot-orchestrator is not
+    enabled in staging.
+
+    Returns:
+      (string)
+    '''
+    return 'staging-postsubmit-orchestrator' if self.m.cros_infra_config.is_staging else 'snapshot-orchestrator'
+
   def get_latest_snapshot_greenness(self):
     '''Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -62,8 +83,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                   self._lookback_hours * 60 * 60,
               )), status=common_pb2.ENDED_MASK)
       predicate.builder.project = self.m.buildbucket.build.builder.project
-      predicate.builder.bucket = 'postsubmit'
-      predicate.builder.builder = 'snapshot-orchestrator'
+      predicate.builder.bucket = self._greenness_bucket
+      predicate.builder.builder = self._greenness_builder
       result = self.m.buildbucket.search([predicate], limit=1, fields=fields)
       if result:
         snap_orch_bbid = result[0].id
