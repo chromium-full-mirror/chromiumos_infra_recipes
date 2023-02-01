@@ -41,6 +41,7 @@ DEPS = [
     'cros_release',
     'cros_sdk',
     'cros_test_plan',
+    'cros_try',
     'signing',
     'cros_source',
     'cros_tags',
@@ -59,6 +60,7 @@ StepDetails = BuildReport.StepDetails
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
+  api.cros_try.check_try_version()
   api.checkpoint.register()
   api.cros_release.set_output_properties()
 

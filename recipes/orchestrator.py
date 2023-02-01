@@ -32,6 +32,7 @@ DEPS = [
     'cros_release',
     'cros_source',
     'cros_tags',
+    'cros_try',
     'orch_menu',
     'signing',
     'recipe_engine/buildbucket',
@@ -42,6 +43,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
+  api.cros_try.check_try_version()
   api.checkpoint.register()
   with api.orch_menu.setup_orchestrator() as config:
     if config:

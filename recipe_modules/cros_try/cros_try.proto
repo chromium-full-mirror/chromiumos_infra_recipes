@@ -1,0 +1,19 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_try;
+
+message CrosTryProperties {
+    // Whether or not to enforce `supported_build`.
+    bool enforce_support = 1;
+
+    // crrev.com/c/4205799 updated `cros try` to track a CIPD ref instead of a
+    // speific CIPD version, allowing us to push updates to users. We want to
+    // invalidate try builds that (roughly) predated this change.
+    // This can be removed after it has baked for a sufficiently long period of
+    // time (several quarters).
+    bool supported_build = 2;
+}
