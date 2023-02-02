@@ -14,6 +14,8 @@ from typing import Callable, Dict
 from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.checkpoint import RetryStep
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
@@ -142,10 +144,23 @@ def GenTests(api: RecipeTestApi):
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True)
 
+  def get_public_orch():
+    output = build_pb2.Build.Output()
+    child_build_ids = [str(8922054662172514001 + x) for x in range(3)]
+    output.properties.update({'child_builds': child_build_ids})
+    return build_pb2.Build(id=8922054662172514000, output=output,
+                           status=common_pb2.SUCCESS)
+
   yield api.orch_menu.test(
-      'release-orchestrator', data.ctp_normal,
+      'release-orchestrator',
+      data.ctp_normal,
       api.properties(
           **{
+              "$chromeos/cros_lkgm": {
+                  "enable_lkgm": True,
+                  "full_run": True,
+                  "builder_threshold_percentage": 0,
+              },
               "$chromeos/orch_menu":
                   OrchMenuProperties(skip_paygen=True,
                                      schedule_public_build=True),
@@ -155,9 +170,55 @@ def GenTests(api: RecipeTestApi):
           }),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
+      api.buildbucket.simulated_collect_output(
+          [get_public_orch()], step_name='collect public orchestrator.collect'),
+      # On ToT, shouldn't be getting branch.
+      api.post_check(post_process.DoesNotRun, 'get chrome branch'),
+      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'call chrome_chromeos_lkgm', ['--branch']),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.schedule public build'),
       api.post_check(post_process.StatusSuccess),
-      builder='release-main-orchestrator', with_history=True,
-      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+      builder='release-main-orchestrator',
+      with_history=True,
+      collect_builds=data.builds,
+      with_manifest_refs=True,
+      bot_size='medium')
+
+  yield api.orch_menu.test(
+      'release-orchestrator-snapshot-experiment',
+      data.ctp_normal,
+      api.properties(
+          **{
+              "$chromeos/cros_lkgm": {
+                  "enable_lkgm": True,
+                  "full_run": True,
+                  "builder_threshold_percentage": 0,
+              },
+              "$chromeos/orch_menu":
+                  OrchMenuProperties(skip_paygen=True,
+                                     schedule_public_build=True),
+              '$chromeos/signing': {
+                  'ignore_already_exists_errors': True,
+              }
+          }),
+      api.buildbucket.simulated_collect_output(
+          [get_public_orch()], step_name='collect public orchestrator.collect'),
+      # On ToT, shouldn't be getting branch.
+      api.post_check(post_process.DoesNotRun, 'get chrome branch'),
+      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'call chrome_chromeos_lkgm', ['--branch']),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.schedule public build'),
+      api.post_check(post_process.StatusSuccess),
+      builder='release-main-orchestrator',
+      with_history=True,
+      collect_builds=data.builds,
+      with_manifest_refs=True,
+      bot_size='medium',
+      experiments=['chromeos.cros_infra_config.release_tot_builds_snapshot'])
 
   yield api.orch_menu.test(
       'public-orchestrator',

@@ -83,9 +83,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
 
   def test_build(self, cq=False, dry_run=False, bot_size='large',
                  extra_changes=None, exe=None, input_properties=None,
-                 create_time=None, start_time=None, update_time=None,
-                 end_time=None, critical=None, output_properties=None,
-                 tags=None, created_by=None, **kwargs):
+                 experiments=None, create_time=None, start_time=None,
+                 update_time=None, end_time=None, critical=None,
+                 output_properties=None, tags=None, created_by=None, **kwargs):
     """Return a buildbucket step_data for a typical test build.
 
     In general, test_orchestrator() should be called for orchestrators, and
@@ -108,6 +108,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       input_properties: A protobuf input properties message, a dictionary of
           input properties, or None.  If used, the dictionary may be a superset
           of protobufs.
+      experiments (list[str]): List of experiments to apply to the build.
       create_time (seconds): Create time, in seconds since epoch.
       start_time (seconds): Start time, in seconds since epoch.
       update_time (seconds): Update time, in seconds since epoch.
@@ -169,6 +170,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       msg.exe.cipd_package = exe.cipd_package
       msg.exe.cipd_version = exe.cipd_version
     msg.input.properties.update(input_dict)
+    msg.input.experiments.extend(experiments)
 
     # These fields show up in buildbucket.build as the build progresses.  Let
     # the user add them for testing.

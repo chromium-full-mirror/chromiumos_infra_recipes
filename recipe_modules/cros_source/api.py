@@ -144,7 +144,7 @@ class CrosSourceApi(RecipeApi):
   @property
   def is_tot(self):
     """Return whether or not the builder is on ToT."""
-    return self.manifest_branch in ['main', 'snapshot', 'staging-snapshot']
+    return self.manifest_branch in ['', 'main', 'snapshot', 'staging-snapshot']
 
   @property
   def manifest_push(self):
