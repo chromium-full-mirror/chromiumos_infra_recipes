@@ -14088,6 +14088,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Full version: R99-1234.56.0\n\n1 non-critical build failed"
   }
 ]

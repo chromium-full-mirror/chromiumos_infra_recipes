@@ -1195,6 +1195,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "full sync"
   }
 ]

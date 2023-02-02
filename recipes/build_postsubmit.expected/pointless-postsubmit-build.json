@@ -4461,6 +4461,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Build was not relevant."
   }
 ]

@@ -14649,6 +14649,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "3 non-critical hw tests failed"
   }
 ]

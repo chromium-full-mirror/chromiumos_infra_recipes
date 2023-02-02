@@ -53,6 +53,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Triggered jobs for refs:\n- refs/heads/release-R86-13421.B"
   }
 ]

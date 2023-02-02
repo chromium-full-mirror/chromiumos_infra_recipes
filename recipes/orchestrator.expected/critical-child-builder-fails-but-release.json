@@ -13769,6 +13769,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Full version: R99-1234.56.0\n\n1 out of 3 builds failed\n\n- amd64-generic-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
   }
 ]

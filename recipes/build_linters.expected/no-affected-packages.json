@@ -6226,6 +6226,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "No packages affected by changes."
   }
 ]

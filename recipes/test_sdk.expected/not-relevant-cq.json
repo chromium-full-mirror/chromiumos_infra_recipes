@@ -4262,6 +4262,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "build was pointless."
   }
 ]

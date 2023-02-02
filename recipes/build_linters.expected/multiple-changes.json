@@ -7833,6 +7833,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Wrote 3 findings."
   }
 ]

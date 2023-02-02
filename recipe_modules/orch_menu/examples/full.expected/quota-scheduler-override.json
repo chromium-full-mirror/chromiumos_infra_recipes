@@ -13793,6 +13793,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "1 non-critical build failed"
   }
 ]

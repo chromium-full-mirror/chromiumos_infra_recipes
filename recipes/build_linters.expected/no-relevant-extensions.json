@@ -150,6 +150,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "No changes need linting."
   }
 ]

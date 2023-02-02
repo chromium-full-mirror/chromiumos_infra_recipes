@@ -2506,6 +2506,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "1 changes made\n\n- test_program/test_project [deadbeef](https://chrome-internal.googlesource.com/chromeos/project/test_program/test_project/+/deadbeefdeadbeefdeadbeefdeadbeefdeadbeef)\n\n"
   }
 ]

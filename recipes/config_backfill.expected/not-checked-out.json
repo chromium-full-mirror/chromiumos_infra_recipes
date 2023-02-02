@@ -1257,6 +1257,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "\n\n1 missing from manifest"
   }
 ]
