@@ -69,7 +69,7 @@ def GenTests(api):
               bapi_stdout=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES,
               expected=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED)),
       # Oh no bigquery just refused to write!
-      api.step_data('adding emerge metrics.load json', retcode=1),
+      api.step_data('adding emerge metrics.insert to bq', retcode=1),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(

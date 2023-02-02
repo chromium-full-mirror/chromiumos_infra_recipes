@@ -7,7 +7,6 @@
 
 from collections import defaultdict
 from datetime import datetime, timedelta
-import json
 import re
 
 from recipe_engine import recipe_api
@@ -23,6 +22,26 @@ class PortageApi(recipe_api.RecipeApi):
     self._portage_emerge_stats = {}
 
     self._BQ_TABLE_NAME = 'portage_stats.staging' if self.m.cros_infra_config.is_staging else 'portage_stats.prod'
+
+    self._INSERT_QUERY_FORMAT = """INSERT `chromeos-bot.{dataset}` (job, total,
+    category, package, version, duration, start, `end`, insert_time, emerge_type,
+    bbid, bucket, builder, step_name)
+    SELECT * FROM UNNEST([{query_data}])"""
+
+    self._INSERT_QUERY_DATA = """(%(job)s,
+    %(total)s,
+    '%(category)s',
+    '%(package)s',
+    '%(version)s',
+    %(duration)s,
+    DATETIME('%(start)s'),
+    DATETIME('%(end)s'),
+    DATETIME('%(insert_time)s'),
+    '%(emerge_type)s',
+    '%(bbid)s',
+    '%(bucket)s',
+    '%(builder)s',
+    '%(step_name)s')"""
 
     # Many of these regexs can be best understood by consulting `man emerge`.
     self._START_STATES = ['Emerging binary', 'Emerging']
@@ -203,13 +222,13 @@ class PortageApi(recipe_api.RecipeApi):
                 'set portage stats', portage_stats=self._portage_emerge_stats)
           if publish_to_bq:
             # Do the BQ insert.
-            jsonl = '\n'.join([json.dumps(x) for x in ready])
-            tmp_file = self.m.path.mkstemp()
-            self.m.file.write_text('write bq jsonl', tmp_file, jsonl)
-            self.m.step('load json', [
-                'bq', 'load', '--source_format=NEWLINE_DELIMITED_JSON',
-                self._BQ_TABLE_NAME, tmp_file
-            ], timeout=60)
+            query_data = ',\n'.join(
+                [self._INSERT_QUERY_DATA % x for x in ready])
+            whole_query = self._INSERT_QUERY_FORMAT.format(
+                dataset=self._BQ_TABLE_NAME, query_data=query_data)
+            self.m.step('insert to bq',
+                        ['bq', 'query', '--use_legacy_sql=false'],
+                        stdin=self.m.raw_io.input_text(whole_query), timeout=60)
 
       except Exception as e:  # pylint: disable=broad-except
         self.m.easy.set_properties_step('set failed portage stats',
