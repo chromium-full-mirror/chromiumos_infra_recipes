@@ -119,11 +119,30 @@ def _replay_successful_ctp_builds_in_replay_builder(api, replay_builder,
       time_limit_seconds=time_limit_seconds)
   for build in builds:
     reqs = MessageToDict(build.input.properties["requests"])
+    new_reqs = _check_dev_env_and_cft(replay_builder, reqs)
+    if not new_reqs:
+      continue  # pragma: nocover
     bb_tags = {
         REPLAYED_PROD_BUILD_ID_TAG: str(build.id),
         'parent_buildbucket_id': str(api.buildbucket.build.id)
     }
     api.skylab.schedule_ctp_requests(tagged_requests=reqs, bb_tags=bb_tags)
+
+
+# b/267268890: Only schedule cft requests in dev env. Remove after trv2
+# rolls to prod.
+def _check_dev_env_and_cft(replay_builder, reqs_dict):
+  if not replay_builder.endswith("dev"):
+    return reqs_dict
+
+  new_reqs_dict = {}
+  for tag, req in reqs_dict.items():
+    if req.get("params") and req.get("params").get("runViaCft") is True:
+      # Run the request in trv2
+      req["params"]["runViaTrv2"] = True
+      new_reqs_dict[tag] = req
+
+  return new_reqs_dict
 
 
 def GenTests(api):
@@ -152,6 +171,7 @@ def GenTests(api):
                   "allow": True,
                   "max": 3
               },
+              "runViaCft": True,
               "scheduling": {
                   "managedPool": "MANAGED_POOL_QUOTA",
                   "qsAccount": "legacypool-suites"
@@ -245,6 +265,24 @@ def GenTests(api):
               'ctp_num_replay_builds': 3,
               'ctp_builder': 'cros_test_platform-foo_env',
               '$chromeos/skylab': dict(ctp_builder='cros_test_platform-foo_env')
+          }),
+      api.buildbucket.simulated_search_results(
+          green_ctp_builds,
+          step_name='replay prod CTP run.find recent green cros_test_platform builds'
+      ),
+      api.buildbucket.simulated_search_results(
+          previous_replayed_runs,
+          step_name='replay prod CTP run.filter out already-replayed builds'),
+  )
+
+  yield api.test(
+      'successful-run-cft',
+      api.properties(
+          **{
+              'ctp_replay_max_runtime': 70 * 60,
+              'ctp_num_replay_builds': 3,
+              'ctp_builder': 'cros_test_platform-dev',
+              '$chromeos/skylab': dict(ctp_builder='cros_test_platform-dev')
           }),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,
