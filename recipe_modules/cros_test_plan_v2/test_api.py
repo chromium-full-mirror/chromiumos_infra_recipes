@@ -6,6 +6,7 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.build.api.system_image import SystemImage
 from PB.chromiumos.build.api.portage import Portage
+from PB.chromiumos.builder_config import BuilderConfigs, BuilderConfig
 from PB.chromiumos.config.api.design import Design
 from PB.chromiumos.config.payload.config_bundle import ConfigBundleList, ConfigBundle
 from PB.chromiumos.test.api.dut_attribute import DutAttributeList, DutAttribute
@@ -94,6 +95,14 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
         BoardPriority(
             skylab_board='testboardA',
             priority=-100,
+        )
+    ])
+
+  @staticmethod
+  def builder_configs():
+    return BuilderConfigs(builder_configs=[
+        BuilderConfig(
+            id=BuilderConfig.Id(name='testboardA-cq'),
         )
     ])
 

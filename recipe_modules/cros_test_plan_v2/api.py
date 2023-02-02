@@ -8,6 +8,7 @@ from collections import namedtuple, defaultdict
 
 from google.protobuf import json_format
 from google.protobuf import text_format
+from google.protobuf import message
 
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
@@ -265,27 +266,35 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
         self._test_plan_path = cipd_dir.join('test_plan')
 
-  def _download_config_pb(self, host, project, path, output_dir,
-                          test_output_message):
+  def _download_config_pb(
+      self,
+      repository_url: str,
+      file_path: str,
+      output_dir: str,
+      test_output_message: message.Message,
+  ):
     """Fetch a protobuf from Gitiles and write to a local temp file.
 
     Args:
-      * host (str): Gerrit host, e.g. chrome-internal.googlesource.com.
-      * project (str): Gerrit project, e.g. chromiumos/chromite.
-      * path (str): Path to the file within config-internal.
-      * output_dir (str): Path to a directory to download the file to.
-      * test_output_message (google.protobuf.Message): A message to write as
-        test data.
+      * repository_url: Full URL to the repository.
+      * file_path: Relative path to the file from the repository root.
+      * output_dir: Path to a directory to download the file to.
+      * test_output_message (google.protobuf.message.Message): A message to
+        write as test data.
 
     Returns:
       * Path to the file where the protobuf was written.
     """
     test_output_contents = base64.b64encode(
         json_format.MessageToJson(test_output_message).encode())
-    contents = self.m.gitiles.get_file(host, project, path, public=False,
-                                       test_output_data=test_output_contents)
+    contents = self.m.gitiles.download_file(
+        repository_url,
+        file_path,
+        step_test_data=lambda: self.m.gitiles.test_api.
+        make_encoded_file_from_bytes(test_output_contents),
+    )
 
-    basename = self.m.path.basename(path)
+    basename = self.m.path.basename(file_path)
     output = self.m.path.join(output_dir, basename)
     self.m.file.write_raw('write {}'.format(basename), output, contents)
 
@@ -350,24 +359,21 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         # TODO(b/182898188): Read BuildMetadataList specific to the build when
         # available. For now, just read the global one from config-internal.
         build_metadata_list_path = self._download_config_pb(
-            'chrome-internal.googlesource.com',
-            'chromeos/config-internal',
+            'https://chrome-internal.googlesource.com/chromeos/config-internal',
             'build/generated/build_metadata.jsonproto',
             host_input_path,
             test_output_message=self.test_api.build_metadata_list(),
         )
 
         config_bundle_list_path = self._download_config_pb(
-            'chrome-internal.googlesource.com',
-            'chromeos/config-internal',
+            'https://chrome-internal.googlesource.com/chromeos/config-internal',
             'hw_design/generated/configs.jsonproto',
             host_input_path,
             test_output_message=self.test_api.config_bundle_list(),
         )
 
         dut_attribute_list_path = self._download_config_pb(
-            'chromium.googlesource.com',
-            'chromiumos/config',
+            'https://chromium.googlesource.com/chromiumos/config',
             'generated/dut_attributes.jsonproto',
             host_input_path,
             test_output_message=self.test_api.dut_attribute_list(),
@@ -395,13 +401,20 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       if self.generate_ctpv1_format:
         board_priority_list_path = self._download_config_pb(
-            'chrome-internal.googlesource.com',
-            'chromeos/config-internal',
+            'https://chrome-internal.googlesource.com/chromeos/config-internal',
             'board_config/generated/board_priority.cfg',
             host_input_path,
             test_output_message=self.test_api.board_priority_list(),
         )
         arg_to_host_path['-boardprioritylist'] = board_priority_list_path
+
+        builder_configs_path = self._download_config_pb(
+            'https://chrome-internal.googlesource.com/chromeos/infra/config',
+            'generated/builder_configs.binaryproto',
+            host_input_path,
+            test_output_message=self.test_api.builder_configs(),
+        )
+        arg_to_host_path['-builderconfigs'] = builder_configs_path
 
         req_path = host_input_path.join('generatetestplanreq.binaryproto')
         self.m.file.write_raw(

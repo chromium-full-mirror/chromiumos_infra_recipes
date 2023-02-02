@@ -16,7 +16,7 @@ DEPS = [
     'cros_test_plan',
     'easy',
     'gerrit',
-    'gitiles',
+    'depot_tools/gitiles',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

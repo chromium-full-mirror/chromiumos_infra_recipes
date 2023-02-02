@@ -7440,30 +7440,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
-      "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@data@        \"portageBuildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@data@          \"overlayName\": \"overlayA\"@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@      }@@@",
-      "@@@STEP_LOG_LINE@data@    }@@@",
-      "@@@STEP_LOG_LINE@data@  ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/main/build/generated/build_metadata.jsonproto",
+      "--format",
+      "text"
     ],
     "luci_context": {
       "realm": {
@@ -7477,9 +7463,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/build/generated/build_metadata.jsonproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch main:build/generated/build_metadata.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -7490,7 +7476,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"values\": [\n    {\n      \"buildTarget\": {\n        \"portageBuildTarget\": {\n          \"overlayName\": \"overlayA\"\n        }\n      }\n    }\n  ]\n}",
+      "ewogICJ2YWx1ZXMiOiBbCiAgICB7CiAgICAgICJidWlsZFRhcmdldCI6IHsKICAgICAgICAicG9ydGFnZUJ1aWxkVGFyZ2V0IjogewogICAgICAgICAgIm92ZXJsYXlOYW1lIjogIm92ZXJsYXlBIgogICAgICAgIH0KICAgICAgfQogICAgfQogIF0KfQ==",
       "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
     ],
     "infra_step": true,
@@ -7512,30 +7498,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"values\": [@@@",
-      "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"designList\": [@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@          \"name\": \"design1\"@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@      ]@@@",
-      "@@@STEP_LOG_LINE@data@    }@@@",
-      "@@@STEP_LOG_LINE@data@  ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/main/hw_design/generated/configs.jsonproto",
+      "--format",
+      "text"
     ],
     "luci_context": {
       "realm": {
@@ -7549,9 +7521,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (2).curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/hw_design/generated/configs.jsonproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch main:hw_design/generated/configs.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -7562,7 +7534,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"values\": [\n    {\n      \"designList\": [\n        {\n          \"name\": \"design1\"\n        }\n      ]\n    }\n  ]\n}",
+      "ewogICJ2YWx1ZXMiOiBbCiAgICB7CiAgICAgICJkZXNpZ25MaXN0IjogWwogICAgICAgIHsKICAgICAgICAgICJuYW1lIjogImRlc2lnbjEiCiAgICAgICAgfQogICAgICBdCiAgICB9CiAgXQp9",
       "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
     ],
     "infra_step": true,
@@ -7584,28 +7556,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"dutAttributes\": [@@@",
-      "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"id\": {@@@",
-      "@@@STEP_LOG_LINE@data@        \"value\": \"attribute1\"@@@",
-      "@@@STEP_LOG_LINE@data@      }@@@",
-      "@@@STEP_LOG_LINE@data@    }@@@",
-      "@@@STEP_LOG_LINE@data@  ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chromium.googlesource.com/chromiumos/config/+/main/generated/dut_attributes.jsonproto",
+      "--format",
+      "text"
     ],
     "luci_context": {
       "realm": {
@@ -7619,9 +7579,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch gitiles file (3).curl https://chromium.googlesource.com/chromiumos/config/+/HEAD/generated/dut_attributes.jsonproto?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.write input files.fetch main:generated/dut_attributes.jsonproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -7632,7 +7592,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"dutAttributes\": [\n    {\n      \"id\": {\n        \"value\": \"attribute1\"\n      }\n    }\n  ]\n}",
+      "ewogICJkdXRBdHRyaWJ1dGVzIjogWwogICAgewogICAgICAiaWQiOiB7CiAgICAgICAgInZhbHVlIjogImF0dHJpYnV0ZTEiCiAgICAgIH0KICAgIH0KICBdCn0=",
       "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
     ],
     "infra_step": true,
@@ -7654,27 +7614,16 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate hw test plans.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@  \"boardPriorities\": [@@@",
-      "@@@STEP_LOG_LINE@data@    {@@@",
-      "@@@STEP_LOG_LINE@data@      \"skylabBoard\": \"testboardA\",@@@",
-      "@@@STEP_LOG_LINE@data@      \"priority\": -100@@@",
-      "@@@STEP_LOG_LINE@data@    }@@@",
-      "@@@STEP_LOG_LINE@data@  ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
     "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/main/board_config/generated/board_priority.cfg",
+      "--format",
+      "text"
     ],
     "luci_context": {
       "realm": {
@@ -7688,9 +7637,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/board_config/generated/board_priority.cfg?format=TEXT",
+    "name": "run tests.schedule tests.generate hw test plans.fetch main:board_config/generated/board_priority.cfg",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -7701,7 +7650,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"boardPriorities\": [\n    {\n      \"skylabBoard\": \"testboardA\",\n      \"priority\": -100\n    }\n  ]\n}",
+      "ewogICJib2FyZFByaW9yaXRpZXMiOiBbCiAgICB7CiAgICAgICJza3lsYWJCb2FyZCI6ICJ0ZXN0Ym9hcmRBIiwKICAgICAgInByaW9yaXR5IjogLTEwMAogICAgfQogIF0KfQ==",
       "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
     ],
     "infra_step": true,
@@ -7718,6 +7667,64 @@
       }
     },
     "name": "run tests.schedule tests.generate hw test plans.write board_priority.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/main/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.fetch main:generated/builder_configs.binaryproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "ewogICJidWlsZGVyQ29uZmlncyI6IFsKICAgIHsKICAgICAgImlkIjogewogICAgICAgICJuYW1lIjogInRlc3Rib2FyZEEtY3EiCiAgICAgIH0KICAgIH0KICBdCn0=",
+      "[CLEANUP]/tmp_tmp_3/builder_configs.binaryproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate hw test plans.write builder_configs.binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -7831,6 +7838,8 @@
       "-ctpv1",
       "-boardprioritylist",
       "/input/board_priority.cfg",
+      "-builderconfigs",
+      "/input/builder_configs.binaryproto",
       "-buildmetadata",
       "/input/build_metadata.jsonproto",
       "-configbundlelist",
