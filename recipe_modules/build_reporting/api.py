@@ -267,6 +267,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
     BuildReportingApi.add_version_msg(config,
                                       BuildConfig.VERSION_KIND_ASH_CHROME,
                                       gtv_response.chrome_version)
+    BuildReportingApi.add_version_msg(config, BuildConfig.VERSION_KIND_CHROME,
+                                      gtv_response.lacros_version)
     BuildReportingApi.add_version_msg(config,
                                       BuildConfig.VERSION_KIND_MILESTONE,
                                       gtv_response.milestone_version)
