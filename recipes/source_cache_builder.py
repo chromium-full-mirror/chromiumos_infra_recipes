@@ -4,12 +4,13 @@
 # found in the LICENSE file.
 
 """Recipe for generating ChromeOS source cache snapshots."""
+from collections import namedtuple
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
-from PB.recipes.chromeos.source_cache_builder import (
-    SourceCacheBuilderProperties, SyncCommand)
+from PB.recipes.chromeos.source_cache_builder import SourceCacheBuilderProperties
+from PB.recipes.chromeos.source_cache_builder import SyncCommand
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -41,12 +42,39 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = SourceCacheBuilderProperties
 
+SpecialBuildConfig = namedtuple('SpecialBuildConfig',
+                                ['full_sync', 'regenerate_recovery_image'])
 
-def _determine_if_full_sync(api: RecipeApi, fsm: int) -> bool:
-  """Inspect the trigger properties to determine if we full sync."""
-  with api.step.nest('determine if full sync') as pres:
-    if fsm == 0:
-      pres.step_text = 'full_sync_modulo not set, never full syncing'
+
+def _determine_special_build_config(api: RecipeApi,
+                                    properties: SourceCacheBuilderProperties
+                                   ) -> SpecialBuildConfig:
+  """Determine whether any of the special build configs should be applied.
+
+  Args:
+    api: RecipesAPI object for dependencies.
+    properties: Properties of Source Cache Builder to use for config modulos.
+
+  Returns:
+    Tuple of all the special build configs.
+  """
+  with api.step.nest('determine special build configs'):
+    full_sync = _determine_if_modulo(api, properties.full_sync_modulo,
+                                     'full sync')
+    regenerate_recovery_image = _determine_if_modulo(
+        api, properties.regenerate_recovery_image_modulo,
+        'regenerate recovery image')
+    api.easy.set_properties_step(
+        full_sync=full_sync,
+        regenerate_recovery_image=regenerate_recovery_image)
+    return SpecialBuildConfig(full_sync, regenerate_recovery_image)
+
+
+def _determine_if_modulo(api: RecipeApi, modulo: int, config_name: str) -> bool:
+  """Inspect the trigger properties to determine if we do a task."""
+  with api.step.nest(f'determine if {config_name}') as pres:
+    if modulo == 0:
+      pres.step_text = f'{config_name.replace(" " , "_")}_modulo not set, never doing {config_name}'
       return False
 
     cron_triggers = [
@@ -54,26 +82,26 @@ def _determine_if_full_sync(api: RecipeApi, fsm: int) -> bool:
     ]
     if cron_triggers:
       last_trig = sorted([x.cron.generation for x in cron_triggers])[-1]
-      pres.step_text = 'cron generation id {} % {} '.format(last_trig, fsm)
-      if last_trig % fsm == 0:
-        pres.step_text += '== 0, doing full sync'
+      pres.step_text = 'cron generation id {} % {} '.format(last_trig, modulo)
+      if last_trig % modulo == 0:
+        pres.step_text += f'== 0, doing {config_name}'
         return True
-      pres.step_text += '!= 0, not doing full sync'
+      pres.step_text += f'!= 0, not doing {config_name}'
       return False
-    pres.step_text = 'no cron triggers, not doing full sync'
+    pres.step_text = f'no cron triggers, not doing {config_name}'
     return False
 
 
 def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
-  full_sync = _determine_if_full_sync(api, properties.full_sync_modulo)
-  api.easy.set_properties_step(full_sync=full_sync)
+  (full_sync, regenerate_recovery_image) = _determine_special_build_config(
+      api, properties)
   if full_sync:
     api.gcloud.cache_action = SourceCacheAction.DONT_MOUNT_ANY_CACHE
 
   with api.step.nest('source cache update'):
-    snapshot_prefixes = []
     image_prefixes = []
     step_failures = []
+    delete_images = []
     is_staging = api.cros_infra_config.is_staging
     infra_host = api.gcloud.infra_host
     for cache in properties.cache_definition:
@@ -86,7 +114,6 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
       snapshot_prefix = '{}-{}'.format(cache.cache_name, api.gcloud.branch)
       if is_staging:
         snapshot_prefix = 'staging-{}'.format(snapshot_prefix)
-      snapshot_prefixes.append(snapshot_prefix)
       image_prefixes.append(snapshot_prefix)
       with api.step.nest('sync mounted cache directories'):
         snapshot_name = '{}-{}'.format(snapshot_prefix,
@@ -148,6 +175,19 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
         with api.step.nest('create image from disk'):
           api.gcloud.create_image_from_disk(disk=disk, image_name=snapshot_name,
                                             zone=api.gcloud.host_zone)
+        if regenerate_recovery_image and cache.can_update_recovery_image:
+          with api.step.nest('regenerate recovery image'):
+            # We hold on to the images to delete and will delete them below to
+            # account for the potential race condition of a different build
+            # trying to read the recovery image, failing, and trying to fallback
+            # on the alternative image at the same time that we remove the
+            # alternative image. This bakes in an artificial delay between disk
+            # creation and deletion.
+            image_to_delete = api.gcloud.transactionally_update_recovery_image(
+                snapshot_name, api.gcloud.mounted_snapshot,
+                cache.recovery_snapshot)
+            if image_to_delete:
+              delete_images.append(image_to_delete)
         with api.step.nest('upload updated version file'):
           api.cros_cache.write_and_upload_version(
               properties.cache_bucket, api.gcloud.snapshot_version_file,
@@ -160,6 +200,11 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
         protected_images=properties.protected_images)
     api.easy.set_properties_step(expired_images=image_delete_list)
     api.gcloud.delete_images(images=image_delete_list)
+  # This is the "below" referenced above in step "regenerate recovery image".
+  if delete_images:
+    with api.step.nest('cleanup temp recovery images'):
+      api.easy.set_properties_step(deleted_images=delete_images)
+      api.gcloud.delete_images(images=delete_images)
   with api.step.nest('delete orphaned disks'):
     disks_to_delete = api.gcloud.determine_disks_to_delete(
         disks=api.gcloud.list_all_disks(),
@@ -178,8 +223,13 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
   markdown = ''
   if step_failures:
     markdown = api.failures.format_step_failures(step_failures=step_failures)
-  elif full_sync:
-    markdown = 'full sync'
+  else:
+    if full_sync:
+      markdown = 'full sync'
+    if regenerate_recovery_image:
+      if markdown:
+        markdown += ' + '
+      markdown += 'regenerate recovery image'
   return result_pb2.RawResult(
       status=common_pb2.FAILURE if step_failures else common_pb2.SUCCESS,
       summary_markdown=markdown)
@@ -373,7 +423,9 @@ def GenTests(api: RecipeTestApi):
               }
           }),
       api.post_check(post_process.MustRunRE,
-                     r'.+create disk with empty checkout$'))
+                     r'.+create disk with empty checkout$'),
+      api.post_check(post_process.SummaryMarkdown, 'full sync'),
+  )
 
   yield api.test(
       'full-sync-modulo-no-trigger',
@@ -436,3 +488,293 @@ def GenTests(api: RecipeTestApi):
           }),
       api.post_check(post_process.DoesNotRunRE,
                      r'.+create disk with empty checkout$'))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-false',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          regenerate_recovery_image_modulo=1337,  # Not going to match this modulo.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [
+                      {
+                          "cron": {
+                              "generation": "1335"
+                          },
+                          "id": "cron:v1:1335"
+                      },
+                      {
+                          "webui": {},  # Here we add an unassociated trigger.
+                      },
+                      {
+                          "cron": {
+                              "generation": "1336"
+                          },
+                          "id": "cron:v1:1336"
+                      }
+                  ]
+              }
+          }),
+      api.post_check(post_process.DoesNotRun,
+                     'source cache update.regenerate recovery image'))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-true-no-prop',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          regenerate_recovery_image_modulo=1337,  # Not going to match this modulo.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [
+                      {
+                          "cron": {
+                              "generation": "1335"
+                          },
+                          "id": "cron:v1:1335"
+                      },
+                      {
+                          "webui": {},  # Here we add an unassociated trigger.
+                      },
+                      {
+                          "cron": {
+                              "generation": "1336"
+                          },
+                          "id": "cron:v1:1336"
+                      }
+                  ]
+              }
+          }),
+      api.post_check(post_process.DoesNotRun,
+                     'source cache update.regenerate recovery image'))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-true',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+                  can_update_recovery_image=True,
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [{
+                      "cron": {
+                          "generation": "15221"
+                      },
+                      "id": "cron:v1:15221"
+                  }, {
+                      "cron": {
+                          "generation": "15224"
+                      },
+                      "id": "cron:v1:15224"
+                  }]
+              }
+          }),
+      api.gcloud.set_image_exists_data([{
+          'name': 'chromiumos-main-13370000'
+      }, {
+          'name': 'chromeos_default_recovery_snapshot'
+      }]),
+      api.post_check(post_process.MustRun,
+                     'source cache update.regenerate recovery image'),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.create image from image'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache update.regenerate recovery image.create image from image',
+          ['--source-image=chromiumos-main-13370000']),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.delete image'),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.create image from image (2)'
+      ),
+      api.post_check(post_process.SummaryMarkdown, 'regenerate recovery image'),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-true-and-full-sync',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+                  can_update_recovery_image=True,
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          full_sync_modulo=1,  # Always regenerate recovery image when mod == 1.
+          regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [{
+                      "cron": {
+                          "generation": "15221"
+                      },
+                      "id": "cron:v1:15221"
+                  }, {
+                      "cron": {
+                          "generation": "15224"
+                      },
+                      "id": "cron:v1:15224"
+                  }]
+              }
+          }),
+      api.gcloud.set_image_exists_data([{
+          'name': 'chromiumos-main-13370000'
+      }, {
+          'name': 'chromeos_default_recovery_snapshot'
+      }]),
+      api.post_check(post_process.MustRun,
+                     'source cache update.regenerate recovery image'),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.create image from image'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache update.regenerate recovery image.create image from image',
+          ['--source-image=chromiumos-main-13370000']),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.delete image'),
+      api.post_check(
+          post_process.MustRun,
+          'source cache update.regenerate recovery image.create image from image (2)'
+      ),
+      api.post_check(post_process.SummaryMarkdown,
+                     'full sync + regenerate recovery image'),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-no-trigger',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     'source cache update.regenerate recovery image'))
+
+  yield api.test(
+      'regenerate-recovery-image-modulo-unspecified',
+      api.properties(
+          cache_definition=[
+              dict(
+                  cache_name='chromiumos',
+                  command='REPO',
+                  recovery_snapshot='chromeos_default_recovery_snapshot',
+                  branch='main',
+                  disk_type='pd-ssd',
+              ),
+          ],
+          cache_bucket='chromeos-bot-cache',
+          retention_days=7,
+          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
+          regenerate_recovery_image_modulo=0,  # Regenerate recovery image unspecified (default proto val == 0).
+      ),
+      api.properties(
+          **{
+              '$recipe_engine/scheduler': {
+                  "hostname":
+                      "luci-scheduler.appspot.com",
+                  "invocation":
+                      "8967204358994338640",
+                  "job":
+                      "chromeos/staging_SourceCacheBuilder",
+                  "triggers": [{
+                      "cron": {
+                          "generation": "15221"
+                      },
+                      "id": "cron:v1:15221"
+                  }, {
+                      "cron": {
+                          "generation": "15224"
+                      },
+                      "id": "cron:v1:15224"
+                  }]
+              }
+          }),
+      api.post_check(post_process.DoesNotRun,
+                     'source cache update.regenerate recovery image'))

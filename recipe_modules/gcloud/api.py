@@ -8,6 +8,8 @@ import datetime
 import json
 import os
 import re
+from typing import List
+from typing import Optional
 
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine import recipe_api
@@ -36,6 +38,9 @@ _RE_DISK_SIZE = re.compile('New disk size \'(?P<first>[0-9]+)\' GiB must be '
 # 404. See: b/141640651.
 _RE_DISK_EXISTS = re.compile('The resource .+ already exists')
 
+RECOVERY_IMAGE_TEMPLATE = 'initial-{}-source-snapshot'
+RECOVERY_IMAGE_FALLBACK_TEMPLATE = "{}-fallback"
+
 
 class GcloudApi(recipe_api.RecipeApi):
   """A module to interact with Google Cloud."""
@@ -59,6 +64,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._disk_exists_count = 0
 
     # Cache properties.
+    self._mounted_snapshot = None
     self._cache_action = (
         properties.source_cache_action or
         SourceCacheAction.MOUNT_LATEST_CACHE_IMAGE)
@@ -141,6 +147,10 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def gce_disk_blkid(self):
     return self._dev_ref
+
+  @property
+  def mounted_snapshot(self):
+    return self._mounted_snapshot
 
   def _is_rfc1035_compliant(self, branch):
     RFC_PATTERN = '^[a-z]([-a-z0-9]*[a-z0-9])?$'
@@ -589,9 +599,15 @@ class GcloudApi(recipe_api.RecipeApi):
         'gcloud', 'compute', 'images', 'list', '--format', 'json(name)',
         '--filter', 'name={}'.format(image)
     ]
+    test_stdout = self.test_api.image_exists_data
+    # If there is test data set for this call, pass that through. Otherwise, use
+    # the default response from test_api.
+    if self._test_data.enabled and 'set_image_exists_data' in self._test_data:
+      test_stdout = self._test_data.get('set_image_exists_data')
+
     output = self.m.easy.stdout_json_step(
         'check whether image exists: {}'.format(image), list_cmd,
-        test_stdout=self.test_api.image_exists_data, infra_step=True)
+        test_stdout=test_stdout, infra_step=True)
     for img in output:
       if image == img['name']:
         return True
@@ -697,6 +713,20 @@ class GcloudApi(recipe_api.RecipeApi):
           .format(self._dev_ref))
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  def create_gcloud_image(self, step_name: str, image_name: str,
+                          props: List[str]):
+    """Create an image.
+
+    Args:
+      image_name: The name to give the image.
+      props: Additional props to pass in to the create command.
+      step_name: Step name to use.
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self._wrap_in_disk_exists_swallow(lambda: self.m.step(
+          step_name, ['gcloud', 'compute', 'images', 'create', image_name] +
+          props, infra_step=True))
+
   def create_image_from_disk(self, disk, image_name, zone):
     """Create an image from specified disk.
 
@@ -705,13 +735,19 @@ class GcloudApi(recipe_api.RecipeApi):
       image_name (str): The name to give the image.
       zone (str): GCE zone to create instance (e.g. us-central1-b).
     """
-    with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self._wrap_in_disk_exists_swallow(lambda: self.m.step(
-          'create image from disk', [
-              'gcloud', 'compute', 'images', 'create', image_name,
-              '--source-disk={}'.format(disk), '--source-disk-zone={}'.format(
-                  zone)
-          ], infra_step=True))
+    self.create_gcloud_image(
+        'create image from disk', image_name,
+        ['--source-disk={}'.format(disk), '--source-disk-zone={}'.format(zone)])
+
+  def create_image_from_image(self, image_name: str, existing_image: str):
+    """Create an image from an existing image.
+
+    Args:
+      image_name: The name to give the image.
+      existing_image: The name of the existing image.
+    """
+    self.create_gcloud_image('create image from image', image_name,
+                             ['--source-image={}'.format(existing_image)])
 
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def get_expired_images(self, retention_days, prefixes, protected_images=None):
@@ -937,7 +973,7 @@ class GcloudApi(recipe_api.RecipeApi):
                     if len(self._disk) > self.gce_name_limit else
                     self._disk).rstrip('-')
       recovery_snapshot = (
-          recovery_snapshot or 'initial-{}-source-snapshot'.format(cache_name))
+          recovery_snapshot or RECOVERY_IMAGE_TEMPLATE.format(cache_name))
       remote_version = self._get_image_version(recovery_snapshot)
 
       if self.cache_action is SourceCacheAction.DONT_MOUNT_ANY_CACHE:
@@ -952,6 +988,12 @@ class GcloudApi(recipe_api.RecipeApi):
         # said image does not exist, we fall back on the snapshot image.
         if not self.image_exists(image=snapshot):
           snapshot = recovery_snapshot
+          # If the recovery image is in the process of being deleted, it could
+          # not exist. In this case, fall back on the recovery B image.
+          fallback_image = RECOVERY_IMAGE_FALLBACK_TEMPLATE.format(snapshot)
+          if not self.image_exists(image=snapshot) and self.image_exists(
+              image=fallback_image):
+            snapshot = fallback_image
         self.m.easy.set_properties_step(snapshot_version=snapshot)
         disk_exists = self.disk_exists(disk=self._disk, zone=self._zone)
         if disk_exists and (recipe_mount or self._dont_reuse_mounted_cache):
@@ -1113,6 +1155,7 @@ class GcloudApi(recipe_api.RecipeApi):
         if snapshot:
           self.m.file.write_text('write version file', local_version_path,
                                  snapshot)
+          self._mounted_snapshot = snapshot
 
       if not recipe_mount:
         self._reset_overlayfs_if_needed(cache_name)
@@ -1215,3 +1258,51 @@ class GcloudApi(recipe_api.RecipeApi):
               instance, '--zone={}'.format(zone), '--project={}'.format(project)
           ], infra_step=True)
       presentation.logs['serial output'] = output
+
+  def transactionally_update_recovery_image(self, image: str, cache_name: str,
+                                            recovery_image: Optional[str]
+                                           ) -> Optional[str]:
+    """Transactionally update the recovery image to the provided image.
+
+    The image name provided must already exist in GCP. The update does this:
+      - quick double check to make sure the image exists.
+      - copy the image to the recovery fallback path.
+      - delete the old recovery image.
+      - copy the newly created fallback image to the recovery image.
+      - return the fallback image for later deletion.
+
+    Args:
+      image: the image to replace the recovery image with.
+      cache_name: the name of the cache (just in case recovery image isn't
+        provided).
+      recovery_image: the name of the recovery image.
+
+    Returns:
+      The temp recovery disk to delete later.
+    """
+    if not self.image_exists(image):
+      raise StepFailure("Asked to copy an image that does not exist")
+
+    recovery_image_name = recovery_image or RECOVERY_IMAGE_TEMPLATE.format(
+        cache_name)
+    fallback_recovery_name = RECOVERY_IMAGE_FALLBACK_TEMPLATE.format(
+        recovery_image_name)
+
+    # If a previous build failed, we could still have the recovery image in here. If so, delete it.
+    if self.image_exists(fallback_recovery_name):
+      self.delete_image(fallback_recovery_name)
+    # If there is no recovery image yet, we don't need to mess with the whole
+    # swap approach.
+    if not self.image_exists(recovery_image_name):
+      # Just create the recovery image from the source.
+      self.create_image_from_image(recovery_image_name, image)
+      return None
+
+    self.create_image_from_image(fallback_recovery_name, image)
+    # Now that there's a fallback image, safely delete the recovery image.
+    self.delete_image(recovery_image_name)
+    # For thoroughness, use the fallback image to recreate the recovery image.
+    self.create_image_from_image(recovery_image_name, fallback_recovery_name)
+    # Return the recovery name for later deletion (not deleting now because of
+    # race condition).
+    return fallback_recovery_name

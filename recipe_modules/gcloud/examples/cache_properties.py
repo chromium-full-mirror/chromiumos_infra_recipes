@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,10 +19,18 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = {
+    'recovery_snapshot': Property(default=None),
+    'mounted_snapshot': Property(default=None),
+}
 
-def RunSteps(api):
+
+def RunSteps(api, recovery_snapshot, mounted_snapshot):
   api.gcloud.setup_cache_disk(cache_name='chromiumos', branch='main',
-                              recipe_mount=True)
+                              recipe_mount=True,
+                              recovery_snapshot=recovery_snapshot)
+  if mounted_snapshot:
+    api.assertions.assertEqual(api.gcloud.mounted_snapshot, mounted_snapshot)
   api.assertions.assertEqual(api.gcloud.branch, 'main')
 
 
@@ -68,11 +77,73 @@ def GenTests(api):
               'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
           }
       }),
+      api.gcloud.set_image_exists_data([{
+          'name': 'initial-chromiumos-source-snapshot'
+      }]),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=initial-chromiumos-source-snapshot']),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'recovery-image-fallback',
+      api.properties(**{
+          '$chromeos/gcloud': {
+              'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
+          }
+      }),
+      api.gcloud.set_image_exists_data([{
+          'name': 'initial-chromiumos-source-snapshot-fallback'
+      }]),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
+          ['--image=initial-chromiumos-source-snapshot-fallback']),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'custom-recovery-image',
+      api.properties(**{
+          '$chromeos/gcloud': {
+              'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
+          }
+      }),
+      api.properties(recovery_snapshot='super-custom-snapshot'),
+      api.gcloud.set_image_exists_data([{
+          'name': 'super-custom-snapshot'
+      }]),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
+          ['--image=super-custom-snapshot']),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'custom-recovery-image-fallback',
+      api.properties(**{
+          '$chromeos/gcloud': {
+              'source_cache_action': 'MOUNT_RECOVERY_IMAGE',
+          }
+      }),
+      api.properties(recovery_snapshot='super-custom-snapshot'),
+      api.gcloud.set_image_exists_data([{
+          'name': 'super-custom-snapshot-fallback'
+      }]),
+      api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
+          ['--image=super-custom-snapshot-fallback']),
       api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
@@ -86,6 +157,7 @@ def GenTests(api):
                   'specific_image_to_mount': 'test-cache-snapshot-123'
               }
           }),
+      api.properties(mounted_snapshot='test-cache-snapshot-123'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(
           post_process.StepCommandContains,

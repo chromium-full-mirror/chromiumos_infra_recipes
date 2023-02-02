@@ -5,16 +5,31 @@
   },
   {
     "cmd": [],
-    "name": "determine if full sync",
+    "name": "determine special build configs"
+  },
+  {
+    "cmd": [],
+    "name": "determine special build configs.determine if full sync",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@cron generation id 15224 % 1 == 0, doing full sync@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set full_sync",
+    "name": "determine special build configs.determine if regenerate recovery image",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@full_sync@true@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@regenerate_recovery_image_modulo not set, never doing regenerate recovery image@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine special build configs.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@full_sync@true@@@",
+      "@@@SET_BUILD_PROPERTY@regenerate_recovery_image@false@@@"
     ]
   },
   {

@@ -27,6 +27,11 @@ message SourceCacheDefinition {
   string disk_type = 6;
   // Whether the cache should be created from the external source.
   bool external_source = 7;
+  // Whether this configured cache is able to update the recovery image. This
+  // allows us to configure a single source of truth for regenerating the
+  // recovery image when multiple cache definitions share a recovery image.
+  // Default false.
+  bool can_update_recovery_image = 8;
 }
 message SourceCacheBuilderProperties {
   // The list of the buildbucket pools to monitor and scale.
@@ -42,4 +47,8 @@ message SourceCacheBuilderProperties {
   // Full sync modulo (proportion that should be full syncs).
   // This is based upon the cron trigger generation number.
   int32 full_sync_modulo = 6;
+  // Regenerate recovery image modulo (proportion that should regenerate the
+  // recovery image). Preferably proportionally low number of builds.
+  // This is based upon the cron trigger generation number.
+  int32 regenerate_recovery_image_modulo = 7;
 }

@@ -37,6 +37,11 @@ class GcloudApiTestApi(recipe_test_api.RecipeTestApi):
     }]
     return image_list
 
+  @recipe_test_api.mod_test_data
+  @staticmethod
+  def set_image_exists_data(data):
+    return data
+
   def disk_exists_data(self, disk):
     """Returns list of disks in json format."""
     if disk.startswith('chrome-'):
