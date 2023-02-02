@@ -1730,6 +1730,8 @@ def summarize_results_from_ctr_results(api, result):
       _set_step_status(api=api, step_name="provision of " + prejob.test_id,
                        summary="", failure_condition=prejob.is_failure())
     for test_result in result.get_test_results():
+      if test_result.is_skipped():
+        continue
       _set_step_status(api=api, step_name=test_result.test_id, summary="",
                        failure_condition=test_result.is_failure())
 
@@ -2615,6 +2617,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _successful_run_test_step_for_ctr():
     return _run_test_step_with_state_for_ctr('pass')
+
+  def _skipped_run_test_step_for_ctr():
+    return _run_test_step_with_state_for_ctr('skip')
 
   def _failed_run_test_step_for_ctr():
     return _run_test_step_with_state_for_ctr('fail')
@@ -3935,6 +3940,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _successful_run_test_step_for_ctr())
+
+  yield api.test('skipped-with-ctr', _set_build(bid=42),
+                 _misc_properties(cft_is_enabled=True),
+                 _crossystem_keyval_file_step_data_for_ctr(),
+                 _kernel_log_file_step_data_for_ctr(),
+                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+                 _successful_prejob_step_for_ctr(),
+                 _skipped_run_test_step_for_ctr())
 
   yield api.test(
       'success-with-ctr-misconfigured-prejob', _set_build(bid=42),

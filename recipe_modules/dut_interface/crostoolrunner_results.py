@@ -63,6 +63,7 @@ class CrosToolRunnerPrejobDUTResponse(dut_results.DUTPrejobResponse
 class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
                                    ):  # pragma: no cover
   TEST_FAILURE = 'fail'
+  TEST_SKIPPED = 'skip'
 
   def is_failure(self):
     """Whether the job has failed.
@@ -70,6 +71,13 @@ class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
     Returns: bool
     """
     return self.get_state_name() == self.TEST_FAILURE
+
+  def is_skipped(self):
+    """Whether the job was skipped.
+
+    Returns: bool
+    """
+    return self.get_state_name() == self.TEST_SKIPPED
 
   @staticmethod
   def build_aborted_response(test_id):

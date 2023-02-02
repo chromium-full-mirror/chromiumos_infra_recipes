@@ -38,6 +38,9 @@ class PhosphorusTestDUTResponse(dut_results.DUTTestResponse
     return (self.data and
             self.data.state != phosphorus.runtest.RunTestResponse.SUCCEEDED)
 
+  def is_skipped(self):
+    raise NotImplementedError
+
   @staticmethod
   def build_aborted_response(test_id):
     return PhosphorusTestDUTResponse(

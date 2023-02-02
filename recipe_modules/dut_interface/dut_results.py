@@ -70,6 +70,13 @@ class DUTTestResponse():  # pragma: no cover
     Returns: bool
     """
 
+  @abstractmethod
+  def is_skipped(self):
+    """Whether the job was skipped.
+
+    Returns: bool
+    """
+
   @staticmethod
   @abstractmethod
   def build_aborted_response(test_id):
