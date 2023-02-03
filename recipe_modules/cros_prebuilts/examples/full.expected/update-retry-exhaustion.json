@@ -1736,7 +1736,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
-      "[START_DIR]/BINHOST.conf",
+      "[START_DIR]",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -1764,7 +1764,7 @@
     "name": "upload prebuilts.update binhost conf file.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]/BINHOST.conf|src/[START_DIR]/BINHOST.conf|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]|src/[START_DIR]|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1774,7 +1774,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1802,7 +1802,7 @@
       "cros",
       "refs/heads/main:"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1827,7 +1827,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1853,7 +1853,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1901,7 +1901,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1931,7 +1931,7 @@
       "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -1966,7 +1966,7 @@
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2041,7 +2041,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2081,7 +2081,7 @@
       "[START_DIR]/BINHOST.conf",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2122,7 +2122,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2149,7 +2149,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2174,7 +2174,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2203,7 +2203,7 @@
       "remove",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2233,7 +2233,7 @@
       "",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2266,7 +2266,7 @@
       "--error-unmatch",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2293,7 +2293,7 @@
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2318,7 +2318,7 @@
       "add",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2348,7 +2348,7 @@
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2379,7 +2379,7 @@
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2406,7 +2406,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2433,7 +2433,7 @@
       "cros",
       "refs/heads/main:"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2458,7 +2458,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2484,7 +2484,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2532,7 +2532,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2562,7 +2562,7 @@
       "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2597,7 +2597,7 @@
       "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2672,7 +2672,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2712,7 +2712,7 @@
       "[START_DIR]/BINHOST.conf",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2753,7 +2753,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2780,7 +2780,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2805,7 +2805,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2834,7 +2834,7 @@
       "remove",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2864,7 +2864,7 @@
       "",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2897,7 +2897,7 @@
       "--error-unmatch",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2924,7 +2924,7 @@
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2949,7 +2949,7 @@
       "add",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2979,7 +2979,7 @@
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3010,7 +3010,7 @@
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3037,7 +3037,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3064,7 +3064,7 @@
       "cros",
       "refs/heads/main:"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3089,7 +3089,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3115,7 +3115,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3163,7 +3163,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3193,7 +3193,7 @@
       "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3228,7 +3228,7 @@
       "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3303,7 +3303,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3343,7 +3343,7 @@
       "[START_DIR]/BINHOST.conf",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3384,7 +3384,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3411,7 +3411,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3436,7 +3436,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3465,7 +3465,7 @@
       "remove",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3495,7 +3495,7 @@
       "",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3528,7 +3528,7 @@
       "--error-unmatch",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3555,7 +3555,7 @@
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3580,7 +3580,7 @@
       "add",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3610,7 +3610,7 @@
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_3"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3641,7 +3641,7 @@
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3668,7 +3668,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3695,7 +3695,7 @@
       "cros",
       "refs/heads/main:"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3720,7 +3720,7 @@
       "rev-parse",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3746,7 +3746,7 @@
       "--force",
       "FETCH_HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3794,7 +3794,7 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3824,7 +3824,7 @@
       "debug",
       "chromite.api.BinhostService/SetBinhost"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3859,7 +3859,7 @@
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3934,7 +3934,7 @@
     "cmd": [
       "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -3974,7 +3974,7 @@
       "[START_DIR]/BINHOST.conf",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4015,7 +4015,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4042,7 +4042,7 @@
       "main",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4067,7 +4067,7 @@
       "branch",
       "--set-upstream-to=cros/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4096,7 +4096,7 @@
       "remove",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4126,7 +4126,7 @@
       "",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4159,7 +4159,7 @@
       "--error-unmatch",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4186,7 +4186,7 @@
       "HEAD",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4211,7 +4211,7 @@
       "add",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4241,7 +4241,7 @@
       "Set POSTSUBMIT_BINHOST=gs://prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_4"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4272,7 +4272,7 @@
       "--",
       "[START_DIR]/BINHOST.conf"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4299,7 +4299,7 @@
       "cros",
       "HEAD:refs/for/refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]/BINHOST.conf",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
     "luci_context": {
       "realm": {

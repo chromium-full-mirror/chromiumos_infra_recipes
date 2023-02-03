@@ -385,7 +385,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       path_response = self.m.cros_build_api.BinhostService.GetBinhostConfPath(
           path_request, infra_step=True)
       binhost_path = self.m.path.abs_to_path(path_response.conf_path)
-      projects = self.m.repo.project_infos(projects=[binhost_path])
+      projects = self.m.repo.project_infos(
+          projects=[self.m.path.dirname(binhost_path)])
       assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
       project = projects[0]
       with self.m.context(
