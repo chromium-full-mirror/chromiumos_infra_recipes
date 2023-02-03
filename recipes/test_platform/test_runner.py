@@ -982,6 +982,13 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     # Upload to rdb using extracted configs.
     api.cros_resultdb.upload(config,
                              step_name='upload chromium test results to rdb')
+    # Uploads incomplete test result for browser tests running with Tauto and Tast
+    _upload_incomplete_test_to_resultdb(api, test_metadata, result,
+                                        autotest_keyval_file,
+                                        config.get('base_variant'),
+                                        config.get('base_tag'))
+    _upload_missing_tast_results(api, config.get('base_variant'),
+                                 config.get('base_tag'), autotest_keyval_file)
     return
 
   first_test_case_name = ''
@@ -3747,6 +3754,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step(),
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
+      _autotest_keyval_file_step_data(),
       api.post_process(
           post_process.StepCommandContains,
           'execution steps.original_test.upload chromium test results '
