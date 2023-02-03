@@ -8,6 +8,7 @@
 from collections import namedtuple
 import contextlib
 
+from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
@@ -276,36 +277,36 @@ class CrosSdkApi(RecipeApi):
       self.m.cros_build_api.SdkService.Delete(
           DeleteSdkRequest(chroot=self.chroot))
 
-  def _is_chroot_usable(self, cache_state, version, step_logs):
+  def _is_chroot_usable(self, cache_state: SdkCacheState, version: int,
+                        step_presentation: StepPresentation) -> bool:
     """Determine whether the cached version of the chroot can be reused.
 
     Compare the config's sdk version and manifest branch to the ones in the
     given SdkCacheState. If they are the same the cached chroot can be reused.
 
     Args:
-      cache_state (SdkCacheState): The state of the cached chroot of
-          interest.
-      version (int): Required SDK cache version, if any. Some recipes do not
-          care what version the SDK is, they just need any SDK.
-      step_logs (dict): The logs dict of the calling step.
+      cache_state: The state of the cached chroot.
+      version: Required SDK cache version.
+      step_presentation: The parent step presentation. This is used for adding
+          logs to the UI.
 
     Returns:
       Boolean indicating if the chroot can be reused.
     """
-    step_logs['sdk cache version'] = [
+    step_presentation.logs['sdk cache version'] = [
         'Version in config: %d' % version,
         'Version on disk: %d' % cache_state.version,
     ]
-    step_logs['sdk manifest url'] = [
+    step_presentation.logs['sdk manifest url'] = [
         'Url in config: %s' % self.m.src_state.build_manifest.url,
         'Url on disk: %s' % cache_state.manifest_url
     ]
-    step_logs['sdk manifest branch'] = [
+    step_presentation.logs['sdk manifest branch'] = [
         'Branch in config: %s' % self.m.cros_source.manifest_branch or
         'snapshot',
         'Branch on disk: %s' % cache_state.manifest_branch
     ]
-    step_logs['sdk snapshot hash'] = [
+    step_presentation.logs['sdk snapshot hash'] = [
         'Snapshot hash in config: %s' % self.m.src_state.gitiles_commit.id,
         'Snapshot hash on disk: %s' % cache_state.snapshot_hash
     ]
@@ -315,17 +316,34 @@ class CrosSdkApi(RecipeApi):
       if reuse:
         return reuse.pop(0)
 
-    reuse = True
-    reuse &= (version == cache_state.version)
+    # There is no cached SDK.
+    if not cache_state.snapshot_hash:
+      step_presentation.step_text = 'not reusable: no cached SDK'
+      return False
+
+    if version != cache_state.version:
+      step_presentation.step_text = 'not reusable: different version requested'
+      return False
+
+    if not self.m.src_state.build_manifest.url == cache_state.manifest_url:
+      step_presentation.step_text = (
+          'not reusable: created with a different manifest')
+      return False
+
     manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
-    reuse &= (manifest_branch == cache_state.manifest_branch)
-    reuse &= (self.m.src_state.build_manifest.url == cache_state.manifest_url)
+    if manifest_branch != cache_state.manifest_branch:
+      step_presentation.step_text = (
+          'not reusable: created with a different manifest branch')
+      return False
+
     with self.m.context(cwd=self.m.src_state.build_manifest.path):
-      reuse &= (
-          bool(cache_state.snapshot_hash) and
-          self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                  head=self.m.src_state.gitiles_commit.id))
-    return reuse
+      if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
+                                 head=self.m.src_state.gitiles_commit.id):
+        step_presentation.step_text = (
+            'reusable: reusing SDK created from the same manifest')
+        return True
+      step_presentation.step_text = 'not reusable: cannot downrev the SDK'
+      return False
 
   def _check_sdk_cache_state(self, version):
     """Check if any cached SDK can be reused for the build.
@@ -340,7 +358,7 @@ class CrosSdkApi(RecipeApi):
     """
     with self.m.step.nest('check SDK in named cache') as presentation:
       reuse = self._is_chroot_usable(self.sdk_cache_state, version,
-                                     presentation.logs)
+                                     presentation)
       if reuse:
         presentation.properties['sdk_cache'] = 'cros_chroot'
       else:

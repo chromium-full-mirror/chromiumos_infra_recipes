@@ -2766,6 +2766,7 @@
     "name": "init sdk.check SDK in named cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@not reusable: no cached SDK@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 2@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
