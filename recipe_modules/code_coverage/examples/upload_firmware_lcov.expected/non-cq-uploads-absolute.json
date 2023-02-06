@@ -5852,17 +5852,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "upload code coverage data (firmware lcov).upload absolute coverage to Code Search.Set absolute coverage builder specific output properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@abs_code_coverage_commit_id@\"abcd1234\"@@@",
-      "@@@SET_BUILD_PROPERTY@abs_code_coverage_host@\"chromium\"@@@",
-      "@@@SET_BUILD_PROPERTY@abs_code_coverage_project@\"chromiumos/codesearch\"@@@",
-      "@@@SET_BUILD_PROPERTY@abs_code_coverage_ref@\"refs/heads/main\"@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "RECIPE_MODULE[chromeos::code_coverage]/resources/chunk_coverage_file.py",

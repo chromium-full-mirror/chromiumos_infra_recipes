@@ -40,6 +40,13 @@ def GenTests(api):
           post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
       ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data (firmware lcov).Set merger properties'),
       cq=True,
   )
 
@@ -62,6 +69,9 @@ def GenTests(api):
           post_process.MustRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to Code Search'
       ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data (firmware lcov).Set merger properties'),
       api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).upload absolute coverage to chromium coverage'

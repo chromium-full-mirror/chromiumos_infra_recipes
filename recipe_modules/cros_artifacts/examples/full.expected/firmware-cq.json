@@ -1250,7 +1250,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.upload code coverage data (firmware lcov).upload incremental coverage to gerrit.upload coverage.json for 123456 (ps #7)",
+    "name": "upload artifacts.upload code coverage data (firmware lcov).upload incremental coverage to gerrit.upload cleaned.file for 123456 (ps #7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"

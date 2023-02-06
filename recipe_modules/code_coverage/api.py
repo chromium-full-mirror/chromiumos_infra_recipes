@@ -5,9 +5,11 @@
 
 import copy
 import os
+import json
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
 class CoverageFileSettings():
@@ -66,6 +68,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self._incremental_coverage_tool = None
     # Path to absolute coverage client.
     self._absolute_coverage_tool = None
+    self._merger_input_incremental_coverage = []
+    self._merger_input_absolute_coverage = []
 
   @property
   def metadata_dir(self):
@@ -92,13 +96,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     self.process_coverage_data(
         tarfile,
         'LCOV',
-        step_name,
+        step_name=step_name,
         # Filtering only works for llvm json files.
         incremental_settings=CoverageFileSettings(True, False, False),
         absolute_cs_settings=CoverageFileSettings(True, False, True),
     )
 
-  def upload_code_coverage(self, tarfile, coverage_type, upload_uri,
+  def upload_code_coverage(self, tarfile, coverage_type, gs_artifact_bucket,
+                           gs_artifact_path,
                            step_name='upload code coverage data'):
     """Uploads code coverage llvm json and golang.
 
@@ -106,8 +111,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         tarfile (Path): path to tarfile.
         step_name (str): name for the step.
         coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
-        upload_uri (Path): artifact upload uri
-                           (eg gs://chromeos-image-archive/buildername/id)
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
     """
     # Settings for capturing incremental coverage.
     incremental_settings = CoverageFileSettings(False, True, False)
@@ -115,28 +120,25 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     absolute_settings = CoverageFileSettings(False, False, True)
     # Settings for capturing absolute coverage on Chromium dashboard.
     absolute_chromium_settings = CoverageFileSettings(False, False, True)
-    tarfile_name = os.path.basename(str(tarfile))
-    coverage_artifact_path = f'{upload_uri}/{tarfile_name}'
-    code_coverage_paths = [coverage_artifact_path]
-    self.m.easy.set_properties_step(
-        'Set common coverage builder output properties',
-        code_coverage_type=coverage_type,
-        code_coverage_paths=code_coverage_paths)
 
-    self.process_coverage_data(tarfile, coverage_type, step_name,
+    self.process_coverage_data(tarfile, coverage_type, True, gs_artifact_bucket,
+                               gs_artifact_path, step_name,
                                incremental_settings, absolute_settings,
                                absolute_chromium_settings)
 
-  def process_coverage_data(self, tarfile, coverage_type,
-                            step_name='upload code coverage data',
-                            incremental_settings=None,
-                            absolute_cs_settings=None,
-                            absolute_chromium_settings=None):
+  def process_coverage_data(
+      self, tarfile, coverage_type, merger_flow_enabled=False,
+      gs_artifact_bucket=None, gs_artifact_path=None,
+      step_name='upload code coverage data', incremental_settings=None,
+      absolute_cs_settings=None, absolute_chromium_settings=None):
     """Uploads code coverage data to the requested external sources.
 
       Args:
         tarfile (Path): path to tarfile.
         coverage_type (str): type of coverage being uploaded (LCOV, LLVM, or GO_COV).
+        merger_flow_enabled (bool): whether merger flow is enabled or not.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
         step_name (str): name for the step.
         incremental_settings (CoverageFileSettings): settings for uploading coverage to gerrit.
         absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
@@ -152,18 +154,121 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           self.m.archive.extract(
               'untar {}'.format(self.m.path.basename(tarfile)),
               archive_file=str(tarfile), output=path_to_extracted_files)
-          for coverage_file in self.m.file.listdir(
-              'listdir', path_to_extracted_files, test_data=('coverage.json',)):
+
+          coverage_files = self.m.file.listdir('listdir',
+                                               path_to_extracted_files,
+                                               test_data=('coverage.json',))
+
+          for coverage_file in coverage_files:
             self._upload_incremental_coverage_to_gerrit(coverage_file,
                                                         coverage_type,
-                                                        incremental_settings)
+                                                        incremental_settings,
+                                                        gs_artifact_bucket,
+                                                        gs_artifact_path)
             self._upload_absolute_coverage_to_code_search(
-                coverage_file, coverage_type, absolute_cs_settings)
+                coverage_file, coverage_type, absolute_cs_settings,
+                merger_flow_enabled, gs_artifact_bucket, gs_artifact_path)
             self._upload_absolute_coverage_to_chromium_coverage(
                 coverage_file, self._project, absolute_chromium_settings)
+
+          if merger_flow_enabled:
+            self._merger_set_properties()
       except StepFailure:
         self.m.step.active_result.presentation.properties[
             'process_coverage_data_failure'] = True
+
+  def _merger_set_properties(self):
+    """Sets merger related builder output properties.
+
+       This function adds coverage information in the output properties.
+       Coverage information is then used by the code coverage merger to
+       process the coverage.
+    """
+    step = self.m.easy.set_properties_step(
+        'Set merger properties',
+        merger_incremental_coverage=self._merger_input_incremental_coverage,
+        merger_absolute_coverage=self._merger_input_absolute_coverage)
+    step.presentation.logs['merger_incremental_coverage'] = [
+        '{}'.format(self._merger_input_incremental_coverage)
+    ]
+    step.presentation.logs['merger_absolute_coverage'] = [
+        '{}'.format(self._merger_input_absolute_coverage)
+    ]
+
+  def _merger_incremental(self, filtered_coverage_file: str,
+                          change: GerritChange, gs_artifact_bucket: str,
+                          gs_artifact_path: str, coverage_type: str) -> None:
+    """Uploads the coverage data to gcs and sets merger properties.
+
+       This function first upload the coverage.json for the change to chromeos archive bucket
+       and then sets the CovPaths property in luci output.
+       Merger then uses the CovPaths property to download and process the coverage.
+
+      Args:
+        filtered_coverage_file(str): location of coverage file on local disk.
+        change (GerritChange): gerrit change.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+    """
+    object_path = os.path.join(gs_artifact_path, 'coverage', str(change.change),
+                               '.json')
+
+    upload_step = self.m.gsutil.upload(filtered_coverage_file,
+                                       gs_artifact_bucket, object_path)
+
+    upload_step.presentation.links['uploaded report'] = (
+        'https://storage.cloud.google.com/%s/%s/index.html' %
+        (gs_artifact_bucket, object_path))
+
+    full_gs_path = 'gs://{gs_bucket}/{gs_path}'.format(
+        gs_bucket=gs_artifact_bucket, gs_path=object_path)
+
+    self._merger_input_incremental_coverage.append({
+        'CovPaths': [full_gs_path],
+        'Host': change.host,
+        'Project': change.project,
+        'PatchSet': change.patchset,
+        'Change': change.change,
+        'CovType': coverage_type
+    })
+
+  def _merger_absolute(self, absolute_coverage_file: str,
+                       codesearch_commit_id: str, gs_artifact_bucket: str,
+                       gs_artifact_path: str, coverage_type: str) -> None:
+    """Uploads the coverage data to gcs and sets merger properties.
+
+       This function first upload the coverage.json to chromeos archive bucket
+       and then sets the CovPaths property in luci output.
+       Merger then uses the CovPaths property to download and process the coverage.
+
+      Args:
+        absolute_coverage_file(str): location of coverage file on local disk.
+        codesearch_commit_id (str): commit id for absolute cc builder.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+        coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
+    """
+    object_path = os.path.join(gs_artifact_path, 'coverage',
+                               codesearch_commit_id, '.json')
+    upload_step = self.m.gsutil.upload(absolute_coverage_file,
+                                       gs_artifact_bucket, object_path)
+
+    upload_step.presentation.links['uploaded report'] = (
+        'https://storage.cloud.google.com/%s/%s/index.html' %
+        (gs_artifact_bucket, object_path))
+
+    full_gs_path = 'gs://{gs_bucket}/{gs_path}'.format(
+        gs_bucket=gs_artifact_bucket, gs_path=object_path)
+
+    self._merger_input_absolute_coverage.append({
+        'CovPaths': [full_gs_path],
+        'Host': PUBLIC_CODE_HOST,
+        'Project': CODESEARCH_PROJECT,
+        'Ref': DEFAULT_CODE_BRANCH,
+        'CovType': coverage_type,
+        'CommitID': codesearch_commit_id
+    })
 
   def _ensure_binaries(self):
     """Ensure this module's binaries are installed."""
@@ -209,31 +314,23 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                           include_log=True)
     return cleaned_path_file
 
-  def _filter_coverage_to_cl_files(self, path_to_coverage_file,
-                                   coverage_file_setting):
-    # Exit if the file does not need to be filtered.
-    if not coverage_file_setting.filter_coverage_to_cl_files:
-      return path_to_coverage_file
+  def _filter_coverage_to_cl_files(self, path_to_coverage_file):
 
     # Filter the data to the changed files.
     with self.m.step.nest('filter to changed files only') as presentation:
       # Get the names of all the files in each cl.
-      patch_set_file_names = {}
+      change_to_file_names = {}
       with self.m.step.nest('get patch sets'):
-        patch_sets = [
-            self.m.gerrit.fetch_patch_set_from_change(commit,
-                                                      include_files=True)
-            for commit in self.m.cros_infra_config.gerrit_changes
-        ]
-
-        for patch_set in patch_sets:
+        for commit in self.m.cros_infra_config.gerrit_changes:
+          file_names = []
+          patch_set = self.m.gerrit.fetch_patch_set_from_change(
+              commit, include_files=True)
           for f in patch_set.file_infos.keys():
-            patch_set_file_names[f.strip().lower()] = True
+            file_names.append(f.strip().lower())
+          change_to_file_names[commit.change] = file_names
 
       # Write out the changed file names for debugging.
-      presentation.logs['output'] = [str(list(patch_set_file_names.keys()))]
-      presentation.step_text = 'found %d file changes.' % len(
-          patch_set_file_names.keys())
+      presentation.logs['output'] = [json.dumps(change_to_file_names, indent=4)]
 
       # Rewrite the coverage llvm json file to only include the files from the cls.
       data_to_clean = self.m.file.read_json(
@@ -250,43 +347,52 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               'version': '0.0',
           })
 
-      coverage_data = []
-      for data in data_to_clean['data']:
-        for file_data in data['files']:
-
-          for patch_file_name in patch_set_file_names:
-            # file_data[filename] contains src prefix example: /src/platform2/vm/foo.cc.
-            # patch_file_name does not contain src prefix. example: vm/foo.cc.
-            # So perform filtering based on endswith check.
-            if file_data['filename'].strip().lower().endswith(patch_file_name):
-              # Zoss expects filename without src prefix. So update file_data
-              # filename
-              file_data_copy = copy.deepcopy(file_data)
-              file_data_copy['filename'] = patch_file_name
-              coverage_data.append(file_data_copy)
-
-      # Write out the results and return the path to the filtered file.
       tmp_dir = self.m.path.mkdtemp(prefix='filtered-coverage')
-      filtered_path_file = tmp_dir.join('filtered.file')
-      self.m.file.write_json(
-          'write filtered file', filtered_path_file, {
-              'data': [{
-                  'files': coverage_data
-              }],
-              'type': data_to_clean['type'],
-              'version': data_to_clean['version'],
-          }, include_log=True)
+      result = {}
+      for change in change_to_file_names:
+        coverage_data = []
+        for data in data_to_clean['data']:
+          for file_data in data['files']:
+            for change_file_name in change_to_file_names[change]:
+              # file_data[filename] contains src prefix example: /src/platform2/vm/foo.cc.
+              # patch_file_name does not contain src prefix. example: vm/foo.cc.
+              # So perform filtering based on endswith check.
+              if file_data['filename'].strip().lower().endswith(
+                  change_file_name):
+                # Zoss expects filename without src prefix. So update file_data
+                # filename
+                file_data_copy = copy.deepcopy(file_data)
+                file_data_copy['filename'] = change_file_name
+                coverage_data.append(file_data_copy)
 
-      return filtered_path_file
+        # Write out the results and return the path to the filtered file.
+        filtered_path_file = tmp_dir.join('filtered.file.{}'.format(change))
+        self.m.file.write_json(
+            'write filtered file', filtered_path_file, {
+                'data': [{
+                    'files': coverage_data
+                }],
+                'type': data_to_clean['type'],
+                'version': data_to_clean['version'],
+            }, include_log=True)
+        result[change] = filtered_path_file
+
+      return result
 
   def _upload_absolute_coverage_to_code_search(self, fpath, coverage_type,
-                                               absolute_cs_settings):
+                                               absolute_cs_settings,
+                                               merger_flow_enabled=False,
+                                               gs_artifact_bucket=None,
+                                               gs_artifact_path=None):
     """Uploads the coverage data to code search.
 
       Args:
         fpath (str): path to the coverage file.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         absolute_cs_settings (CoverageFileSettings): settings for uploading coverage.
+        merger_flow_enabled (bool): whether merger flow is enabled or not.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
     """
     if self._cq_builder or self.m.cq.active or absolute_cs_settings is None:
       return
@@ -299,14 +405,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       codesearch_commit_id = self.m.gitiles.fetch_revision(
           PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
       build = self.m.buildbucket.build
-
-      self.m.easy.set_properties_step(
-          'Set absolute coverage builder specific output properties',
-          abs_code_coverage_host=PUBLIC_CODE_HOST,
-          abs_code_coverage_project=CODESEARCH_PROJECT,
-          abs_code_coverage_ref=DEFAULT_CODE_BRANCH,
-          abs_code_coverage_commit_id=codesearch_commit_id,
-      )
+      if merger_flow_enabled:
+        self._merger_absolute(absolute_coverage_file, codesearch_commit_id,
+                              gs_artifact_bucket, gs_artifact_path,
+                              coverage_type)
       chunks_file = self._chunk_coverage_file(absolute_coverage_file,
                                               coverage_type)
 
@@ -346,7 +448,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
             ])
 
   def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
-                                             incremental_settings):
+                                             incremental_settings,
+                                             gs_artifact_bucket,
+                                             gs_artifact_path):
     """Uploads the coverage data to gerrit.
 
       Args:
@@ -365,38 +469,54 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       incremental_coverage_file = self._write_cleaned_coverage_file(
           fpath, incremental_settings)
 
-      incremental_coverage_file = self._filter_coverage_to_cl_files(
-          incremental_coverage_file, incremental_settings)
-      for change in self.m.cros_infra_config.gerrit_changes:
-        self.m.step(
-            'upload {} for {} (ps #{})'.format(
-                self.m.path.basename(fpath), change.change, change.patchset),
-            wrapper=['luci-auth', 'context', '--'],
-            cmd=[
-                self._incremental_coverage_tool,
-                '--env',
-                self._coverage_env,
-                '--host',
-                change.host,
-                '--project',
-                change.project,
-                '--change_id',
-                change.change,
-                '--patchset',
-                change.patchset,
-                '--uploader_name',
-                self.m.buildbucket.build.builder.builder,
-                '--uploader_id',
-                '{}_{}_{}'.format(change.change, change.patchset,
-                                  str(self.m.buildbucket.build.id)),
-                '--format',
-                coverage_type,
-                '--coverage_file',
-                str(incremental_coverage_file),
-            ],
-            stdout=self.m.raw_io.output(add_output_log=True),
-            stderr=self.m.raw_io.output(add_output_log=True),
-        )
+      if not incremental_settings.filter_coverage_to_cl_files:
+        for change in self.m.cros_infra_config.gerrit_changes:
+          self._invoke_incremental_coverage_tool(incremental_coverage_file,
+                                                 change, coverage_type)
+      else:
+        change_to_filtered_coverage = self._filter_coverage_to_cl_files(
+            incremental_coverage_file)
+
+        for change in self.m.cros_infra_config.gerrit_changes:
+          if change.change in change_to_filtered_coverage:
+            self._merger_incremental(change_to_filtered_coverage[change.change],
+                                     change, gs_artifact_bucket,
+                                     gs_artifact_path, coverage_type)
+
+            self._invoke_incremental_coverage_tool(
+                change_to_filtered_coverage[change.change], change,
+                coverage_type)
+
+  def _invoke_incremental_coverage_tool(self, path, change, coverage_type):
+    self.m.step(
+        'upload {} for {} (ps #{})'.format(
+            self.m.path.basename(path), change.change, change.patchset),
+        wrapper=['luci-auth', 'context', '--'],
+        cmd=[
+            self._incremental_coverage_tool,
+            '--env',
+            self._coverage_env,
+            '--host',
+            change.host,
+            '--project',
+            change.project,
+            '--change_id',
+            change.change,
+            '--patchset',
+            change.patchset,
+            '--uploader_name',
+            self.m.buildbucket.build.builder.builder,
+            '--uploader_id',
+            '{}_{}_{}'.format(change.change, change.patchset,
+                              str(self.m.buildbucket.build.id)),
+            '--format',
+            coverage_type,
+            '--coverage_file',
+            str(path),
+        ],
+        stdout=self.m.raw_io.output(add_output_log=True),
+        stderr=self.m.raw_io.output(add_output_log=True),
+    )
 
   def _compose_gs_path_for_chromium_coverage(self, data_type):
     build = self.m.buildbucket.build
