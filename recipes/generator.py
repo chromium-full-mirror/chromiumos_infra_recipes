@@ -5,11 +5,16 @@
 
 """Recipe for the PUpr generator.
 
-PUpr is a general uprev pipeline that listens for package releases (via LUCI
-Scheduler gitiles triggers), generates ebuild uprev CLs for those releases,
-and tags the appropriate reviewers. Think of it as the CrOS autoroller.
+PUpr is a general uprev pipeline that automatically creates uprev CLs for new
+software patches, such as ebuild uprevs and SDK uprevs. It tags appropriate
+reviewers, sets CL labels, and handles existing uprev CLs. Think of it as the
+CrOS autoroller.
 
-See go/pupr and go/pupr-generator for rationale and design decisions.
+PUpr is usually triggered via LUCI Scheduler gitiles triggers in response to
+package releases. It can also be scheduled to run on a cron.
+
+See go/pupr and go/pupr-generator for rationale, design decisions, and usage
+instructions.
 """
 
 import re
