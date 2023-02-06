@@ -10206,9 +10206,9 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Copy legacy configuration and generate backfilled configuration.
 
-&mdash; **def [RunSteps](/recipes/config_backfill.py#524)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_backfill.py#531)(api, properties):**
 
-&mdash; **def [backfill\_project](/recipes/config_backfill.py#408)(api, config):**
+&mdash; **def [backfill\_project](/recipes/config_backfill.py#415)(api, config):**
 
 Backfill an individual project.
 
@@ -10267,7 +10267,7 @@ Return:
   List containing the path where the downloaded config.yaml file resides,
   or empty list if no GS path was found for the builder.
 
-&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#467)(commits, errors, nmissing):**
+&mdash; **def [format\_output\_markdown](/recipes/config_backfill.py#474)(commits, errors, nmissing):**
 
 Generate markdown to be shown for the build status.
 
