@@ -1351,7 +1351,9 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/checker.py",
       "--program",
       "[CLEANUP]/chromiumos_workspace/src/program/testprogram/generated/config.binaryproto",
