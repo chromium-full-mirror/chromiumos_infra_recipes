@@ -44,8 +44,7 @@ def RunSteps(api, properties):
   api.checkpoint.register()
 
   build = api.buildbucket.build
-  with api.orch_menu.setup_orchestrator(
-      test_footers=properties.test_footers) as config:
+  with api.orch_menu.setup_orchestrator() as config:
     api.assertions.assertEqual(config, api.orch_menu.config)
     if not config:
       api.assertions.assertTrue(properties.expect_missing_config)

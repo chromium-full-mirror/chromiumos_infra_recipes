@@ -7,12 +7,12 @@
     "cmd": [],
     "name": "is chroot usable",
     "~followup_annotations": [
-      "@@@STEP_TEXT@not reusable: created with an incompatible manifest@@@",
+      "@@@STEP_TEXT@reusable: reusing SDK created from a compatible manifest@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
       "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chrome-internal.googlesource.com/chromeos/manifest-internal@@@",
-      "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: other@@@",
+      "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: https://chromium.googlesource.com/chromiumos/manifest@@@",
       "@@@STEP_LOG_END@sdk manifest url@@@",
       "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: @@@",
       "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: snapshot@@@",
@@ -39,7 +39,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@{@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"other\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"123\\n\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
@@ -60,6 +60,45 @@
     "name": "is chroot usable.remove sdk version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--key",
+      "Cr-External-Snapshot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "is chroot usable.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "is chroot usable.log command",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@running git with args: ['merge-base', '--is-ancestor', '123', 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee']@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "123",
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "is chroot usable.git merge-base",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@commit is reachable@@@"
     ]
   },
   {

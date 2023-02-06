@@ -510,9 +510,40 @@ class CrosSourceApi(RecipeApi):
     branch = '' if branch in ("snapshot", "staging-snapshot") else branch
     return branch
 
+  def get_external_snapshot_commit(self, internal_manifest_path: Path,
+                                   snapshot_commit_id: str) -> Optional[str]:
+    """Return the Cr-External-Snapshot for the given internal snapshot commit.
+
+    The internal snapshot commit contains a footer 'Cr-External-Snapshot' which
+    contains the corresponding snapshot commit in the external manifest.
+
+    Note: This function assumes the internal manifest is synced.
+
+    Args:
+      internal_manifest_path: The path where the internal manifest is checked
+          out.
+      snapshot_commit_id: The internal snapshot commit id for which to return
+          the external snapshot commit counterpart.
+
+    Raises:
+      StepFailure if there is not exactly one Cr-External-Snapshot footer.
+
+    Returns:
+      The corresponding exteral manifest snapshot commit.
+    """
+    with self.m.context(cwd=internal_manifest_path):
+      test_data = self.m.git_footers.test_api.step_test_data_factory('e' * 40)
+      footers = self.m.git_footers.from_ref(snapshot_commit_id,
+                                            key='Cr-External-Snapshot',
+                                            step_test_data=test_data)
+
+      if not footers or len(footers) != 1:
+        raise StepFailure('expected exactly one Cr-External-Snapshot footer')
+
+      return footers[0]
+
   def checkout_manifests(self, commit=None, is_staging=False,
-                         checkout_internal=True, checkout_external=False,
-                         test_footers=None):
+                         checkout_internal=True, checkout_external=False):
     """Check out the manifest projects.
 
     Syncs the manifest projects into the workspace, at the appropriate revision.
@@ -534,8 +565,6 @@ class CrosSourceApi(RecipeApi):
         Defaults to true.
       checkout_external (bool): Whether to checkout the external manifest.
         Defaults to false.
-      test_footers (str): test Cr-External-Snapshot footer data(values separated
-          by newlines), or None.
 
     Returns:
       (GitilesCommit) The GitilesCommit to use for the external manifest.
@@ -616,14 +645,8 @@ class CrosSourceApi(RecipeApi):
         return ext_commit
       # If we have a snapshot.xml, checkout the corresponding public manifest
       # commit id, and update the external commit.
-      test_data = self.m.git_footers.test_api.step_test_data_factory(
-          test_footers or 'e' * 40)
-      footers = self.m.git_footers.from_ref(commit.id,
-                                            key='Cr-External-Snapshot',
-                                            step_test_data=test_data)
-      if not footers or len(footers) != 1:
-        raise StepFailure('expected exactly one Cr-External-Snapshot footer')
-      ext_commit.id = footers[0]
+      ext_commit.id = self.get_external_snapshot_commit(working_manifest.path,
+                                                        commit.id)
       if checkout_external:
         # Default to not checking out the external manifest.  It's possible that
         # GoB hasn't quite reconciled all of its copies, and it may not have

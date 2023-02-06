@@ -218,17 +218,13 @@ class OrchMenuApi(RecipeApi):
     return _manifest_info(manifest.relpath, commit, manifest.path, manifest.url)
 
   @contextlib.contextmanager
-  def setup_orchestrator(self, test_footers=None):
+  def setup_orchestrator(self):
     """Initial setup steps for the orchestrator.
 
     This context manager returns with all of the contexts that the orchestrator
     needs to have when it runs, for cleanup to happen properly.
 
     If appropriate, any inflight orchestrator has finished before we return.
-
-    Args:
-      test_footers (str): test Cr-External-Snapshot footer data(values separated
-          by newlines), or None.
 
     Raises:
       StepFailure if no config is found.
@@ -251,8 +247,7 @@ class OrchMenuApi(RecipeApi):
         external_commit = self.m.cros_source.checkout_manifests(
             is_staging=self.m.cros_infra_config.is_staging,
             checkout_internal=not use_external,
-            checkout_external=self._update_manifest_refs or use_external,
-            test_footers=test_footers)
+            checkout_external=self._update_manifest_refs or use_external)
         self._external_gitiles_commit = external_commit
 
         # We cannot push manifest refs to unpinned branches.

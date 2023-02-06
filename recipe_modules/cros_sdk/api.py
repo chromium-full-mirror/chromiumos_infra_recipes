@@ -325,24 +325,56 @@ class CrosSdkApi(RecipeApi):
       step_presentation.step_text = 'not reusable: different version requested'
       return False
 
-    if not self.m.src_state.build_manifest.url == cache_state.manifest_url:
-      step_presentation.step_text = (
-          'not reusable: created with a different manifest')
-      return False
-
     manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
     if manifest_branch != cache_state.manifest_branch:
       step_presentation.step_text = (
           'not reusable: created with a different manifest branch')
       return False
 
-    with self.m.context(cwd=self.m.src_state.build_manifest.path):
-      if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                 head=self.m.src_state.gitiles_commit.id):
+    # Check ancestory if the current build and cached SDK use the same manifest.
+    if self.m.src_state.build_manifest.url == cache_state.manifest_url:
+      with self.m.context(cwd=self.m.src_state.build_manifest.path):
+        if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
+                                   head=self.m.src_state.gitiles_commit.id):
+          step_presentation.step_text = (
+              'reusable: reusing SDK created from the same manifest')
+          return True
+
+        step_presentation.step_text = 'not reusable: cannot downrev the SDK'
+        return False
+
+    # A build using the internal manifest can reuse a cached SDK that was built
+    # with the external manifest. The ancestory check will be done using the
+    # corresponding external snapshot commit.
+    elif (self.m.src_state.build_manifest.url ==
+          self.m.src_state.internal_manifest.url and
+          cache_state.manifest_url == self.m.src_state.external_manifest.url):
+
+      try:
+        # The get_external_snapshot_commit function throws an error if one
+        # external snapshot commit is not found.
+        # Reusing the SDK is best effort and this should not fail the build.
+        external_commit = self.m.cros_source.get_external_snapshot_commit(
+            self.m.src_state.build_manifest.path,
+            self.m.src_state.gitiles_commit.id)
+      except StepFailure:
         step_presentation.step_text = (
-            'reusable: reusing SDK created from the same manifest')
-        return True
-      step_presentation.step_text = 'not reusable: cannot downrev the SDK'
+            'not reusable: could not get external snapshot commit')
+        return False
+
+      with self.m.context(cwd=self.m.src_state.external_manifest.path):
+        if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
+                                   head=external_commit):
+          step_presentation.step_text = (
+              'reusable: reusing SDK created from a compatible manifest')
+          return True
+
+        step_presentation.step_text = 'not reusable: cannot downrev the SDK'
+        return False
+
+    else:
+      step_presentation.step_text = (
+          'not reusable: created with an incompatible manifest')
       return False
 
   def _check_sdk_cache_state(self, version):

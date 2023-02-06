@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_sdk',
     'git',
+    'git_footers',
     'src_state',
 ]
 
@@ -72,6 +73,37 @@ def GenTests(api):
       api.step_data(
           'is chroot usable.read sdk cache state json',
           api.file.read_proto(_sdk_cache_state_file(manifest_branch='other'))))
+
+  yield api.test(
+      'no-external-snapshot-commit',
+      api.step_data(
+          'is chroot usable.read sdk cache state json',
+          api.file.read_proto(
+              _sdk_cache_state_file(
+                  manifest_branch='snapshot',
+                  manifest_url=api.src_state.external_manifest.url))),
+      api.git_footers.simulated_get_footers([], 'is chroot usable'),
+      api.git.is_reachable(False))
+
+  yield api.test(
+      'external-sdk-not-reusable-by-internal-build',
+      api.step_data(
+          'is chroot usable.read sdk cache state json',
+          api.file.read_proto(
+              _sdk_cache_state_file(
+                  manifest_branch='snapshot',
+                  manifest_url=api.src_state.external_manifest.url))),
+      api.git.is_reachable(False))
+
+  yield api.test(
+      'external-sdk-reusable-by-internal-build',
+      api.step_data(
+          'is chroot usable.read sdk cache state json',
+          api.file.read_proto(
+              _sdk_cache_state_file(
+                  manifest_branch='snapshot',
+                  manifest_url=api.src_state.external_manifest.url))),
+      api.properties(is_chroot_usable=True))
 
   yield api.test(
       'mismatch-snapshot-hash',
