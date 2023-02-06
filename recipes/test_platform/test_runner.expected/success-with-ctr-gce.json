@@ -1284,7 +1284,8 @@
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -1309,15 +1310,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjkuGS4uIrSSwtyddLKc3NrYzPTBFglGIrSk0szs8T4ufi5eIsKMovyyzOzM8DSoRwBaUXW+nrJ2cU5eem5hfrlqQWl+jm5KcX6yfn5+bm5+mm5pXpGxkYGukamOoamugbQIEuFgIEDI2NzZXYuViBFqZUGuly8eYXZaZn5iXmxINMFsLrPACSKDTD\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytUEsKwjAUpAsVH1Sly+LKfZp+FMFjeIES25AGkrySl1Z6Rw9lCy7FlbMYBgZmmIEjpLALYgiYtYO1U63bQ5SuvRSELtlDDNve46hJo5uNVwR3RTfOm86jlUgsSArMoCLeoLXomHQjL/OiZPmFFWeef8C+0IKiqq7J2IXQL7EUhHZGEmUN+j5TiMrIWVv+8Pgk+d/e0wZW89J2KhnE6LXSTph6SU5+/vIGs9tZtQ==\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@",
-      "@@@STEP_LINK@Logs in Stainless@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {

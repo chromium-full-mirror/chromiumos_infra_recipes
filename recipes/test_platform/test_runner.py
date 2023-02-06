@@ -189,13 +189,8 @@ def summarize_results_from_phosphorus_results(api, result):
     """
   with api.step.nest('Results') as step:
     # Do not surface empty link when provision has failure
-    if not result.prejob_failed():
-      if result.get_testhaus_log_url():
-        s_link(step=step, name='Logs in Testhaus',
-               link=result.get_testhaus_log_url())
-      if result.get_stainless_log_url():
-        s_link(step=step, name='Logs in Stainless',
-               link=result.get_stainless_log_url())
+    if result.get_stainless_log_url() and not result.prejob_failed():
+      s_link(step=step, name='Logs', link=result.get_stainless_log_url())
     s_log(step=step, name='JSON output', log=result.to_json())
     for prejob in result.get_prejob_steps():
       _set_step_status(
@@ -870,8 +865,7 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'result_file': test_result_file,
           'artifact_directory': None,
       }
-      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
-                               str(result.get_testhaus_log_url()))
+      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
   except api.step.StepFailure:
     # Marks the step status as Failure only and bypass the exception.
     api.step.active_result.presentation.status = api.step.FAILURE
@@ -935,8 +929,7 @@ def _upload_incomplete_test_to_resultdb(api, test_metadata, result,
           'result_file': incomplete_test_result_file,
           'artifact_directory': None,
       }
-      api.cros_resultdb.upload(config, autotest_result.log_data.stainless_url,
-                               autotest_result.log_data.testhaus_url)
+      api.cros_resultdb.upload(config, autotest_result.log_data.stainless_url)
   except api.step.StepFailure:
     # Marks the step status as Failure only and bypass the exception.
     api.step.active_result.presentation.status = api.step.FAILURE
@@ -1082,8 +1075,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   # Uploads test results to ResultDB only when the test result file exists.
   result_file_content = _read_test_result_file(api, result_file)
   if result_file_content:
-    api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
-                             str(result.get_testhaus_log_url()))
+    api.cros_resultdb.upload(config, str(result.get_stainless_log_url()))
 
   # Uploads an additional Autotest wrapper result for Tast test.
   if is_tast_result:
@@ -1706,8 +1698,8 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
       # Parse log data
       if ctr_result.gs_url:
         log_data.gs_url = ctr_result.gs_url
-      # if ctr_result.testhaus_url:
-      #   log_data.testhaus_url = ctr_result.testhaus_url
+      if ctr_result.stainless_url:
+        log_data.stainless_url = ctr_result.stainless_url
 
     if not test_cases:
       # if prejob failed, add the default test case
@@ -1739,13 +1731,8 @@ def summarize_results_from_ctr_results(api, result):
     """
   with api.step.nest('Results') as step:
     # Do not surface empty link when provision has failure
-    if not result.prejob_failed():
-      if result.get_testhaus_log_url():
-        s_link(step=step, name='Logs in Testhaus',
-               link=result.get_testhaus_log_url())
-      if result.get_stainless_log_url():
-        s_link(step=step, name='Logs in Stainless',
-               link=result.get_stainless_log_url())
+    if result.get_stainless_log_url() and not result.prejob_failed():
+      s_link(step=step, name='Logs', link=result.get_stainless_log_url())
     for prejob in result.get_prejob_steps():
       _set_step_status(api=api, step_name="provision of " + prejob.test_id,
                        summary="", failure_condition=prejob.is_failure())
@@ -1895,7 +1882,6 @@ parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
 synchronous_log_data_stainless_url=https://path/to/stainless
-synchronous_log_data_testhaus_url=https://path/to/testhaus
 synchronous_log_data_url=gs://path/to/test/logs
 branch=main
 label=board-cq/R00-0.0.0/sweet-cq/test-case
@@ -1924,7 +1910,6 @@ parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
 synchronous_log_data_stainless_url=https://path/to/stainless
-synchronous_log_data_testhaus_url=https://path/to/testhaus
 synchronous_log_data_url=gs://path/to/test/logs
 branch=main
 label=board-cq/R00-0.0.0/sweet-cq/test-case
@@ -2016,7 +2001,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {
     "step": [
@@ -2047,7 +2032,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {
     "step": [
@@ -2079,7 +2064,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {
     "step": [

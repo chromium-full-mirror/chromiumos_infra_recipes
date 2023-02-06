@@ -171,13 +171,6 @@ class DUTResult():  # pragma: no cover
     """
 
   @abstractmethod
-  def get_testhaus_log_url(self):
-    """Retrieve the URL for Testhaus logs
-
-    Returns: str
-    """
-
-  @abstractmethod
   def get_prejob_steps(self):
     """Get the prejob steps executed.
 

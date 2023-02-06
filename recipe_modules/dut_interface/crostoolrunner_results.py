@@ -118,7 +118,6 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     super().__init__(data)
     self.gs_url = None
     self.stainless_url = None
-    self.testhaus_url = None
 
   def is_failure(self):
     """Whether this job has failed.
@@ -141,7 +140,6 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     """
     self.gs_url = metadata.gs_url
     self.stainless_url = metadata.stainless_logs_url
-    self.testhaus_url = metadata.testhaus_logs_url
 
   def get_stainless_log_url(self):
     """Retrieve the url for stainless logs
@@ -149,13 +147,6 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     Returns: str
     """
     return self.stainless_url
-
-  def get_testhaus_log_url(self):
-    """Retrieve the url for Testhaus logs.
-
-    Returns: str
-    """
-    return self.testhaus_url
 
   def get_dut_state(self):
     """Retrieves the state of this dut.
@@ -230,6 +221,5 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
       self.data = result.data
       self.gs_url = result.gs_url
       self.stainless_url = result.stainless_url
-      self.testhaus_url = result.testhaus_url
       self.prejob_response = result.prejob_response
       self.test_responses.extend(result.test_responses)

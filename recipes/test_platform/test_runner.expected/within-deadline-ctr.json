@@ -834,7 +834,8 @@
       "@@@STEP_LOG_LINE@skylab_result@    ]@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -859,15 +860,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjkuGS4uIrSSwtyddLKc3NrYzPTBFglGIrSk0szs8T4ufi5eIsKMovyyzOzM8DSoRwBaUXW+nrJ2cU5eem5hfrlqQWl+jm5KcX6yfn5+bm5+mm5pXpGxmYmOoaGOkaGOsbQIEuFgIEDI2NzZXYuViBFqZUGuly8eYXZaZn5iXmxINMFsLrPACSozTE\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytUMEKwjAUYwcVH0xlx+HJe9e6KYKf4Q9I3UpXaPtGXzfZP/pRbuBRPJlDCAQSEthDDpso+4hF0zs33k2zS/JlUJLQZ1tIYd0FHAwZ9JPxSuCm6cp53QZ0ColFRZFZ1MRrdA49U37gpTidmSiZqLj4gH2hGcequmRDG2M3x1KUxltFVNQYukIjaqsm7fgj4JPUf3sPK1hMS5uxZJBiMNp4ae9zcvbzlze1SVm3\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@",
-      "@@@STEP_LINK@Logs in Stainless@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {
