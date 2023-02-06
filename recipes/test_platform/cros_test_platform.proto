@@ -58,4 +58,10 @@ message CrosTestPlatformProperties {
   // build (i.e. it has no parent build). The following prop forces the recipe
   // to ignore the ancestor check, and export no matter what. Defaults to false.
   bool force_export = 10;
+
+  enum LUCIExperiments {
+    SUITE_EXECUTION_LIMIT = 0;
+  }
+  // This field is used for LUCI builder experiments defined in infra/config.
+  repeated LUCIExperiments experiments = 11;
 }

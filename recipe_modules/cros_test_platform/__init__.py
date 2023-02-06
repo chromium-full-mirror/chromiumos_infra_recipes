@@ -6,6 +6,7 @@ from PB.recipe_modules.chromeos.cros_test_platform.cros_test_platform import \
     CrosTestPlatformModuleProperties
 
 DEPS = [
+    'cros_infra_config',
     'easy',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',

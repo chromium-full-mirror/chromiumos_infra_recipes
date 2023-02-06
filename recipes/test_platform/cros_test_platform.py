@@ -668,14 +668,15 @@ def publish_to_result_flow(api, config, should_poll_for_completion=False):
         build_type='ctp', should_poll_for_completion=should_poll_for_completion)
 
 
-def execute(api, requests):
+def execute(api, properties, requests):
   """Execute request in the correct backend.
 
   Args:
+    properties: CrosTestPlatformProperties
     requests: ExecutionRequests payload.
   """
   with api.step.nest('execute'):
-    return api.cros_test_platform.execute_luciexe(requests)
+    return api.cros_test_platform.execute_luciexe(properties, requests)
 
 
 def _execute_requests(api, requests, enumerations, config, error_in_requests):
@@ -741,8 +742,8 @@ def RunSteps(api, properties):
     _validate_request_error_and_turn_off_cft_if_necessary(
         api, requests, error_in_requests)
     enumerations = enumerate_tests(api, requests, error_in_requests)
-    responses = execute(
-        api,
+    responses, suite_execution_logs = execute(
+        api, properties,
         _execute_requests(api, requests, enumerations, properties.config,
                           error_in_requests))
     # Add error responses for each request that had error.
@@ -755,7 +756,8 @@ def RunSteps(api, properties):
     publish_to_result_flow(api, properties.config,
                            should_poll_for_completion=True)
     postprocess(api, requests, tagged_responses)
-  summarize(api, enumerations, tagged_responses, error_in_requests)
+  summarize(api, enumerations, tagged_responses, error_in_requests,
+            suite_execution_logs)
 
 
 def _append_error_responses(error_in_requests, responses):
@@ -1017,7 +1019,8 @@ def _classify_request_failure(consolidated_results):
   return _REQUEST_FAILURE
 
 
-def summarize(api, enumerations, responses, error_in_requests):
+def summarize(api, enumerations, responses, error_in_requests,
+              suite_execution_logs):
   # Failures in summarization are non-infra related.
   failures = 0
 
@@ -1026,8 +1029,20 @@ def summarize(api, enumerations, responses, error_in_requests):
     request_classifications[state] = 0
 
   with api.step.nest('summarize') as step:
+    if suite_execution_logs:
+      with api.step.nest('execution logs') as log_step:
+        # Log the suite execution metrics
+        for key in suite_execution_logs:
+          if key == "totals":
+            log_step.logs[
+                'Total Per Suite Execution Statistics'] = suite_execution_logs[
+                    key]
+          else:
+            log_step.logs[key + " execution logs"] = suite_execution_logs[key]
+
     for tag, response in sorted(responses.items()):
       with api.step.nest('%s task results' % tag):
+
         if tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
 
@@ -1970,6 +1985,15 @@ def GenTests(api):
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
+      _generic_enumerate_response(api), _generic_passing_execute_response(api))
+
+  yield api.test(
+      'end-to-end-execution-with-passed-tasks-with-suite-limit-experiment',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={'default': _test_request('foo')},
+              config=_test_config('foo'),
+              experiments=[CrosTestPlatformProperties.SUITE_EXECUTION_LIMIT])),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
   passed_task_result = ExecuteResponse.TaskResult(

@@ -10,7 +10,9 @@ from PB.test_platform.steps.enumeration import EnumerationRequests
 from PB.test_platform.steps.enumeration import EnumerationResponses
 from PB.test_platform.steps.execution import ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponses
+from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformProperties
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 # This exit code is returned by cros_test_platform runs that had an error but
 # produced a response anyway.
@@ -99,7 +101,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     return self._run('skylab-execute', request, ExecuteRequests,
                      ExecuteResponses)
 
-  def execute_luciexe(self, request):
+  def execute_luciexe(self, properties, request):
     """Execute work via `luciexe` binary for cros_test_platform
 
     crbug.com/1112514: This is an alternative binary target for
@@ -108,8 +110,9 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     Args:
       request: a ExecuteRequests.
+      properties: CrosTestPlatformProperties
 
-    Returns: ExecuteResponses.
+    Returns: ExecuteResponses, Dict[string][string].
     """
     self._ensure_cros_test_platform()
     with self.m.step.nest('call binary') as s:
@@ -154,7 +157,54 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           'JSONPB',
       )
       s.logs['responses'] = [json_format.MessageToJson(responses)]
-      return responses
+
+      # Logs to be returned.
+      suite_execution_logs = {}
+
+      # For now the suite execution logic is going to be hidden behind a feature
+      # flag.
+      # Read the files outputted on the metrics.
+      # they will be in:
+      #   * sub_cwd/metric_logs/per_suite
+      #   * sub_cwd/metric_logs/totals
+      if ('chromeos.cros_infra_config.suite_execution_limited'
+          in self.m.cros_infra_config.experiments or
+          CrosTestPlatformProperties.SUITE_EXECUTION_LIMIT
+          in properties.experiments):
+        try:
+          with self.m.step.nest('Read Execution Metrics'):
+            totalsDir = sub_cwd.join('metric_logs/totals')
+            perSuiteDir = sub_cwd.join('metric_logs/per_suites')
+
+            # Read the final per suite report
+            final_metrics = self.m.file.read_text(
+                "read suite execution final metrics",
+                totalsDir.join("final.csv"), include_log=False,
+                test_data="suiteName,totalTestExecutionSeconds,completed,exceededExecutionLimit\ndefault,0,True,False"
+            )
+
+            suite_execution_logs["totals"] = final_metrics
+
+            perSuiteLogPaths = self.m.file.listdir(
+                'List Dir', perSuiteDir, test_data=['/tmp/default.csv'])
+            for path in perSuiteLogPaths:
+              # Read the final per suite report
+              suite_metric = self.m.file.read_text(
+                  "read suite execution final metrics", path, include_log=False,
+                  test_data="suiteName,taskName,lastSeen,currentlySeenAt,delta,completed\ndefault,default,,12,True"
+              )
+              # Strip file type from name
+              suite = self.m.path.basename(path).replace(".csv", "")
+
+              suite_execution_logs[suite] = suite_metric
+        # TODO(b/271176507): We don't want logging to be blocking as this will mean
+        # loss of test results. Since suite_execution_limited is not fully
+        # rolled out, this can be ignored for now.
+        except StepFailure:  # pragma: nocover
+          pass
+
+      # If the experiment isn't on then suite_execution_logs will be an empty dict.
+      return responses, suite_execution_logs
 
   def _ensure_cros_test_platform(self):
     """Ensure the cros_test_platform CLI is installed."""

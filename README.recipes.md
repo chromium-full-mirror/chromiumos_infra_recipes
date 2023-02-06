@@ -4420,19 +4420,19 @@ Args:
       subdirectory of directory will also be validated.
 ### *recipe_modules* / [cros\_test\_platform](/recipe_modules/cros_test_platform)
 
-[DEPS](/recipe_modules/cros_test_platform/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_platform/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlatformCommand](/recipe_modules/cros_test_platform/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing cros_test_platform commands
 
-&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#176)(self):**
+&mdash; **def [cipd\_package\_version](/recipe_modules/cros_test_platform/api.py#226)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#80)(self, request):**
+&mdash; **def [enumerate](/recipe_modules/cros_test_platform/api.py#82)(self, request):**
 
 Enumerate test cases via `enumerate` subcommand.
 
@@ -4441,7 +4441,7 @@ Args:
 
 Returns: EnumerationResponse.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#102)(self, request):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_platform/api.py#104)(self, properties, request):**
 
 Execute work via `luciexe` binary for cros_test_platform
 
@@ -4451,10 +4451,11 @@ cros_test_platform binary.
 
 Args:
   request: a ExecuteRequests.
+  properties: CrosTestPlatformProperties
 
-Returns: ExecuteResponses.
+Returns: ExecuteResponses, Dict[string][string].
 
-&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#91)(self, request):**
+&mdash; **def [skylab\_execute](/recipe_modules/cros_test_platform/api.py#93)(self, request):**
 
 Execute work via `skylab-execute` subcommand.
 
@@ -11454,11 +11455,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#25)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
-[DEPS](/recipe_modules/cros_test_platform/examples/full.py#12): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_platform/examples/full.py#14): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_platform/examples/full.py#24)(api):**
 ### *recipes* / [cros\_test\_postprocess:examples/full](/recipe_modules/cros_test_postprocess/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_postprocess/examples/full.py#6): [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -13414,9 +13415,9 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#727)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#728)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#826)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#828)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -13436,11 +13437,12 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#671)(api, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#671)(api, properties, requests):**
 
 Execute request in the correct backend.
 
 Args:
+  properties: CrosTestPlatformProperties
   requests: ExecutionRequests payload.
 
 &mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#86)(api):**
@@ -13448,7 +13450,7 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#921)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#923)(api, requests, responses):**
 
 &mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#648)(api, config, should_poll_for_completion=False):**
 
@@ -13459,13 +13461,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1090)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1105)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1168)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1183)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1020)(api, enumerations, responses, error_in_requests):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1022)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#105)(api, properties):**
 

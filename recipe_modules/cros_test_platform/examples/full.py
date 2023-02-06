@@ -9,6 +9,8 @@ from PB.test_platform.steps.enumeration import EnumerationResponses
 from PB.test_platform.steps.execution import ExecuteRequests
 from PB.test_platform.steps.execution import ExecuteResponses
 
+from PB.recipes.chromeos.test_platform.cros_test_platform import CrosTestPlatformProperties
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -25,7 +27,7 @@ def RunSteps(api):
   with api.assertions.assertRaises(ValueError):
     api.cros_test_platform.skylab_execute(None)
   with api.assertions.assertRaises(ValueError):
-    api.cros_test_platform.execute_luciexe(None)
+    api.cros_test_platform.execute_luciexe(CrosTestPlatformProperties(), None)
 
   api.assertions.assertEqual(api.cros_test_platform.cipd_package_version(),
                              'some-cipd-label')
@@ -40,11 +42,17 @@ def RunSteps(api):
         ExecuteResponses(),
         api.cros_test_platform.skylab_execute(ExecuteRequests()),
     )
-  with api.step.nest('callsite-execute-luciexe'):
-    api.assertions.assertEqual(
-        ExecuteResponses(),
-        api.cros_test_platform.execute_luciexe(ExecuteRequests()),
-    )
+  with api.step.nest('callsite-execute-luciexe-no-suite-limit'):
+    response, _ = api.cros_test_platform.execute_luciexe(
+        CrosTestPlatformProperties(), ExecuteRequests())
+    api.assertions.assertEqual(ExecuteResponses(), response)
+  with api.step.nest('callsite-execute-luciexe-with-suite-limit'):
+    response, _ = api.cros_test_platform.execute_luciexe(
+        CrosTestPlatformProperties(
+            experiments=[CrosTestPlatformProperties.SUITE_EXECUTION_LIMIT]),
+        ExecuteRequests())
+
+    api.assertions.assertEqual(ExecuteResponses(), response)
 
 
 def GenTests(api):
@@ -63,5 +71,7 @@ def GenTests(api):
       api.cros_test_platform.set_skylab_execute_response(
           'callsite-skylab-execute', ExecuteResponses()),
       api.cros_test_platform.set_execute_luciexe_response(
-          'callsite-execute-luciexe', ExecuteResponses()),
+          'callsite-execute-luciexe-no-suite-limit', ExecuteResponses()),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'callsite-execute-luciexe-with-suite-limit', ExecuteResponses()),
   )
