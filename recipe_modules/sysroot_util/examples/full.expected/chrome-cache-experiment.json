@@ -988,18 +988,23 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
       "solutions = [\n    {\n        'url': 'https://chromium.googlesource.com/chromium/src.git',\n        'managed': False,\n        'name': 'src',\n        'custom_deps': {},\n        'custom_vars': {\n            'checkout_src_internal': True,\n            'checkout_google_internal': True\n        }\n    }\n]\ncache_dir = '../chrome_cache'"
     ],
     "cwd": "[START_DIR]/chrome/src",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "project/ci/atlas-cq/8945511751514863184"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },

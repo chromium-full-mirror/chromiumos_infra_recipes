@@ -1367,7 +1367,8 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
@@ -1379,6 +1380,7 @@
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },
@@ -1416,7 +1418,8 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
+      "-u",
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--reset",
@@ -1430,6 +1433,7 @@
         "0"
       ],
       "PATH": [
+        "RECIPE_REPO[depot_tools]",
         "RECIPE_REPO[depot_tools]"
       ]
     },

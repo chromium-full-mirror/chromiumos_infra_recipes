@@ -105,10 +105,7 @@ class ChromeApi(recipe_api.RecipeApi):
               "solutions = {}\ncache_dir = '../chrome_cache'".format(
                   GCLIENT_CACHE_CONFIG)
           ]
-          self.m.step(
-              'gclient config',
-              ['python', self.m.depot_tools.root.join('gclient.py')] +
-              gclient_config_cmd, infra_step=True)
+          self.m.gclient('config', gclient_config_cmd, infra_step=True)
         cache_cmd = [
             'populate',
             '-v',
@@ -129,11 +126,8 @@ class ChromeApi(recipe_api.RecipeApi):
               '--with_tags',
               '--verbose',
           ]
-          self.m.step(
-              'gclient sync',
-              ['python', self.m.depot_tools.root.join('gclient.py')] +
-              gclient_sync_cmd, infra_step=True,
-              timeout=self.gclient_sync_timeout_seconds)
+          self.m.gclient('sync', gclient_sync_cmd, infra_step=True,
+                         timeout=self.gclient_sync_timeout_seconds)
 
   def sync(self, chrome_root, chroot, build_target, internal,
            cache_dir=CHROMIUM_CACHE_DIR):
