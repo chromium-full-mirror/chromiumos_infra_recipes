@@ -12738,11 +12738,13 @@ Verify that uprev_packages() creates local uprev commits as expected.
 &mdash; **def [RunSteps](/recipe_modules/pupr_local_uprev/tests/uprev_packages.py#51)(api: RecipeApi, additional_commit_message: str, allow_partial_uprev: bool, expect_none_response: bool):**
 ### *recipes* / [pvs\_upload\_mappings](/recipes/pvs_upload_mappings.py)
 
+[DEPS](/recipes/pvs_upload_mappings.py#11): [build\_menu](#recipe_modules-build_menu)
+
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for uploading mappings to the PVS database.
 
-&mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#17)(api):**
+&mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#16)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

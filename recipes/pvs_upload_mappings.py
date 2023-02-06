@@ -8,13 +8,15 @@
 
 from recipe_engine import post_process
 
-DEPS = []
+DEPS = ["build_menu"]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):  #pylint: disable=unused-argument
-  pass
+def RunSteps(api):
+  with api.build_menu.configure_builder(
+      missing_ok=True), api.build_menu.setup_workspace_and_chroot():
+    pass
 
 
 def GenTests(api):
