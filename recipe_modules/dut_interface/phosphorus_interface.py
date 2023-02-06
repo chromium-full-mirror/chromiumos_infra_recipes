@@ -473,6 +473,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     keyvals = metadata.test.autotest.keyvals
     keyvals['synchronous_log_data_url'] = metadata.gs_url
     keyvals['synchronous_log_data_stainless_url'] = metadata.stainless_logs_url
+    keyvals['synchronous_log_data_testhaus_url'] = metadata.testhaus_logs_url
     return keyvals
 
   def logs_gs_url(self):

@@ -37,6 +37,7 @@ class DUTTestMetadata():  # pragma: no cover
     self.test = test
     self.gs_url = gs_url
     self.stainless_logs_url = self._parse_stainless_logs_url(self.gs_url)
+    self.testhaus_logs_url = self._parse_testhaus_logs_url(self.gs_url)
     self.image_storage_server = image_storage_server
 
   @staticmethod
@@ -55,6 +56,24 @@ class DUTTestMetadata():  # pragma: no cover
     assert gs_dir.startswith('gs://'), "{} should start with gs://".format(
         gs_dir)
     return 'https://stainless.corp.google.com/browse/%s' % gs_dir[len('gs://'):]
+
+  @staticmethod
+  def _parse_testhaus_logs_url(gs_dir):
+    """Return a Testhaus equivalent URL to the given gs URL.
+
+    Args:
+    * gs_dir (str): The Google Storage directory.
+
+    Returns:
+      str: Testhaus URL
+
+    Raises:
+      AssertionError if gs_dir does not start with `gs://`
+    """
+    assert gs_dir.startswith('gs://'), "{} should start with gs://".format(
+        gs_dir)
+    return 'https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/%s' \
+      % gs_dir[len('gs://'):]
 
 
 class DUTInterface():  # pragma: no cover

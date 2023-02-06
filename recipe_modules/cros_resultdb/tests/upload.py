@@ -21,7 +21,8 @@ def RunSteps(api):
       'result_file': './path/to/results.json'
   })
   config = api.cros_resultdb.extract_chromium_resultdb_settings(test_args)
-  api.cros_resultdb.upload(config, 'http://localhost/stainless/url')
+  api.cros_resultdb.upload(config, 'http://localhost/stainless/url',
+                           'http://localhost/testhaus/url')
 
 
 def GenTests(api):
