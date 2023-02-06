@@ -109,8 +109,9 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
               ])
               api.path.mock_add_paths(full_path.join(properties.test_filename))
               if api.path.exists(full_path.join('PRESUBMIT.cfg')):
-                api.step('git cl presubmit',
-                         ['git', 'cl', 'presubmit', '--verbose'])
+                api.step('repo presubmit', [
+                    workpath.join('src/repohooks/pre-upload.py'), '--pre-submit'
+                ])
               elif api.path.exists(full_path.join('PRESUBMIT.py')):
                 api.step('git cl presubmit',
                          ['git', 'cl', 'presubmit', '--verbose'])
