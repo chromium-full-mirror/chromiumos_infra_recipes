@@ -13473,7 +13473,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for upreving Borealis build dependencies.
 
-&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#131)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
+&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#129)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
 
 Create Git commit from changes and upload Gerrit CL.
 
@@ -13494,7 +13494,7 @@ Args:
   stage: The name of the step from the Dockerfile to build. Does not
     perform a full build, will stop after the specified stage is built.
 
-&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#149)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#152)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
 &mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#42)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)

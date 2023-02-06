@@ -110,22 +110,20 @@ def _CreateCL(api: RecipeApi, project: ProjectInfo,
     project: Project object obtained from api.repo.project_info
     presentation: the step to write the CL link to (for LUCI web UI)
   """
-  # Upload CL to gerrit as long as not in staging job.
-  if not api.build_menu.is_staging:
-    with api.step.nest('upload CL to gerrit') as nested_presentation:
-      change = api.gerrit.create_change(project=project.name,
-                                        topic=GERRIT_CL_TOPIC,
-                                        reviewers=GERRIT_CL_REVIEWERS)
-      labels = {
-          Label.BOT_COMMIT: 1,
-          Label.COMMIT_QUEUE: 2,
-      }
-      api.gerrit.set_change_labels(change, labels)
-      if presentation:
-        presentation.links['Gerrit CL'] = api.gerrit.parse_gerrit_change_url(
-            change)
-      nested_presentation.links[
-          'Gerrit CL'] = api.gerrit.parse_gerrit_change_url(change)
+  with api.step.nest('upload CL to gerrit') as nested_presentation:
+    change = api.gerrit.create_change(project=project.name,
+                                      topic=GERRIT_CL_TOPIC,
+                                      reviewers=GERRIT_CL_REVIEWERS)
+    labels = {
+        Label.BOT_COMMIT: 1,
+        Label.COMMIT_QUEUE: 2,
+    }
+    api.gerrit.set_change_labels(change, labels)
+    if presentation:
+      presentation.links['Gerrit CL'] = api.gerrit.parse_gerrit_change_url(
+          change)
+    nested_presentation.links['Gerrit CL'] = api.gerrit.parse_gerrit_change_url(
+        change)
 
 
 def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
@@ -142,8 +140,13 @@ def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
   project = api.repo.project_info(project=api.git.repository_root())
 
   with api.step.nest(step_name):
-    _CommitChanges(api, project, commit_message, step_name)
-    _CreateCL(api, project, presentation)
+    # Only commit and create CL on non-staging jobs.
+    # Committing an empty change results in an INFRA_FAILURE which can be
+    # easily caused as a race condition if the staging job is scheduled to run
+    # shortly after the prod job.
+    if not api.build_menu.is_staging:
+      _CommitChanges(api, project, commit_message, step_name)
+      _CreateCL(api, project, presentation)
 
 
 def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
