@@ -102,7 +102,9 @@ def RunSteps(api: RecipeApi, properties: LocalManifestPresubmitProperties):
       with api.context(infra_steps=False), api.depot_tools.on_path(), \
           api.gs_step_logging.log_step_to_gs(properties.logging_gs_prefix):
         cmd = [
-            'vpython',
+            'vpython3',
+            '-vpython-log-level',
+            'info',
             api.depot_tools.presubmit_support_py_path,
             '--json_output',
             api.json.output(),

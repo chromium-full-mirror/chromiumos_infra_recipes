@@ -1520,7 +1520,9 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
+      "-vpython-log-level",
+      "info",
       "RECIPE_REPO[depot_tools]/presubmit_support.py",
       "--json_output",
       "/path/to/tmp/json",
