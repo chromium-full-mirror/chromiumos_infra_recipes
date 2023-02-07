@@ -1455,369 +1455,99 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "fetch latest chromium.use chromium cache.populate cached chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
-      "gcloud",
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/tmp_tmp_1/src"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
+    "infra_step": true,
+    "name": "fetch latest chromium.use chromium cache.populate cached chrome.ensure chrome src directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/tmp_tmp_1/chrome_cache"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
+    "infra_step": true,
+    "name": "fetch latest chromium.use chromium cache.populate cached chrome.ensure chrome cache directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
-      "set",
-      "project",
-      "chromeos-bot"
+      "--spec",
+      "solutions = [\n    {\n        'url': 'https://chromium.googlesource.com/chromium/src.git',\n        'managed': False,\n        'name': 'src',\n        'custom_deps': {},\n        'custom_vars': {\n            'checkout_src_internal': True,\n            'checkout_google_internal': True\n        }\n    }\n]\ncache_dir = '../chrome_cache'"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "fetch latest chromium.use chromium cache.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.determine whether cache is mounted and can be reused",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.retrieve image version from storage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://chromeos-bot-cache/chrome-main-cache-snapshot-version.txt"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name="
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name=initial-chrome-source-snapshot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chrome-source-snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "list",
-      "--format",
-      "json(name)",
-      "--filter",
-      "name=initial-chrome-source-snapshot-fallback"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chrome-source-snapshot-fallback",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chromiumos-main-16287984\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"staging-chromiumos-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"chrome-release-r93-14092-b-16287710\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"test-cache-snapshot-123\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image.set snapshot_version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@SET_BUILD_PROPERTY@snapshot_version@\"initial-chrome-source-snapshot\"@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "disks",
-      "describe",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
-      "--zone=us-central1-b",
-      "--format",
-      "json(name)"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"name\": \"chromeos-ci-infra-us-central1-b-x16-0-nvcj-cr\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.look up device name to device id map",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "mkdir",
-      "-p",
-      "/snapshot_mounts/chrome"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
+    "cwd": "[CLEANUP]/tmp_tmp_1/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "RECIPE_REPO[depot_tools]"
+      ]
     },
     "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.ensure mount directory exists",
+    "name": "fetch latest chromium.use chromium cache.populate cached chrome.gclient config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
-      "sudo",
-      "mount",
-      "-o",
-      "discard,defaults",
-      "/dev/sdt",
-      "/snapshot_mounts/chrome"
+      "python",
+      "RECIPE_REPO[depot_tools]/git_cache.py",
+      "populate",
+      "-v",
+      "--cache-dir",
+      "../chrome_cache",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "--reset-fetch-config"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
+    "cwd": "[CLEANUP]/tmp_tmp_1/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
     },
     "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.mount disk cr",
+    "name": "fetch latest chromium.use chromium cache.populate cached chrome.populate git cache",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "blkid",
-      "-s",
-      "UUID",
-      "-o",
-      "value",
-      "/dev/sdt"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "name": "fetch latest chromium.use chromium cache.source cache.determine UUID",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "tee",
-      "-a",
-      "/etc/fstab"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.update fstab for /dev/sdt",
-    "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chrome ext4 discard,defaults,noatime,nofail 0 2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "main",
-      "[CACHE]/infra_versions/overlay_branch.txt"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.write overlayfs branch file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "set-disk-auto-delete",
-      "chromeos-ci-infra-us-central1-b-x16-0-nvcj",
-      "--auto-delete",
-      "--device-name=cr",
-      "--zone=us-central1-b"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.set disk to autodelete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "initial-chrome-source-snapshot",
-      "[CACHE]/infra_versions/chrome-main-cache-snapshot-version.txt"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.write version file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@chrome-main-cache-snapshot-version.txt@initial-chrome-source-snapshot@@@",
-      "@@@STEP_LOG_END@chrome-main-cache-snapshot-version.txt@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch latest chromium.use chromium cache.source cache.determine whether to reset overlayfs directories",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CACHE]/infra_versions/overlay_branch.txt",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
-    "infra_step": true,
-    "name": "fetch latest chromium.use chromium cache.source cache.determine whether to reset overlayfs directories.read overlayfs branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@overlay_branch.txt@main@@@",
-      "@@@STEP_LOG_END@overlay_branch.txt@@@"
     ]
   },
   {
@@ -1847,7 +1577,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "/snapshot_mounts/chrome/chrome_cache/chromium.googlesource.com-chromium-src/objects",
+      "[CLEANUP]/tmp_tmp_1/chrome_cache/chromium.googlesource.com-chromium-src/objects",
       "[CLEANUP]/chromiumos_workspace/src/platform/libchrome/.git/objects/info/alternates"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
@@ -1855,7 +1585,7 @@
     "name": "fetch latest chromium.use chromium cache.create chrome git reference",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@alternates@/snapshot_mounts/chrome/chrome_cache/chromium.googlesource.com-chromium-src/objects@@@",
+      "@@@STEP_LOG_LINE@alternates@[CLEANUP]/tmp_tmp_1/chrome_cache/chromium.googlesource.com-chromium-src/objects@@@",
       "@@@STEP_LOG_END@alternates@@@"
     ]
   },
