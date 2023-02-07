@@ -6932,11 +6932,11 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#117)(self, orch_start_time):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#111)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest snap-orch started.
 
@@ -6944,9 +6944,9 @@ This is used as an approximation of snapshot manifest age since a
 snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 
 Returns:
-  (int) Approx age in hours of snapshot used by latest snap-orch.
+  Approx age in hours of snapshot used by latest snap-orch.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#65)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#59)(self):**
 
 Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -6954,26 +6954,23 @@ Use common_pb2.ENDED_MASK to identify completed builds and limits return to
 1 build to get the latest build.
 
 Returns:
-  agg_green (int): for latest snapshot-orchestrator, or -1 if not found.
+  aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#131)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#126)(self):**
 
 Returns whether the last snapshot-orchestrator greenness is higher than
 
 greenness threshold.
 
 Returns:
-  (bool) Whether last snap-orch run is green
+  Whether last snap-orch run is green
 
-&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#30)(self):**
+&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#33)(self):**
 
 Returns the current UTC time.
 
 Initialized once and used throughout for any time calculations. Zero out
 the microseconds to use seconds as level of precision.
-
-Returns:
-  (datetime.datetime) current UTC time
 ### *recipe_modules* / [manifest\_doctor](/recipe_modules/manifest_doctor)
 
 [DEPS](/recipe_modules/manifest_doctor/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -4,10 +4,12 @@
 # found in the LICENSE file.
 
 import datetime
+from typing import Any
 
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStats
 
 from google.protobuf import timestamp_pb2
@@ -18,7 +20,8 @@ from recipe_engine import recipe_api
 class LooksForGreenApi(recipe_api.RecipeApi):
   """A module to look for green snapshots."""
 
-  def __init__(self, properties, **kwargs):
+  def __init__(self, properties: LooksForGreenProperties,
+               **kwargs: Any) -> None:
     super().__init__(**kwargs)
     self._enable_looks_for_green = properties.enable_looks_for_green
     self._dry_run = properties.dry_run
@@ -28,48 +31,39 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._now = None
 
   @property
-  def now_utc(self):
+  def now_utc(self) -> datetime.datetime:
     '''Returns the current UTC time.
 
     Initialized once and used throughout for any time calculations. Zero out
     the microseconds to use seconds as level of precision.
-
-    Returns:
-      (datetime.datetime) current UTC time
     '''
     if not self._now:
       self._now = self.m.time.utcnow().replace(microsecond=0)
     return self._now
 
   @property
-  def _greenness_bucket(self):
+  def _greenness_bucket(self) -> str:
     '''Returns bucket to query for greenness.
-
-    Returns:
-      (string)
     '''
     return 'staging' if self.m.cros_infra_config.is_staging else 'postsubmit'
 
   @property
-  def _greenness_builder(self):
+  def _greenness_builder(self) -> str:
     '''Returns builder to query for greenness.
 
     Using staging-postsubmit-orchestrator since snapshot-orchestrator is not
     enabled in staging.
-
-    Returns:
-      (string)
     '''
     return 'staging-postsubmit-orchestrator' if self.m.cros_infra_config.is_staging else 'snapshot-orchestrator'
 
-  def get_latest_snapshot_greenness(self):
+  def get_latest_snapshot_greenness(self) -> int:
     '''Returns aggregate greenness of latest complete snapshot-orchestrator.
 
     Use common_pb2.ENDED_MASK to identify completed builds and limits return to
     1 build to get the latest build.
 
     Returns:
-      agg_green (int): for latest snapshot-orchestrator, or -1 if not found.
+      aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
     '''
     with self.m.step.nest('checking latest snapshot greenness') as presentation:
       fields = frozenset({
@@ -114,27 +108,28 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         agg_green = -1
       return agg_green
 
-  def calc_approx_snap_age_hours(self, orch_start_time):
+  def calc_approx_snap_age_hours(self,
+                                 orch_start_time: datetime.datetime) -> int:
     '''Returns how many hours age the latest snap-orch started.
 
     This is used as an approximation of snapshot manifest age since a
     snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 
     Returns:
-      (int) Approx age in hours of snapshot used by latest snap-orch.
+      Approx age in hours of snapshot used by latest snap-orch.
     '''
     delta = self.now_utc - orch_start_time
     days, seconds = delta.days, delta.seconds
     approx_snap_age_hours = days * 24 + seconds / 3600
     return round(approx_snap_age_hours)
 
-  def is_snap_orch_green(self):
+  def is_snap_orch_green(self) -> bool:
     '''Returns whether the last snapshot-orchestrator greenness is higher than
 
     greenness threshold.
 
     Returns:
-      (bool) Whether last snap-orch run is green
+      Whether last snap-orch run is green
     '''
     self.latest_greenness = self.get_latest_snapshot_greenness()
     is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
