@@ -336,7 +336,6 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
       # Merge backfilled data into a ConfigBundle payload
       cmd = [path_cros_repo.join(PATH_CROS_CONFIG, JOIN_SCRIPT_PATH)]
-      cmd += []
       cmd += ['--log', 'DEBUG']
       cmd += ['--project-name', config.project_name]
       cmd += ['--program-name', config.program_name]
@@ -366,8 +365,11 @@ def config_merger(api, config, path_cros_repo, step_pres):
         # generate the import-only config (no merging with config.jsonproto)
         path_imported_config = path_generated.join('imported.jsonproto')
         api.step('Generate imported configuration', [
-            'vpython3', '-vpython-spec',
-            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython')
+            'vpython3',
+            '-vpython-spec',
+            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython'),
+            '-vpython-log-level',
+            'info',
         ] + cmd + [
             '--import-only',
             '--output',
@@ -378,8 +380,11 @@ def config_merger(api, config, path_cros_repo, step_pres):
         # generate joined config (with merging)
         path_merged_config = path_generated.join('joined.jsonproto')
         api.step('Generate joined configuration', [
-            'vpython3', '-vpython-spec',
-            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython')
+            'vpython3',
+            '-vpython-spec',
+            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython'),
+            '-vpython-log-level',
+            'info',
         ] + cmd + [
             '--output',
             path_merged_config,

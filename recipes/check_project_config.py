@@ -137,8 +137,14 @@ def RunSteps(api, properties):
                                                '.vpython')
       api.step(
           'check constraints',
-          ['vpython3', '-vpython-spec', vpython_spec_path, checker_path] +
-          checker_args,
+          [
+              'vpython3',
+              '-vpython-spec',
+              vpython_spec_path,
+              '-vpython-log-level',
+              'info',
+              checker_path,
+          ] + checker_args,
           stdout=api.raw_io.output(add_output_log=True),
       )
 
