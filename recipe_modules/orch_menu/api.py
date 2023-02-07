@@ -15,6 +15,7 @@ from collections import namedtuple
 
 from google.protobuf import json_format
 
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -1007,23 +1008,31 @@ class OrchMenuApi(RecipeApi):
         self._builds_status.update(builds, failures)
       return builds[0]
 
-  def plan_and_run_tests(self, testable_builds=None, container_metadata=None,
-                         ignore_gerrit_changes=False):
+  def plan_and_run_tests(
+      self,
+      testable_builds: Optional[List[build_pb2.Build]] = None,
+      container_metadata: Optional[ContainerMetadata] = None,
+      ignore_gerrit_changes: bool = False,
+      no_nest_final_build_collect: bool = False,
+  ) -> BuildsStatus:
     """Plan, schedule, and run tests.
 
-    Run tests on the testable_builds identified by plan_and_run_children.
+    Run tests on the testable_builds identified by plan_and_run_children. Also
+    do a final collect and results check for builds that are still running.
 
     Args:
-      testable_builds (list[Build]): The list of builds to consider,
-        or None to use the current results.
-      container_metadata (ContainerMetadata): Information on container
-        images used for test execution.
-      ignore_gerrit_changes (bool): Whether to drop gerrit changes from the
-        test plan request, primarily used for tryjobs (which are release
-        builds and thus shouldn't test based on any patches applied).
+      testable_builds: The list of builds to consider or None to use the
+        current results.
+      container_metadata: Information on container images used for test
+        execution.
+      ignore_gerrit_changes: Whether to drop gerrit changes from the test plan
+        request, primarily used for tryjobs (which are release builds and thus
+        shouldn't test based on any patches applied).
+      no_nest_final_build_collect: If true, no nested step will be created for
+        the final build collect.
 
     Returns:
-      (BuildsStatus): The current status of the builds.
+      The current status of the builds.
     """
     # Is the build tagged as overriding the PCQ quota scheduler account?
     if self.m.cros_tags.has_entry('cq_cl_tag',
@@ -1061,22 +1070,28 @@ class OrchMenuApi(RecipeApi):
       )
     self._builds_status.update([], test_failures)
 
-    if not self._collect_remaining_children().fatal_failures:
+    if not self._collect_remaining_children(
+        no_nest=no_nest_final_build_collect).fatal_failures:
       self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
     return self._builds_status
 
-  def _collect_remaining_children(self, step_name='final build collect'):
+  def _collect_remaining_children(
+      self,
+      step_name: str = 'final build collect',
+      no_nest: bool = False,
+  ) -> BuildsStatus:
     """Collect any remaining children.
 
     Args:
-      step_name (str): The name for the step.
+      step_name: The name for the step.
+      no_nest: If true, no nested step will be created.
 
     Returns:
-      (BuildsStatus): The current status of the builds.
+      The current status of the builds.
     """
     if self._builds_status.running_builds:
-      with self.m.step.nest(step_name):
+      with contextlib.nullcontext() if no_nest else self.m.step.nest(step_name):
         completed_builds = self._collect_builds(
             [b.id for b in self._builds_status.running_builds])
         self._collect_and_check_build_results(completed_builds)

@@ -116,8 +116,14 @@ def DoRunSteps(api: RecipeApi):
         # orchestrators without testing we can't run the test plan generator because
         # it requires access to internal repos.
         api.orch_menu.plan_and_run_tests(
-            container_metadata=metadata, testable_builds=testable_builds,
-            ignore_gerrit_changes=api.orch_menu.is_release_orchestrator)
+            container_metadata=metadata,
+            testable_builds=testable_builds,
+            ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
+            # If async unit tests are enabled, don't create the nested 'final
+            # build collect' step, so that the 'check build results' step is
+            # a top-level step.
+            no_nest_final_build_collect=async_unit_tests_enabled,
+        )
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
     api.cros_lkgm.collect_public_build()
@@ -385,7 +391,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'run builds.collect.buildbucket.get_multi'),
       api.post_check(post_process.MustRun, 'aggregating metadata'),
-      api.post_check(post_process.MustRun, 'final build collect.collect.get'),
+      api.post_check(post_process.MustRun, 'collect.get'),
+      api.post_check(post_process.MustRun, 'check build results'),
       api.post_check(post_process.StatusSuccess),
       builder='cq-orchestrator',
       experiments=['chromeos.build_cq.async_unit_tests'],
