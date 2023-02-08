@@ -2109,7 +2109,8 @@
     "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@7 new, 0 recycled@@@"
+      "@@@STEP_TEXT@7 new, 0 recycled@@@",
+      "@@@SET_BUILD_PROPERTY@testable_builders@[\"amd64-generic-cq\", \"arm-generic-cq\", \"arm64-generic-cq\", \"atlas-cq\"]@@@"
     ]
   },
   {

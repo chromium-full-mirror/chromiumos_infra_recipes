@@ -643,6 +643,12 @@ class OrchMenuApi(RecipeApi):
       # _collect_remaining_children.
       self._builds_status.update(running=collect_now + collect_after)
 
+      # Output the names of the builders we waited on before starting HW/VM
+      # testing so that it easier to query.
+      pres.properties['testable_builders'] = [
+          b.builder.builder for b in collect_now
+      ]
+
       # Wait until the children being used for end-to-end tests either complete
       # or upload testing artifacts.
       testable_builds = self._poll_for_output_prop(
@@ -687,6 +693,14 @@ class OrchMenuApi(RecipeApi):
 
           collect_now, collect_after = self._filter_schedule_builds(
               pres, child_specs, extra_props=extra_child_props)
+
+          if self.is_cq_orchestrator:
+            # Output the names of the builders we waited on before starting
+            # HW/VM testing so that it easier to query.
+            pres.properties['testable_builders'] = [
+                b.builder.builder for b in collect_now
+            ]
+
           completed_builds = list(
               self._collect_builds([b.id for b in collect_now],
                                    collect_name='child builds'))
