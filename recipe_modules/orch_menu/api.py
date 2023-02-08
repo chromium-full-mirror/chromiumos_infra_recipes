@@ -772,6 +772,7 @@ class OrchMenuApi(RecipeApi):
         ]
         if not ps_relevant_builds:
           self.m.easy.set_properties_step(all_builds_irrelevant=True)
+          self.m.easy.set_properties_step(sheriff_ignore_build=True)
 
       failures = self.m.failures.get_build_results(builds).failures
       self.builds_status.update(completed=builds, failures=failures)
