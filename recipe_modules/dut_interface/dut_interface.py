@@ -36,25 +36,44 @@ class DUTTestMetadata():  # pragma: no cover
     self.passthrough_test_id = '' if test_id == self.DUMMY_TEST_ID else test_id
     self.test = test
     self.gs_url = gs_url
-    self.stainless_logs_url = self._parse_stainless_logs_url(self.gs_url)
+    self.stainless_logs_url = self._parse_logs_url(self.gs_url, 'stainless')
+    self.testhaus_logs_url = self._parse_logs_url(self.gs_url, 'testhaus')
     self.image_storage_server = image_storage_server
 
   @staticmethod
-  def _parse_stainless_logs_url(gs_dir):
-    """Return a stainless equivalent URL to the given gs URL.
+  def _parse_logs_url(gs_dir, tool):
+    """Return an equivalent tool URL for the given gs URL.
 
     Args:
     * gs_dir (str): The Google Storage directory.
+    * tool (str): The target tool to create the equivalent log URL for.
+                  Supported values are:
+                  * 'stainless'
+                  * 'testhaus'
 
     Returns:
-      str: Stainless URL
+      str: URL to logs in the specified tool.
 
     Raises:
       AssertionError if gs_dir does not start with `gs://`
+      ValueError if tool is not one of 'stainless' or 'testhaus'
     """
-    assert gs_dir.startswith('gs://'), "{} should start with gs://".format(
-        gs_dir)
-    return 'https://stainless.corp.google.com/browse/%s' % gs_dir[len('gs://'):]
+    gs_prefix = 'gs://'
+    template_urls = {
+        'stainless':
+            'https://stainless.corp.google.com/browse/{logs_path}',
+        'testhaus': ('https://cros-test-analytics.appspot.com/p/chromeos/logs/'
+                     'browse/{logs_path}'),
+    }
+
+    template_url = template_urls.get(tool)
+    if not template_url:
+      raise ValueError('Logs URL for {} is not supported'.format(tool))
+
+    assert gs_dir.startswith(gs_prefix), '{} should start with {}'.format(
+        gs_dir, gs_prefix)
+
+    return template_url.format(logs_path=gs_dir[len(gs_prefix):])
 
 
 class DUTInterface():  # pragma: no cover

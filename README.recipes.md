@@ -3378,7 +3378,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#447)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#471)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -3386,7 +3386,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#357)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#381)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3484,7 +3484,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#501)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#525)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -3497,13 +3497,14 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#182)(self, config, stainless_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#182)(self, config, stainless_url=None, testhaus_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
 Args:
   config (dict) A dict wrapping all resultdb parameters.
   stainless_url (string): Link to the Stainless logs for the test run.
+  testhaus_url (string): Link to the Testhaus logs for the test run.
   step_name (str): The name of the step or None for default.
 ### *recipe_modules* / [cros\_schedule](/recipe_modules/cros_schedule)
 
@@ -13279,7 +13280,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1809)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1824)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#163)(api, interface, test_metadata, result):**
 
@@ -13295,7 +13296,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1656)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1664)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -13307,7 +13308,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1398)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1406)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -13323,7 +13324,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1312)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1320)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -13339,7 +13340,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1283)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1291)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -13368,7 +13369,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#224)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#229)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -13376,7 +13377,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1725)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1735)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

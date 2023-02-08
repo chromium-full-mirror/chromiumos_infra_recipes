@@ -95,9 +95,13 @@ class PhosphorusResult(dut_results.DUTResult):  # pragma: no cover
     # Thus, it is possible that we do not have a good result message.
     self.data.log_data.gs_url = metadata.gs_url
     self.data.log_data.stainless_url = metadata.stainless_logs_url
+    self.data.log_data.testhaus_url = metadata.testhaus_logs_url
 
   def get_stainless_log_url(self):
     return self.data.log_data.stainless_url
+
+  def get_testhaus_log_url(self):
+    return self.data.log_data.testhaus_url
 
   def get_prejob_steps(self):
     return self.data.prejob.step

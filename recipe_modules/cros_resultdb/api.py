@@ -179,17 +179,18 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return base
     return os.path.join(base, artifact_directory)
 
-  def upload(self, config, stainless_url=None,
+  def upload(self, config, stainless_url=None, testhaus_url=None,
              step_name='upload test results to rdb'):
     """Wrapper for uploading test results to resultDB.
 
     Args:
       config (dict) A dict wrapping all resultdb parameters.
       stainless_url (string): Link to the Stainless logs for the test run.
+      testhaus_url (string): Link to the Testhaus logs for the test run.
       step_name (str): The name of the step or None for default.
     """
     with self.m.step.nest(step_name):
-      self._upload(config, stainless_url)
+      self._upload(config, stainless_url, testhaus_url)
 
   def _is_base_build(self, board, image):
     """Returns True if an image is a base build or False if it's a variant.
@@ -250,13 +251,14 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     return ''
 
-  def _upload(self, config, stainless_url=None):
+  def _upload(self, config, stainless_url=None, testhaus_url=None):
     """Call the ResultDB module to upload test result
 
     Args:
       config (dict) A dict wrapping all resultdb parameters. For a list of
           supported parameters refer to the recipe_engine/resultdb module.
       stainless_url (string): Link to the Stainless logs for the test run.
+      testhaus_url (string): Link to the Testhaus logs for the test run.
     """
     pres = self.m.step.active_result.presentation
     pres.logs['config'] = self.m.json.dumps(config, indent=4)
@@ -322,11 +324,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
         include=config.get('include', False) or (realm != ''),
         realm=realm,
     )
-    # Even rdb failed we should complete the test runner build, so that
-    # the we could return the stainless log link to upstream builders.
+    # Even if rdb failed we should complete the test runner build, so that
+    # we can return the Stainless/Testhaus log links to upstream builders.
     try:
-      if stainless_url:
-        self._upload_invocation_artifacts(stainless_url)
+      log_artifacts = self._construct_log_artifacts(stainless_url, testhaus_url)
+      if log_artifacts:
+        self._upload_invocation_artifacts(log_artifacts)
       self.m.step('run rdb', cmd)
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = self.m.step.FAILURE
@@ -345,14 +348,35 @@ class ResultDBCommand(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._result_adapter = cipd_dir.join('result_adapter')
 
-  def _upload_invocation_artifacts(self, stainless_url):
-    """Upload artifacts associated with the entire invocation.
+  @staticmethod
+  def _construct_log_artifacts(stainless_url, testhaus_url):
+    """Construct artifacts for logs associated with the entire invocation.
 
     Args:
       stainless_url (string): Link to the Stainless logs for the test run.
+      testhaus_url (string): Link to the Testhaus logs for the test run.
+
+    Returns:
+      A dictonary of artifacts for the test run logs.
     """
-    artifact = {'stainless_logs': {'contents': stainless_url.encode()}}
-    self.m.resultdb.upload_invocation_artifacts(artifact)
+    artifacts = {}
+    if stainless_url:
+      artifacts['stainless_logs'] = {'contents': stainless_url.encode()}
+    if testhaus_url:
+      artifacts['testhaus_logs'] = {'contents': testhaus_url.encode()}
+
+    return artifacts
+
+  def _upload_invocation_artifacts(self, artifacts):
+    """Upload artifacts associated with the entire invocation.
+
+    Args:
+      artifacts (dict): A collection of artifacts to upload. Each key is an
+        artifact ID, with the corresponding value being a dict containing:
+        * 'content_type' (optional); and
+        * one of 'contents' (binary string) or 'gcs_uri' (str).
+    """
+    self.m.resultdb.upload_invocation_artifacts(artifacts)
 
   def apply_exonerations(self, invocation_ids, default_behavior=Request.Params
                          .TestExecutionBehavior.BEHAVIOR_UNSPECIFIED,
