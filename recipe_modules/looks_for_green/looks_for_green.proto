@@ -24,20 +24,27 @@ message LooksForGreenProperties {
 }
 
 message LooksForGreenStats {
-  // Whether the latest snapshot-orchestrator is green compared to greenness_threshold.
-  bool is_snap_orch_green = 1;
 
-  // Aggregate greenness (set in output props by greennness module) of latest
-  // snapshot-orchestrator.
-  int32 snap_orch_greenness = 2;
+  message SnapshotStats {
+    // Whether the snapshot-orchestrator is green compared to greenness_threshold.
+    bool is_snap_orch_green = 1;
 
-  // BBID of latest snapshot-orchestrator.
-  int64 snap_orch_bbid = 3;
+    // Aggregate greenness (set in output props by greennness module) of
+    // snapshot-orchestrator.
+    int32 snap_orch_greenness = 2;
 
-  // Approximate age of snapshot manifest tested with latest
-  // snapshot-orchestrator.
-  int32 approx_snap_age_hours = 4;
+    // BBID of snapshot-orchestrator.
+    int64 snap_orch_bbid = 3;
 
-  // SHA of snapshot manifest tested with latest snapshot-orchestrator.
-  string snap_commit_sha = 5;
+    // Approximate age of snapshot manifest tested with snapshot-orchestrator.
+    int32 approx_snap_age_hours = 4;
+
+    // SHA of snapshot manifest tested with snapshot-orchestrator.
+    string snap_commit_sha = 5;
+  }
+  // Details of latest snapshot.
+  SnapshotStats latest = 1;
+
+  // Details of suggested snapshot.
+  SnapshotStats suggested = 2;
 }

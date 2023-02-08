@@ -132,7 +132,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
         with self.m.failures.ignore_exceptions():
           with self.m.step.nest('looks for green'):
-            self.m.looks_for_green.is_snap_orch_green()
+            if not self.m.looks_for_green.is_snap_orch_green():
+              self.m.looks_for_green.find_green_snapshot()
       else:
         filter_log.append('CQ looks experiment not enabled')
 

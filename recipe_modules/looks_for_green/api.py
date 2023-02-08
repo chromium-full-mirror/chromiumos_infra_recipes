@@ -3,9 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import namedtuple
 import datetime
-from typing import Any
+from typing import Any, List, Optional
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -15,6 +17,15 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
+
+Snapshot = namedtuple('Snapshot', [
+    'bbid',
+    'commit_sha',
+    'start_time',
+    'end_time',
+    'agg_green',
+    'approx_snap_age_hours',
+])
 
 
 class LooksForGreenApi(recipe_api.RecipeApi):
@@ -56,6 +67,68 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     return 'staging-postsubmit-orchestrator' if self.m.cros_infra_config.is_staging else 'snapshot-orchestrator'
 
+  def _get_snapshots(self,
+                     limit: Optional[int] = None) -> List[build_pb2.Build]:
+    '''Get snapshot builds within the lookback period.
+
+    Optionally specify a limit of builds to return.
+    '''
+    fields = frozenset({
+        'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
+        'end_time', 'status'
+    })
+    predicate = builds_service_pb2.BuildPredicate(
+        create_time=common_pb2.TimeRange(
+            start_time=timestamp_pb2.Timestamp(
+                seconds=self.m.buildbucket.build.create_time.ToSeconds() -
+                self._lookback_hours * 60 * 60,
+            )), status=common_pb2.ENDED_MASK)
+    predicate.builder.project = self.m.buildbucket.build.builder.project
+    predicate.builder.bucket = self._greenness_bucket
+    predicate.builder.builder = self._greenness_builder
+    return self.m.buildbucket.search([predicate], limit=limit, fields=fields)
+
+  def _parse_snapshot_result(self,
+                             snapshot_result: build_pb2.Build) -> Snapshot:
+    '''Parse buildbucket return into Snapshot NamedTuple.
+    '''
+    start_time = datetime.datetime.utcfromtimestamp(
+        snapshot_result.start_time.seconds)
+    end_time = datetime.datetime.utcfromtimestamp(
+        snapshot_result.end_time.seconds)
+    out_props = snapshot_result.output.properties
+    try:
+      agg_green = int(out_props['greenness']['aggregateMetric'])
+    except ValueError:
+      agg_green = -1
+    approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
+    return Snapshot(bbid=snapshot_result.id,
+                    commit_sha=snapshot_result.input.gitiles_commit.id,
+                    start_time=start_time, end_time=end_time,
+                    agg_green=agg_green,
+                    approx_snap_age_hours=approx_snap_age_hours)
+
+  def _set_snapshot_stats(
+      self,
+      snapshot_stats: Snapshot,
+      suggested: bool = False,
+  ) -> None:
+    '''Set output stats using LooksForGreenStats proto fields.
+
+    When suggested is True, populate stats for the snapshot that CQ Looks
+    recommends to use. Otherwise, populate state for the latest snapshot that
+    has go/greenness properties set.
+    '''
+    if not suggested:
+      stats = self._stats.latest
+    else:
+      stats = self._stats.suggested
+
+    stats.snap_orch_greenness = snapshot_stats.agg_green
+    stats.approx_snap_age_hours = snapshot_stats.approx_snap_age_hours
+    stats.snap_orch_bbid = snapshot_stats.bbid
+    stats.snap_commit_sha = snapshot_stats.commit_sha
+
   def get_latest_snapshot_greenness(self) -> int:
     '''Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -66,47 +139,19 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
     '''
     with self.m.step.nest('checking latest snapshot greenness') as presentation:
-      fields = frozenset({
-          'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
-          'end_time', 'status'
-      })
-      predicate = builds_service_pb2.BuildPredicate(
-          create_time=common_pb2.TimeRange(
-              start_time=timestamp_pb2.Timestamp(
-                  seconds=self.m.buildbucket.build.create_time.ToSeconds() -
-                  self._lookback_hours * 60 * 60,
-              )), status=common_pb2.ENDED_MASK)
-      predicate.builder.project = self.m.buildbucket.build.builder.project
-      predicate.builder.bucket = self._greenness_bucket
-      predicate.builder.builder = self._greenness_builder
-      result = self.m.buildbucket.search([predicate], limit=1, fields=fields)
+      result = self._get_snapshots(limit=1)
       if result:
-        snap_orch_bbid = result[0].id
-        snap_commit_sha = result[0].input.gitiles_commit.id
-        snap_orch_start_time = datetime.datetime.utcfromtimestamp(
-            result[0].start_time.seconds)
-        snap_orch_end_time = datetime.datetime.utcfromtimestamp(
-            result[0].end_time.seconds)
-        out_props = result[0].output.properties
-        try:
-          agg_green = int(out_props['greenness']['aggregateMetric'])
-        except ValueError:
-          agg_green = -1
+        snapshot_stats = self._parse_snapshot_result(result[0])
         presentation.logs['latest snapshot greenness'] = (
             f'latest snapshot-orchestrator '
-            f'go/bbid/{snap_orch_bbid} has aggregate greenness of {agg_green}. '
-            f'Start time: {snap_orch_start_time} End time: {snap_orch_end_time}'
+            f'go/bbid/{snapshot_stats.bbid} has aggregate greenness of {snapshot_stats.agg_green}. '
+            f'Start time: {snapshot_stats.start_time} End time: {snapshot_stats.end_time}'
             f'. The current time is {self.now_utc}')
-        approx_snap_age_hours = self.calc_approx_snap_age_hours(
-            snap_orch_start_time)
-        self._stats.snap_orch_greenness = agg_green
-        self._stats.approx_snap_age_hours = approx_snap_age_hours
-        self._stats.snap_orch_bbid = snap_orch_bbid
-        self._stats.snap_commit_sha = snap_commit_sha
+        self._set_snapshot_stats(snapshot_stats)
       else:
         presentation.logs['latest snapshot greenness'] = 'found no builds'
-        agg_green = -1
-      return agg_green
+        return -1
+      return snapshot_stats.agg_green
 
   def calc_approx_snap_age_hours(self,
                                  orch_start_time: datetime.datetime) -> int:
@@ -123,6 +168,38 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     approx_snap_age_hours = days * 24 + seconds / 3600
     return round(approx_snap_age_hours)
 
+  def _get_latest_green_snapshot(self, parsed_results: List[Snapshot]
+                                ) -> Optional[Snapshot]:
+    '''Get the latest green snapshot from a list of buildbucket snapshots.
+
+    Return None if no green snapshot exists.
+    '''
+    green_results = list(
+        filter(lambda d: d.agg_green >= self._greenness_threshold,
+               parsed_results))
+    if not green_results:
+      return None
+    latest_snap = max(green_results, key=lambda k: k.start_time)
+    return latest_snap
+
+  def find_green_snapshot(self) -> Optional[Snapshot]:
+    '''Find a green snapshot within the lookback period if one exists.'''
+    with self.m.step.nest('find green snapshot') as presentation:
+      results = self._get_snapshots()
+      parsed_results = []
+      for result in results:
+        parsed_results.append(self._parse_snapshot_result(result))
+      green = self._get_latest_green_snapshot(parsed_results)
+      if green:
+        presentation.logs[
+            'latest green'] = f'Found green snapshot: {green.commit_sha} with greenness {green.agg_green} and {green.approx_snap_age_hours} hours old.'
+        self._set_snapshot_stats(green, suggested=True)
+        self.m.easy.set_properties_step(looks_for_green=self._stats)
+      else:
+        presentation.logs[
+            'latest green'] = f'Found no snapshot of at least {self._greenness_threshold} greenness within the last {self._lookback_hours} hours.'
+      return green
+
   def is_snap_orch_green(self) -> bool:
     '''Returns whether the last snapshot-orchestrator greenness is higher than
 
@@ -133,6 +210,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     self.latest_greenness = self.get_latest_snapshot_greenness()
     is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
-    self._stats.is_snap_orch_green = is_snap_orch_green
+    self._stats.latest.is_snap_orch_green = is_snap_orch_green
     self.m.easy.set_properties_step(looks_for_green=self._stats)
     return is_snap_orch_green

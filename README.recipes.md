@@ -154,6 +154,7 @@
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds) (Python3 ✅)
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan) (Python3 ✅)
   * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds) (Python3 ✅)
+  * [build_plan:tests/cq_looks_dryrun](#recipes-build_plan_tests_cq_looks_dryrun) (Python3 ✅)
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds) (Python3 ✅)
   * [build_postsubmit](#recipes-build_postsubmit) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for Postsubmit.
   * [build_release](#recipes-build_release) (Python3 ✅) &mdash; Recipe for building images for release.
@@ -457,6 +458,7 @@
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [looks_for_green:tests/calc_approx_snap_age_hours](#recipes-looks_for_green_tests_calc_approx_snap_age_hours) (Python3 ✅)
+  * [looks_for_green:tests/find_green_snapshot](#recipes-looks_for_green_tests_find_green_snapshot) (Python3 ✅)
   * [looks_for_green:tests/get_latest_snapshot_greenness](#recipes-looks_for_green_tests_get_latest_snapshot_greenness) (Python3 ✅)
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) (Python3 ✅) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
@@ -1284,7 +1286,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#272)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#273)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1298,7 +1300,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#358)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#359)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1314,7 +1316,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#397)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#398)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1325,7 +1327,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#329)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#330)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -6932,11 +6934,11 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#111)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#156)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest snap-orch started.
 
@@ -6946,7 +6948,11 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest snap-orch.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#59)(self):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#185)(self):**
+
+Find a green snapshot within the lookback period if one exists.
+
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#132)(self):**
 
 Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -6956,7 +6962,7 @@ Use common_pb2.ENDED_MASK to identify completed builds and limits return to
 Returns:
   aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#126)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#203)(self):**
 
 Returns whether the last snapshot-orchestrator greenness is higher than
 
@@ -6965,7 +6971,7 @@ greenness threshold.
 Returns:
   Whether last snap-orch run is green
 
-&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#44)(self):**
 
 Returns the current UTC time.
 
@@ -9753,6 +9759,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#22)(api):**
+### *recipes* / [build\_plan:tests/cq\_looks\_dryrun](/recipe_modules/build_plan/tests/cq_looks_dryrun.py)
+
+[DEPS](/recipe_modules/build_plan/tests/cq_looks_dryrun.py#16): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/cq_looks_dryrun.py#30)(api, properties):**
 ### *recipes* / [build\_plan:tests/get\_forced\_rebuilds](/recipe_modules/build_plan/tests/get_forced_rebuilds.py)
 
 [DEPS](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#10): [build\_plan](#recipe_modules-build_plan), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12195,6 +12208,13 @@ Runs the presubmit for a project with checkout per local manifest.
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/calc_approx_snap_age_hours.py#30)(api, expected_approx_snap_age_hours, test_start_str):**
+### *recipes* / [looks\_for\_green:tests/find\_green\_snapshot](/recipe_modules/looks_for_green/tests/find_green_snapshot.py)
+
+[DEPS](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#13): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#58)(api, expect_result, expected_bbid, expected_greenness, expected_commit_sha):**
 ### *recipes* / [looks\_for\_green:tests/get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]

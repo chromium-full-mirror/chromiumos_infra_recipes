@@ -1080,7 +1080,7 @@
     "name": "filter builds.looks for green.set looks_for_green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"approxSnapAgeHours\": 8, \"isSnapOrchGreen\": true, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}@@@"
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latest\": {\"approxSnapAgeHours\": 8, \"isSnapOrchGreen\": true, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}}@@@"
     ]
   },
   {
