@@ -1,4 +1,4 @@
-# Copyright 2019 The ChromiumOS Authors.
+# Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -72,7 +72,7 @@ def CommitChecks(input_api, output_api):
   results += input_api.RunTests([
       input_api.Command(
           name='recipes test',
-          cmd=[input_api.python_executable, 'recipes.py', 'test', 'run'],
+          cmd=[input_api.python3_executable, 'recipes.py', 'test', 'run'],
           kwargs={},
           message=output_api.PresubmitError,
       )
