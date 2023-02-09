@@ -500,7 +500,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     dest_dir = self.m.path.mkdtemp(prefix='chunked')
 
     self.m.step('Chunking coverage file', [
-        'vpython',
+        'vpython3',
         self.resource('chunk_coverage_file.py'), '--coverage-file',
         coverage_file, '--coverage-type', coverage_type,
         '--file-entries-per-chunk', FILE_ENTRIES_PER_CHUNK, '--chunk-dest-dir',

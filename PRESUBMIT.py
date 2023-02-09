@@ -75,6 +75,7 @@ def CommitChecks(input_api, output_api):
           cmd=[input_api.python3_executable, 'recipes.py', 'test', 'run'],
           kwargs={},
           message=output_api.PresubmitError,
+          python3=True,
       )
   ])
   results += PylintCheck(input_api, output_api)
