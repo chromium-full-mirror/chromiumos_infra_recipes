@@ -351,12 +351,15 @@ class CrosSdkApi(RecipeApi):
           cache_state.manifest_url == self.m.src_state.external_manifest.url):
 
       try:
-        # The get_external_snapshot_commit function throws an error if one
-        # external snapshot commit is not found.
         # Reusing the SDK is best effort and this should not fail the build.
         external_commit = self.m.cros_source.get_external_snapshot_commit(
             self.m.src_state.build_manifest.path,
             self.m.src_state.gitiles_commit.id)
+        # Since this builder only syncs the internal manifest, the external
+        # manifest checkout will most likely be stale. The checkout needs to
+        # be synced to the appropriate snapshot in order to call git merge-base.
+        self.m.cros_source.checkout_external_manifest(external_commit,
+                                                      force=False)
       except StepFailure:
         step_presentation.step_text = (
             'not reusable: could not get external snapshot commit')

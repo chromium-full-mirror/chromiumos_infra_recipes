@@ -79,6 +79,40 @@
   },
   {
     "cmd": [],
+    "name": "is chroot usable.checkout external manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "is chroot usable.checkout external manifest.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "name": "is chroot usable.checkout external manifest.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "is chroot usable.log command",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

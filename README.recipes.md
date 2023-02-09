@@ -3573,7 +3573,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#651)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#654)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -3583,7 +3583,7 @@ Chroot needs to be tightened to 755 for the build process.
 
 Return a chromiumos.common.Chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#540)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#543)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -3594,7 +3594,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#625)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#628)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#51)(self, chroot_parent_path):**
 
@@ -3616,7 +3616,7 @@ Must be run with cwd inside a chromiumos source root.
 
 Configure remoteexec for Chrome.
 
-&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#401)(self, version=None, use_image=True, bootstrap=False, sdk_version=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None, replace=False):**
+&mdash; **def [create\_chroot](/recipe_modules/cros_sdk/api.py#404)(self, version=None, use_image=True, bootstrap=False, sdk_version=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None, replace=False):**
 
 Initialize the chroot and link it into the workspace.
 
@@ -3651,7 +3651,7 @@ Returns a Path to the cros_sdk script.
 
 Return whether we are forcing toolchain_cls off for testing.
 
-&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#703)(self, build_target):**
+&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#706)(self, build_target):**
 
 Retrieve metadata about SDK/toolchain usage.
 
@@ -3671,7 +3671,7 @@ Returns:
 
 Cache the chroot path.
 
-&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#477)(self, checkout_path, chroot_path=None):**
+&mdash; **def [link\_chroot](/recipe_modules/cros_sdk/api.py#480)(self, checkout_path, chroot_path=None):**
 
 Link the chroot to a chromiumos checkout.
 
@@ -3689,7 +3689,7 @@ This boolean is sticky.
 
 &emsp; **@property**<br>&mdash; **def [remoteexec\_config](/recipe_modules/cros_sdk/api.py#233)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#660)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#663)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -3738,7 +3738,7 @@ Set the remoteexec config.
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#237)(self, use_flags):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#574)(self, create_test_data=None, restore_test_data=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [snapshot](/recipe_modules/cros_sdk/api.py#577)(self, create_test_data=None, restore_test_data=None):**
 
 Returns a context that snapshots and restores the SDK chroot state.
 
@@ -3757,21 +3757,21 @@ Args:
       SdkService.RestoreSnapshot call, or None to use the default in
       cros_build_api/test_api.py.
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#642)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#645)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#630)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#633)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
 Args:
  checkout_path (Path): Path to the checkout root.
 
-&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#620)(self, chroot=None):**
+&mdash; **def [unmount\_chroot](/recipe_modules/cros_sdk/api.py#623)(self, chroot=None):**
 
-&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#496)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
+&mdash; **def [update\_chroot](/recipe_modules/cros_sdk/api.py#499)(self, commit, changes, build_source=False, toolchain_targets=None, timeout_sec='DEFAULT', test_data=None, test_toolchain_cls=None, name=None):**
 
 Update the chroot.
 
@@ -3827,7 +3827,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#824)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#834)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -3843,7 +3843,7 @@ Args:
 Returns:
   List[PatchSet]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1223)(self, patch, project_path, is_abs_path=False):**
+&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1233)(self, patch, project_path, is_abs_path=False):**
 
 Apply a PatchSet to the git repo in ${CWD}.
 
@@ -3866,7 +3866,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#662)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#672)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -3883,7 +3883,15 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#855)(self, change):**
+&mdash; **def [checkout\_external\_manifest](/recipe_modules/cros_source/api.py#545)(self, commit_id: str, force: bool=True):**
+
+Checkout the external manifest at the given commit.
+
+Args:
+  commit_id: The commit of the external manifest to checkout.
+  force: If true, throw away any local changes.
+
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#865)(self, change):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -3895,7 +3903,7 @@ Args:
   change (GerritChange): Change to check out.
   name (string): Step name.  Default: "checkout gerrit change".
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#545)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#558)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
 
 Check out the manifest projects.
 
@@ -3922,7 +3930,7 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#769)(self, mount_cache=True, disk_type='pd-ssd'):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#779)(self, mount_cache=True, disk_type='pd-ssd'):**
 
 Returns a context where overlays can be mounted.
 
@@ -3930,7 +3938,7 @@ Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
   disk_type (str): GCE disk type to use.  Default: pd-ssd
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#708)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#718)(self):**
 
 Check out the tip-of-tree in the workspace.
 
@@ -3974,7 +3982,7 @@ Args:
       in init_opts. Otherwise, use the value returned from
       configure_builder().
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#714)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#724)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -3988,7 +3996,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#796)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#806)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -4066,7 +4074,7 @@ Returns:
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1467)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1477)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4084,7 +4092,7 @@ Return:
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1254)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1264)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -4096,7 +4104,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1346)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1356)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -4115,7 +4123,7 @@ Uses the `sync_to_manifest` property.
 
 Returns: ManifestLocation, or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1276)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1286)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -4132,7 +4140,7 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1446)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1456)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 

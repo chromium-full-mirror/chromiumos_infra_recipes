@@ -542,6 +542,19 @@ class CrosSourceApi(RecipeApi):
 
       return footers[0]
 
+  def checkout_external_manifest(self, commit_id: str, force: bool = True):
+    """Checkout the external manifest at the given commit.
+
+    Args:
+      commit_id: The commit of the external manifest to checkout.
+      force: If true, throw away any local changes.
+    """
+    with self.m.step.nest('checkout external manifest'), self.m.context(
+        cwd=self.m.src_state.external_manifest.path):
+      self.m.git.fetch(self.m.src_state.external_manifest.remote,
+                       ['%s:' % commit_id])
+      self.m.git.checkout(commit_id, force=force)
+
   def checkout_manifests(self, commit=None, is_staging=False,
                          checkout_internal=True, checkout_external=False):
     """Check out the manifest projects.
@@ -653,10 +666,7 @@ class CrosSourceApi(RecipeApi):
         # been included in the repo sync above, because of that timing.  The
         # orchestrator only needs to have it checked out if it is pushing
         # manifest_refs (such as postsubmit-orchestrator).
-        with self.m.step.nest('checkout external manifest'), self.m.context(
-            cwd=e_manifest.path):
-          self.m.git.fetch(e_manifest.remote, ['%s:' % ext_commit.id])
-          self.m.git.checkout(ext_commit.id, force=True)
+        self.checkout_external_manifest(ext_commit.id)
       return ext_commit
 
   def checkout_branch(self, manifest_url, manifest_branch, projects=None,
