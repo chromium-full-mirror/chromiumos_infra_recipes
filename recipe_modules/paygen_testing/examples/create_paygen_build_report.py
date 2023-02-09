@@ -67,7 +67,7 @@ def RunSteps(api: RecipeApi):
                   generation_request=GenerationRequest(
                       tgt_dlc_image=DLCImage(
                           build=Build(channel='beta-channel'), dlc_id='dlc')))),
-          'gs://path/to/dlc/payload'),
+          'gs://path/to/dlc/payload', 1),
   ]
 
   expected_build_report = [
@@ -115,6 +115,7 @@ def RunSteps(api: RecipeApi):
           size=1234,
           source_version='1.2.3',
           target_version='4.5.6',
+          recovery_key_version=1,
       )
   ]
   api.assertions.assertEqual(build_report, expected_build_report)

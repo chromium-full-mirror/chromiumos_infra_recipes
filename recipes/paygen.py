@@ -7,7 +7,7 @@
 
 import datetime
 import json
-from typing import Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, List
 
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from google.protobuf.json_format import MessageToDict
@@ -148,11 +148,11 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             api.future_utils.create_custom_response(
                 request, StepFailure(response.failure_reason),
                 paygen_response.call_count))
-
-      report_payload = api.paygen_testing.create_paygen_build_report_payload(
-          request, response.remote_uri)
-      if report_payload:
-        payloads.append(report_payload)
+      for artifact in get_paygen_response_artifacts(response):
+        report_payload = api.paygen_testing.create_paygen_build_report_payload(
+            request, artifact.remote_uri, artifact.version)
+        if report_payload:
+          payloads.append(report_payload)
 
       test_configs = api.paygen_testing.set_up_paygen_test_configs(
           request, response)
@@ -233,14 +233,29 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
       raise exception  # pylint: disable-msg=E0702
 
 
+def get_paygen_response_artifacts(
+    resp: GenerationResponse) -> List[GenerationResponse.VersionedArtifact]:
+  # Since the call can hit older versions that may not have the required
+  # field, create it from older fields if needed.
+  if resp.versioned_artifacts:
+    return resp.versioned_artifacts
+  return [
+      GenerationResponse.VersionedArtifact(
+          local_path=resp.local_path,
+          remote_uri=resp.remote_uri,
+      )
+  ]
+
+
 def report_paygen_success_to_snoopy(api: RecipeApi,
                                     req: PaygenProperties.PaygenRequest,
                                     resp: GenerationResponse):
-  with api.failures.ignore_exceptions():
-    abspath = api.path.join(req.generation_request.chroot.path,
-                            resp.local_path.lstrip('/'))
-    file_hash = api.file.file_hash(abspath, test_data='deadbeef')
-    api.bcid_reporter.report_gcs(file_hash, resp.remote_uri)
+  for artifact in get_paygen_response_artifacts(resp):
+    with api.failures.ignore_exceptions():
+      abspath = api.path.join(req.generation_request.chroot.path,
+                              artifact.local_path.lstrip('/'))
+      file_hash = api.file.file_hash(abspath, test_data='deadbeef')
+      api.bcid_reporter.report_gcs(file_hash, artifact.remote_uri)
 
 
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect
@@ -281,6 +296,21 @@ def GenTests(api: RecipeTestApi):
   )
 
   def generate_payload_response(
+      api: RecipeTestApi, is_success: bool = True,
+      versioned_artifacts: List[Dict[str, Any]] = None,
+      failure_reason: GenerationResponse.FailureReason = None, retcode: int = 0,
+      retry: int = 0) -> TestData:
+    suffix = '' if not retry else ' retry ({})'.format(retry)
+    data = json.dumps(
+        dict(success=is_success, versioned_artifacts=versioned_artifacts,
+             failure_reason=failure_reason), sort_keys=True)
+    return api.cros_build_api.set_api_return(
+        parent_step_name='doing paygen.running paygen operations in parallel',
+        step_name='making single payload{}'.format(suffix), data=data,
+        retcode=retcode)
+
+  # Here to support backwards compatibility on branches
+  def generate_legacy_payload_response(
       api: RecipeTestApi, is_success: bool = True, local_path: str = '',
       remote_uri: str = '',
       failure_reason: GenerationResponse.FailureReason = None, retcode: int = 0,
@@ -337,7 +367,36 @@ def GenTests(api: RecipeTestApi):
               "$chromeos/cros_infra_config":
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
-      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
+      generate_payload_response(
+          api,
+          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.MustRun,
+                     'initialization.clone config-internal from main branch'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.DoesNotRun,
+                     'testing paygen.buildbucket.schedule'),
+      api.post_check(post_process.StatusSuccess),
+      # api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'dryrun-legacy',
+      api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
+      api.properties(
+          PaygenProperties(requests=[
+              dict(
+                  generation_request=api.paygen_testing
+                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                           applicable_models=['woomax'])
+                  ])
+          ]), **{
+              "$chromeos/cros_infra_config":
+                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
+          }),
+      generate_legacy_payload_response(api,
+                                       local_path='/tmp/aohiwdadoi/delta.bin'),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
@@ -366,8 +425,19 @@ def GenTests(api: RecipeTestApi):
                                            applicable_models=['woomax'])
                   ])
           ])),
-      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
+      generate_payload_response(
+          api, versioned_artifacts=[
+              dict(version=1, local_path='/tmp/aohiwdadoi/delta.bin',
+                   remote_uri=full_payload_uri),
+              dict(version=2, local_path='/tmp/aohiwdadoi/delta.bin',
+                   remote_uri=f'{full_payload_uri}2')
+          ]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
+      api.step_data(
+          'doing paygen.gsutil cat {}.json (2)'.format(full_payload_uri),
+          stdout=api.raw_io.output(payload_json_data)),
+      api.step_data('doing paygen.gsutil cat {}2.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(
@@ -413,7 +483,9 @@ def GenTests(api: RecipeTestApi):
                                                applicable_models=['woomax'])
                       ])
               ], max_concurrent_requests=1)),
-      generate_payload_response(api, local_path='/tmp/aohiwdadoi/delta.bin'),
+      generate_payload_response(
+          api,
+          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),

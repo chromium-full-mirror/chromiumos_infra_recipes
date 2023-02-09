@@ -352,15 +352,16 @@ class PaygenTestingApi(recipe_api.RecipeApi):
           gen_req.tgt_dlc_image.build.channel)
     return None  #pragma: nocover
 
-  def create_paygen_build_report_payload(self,
-                                         req: PaygenProperties.PaygenRequest,
-                                         payload_uri: str
-                                        ) -> BuildReport.Payload:
+  def create_paygen_build_report_payload(
+      self, req: PaygenProperties.PaygenRequest, payload_uri: str,
+      recovery_key_version: Optional[int] = None) -> BuildReport.Payload:
     """Prepare payload information for the release pubsub.
 
     Args:
       req: The paygen request that was used.
       payload_uri: The uri of the generated payload.
+      recovery_key_version: version of the recovery key if provided. Default
+        None.
 
     Returns:
       A Payload containing payload information for the pubsub.
@@ -401,7 +402,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
         metadata_size=payload_info['metadata_size'],
         source_version=payload_info.get('source_version', None),
         target_version=payload_info['target_version'],
-        size=payload_info['size'])
+        size=payload_info['size'], recovery_key_version=recovery_key_version)
 
   @util.exponential_retry(retries=6, delay=timedelta(minutes=2))
   def _discover_source_test_full_payload(self, root_uri: str) -> FullPayload:

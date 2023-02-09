@@ -7596,24 +7596,26 @@ API for working with Paygen testing. Used by paygen.py.
 
 A module for CrOS-specific paygen testing steps.
 
-&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#590)(self, paygen_test_configs: List[PaygenTestConfig]):**
+&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#591)(self, paygen_test_configs: List[PaygenTestConfig]):**
 
 Takes in paygen test configs and creates au test requests.
 
 This is its own method mainly for testing.
 
-&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#355)(self, req: PaygenProperties.PaygenRequest, payload_uri: str):**
+&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#355)(self, req: PaygenProperties.PaygenRequest, payload_uri: str, recovery_key_version: Optional[int]=None):**
 
 Prepare payload information for the release pubsub.
 
 Args:
   req: The paygen request that was used.
   payload_uri: The uri of the generated payload.
+  recovery_key_version: version of the recovery key if provided. Default
+    None.
 
 Returns:
   A Payload containing payload information for the pubsub.
 
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/paygen_testing/api.py#435)(self, tgt_payload: Payload, delta_type: common_pb2.DeltaType, src_version: str=None, src_channel: str=None, applicable_models: List[str]=None, src_bucket: str=None):**
+&mdash; **def [create\_paygen\_test\_config](/recipe_modules/paygen_testing/api.py#436)(self, tgt_payload: Payload, delta_type: common_pb2.DeltaType, src_version: str=None, src_channel: str=None, applicable_models: List[str]=None, src_bucket: str=None):**
 
 Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
@@ -7636,7 +7638,7 @@ Returns:
   A PaygenTestConfig or None if no source payload exists or unsupported
   Payload provided.
 
-&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#624)(self, paygen_test_configs: List[PaygenTestConfig]):**
+&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#625)(self, paygen_test_configs: List[PaygenTestConfig]):**
 
 Schedule Paygen autoupdate (AU) tests.
 
@@ -7651,7 +7653,7 @@ Args:
 Returns:
   The scheduled buildbucket builds.
 
-&mdash; **def [set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/api.py#534)(self, request: PaygenProperties.PaygenRequest, response: GenerationResponse):**
+&mdash; **def [set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/api.py#535)(self, request: PaygenProperties.PaygenRequest, response: GenerationResponse):**
 
 Set up test configs for a paygen response, if applicable.
 
@@ -12487,6 +12489,8 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 
 &mdash; **def [RunSteps](/recipes/paygen.py#61)(api: RecipeApi, properties: PaygenProperties):**
 
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#236)(resp: GenerationResponse):**
+
 &mdash; **def [initialize\_directories](/recipes/paygen.py#181)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
@@ -12495,7 +12499,7 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#236)(api: RecipeApi, req: PaygenProperties.PaygenRequest, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#250)(api: RecipeApi, req: PaygenProperties.PaygenRequest, resp: GenerationResponse):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#12): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

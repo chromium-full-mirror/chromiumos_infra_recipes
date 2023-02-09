@@ -1621,7 +1621,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failure_reason\": 1, \"local_path\": \"\", \"remote_uri\": \"\", \"success\": false}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failure_reason\": 1, \"success\": false, \"versioned_artifacts\": null}@@@",
       "@@@STEP_LOG_END@response@@@",
       "@@@STEP_FAILURE@@@"
     ]

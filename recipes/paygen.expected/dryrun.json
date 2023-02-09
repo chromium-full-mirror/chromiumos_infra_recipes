@@ -2524,7 +2524,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"\", \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"success\": true, \"versioned_artifacts\": [{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
