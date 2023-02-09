@@ -27,8 +27,8 @@ def RunSteps(api):
   rdb_config[
       'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
           '/base/dir', result_format) or ''
-  api.cros_resultdb.upload(rdb_config,
-                           'gs://chromeos-test-logs/common-env/UUID/logs')
+  api.cros_resultdb.upload(rdb_config, 'http://localhost/stainless/url',
+                           'http://localhost/testhaus/url')
   if api.properties.get('result_adapter_cached'):
     # pylint: disable=protected-access
     api.cros_resultdb._ensure_result_adapter_executables()
@@ -221,6 +221,9 @@ def GenTests(api):
               '/base/dir/autoserv_test/chromium/results/native_results.jsonl',
               '-artifact-directory',
               '/base/dir/autoserv_test/',
+              '-invocation-link-artifacts',
+              ('stainless_logs=http://localhost/stainless/url,'
+               'testhaus_logs=http://localhost/testhaus/url'),
               '-trim-artifact-prefix',
               '/usr/local/autotest/results/lxc_job_folder',
           ]),

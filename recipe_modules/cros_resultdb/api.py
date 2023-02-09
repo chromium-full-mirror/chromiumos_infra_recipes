@@ -286,6 +286,20 @@ class ResultDBCommand(recipe_api.RecipeApi):
           '-artifact-directory',
           config.get('artifact_directory')
       ]
+    if stainless_url or testhaus_url:
+      pairs = []
+      if stainless_url:
+        stainless_url_str = bytes.decode(stainless_url) if isinstance(
+            stainless_url, bytes) else stainless_url
+        pairs.append('stainless_logs=' + stainless_url_str)
+      if testhaus_url:
+        testhaus_url_str = bytes.decode(testhaus_url) if isinstance(
+            testhaus_url, bytes) else testhaus_url
+        pairs.append('testhaus_logs=' + testhaus_url_str)
+      result_adapter += [
+          '-invocation-link-artifacts',
+          ','.join(pairs),
+      ]
 
     # Skylab tests are running in a SSP container, hence the artifact
     # path has a constant prefix of the container. Instruct the result
@@ -324,12 +338,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         include=config.get('include', False) or (realm != ''),
         realm=realm,
     )
-    # Even if rdb failed we should complete the test runner build, so that
-    # we can return the Stainless/Testhaus log links to upstream builders.
     try:
-      log_artifacts = self._construct_log_artifacts(stainless_url, testhaus_url)
-      if log_artifacts:
-        self._upload_invocation_artifacts(log_artifacts)
       self.m.step('run rdb', cmd)
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = self.m.step.FAILURE
@@ -347,36 +356,6 @@ class ResultDBCommand(recipe_api.RecipeApi):
         pkgs.add_package('infra/tools/result_adapter/${platform}', version)
         self.m.cipd.ensure(cipd_dir, pkgs)
         self._result_adapter = cipd_dir.join('result_adapter')
-
-  @staticmethod
-  def _construct_log_artifacts(stainless_url, testhaus_url):
-    """Construct artifacts for logs associated with the entire invocation.
-
-    Args:
-      stainless_url (string): Link to the Stainless logs for the test run.
-      testhaus_url (string): Link to the Testhaus logs for the test run.
-
-    Returns:
-      A dictonary of artifacts for the test run logs.
-    """
-    artifacts = {}
-    if stainless_url:
-      artifacts['stainless_logs'] = {'contents': stainless_url.encode()}
-    if testhaus_url:
-      artifacts['testhaus_logs'] = {'contents': testhaus_url.encode()}
-
-    return artifacts
-
-  def _upload_invocation_artifacts(self, artifacts):
-    """Upload artifacts associated with the entire invocation.
-
-    Args:
-      artifacts (dict): A collection of artifacts to upload. Each key is an
-        artifact ID, with the corresponding value being a dict containing:
-        * 'content_type' (optional); and
-        * one of 'contents' (binary string) or 'gcs_uri' (str).
-    """
-    self.m.resultdb.upload_invocation_artifacts(artifacts)
 
   def apply_exonerations(self, invocation_ids, default_behavior=Request.Params
                          .TestExecutionBehavior.BEHAVIOR_UNSPECIFIED,
