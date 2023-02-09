@@ -23,8 +23,17 @@ message LooksForGreenProperties {
   int32 greenness_threshold = 4;
 }
 
-message LooksForGreenStats {
+enum LooksForGreenStatus {
+  STATUS_UNSPECIFIED = 0;
+  // The most recent snapshot-orchestrator is green.
+  STATUS_RAN_LATEST = 1;
+  // Found an older snapshot within the configured lookback period.
+  STATUS_RAN_OLDER = 2;
+  // Couldn't find a green snapshot within the configured lookback period.
+  STATUS_FOUND_NONE = 3;
+}
 
+message LooksForGreenStats {
   message SnapshotStats {
     // Whether the snapshot-orchestrator is green compared to greenness_threshold.
     bool is_snap_orch_green = 1;
@@ -47,4 +56,7 @@ message LooksForGreenStats {
 
   // Details of suggested snapshot.
   SnapshotStats suggested = 2;
+
+  // Outcome of the Looks logic.
+  LooksForGreenStatus status = 3;
 }

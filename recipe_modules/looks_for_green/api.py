@@ -13,6 +13,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStats
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 
 from google.protobuf import timestamp_pb2
 
@@ -194,10 +195,13 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         presentation.logs[
             'latest green'] = f'Found green snapshot: {green.commit_sha} with greenness {green.agg_green} and {green.approx_snap_age_hours} hours old.'
         self._set_snapshot_stats(green, suggested=True)
+        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
         self.m.easy.set_properties_step(looks_for_green=self._stats)
       else:
         presentation.logs[
             'latest green'] = f'Found no snapshot of at least {self._greenness_threshold} greenness within the last {self._lookback_hours} hours.'
+        self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
+        self.m.easy.set_properties_step(looks_for_green=self._stats)
       return green
 
   def is_snap_orch_green(self) -> bool:
@@ -211,5 +215,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self.latest_greenness = self.get_latest_snapshot_greenness()
     is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
     self._stats.latest.is_snap_orch_green = is_snap_orch_green
+    # This logic is a bit brittle as it assumes that the caller is not going to
+    # turn around and choose a different snapshot.
+    if is_snap_orch_green:
+      self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST
     self.m.easy.set_properties_step(looks_for_green=self._stats)
     return is_snap_orch_green

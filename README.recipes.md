@@ -6943,11 +6943,11 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#156)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#157)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest snap-orch started.
 
@@ -6957,11 +6957,11 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#185)(self):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#186)(self):**
 
 Find a green snapshot within the lookback period if one exists.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#132)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#133)(self):**
 
 Returns aggregate greenness of latest complete snapshot-orchestrator.
 
@@ -6971,7 +6971,7 @@ Use common_pb2.ENDED_MASK to identify completed builds and limits return to
 Returns:
   aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#203)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#207)(self):**
 
 Returns whether the last snapshot-orchestrator greenness is higher than
 
@@ -6980,7 +6980,7 @@ greenness threshold.
 Returns:
   Whether last snap-orch run is green
 
-&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#44)(self):**
+&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#45)(self):**
 
 Returns the current UTC time.
 
@@ -12224,18 +12224,18 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/calc_approx_snap_age_hours.py#30)(api, expected_approx_snap_age_hours, test_start_str):**
 ### *recipes* / [looks\_for\_green:tests/find\_green\_snapshot](/recipe_modules/looks_for_green/tests/find_green_snapshot.py)
 
-[DEPS](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#13): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#16): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#58)(api, expect_result, expected_bbid, expected_greenness, expected_commit_sha):**
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#61)(api, expect_result, expected_bbid, expected_greenness, expected_commit_sha):**
 ### *recipes* / [looks\_for\_green:tests/get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py)
 
-[DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#36)(api, expected_greenness, expected_is_snap_orch_green, expected_staging):**
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#39)(api, expected_greenness, expected_is_snap_orch_green, expected_staging):**
 ### *recipes* / [lvfs\_mirror](/recipes/lvfs_mirror.py)
 
 [DEPS](/recipes/lvfs_mirror.py#12): [cros\_lvfs\_mirror](#recipe_modules-cros_lvfs_mirror)

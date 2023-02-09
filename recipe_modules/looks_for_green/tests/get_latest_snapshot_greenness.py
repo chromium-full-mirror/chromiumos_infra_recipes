@@ -4,9 +4,12 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 
 from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
+
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 
 from google.protobuf import timestamp_pb2
 
@@ -64,6 +67,7 @@ def GenTests(api):
           ],
           step_name='checking latest snapshot greenness (2).buildbucket.search'
       ),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_LATEST),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

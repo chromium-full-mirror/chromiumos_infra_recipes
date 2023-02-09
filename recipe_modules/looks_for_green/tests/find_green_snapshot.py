@@ -4,9 +4,12 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 
 from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
+
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 
 from google.protobuf import timestamp_pb2
 
@@ -75,6 +78,7 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds=[green_build],
           step_name='find green snapshot.buildbucket.search'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
@@ -85,6 +89,7 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='find green snapshot.buildbucket.search'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
@@ -97,6 +102,7 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds=[green_build, green_build2],
           step_name='find green snapshot.buildbucket.search'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
