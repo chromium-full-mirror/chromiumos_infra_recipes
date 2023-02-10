@@ -1824,9 +1824,9 @@ def _get_failure_reason_from_test_result(test_result):
 def RunSteps(api, properties):
   api.easy.log_parent_step()
 
-  if api.cros_test_runner.is_enabled():  # pragma: nocover
-    # Experimental code path for using the new test_runner binary rather
-    # than the normal test_runner workflow.
+  if properties.cft_is_enabled and properties.cft_test_request.run_via_trv2 and api.cros_test_runner.is_enabled(
+  ):  # pragma: nocover
+    # Use cros_test_runner binary rather than the normal test_runner workflow.
     api.cros_test_runner.execute_luciexe()
     return
   if properties.cft_is_enabled:
