@@ -204,11 +204,7 @@ message GeneratorProperties {
   // Whether to generate CLs when at least one package had no modified file.
   bool allow_partial_uprev = 17;
 
-  // The package to generate CLs for.
-  // Deprecated. Use packages instead.
-  chromiumos.PackageInfo package_info = 1 [deprecated = true];
-
-  reserved 2 to 5, 9, 10;
+  reserved 1 to 5, 9, 10;
 
   // The build targets to uprev. Only populate if required by endpoint.
   repeated chromiumos.BuildTarget build_targets = 6;

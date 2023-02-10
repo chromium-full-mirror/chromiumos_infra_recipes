@@ -192,7 +192,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "must set exactly one of {package_info, non-empty packages}"
+      "humanReason": "must set not-packages to uprev"
     },
     "name": "$result"
   }

@@ -153,17 +153,11 @@ class GeneratorRun:
     return self._has_cron_trigger
 
   @property
-  def packages(self) -> List[PackageInfo]:
-    """Get the packages that this build should uprev."""
-    if self.properties.HasField('package_info'):
-      return [self.properties.package_info]
-    return self.properties.packages
-
-  @property
   def cpvs(self) -> List[str]:
     """Get the category-package-version for this build's packages."""
     return [
-        self.m.naming.get_package_title(package) for package in self.packages
+        self.m.naming.get_package_title(package)
+        for package in self.properties.packages
     ]
 
   @property
@@ -220,7 +214,7 @@ class GeneratorRun:
         additional_commit_message=self.properties.additional_commit_message,
         allow_partial_uprev=self.properties.allow_partial_uprev,
         build_targets=self.properties.build_targets,
-        packages=self.packages,
+        packages=self.properties.packages,
     )
     self.m.pupr_gerrit_interface.rebase_before_retry = self.properties.rebase_before_retry
 
@@ -271,12 +265,8 @@ class GeneratorRun:
       StepFailure: if there are any issues with the input properties.
     """
     with self.m.step.nest('validate properties') as presentation:
-      if ((not self.properties.HasField('package_info') and
-           not self.properties.packages) or
-          (self.properties.HasField('package_info') and
-           self.properties.packages)):
-        raise StepFailure(
-            'must set exactly one of {package_info, non-empty packages}')
+      if not self.properties.packages:
+        raise StepFailure('must set not-packages to uprev')
 
       # Retrieve version information from Gitiles API.
       if self.properties.HasField('gitiles_info'):
@@ -466,8 +456,8 @@ def GenTests(api: RecipeTestApi):
     """Create GeneratorProperties, with defaults."""
     if not kwargs.get('packages'):
       kwargs.setdefault(
-          'package_info',
-          PackageInfo(category='chromeos-base', package_name='chromite'))
+          'packages',
+          [PackageInfo(category='chromeos-base', package_name='chromite')])
     kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
     kwargs.setdefault('branch_policies', [_policy()])
     kwargs.setdefault('gitiles_info', None)
@@ -584,7 +574,7 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'no-package-info',
+      'no-packages',
       api.post_check(post_process.StatusAnyFailure),
   )
 
@@ -709,7 +699,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'invoked-directly',
       _props(
-          package_info=package_chrome, branch_policies=[
+          packages=[package_chrome], branch_policies=[
               _policy(reviewers=[Reviewer(email='dburger@chromium.org')])
           ]),
       api.properties(triggers=[trigger_prop]),
@@ -735,7 +725,7 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'branch-policies',
       api.properties(triggers=[trigger_prop]),
-      _props(package_info=package_chrome, branch_policies=[branch_policy]),
+      _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
@@ -746,7 +736,7 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'branch-policies-multiple-triggers',
       api.properties(triggers=[trigger_prop] * 2),
-      _props(package_info=package_chrome, branch_policies=[branch_policy]),
+      _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
@@ -757,7 +747,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'branch-policies-multiple-trigger-policies',
       api.properties(triggers=[trigger_prop, trigger_prop2]),
-      _props(package_info=package_chrome,
+      _props(packages=[package_chrome],
              branch_policies=[branch_policy, _policy()]),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
@@ -766,7 +756,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'branch-policies-no-pattern',
       api.properties(triggers=[trigger_prop]),
-      _props(package_info=package_chrome, branch_policies=[no_pattern_policy]),
+      _props(packages=[package_chrome], branch_policies=[no_pattern_policy]),
       api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
       api.post_check(post_process.StatusAnyFailure),
   )
@@ -775,7 +765,7 @@ def GenTests(api: RecipeTestApi):
       'branch-policies-default-branch',
       api.properties(triggers=[trigger_prop]),
       _props(
-          package_info=package_chrome, branch_policies=[
+          packages=[package_chrome], branch_policies=[
               BranchPolicy(pattern='.*', repl='',
                            reviewers=[Reviewer(email='a@example.com')])
           ]),
@@ -786,7 +776,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'branch-policies-multi-ref',
       api.properties(triggers=[trigger_prop]),
-      _props(package_info=package_chrome, branch_policies=[branch_policy]),
+      _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.step_data(
           'select policy.git ls-remote',
           stdout=api.raw_io.output_text('\n'.join([
@@ -807,7 +797,6 @@ def GenTests(api: RecipeTestApi):
               PackageInfo(category='chromeos-base',
                           package_name='chromeos-lacros'),
           ],
-          package_info=None,
           topic='chromeos-base/new-topic-name',
       ), api.git.diff_check(True),
       api.post_check(post_process.MustRun,
@@ -826,14 +815,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'generate CLs.create gerrit change for src/overlay.git_cl upload',
           ['--topic', 'chromeos-base/new-topic-name']))
-
-  yield api.test(
-      'duplicated-package-info-and-packages',
-      _props(package_info=package_chrome, packages=[package_chrome],
-             branch_policies=[_policy(ignore=True)]),
-      api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.StatusAnyFailure),
-  )
 
   changes = [
       GerritChange(change=1, host='chromium-review.googlesource.com'),
