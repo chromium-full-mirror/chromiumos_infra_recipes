@@ -151,29 +151,10 @@
     ]
   },
   {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
-      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
-      "/path/to/tmp/json"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "call chromite.api.TestApiService/InputOutputMethod.publish event.publish message.read deploy_cipd.json",
+    "cmd": [],
+    "name": "call chromite.api.TestApiService/InputOutputMethod.publish event.publish message.ensure support CIPD package",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -181,9 +162,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cros-recipes-support",
+      "[START_DIR]/cipd",
       "-ensure-file",
-      "pkg inst",
+      "chromiumos/infra/support/${platform} prod",
       "-max-threads",
       "0",
       "-json-output",
@@ -195,15 +176,15 @@
       ]
     },
     "infra_step": true,
-    "name": "call chromite.api.TestApiService/InputOutputMethod.publish event.publish message.ensure_installed",
+    "name": "call chromite.api.TestApiService/InputOutputMethod.publish event.publish message.ensure support CIPD package.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -213,7 +194,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "env_suffixes": {
       "PATH": [
@@ -385,7 +366,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "env_suffixes": {
       "PATH": [

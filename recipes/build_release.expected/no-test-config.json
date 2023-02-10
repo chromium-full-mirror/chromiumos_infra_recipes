@@ -121,39 +121,10 @@
     ]
   },
   {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
-      "RECIPE_REPO[chromeos]/support/deploy_cipd.json",
-      "/path/to/tmp/json"
-    ],
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build status pubsub update.publish message.read deploy_cipd.json",
+    "cmd": [],
+    "name": "build status pubsub update.publish message.ensure support CIPD package",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"instance_id\": \"inst\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"package\": \"pkg\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -161,9 +132,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cros-recipes-support",
+      "[START_DIR]/cipd",
       "-ensure-file",
-      "pkg inst",
+      "chromiumos/infra/support/${platform} prod",
       "-max-threads",
       "0",
       "-json-output",
@@ -185,15 +156,15 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build status pubsub update.publish message.ensure_installed",
+    "name": "build status pubsub update.publish message.ensure support CIPD package.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-inst------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"pkg\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
@@ -203,7 +174,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -311,7 +282,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/gitiles-fetch-ref"
+      "[START_DIR]/cipd/gitiles-fetch-ref"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -2662,7 +2633,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3000,7 +2971,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3336,7 +3307,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3416,7 +3387,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -4179,7 +4150,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cros-recipes-support/cipd-bin/publish-message"
+      "[START_DIR]/cipd/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
