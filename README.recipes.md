@@ -8697,7 +8697,7 @@ It will contain the base checkout and any modifications made by the build,
 and is discarded after the build.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
-[DEPS](/recipe_modules/support/__init__.py#6): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/support/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -8707,7 +8707,7 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#42)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, add_json_log=True, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/support/api.py#50)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, add_json_log=True, \*\*kwargs):**
 
 Run a tool from the support package.
 
@@ -8723,11 +8723,11 @@ Args:
 Returns:
   Data passed as output from the tool (deserialized from JSON).
 
-&mdash; **def [ensure\_package\_installed](/recipe_modules/support/api.py#23)(self):**
+&mdash; **def [ensure\_package\_installed](/recipe_modules/support/api.py#35)(self):**
 
 Ensure the CIPD support package is installed.
 
-&mdash; **def [initialize](/recipe_modules/support/api.py#14)(self):**
+&mdash; **def [initialize](/recipe_modules/support/api.py#18)(self):**
 ### *recipe_modules* / [swarming\_cli](/recipe_modules/swarming_cli)
 
 [DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -13157,11 +13157,11 @@ json files.
 &mdash; **def [RunSteps](/recipes/star_doctor.py#248)(api: RecipeApi, properties: StarDoctorProperties):**
 ### *recipes* / [support:examples/full](/recipe_modules/support/examples/full.py)
 
-[DEPS](/recipe_modules/support/examples/full.py#6): [support](#recipe_modules-support), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/support/examples/full.py#8): [support](#recipe_modules-support), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#19)(api):**
 ### *recipes* / [swarming\_cli:examples/full](/recipe_modules/swarming_cli/examples/full.py)
 
 [DEPS](/recipe_modules/swarming_cli/examples/full.py#8): [bot\_scaling](#recipe_modules-bot_scaling), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

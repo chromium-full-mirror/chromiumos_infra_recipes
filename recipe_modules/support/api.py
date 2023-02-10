@@ -11,33 +11,41 @@ from recipe_engine import recipe_api
 class SupportApi(recipe_api.RecipeApi):
   """A module for support tool steps."""
 
-  def initialize(self):
-    self._pin = None
-    self._ensured = False
+  def __init__(self, properties, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._properties = properties
 
-  @property
-  def _support_root(self):
-    """Returns the path where the support CIPD package is installed."""
-    return self.m.path['start_dir'].join('cros-recipes-support')
+  def initialize(self):
+    self._support_cipd_path = None
+
+    self._support_cipd_package = (
+        self._properties.support_cipd_package or
+        'chromiumos/infra/support/${platform}')
+
+    # This module gets used before cros_infra_config loads builder config
+    # (and calling cros_infra_config would create a circular dependency),
+    # so we have to do our own check.
+    build = self.m.buildbucket.build
+    is_staging = (
+        build.builder.bucket == 'staging' or
+        build.builder.builder.startswith('staging-'))
+    default_ref = 'staging' if is_staging else 'prod'
+    self._support_cipd_ref = (self._properties.support_cipd_ref or default_ref)
 
   def ensure_package_installed(self):
     """Ensure the CIPD support package is installed."""
-    if not self._ensured:
-      deploy_version_file = self.repo_resource('support/deploy_cipd.json')
+    if self._support_cipd_path:
+      return
 
-      step_data = self.m.json.read(
-          'read deploy_cipd.json', deploy_version_file,
-          step_test_data=lambda: self.m.json.test_api.output(
-              {'result': {
-                  'package': 'pkg',
-                  'instance_id': 'inst'
-              }}))
-      version = step_data.json.output['result']
+    with self.m.step.nest('ensure support CIPD package'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd-support')
 
-      ensure_file = self.m.cipd.EnsureFile()
-      ensure_file.add_package(version['package'], version['instance_id'])
-      self.m.cipd.ensure(self._support_root, ensure_file)
-    self._ensured = True
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package(self._support_cipd_package, self._support_cipd_ref)
+        self.m.cipd.ensure(cipd_dir, pkgs)
+
+        self._support_cipd_path = cipd_dir
 
   def call(self, tool, input_data, test_output_data=None, infra_step=True,
            timeout=None, add_json_log=True, **kwargs):
@@ -56,7 +64,7 @@ class SupportApi(recipe_api.RecipeApi):
       Data passed as output from the tool (deserialized from JSON).
     """
     self.ensure_package_installed()
-    tool_path = self._support_root.join('cipd-bin', tool)
+    tool_path = self._support_cipd_path.join(tool)
     return self.m.easy.stdout_json_step(tool, [tool_path],
                                         stdin_json=input_data,
                                         test_stdout=test_output_data,
