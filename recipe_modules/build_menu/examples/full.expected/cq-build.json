@@ -7265,58 +7265,6 @@
     ]
   },
   {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder.bucket,builder.builder,create_time,end_time,id,start_time,status",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas\"}, \"id\": \"101\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas\"}, \"id\": \"102\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@101@https://cr-buildbucket.appspot.com/build/101@@@",
-      "@@@STEP_LINK@102@https://cr-buildbucket.appspot.com/build/102@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set child_builds",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@child_builds@[\"101\", \"102\"]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set child_build_info",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas\"}, \"id\": \"101\"}, {\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas\"}, \"id\": \"102\"}]@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "finalize metadata"
   },

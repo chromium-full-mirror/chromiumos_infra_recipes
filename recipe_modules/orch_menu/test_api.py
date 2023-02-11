@@ -12,9 +12,9 @@ consistent.
 from collections import namedtuple
 
 from recipe_engine import recipe_test_api
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 
 
@@ -67,9 +67,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     inflight_orch = kwargs.pop('inflight_orch', None)
     annealing_builds = kwargs.pop('annealing_builds', None)
     history_builds = kwargs.pop('history_builds', None)
-    collect_builds = kwargs.pop('collect_builds', None)
+    collect_builds = kwargs.pop('collect_builds', [])
     collect_timeout = kwargs.pop('collect_timeout', None)
-    collect_after_builds = kwargs.pop('collect_after_builds', None)
+    collect_after_builds = kwargs.pop('collect_after_builds', [])
     process_child = kwargs.pop('process_child', None)
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
@@ -124,7 +124,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
               annealing_builds,
               'run builds.get snapshot builds.buildbucket.search'))
 
-    if collect_builds is not None:
+    if collect_builds:
       if collect_timeout:
         args.extend([
             self.step_data('run builds.collect.wait', retcode=1),
@@ -135,10 +135,15 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         args.append(
             self.m.buildbucket.simulated_collect_output(collect_builds,
                                                         'run builds.collect'))
-    if collect_after_builds is not None:
+    if collect_after_builds:
       args.append(
           self.m.buildbucket.simulated_collect_output(
               collect_after_builds, 'final build collect.collect'))
+
+    child_builds = collect_builds + collect_after_builds
+    if child_builds:
+      ret += self.m.buildbucket.simulated_search_results(
+          child_builds, 'clean up orchestrator.buildbucket.search')
 
     if process_child:
       process_name = 'run {}'.format(process_child.builder.builder)

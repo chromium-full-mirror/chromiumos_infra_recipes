@@ -22,15 +22,7 @@ from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import PackageInfo
 from PB.chromiumos.common import Profile
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
 from recipe_engine import recipe_api
-
-CHILD_BUILD_PREDICATE_SET = frozenset({
-    'id', 'create_time', 'start_time', 'end_time', 'status', 'builder.bucket',
-    'builder.builder'
-})
-
 
 class BuildMenuApi(recipe_api.RecipeApi):
   """A module with steps used by image builders.
@@ -856,37 +848,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self.m.cros_prebuilts.upload_devinstall_prebuilts(
         self.build_target, self.sysroot,
         artifacts.devinstall_prebuilts_gs_bucket)
-
-  def _get_child_builds(self):
-    """
-    Get the child builders of current build.
-
-    Returns:
-      (list[Build]): List of child builds.
-    """
-    current_build = self.m.buildbucket.build
-    # Do not want to search child builds for led job.
-    children = []
-    if current_build.id:
-      predicate = builds_service_pb2.BuildPredicate(
-          tags=self.m.buildbucket.tags(
-              parent_buildbucket_id=str(current_build.id)))
-      predicate.builder.project = current_build.builder.project
-      children = self.m.buildbucket.search(predicate,
-                                           fields=CHILD_BUILD_PREDICATE_SET)
-    return children
-
-  def add_child_info_to_output_property(self):
-    """
-    Add child information to output property of current build.
-    """
-    child_builds = self._get_child_builds()
-    if child_builds:
-      # TODO(b/266749698): Deprecate child_build_ids for child_build_info.
-      child_build_info = [json_format.MessageToDict(b) for b in child_builds]
-      child_build_ids = [str(b.id) for b in child_builds]
-      self.m.easy.set_properties_step(child_builds=child_build_ids)
-      self.m.easy.set_properties_step(child_build_info=child_build_info)
 
   def publish_latest_files(self, gs_bucket, gs_path):
     """Write LATEST-... files to GS.

@@ -19,6 +19,8 @@ from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -28,6 +30,11 @@ from PB.test_platform.request import Request
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+
+CHILD_BUILD_PREDICATE_SET = frozenset({
+    'id', 'create_time', 'start_time', 'end_time', 'status', 'builder.bucket',
+    'builder.builder'
+})
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
@@ -137,6 +144,10 @@ class OrchMenuApi(RecipeApi):
     self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
     self._chromium_src_ref_cl_tag = None
+
+    self._builder_to_collect_value = defaultdict(
+        lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
+            BuilderConfig.Orchestrator.ChildSpec.COLLECT_HANDLING_UNSPECIFIED))
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -358,7 +369,7 @@ class OrchMenuApi(RecipeApi):
       self.m.greenness.print_step()
       self.m.exonerate.print_stats()
       # Set child output ids if any
-      self.m.build_menu.add_child_info_to_output_property()
+      self.add_child_info_to_output_property()
 
     results = self.m.failures.Results(
         failures=self.builds_status.failures,
@@ -872,8 +883,13 @@ class OrchMenuApi(RecipeApi):
     child_specs_dict = {cs.name: cs for cs in child_specs}
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
     for b in existing_builds:
-      collect_when_dict[self._collect_value(b, child_specs_dict,
-                                            child_targets_dict)].append(b)
+      collect_value = self._collect_value(b, child_specs_dict,
+                                          child_targets_dict)
+      collect_when_dict[collect_value].append(b)
+      self._builder_to_collect_value[
+          b.builder
+          .builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
+              collect_value)
 
     return (completed_builds +
             collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
@@ -1253,3 +1269,41 @@ class OrchMenuApi(RecipeApi):
           json_format.MessageToJson(aggregated)
 
     return aggregated
+
+  def _get_child_builds(self):
+    """
+    Get the child builders of current build.
+
+    Returns:
+      (list[Build]): List of child builds.
+    """
+    current_build = self.m.buildbucket.build
+    # Do not want to search child builds for led job.
+    children = []
+    if current_build.id:
+      predicate = builds_service_pb2.BuildPredicate(
+          tags=self.m.buildbucket.tags(
+              parent_buildbucket_id=str(current_build.id)))
+      predicate.builder.project = current_build.builder.project
+      children = self.m.buildbucket.search(predicate,
+                                           fields=CHILD_BUILD_PREDICATE_SET)
+    return children
+
+  def add_child_info_to_output_property(self):
+    """
+    Add child information to output property of current build.
+    """
+    child_builds = self._get_child_builds()
+    child_build_info = []
+    # TODO(b/266749698): Deprecate child_build_ids for child_build_info.
+    for b in child_builds:
+      child_build_dict = json_format.MessageToDict(b)
+      # Add collect handling information.
+      child_build_dict['collect_value'] = self._builder_to_collect_value[
+          b.builder.builder]
+      child_build_info.append(child_build_dict)
+
+    if child_builds:
+      child_build_ids = [str(b.id) for b in child_builds]
+      self.m.easy.set_properties_step(child_builds=child_build_ids)
+      self.m.easy.set_properties_step(child_build_info=child_build_info)

@@ -479,6 +479,7 @@
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full) (Python3 ✅)
   * [orch_menu:examples/wait_for_images](#recipes-orch_menu_examples_wait_for_images) (Python3 ✅)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status) (Python3 ✅)
+  * [orch_menu:tests/child_build_info](#recipes-orch_menu_tests_child_build_info) (Python3 ✅)
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect) (Python3 ✅)
   * [orch_menu:tests/set_child_builds](#recipes-orch_menu_tests_set_child_builds) (Python3 ✅)
   * [orchestrator](#recipes-orchestrator) (Python3 ✅) &mdash; Recipe that schedules child builders and watches for failures.
@@ -950,27 +951,23 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API providing a menu for build steps
 
-#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildMenuApi](/recipe_modules/build_menu/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by image builders.
 
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/build_menu/api.py#879)(self):**
+&emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#71)(self):**
 
-Add child information to output property of current build.
-
-&emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#79)(self):**
-
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#710)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#702)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#491)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#483)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -979,7 +976,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#593)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#585)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -992,7 +989,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#548)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#540)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1003,15 +1000,15 @@ Args:
   include_version (bool): Whether or not to pass the workspace version
     to sysroot_util.build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#75)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#170)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#162)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#87)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#79)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#91)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#83)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#213)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#205)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
 
 Initial setup steps for the builder.
 
@@ -1032,7 +1029,7 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [container\_version](/recipe_modules/build_menu/api.py#95)(self):**
+&emsp; **@property**<br>&mdash; **def [container\_version](/recipe_modules/build_menu/api.py#87)(self):**
 
 Return the version string for containers.
 
@@ -1040,7 +1037,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#724)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#716)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1054,11 +1051,11 @@ Args:
 Returns:
   None
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#174)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#166)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#147)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#139)(self):**
 
-&mdash; **def [get\_cl\_affected\_sysroot\_packages](/recipe_modules/build_menu/api.py#181)(self, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_cl\_affected\_sysroot\_packages](/recipe_modules/build_menu/api.py#173)(self, packages=None, include_rev_deps=False):**
 
 Gets the list of sysroot packages affected by the input CLs.
 
@@ -1075,7 +1072,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#448)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#440)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1085,11 +1082,11 @@ the SDK will be marked as dirty out of an abundance of caution.
 Returns:
   The dependency graph from cros_relevance.get_dependency_graph.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#143)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#135)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#69)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#61)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#504)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#496)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1110,9 +1107,9 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#151)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#143)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#911)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#872)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1122,7 +1119,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#891)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#852)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1135,14 +1132,14 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#608)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#600)(self, config=None):**
 
 run ebuild tests as specified by config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#327)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#319)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False):**
 
 Setup the chroot for the builder.
 
@@ -1156,7 +1153,7 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#372)(self, with_sysroot=True):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#364)(self, with_sysroot=True):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1170,7 +1167,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#296)(self, cherry_pick_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#288)(self, cherry_pick_changes=True):**
 
 Setup the workspace for the builder.
 
@@ -1179,7 +1176,7 @@ Args:
       checkout using cherry-pick. If set to False, will directly checkout
       the changes using the gerrit fetch refs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#272)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#264)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -1196,9 +1193,9 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#155)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#147)(self):**
 
-&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#159)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#151)(self):**
 
 Get the current GetTargetVersionsResponse.
 
@@ -1207,7 +1204,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#578)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#570)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1216,7 +1213,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#664)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#656)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
@@ -1239,14 +1236,14 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#847)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#839)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#828)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#820)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -7256,14 +7253,18 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API providing a menu for orchestrator steps
 
-#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#120)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#127)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1120)(self, child_builds):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1292)(self):**
+
+Add child information to output property of current build.
+
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1136)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7276,15 +7277,15 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#165)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#176)(self):**
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#197)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#208)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#189)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#200)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#145)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#156)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#333)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#344)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -7297,27 +7298,27 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#153)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#164)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#157)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#168)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#149)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#160)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#141)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#152)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#169)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#180)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#161)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#172)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#177)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#188)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#185)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#196)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#181)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#192)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#173)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#184)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#661)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#672)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -7331,7 +7332,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1011)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1027)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7352,7 +7353,7 @@ Args:
 Returns:
   The current status of the builds.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#615)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#626)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -7364,11 +7365,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#939)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#955)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#945)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#961)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -7385,7 +7386,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#221)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#232)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -7400,7 +7401,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#193)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#204)(self):**
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9680,13 +9681,13 @@ Recipe for linting CLs.
 &mdash; **def [RunSteps](/recipes/build_linters.py#215)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
-[DEPS](/recipe_modules/build_menu/examples/full.py#14): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_menu/examples/full.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#43)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#42)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#32)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#31)(api, properties):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_staging.py#8): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -12402,6 +12403,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/builds_status.py#17)(api):**
+### *recipes* / [orch\_menu:tests/child\_build\_info](/recipe_modules/orch_menu/tests/child_build_info.py)
+
+[DEPS](/recipe_modules/orch_menu/tests/child_build_info.py#9): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#17)(api):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/collect.py#11): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
