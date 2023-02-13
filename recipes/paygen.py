@@ -148,14 +148,15 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             api.future_utils.create_custom_response(
                 request, StepFailure(response.failure_reason),
                 paygen_response.call_count))
-      for artifact in get_paygen_response_artifacts(response):
+      artifacts = get_paygen_response_artifacts(response)
+      for artifact in artifacts:
         report_payload = api.paygen_testing.create_paygen_build_report_payload(
             request, artifact.remote_uri, artifact.version)
         if report_payload:
           payloads.append(report_payload)
 
       test_configs = api.paygen_testing.set_up_paygen_test_configs(
-          request, response)
+          request, artifacts)
       if test_configs:
         paygen_test_configs.extend(test_configs)
 

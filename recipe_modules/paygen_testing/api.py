@@ -532,9 +532,10 @@ class PaygenTestingApi(recipe_api.RecipeApi):
         quota_scheduler_account=self._quota_scheduler_account,
         quota_scheduler_label_pool=self._quota_scheduler_label_pool)
 
-  def set_up_paygen_test_configs(self, request: PaygenProperties.PaygenRequest,
-                                 response: GenerationResponse
-                                ) -> Optional[List[PaygenTestConfig]]:
+  def set_up_paygen_test_configs(
+      self, request: PaygenProperties.PaygenRequest,
+      artifacts: List[GenerationResponse.VersionedArtifact]
+  ) -> Optional[List[PaygenTestConfig]]:
     """Set up test configs for a paygen response, if applicable.
 
     Given a PaygenRequest and a GenerationResponse, determine if this payload
@@ -543,7 +544,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
 
     Args:
       request: request object to introspect.
-      response: response from payload generation.
+      artifacts: artifacts from payload generation.
 
     Returns:
       List of paygen test configs to schedule.
@@ -570,21 +571,22 @@ class PaygenTestingApi(recipe_api.RecipeApi):
       # use the prod bucket.)
       src_bucket = request.generation_request.src_unsigned_image.build.bucket or \
                    request.generation_request.tgt_unsigned_image.build.bucket
-      tgt_payload = (
-          # Notice FullPayload doesn't get a bucket. That's because a full payload
-          # source is created in paygen_testing.create_paygen_test_config().
-          self.m.cros_storage.FullPayload.parse_uri(response.remote_uri,
-                                                    milestone) or
-          self.m.cros_storage.DeltaPayload.parse_uri(response.remote_uri,
-                                                     milestone, src_bucket))
-      for test_config in request.autoupdate_test_configs:
-        paygen_test_configs.append(
-            self.create_paygen_test_config(
-                tgt_payload, src_version=test_config.src_version,
-                src_channel=test_config.src_channel,
-                delta_type=test_config.delta_type,
-                applicable_models=test_config.applicable_models,
-                src_bucket=src_bucket))
+      for artifact in artifacts:
+        tgt_payload = (
+            # Notice FullPayload doesn't get a bucket. That's because a full payload
+            # source is created in paygen_testing.create_paygen_test_config().
+            self.m.cros_storage.FullPayload.parse_uri(artifact.remote_uri,
+                                                      milestone) or
+            self.m.cros_storage.DeltaPayload.parse_uri(artifact.remote_uri,
+                                                       milestone, src_bucket))
+        for test_config in request.autoupdate_test_configs:
+          paygen_test_configs.append(
+              self.create_paygen_test_config(
+                  tgt_payload, src_version=test_config.src_version,
+                  src_channel=test_config.src_channel,
+                  delta_type=test_config.delta_type,
+                  applicable_models=test_config.applicable_models,
+                  src_bucket=src_bucket))
 
       return paygen_test_configs
 
