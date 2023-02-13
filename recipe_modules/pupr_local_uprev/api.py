@@ -12,6 +12,7 @@ from typing import Any, DefaultDict, List, NamedTuple, Optional
 
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromite.api.packages import UprevVersionedPackageRequest
@@ -105,9 +106,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         return None
     if not all_valid_responses:
       return None
-    return self._commit_uprevs(versions, all_valid_responses,
-                               modified_package_names, topic,
-                               change_id=change_id)
+    return self._commit_package_uprevs(versions, all_valid_responses,
+                                       modified_package_names, topic,
+                                       change_id=change_id)
 
   def _uprev_package(
       self,
@@ -162,11 +163,12 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       ]
     return valid_responses
 
-  def _commit_uprevs(self, versions: List[UprevVersionedPackageRequest.GitRef],
-                     uprev_packages_responses: List[UprevPackagesResponse],
-                     modified_package_names: List[str], topic: str,
-                     change_id: Optional[str] = None) -> List[ProjectInfo]:
-    """Commit the uprevs on the local filesystem.
+  def _commit_package_uprevs(
+      self, versions: List[UprevVersionedPackageRequest.GitRef],
+      uprev_packages_responses: List[UprevPackagesResponse],
+      modified_package_names: List[str], topic: str,
+      change_id: Optional[str] = None) -> List[ProjectInfo]:
+    """Commit the package uprevs on the local filesystem.
 
     Args:
       versions: The versions to consider for an update.
@@ -252,6 +254,17 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
           self.m.git.commit(commit_message)
 
     return list(ebuilds_by_project)
+
+  def uprev_sdk(self) -> List[ProjectInfo]:
+    """Uprev the SDK on the local filesystem, and commit the uprev.
+
+    TODO(b/259445565): Implement this.
+
+    Returns:
+      A list of repo projects with modified code.
+    """
+    with self.m.step.nest('uprev sdk'):
+      raise InfraFailure('Not implemented yet!')
 
   def rebase_cl(self, open_changes: List[GerritChange], topic: str,
                 change_num: int) -> None:

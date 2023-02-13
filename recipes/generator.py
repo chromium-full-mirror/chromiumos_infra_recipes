@@ -52,8 +52,10 @@ from PB.recipes.chromeos.generator import RetryRef
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
 from PB.recipes.chromeos.generator import SendToCqPolicy
+from PB.recipes.chromeos.generator import UprevTargetKind
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
+from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -127,6 +129,16 @@ class GeneratorRun:
     # the uprev handler.
     self.target_version_from_gitiles = None
 
+  @property
+  def _is_package_uprevver(self) -> bool:
+    """Return whether this generator run is a package uprevver."""
+    return self.properties.uprev_target_kind is UprevTargetKind.PACKAGE
+
+  @property
+  def _is_sdk_uprevver(self) -> bool:
+    """Return whether this generator run is an SDK uprevver."""
+    return self.properties.uprev_target_kind is UprevTargetKind.SDK
+
   @cached_property
   def triggers(self) -> List[Trigger]:
     """Get this run's triggers, all of which have the gitiles field set."""
@@ -137,8 +149,14 @@ class GeneratorRun:
     return self._raw_triggers
 
   @property
-  def target_versions(self) -> List[UprevVersionedPackageRequest.GitRef]:
-    """Determine versions to try to uprev to."""
+  def target_package_versions(self
+                             ) -> List[UprevVersionedPackageRequest.GitRef]:
+    """Return the package versions to try to uprev to.
+
+    Raises:
+        InfraFailure: If this generator does not uprev packages.
+    """
+    assert self._is_package_uprevver
     return [
         UprevVersionedPackageRequest.GitRef(
             repository=parse.urlparse(trigger.gitiles.repo).path,
@@ -155,6 +173,7 @@ class GeneratorRun:
   @property
   def cpvs(self) -> List[str]:
     """Get the category-package-version for this build's packages."""
+    assert self._is_package_uprevver
     return [
         self.m.naming.get_package_title(package)
         for package in self.properties.packages
@@ -178,7 +197,11 @@ class GeneratorRun:
       return self.policy.topic
     if self.properties.topic:
       return self.properties.topic
-    return self.cpvs[0]
+    if self._is_package_uprevver:
+      return self.cpvs[0]
+    if self._is_sdk_uprevver:  # pragma: nocover
+      return 'cros_sdk'
+    raise InfraFailure('Not sure how to generate topic')  # pragma: nocover
 
   @cached_property
   def _projects_by_remote(self) -> ProjectsByRemote:
@@ -237,7 +260,7 @@ class GeneratorRun:
           self.m.cros_sdk.create_chroot(use_image=False)
 
       if not self.retry_only_run:
-        self._modified_projects = self.uprev_packages()
+        self._modified_projects = self.create_local_uprev()
         if self._modified_projects is None:
           return
 
@@ -253,10 +276,19 @@ class GeneratorRun:
                                                       do_open_cls_remain,
                                                       self.policy, self.topic)
 
-  def uprev_packages(self) -> Optional[List[ProjectInfo]]:
-    """Uprev packages on the local filesystem."""
-    return self.m.pupr_local_uprev.uprev_packages(self.target_versions,
-                                                  self.topic)
+  def create_local_uprev(self) -> Optional[List[ProjectInfo]]:
+    """Create and commit uprevs on the local filesystem.
+
+    Returns:
+      If the uprev is successful, a list of repo projects with code changes.
+      Otherwise, None, signifying that the build should terminate immediately.
+    """
+    if self._is_package_uprevver:
+      return self.m.pupr_local_uprev.uprev_packages(
+          self.target_package_versions, self.topic)
+    if self._is_sdk_uprevver:
+      return self.m.pupr_local_uprev.uprev_sdk()
+    raise InfraFailure('Not sure how to uprev.')  # pragma: nocover
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -265,8 +297,8 @@ class GeneratorRun:
       StepFailure: if there are any issues with the input properties.
     """
     with self.m.step.nest('validate properties') as presentation:
-      if not self.properties.packages:
-        raise StepFailure('must set not-packages to uprev')
+      if self._is_package_uprevver and not self.properties.packages:
+        raise StepFailure('must set packages to uprev for a package uprevver')
 
       # Retrieve version information from Gitiles API.
       if self.properties.HasField('gitiles_info'):
@@ -458,6 +490,7 @@ def GenTests(api: RecipeTestApi):
       kwargs.setdefault(
           'packages',
           [PackageInfo(category='chromeos-base', package_name='chromite')])
+    kwargs.setdefault('uprev_target_kind', UprevTargetKind.PACKAGE)
     kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
     kwargs.setdefault('branch_policies', [_policy()])
     kwargs.setdefault('gitiles_info', None)
@@ -575,6 +608,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-packages',
+      api.properties(uprev_target_kind=UprevTargetKind.PACKAGE),
       api.post_check(post_process.StatusAnyFailure),
   )
 
@@ -1176,3 +1210,7 @@ def GenTests(api: RecipeTestApi):
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)'
       ),
   )
+
+  yield api.test('sdk-uprev', _props(uprev_target_kind=UprevTargetKind.SDK),
+                 api.scheduler(triggers=[chromite_gitiles_trigger]),
+                 api.post_check(post_process.StepException, 'uprev sdk'))

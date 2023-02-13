@@ -192,7 +192,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "must set not-packages to uprev"
+      "humanReason": "must set packages to uprev for a package uprevver"
     },
     "name": "$result"
   }
