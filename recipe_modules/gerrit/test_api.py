@@ -215,19 +215,21 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     """
     return {'errors': list(errors)}
 
-  def simulated_changes_are_submittable(self, submittable: bool = True
+  def simulated_changes_are_submittable(self, submittable: bool = True,
+                                        step_name_prefix: str = ''
                                        ) -> recipe_test_api.TestData:
     """Return a TestData that sets the response for git-test-submit.
 
     Args:
       submittable: Whether the binary should return that the CLs can be
           cherry-picked.
+      step_name_prefix: Optional prefix to step name for testing nested calls.
     """
     output: JSONObject = {'errors': []}
     if not submittable:
       output['errors'].append('some cherry pick error line 1\nline2')
-    return self.step_data('check for merge conflicts.git-test-submit',
-                          stdout=self.m.json.output(output))
+    step_name = f'{step_name_prefix}check for merge conflicts.git-test-submit'
+    return self.step_data(step_name, stdout=self.m.json.output(output))
 
   def simulated_create_change(self, step_name: str, gerrit_change_url: str
                              ) -> recipe_test_api.TestData:

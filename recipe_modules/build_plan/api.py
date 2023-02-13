@@ -5,9 +5,14 @@
 
 from collections import defaultdict
 from datetime import datetime
+from typing import List, Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+
+from RECIPE_MODULES.chromeos.src_state.common import ManifestProject
 
 from recipe_engine import recipe_api
 
@@ -123,12 +128,17 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      # Check if CQ looks experiment is enabled and suggest a snapshot.
-      cq_looks_enabled = b'chromeos.cros_infra_config.cq_looks' in child_exps \
-          or 'chromeos.cros_infra_config.cq_looks' in child_exps
+      # Check if CQ looks experiment is enabled and choose a snapshot.
       # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
       # wait-only CQ looks behaviors.
-      self.suggest_snapshot(cq_looks_enabled)
+      cq_looks_enabled = (
+          (b"chromeos.cros_infra_config.cq_looks" in child_exps or
+           "chromeos.cros_infra_config.cq_looks" in child_exps) and
+          self.m.looks_for_green.enable_looks_for_green)
+      # TODO(b/211620738): Choose snapshot for external manifest.
+      internal_snapshot = self.choose_snapshot(
+          internal_snapshot, gerrit_changes, self.m.src_state.internal_manifest,
+          cq_looks_enabled)
 
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
@@ -401,16 +411,64 @@ class BuildPlanApi(recipe_api.RecipeApi):
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
 
-  def suggest_snapshot(self, cq_looks_enabled=False):
+  def choose_snapshot(self, original_snapshot: GitilesCommit,
+                      gerrit_changes: List[GerritChange],
+                      manifest: ManifestProject,
+                      cq_looks_enabled: Optional[bool] = False
+                     ) -> GitilesCommit:
+    """Returns chosen manifest snapshot to run CQ with.
+
+    Args:
+      original_snapshot: Latest manifest snapshot.
+      gerrit_changes: List of changes to be tested by CQ.
+      manifest: Manifest project for the snapshot.
+      cq_looks_enabled: Whether to run CQ looks for green logic.
+
+    Returns:
+      chosen_snapshot: The manifest snapshot that CQ will run with.
+
+    """
     # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
     with self.m.failures.ignore_exceptions():
+      chosen_snapshot = original_snapshot
+      original_snapshot_id = original_snapshot.id
       with self.m.step.nest('looks for green') as presentation:
         cq_looks_log = []
         if cq_looks_enabled:
           cq_looks_log.append('CQ looks experiment enabled')
-          if not self.m.looks_for_green.is_snap_orch_green():
-            self.m.looks_for_green.find_green_snapshot()
+          should_find_green_snapshot = \
+            self.m.looks_for_green.use_complete_snapshot \
+            or not self.m.looks_for_green.is_snap_orch_green()
+          if should_find_green_snapshot:
+            suggested_snap = self.m.looks_for_green.find_green_snapshot()
+            log = (f'Looks for green: Replacing {original_snapshot_id} with '
+                   f'{suggested_snap.commit_sha}')
+            if self.m.looks_for_green.dry_run:
+              log = '(Dry run only, would have run)' + log
+            cq_looks_log.append(log)
+            if not self.m.looks_for_green.dry_run:
+              with self.m.step.nest('set green snapshot'):
+                chosen_snapshot.id = suggested_snap.commit_sha
+              with self.m.step.nest('checking mergability'):
+                try:
+                  with self.m.context(cwd=manifest.path):
+                    self.m.git.checkout(chosen_snapshot.id, force=True)
+                  self.m.gerrit.assert_changes_submittable(gerrit_changes)
+                  log = (
+                      f'Changes are submittable with {suggested_snap.commit_sha}'
+                  )
+                except recipe_api.StepFailure:
+                  chosen_snapshot.id = original_snapshot_id
+                  with self.m.step.nest('resetting to original snapshot'):
+                    log = (
+                        'Cannot merge gerrit changes onto snapshot '
+                        f'{suggested_snap.commit_sha}. Falling back to latest '
+                        f'snapshot {original_snapshot_id}')
+                    with self.m.context(cwd=manifest.path):
+                      self.m.git.checkout(chosen_snapshot.id, force=True)
+                cq_looks_log.append(log)
         else:
           cq_looks_log.append(
               'CQ looks experiment not enabled. Using original snapshot.')
         presentation.logs['cq looks log'] = cq_looks_log
+    return chosen_snapshot

@@ -399,7 +399,9 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(
           experiments=['chromeos.cros_infra_config.cq_looks']),
       api.properties(
-          expected_build_requests=[
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True,
+          }}, expected_build_requests=[
               'atlas-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[

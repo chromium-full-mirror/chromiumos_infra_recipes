@@ -35,10 +35,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def __init__(self, properties: LooksForGreenProperties,
                **kwargs: Any) -> None:
     super().__init__(**kwargs)
-    self._enable_looks_for_green = properties.enable_looks_for_green
-    self._dry_run = properties.dry_run
+    self.enable_looks_for_green = properties.enable_looks_for_green
+    self.dry_run = properties.dry_run
     self._lookback_hours = properties.lookback_hours or 10
     self._greenness_threshold = properties.greenness_threshold or 80
+    self.use_complete_snapshot = properties.use_complete_snapshot
     self._stats = LooksForGreenStats()
     self._now = None
 
@@ -195,7 +196,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         presentation.logs[
             'latest green'] = f'Found green snapshot: {green.commit_sha} with greenness {green.agg_green} and {green.approx_snap_age_hours} hours old.'
         self._set_snapshot_stats(green, suggested=True)
-        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
+        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST
         self.m.easy.set_properties_step(looks_for_green=self._stats)
       else:
         presentation.logs[
@@ -217,7 +218,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._stats.latest.is_snap_orch_green = is_snap_orch_green
     # This logic is a bit brittle as it assumes that the caller is not going to
     # turn around and choose a different snapshot.
-    if is_snap_orch_green:
+    if is_snap_orch_green or self.dry_run:
       self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST
     self.m.easy.set_properties_step(looks_for_green=self._stats)
     return is_snap_orch_green
