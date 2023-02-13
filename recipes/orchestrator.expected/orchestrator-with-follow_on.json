@@ -2224,7 +2224,6 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@need 1 new build (filtered 0)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
-      "@@@STEP_LOG_LINE@filter log@CQ looks experiment not enabled@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -2252,6 +2251,15 @@
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.filter builds.looks for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment not enabled. Using original snapshot.@@@",
+      "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {

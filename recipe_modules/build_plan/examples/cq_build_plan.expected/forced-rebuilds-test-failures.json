@@ -1039,7 +1039,6 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@need 3 new builds (filtered 5)@@@",
       "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
-      "@@@STEP_LOG_LINE@filter log@CQ looks experiment not enabled@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
@@ -1072,6 +1071,15 @@
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment not enabled. Using original snapshot.@@@",
+      "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {

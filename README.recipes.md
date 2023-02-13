@@ -1287,7 +1287,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#273)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#266)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1301,7 +1301,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#359)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#352)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1317,7 +1317,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#398)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#391)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1328,7 +1328,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#330)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#323)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -1340,6 +1340,8 @@ Args:
   builds ([build_pb2.Build]): Builds to dedupe and sort.
 
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
+
+&mdash; **def [suggest\_snapshot](/recipe_modules/build_plan/api.py#404)(self, cq_looks_enabled=False):**
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
 [DEPS](/recipe_modules/build_reporting/__init__.py#8): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [signing](#recipe_modules-signing), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

@@ -123,19 +123,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      # Check if CQ looks experiment is enabled
-      if b'chromeos.cros_infra_config.cq_looks' in child_exps \
-          or 'chromeos.cros_infra_config.cq_looks' in child_exps:
-        # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
-        # wait-only CQ looks behaviors.
-        filter_log.append('CQ looks experiment enabled')
-        # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
-        with self.m.failures.ignore_exceptions():
-          with self.m.step.nest('looks for green'):
-            if not self.m.looks_for_green.is_snap_orch_green():
-              self.m.looks_for_green.find_green_snapshot()
-      else:
-        filter_log.append('CQ looks experiment not enabled')
+      # Check if CQ looks experiment is enabled and suggest a snapshot.
+      cq_looks_enabled = b'chromeos.cros_infra_config.cq_looks' in child_exps \
+          or 'chromeos.cros_infra_config.cq_looks' in child_exps
+      # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
+      # wait-only CQ looks behaviors.
+      self.suggest_snapshot(cq_looks_enabled)
 
       for child_spec in child_specs:
         # Get the builder variant in the build plan.
@@ -407,3 +400,17 @@ class BuildPlanApi(recipe_api.RecipeApi):
     """
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
+
+  def suggest_snapshot(self, cq_looks_enabled=False):
+    # TODO(211620738): Remove ignore_exceptions when looks_for_green is stable.
+    with self.m.failures.ignore_exceptions():
+      with self.m.step.nest('looks for green') as presentation:
+        cq_looks_log = []
+        if cq_looks_enabled:
+          cq_looks_log.append('CQ looks experiment enabled')
+          if not self.m.looks_for_green.is_snap_orch_green():
+            self.m.looks_for_green.find_green_snapshot()
+        else:
+          cq_looks_log.append(
+              'CQ looks experiment not enabled. Using original snapshot.')
+        presentation.logs['cq looks log'] = cq_looks_log
