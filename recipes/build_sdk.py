@@ -8,6 +8,7 @@
 from typing import List
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
+from PB.chromite.api.sdk import BuildSdkTarballRequest
 from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromiumos import common as common_pb2
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
@@ -49,6 +50,7 @@ class BuildSDKRun:
         self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True, replace=True):
       self._build_sdk_packages()
       self._build_toolchain()
+      self._create_sdk_tarball()
 
   def _build_sdk_packages(self):
     """Build all packages for the SDK build target."""
@@ -63,6 +65,16 @@ class BuildSDKRun:
     response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
     return response.generated_files
 
+  def _create_sdk_tarball(self) -> common_pb2.Path:
+    """Create a tarball containing a previously built SDK.
+
+    Returns:
+      Path to the newly created tarball.
+    """
+    request = BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
+    response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
+    return response.sdk_tarball_path
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
@@ -71,6 +83,8 @@ def GenTests(api: RecipeTestApi):
                      'call chromite.api.SdkService/BuildPrebuilts'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkToolchain'),
+      api.post_check(post_process.StepSuccess,
+                     'call chromite.api.SdkService/BuildSdkTarball'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(
