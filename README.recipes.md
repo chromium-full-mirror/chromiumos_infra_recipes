@@ -13274,9 +13274,9 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#702)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#716)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#801)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#815)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -13308,7 +13308,7 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#896)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#910)(api, requests, responses):**
 
 &mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#637)(api, config, should_poll_for_completion=False):**
 
@@ -13319,13 +13319,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1065)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1079)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1143)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1157)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#995)(api, enumerations, responses, error_in_requests):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1009)(api, enumerations, responses, error_in_requests):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#105)(api, properties):**
 

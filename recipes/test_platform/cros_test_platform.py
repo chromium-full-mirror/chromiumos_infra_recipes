@@ -679,6 +679,7 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
     ExecutionRequests payload.
   """
   _ensure_all_requests_enumerated(requests, enumerations, error_in_requests)
+  _ensure_non_critical_dont_retry(api, requests)
   return ExecuteRequests(
       tagged_requests={
           t: ExecuteRequest(request_params=r.params,
@@ -689,6 +690,19 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
       build=Build(id=api.buildbucket.build.id,
                   create_time=api.buildbucket.build.create_time),
   )
+
+
+def _ensure_non_critical_dont_retry(api, requests):
+  """Determines the number of max retries for an autotest test
+
+  Args:
+    * request: ExecutionRequests payload.
+  """
+  if api.cros_tags.get_values('user_agent') != "suite_scheduler":
+    for _, request in requests.items():
+      if request.params.test_execution_behavior != Request.Params.TestExecutionBehavior.CRITICAL:
+        request.params.retry.max = 0
+        request.params.retry.allow = False
 
 
 def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
