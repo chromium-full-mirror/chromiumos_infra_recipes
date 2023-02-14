@@ -22,6 +22,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/depot_tools',
+    'depot_tools/gsutil',
     'build_menu',
     'cros_sdk',
     'cros_source',
@@ -109,6 +110,19 @@ def DoRunSteps(api, properties):
       presentation.links['VM image'] = api.path.join(
           _PANTHEON_PREFIX, properties.destination_gs_bucket,
           properties.destination_gs_path, archive_name)
+
+    api.step('borealis tast taball', [
+        './tools/build_tast_binaries.py', '--no-output-append-date',
+        '--output=public-borealis-tast-binaries-' + version
+    ])
+    tast_archive_name = 'public-borealis-tast-binaries' + '-' + version + '.tar.zst'
+    with api.step.nest('upload tast tarball') as presentation:
+      bucket_url = 'chromiumos-test-assets-public'
+      path_url = 'tast/cros/borealis'
+      api.gsutil.upload(tast_archive_name, bucket_url, path_url)
+      presentation.links['tarball'] = api.path.join(_PANTHEON_PREFIX,
+                                                    bucket_url, path_url,
+                                                    tast_archive_name)
 
     with api.step.nest('update VERSION-PIN') as presentation:
       version_path = api.cros_source.workspace_path.join(

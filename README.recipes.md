@@ -9602,15 +9602,15 @@ for example:
 &mdash; **def [RunSteps](/recipes/build_android_uprev.py#33)(api, properties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
-[DEPS](/recipes/build_borealis_rootfs.py#16): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_borealis_rootfs.py#16): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a Borealis rootfs image.
 
-&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#74)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#75)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#46)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#47)(api, properties):**
 ### *recipes* / [build\_chromiumos](/recipes/build_chromiumos.py)
 
 [DEPS](/recipes/build_chromiumos.py#18): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [debug\_symbols](#recipe_modules-debug_symbols), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

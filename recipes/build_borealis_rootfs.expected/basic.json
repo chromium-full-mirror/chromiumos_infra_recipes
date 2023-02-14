@@ -1985,6 +1985,58 @@
     ]
   },
   {
+    "cmd": [
+      "./tools/build_tast_binaries.py",
+      "--no-output-append-date",
+      "--output=public-borealis-tast-binaries-2012.05.14.125330"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "borealis tast taball"
+  },
+  {
+    "cmd": [],
+    "name": "upload tast tarball",
+    "~followup_annotations": [
+      "@@@STEP_LINK@tarball@https://pantheon.corp.google.com/storage/browser/chromiumos-test-assets-public/tast/cros/borealis/public-borealis-tast-binaries-2012.05.14.125330.tar.zst@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "public-borealis-tast-binaries-2012.05.14.125330.tar.zst",
+      "gs://chromiumos-test-assets-public/tast/cros/borealis"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "upload tast tarball.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-test-assets-public/tast/cros/borealis@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "update VERSION-PIN",
     "~followup_annotations": [
