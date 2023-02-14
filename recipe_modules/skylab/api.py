@@ -204,6 +204,9 @@ class SkylabApi(recipe_api.RecipeApi):
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
               request.params.run_via_cft = True
+              request.params.run_via_trv2 = uht.hw_test.run_via_trv2
+              request.params.trv2_steps_config.CopyFrom(
+                  uht.hw_test.trv2_steps_config)
               request.test_plan.tag_criteria.CopyFrom(uht.hw_test.tag_criteria)
               configure_step.step_summary_text = "(Executing via CFT)"
 

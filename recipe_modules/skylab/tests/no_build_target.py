@@ -28,6 +28,7 @@ def RunSteps(api):
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'my_first_little_hwtest'
   hw_test.run_via_cft = True
+  hw_test.run_via_trv2 = True
   unit_hw_test = api.skylab.UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
 
   api.skylab.schedule_suites(
