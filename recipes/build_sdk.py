@@ -10,6 +10,7 @@ from typing import List
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import BuildSdkTarballRequest
 from PB.chromite.api.sdk import BuildSdkToolchainRequest
+from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromiumos import common as common_pb2
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
 
@@ -22,6 +23,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'workspace_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -51,6 +53,7 @@ class BuildSDKRun:
       self._build_sdk_packages()
       self._build_toolchain()
       self._create_sdk_tarball()
+      self._create_sdk_manifest()
 
   def _build_sdk_packages(self):
     """Build all packages for the SDK build target."""
@@ -75,6 +78,26 @@ class BuildSDKRun:
     response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
     return response.sdk_tarball_path
 
+  def _create_sdk_manifest(self) -> common_pb2.Path:
+    """Create a manifest file showing the ebuilds in an SDK.
+
+    Returns:
+      Path to the newly created manifest.
+    """
+    request = CreateManifestFromSdkRequest(
+        chroot=self.m.cros_sdk.chroot,
+        sdk_path=common_pb2.Path(
+            path="build/amd64-host",
+            location=common_pb2.Path.INSIDE,
+        ),
+        dest_dir=common_pb2.Path(
+            path=str(self.m.workspace_util.workspace_path),
+            location=common_pb2.Path.OUTSIDE,
+        ),
+    )
+    response = self.m.cros_build_api.SdkService.CreateManifestFromSdk(request)
+    return response.manifest_path
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
@@ -85,6 +108,8 @@ def GenTests(api: RecipeTestApi):
                      'call chromite.api.SdkService/BuildSdkToolchain'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkTarball'),
+      api.post_check(post_process.StepSuccess,
+                     'call chromite.api.SdkService/CreateManifestFromSdk'),
       api.post_check(post_process.StatusSuccess))
 
   yield api.test(

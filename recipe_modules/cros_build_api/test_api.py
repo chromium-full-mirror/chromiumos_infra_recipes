@@ -466,6 +466,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'path': '/test/path/built-sdk.tar.xz',
             'location': 2,  # chromiumos.Path.Location.OUTSIDE
         })
+    responses['CreateManifestFromSdk'] = jsonify(
+        manifest_path={
+            'path': '/build/amd64-host/built-sdk.tar.gz.Manifest',
+            'location': 1,  # chromium.Paht.Location.INSIDE
+        })
     responses['CreateBinhostCLs'] = jsonify(cls=[
         'binhostcls:1',
         'binhostcls:8',

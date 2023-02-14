@@ -158,6 +158,7 @@ def RunSteps(api):
           'Create': sdk.CreateResponse,
           'BuildPrebuilts': sdk.BuildPrebuiltsResponse,
           'BuildSdkTarball': sdk.BuildSdkTarballResponse,
+          'CreateManifestFromSdk': sdk.CreateManifestFromSdkResponse,
           'BuildSdkToolchain': sdk.BuildSdkToolchainResponse,
           'Delete': sdk.UpdateResponse,
           'Unmount': sdk.UnmountResponse,
