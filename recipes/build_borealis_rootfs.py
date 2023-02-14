@@ -27,6 +27,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/depot_tools',
+    'depot_tools/gsutil',
     'build_menu',
     'cros_sdk',
     'cros_source',
@@ -121,6 +122,21 @@ def DoRunSteps(api: RecipeApi,
           _PANTHEON_PREFIX, properties.destination_gs_bucket,
           properties.destination_gs_path, archive_name)
 
+    # Do not build if we are in manifest branch.
+    if not properties.manifest_branch and properties.build_tast_binaries:
+      api.step('borealis tast taball', [
+          './tools/build_tast_binaries.py', '--no-output-append-date',
+          '--output=public-borealis-tast-binaries-' + version
+      ])
+      tast_archive_name = 'public-borealis-tast-binaries-' + version + '.tar.zst'
+      with api.step.nest('upload tast tarball') as presentation:
+        bucket_url = properties.destination_gs_bucket
+        path_url = properties.destination_gs_path
+        api.gsutil.upload(tast_archive_name, bucket_url, path_url)
+        presentation.links['tarball'] = api.path.join(_PANTHEON_PREFIX,
+                                                      bucket_url, path_url,
+                                                      tast_archive_name)
+
     # If the version_file is not set, skip updating the version_file
     if not properties.version_file:
       return
@@ -170,6 +186,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       },
       'destination_gs_bucket': 'chromeos-localmirror-private',
       'destination_gs_path': 'borealis',
+      'build_tast_binaries': False,
   }
   yield api.test(
       'basic',
@@ -191,6 +208,21 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'docker_variant chroot',
       api.properties(**props),
+  )
+
+  props = good_props.copy()
+  props['build_tast_binaries'] = True
+  yield api.test(
+      'build_tast_binaries',
+      api.properties(**props),
+      api.post_check(post_process.MustRun, 'upload tast tarball'),
+  )
+
+  props = good_props.copy()
+  yield api.test(
+      'no-build_tast_binaries',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'upload tast tarball'),
   )
 
   props = good_props.copy()

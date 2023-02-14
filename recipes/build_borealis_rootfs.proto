@@ -31,4 +31,7 @@ message BuildBorealisRootfsProperties {
 
   // The docker variant to build with.
   string docker_variant = 6;
+
+  // Whether to build the tast binaries tarball.
+  bool build_tast_binaries = 7;
 }
