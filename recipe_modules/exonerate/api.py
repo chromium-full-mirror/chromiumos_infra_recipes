@@ -261,9 +261,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     exonerated_test_names = []
     new_test_results = []
     with self.m.step.nest('exonerate hw tests') as pres:
+      # Always print configs here. For debugging.
+      pres.logs['configs'] = self._get_printable_configs()
       if not self._configs_loaded:
         self.load_configs()
-        pres.logs['configs'] = self._get_printable_configs()
 
       for skylab_res in hw_test_results:
         if (skylab_res.status == common_pb2.SUCCESS or
@@ -367,7 +368,6 @@ class ExonerateApi(recipe_api.RecipeApi):
     with self.m.step.nest('exonerate vm tests') as pres:
       if not self._configs_loaded:
         self.load_configs()
-        pres.logs['configs'] = self._get_printable_configs()
 
       for build in vm_builds:
         if build.status == common_pb2.SUCCESS or build.critical == common_pb2.NO:
