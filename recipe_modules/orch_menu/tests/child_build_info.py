@@ -8,6 +8,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'cros_test_proctor',
     'orch_menu',
 ]
 
@@ -35,6 +36,15 @@ def GenTests(api):
                                 builder='cq-orchestrator'),
       api.buildbucket.simulated_search_results(
           _child_builds(['atlas-cq', 'dedede-cq'])),
+      api.cros_test_proctor.builders_tested_in_this_run(['atlas-cq']),
       api.post_check(post_process.PropertyEquals, 'child_builds',
                      ['101', '102']),
+      # atlas-cq
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'tested_in_this_run'] is True)),
+      # dedede-cq
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][1][
+              'tested_in_this_run'] is False)),
   )

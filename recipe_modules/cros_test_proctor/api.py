@@ -46,6 +46,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._not_runnable_addtnl_tests = []
     self._dry_run_exonerate_retried_suites = properties.dry_run_exonerate_retried_suites
 
+    # This is used to track the builders whose images are getting end-to-end
+    # tested in this CQ run.
+    self._builders_tested_in_this_run = set()
+
+  @property
+  def builders_tested_in_this_run(self):
+    if self._test_data.get('builders_tested_in_this_run') is not None:
+      return self._test_data.get('builders_tested_in_this_run')
+
+    return self._builders_tested_in_this_run
+
   @property
   def test_summary(self):
     """Returns the test_summary for this build."""
@@ -587,6 +598,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             tests_to_run[build_target.name].append(
                 self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
             hw_build_targets.add(build_target.name)
+
+            # Record information about what is getting tested.
+            self._builders_tested_in_this_run.add(unit.common.builder_name)
             scheduled_test_names.append(test.common.display_name)
 
       _ALL_BUILD_TARGETS = 'all build targets'
@@ -681,7 +695,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               shard_method=shard_method))), tags=tags,
                   swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
+
+          # Record information about what is getting tested.
+          self._builders_tested_in_this_run.add(unit.common.builder_name)
           scheduled_test_names.append(test.common.display_name)
+
     vm_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast vm tests',
         url_title_fn=self.m.naming.get_vm_test_title)
@@ -762,7 +780,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                               gce_metadata=properties_gce_metadata))),
                   tags=tags, swarming_parent_run_id=None if run_async else
                   self.m.swarming.task_id, can_outlive_parent=run_async))
+
+          # Record information about what is getting tested.
+          self._builders_tested_in_this_run.add(unit.common.builder_name)
           scheduled_test_names.append(test.common.display_name)
+
     gce_tests = self.m.buildbucket.schedule(
         requests, step_name='schedule tast GCE tests',
         url_title_fn=self.m.naming.get_vm_test_title)

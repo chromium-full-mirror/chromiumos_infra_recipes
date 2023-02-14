@@ -1301,9 +1301,17 @@ class OrchMenuApi(RecipeApi):
       # Add collect handling information.
       child_build_dict['collect_value'] = self._builder_to_collect_value[
           b.builder.builder]
+      # Add whether this builder was tested in this run.
+      child_build_dict['tested_in_this_run'] = (
+          b.builder.builder in
+          self.m.cros_test_proctor.builders_tested_in_this_run)
+
       child_build_info.append(child_build_dict)
+
 
     if child_builds:
       child_build_ids = [str(b.id) for b in child_builds]
       self.m.easy.set_properties_step(child_builds=child_build_ids)
-      self.m.easy.set_properties_step(child_build_info=child_build_info)
+      self.m.easy.set_properties_step(
+          child_build_info=sorted(child_build_info,
+                                  key=lambda b: b['builder']['builder']))

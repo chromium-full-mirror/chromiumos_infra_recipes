@@ -51,7 +51,7 @@
     "cmd": [],
     "name": "set child_build_info",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas-cq\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"id\": \"101\"}, {\"builder\": {\"bucket\": \"cq\", \"builder\": \"dedede-cq\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"id\": \"102\"}]@@@"
+      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas-cq\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"id\": \"101\", \"tested_in_this_run\": true}, {\"builder\": {\"bucket\": \"cq\", \"builder\": \"dedede-cq\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"id\": \"102\", \"tested_in_this_run\": false}]@@@"
     ]
   },
   {
