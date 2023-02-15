@@ -1766,6 +1766,34 @@
     },
     {
       "id": {
+        "name": "eve-release-publish-img-pkg-sizes",
+        "type": "RELEASE",
+        "bucket": "release"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE",
+        "publish_image_sizes": true
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": []
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        }
+      }
+    },
+    {
+      "id": {
         "name": "kukui-release-main",
         "type": "RELEASE",
         "bucket": "release"

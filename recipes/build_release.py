@@ -28,6 +28,7 @@ DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/futures',
     'recipe_engine/properties',
     'recipe_engine/runtime',
@@ -151,6 +152,16 @@ def DoRunSteps(api, config, properties):
             # Then fire off a pub/sub call with that builder meta.
             api.build_reporting.publish_build_target_and_model_metadata(
                 api.cros_source.manifest_branch, builder_metadata)
+
+          # Publish image and package sizes.
+          try:
+            api.build_menu.publish_image_size_data(config)
+          except StepFailure:
+            # Swallow the exception unilaterally, since this should never be a
+            # blocker for postsubmit builds or release builds.
+            # TODO(b/259704135): set up monitoring.
+            pass
+
           # We upload devinstall prebuilts at this stage instead of earlier on
           # because ImageService/Create (which is called in build_images above) is
           # the call that generates the package list that the devinstall prebuilts
@@ -557,6 +568,29 @@ def GenTests(api):
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+  )
+
+  # Release build with failure publishing image/package size data.
+  yield api.build_menu.test(
+      'publish-image-size-fail',
+      api.post_check(post_process.StatusSuccess),
+      api.signing.setup_mocks(),
+      api.build_menu.set_build_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData', retcode=1),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.call build API script',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.read output file',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      bucket='release',
+      builder='eve-release-publish-img-pkg-sizes',
+      build_target='eve',
   )
 
   yield api.build_menu.test(
