@@ -7493,7 +7493,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/symlink.py",
       "--link-json",
