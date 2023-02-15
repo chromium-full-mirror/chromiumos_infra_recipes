@@ -150,6 +150,8 @@ class PuprApi(recipe_api.RecipeApi):
     """Identify the CL to be retried based on retry_policy.
 
     Precedence order:
+      * If a CL is already run for CQ+2, that CL.
+        (This means no retry should happen, unless rebase_before_retry is set)
       * If a pinned CL exists, most recent pinned CL if failed, or None if most
           recent pinned CL is not failed.
       * Most recent CL with a passed dry run, if no_existing_cls_policy ==
@@ -167,30 +169,41 @@ class PuprApi(recipe_api.RecipeApi):
       open_cls (List[PatchSet]): List of CLs.
 
     Returns:
-      (PatchSet, int, str, bool): (The CL to be retried (or None if no retry),
-                                   CQ label to be applied,
-                                   The description of the action,
-                                   Whether the CL, if any, is currently passed)
+      (PatchSet, int, str, bool, bool):
+          (The CL to be retried (or None if no retry),
+          CQ label to be applied,
+          The description of the action,
+          Whether the CL, if any, is currently passed,
+          Whether the CL, if any, is currently running for CQ+1 or +2)
     """
     if retry_policy not in [RETRY_LATEST_OR_LATEST_PINNED, RETRY_LATEST_PINNED]:
-      return (None, 0, 'Not set to retry.', False)
+      return (None, 0, 'Not set to retry.', False, False)
 
     open_cls = sorted_cls(open_cls)
 
-    # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
-    # If a CL is in the process of running, no retry will occur.
-    running_cls = list(filter(is_running_cl, open_cls))
-    if running_cls:
-      return (None, 0, 'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
-          [cl.display_url for cl in running_cls])), False)
-
-    # Helper function to generate return value for retry.
+    # Helper functions to generate return value for retry.
     def with_retry(retry_cl, is_dry_run, retry_cl_is_passed):
       return (retry_cl, 1 if is_dry_run else 2,
-              'Found cl: {}'.format(retry_cl.display_url), retry_cl_is_passed)
+              'Found cl: {}'.format(retry_cl.display_url), retry_cl_is_passed,
+              False)
 
     def no_retry(message='No open CL was found to retry.'):
-      return (None, 0, message, False)
+      return (None, 0, message, False, False)
+
+    def retry_if_rebase(retry_cl, is_dry_run, retry_cl_is_passed, message):
+      return (retry_cl, 1 if is_dry_run else 2, message, retry_cl_is_passed,
+              True)
+
+    # Check to see if there is a CL (previously failed or not) currently running with CQ+2.
+    # If a CL is in the process of running, no retry will occur except for the case when
+    # rebasing it to resolve merge conflict.
+    running_cq2_cls = list(filter(is_running_cl, open_cls))
+    if running_cq2_cls:
+      retry_cl = running_cq2_cls[0]
+      return retry_if_rebase(
+          retry_cl, False, is_passed_cl(retry_cl, dry_run=True),
+          'There are CQ+2 run(s) ongoing: {}'.format(' '.join(
+              [cl.display_url for cl in running_cq2_cls])))
 
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
@@ -237,5 +250,16 @@ class PuprApi(recipe_api.RecipeApi):
           cl for cl in open_cls
           if cl.created > retry_cl.created and is_running_cl(cl, dry_run=True)):
         return with_retry(retry_cl, no_existing_cls_policy == DRY_RUN, False)
+
+    # Look for ongoing dry runs, just in case it may need rebasing.
+    retry_cl = next((c for c in open_cls if is_running_cl(c, dry_run=True)),
+                    None)
+    if retry_cl:
+      if not any(
+          cl for cl in open_cls
+          if cl.created > retry_cl.created and is_running_cl(cl, dry_run=True)):
+        return retry_if_rebase(
+            retry_cl, True, False,
+            'Found running cl: {}'.format(retry_cl.display_url))
 
     return no_retry()

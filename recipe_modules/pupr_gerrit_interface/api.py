@@ -368,7 +368,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if self.m.pupr.retries_frozen(open_patch_sets):
         return
 
-      patch_set_to_retry, cq_label, message, cl_passed_dry_run = \
+      patch_set_to_retry, cq_label, message, cl_passed_dry_run, running = \
           self.m.pupr.identify_retry(policy.retry_cl_policy,
                                      policy.no_existing_cls_policy,
                                      open_patch_sets)
@@ -376,13 +376,19 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
       if not patch_set_to_retry:
         return
-
       if self.rebase_before_retry:
-        if not self.m.gerrit.get_change_mergeable(patch_set_to_retry.change_id,
-                                                  patch_set_to_retry.host):
+        mergeable = self.m.gerrit.get_change_mergeable(
+            patch_set_to_retry.change_id, patch_set_to_retry.host)
+        if not mergeable:
           self.m.pupr_local_uprev.rebase_cl(open_changes, topic,
                                             patch_set_to_retry.change_id)
           self.upload_new_patch_set(patch_set_to_retry)
+          # A new patchset upload resets CQ+1/+2 status.
+          running = False
+
+      if running:
+        # Already running for CQ. No need to retry.
+        return
 
       self.retry_cl(patch_set_to_retry, cq_label)
 
