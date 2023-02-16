@@ -37,3 +37,24 @@ message ExonerateStats {
   repeated GranularStats test_stats = 4;
   repeated GranularStats suite_stats = 5;
 }
+
+// This stat will be published for each failed test.
+message FailedTestStats {
+  // Name of the test that failed.
+  string test_id = 1;
+
+  // Build target of the failure.
+  string build_target = 2;
+
+  // Whether this test been manually exonerated.
+  bool manually_exonerated = 3;
+
+  // Whether this test would be automatically exonerated.
+  bool automatically_exonerated = 4;
+
+  // Number of failure in the last ten executions.
+  int32 consistent_failures = 5;
+
+  // Percent of flaky/unexpected/exonerated verdicts in all verdicts.
+  int32 flaky_verdict_percent = 6;
+}

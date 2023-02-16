@@ -5,6 +5,7 @@
 # found in the LICENSE file.
 
 from collections import defaultdict
+from collections import namedtuple
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
@@ -17,6 +18,7 @@ from PB.test_platform.steps.execution import ExecuteResponse
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
+FailedTest = namedtuple('FailedTest', ['name', 'board', 'build_target'])
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -32,6 +34,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._test_stats_map = defaultdict(int)
     self._suite_stats_map = defaultdict(int)
     self._exonerated_tests = defaultdict(set)
+    self._failed_tests = set()
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
 
@@ -159,13 +162,14 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return test_case
 
-  def _exonerate_hw_test_cases(self, test_cases, build_target):
+  def _exonerate_hw_test_cases(self, test_cases, build_target, board):
     """Exonerates [ExecuteResponse.TaskResult.TestCaseResult] based on configs.
 
     Args:
       test_case([ExecuteResponse.TaskResult.TestCaseResult]): test_cases to be
         conditionally exonerated.
-      build_target(str): build_target on which the test was executed.
+      build_target(str): build_target that was tested.
+      board(str): board on which the test was executed.
 
     Returns: list of TestCaseResult changed based on the decision, new overall
       verdict of the tests.
@@ -188,6 +192,9 @@ class ExonerateApi(recipe_api.RecipeApi):
           # summarize failures. Remove from the list to let exoneration work
           # on actual test cases.
           continue
+        self._failed_tests.add(
+            FailedTest(name=test_case.name, board=board,
+                       build_target=build_target))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -201,13 +208,14 @@ class ExonerateApi(recipe_api.RecipeApi):
       new_verdict = TaskState.VERDICT_PASSED
     return new_test_cases, new_verdict
 
-  def _exonerate_child_results(self, results, build_target):
+  def _exonerate_child_results(self, results, build_target, board):
     """Exonerates [WaitTaskResult.Task] based on configs.
 
     Args:
       results([WaitTaskResult.Task]): child results to be
         conditionally exonerated.
       build_target(str): build_target on which the test was executed.
+      board(str): board on which the test was executed.
 
     Returns: list of WaitTaskResult.Task changed based on the decision, new
       overall status of the results.
@@ -222,7 +230,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       else:
         new_result = result
         new_test_cases, new_verdict = self._exonerate_hw_test_cases(
-            result.test_cases, build_target)
+            result.test_cases, build_target, board)
         new_result.ClearField("test_cases")
         new_result.test_cases.extend(new_test_cases)
         new_result.state.verdict = new_verdict
@@ -273,8 +281,9 @@ class ExonerateApi(recipe_api.RecipeApi):
           new_test_results.append(skylab_res)
         else:
           build_target = skylab_res.task.unit.common.build_target.name
+          board = skylab_res.task.test.skylab_board
           new_child_results, new_status = self._exonerate_child_results(
-              skylab_res.child_results, build_target)
+              skylab_res.child_results, build_target, board)
           new_skylab_res = self.m.skylab.SkylabResult(
               task=skylab_res.task, status=new_status,
               child_results=new_child_results)
@@ -335,8 +344,15 @@ class ExonerateApi(recipe_api.RecipeApi):
     new_test_cases = []
     for test_case in all_test_cases:
       test_name = test_case['name']
-      if (test_case['verdict'] != 'VERDICT_FAILED' or
-          test_name not in self._exoneration_configs):
+      if test_case['verdict'] != 'VERDICT_FAILED':
+        continue
+      self._failed_tests.add(
+          FailedTest(
+              name=test_case['name'],
+              # board == build_target for VM tests.
+              board=build_target,
+              build_target=build_target))
+      if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:
         new_test_case = self.exonerate_vm_testcase(test_case, build_target)
@@ -434,6 +450,13 @@ class ExonerateApi(recipe_api.RecipeApi):
     ]
     md_string += ', '.join(all_links)
     return md_string
+
+  def auto_exoneration_dry_run(self):
+    """Skeleton of a function that will run Automated Exoneration dry-run.
+    """
+    with self.m.step.nest('Automated Exoneration Dry-run') as pres:
+      pres.logs['failed_tests'] = str(
+          sorted(self._failed_tests, key=lambda x: x.name + x.build_target))
 
   def _is_test_name_exonerable(self, test_name, build_target):
     """Checks to see if test is exonerable.

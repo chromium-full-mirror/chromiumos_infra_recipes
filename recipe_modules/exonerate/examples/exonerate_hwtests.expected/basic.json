@@ -113,6 +113,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Automated Exoneration Dry-run",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name'), FailedTest(name='test2', board='target', build_target='build_target_name'), FailedTest(name='test3', board='target', build_target='build_target_name'), FailedTest(name='test5', board='target', build_target='build_target_name')]@@@",
+      "@@@STEP_LOG_END@failed_tests@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
