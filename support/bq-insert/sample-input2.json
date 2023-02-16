@@ -1,6 +1,0 @@
-{
-  "project_id": "chromeos-bot",
-  "dataset_id": "test",
-  "table_name": "sample_data",
-  "read_test": true
-}

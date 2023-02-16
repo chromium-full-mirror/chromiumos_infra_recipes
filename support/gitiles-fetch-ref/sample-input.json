@@ -1,7 +1,0 @@
-{
-  "branch": {
-    "host": "chrome-internal",
-    "project": "chromeos/manifest-internal",
-    "branch": "snapshot"
-  }
-}

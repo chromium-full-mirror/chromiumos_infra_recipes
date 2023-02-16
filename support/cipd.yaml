@@ -1,5 +1,0 @@
-package: chromiumos/infra/recipes/support
-description: Support tools for chromiumos recipes.
-install_mode: copy
-data:
-  - dir: cipd-bin
