@@ -4389,7 +4389,7 @@ of this module's properties.
 
 &emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#68)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#324)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#330)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4408,7 +4408,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#49)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#174)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#180)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -4419,7 +4419,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#160)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#166)(self, directory: str):**
 
 Call test_plan validate on directory.
 

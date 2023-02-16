@@ -27,6 +27,7 @@ message CrosTestPlanV2Properties {
   string platform_test_plan_docker_tag = 4;
 
   // Configure changes in a project to be migrated to v2 test planning.
+  // NEXT ID: 11
   message ProjectMigrationConfig {
     // Gerrit hostname of the project being migrated, e.g.
     // "chromium-review.googlesource.com". Required.
@@ -38,6 +39,12 @@ message CrosTestPlanV2Properties {
     // '$' are added at the front and back of the pattern, respectively, i.e.
     // the pattern must match the entire path string.
     string project = 2;
+
+    // Blocklist of projects to not migrate. Optional. If a project is matched
+    // by the above "project" field regexp, but is matched by any of the regexps
+    // in this blocklist field, it will not be migrated. The same regular
+    // expression rules as for the above "project" field apply.
+    repeated string project_blocklist = 10;
 
     // Allowlist of branch regexps that will be migrated. Required.
     //

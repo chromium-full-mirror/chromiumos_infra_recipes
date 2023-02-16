@@ -172,3 +172,26 @@ def GenTests(api):
            'src/projectA), not enabling test planning v2')),
       api.post_process(post_process.DropExpectation),
   )
+
+  yield api.test(
+      'project_in_blocklist',
+      api.properties(
+          **{
+              '$chromeos/cros_test_plan_v2':
+                  CrosTestPlanV2Properties(migration_configs=[
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host="chromium-review.googlesource.com",
+                          project=".*",
+                          project_blocklist=["src/project[A|C]"],
+                          file_allowlist_regexps=['.*'],
+                          branch_allowlist_regexps=['.*'],
+                      ),
+                  ]),
+          },
+      ),
+      api.post_process(
+          post_process.StepTextEquals, 'check test planning v2 enabled',
+          ('project src/projectA is blocklisted, not enabling test planning v2'
+          )),
+      api.post_process(post_process.DropExpectation),
+  )

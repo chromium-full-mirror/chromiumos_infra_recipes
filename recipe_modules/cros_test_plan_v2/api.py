@@ -112,6 +112,12 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
               .format(gc.host, gc.project))
           return False
 
+        for regexp in migration_config.project_blocklist:
+          if re.match('^{}$'.format(regexp), gc.project):
+            presentation.step_text = 'project {} is blocklisted, not enabling test planning v2'.format(
+                gc.project)
+            return False
+
         if not migration_config.file_allowlist_regexps:
           raise ValueError(
               'file_allowlist_regexps must be non-empty, got config "{}"'
