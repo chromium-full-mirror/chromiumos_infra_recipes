@@ -6966,38 +6966,39 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#158)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#164)(self, orch_start_time: datetime.datetime):**
 
-Returns how many hours age the latest snap-orch started.
+Returns how many hours age the latest scored snap-orch started.
 
 This is used as an approximation of snapshot manifest age since a
 snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 
 Returns:
-  Approx age in hours of snapshot used by latest snap-orch.
+  Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#187)(self):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#193)(self):**
 
 Find a green snapshot within the lookback period if one exists.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#134)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#137)(self):**
 
-Returns aggregate greenness of latest complete snapshot-orchestrator.
+Returns aggregate greenness of latest scored snapshot-orchestrator.
 
 Use common_pb2.ENDED_MASK to identify completed builds and limits return to
-1 build to get the latest build.
+1 build to get the latest scored build.
 
 Returns:
-  aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
+  aggregate greenness for latest scored snapshot-orchestrator, or -1 if
+  not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#208)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#214)(self):**
 
-Returns whether the last snapshot-orchestrator greenness is higher than
+Returns whether the latest scored snapshot-orchestrator greenness is
 
-greenness threshold.
+higher than greenness threshold.
 
 Returns:
-  Whether last snap-orch run is green
+  Whether latest scored snap-orch run is green
 
 &emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#46)(self):**
 

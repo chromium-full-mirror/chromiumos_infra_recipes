@@ -79,6 +79,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
         'end_time', 'status'
     })
+    # TODO(b/269180630): Remove ended_mask when build greenness is populated.
+    # We can check greenness of snapshot-orchestrators that are still
+    # in-progress as long as build greenness is populated.
     predicate = builds_service_pb2.BuildPredicate(
         create_time=common_pb2.TimeRange(
             start_time=timestamp_pb2.Timestamp(
@@ -122,7 +125,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     has go/greenness properties set.
     '''
     if not suggested:
-      stats = self._stats.latest
+      stats = self._stats.latest_scored
     else:
       stats = self._stats.suggested
 
@@ -132,38 +135,41 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     stats.snap_commit_sha = snapshot_stats.commit_sha
 
   def get_latest_snapshot_greenness(self) -> int:
-    '''Returns aggregate greenness of latest complete snapshot-orchestrator.
+    '''Returns aggregate greenness of latest scored snapshot-orchestrator.
 
     Use common_pb2.ENDED_MASK to identify completed builds and limits return to
-    1 build to get the latest build.
+    1 build to get the latest scored build.
 
     Returns:
-      aggregate greenness for latest snapshot-orchestrator, or -1 if not found.
+      aggregate greenness for latest scored snapshot-orchestrator, or -1 if
+      not found.
     '''
-    with self.m.step.nest('checking latest snapshot greenness') as presentation:
+    with self.m.step.nest(
+        'checking latest scored snapshot greenness') as presentation:
       result = self._get_snapshots(limit=1)
       if result:
         snapshot_stats = self._parse_snapshot_result(result[0])
-        presentation.logs['latest snapshot greenness'] = (
-            f'latest snapshot-orchestrator '
+        presentation.logs['latest scored snapshot greenness'] = (
+            f'latest scored snapshot-orchestrator '
             f'go/bbid/{snapshot_stats.bbid} has aggregate greenness of {snapshot_stats.agg_green}. '
             f'Start time: {snapshot_stats.start_time} End time: {snapshot_stats.end_time}'
             f'. The current time is {self.now_utc}')
         self._set_snapshot_stats(snapshot_stats)
       else:
-        presentation.logs['latest snapshot greenness'] = 'found no builds'
+        presentation.logs[
+            'latest scored snapshot greenness'] = 'found no builds'
         return -1
       return snapshot_stats.agg_green
 
   def calc_approx_snap_age_hours(self,
                                  orch_start_time: datetime.datetime) -> int:
-    '''Returns how many hours age the latest snap-orch started.
+    '''Returns how many hours age the latest scored snap-orch started.
 
     This is used as an approximation of snapshot manifest age since a
     snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 
     Returns:
-      Approx age in hours of snapshot used by latest snap-orch.
+      Approx age in hours of snapshot used by latest scored snap-orch.
     '''
     delta = self.now_utc - orch_start_time
     days, seconds = delta.days, delta.seconds
@@ -196,7 +202,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         presentation.logs[
             'latest green'] = f'Found green snapshot: {green.commit_sha} with greenness {green.agg_green} and {green.approx_snap_age_hours} hours old.'
         self._set_snapshot_stats(green, suggested=True)
-        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST
+        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
         self.m.easy.set_properties_step(looks_for_green=self._stats)
       else:
         presentation.logs[
@@ -206,19 +212,19 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       return green
 
   def is_snap_orch_green(self) -> bool:
-    '''Returns whether the last snapshot-orchestrator greenness is higher than
+    '''Returns whether the latest scored snapshot-orchestrator greenness is
 
-    greenness threshold.
+    higher than greenness threshold.
 
     Returns:
-      Whether last snap-orch run is green
+      Whether latest scored snap-orch run is green
     '''
     self.latest_greenness = self.get_latest_snapshot_greenness()
     is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
-    self._stats.latest.is_snap_orch_green = is_snap_orch_green
+    self._stats.latest_scored.is_snap_orch_green = is_snap_orch_green
     # This logic is a bit brittle as it assumes that the caller is not going to
     # turn around and choose a different snapshot.
     if is_snap_orch_green or self.dry_run:
-      self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST
+      self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
     self.m.easy.set_properties_step(looks_for_green=self._stats)
     return is_snap_orch_green

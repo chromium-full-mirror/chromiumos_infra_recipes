@@ -95,7 +95,7 @@ def GenTests(api):
           expected_internal_sha='internalSHA2'),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -131,7 +131,7 @@ def GenTests(api):
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -189,7 +189,7 @@ def GenTests(api):
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -228,7 +228,7 @@ def GenTests(api):
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -258,7 +258,7 @@ def GenTests(api):
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -278,8 +278,9 @@ def GenTests(api):
       api.properties(
           expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.post_check(post_process.StatusSuccess),
-      api.post_check(post_process.DoesNotRun,
-                     'filter builds.looks for green.checking latest snapshot'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'filter builds.looks for green.checking latest scored snapshot'),
       api.post_check(post_process.DoesNotRun,
                      'filter builds.looks for green.find green snapshot'),
       api.post_process(post_process.DropExpectation),

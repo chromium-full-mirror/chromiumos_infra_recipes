@@ -428,6 +428,6 @@ def GenTests(api):
                               start_time=test_start_timestamp,
                               end_time=test_end_timestamp)
           ],
-          step_name='filter builds.looks for green.checking latest snapshot greenness.buildbucket.search'
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
   )

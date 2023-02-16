@@ -22,7 +22,7 @@ message LooksForGreenProperties {
   // greenness module - greenness is [0,100].
   int32 greenness_threshold = 4;
 
-  // Whether to use a snapshot that has finished running with 
+  // Whether to use a snapshot that has finished running with
   // snapshot-orchestrator rather than the latest created snapshot. If this
   // flag is not set, CQ will run with the latest minted snapshot (unless the
   // greenness of the latest snapshot-orchestrator run is below the greenness
@@ -32,8 +32,9 @@ message LooksForGreenProperties {
 
 enum LooksForGreenStatus {
   STATUS_UNSPECIFIED = 0;
-  // The most recent snapshot-orchestrator is green.
-  STATUS_RAN_LATEST = 1;
+  // The most recent scored snapshot-orchestrator is green. Using the latest
+  // snapshot that has been created.
+  STATUS_RAN_LATEST_MINTED = 1;
   // Found an older snapshot within the configured lookback period.
   STATUS_RAN_OLDER = 2;
   // Couldn't find a green snapshot within the configured lookback period.
@@ -58,8 +59,8 @@ message LooksForGreenStats {
     // SHA of snapshot manifest tested with snapshot-orchestrator.
     string snap_commit_sha = 5;
   }
-  // Details of latest snapshot.
-  SnapshotStats latest = 1;
+  // Details of latest snapshot with greenness score.
+  SnapshotStats latest_scored = 1;
 
   // Details of suggested snapshot.
   SnapshotStats suggested = 2;
