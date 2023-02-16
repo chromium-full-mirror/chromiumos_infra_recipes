@@ -1993,6 +1993,44 @@
   },
   {
     "cmd": [
+      "./tools/arch_verity/checksum_tool.py",
+      "--update"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Arch mirror uprev.Arch db checksum update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./tools/arch_verity/checksum_tool.py",
+      "--verify"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "Arch mirror uprev.Verify new Arch db checksums",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "rev-parse",
       "--show-toplevel"
