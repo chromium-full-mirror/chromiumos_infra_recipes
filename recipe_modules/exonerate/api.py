@@ -407,7 +407,7 @@ class ExonerateApi(recipe_api.RecipeApi):
             suite_name = self.m.naming.get_vm_test_title(build)
             link_text = '{}.{}'.format(build_target, suite_name)
             self._exoneration_link_map[
-                link_text] = self.m.urls.get_vm_test_link_map(build)
+                link_text] = self.m.buildbucket.build_url(build_id=build.id)
             exonerated_test_names.append(suite_name)
             self._suite_stats_map[suite_name] += 1
             self._stats.suite_count += 1
