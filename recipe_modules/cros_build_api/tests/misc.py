@@ -12,6 +12,7 @@ from PB.chromite.api import api as meta_api
 from PB.chromite.api import artifacts
 from PB.chromite.api import binhost
 from PB.chromite.api import build_api_test
+from PB.chromite.api import copybot
 from PB.chromite.api import depgraph
 from PB.chromite.api import firmware
 from PB.chromite.api import image
@@ -110,6 +111,9 @@ def RunSteps(api):
               binhost.RegenBuildCacheResponse,
           'GetBinhostConfPath':
               binhost.GetBinhostConfPathResponse,
+      },
+      'CopybotService': {
+          'RunCopybot': copybot.RunCopybotResponse,
       },
       'DependencyService': {
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,

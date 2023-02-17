@@ -90,6 +90,10 @@ class BinhostService(Stub):
   """Stub for BinhostService."""
 
 
+class CopybotService(Stub):
+  """Stub for PayloadService."""
+
+
 class DependencyService(Stub):
   """Stub for DependencyService."""
 
@@ -376,7 +380,7 @@ class CrosBuildApiApi(RecipeApi):
   def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
                test_teelog_data=None, name=None, infra_step=False, timeout=None,
                response_lambda=None, pkg_logs_lambda=None, step_text=None,
-               use_chromite_head=False):
+               use_chromite_head=False, retcode_fn=None):
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -409,6 +413,9 @@ class CrosBuildApiApi(RecipeApi):
           should ONLY be used with calls that do not make other calls. It also
           shouldn't be used in conjunction with calls not using chromite-HEAD
           if you're expecting state to carry across the calls.
+      retcode_fn (fn(int)->None): Called with the return code from Build API.
+          This is useful for when the return code is 2
+          (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
 
     Returns:
       google.protobuf: The parsed response proto.
@@ -422,6 +429,7 @@ class CrosBuildApiApi(RecipeApi):
 
     response_lambda = response_lambda or (lambda op: '')
     pkg_logs_lambda = pkg_logs_lambda or (lambda *args: [])
+    retcode_fn = retcode_fn or (lambda retcode: None)
 
     with self.m.step.nest(name or 'call %s' % endpoint) as presentation:
       if step_text:
@@ -543,6 +551,7 @@ class CrosBuildApiApi(RecipeApi):
               presentation.step_text = 'failed to publish pubsub message to analysis service'
               presentation.status = self.m.step.INFRA_FAILURE
 
+      retcode_fn(call_step.exc_result.retcode)
       return output_proto
 
   def response_step_name(self, output_proto, response_lambda):

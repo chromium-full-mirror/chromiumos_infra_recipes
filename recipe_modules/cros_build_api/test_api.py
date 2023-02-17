@@ -154,6 +154,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def copybot_service_responses(self):
+    """Generate responses for CopybotService."""
+    responses = {}
+    responses['RunCopybot'] = jsonify(
+        failure_reason='FAILURE_UNKNOWN',
+        merge_conflicts=[],
+    )
+    return responses
+
+  @property
   def dependency_service_responses(self):
     """Generate responses for DependencyService."""
     responses = {}
@@ -557,6 +567,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'AndroidService': self.android_service_responses,
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
+        'CopybotService': self.copybot_service_responses,
         'DependencyService': self.dependency_service_responses,
         'FirmwareService': self.firmware_service_responses,
         'ImageService': self.image_service_responses,
