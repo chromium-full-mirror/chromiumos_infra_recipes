@@ -285,3 +285,30 @@ def GenTests(api):
                      'filter builds.looks for green.find green snapshot'),
       api.post_process(post_process.DropExpectation),
   )
+
+  yield api.test(
+      'no-green',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['chromeos.cros_infra_config.cq_looks']),
+      api.properties(
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True
+          }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+      api.buildbucket.simulated_search_results(
+          builds=[red_build],
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
+      ),
+      api.buildbucket.simulated_search_results(
+          builds=[red_build],
+          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
+      ),
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun,
+                     'filter builds.looks for green.find green snapshot'),
+      api.post_process(
+          post_process.LogContains, 'filter builds.looks for green',
+          'cq looks log',
+          ['No green snapshot found. Using latest minted snapshot.']),
+      api.post_process(post_process.DropExpectation),
+  )

@@ -441,6 +441,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
             or not self.m.looks_for_green.is_snap_orch_green()
           if should_find_green_snapshot:
             suggested_snap = self.m.looks_for_green.find_green_snapshot()
+            if not suggested_snap:
+              cq_looks_log.append(
+                  'No green snapshot found. Using latest minted snapshot.')
+              presentation.logs['cq looks log'] = cq_looks_log
+              return chosen_snapshot
             log = (f'Looks for green: Replacing {original_snapshot_id} with '
                    f'{suggested_snap.commit_sha}')
             if self.m.looks_for_green.dry_run:
