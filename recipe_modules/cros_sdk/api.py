@@ -142,21 +142,17 @@ class CrosSdkApi(RecipeApi):
     sdk_state.version = sdk_state.version or _DEFAULT_SDK_CACHE_VERSION
     return sdk_state
 
-  def _write_sdk_cache_state(self, version=_DEFAULT_SDK_CACHE_VERSION):
+  def _write_sdk_cache_state(self):
     """Set sdk cache state and write to file.
 
     Args:
       version (int): new sdk cache version to set.
     """
-    state = SdkCacheState(
-        version=version,
-        manifest_branch=self.m.cros_source.manifest_branch or 'snapshot',
-        manifest_url=self.m.src_state.build_manifest.url,
-        snapshot_hash=self.m.src_state.gitiles_commit.id,
-    )
+    if self.sdk_is_dirty or not self._sdk_cache_state:
+      return
     self.m.file.write_proto('write sdk cache state file',
-                            self._sdk_cache_state_file, state, 'JSONPB')
-    self._sdk_cache_state = state
+                            self._sdk_cache_state_file, self._sdk_cache_state,
+                            'JSONPB')
 
   def set_chrome_root(self, chrome_root):
     """Set chrome root with synced sources.
@@ -457,7 +453,6 @@ class CrosSdkApi(RecipeApi):
             timeout=timeout_sec, test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
-        self._write_sdk_cache_state(version)
         self.link_chroot(self.m.cros_source.workspace_path)
 
         # If there were toolchain changes already applied to the workspace, we
@@ -465,6 +460,18 @@ class CrosSdkApi(RecipeApi):
         if self.m.workspace_util.detect_toolchain_cls(
             self.chroot, test_value=test_toolchain_cls):
           self.mark_sdk_as_dirty()
+
+        if not self.sdk_is_dirty:
+          # If we succeeded in creating the SDK and it is not dirty yet then
+          # record the cache state data.
+          # It will be written to the SDK cache state file if the build succeeds
+          # and it did not get marked as dirty later on.
+          self._sdk_cache_state = SdkCacheState(
+              version=version,
+              manifest_branch=self.m.cros_source.manifest_branch or 'snapshot',
+              manifest_url=self.m.src_state.build_manifest.url,
+              snapshot_hash=self.m.src_state.gitiles_commit.id,
+          )
 
       except StepFailure:
         # Invalidate the cache if the InitSDK call fails.
@@ -561,6 +568,7 @@ class CrosSdkApi(RecipeApi):
       with self.m.step.nest('clean up SDK chroot'):
         if self._chroot_initialized:
           self.cleanup_sysroot()
+          self._write_sdk_cache_state()
           self.unmount_chroot()
 
           if self._sdk_is_dirty:

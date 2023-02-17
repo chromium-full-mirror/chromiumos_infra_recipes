@@ -3383,46 +3383,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"snapshot_hash\": \"main-HEAD-SHA\",\n  \"version\": 1\n}",
-      "[CACHE]/cros_chroot/sdk_cache_state.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "init sdk.write sdk cache state file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@{@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"main-HEAD-SHA\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
-      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "init sdk.link chroot in chromiumos_workspace",
     "~followup_annotations": [

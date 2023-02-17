@@ -22,9 +22,6 @@ def RunSteps(api):
     api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
     api.assertions.assertEqual(api.cros_sdk.sdk_cache_state.version, 2)
 
-    api.cros_sdk._write_sdk_cache_state(3)  # pylint: disable=protected-access
-    api.assertions.assertEqual(api.cros_sdk.sdk_cache_state.version, 3)
-
 
 def GenTests(api):
   yield api.test(
