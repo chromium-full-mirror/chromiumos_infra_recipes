@@ -3970,6 +3970,14 @@
   },
   {
     "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@greenness@OrderedDict()@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_TEXT@all tests passed.@@@"
@@ -13182,7 +13190,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('target', GreennessTuple(score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

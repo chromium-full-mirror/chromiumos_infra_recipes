@@ -737,6 +737,7 @@ class OrchMenuApi(RecipeApi):
 
     self._builds_status.update(running=collect_after)
     self.m.greenness.update_build_info(completed_builds)
+    self.m.greenness.print_step()
 
     # Determine the failure ratio and see if we should update the ref.
     # If we didn't complete a build, call it success.
@@ -1110,6 +1111,8 @@ class OrchMenuApi(RecipeApi):
             [b.id for b in self._builds_status.running_builds])
         self._collect_and_check_build_results(completed_builds)
         self.m.greenness.update_build_info(completed_builds)
+        self.m.greenness.print_step()
+
     return self._builds_status
 
   def _get_property(self, pathspec, props):

@@ -3992,6 +3992,14 @@
   },
   {
     "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "aggregating metadata",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@container metadata (log)@{}@@@",
@@ -13853,6 +13861,15 @@
   },
   {
     "cmd": [],
+    "name": "final build collect.print greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator"
   },
   {
@@ -13913,7 +13930,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, critical=False, relevant=True)), ('target', GreennessTuple(score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, critical=True, relevant=True)), ('None', GreennessTuple(score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

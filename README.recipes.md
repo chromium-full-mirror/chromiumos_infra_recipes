@@ -6819,11 +6819,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#34)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#36)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -6833,17 +6833,17 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#30)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#32)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#106)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#122)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#113)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#129)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#52)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#54)(self, builds):**
 
 Update Grenness with build information.
 
@@ -6851,14 +6851,14 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#70)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#75)(self, results):**
 
 Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#93)(self, results):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#104)(self, results):**
 
 Update Grenness with VM test information.
 
@@ -7276,11 +7276,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1290)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1293)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1134)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1137)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7348,7 +7348,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1025)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1026)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7381,11 +7381,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#953)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#954)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#959)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#960)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

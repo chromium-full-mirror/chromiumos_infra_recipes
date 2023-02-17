@@ -2685,6 +2685,14 @@
   },
   {
     "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check test planning v2 enabled",
     "~followup_annotations": [
       "@@@STEP_TEXT@enabling test planning v2@@@"
@@ -12822,7 +12830,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, critical=False, relevant=True)), ('target', GreennessTuple(score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },

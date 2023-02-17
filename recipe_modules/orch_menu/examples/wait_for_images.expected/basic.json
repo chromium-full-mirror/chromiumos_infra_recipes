@@ -13293,6 +13293,15 @@
   },
   {
     "cmd": [],
+    "name": "final build collect.print greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"checkout_manifests\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"

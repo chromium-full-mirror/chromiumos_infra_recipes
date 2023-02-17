@@ -2366,6 +2366,14 @@
   },
   {
     "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "aggregating metadata",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@one or more child payloads failed to download@@@",
