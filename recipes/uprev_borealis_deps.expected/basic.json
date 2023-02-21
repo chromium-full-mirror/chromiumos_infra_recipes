@@ -2113,6 +2113,27 @@
   },
   {
     "cmd": [
+      "git",
+      "add",
+      "tools/arch_verity/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Arch mirror uprev.create Arch mirror CL.commit changes.git add (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -2522,6 +2543,27 @@
     },
     "infra_step": true,
     "name": "PKGBUILDs uprev.create PKGBUILDs CL.commit changes.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "tools/arch_verity/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.commit changes.git add (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

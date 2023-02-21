@@ -77,7 +77,7 @@ def DoBorealisBuild(api: RecipeApi, use_cache: bool = True,
 
 def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
                    branch_name: str = None):
-  """Commit changes to the Borealis build/ directory.
+  """Commit changes to the Borealis build/ and tools/arch_verity/ directories.
 
   Args:
     api: The recipe modules API.
@@ -96,8 +96,9 @@ def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
       repo_branch = ''.join([char for char in branch_name if char.isalpha()])
     api.repo.start(repo_branch, projects=[project.name])
 
-    # Commit all changes in platform/borealis/build/
+    # Commit all changes in platform/borealis/{build,tools/arch_verity}/
     api.git.add(['build/'])
+    api.git.add(['tools/arch_verity/'])
     api.git.commit(commit_message)
 
 
