@@ -76,6 +76,7 @@
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
+  * [labpack](#recipe_modules-labpack) (Python3 ✅)
   * [looks_for_green](#recipe_modules-looks_for_green) (Python3 ✅)
   * [manifest_doctor](#recipe_modules-manifest_doctor) (Python3 ✅) &mdash; API wrapping the manifest_doctor tool.
   * [metadata](#recipe_modules-metadata) (Python3 ✅) &mdash; API to support metadata generation and wrangling.
@@ -454,6 +455,7 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
+  * [labpack:tests/tests](#recipes-labpack_tests_tests) (Python3 ✅)
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
@@ -6956,6 +6958,13 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [labpack](/recipe_modules/labpack)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Labpack command is a singleton whose methods invoke the labpack CIPD executable
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12215,6 +12224,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe to enforce go/kernel-upstream-tracking-process
 
 &mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#32)(api: RecipeApi):**
+### *recipes* / [labpack:tests/tests](/recipe_modules/labpack/tests/tests.py)
+
+[DEPS](/recipe_modules/labpack/tests/tests.py#9): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/tests.py#12)(api):**
+
+RunSteps runs the whole test suite.
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)
 
 [DEPS](/recipes/libchrome_uprev.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
