@@ -117,7 +117,7 @@
       "-ensure-file",
       "chromiumos/infra/result_flow/${platform} latest",
       "-max-threads",
-      "0",
+      "1",
       "-json-output",
       "/path/to/tmp/json"
     ],

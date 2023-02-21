@@ -114,7 +114,7 @@
       "-ensure-file",
       "chromiumos/infra/result_flow/${platform} latest",
       "-max-threads",
-      "0",
+      "1",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -242,7 +242,7 @@
       "-ensure-file",
       "chromiumos/infra/phosphorus/${platform} phosphorus_prod",
       "-max-threads",
-      "0",
+      "1",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -1163,7 +1163,7 @@
       "-ensure-file",
       "infra/tools/result_adapter/${platform} prod",
       "-max-threads",
-      "0",
+      "1",
       "-json-output",
       "/path/to/tmp/json"
     ],
