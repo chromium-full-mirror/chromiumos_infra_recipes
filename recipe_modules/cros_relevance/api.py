@@ -24,6 +24,10 @@ from PB.testplans.pointless_build import PointlessBuildCheckRequest
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
 from recipe_engine import recipe_api
 
+PlannedBuilders = namedtuple(
+    'PlannedBuilders',
+    ['necessary', 'global_irrelevance_skipped', 'run_when_rules_skipped'])
+
 
 class CrosRelevanceApi(recipe_api.RecipeApi):
   """A module for determining if a build is unnecessary."""
@@ -68,8 +72,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       return self._test_data.get('toolchain_cls_applied')
     return self._toolchain_cls_applied
 
-  def get_necessary_builders(self, builder_configs, gerrit_changes,
-                             gitiles_commit, name=None, test_builder_ids=None):
+  def run_build_planner(self, builder_configs, gerrit_changes, gitiles_commit,
+                        name=None, test_builder_ids=None):
     """Determines which builders must be run (and which can be skipped).
 
     This filters on preconfigured RunWhen rules, as well as on rules allowing
@@ -87,7 +91,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       test_builder_ids (list[BuilderConfig.Id]): test override
 
     Returns:
-      list[str]: the names of the child builders that must be run.
+      PlannedBuilders: Necessary and skipped builders as a tuple.
     """
     with self.m.step.nest(name or 'plan builds') as presentation:
       self._ensure_binaries()
@@ -141,10 +145,22 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
               len(result.builds_to_run),
               len(result.skip_for_global_build_irrelevance) +
               len(result.skip_for_run_when_rules)))
-      builders = [b.name for b in result.builds_to_run]
+      necessary = [b.name for b in result.builds_to_run]
+      global_irrelevance_skipped = [
+          b.name for b in result.skip_for_global_build_irrelevance
+      ]
+      run_when_rules_skipped = [b.name for b in result.skip_for_run_when_rules]
       if not self.m.cq.active:
-        return builders
-      return self._filter_slim_builders(builders, gerrit_changes)
+        return PlannedBuilders(
+            necessary=necessary,
+            global_irrelevance_skipped=global_irrelevance_skipped,
+            run_when_rules_skipped=run_when_rules_skipped)
+      return PlannedBuilders(
+          necessary=self._filter_slim_builders(necessary, gerrit_changes),
+          global_irrelevance_skipped=self._filter_slim_builders(
+              global_irrelevance_skipped, gerrit_changes),
+          run_when_rules_skipped=self._filter_slim_builders(
+              run_when_rules_skipped, gerrit_changes))
 
   def _filter_slim_builders(self, builders, gerrit_changes):
     """Filter out slim builders and replace with standard builders as necessary.

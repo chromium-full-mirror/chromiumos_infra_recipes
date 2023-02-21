@@ -1267,7 +1267,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to plan the builds to be launched.
 
-&mdash; **def [choose\_snapshot](/recipe_modules/build_plan/api.py#414)(self, original_snapshot: GitilesCommit, gerrit_changes: List[GerritChange], manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshot](/recipe_modules/build_plan/api.py#415)(self, original_snapshot: GitilesCommit, gerrit_changes: List[GerritChange], manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1303,7 +1303,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#276)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#277)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1317,7 +1317,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#362)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#363)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1333,7 +1333,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#401)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#402)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1344,7 +1344,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#333)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#334)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -3253,11 +3253,11 @@ Return:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosRelevanceApi](/recipe_modules/cros_relevance/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#405)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
+&mdash; **def [check\_for\_toolchain\_change](/recipe_modules/cros_relevance/api.py#421)(self, gerrit_changes, gitiles_commit, chroot, test_value=None, name=None):**
 
 Check for toolchain changes.
 
@@ -3271,7 +3271,7 @@ Args:
 Returns:
   (bool): Whether there are toolchain_cls applied.
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#456)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#472)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3282,7 +3282,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#434)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#450)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3298,28 +3298,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_necessary\_builders](/recipe_modules/cros_relevance/api.py#71)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
-
-Determines which builders must be run (and which can be skipped).
-
-This filters on preconfigured RunWhen rules, as well as on rules allowing
-skipping of image builders. Image builders are those that run the
-build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
-
-Args:
-  builder_configs (list[chromiumos.BuilderConfig]): builder configs to
-      consider for skipping.
-  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
-      applied for the build, if any.
-  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
-      snapshot Gitiles commit.
-  name (str): The step name.
-  test_builder_ids (list[BuilderConfig.Id]): test override
-
-Returns:
-  list[str]: the names of the child builders that must be run.
-
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#519)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#535)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3336,11 +3315,11 @@ Args:
 Returns:
   (List[str]): A list of package dependencies for the build target.
 
-&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#43)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_relevance/api.py#47)(self):**
 
 Initializes the module.
 
-&mdash; **def [is\_cq\_build\_relevant](/recipe_modules/cros_relevance/api.py#175)(self, patch_sets: List[PatchSet], dep_graph: DepGraph, force_relevant: bool=False, is_pointless_test_value: bool=False):**
+&mdash; **def [is\_cq\_build\_relevant](/recipe_modules/cros_relevance/api.py#191)(self, patch_sets: List[PatchSet], dep_graph: DepGraph, force_relevant: bool=False, is_pointless_test_value: bool=False):**
 
 Determines if changes are relevant to the CQ run.
 
@@ -3359,7 +3338,7 @@ Args:
 Returns:
   bool: Whether the changes are relevant to the CQ run.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#380)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#396)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -3376,7 +3355,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#237)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#253)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 
@@ -3390,7 +3369,28 @@ Returns:
   bool: Whether any packages that target depends on have been upreved
   in the latest snapshot or the build was forced relevant.
 
-&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#63)(self):**
+&mdash; **def [run\_build\_planner](/recipe_modules/cros_relevance/api.py#75)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
+
+Determines which builders must be run (and which can be skipped).
+
+This filters on preconfigured RunWhen rules, as well as on rules allowing
+skipping of image builders. Image builders are those that run the
+build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
+
+Args:
+  builder_configs (list[chromiumos.BuilderConfig]): builder configs to
+      consider for skipping.
+  gerrit_changes (bbcommon_pb2.GerritChange): The Gerrit Changes to be
+      applied for the build, if any.
+  gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
+      snapshot Gitiles commit.
+  name (str): The step name.
+  test_builder_ids (list[BuilderConfig.Id]): test override
+
+Returns:
+  PlannedBuilders: Necessary and skipped builders as a tuple.
+
+&emsp; **@property**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#67)(self):**
 
 Whether there are toolchain CLs applied to the source tree.
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)

@@ -12,9 +12,12 @@ message BuildPlanTest {
   // The builder ids to use.
   repeated chromiumos.BuilderConfig.Id test_builder_ids = 1;
 
-  // The expected return from get_necessary_builders
+  // The expected builders from run_build_planner
   repeated string expected_builders = 2;
 
   // Any manifest branch to checkout.
   string manifest_branch = 3;
+
+  // The expected skipped builders from run_build_planner
+  repeated string expected_skipped_builders = 4;
 }

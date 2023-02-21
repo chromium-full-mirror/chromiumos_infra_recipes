@@ -67,10 +67,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     if gerrit_changes and not self._properties.disable_build_plan_pruning:
-      necessary_builders = self.m.cros_relevance.get_necessary_builders(
+      builders_tuple = self.m.cros_relevance.run_build_planner(
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
           ])
+      necessary_builders = builders_tuple.necessary
     # Handle forced relevancy.
     forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
         gerrit_changes, builder_configs)

@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "plan builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_TEXT@1 relevant, 1 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"builderConfigs\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
@@ -24,6 +24,9 @@
       "@@@STEP_LOG_END@planner_input@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"other-builder\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_LINE@planner_output@skip_for_run_when_rules {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"skipped-builder\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_END@planner_output@@@"
     ]

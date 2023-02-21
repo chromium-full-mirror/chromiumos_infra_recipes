@@ -42,10 +42,13 @@ def RunSteps(api, properties):
   if properties.manifest_branch:
     api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                     properties.manifest_branch)
-  builders = api.cros_relevance.get_necessary_builders(
+  builders_tuple = api.cros_relevance.run_build_planner(
       bc, gc, bbcommon_pb2.GitilesCommit(id='hello'),
       test_builder_ids=properties.test_builder_ids)
-  api.assertions.assertCountEqual(builders, properties.expected_builders)
+  api.assertions.assertCountEqual(builders_tuple.necessary,
+                                  properties.expected_builders)
+  api.assertions.assertCountEqual(builders_tuple.run_when_rules_skipped,
+                                  properties.expected_skipped_builders)
 
 
 def GenTests(api):
@@ -102,14 +105,17 @@ def GenTests(api):
           BuildPlanTest(test_builder_ids=[BuilderConfig.Id(name=_BUILDER_NAME)],
                         expected_builders=[_BUILDER_NAME])))
 
-  # Verify that simulated_get_necessary_builders works.
+  # Verify that simulated_run_build_planner works.
   yield api.test(
       'forced-response',
-      api.cros_relevance.simulated_get_necessary_builders([
-          'other-builder',
-      ]), api.properties(BuildPlanTest(expected_builders=[
-          'other-builder',
-      ])))
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'other-builder',
+          ], skipped_builders=['skipped-builder']),
+      api.properties(
+          BuildPlanTest(expected_builders=[
+              'other-builder',
+          ], expected_skipped_builders=['skipped-builder'])))
 
   yield api.test(
       'branch',

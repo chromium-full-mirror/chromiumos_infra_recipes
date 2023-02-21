@@ -112,12 +112,13 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -143,12 +144,13 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           [], 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -174,13 +176,14 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(['eve-cq'],
                                             'check force relevance'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'coral-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'coral-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -206,13 +209,14 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(['coral-cq'],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'coral-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'coral-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -235,13 +239,14 @@ def GenTests(api):
           ], expected_completed_builds=[]),
       api.git_footers.simulated_get_footers(['all'],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'coral-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'coral-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -267,13 +272,14 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(['test-failures'],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'coral-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'coral-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_failed_tests(['coral-cq'])
       ], 'check disallow recycled builds.find matching builds.buildbucket.search'
@@ -308,12 +314,13 @@ def GenTests(api):
                                             'check disallow recycled builds'),
       api.git_footers.simulated_get_footers(['named-exp-from-cl'],
                                             'filter builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -344,12 +351,13 @@ def GenTests(api):
           binaryproto=False),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -372,13 +380,14 @@ def GenTests(api):
           ]),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'amd64-generic-slim-cq',
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-slim-cq',
-          'cave-slim-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'amd64-generic-slim-cq',
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-slim-cq',
+              'cave-slim-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -410,12 +419,13 @@ def GenTests(api):
           ], expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.cros_relevance.simulated_get_necessary_builders([
-          'arm-generic-cq',
-          'arm64-generic-cq',
-          'atlas-cq',
-          'cave-cq',
-      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
