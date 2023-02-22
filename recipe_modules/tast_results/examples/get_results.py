@@ -28,7 +28,8 @@ def RunSteps(api):
                              TaskState.VERDICT_PASSED)
 
   task_result = api.tast_results.get_results(
-      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', ['arc.Boot'])
+      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default_shard_5_of_5', '1',
+      ['arc.Boot'])
   results, test_cases = api.tast_results.convert_results(task_result)
   api.tast_results.print_results(results.failures, False)
   api.assertions.assertEqual(test_cases[0]['name'], 'arc.Boot')

@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import datetime
+import re
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
@@ -460,8 +461,11 @@ class TastResultsApi(recipe_api.RecipeApi):
     # "tast_vm_default" for "reven-vmtest-cq.tast_vm.tast_vm_default". This is
     # because CQ v1 contains all shards in the name while CQ v2 planning uses a
     # different name format "vm.<board>.<suite_name>".
+    # Also remove shard suffix i.e. "tast_vm_default_shard_5_of_5" => "tast_vm_default".
     if suite_name:
-      base_variant['suite'] = suite_name.split('.')[-1]
+      suite = suite_name.split('.')[-1]
+      match = re.match(r'(\w+)_shard_.*', suite)
+      base_variant['suite'] = match.groups()[0] if match else suite
 
     build_target = self.m.cros_infra_config.get_build_target_name()
     if build_target:
