@@ -397,8 +397,8 @@ class CrosSdkApi(RecipeApi):
 
       return reuse
 
-  def create_chroot(self, version=None, use_image=True, bootstrap=False,
-                    sdk_version=None, timeout_sec='DEFAULT', test_data=None,
+  def create_chroot(self, version=None, bootstrap=False, sdk_version=None,
+                    timeout_sec='DEFAULT', test_data=None,
                     test_toolchain_cls=None, name=None, replace=False):
     """Initialize the chroot and link it into the workspace.
 
@@ -409,7 +409,6 @@ class CrosSdkApi(RecipeApi):
     Args:
       version (int): Required SDK cache version, if any.  Some recipes do not
           care what version the SDK is, they just need any SDK.
-      use_image (boolean): Mount the SDK file as an image.  Default: True.
       bootstrap (boolean): Whether to bootstrap the chroot.  Default: False
       sdk_version (string): Optional. Specific SDK version to include in the
         CreateSdkRequest, e.g. 2022.01.20.073008.
@@ -444,10 +443,11 @@ class CrosSdkApi(RecipeApi):
             version) and not sdk_version and not replace
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
+        # TODO(b/266878468): drop no_use_image.
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(
                 flags=CreateSdkRequest.Flags(no_replace=no_replace,
-                                             no_use_image=not use_image,
+                                             no_use_image=True,
                                              bootstrap=bootstrap),
                 chroot=self.chroot, sdk_version=sdk_version),
             timeout=timeout_sec, test_output_data=test_data)

@@ -344,8 +344,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if not self.artifact_build or relevance != Relevance.POINTLESS:
       self.m.cros_source.uprev_packages()
       self.m.cros_sdk.create_chroot(
-          version=config.general.sdk_cache_version, use_image=self.is_staging,
-          bootstrap=bootstrap, sdk_version=sdk_version,
+          version=config.general.sdk_cache_version, bootstrap=bootstrap,
+          sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
           no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True

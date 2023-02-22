@@ -219,8 +219,7 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
         delay=datetime.timedelta(seconds=properties.sdk_retry_delay or 300))
     def _retry_chroot_init_wrapper() -> Optional[StepFailure]:
       try:
-        api.cros_sdk.create_chroot(version=None, use_image=False,
-                                   timeout_sec=timeout)
+        api.cros_sdk.create_chroot(version=None, timeout_sec=timeout)
       except Exception as e:
         if "timeout" in str(e):
           presentation.step_text = 'SDK initialization timed out'
