@@ -174,6 +174,7 @@
   * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) (Python3 ✅) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) (Python3 ✅) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
   * [check_fit_image](#recipes-check_fit_image) (Python3 ✅) &mdash; Check that any binary blobs in a commit come from a valid FIT version.
+  * [check_fpp_build](#recipes-check_fpp_build) (Python3 ✅)
   * [check_project_config](#recipes-check_project_config) (Python3 ✅) &mdash; Checks a project conforms to its program's constraints.
   * [checkpoint:examples/retry](#recipes-checkpoint_examples_retry) (Python3 ✅)
   * [checkpoint:tests/build_target_retry_props](#recipes-checkpoint_tests_build_target_retry_props) (Python3 ✅)
@@ -10008,6 +10009,13 @@ Args:
 
 Return:
   (Fit Version, { filename => SHA-256 hash })
+### *recipes* / [check\_fpp\_build](/recipes/check_fpp_build.py)
+
+[DEPS](/recipes/check_fpp_build.py#6): [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipes/check_fpp_build.py#12)(api):**
 ### *recipes* / [check\_project\_config](/recipes/check_project_config.py)
 
 [DEPS](/recipes/check_project_config.py#17): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
