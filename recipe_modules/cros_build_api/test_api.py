@@ -457,9 +457,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Delete'] = '{}'
     responses['Unmount'] = '{}'
     responses['Update'] = jsonify(version={'version': 123})
-    responses['CreateSnapshot'] = jsonify(
-        snapshot_token={'value': 'TEST_SNAPSHOT'})
-    responses['RestoreSnapshot'] = '{}'
     responses['BuildPrebuilts'] = '{}'
     responses['BuildSdkTarball'] = jsonify(
         sdk_tarball_path={

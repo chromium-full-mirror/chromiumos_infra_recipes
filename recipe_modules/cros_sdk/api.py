@@ -19,8 +19,6 @@ from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
-from PB.chromite.api.sdk import CreateSnapshotRequest
-from PB.chromite.api.sdk import RestoreSnapshotRequest
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
@@ -581,52 +579,6 @@ class CrosSdkApi(RecipeApi):
             raise StepFailure('not all input test data used')
         else:
           self._delete_chroot(name='ensure no rogue SDK')
-
-  @contextlib.contextmanager
-  def snapshot(self, create_test_data=None, restore_test_data=None):
-    """Returns a context that snapshots and restores the SDK chroot state.
-
-    When this context manager is entered, a snapshot is made of the chroot
-    state and a token corresponding to that snapshot is stored. When the context
-    is exited, regardless of the reason, the context manager will attempt to
-    restore the chroot back to that initial snapshot. If the chroot was
-    initially created with 'nouse-image', it will be replaced so that it
-    supports the ability to make snapshots.
-
-    Args:
-      create_test_data (str): test response (JSON) from the
-          SdkService.CreateSnapshot call, or None to use the default in
-          cros_build_api/test_api.py.
-      restore_test_data (str): test response (JSON) from the
-          SdkService.RestoreSnapshot call, or None to use the default in
-          cros_build_api/test_api.py.
-    """
-    SdkService = self.m.cros_build_api.SdkService
-    with self.m.step.nest('creating chroot snapshot'):
-      if self.m.cros_build_api.has_endpoint(SdkService, 'CreateSnapshot'):
-        snapshot_response = SdkService.CreateSnapshot(
-            CreateSnapshotRequest(chroot=self.chroot),
-            test_output_data=create_test_data)
-        snapshot_token = snapshot_response.snapshot_token
-      else:
-        raise StepFailure('Build API lacks SdkService.CreateSnaphsot endpoint')
-
-    try:
-      yield
-    finally:
-      # Regardless of how we exited the context block, try to restore the
-      # chroot snapshot.
-      try:
-        with self.m.step.nest('restoring chroot from snapshot'):
-          SdkService.RestoreSnapshot(
-              RestoreSnapshotRequest(chroot=self.chroot,
-                                     snapshot_token=snapshot_token),
-              test_output_data=restore_test_data)
-      except:
-        # If restoring the snapshot fails for any reason, mark the current SDK
-        # for deletion and reraise the exception.
-        self.mark_sdk_as_dirty()
-        raise
 
   def unmount_chroot(self, chroot=None):
     chroot = chroot or self.chroot

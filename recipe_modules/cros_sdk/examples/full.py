@@ -54,23 +54,21 @@ def RunSteps(api, properties):
     if properties.check_remoteexec:
       api.cros_sdk.configure_remoteexec()
       api.cros_sdk.set_use_flags([common.UseFlag(flag='remoteexec')])
-      with api.cros_sdk.snapshot():
-        remoteexec = api.cros_sdk.remoteexec_config
-        api.assertions.assertEqual(remoteexec.reclient_dir,
-                                   str(api.remoteexec.reclient_dir))
-        api.assertions.assertEqual(remoteexec.reproxy_cfg_file,
-                                   str(api.remoteexec.reproxy_cfg_file))
-        api.assertions.assertTrue(api.cros_sdk.has_remoteexec_config())
+      remoteexec = api.cros_sdk.remoteexec_config
+      api.assertions.assertEqual(remoteexec.reclient_dir,
+                                 str(api.remoteexec.reclient_dir))
+      api.assertions.assertEqual(remoteexec.reproxy_cfg_file,
+                                 str(api.remoteexec.reproxy_cfg_file))
+      api.assertions.assertTrue(api.cros_sdk.has_remoteexec_config())
     else:
       api.assertions.assertRaises(ValueError, api.cros_sdk.configure_remoteexec)
       api.cros_sdk.configure_goma()
       api.cros_sdk.set_use_flags([common.UseFlag(flag='goma')])
       chroot = api.cros_sdk.chroot
-      with api.cros_sdk.snapshot():
-        api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
-        api.assertions.assertTrue(api.cros_sdk.has_goma_config())
-        api.assertions.assertCountEqual(chroot.env.use_flags,
-                                        [common.UseFlag(flag='goma')])
+      api.assertions.assertEqual(chroot.chrome_dir, '/chrome_dir')
+      api.assertions.assertTrue(api.cros_sdk.has_goma_config())
+      api.assertions.assertCountEqual(chroot.env.use_flags,
+                                      [common.UseFlag(flag='goma')])
 
       goma = api.cros_sdk.goma_config()
       api.assertions.assertEqual(goma.goma_dir, str(api.goma.goma_dir))
@@ -202,19 +200,6 @@ def GenTests(api):
                   ),
           }),
       api.step_data('link chroot in workspace.ensure workspace', retcode=1))
-
-  yield api.test(
-      'failed-restore-to-snapshot-test',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
-      api.step_data(
-          ('restoring chroot from snapshot.call chromite.api.SdkService/'
-           'RestoreSnapshot.call build API script'), retcode=1))
 
   yield api.test(
       'remaining-test-data', api.cros_sdk.is_chroot_usable([False, True]),
