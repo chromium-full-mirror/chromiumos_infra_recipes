@@ -457,7 +457,7 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
-  * [labpack:tests/tests](#recipes-labpack_tests_tests) (Python3 ✅)
+  * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) (Python3 ✅) &mdash; test_ensure_labpack.
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
@@ -6946,11 +6946,36 @@ Raises:
   matching predicate.
 ### *recipe_modules* / [labpack](/recipe_modules/labpack)
 
+[DEPS](/recipe_modules/labpack/__init__.py#5): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#8)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
+
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#24)(self):**
+
+Ensure labpack ensures that labpack exists.
+
+We create a cipd package area inside the cleanup directory,
+add labpack to the manifest file, and then ensure the resulting
+manifest.
+
+Args: No arguments
+
+Returns: Dictionary
+
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#12)(self):**
+
+Get the path of the cipd package.
+
+Get the location of a path inside cleanup, which is guaranteed to be
+cleaned between runs.
+
+See documentation below for details:
+
+https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12234,15 +12259,19 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe to enforce go/kernel-upstream-tracking-process
 
 &mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#32)(api: RecipeApi):**
-### *recipes* / [labpack:tests/tests](/recipe_modules/labpack/tests/tests.py)
+### *recipes* / [labpack:tests/test\_ensure\_labpack](/recipe_modules/labpack/tests/test_ensure_labpack.py)
 
-[DEPS](/recipe_modules/labpack/tests/tests.py#9): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/labpack/tests/test_ensure_labpack.py#16): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/labpack/tests/tests.py#12)(api):**
+test_ensure_labpack.py tests that the labpack recipe module reports
+success on the ensure_labpack step when the fake file .../labpack/labpack
+exists.
 
-RunSteps runs the whole test suite.
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_ensure_labpack.py#22)(api):**
+
+RunSteps runs ensure_labpack
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)
 
 [DEPS](/recipes/libchrome_uprev.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
