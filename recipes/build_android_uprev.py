@@ -14,10 +14,16 @@ for example:
 }
 """
 
+from typing import Generator
+
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/properties',
@@ -30,13 +36,14 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = AndroidUprevProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
     return DoRunSteps(api, properties, config)
 
 
-def DoRunSteps(api, properties, config):
+def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
+               config: BuilderConfig) -> None:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
@@ -73,7 +80,7 @@ def DoRunSteps(api, properties, config):
         raise
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   uprev_props = api.properties(android_package='android-package',
                                android_version='7123456')
 

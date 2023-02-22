@@ -17,6 +17,8 @@ This recipe is invoked as part of uprev_parallels_pin.
 """
 
 from collections import namedtuple
+from pathlib import Path
+from typing import Generator, Tuple
 
 from PB.recipes.chromeos.build_parallels_image import BuildParallelsImageProperties
 from PB.test_platform.taskstate import TaskState
@@ -25,6 +27,9 @@ from PB.testplans.generate_test_plan import BuildPayload
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'depot_tools/gsutil',
@@ -56,7 +61,7 @@ BuildPath = namedtuple('BuildPath', ['bucket', 'path'])
 VersionPin = namedtuple('VersionPin', ['version', 'test_image'])
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: BuildParallelsImageProperties) -> None:
   with api.step.nest('validate properties') as presentation:
     if not properties.build_gs_bucket:
       raise StepFailure('must set build_gs_bucket')
@@ -87,7 +92,9 @@ def RunSteps(api, properties):
     step.properties['image_sha256'] = sha256
 
 
-def build_vm_image(api, properties):
+def build_vm_image(
+    api: RecipeApi,
+    properties: BuildParallelsImageProperties) -> Tuple[str, int, str]:
   """Builds a new VM image for testing.
 
   Returns:
@@ -179,7 +186,8 @@ def build_vm_image(api, properties):
   return image_name, size, sha256
 
 
-def invoke_tast(api, test_artifacts_dir, build_payload, dest_path):
+def invoke_tast(api: RecipeApi, test_artifacts_dir: Path,
+                build_payload: BuildPayload, dest_path: Path) -> None:
   """Runs tast to build the new VM image.
 
   Args:
@@ -233,7 +241,7 @@ def invoke_tast(api, test_artifacts_dir, build_payload, dest_path):
               _TAST_NAME))
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   good_props = {
       '$chromeos/tast_results': {
           'archive_gs_bucket': 'chromeos-parallels-uprev-archive',

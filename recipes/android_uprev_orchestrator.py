@@ -14,9 +14,15 @@ file. The change will in turn trigger the PUpr generator to publish an actual
 Android uprev.
 """
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from typing import Generator
 
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+
+from PB.recipe_engine.result import RawResult
 from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 
@@ -52,14 +58,14 @@ _SYNC_PROJECTS = [
 ]
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> RawResult:
   with api.orch_menu.setup_orchestrator() as config:
     if config:
       DoRunSteps(api, properties)
     return api.orch_menu.create_recipe_result()
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
   android_package = properties.android_package
   if not android_package:
     raise StepFailure('android_package not set')
@@ -154,7 +160,7 @@ def DoRunSteps(api, properties):
   api.orch_menu.run_follow_on_orchestrator()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   data = api.orch_menu.standard_test_data()
 

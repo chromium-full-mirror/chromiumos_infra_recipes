@@ -5,8 +5,13 @@
 
 """Recipe for creating a new ChromeOS branch."""
 
+from typing import Generator
+
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.brancher import BrancherProperties
@@ -28,11 +33,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BrancherProperties
 
 
-def is_108_or_greater(source_version):
+def is_108_or_greater(source_version: str) -> bool:
   return int(source_version.split('-')[1].split('.')[0]) >= 15183
 
 
-def is_unsupported_rubik_build(api, source_version):
+def is_unsupported_rubik_build(api: RecipeApi, source_version: str) -> bool:
   # Support all builds associated with milestones >= 108.
   if is_108_or_greater(source_version):
     return False
@@ -46,7 +51,7 @@ def is_unsupported_rubik_build(api, source_version):
   return ret.retcode == 0
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
   with api.step.nest('validate properties'):
     if not properties.source_version:
       raise StepFailure("source_version required")
@@ -85,7 +90,7 @@ def RunSteps(api, properties):
       api.cros_release_config.update_config(branch_name)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   TEST_STDOUT = """
 2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...
 2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B

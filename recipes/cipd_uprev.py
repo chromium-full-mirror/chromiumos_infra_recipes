@@ -3,9 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Generator
+
 from PB.recipes.chromeos import cipd_uprev
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/cipd',
@@ -23,7 +28,8 @@ PROPERTIES = cipd_uprev.Properties
 
 _CI_RELEASE_VERSION_TAG = 'ci_release_version'
 
-def validate(api, instruction):
+
+def validate(api: RecipeApi, instruction: cipd_uprev.Instruction) -> None:
   """Validate instructions for uprevving a specific package.
 
   Args:
@@ -40,14 +46,17 @@ def validate(api, instruction):
       raise StepFailure('No new version provided for package %s' %
                         instruction.package_name)
 
-def get_current_instance(api, instruction):
+
+def get_current_instance(
+    api: RecipeApi,
+    instruction: cipd_uprev.Instruction) -> cipd_uprev.PackageInstance:
   """Get the current version of the ref.
 
   Args:
     * instruction (cipd_uprev.Instruction): A complete set of args for
       `cipd set-ref`.
   Returns:
-    cipd_uprev.Instance
+    cipd_uprev.PackageInstance
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
@@ -59,7 +68,9 @@ def get_current_instance(api, instruction):
     return cipd_uprev.PackageInstance(package_name=instruction.package_name,
                                       id=instance_id)
 
-def uprev_package(api, instruction, package_tags=None):
+
+def uprev_package(api: RecipeApi, instruction: cipd_uprev.Instruction,
+                  package_tags=None) -> cipd_uprev.PackageInstance:
   """Change CIPD ref of a package according to the instructions.
 
   Args:
@@ -67,7 +78,7 @@ def uprev_package(api, instruction, package_tags=None):
       `cipd set-ref`.
     * package_tags: Tags to add to the package.
   Returns:
-    cipd_uprev.Instance
+    cipd_uprev.PackageInstance
   Raises:
     A StepFailure if the CIPD tool call fails.
   """
@@ -92,7 +103,7 @@ def uprev_package(api, instruction, package_tags=None):
                                       id=instance_id)
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
   release_tag_time = api.time.utcnow().isoformat()
   with api.deferrals.raise_exceptions_at_end():
     for instruction in properties.config.instructions:
@@ -114,7 +125,7 @@ def RunSteps(api, properties):
           properties.response.new_versions.extend([package])
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'basic-without-release-tagging',
       api.properties(

@@ -8,7 +8,12 @@
 This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles."""
 
+from typing import Generator
+
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'build_menu',
@@ -18,7 +23,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
@@ -28,7 +33,7 @@ def RunSteps(api):
     api.build_menu.upload_artifacts(config)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.build_menu.test(
       'basic', api.post_check(post_process.MustRun, 'build images'),

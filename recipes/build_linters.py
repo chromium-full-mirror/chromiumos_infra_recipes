@@ -6,15 +6,23 @@
 """Recipe for linting CLs."""
 
 from collections import OrderedDict
+from typing import Any, Dict, Generator, List, Optional, Set
 import json
+
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 from PB.chromite.api.depgraph import ListRequest, SourcePath
 from PB.chromite.api.toolchain import LinterRequest, LinterFinding
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, SUCCESS
 from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from PB.recipe_engine.result import RawResult
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/step',
@@ -33,12 +41,14 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = BuildLintersProperties
 
 
-def _GetRelevantPatchsetsByLinter(api, properties):
+def _GetRelevantPatchsetsByLinter(
+    api: RecipeApi,
+    properties: BuildLintersProperties) -> Dict[str, Dict[PatchSet, List[str]]]:
   """Get relevant patchsets, grouped by the linter they require.
 
   Returns:
     A map of files with relevant extensions grouped by required linter and
-      patchset (Dict[linter:Text, Dict[patchset:PatchSet, files:List[Text]]]).
+      patchset.
   """
   with api.step.nest('get relevant patches') as presentation:
 
@@ -88,7 +98,10 @@ def _GetRelevantPatchsetsByLinter(api, properties):
     return relevant_patchsets
 
 
-def _GetSourcePaths(api, relevant_patchsets):
+def _GetSourcePaths(
+    api: RecipeApi,
+    relevant_patchsets: Dict[str, Dict[PatchSet,
+                                       List[str]]]) -> List[SourcePath]:
   """Returns Sourcepath protos with project paths prepended to filepaths."""
   source_paths = []
   for patch_set, filepaths in relevant_patchsets.items():
@@ -99,7 +112,10 @@ def _GetSourcePaths(api, relevant_patchsets):
   return source_paths
 
 
-def _GetAffectedPackages(api, linter, relevant_patchsets):
+def _GetAffectedPackages(
+    api: RecipeApi, linter: str,
+    relevant_patchsets: Dict[str, Dict[PatchSet,
+                                       List[str]]]) -> List[PackageInfo]:
   """Get a list of packages affected by changes to some list of files."""
   with api.step.nest('get affected packages for %s' % linter) as presentation:
     source_paths = _GetSourcePaths(api, relevant_patchsets)
@@ -115,10 +131,10 @@ def _GetAffectedPackages(api, linter, relevant_patchsets):
     return affected
 
 
-def _GetLints(api, linter, affected_packages):
+def _GetLints(api: RecipeApi, linter: str,
+              affected_packages: Set[PackageInfo]) -> List[LinterFinding]:
   """Emerges affected packages and retrieves generated lints."""
   with api.step.nest('linting packages with %s' % linter):
-
     linters = {
         'tidy': LinterFinding.Linters.CLANG_TIDY,
         'clippy': LinterFinding.Linters.CARGO_CLIPPY,
@@ -185,7 +201,7 @@ def _GetLints(api, linter, affected_packages):
         test_output_data=test_data).findings
 
 
-def _WriteComments(api, findings):
+def _WriteComments(api: RecipeApi, findings: List[LinterFinding]) -> int:
   """Write comments with Tricium for linter findings."""
   with api.step.nest('write comments for linter findings') as presentation:
     comment_count = 0
@@ -212,7 +228,8 @@ def _WriteComments(api, findings):
   return comment_count
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: BuildLintersProperties) -> Optional[RawResult]:
   relevant_patchsets_by_linter = _GetRelevantPatchsetsByLinter(api, properties)
   if not any(patches for patches in relevant_patchsets_by_linter.values()):
     return RawResult(status=SUCCESS,
@@ -225,10 +242,14 @@ def RunSteps(api, properties):
     #   prevent problems with dependencies not being in sync (see b/240481231)
     # Because the bug referenced in 2) is more common, we should cherry pick.
     with api.build_menu.setup_workspace_and_chroot(cherry_pick_changes=True):
-      return DoRunSteps(api, config, relevant_patchsets_by_linter, properties)
+      return DoRunSteps(api, config, relevant_patchsets_by_linter)
 
 
-def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):  # pylint: disable=inconsistent-return-statements
+def DoRunSteps(  # pylint: disable=inconsistent-return-statements
+    api: RecipeApi, config: BuilderConfig,
+    relevant_patchsets_by_linter: Dict[str,
+                                       Dict[PatchSet,
+                                            List[str]]]) -> Optional[RawResult]:
   api.build_menu.setup_sysroot_and_determine_relevance()
   try:
     all_linter_output = []
@@ -262,7 +283,7 @@ def DoRunSteps(api, config, relevant_patchsets_by_linter, _properties):  # pylin
     api.build_menu.upload_artifacts(config)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   changes = [
       GerritChange(host='chromium-review.googlesource.com', change=1,
                    project='fake-project', patchset=1),
@@ -310,7 +331,7 @@ def GenTests(api):
            upstream='refs/heads/fake-branch')
   ]
 
-  def BuildTestArgs(**kwargs):
+  def BuildTestArgs(**kwargs: Any) -> Dict[str, Any]:
     """Generate kwargs for a test build."""
     kwargs.setdefault('cq', True)
     kwargs.setdefault('build_target', 'atlas')

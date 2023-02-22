@@ -27,11 +27,17 @@ For more details on the input properties, see cl_factory.proto.
 """
 
 import re
+from typing import Generator, List, Optional, Tuple
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.cl_factory import ClFactoryProperties
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 PROPERTIES = ClFactoryProperties
 
@@ -60,7 +66,7 @@ _CHROMIOUS_CONFIG_PROJECT = 'chromiumos/config'
 _CHANGE_ID_REGEX = re.compile(r'^Change-Id: ', re.MULTILINE)
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: ClFactoryProperties) -> None:
   _validate_inputs(properties)
   # Note that gerrit_changes is allowed to be empty.
   gerrit_changes = api.buildbucket.build.input.gerrit_changes
@@ -131,7 +137,7 @@ def RunSteps(api, properties):
             pres.logs['gerrit_commands'] = gerrit_commands
 
 
-def _validate_inputs(properties):
+def _validate_inputs(properties: ClFactoryProperties) -> None:
   """Validates the inputs to this recipe.
 
   Validates that the inputs to this recipe. An exception is thrown if a problem
@@ -149,20 +155,22 @@ def _validate_inputs(properties):
                      'commit messages')
 
 
-def _make_changes(api, cl_infos, gerrit_changes, properties):
+def _make_changes(
+    api: RecipeApi, cl_infos: List[ProjectInfo],
+    gerrit_changes: List[GerritChange],
+    properties: ClFactoryProperties) -> Tuple[List[GerritChange], List[str]]:
   """Creates and returns the generated change lists and their diffs
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    cl_infos (List[ProjectInfo]}: List of infos for the projects CLs are being
+    api: See RunSteps documentation.
+    cl_infos: List of infos for the projects CLs are being
       made in. Corresponds to that found via repo_regexes.
-    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe,
+    gerrit_changes: gerrit change inputs to the recipe,
       if any.
-    properties (ClFactoryProperties): Input properties to the recipe.
+    properties: Input properties to the recipe.
 
   Returns:
-    (List([GerritChange]), List([str])) tuple of generated changes and the diffs
-      for those changes
+    a tuple of generated changes and the diffs for those changes
   """
   diffs = []
   changes = []
@@ -185,21 +193,20 @@ def _make_changes(api, cl_infos, gerrit_changes, properties):
   return changes, diffs
 
 
-def _make_cl(api, info, properties, gerrit_changes):
+def _make_cl(api: RecipeApi, info: ProjectInfo, properties: ClFactoryProperties,
+             gerrit_changes: List[GerritChange]) -> Tuple[GerritChange, str]:
   """Makes and returns a generated gerrit change and their diffs.
 
   Makes and returns a generated gerrit change, assumes cwd is the project path.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    info (ProjectInfo): project info of project making a change list for.
-    properties (ClFactoryProperties): recipe input properties.
-    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe,
-      if any.
+    api: See RunSteps documentation.
+    info: project info of project making a change list for.
+    properties: recipe input properties.
+    gerrit_changes: gerrit change inputs to the recipe, if any.
 
   Returns:
-    (List([GerritChange]), List([str])) tuple of generated changes and the diffs
-      for those changes
+    a tuple of generated changes and the diff for those changes
   """
   project_path = api.context.cwd
   commit_message = _make_commit_message(api, info, gerrit_changes, properties)
@@ -217,15 +224,16 @@ def _make_cl(api, info, properties, gerrit_changes):
   return cl, diff
 
 
-def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
+def _set_source_cq_depends(api: RecipeApi, changes: List[GerritChange],
+                           gc_infos: List[ProjectInfo],
+                           gerrit_changes: List[GerritChange]) -> None:
   """Sets Cq-Depend on the input gerrit changes.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    changes (List[GerritChange]): List of generated gerrit changes.
-    gc_infos (List[ProjectInfo]): List of infos for the input gerrit changes.
-    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe,
-      if any.
+    api: See RunSteps documentation.
+    changes: List of generated gerrit changes.
+    gc_infos: List of infos for the input gerrit changes.
+    gerrit_changes: gerrit change inputs to the recipe, if any.
   """
   cq_depend = api.cros_cq_depends.get_cq_depend(changes)
   replacement = cq_depend + '\nChange-Id: '
@@ -247,18 +255,20 @@ def _set_source_cq_depends(api, changes, gc_infos, gerrit_changes):
         api.gerrit.set_change_description(change, description)
 
 
-def _determine_sync_projects(api, gc_infos, cl_infos, properties):
+def _determine_sync_projects(api: RecipeApi, gc_infos: List[ProjectInfo],
+                             cl_infos: List[ProjectInfo],
+                             properties: ClFactoryProperties) -> List[str]:
   """Determines projects needing to be synced and returns them.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    gc_infos (List[ProjectInfo]): List of infos for the input gerrit changes.
-    cl_infos (List[ProjectInfo]}: List of infos for the projects CLs are being
+    api: See RunSteps documentation.
+    gc_infos: List of infos for the input gerrit changes.
+    cl_infos: List of infos for the projects CLs are being
       made in. Corresponds to that found via repo_regexes.
-    properties (ClFactoryProperties): Input properties to the recipe.
+    properties: Input properties to the recipe.
 
   Returns:
-    List([str]) of projects to sync, returning an empty list to sync all.
+    List of projects to sync, returning an empty list to sync all.
   """
   if properties.full_repo_sync:
     return []
@@ -273,12 +283,12 @@ def _determine_sync_projects(api, gc_infos, cl_infos, properties):
   return sorted(list(projects))
 
 
-def _replace_strings(api, properties):
+def _replace_strings(api: RecipeApi, properties: ClFactoryProperties) -> None:
   """Executes string replacements with cwd repo.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    properties (ClFactoryProperties): recipe input properties.
+    api: See RunSteps documentation.
+    properties: recipe input properties.
   """
   with api.step.nest('replace_strings'):
     for rs in properties.replace_strings:
@@ -291,7 +301,7 @@ def _replace_strings(api, properties):
         api.file.write_raw('write {}'.format(filename), filename, str(filedata))
 
 
-def _gen_config(api):
+def _gen_config(api: RecipeApi) -> None:
   """Executes gen_config within cwd device configuration repo.
 
   Executes gen_config within the cwd device configuration repo. If gen_config or
@@ -301,7 +311,7 @@ def _gen_config(api):
   will of course hit it.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
+    api: See RunSteps documentation.
   """
   gen_config_path = api.context.cwd.join('config', 'bin', 'gen_config')
   config_path = api.context.cwd.join('config.star')
@@ -317,18 +327,19 @@ def _gen_config(api):
       api.step('run gen_config config.star', [gen_config_path, config_path])
 
 
-def _make_commit_message(api, info, gerrit_changes, properties):
+def _make_commit_message(api: RecipeApi, info: ProjectInfo,
+                         gerrit_changes: List[GerritChange],
+                         properties: ClFactoryProperties) -> str:
   """Makes the commit message for a generated gerrit change.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    info (ProjectInfo): project info of project making a commit message for.
-    gerrit_changes (List[GerritChange]): gerrit change inputs to the recipe,
-      if any.
-    properties (ClFactoryProperties): Input properties to the recipe.
+    api: See RunSteps documentation.
+    info: project info of project making a commit message for.
+    gerrit_changes: gerrit change inputs to the recipe, if any.
+    properties: Input properties to the recipe.
 
   Returns:
-    str commit message.
+    commit message.
   """
   replacements = {
       'project': info.name,
@@ -348,7 +359,7 @@ def _make_commit_message(api, info, gerrit_changes, properties):
   return message
 
 
-def _make_unified_diff(changes, diffs):
+def _make_unified_diff(changes: List[GerritChange], diffs: List[str]) -> str:
   """Makes a unified, single string, concatenation of all the diffs.
 
   Combines the given diffs into a single string with a small header that shows
@@ -357,11 +368,11 @@ def _make_unified_diff(changes, diffs):
   overall approval decision without visiting each change in gerrit.
 
   Args:
-    changes (List[GerritChange]): List of generated gerrit changes.
-    diffs (List[str]): List of diffs for the generated gerrit changes.
+    changes: List of generated gerrit changes.
+    diffs: List of diffs for the generated gerrit changes.
 
   Returns:
-    str unified diff.
+    unified diff.
   """
   unified_diff = ''
   for cl, diff in zip(changes, diffs):
@@ -378,16 +389,17 @@ _ABANDON_TEMPLATE = (
     'gerrit abandon `./gerrit {} --raw search "{} status:open {}"`')
 
 
-def _make_gerrit_commands(api, hashtags, changes):
+def _make_gerrit_commands(api: RecipeApi, hashtags: List[str],
+                          changes: List[GerritChange]) -> Optional[str]:
   """Returns a the gerrit commands to review, verify, commit the changes.
 
   Returns a string containing the gerrit command line commands that can be used
   to review, verify, and commit the changes.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    hashtags (List[str]): List of hashtags applied to generated gerrit changes.
-    changes (List[GerritChange]): List of generated gerrit changes.
+    api: See RunSteps documentation.
+    hashtags: List of hashtags applied to generated gerrit changes.
+    changes: List of generated gerrit changes.
 
   Returns:
     str of approval commands suitable for presenting to the user, or None
@@ -422,15 +434,15 @@ def _make_gerrit_commands(api, hashtags, changes):
   return commands
 
 
-def _has_changes_on_host(changes, host):
+def _has_changes_on_host(changes: List[GerritChange], host: str) -> bool:
   """Returns whether the changes have a change on host.
 
   Returns whether or not the list of changes have a change that is on the
   give gerrit host.
 
   Args:
-    changes (List[GerritChange]): List of generated gerrit changes.
-    host (str): Host to check.
+    changes: List of generated gerrit changes.
+    host: Host to check.
 
   Returns:
     bool whether or not the changes have a change on host.
@@ -441,7 +453,7 @@ def _has_changes_on_host(changes, host):
   return False
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   message_template = """Regenerate audio config in project {project}.
 
 Regenerate the audio config in project {project}

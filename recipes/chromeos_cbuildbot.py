@@ -4,6 +4,7 @@
 
 import json
 import re
+from typing import Generator
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -11,7 +12,10 @@ from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
 
 from recipe_engine.recipe_api import AggregatedStepFailure
 from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/legacy_annotation',
@@ -30,7 +34,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = ChromeosCbuildbotProperties
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: ChromeosCbuildbotProperties) -> result_pb2.RawResult:
   result = result_pb2.RawResult(status=common_pb2.SUCCESS,)
 
   try:
@@ -54,7 +59,7 @@ def RunSteps(api, properties):
   return result
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi, properties: ChromeosCbuildbotProperties) -> None:
   # Copy input properties to output properties. cbuildbot makes some
   # assumptions on the presence of input properties in output properties.
   # See b/243052729 for context.
@@ -96,7 +101,7 @@ def DoRunSteps(api, properties):
     api.chromite.run()
 
 
-def MakeSummaryMarkdown(api, failure):
+def MakeSummaryMarkdown(api: RecipeTestApi, failure: StepFailure) -> str:
   lines = []
   lines.append(failure.reason)
 
@@ -112,7 +117,7 @@ def MakeSummaryMarkdown(api, failure):
   return '\n\n'.join(lines)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   common_properties = {
       'buildername': 'Test',

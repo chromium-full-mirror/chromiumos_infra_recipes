@@ -5,9 +5,15 @@
 
 """Recipe that schedules child builders and watches for failures."""
 
+from typing import Generator
+
 from recipe_engine.post_process import PropertyEquals
 from recipe_engine.post_process import StatusFailure
 from recipe_engine.post_process import StatusSuccess
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+from PB.recipe_engine import result as result_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -26,7 +32,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.bot_cost.build_cost_context():
     api.cros_source.configure_builder()
     branch = api.src_state.gitiles_commit.ref
@@ -51,7 +57,7 @@ def RunSteps(api):
     return api.orch_menu.create_recipe_result()
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   test_base = 'firmware-board-5555'
   test_branch = '{}.B'.format(test_base)

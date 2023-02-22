@@ -5,11 +5,17 @@
 
 """Recipe for building a BuildTarget image for Postsubmit."""
 
+from typing import Generator, Optional
+
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -24,7 +30,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 
   if api.cros_infra_config.is_staging:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4,
@@ -35,7 +41,7 @@ def RunSteps(api):
     return DoRunSteps(api, config)
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
@@ -73,7 +79,7 @@ def DoRunSteps(api, config):
   return None
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Normal postsubmit build.
   yield api.build_menu.test(

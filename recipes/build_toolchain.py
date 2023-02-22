@@ -6,6 +6,7 @@
 """Builds and uploads the Chromium OS toolchain."""
 
 import re
+from typing import Any, Dict, Generator
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import CreateBinhostCLsRequest
@@ -14,7 +15,10 @@ from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.build_toolchain import BuildToolchainProperties
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     "depot_tools/gsutil",
@@ -42,7 +46,7 @@ SDK_TARBALL_SUFFIX = ".tar.xz"
 VERSION_PREFIX = "build_toolchain"
 
 
-def _insert_before_change_id(change, description, text):
+def _insert_before_change_id(change: str, description: str, text: str) -> str:
   """Insert text before the Change-Id in a change's description.
 
   This effectively inserts text in description and returns the
@@ -67,7 +71,7 @@ def _insert_before_change_id(change, description, text):
   return description[:pos] + text + description[pos:]
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
   with api.step.nest("check properties"):
     if not properties.archive_gs_bucket:
       raise StepFailure("archive_gs_bucket must be set")
@@ -231,7 +235,7 @@ def RunSteps(api, properties):
       api.gerrit.set_change_description(gerrit_change, description)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   single_change_with_trybots = GerritChange(
       change=101,
       project="cromiumos/overlays/chromiumos-overlay",
@@ -337,7 +341,7 @@ def GenTests(api):
       },
   }
 
-  def builder_args(**kwargs):
+  def builder_args(**kwargs: Any) -> Dict[str, Any]:
     """Generate a test build."""
     kwargs.setdefault("cq", True)
     kwargs.setdefault("builder", "chromeos-sdk-cq")

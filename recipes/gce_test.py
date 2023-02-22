@@ -4,7 +4,12 @@
 # found in the LICENSE file.
 
 """ An experimental recipe for running GCE tests."""
+from typing import Generator
 
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.gce_test import GceTestProperties
 
 DEPS = [
@@ -31,7 +36,8 @@ _IMAGE_LICENSES = [
 ]
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi,
+             properties: GceTestProperties) -> result_pb2.RawResult:
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
   api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
 
@@ -89,7 +95,7 @@ def RunSteps(api, properties):
     api.gcloud.delete_image(image)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   props = api.properties(
       build_target=dict(name='board'),
       build_payload=dict(

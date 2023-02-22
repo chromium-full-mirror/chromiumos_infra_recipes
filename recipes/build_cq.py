@@ -5,13 +5,18 @@
 
 """Recipe for building a BuildTarget image for CQ."""
 
+from typing import Generator, Optional
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -43,7 +48,7 @@ GERRIT_CHANGE = GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)
 EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
 
   if api.cros_infra_config.is_staging:
@@ -69,7 +74,7 @@ def RunSteps(api):
               api.buildbucket.build_url(build_id=parent[0])))
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   if env_info.pointless:
@@ -169,7 +174,7 @@ def DoRunSteps(api, config):
   return None
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(

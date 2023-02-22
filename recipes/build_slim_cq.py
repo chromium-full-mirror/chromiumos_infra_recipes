@@ -5,11 +5,18 @@
 
 """Recipe for building and testing a BuildTarget's packages."""
 
+from typing import Generator, List, Optional
+
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -28,7 +35,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api):
+def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
 
   if api.cros_infra_config.is_staging:
@@ -54,7 +61,7 @@ def RunSteps(api):
               api.buildbucket.build_url(build_id=parent[0])))
 
 
-def DoRunSteps(api, config):
+def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   if env_info.pointless:
@@ -104,16 +111,17 @@ def DoRunSteps(api, config):
   return None
 
 
-def _should_install_all_packages(api, config, packages):
+def _should_install_all_packages(api: RecipeApi, config: BuilderConfig,
+                                 packages: List[PackageInfo]) -> bool:
   """Determine if all packages need to be installed.
 
   All packages need to be installed on retries or if Portage is unable to
   calculate the list of packages to install (b/188214351).
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    config (BuilderConfig): The Builder Config for the build.
-    packages (list[PackageInfo]): List of packages to install.
+    api: See RunSteps documentation.
+    config: The Builder Config for the build.
+    packages: List of packages to install.
 
   Returns:
     Boolean whether the build needs to install all packages
@@ -143,7 +151,7 @@ def _should_install_all_packages(api, config, packages):
       return True
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Slim CQ build, with one gerrit_change.
   yield api.build_menu.test(

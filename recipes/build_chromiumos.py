@@ -5,15 +5,20 @@
 
 """Recipe for building public ChromiumOS images."""
 
+from typing import Generator
 from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_chromiumos import BuildChromiumosProperties
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/properties',
@@ -34,7 +39,7 @@ PROPERTIES = BuildChromiumosProperties
 StepDetails = BuildReport.StepDetails
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: BuildChromiumosProperties) -> None:
   api.easy.log_parent_step()
 
   with api.step.nest('check buildspec property'):
@@ -56,7 +61,8 @@ def RunSteps(api, properties):
         return DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api, config, properties):
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               properties: BuildChromiumosProperties) -> None:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   # After the sysroot is setup we have the package versions determined.
   api.build_reporting.publish_versions(api.build_menu.target_versions)
@@ -104,7 +110,7 @@ def DoRunSteps(api, config, properties):
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Normal public build.
   yield api.build_menu.test(
       'public-build',

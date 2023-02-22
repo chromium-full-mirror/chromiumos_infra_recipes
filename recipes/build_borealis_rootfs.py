@@ -6,9 +6,13 @@
 """Recipe for building a Borealis rootfs image."""
 
 import re
+from typing import Generator
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 from PB.recipes.chromeos.build_borealis_rootfs import (
     BuildBorealisRootfsProperties)
 from RECIPE_MODULES.chromeos.gerrit.api import Label
@@ -38,12 +42,12 @@ PROPERTIES = BuildBorealisRootfsProperties
 _PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 
 
-def _gs_path(bucket, path):
+def _gs_path(bucket: str, path: str) -> str:
   """Returns the full gs:// path for bucket and path."""
   return 'gs://' + bucket + '/' + path
 
 
-def RunSteps(api, properties):
+def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
   with api.step.nest('validate properties') as presentation:
     if not properties.version_file:
       raise StepFailure('must set version_file')
@@ -71,7 +75,8 @@ def RunSteps(api, properties):
     return DoRunSteps(api, properties)
 
 
-def DoRunSteps(api, properties):
+def DoRunSteps(api: RecipeApi,
+               properties: BuildBorealisRootfsProperties) -> None:
   chroot_path = api.cros_source.workspace_path
   borealis_path = chroot_path.join('src/platform/borealis')
   with api.context(cwd=borealis_path), api.depot_tools.on_path():
@@ -144,7 +149,7 @@ def DoRunSteps(api, properties):
           presentation.links['CL'] = api.gerrit.parse_gerrit_change_url(change)
 
 
-def GenTests(api):
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   good_props = {
       'version_file': ('src/private-overlays/chromeos-overlay/chromeos-base/'
                        'borealis-dlc/VERSION_PIN'),
