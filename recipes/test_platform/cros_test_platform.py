@@ -294,7 +294,11 @@ def _reconstruct_build_target(r):
   dep = None
   for dep in r.params.software_dependencies:
     if dep.WhichOneof('dep') == 'chromeos_build':
-      dep = '-'.join(dep.chromeos_build.split('/')[0].split('-')[:-1])
+      dep_parts = dep.chromeos_build.split('/')[0].split('-')[:-1]
+      # Strip prefixes that aren't included in build_target
+      if dep_parts[0] == "staging" or dep_parts[0] == "dev":
+        dep_parts = dep_parts[1:]
+      dep = '-'.join(dep_parts)
       break
   return dep
 
@@ -1253,7 +1257,7 @@ def _test_scheduling():
 def _default_software_dependencies():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build="foo-build-target-postsubmit/R108-33333.0.0-112318231231",
+          chromeos_build="staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231",
       ),
       Request.Params.SoftwareDependency(
           ro_firmware_build="single-ro-firmware",
