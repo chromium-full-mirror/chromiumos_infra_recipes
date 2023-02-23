@@ -66,6 +66,7 @@ DEPS = [
     'dut_interface',
     'easy',
     'gcloud',
+    'labpack',
     'phosphorus',
     'result_flow',
 ]
@@ -1837,6 +1838,14 @@ def RunSteps(api, properties):
     summarize_results_from_ctr_results(api, result)
   else:
     result = execution_steps_with_phosphorus(api, properties)
+    # The labapck code path is relatively new and not on the critical path for test_runner.py yet.
+    # Exceptions should NOT be allowed to propagate out of the next block and cause the test to fail.
+    try:
+      # Ensure the existence of labpack, but don't do anything else.
+      # The only thing that this does is download a CIPD package.
+      _ = api.labpack.ensure_labpack()
+    except Exception:  # pragma: nocover #pylint: disable=broad-except
+      pass
     summarize_results_from_phosphorus_results(api, result)
 
   if result.has_any_failures():
