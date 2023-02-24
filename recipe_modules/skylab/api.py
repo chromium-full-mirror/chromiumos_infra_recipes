@@ -283,12 +283,10 @@ class SkylabApi(recipe_api.RecipeApi):
   def _enable_test_retries(self, req):
     """Enable test retries within suites.
 
-    The values here are in-line with what LCQ currently does.
-
     Args:
       params: A request.Request object.
     """
-    req.params.retry.max = 5
+    req.params.retry.max = 30
     req.params.retry.allow = True
 
   def wait_on_suites(self, tasks, timeout):

@@ -8503,7 +8503,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module for issuing commands to Skylab
 
-&mdash; **def [get\_previous\_results](/recipe_modules/skylab/api.py#333)(self, task_ids: List[str], unit_hw_tests: List[structs.UnitHwTest]):**
+&mdash; **def [get\_previous\_results](/recipe_modules/skylab/api.py#331)(self, task_ids: List[str], unit_hw_tests: List[structs.UnitHwTest]):**
 
 Get the results from the previous tasks with the specified task_ids.
 
@@ -8554,7 +8554,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#294)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#292)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
