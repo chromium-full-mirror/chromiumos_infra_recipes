@@ -11,6 +11,7 @@ DEPS = [
     'cros_infra_config',
     'easy',
     'naming',
+    'rdb_util',
     'skylab',
     'urls',
 ]

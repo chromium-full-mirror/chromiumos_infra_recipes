@@ -38,7 +38,20 @@ def RunSteps(api):
       {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
   suite_name = 'betty.tast_vm.tast_vm_default'
   build.input.properties.update({'name': suite_name})
-  vm_builds = [build]
+  build2 = api.exonerate.test_api.fake_vm_build()
+  failed_test_case_result3 = ExecuteResponse.TaskResult.TestCaseResult(
+      name='arc.Boot', verdict=TaskState.VERDICT_FAILED,
+      human_readable_summary='Unexonerable message')
+  failed_test_case_dict3 = json_format.MessageToDict(failed_test_case_result3)
+  build2.output.properties.update(
+      {'failed_test_cases': [failed_test_case_dict3]})
+  build2.input.properties.update({
+      'buildTarget':
+          json_format.MessageToDict(BuildTarget(name='amd64-generic'))
+  })
+  suite_name = 'amd64-generic.tast_vm.tast_vm_default'
+  build2.input.properties.update({'name': suite_name})
+  vm_builds = [build, build2]
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])

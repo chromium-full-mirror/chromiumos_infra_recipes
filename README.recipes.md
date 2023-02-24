@@ -92,6 +92,7 @@
   * [pupr](#recipe_modules-pupr) (Python3 ✅) &mdash; APIs for PUpr.
   * [pupr_gerrit_interface](#recipe_modules-pupr_gerrit_interface) (Python3 ✅) &mdash; Module to interface with Gerrit for PUpr (Parallel Uprevs).
   * [pupr_local_uprev](#recipe_modules-pupr_local_uprev) (Python3 ✅) &mdash; Module to create uprevs on the local checkout for PUpr (Parallel Uprevs).
+  * [rdb_util](#recipe_modules-rdb_util) (Python3 ✅)
   * [recipe_analyze](#recipe_modules-recipe_analyze) (Python3 ✅) &mdash; API for calling 'recipes.
   * [remoteexec](#recipe_modules-remoteexec) (Python3 ✅) &mdash; API for working with re-client for remote execution.
   * [repo](#recipe_modules-repo) (Python3 ✅) &mdash; API for working with the 'repo' VCS tool.
@@ -377,7 +378,6 @@
   * [exonerate:examples/non_critical_hwtests](#recipes-exonerate_examples_non_critical_hwtests) (Python3 ✅)
   * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests) (Python3 ✅)
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
-  * [exonerate:examples/vmtests_dry_run](#recipes-exonerate_examples_vmtests_dry_run) (Python3 ✅)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results) (Python3 ✅)
   * [failures:examples/additional_test_not_run_critical_cq](#recipes-failures_examples_additional_test_not_run_critical_cq) (Python3 ✅)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures) (Python3 ✅)
@@ -519,6 +519,7 @@
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [pupr_local_uprev:tests/uprev_sdk](#recipes-pupr_local_uprev_tests_uprev_sdk) (Python3 ✅) &mdash; Verify that uprev_sdk() creates local uprev commits as expected.
   * [pvs_upload_mappings](#recipes-pvs_upload_mappings) (Python3 ✅) &mdash; Recipe for uploading mappings to the PVS database.
+  * [rdb_util:examples/get_vm_suite](#recipes-rdb_util_examples_get_vm_suite) (Python3 ✅)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) (Python3 ✅) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full) (Python3 ✅)
@@ -5012,18 +5013,18 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_dry\_run](/recipe_modules/exonerate/api.py#454)(self):**
+&mdash; **def [auto\_exoneration\_dry\_run](/recipe_modules/exonerate/api.py#451)(self):**
 
 Skeleton of a function that will run Automated Exoneration dry-run.
     
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#257)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#256)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -5034,7 +5035,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#302)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#301)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -5045,19 +5046,20 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#330)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#327)(self, all_test_cases, build_target, suite):**
 
 Exonerates VM test cases based on configs.
 
 Args:
-  all_test_cases([Dict with predefined keys]): VM test_cases to be
-    conditionally exonerated.
+  all_test_cases([Dict with predefined keys]): Failed VM test_cases
+    to be conditionally exonerated.
   build_target(str): build_target on which the test was executed.
+  suite(str): suite in which the test was executed.
 
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#368)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#365)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5068,7 +5070,7 @@ Returns:
   [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#46)(self, mock_data=None):**
+&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#47)(self, mock_data=None):**
 
 Download config file and return the extracted config proto.
 
@@ -5077,21 +5079,21 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#437)(self):**
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#434)(self):**
 
 Return markdown style info about suites that were exonerated.
 
 Returns: str in markdown style.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#63)(self, test_name):**
+&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#64)(self, test_name):**
 
 Return test_name without the tast prefix.
 
-&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#41)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#42)(self):**
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#420)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#418)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5100,7 +5102,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#480)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#477)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5111,7 +5113,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#518)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#515)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5122,11 +5124,11 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if the result itself is a success.
 
-&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#69)(self, mock_data=None):**
+&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#70)(self, mock_data=None):**
 
 Load configs from binary/json files.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#117)(self):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#116)(self):**
 
 Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
@@ -8042,6 +8044,24 @@ Returns:
 &emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_local_uprev/api.py#48)(self):**
 
 Return the checkout path where the build is processed.
+### *recipe_modules* / [rdb\_util](/recipe_modules/rdb_util)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [RDBUtilApi](/recipe_modules/rdb_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for util functions associated with ResultDB.
+
+&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#14)(self, composite_name: str):**
+
+Get the name of the suite of a VM/GCE run from the composite name.
+
+Args:
+  composite_name: Composite name of the builder.
+    eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5'
+
+Returns:
+  A string of just the suite name registered in RDB.
 ### *recipe_modules* / [recipe\_analyze](/recipe_modules/recipe_analyze)
 
 [DEPS](/recipe_modules/recipe_analyze/__init__.py#5): [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8986,19 +9006,19 @@ Returns:
    empty and a dict mapping a task kind with the number of successes.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [rdb\_util](#recipe_modules-rdb_util), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#25)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#24)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#44)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#43)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -9009,7 +9029,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#187)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#186)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -9022,7 +9042,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#162)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#161)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -9032,7 +9052,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#146)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#145)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -9042,7 +9062,7 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#69)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#68)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -9059,7 +9079,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#276)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#275)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -9070,7 +9090,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#225)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#224)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -9078,14 +9098,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#250)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#249)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#491)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#483)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
 
 Upload the test results to ResultDB.
 
@@ -11601,13 +11621,6 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_cannot_exonerate.py#25)(api):**
-### *recipes* / [exonerate:examples/vmtests\_dry\_run](/recipe_modules/exonerate/examples/vmtests_dry_run.py)
-
-[DEPS](/recipe_modules/exonerate/examples/vmtests_dry_run.py#18): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_dry_run.py#27)(api):**
 ### *recipes* / [exonerate:examples/vmtests\_missing\_results](/recipe_modules/exonerate/examples/vmtests_missing_results.py)
 
 [DEPS](/recipe_modules/exonerate/examples/vmtests_missing_results.py#16): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12793,6 +12806,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe for uploading mappings to the PVS database.
 
 &mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#16)(api):**
+### *recipes* / [rdb\_util:examples/get\_vm\_suite](/recipe_modules/rdb_util/examples/get_vm_suite.py)
+
+[DEPS](/recipe_modules/rdb_util/examples/get_vm_suite.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_vm_suite.py#14)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]

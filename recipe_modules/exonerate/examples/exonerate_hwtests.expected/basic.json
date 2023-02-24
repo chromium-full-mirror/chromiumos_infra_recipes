@@ -38,6 +38,7 @@
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test2 on build_target_name@@@",
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on build_target_name@@@",
@@ -58,6 +59,7 @@
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
@@ -72,6 +74,7 @@
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
@@ -86,6 +89,7 @@
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
@@ -100,6 +104,7 @@
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
       "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
       "@@@STEP_LOG_END@configs@@@",
       "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
       "@@@STEP_LOG_END@exoneration logs@@@"
@@ -116,7 +121,7 @@
     "cmd": [],
     "name": "Automated Exoneration Dry-run",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name'), FailedTest(name='test2', board='target', build_target='build_target_name'), FailedTest(name='test3', board='target', build_target='build_target_name'), FailedTest(name='test5', board='target', build_target='build_target_name')]@@@",
+      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name', suite='target.hw.bvt-cq'), FailedTest(name='test2', board='target', build_target='build_target_name', suite='target.hw.bvt-cq'), FailedTest(name='test3', board='target', build_target='build_target_name', suite='target.hw.bvt-cq'), FailedTest(name='test5', board='target', build_target='build_target_name', suite='target.hw.bvt-cq'), FailedTest(name='test6', board='target', build_target='build_target_name', suite='target.hw.bvt-cq')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@"
     ]
   },

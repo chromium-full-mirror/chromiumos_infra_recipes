@@ -27,6 +27,8 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
                         bug_ids=["123456"]),
         TestDisablement(name="test4", dut_criteria=[bt_criteria],
                         bug_ids=["123456"]),
+        TestDisablement(name="test6", dut_criteria=[betty_criteria],
+                        bug_ids=["123456"]),
         TestDisablement(name="arc.Boot", dut_criteria=[betty_criteria],
                         bug_ids=["123456"]),
     ]

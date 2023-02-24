@@ -19,6 +19,7 @@ DEPS = [
     'cros_tags',
     'easy',
     'failures',
+    'rdb_util',
     'util',
 ]
 

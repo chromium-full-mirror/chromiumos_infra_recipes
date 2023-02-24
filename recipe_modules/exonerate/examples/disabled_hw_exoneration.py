@@ -69,12 +69,3 @@ def GenTests(api):
       api.properties(**{
           '$chromeos/exonerate': ExonerateProperties(enable_exoneration=False)
       }), api.post_check(post_process.DoesNotRun, 'exonerate hw tests'))
-
-  # Dry runs implicitly disable exoneration.
-  yield api.test(
-      'dry-run',
-      api.properties(
-          **{
-              '$chromeos/exonerate':
-                  ExonerateProperties(enable_exoneration=True, dry_run=True)
-          }))

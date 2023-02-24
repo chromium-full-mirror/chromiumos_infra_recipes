@@ -43,9 +43,12 @@ def RunSteps(api):
           name='tast', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='3 failures: test2, test3, tast.test4'),
   ]
-  failing_unexonerable_test_case = [
+  failing_unexonerable_test_cases = [
       ExecuteResponse.TaskResult.TestCaseResult(
           name='test5', verdict=TaskState.VERDICT_FAILED,
+          human_readable_summary='meh'),
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='test6', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='meh'),
   ]
   failing_incomplete_test_case = [
@@ -68,7 +71,7 @@ def RunSteps(api):
                                  test_cases=passing_test_cases),
       ExecuteResponse.TaskResult(name='critical-flaked-shard-0',
                                  state=fail_state, attempt=1,
-                                 test_cases=(failing_unexonerable_test_case)),
+                                 test_cases=(failing_unexonerable_test_cases)),
   ]
   hw_test_failures = [
       api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
@@ -106,7 +109,7 @@ def RunSteps(api):
                                  test_cases=passing_test_cases),
       ExecuteResponse.TaskResult(
           name='suite2', state=fail_state,
-          test_cases=(passing_test_cases + failing_unexonerable_test_case))
+          test_cases=(passing_test_cases + failing_unexonerable_test_cases))
   ]
   hw_test_failures = [
       api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
