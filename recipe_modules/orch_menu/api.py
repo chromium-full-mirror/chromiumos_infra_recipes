@@ -373,8 +373,11 @@ class OrchMenuApi(RecipeApi):
       self.add_child_info_to_output_property()
 
     results = self.m.failures.Results(
-        failures=self.builds_status.failures,
-        successes={'build': len(self.builds_status.completed_builds)})
+        failures=self.builds_status.failures, successes={
+            'build':
+                self._count_successful_critical_builds(
+                    self.builds_status.completed_builds)
+        })
 
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)
@@ -386,6 +389,12 @@ class OrchMenuApi(RecipeApi):
       raw_result = result_pb2.RawResult(status=raw_result.status,
                                         summary_markdown=summary_markdown)
     return raw_result
+
+  def _count_successful_critical_builds(self, builds):
+    return len([
+        b for b in builds
+        if b.critical == common_pb2.YES and b.status == common_pb2.SUCCESS
+    ])
 
   def _validate_properties(self):
     """Validate the orchestrator properties.
@@ -779,6 +788,7 @@ class OrchMenuApi(RecipeApi):
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
     # non-critical.
+    failures = self.m.failures.get_build_results(builds).failures
     self._non_critical_build_check(
         check_critical_step_name or 'non-critical build check', builds,
         failures)

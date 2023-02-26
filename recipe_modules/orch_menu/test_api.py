@@ -220,7 +220,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
         'history_builds', 'after_builds', 'crit_fail', 'non_crit_fail',
-        'process_child', 'follow_on_orchestrator', 'ctp_normal', 'ctp_failure'
+        'process_child', 'follow_on_orchestrator', 'mixed_build_results',
+        'ctp_normal', 'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -304,6 +305,17 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          status='FAILURE', critical='NO')
     ]
 
+    mixed_build_results = [
+        _child_build_msg('amd64-generic', build_id=8922054662172514000,
+                         status='FAILURE', critical='YES'),
+        _child_build_msg('amd64-generic', build_id=8922054662172514001,
+                         status='INFRA_FAILURE', critical='NO'),
+        _child_build_msg('arm-generic', build_id=8922054662172514002,
+                         status='SUCCESS', critical='YES'),
+        _child_build_msg('arm-generic', build_id=8922054662172514003,
+                         status='SUCCESS', critical='NO'),
+    ]
+
     values = [
         orchestrator,
         inflight_orchestrator,
@@ -315,6 +327,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         non_crit_fail,
         process_child,
         follow_on_orchestrator,
+        mixed_build_results,
     ]
 
     def _ctp_sched_resp(build_id):

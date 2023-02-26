@@ -12352,6 +12352,77 @@
   },
   {
     "cmd": [],
+    "name": "build results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all critical builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (7)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results. (8)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "non-critical build check"
   },
   {

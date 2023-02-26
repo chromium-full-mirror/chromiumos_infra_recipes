@@ -3531,6 +3531,31 @@
   },
   {
     "cmd": [],
+    "name": "build results",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1 builds failed, 1 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.amd64-generic-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.amd64-generic-postsubmit (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "non-critical build check"
   },
   {
@@ -13198,7 +13223,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 3 builds failed\n\n- amd64-generic-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
+      "humanReason": "1 out of 1 build failed\n\n- amd64-generic-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)"
     },
     "name": "$result"
   }

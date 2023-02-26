@@ -116,6 +116,7 @@ def RunSteps(api, properties):
                                   properties.expected_completed_builds):
         api.assertions.assertEqual(actual, expected)
 
+
     expected = properties.expected_recipe_result
     if not expected.status:
       expected = RawResult(status=common_pb2.SUCCESS)
@@ -677,18 +678,19 @@ def GenTests(api):
       follow_on_orch=data.follow_on_orchestrator, follow_on_timeout=True,
       bucket='toolchain', builder='orderfile-generate-orchestrator')
 
+  builds = data.mixed_build_results
   summary = (
-      '1 out of 3 builds failed\n\n- amd64-generic-postsubmit: [build page](https://'
+      '1 out of 2 builds failed\n\n- amd64-generic-postsubmit: [build page](https://'
       'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
       'critical-child-builder-fails',
       api.post_check(post_process.StatusAnyFailure),
       api.properties(
           FullProperties(
-              expected_completed_builds=data.crit_fail,
+              expected_completed_builds=builds,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      collect_builds=data.crit_fail, history_builds=data.history_builds,
+      collect_builds=builds, history_builds=data.history_builds,
       with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(

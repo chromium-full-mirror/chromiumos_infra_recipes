@@ -675,7 +675,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 2 builds failed\n\n- firmware-board-5555-cq: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
+      "humanReason": "1 out of 1 build failed\n\n- firmware-board-5555-cq: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
     },
     "name": "$result"
   }
