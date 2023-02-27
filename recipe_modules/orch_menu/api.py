@@ -143,7 +143,9 @@ class OrchMenuApi(RecipeApi):
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
+    self._is_snapshot_orchestrator = False
     self._chromium_src_ref_cl_tag = None
+    self._relevant_child_builds = []
 
     self._builder_to_collect_value = defaultdict(
         lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
@@ -323,6 +325,10 @@ class OrchMenuApi(RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
+
+        if self.m.buildbucket.build.builder.builder.endswith(
+            'snapshot-orchestrator'):
+          self._is_snapshot_orchestrator = True
 
         self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
             'chromium_src_ref', self.m.buildbucket.build.tags)
@@ -771,6 +777,7 @@ class OrchMenuApi(RecipeApi):
             cq_relevant_builds.append(build.builder.builder)
         pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
                                                  ['no relevant builds'])
+        self._relevant_child_builds = cq_relevant_builds
         self.m.easy.set_properties_step(
             child_builds_relevant=len(cq_relevant_builds))
 
@@ -780,6 +787,7 @@ class OrchMenuApi(RecipeApi):
             for x in self._builds_status.completed_builds
             if ps_relevant(x)
         ]
+        self._relevant_child_builds = ps_relevant_builds
         if not ps_relevant_builds:
           self.m.easy.set_properties_step(all_builds_irrelevant=True)
           self.m.easy.set_properties_step(sheriff_ignore_build=True)
@@ -1306,6 +1314,11 @@ class OrchMenuApi(RecipeApi):
       child_build_dict['tested_in_this_run'] = (
           b.builder.builder in
           self.m.cros_test_proctor.builders_tested_in_this_run)
+      # Add whether this builder was relevant.
+      # This is only applicable to CQ and Snapshot.
+      if self.is_cq_orchestrator or self._is_snapshot_orchestrator:
+        child_build_dict['relevant'] = (
+            b.builder.builder in self._relevant_child_builds)
 
       child_build_info.append(child_build_dict)
 

@@ -16,8 +16,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-
-  api.orch_menu.add_child_info_to_output_property()
+  with api.orch_menu.setup_orchestrator():
+    api.orch_menu.add_child_info_to_output_property()
 
 
 def GenTests(api):
@@ -47,4 +47,28 @@ def GenTests(api):
       api.post_check(lambda check, steps: check(steps[
           'set child_build_info'].output_properties['child_build_info'][1][
               'tested_in_this_run'] is False)),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'snapshot-orchestrator-relevance-field',
+      api.buildbucket.ci_build(project='chromeos', bucket='snapshot',
+                               builder='snapshot-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-postsubmit'])),
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'relevant'] is False)),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'postsubmit-orchestrator-no-relevance-field',
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='postsubmit-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-postsubmit'])),
+      api.post_check(lambda check, steps: check('relevant' not in steps[
+          'set child_build_info'].output_properties['child_build_info'][0])),
+      api.post_process(post_process.DropExpectation),
   )
