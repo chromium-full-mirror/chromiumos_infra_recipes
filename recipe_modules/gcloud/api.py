@@ -215,6 +215,7 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('gce create image', cmd, infra_step=True)
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
   def delete_image(self, image_name):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete image', [
