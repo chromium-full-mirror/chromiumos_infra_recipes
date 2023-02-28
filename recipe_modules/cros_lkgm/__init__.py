@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/path',
     'cros_infra_config',
     'cros_release',
+    'cros_schedule',
     'cros_source',
     'cros_version',
 ]

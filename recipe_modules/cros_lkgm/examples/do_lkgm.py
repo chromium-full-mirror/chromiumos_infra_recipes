@@ -147,7 +147,7 @@ def GenTests(api):
       api.post_check(
           post_process.StepCommandContains, 'call chrome_chromeos_lkgm', [
               '--lkgm', '1234.56.0', '--buildbucket-id', '8945511751514863184',
-              '--branch', 'refs/branch-heads/5204'
+              '--branch', 'refs/branch-heads/5615'
           ]), api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
@@ -166,9 +166,11 @@ def GenTests(api):
                      ['70.00%', '50%']),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'),
-      api.step_data('get chrome branch.list chrome ebuild files',
-                    stdout=api.raw_io.output_text('foo\n')),
-      api.post_check(post_process.StepFailure, 'get chrome branch'),
+      api.step_data(
+          'fetch chrome branch from chromiumdash.curl fetch_milestones',
+          api.raw_io.stream_output('foo\n')),
+      api.post_check(post_process.StepFailure,
+                     'fetch chrome branch from chromiumdash'),
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),

@@ -312,6 +312,7 @@
   * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings) (Python3 ✅)
   * [cros_resultdb:tests/upload](#recipes-cros_resultdb_tests_upload) (Python3 ✅)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full) (Python3 ✅)
+  * [cros_schedule:examples/get_chrome_branch](#recipes-cros_schedule_examples_get_chrome_branch) (Python3 ✅)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils) (Python3 ✅)
   * [cros_sdk:examples/existing_sdk_cache](#recipes-cros_sdk_examples_existing_sdk_cache) (Python3 ✅)
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full) (Python3 ✅)
@@ -2999,22 +3000,22 @@ This is used by findit, which has a single builder that performs
 bisection using the configuration of another builder.
 ### *recipe_modules* / [cros\_lkgm](/recipe_modules/cros_lkgm)
 
-[DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_schedule](#recipe_modules-cros_schedule), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosLkgmApi](/recipe_modules/cros_lkgm/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#98)(self):**
+&mdash; **def [collect\_public\_build](/recipe_modules/cros_lkgm/api.py#96)(self):**
 
 Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#126)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#124)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
@@ -3026,11 +3027,11 @@ Args:
   use_branch (bool): if set, upload the LKGM CL to the Chrome branch
     (e.g. refs/branch-heads/5204) instead of ToT.
 
-&emsp; **@property**<br>&mdash; **def [has\_public\_build](/recipe_modules/cros_lkgm/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [has\_public\_build](/recipe_modules/cros_lkgm/api.py#46)(self):**
 
 Check if a public build was scheduled.
 
-&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#53)(self):**
+&mdash; **def [schedule\_public\_build](/recipe_modules/cros_lkgm/api.py#51)(self):**
 
 Schedules a public build.
 
@@ -3564,11 +3565,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for working with CrOS's Schedule.
 
-#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosScheduleApi](/recipe_modules/cros_schedule/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for reading, commiting, and manipulating the release schedule.
 
-&mdash; **def [fetch\_chromiumdash\_schedule](/recipe_modules/cros_schedule/api.py#33)(self, start_mstone=None, fetch_n=10):**
+&mdash; **def [fetch\_chromiumdash\_schedule](/recipe_modules/cros_schedule/api.py#57)(self, start_mstone=None, fetch_n=10):**
 
 Return the json schedule from chromiumdash.
 
@@ -3580,7 +3581,17 @@ Args:
 Returns:
   (str): JSON string representing the results of the query, or None.
 
-&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#73)(self):**
+&mdash; **def [get\_chrome\_branch](/recipe_modules/cros_schedule/api.py#132)(self, mstone):**
+
+Get the associated chrome branch for a milestone.
+
+Args:
+  mstone (int): Milestone to fetch.
+
+Returns:
+  (str): The chromium branch number or None.
+
+&mdash; **def [get\_last\_branched\_mstone](/recipe_modules/cros_schedule/api.py#97)(self):**
 
 Gets the last branched milestone.
 
@@ -3589,11 +3600,11 @@ Returns:
 
 Raises: StepFailure if not able to find mstone.
 
-&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#104)(self):**
+&mdash; **def [get\_last\_branched\_mstone\_n](/recipe_modules/cros_schedule/api.py#128)(self):**
 
 Gets the last branched milestone number as an int.
 
-&mdash; **def [json\_to\_proto](/recipe_modules/cros_schedule/api.py#26)(self, sched_str_json):**
+&mdash; **def [json\_to\_proto](/recipe_modules/cros_schedule/api.py#50)(self, sched_str_json):**
 
 Returns a FetchMilestoneScheduleResponse from JSON repr.
 ### *recipe_modules* / [cros\_sdk](/recipe_modules/cros_sdk)
@@ -11311,6 +11322,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/full.py#22)(api, properties):**
+### *recipes* / [cros\_schedule:examples/get\_chrome\_branch](/recipe_modules/cros_schedule/examples/get_chrome_branch.py)
+
+[DEPS](/recipe_modules/cros_schedule/examples/get_chrome_branch.py#8): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_schedule/examples/get_chrome_branch.py#18)(api):**
 ### *recipes* / [cros\_schedule:examples/utils](/recipe_modules/cros_schedule/examples/utils.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/utils.py#6): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]

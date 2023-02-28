@@ -16,12 +16,36 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 
+CHROMIUMDASH_SCHEDULE_FETCH_URL_TEMPLATE = (
+    'https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone={}&n={}')
+CHROMIUMDASH_MSTONE_FETCH_URL_TEMPLATE = (
+    'https://chromiumdash.appspot.com/fetch_milestones?mstone={}')
+
+CHROME_BRANCH_TEST_DATA = json.dumps([{
+    "angle_branch": "5615",
+    "bling_ldap": "govind",
+    "bling_owner": "Krishna Govind",
+    "chromium_branch": "5615",
+    "chromium_main_branch_hash": "9c6408ef696e83a9936b82bbead3d41c93c82ee4",
+    "chromium_main_branch_position": 1109224,
+    "clank_ldap": "govind",
+    "clank_owner": "Krishna Govind",
+    "cros_ldap": "obenedict",
+    "cros_owner": "Benedict Oleforo",
+    "dawn_branch": "5615",
+    "desktop_ldap": "srinivassista",
+    "desktop_owner": "Srinivas Sista",
+    "devtools_branch": "5615",
+    "milestone": 112,
+    "pdfium_branch": "5615",
+    "skia_branch": "m112",
+    "v8_branch": "11.2-lkgr",
+    "webrtc_branch": "5615"
+}])
+
+
 class CrosScheduleApi(recipe_api.RecipeApi):
   """A module for reading, commiting, and manipulating the release schedule."""
-
-  CHROMIUMDASH_FETCH_URL_TEMPLATE = (
-      'https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone={}&n={}'
-  )
 
   def json_to_proto(self, sched_str_json):
     """Returns a FetchMilestoneScheduleResponse from JSON repr."""
@@ -42,7 +66,7 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       (str): JSON string representing the results of the query, or None.
     """
     start_mstone = start_mstone or self.get_last_branched_mstone_n()
-    query_url = self.CHROMIUMDASH_FETCH_URL_TEMPLATE.format(
+    query_url = CHROMIUMDASH_SCHEDULE_FETCH_URL_TEMPLATE.format(
         start_mstone, fetch_n)
 
     with self.m.step.nest('fetch chromiumdash schedule'):
@@ -104,3 +128,30 @@ class CrosScheduleApi(recipe_api.RecipeApi):
   def get_last_branched_mstone_n(self):
     """Gets the last branched milestone number as an int."""
     return self.get_last_branched_mstone().mstone
+
+  def get_chrome_branch(self, mstone):
+    """Get the associated chrome branch for a milestone.
+
+    Args:
+      mstone (int): Milestone to fetch.
+
+    Returns:
+      (str): The chromium branch number or None.
+    """
+    query_url = CHROMIUMDASH_MSTONE_FETCH_URL_TEMPLATE.format(mstone)
+
+    with self.m.step.nest('fetch chrome branch from chromiumdash'):
+      returned_data = self.m.easy.stdout_step(
+          'curl fetch_milestones', ['curl', query_url],
+          test_stdout=CHROME_BRANCH_TEST_DATA)
+
+      try:
+        json_data = json.loads(returned_data)
+      except ValueError as e:
+        raise StepFailure('fetch milestone response was not json') from e
+      try:
+        mstone = json_data[0]
+      except Exception as e:
+        raise self.m.step.StepFailure(
+            'fetch milestone response json format bad') from e
+      return mstone.get("chromium_branch", None)

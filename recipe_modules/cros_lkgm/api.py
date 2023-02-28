@@ -4,8 +4,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import re
-
 from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -143,7 +141,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       presentation.step_text = 'LKGM candidate'
     branch = None
     if use_branch:
-      branch = self._get_chrome_branch()
+      branch = self.m.cros_schedule.get_chrome_branch(
+          self.m.cros_version.version.milestone)
 
     script_path = self.m.cros_source.workspace_path.join(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
@@ -205,23 +204,3 @@ class CrosLkgmApi(recipe_api.RecipeApi):
           result = False
 
     return result
-
-  def _get_chrome_branch(self):
-    """Get the Chrome branch number from the current checkout."""
-    with self.m.step.nest('get chrome branch') as presentation:
-      with self.m.context(
-          self.m.cros_source.workspace_path.join(CHROMIUMOS_OVERLAY_PATH)):
-        files = self.m.step(
-            'list chrome ebuild files', [
-                'find', 'chromeos-base/chromeos-chrome', '-name',
-                'chromeos-chrome-*'
-            ], stdout=self.m.raw_io.output_text(),
-            step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
-                CHROME_EBUILD_TEST_DATA)).stdout.strip().split()
-      for f in files:
-        match = re.match(CHROME_VERSION_REGEXP, f)
-        if match:
-          branch = match.groupdict()['branch']
-          presentation.step_text = branch
-          return branch
-      raise StepFailure('could not get chrome branch number')
