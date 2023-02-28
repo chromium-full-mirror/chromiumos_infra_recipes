@@ -1824,10 +1824,8 @@ def _get_failure_reason_from_test_result(test_result):
 
 def RunSteps(api, properties):
   api.easy.log_parent_step()
-  # Set max_threads for whole test_runner build. Details: b/270152591.
+  # Set max_threads to 1 for whole test_runner build. Details: b/270152591.
   api.cipd.max_threads = 1
-  # Set max go process threads count for whole test_runner build. Details: b/270152591.
-  os.environ["GOMAXPROCS"] = "10"
 
   if properties.cft_is_enabled and properties.cft_test_request.run_via_trv2 and api.cros_test_runner.is_enabled(
   ):  # pragma: nocover
