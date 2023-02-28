@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import post_process
 
@@ -22,16 +25,37 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def _child_builds(child_builder_names):
-    return [
+  def _child_builds(child_builder_names, async_unit_tests_enabled=False):
+    builds = [
         build_pb2.Build(id=101 + i, builder={
             'builder': builder,
             'bucket': 'cq'
         }) for i, builder in enumerate(child_builder_names)
     ]
+    if async_unit_tests_enabled:
+      for b in builds:
+        b.output.properties[
+            'image_artifacts_uploaded_time'] = json_format.MessageToDict(
+                timestamp_pb2.Timestamp(seconds=101))
+    return builds
 
   yield api.test(
       'basic',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='cq-orchestrator'),
+      api.buildbucket.simulated_search_results(_child_builds(['atlas-cq'])),
+      api.post_check(post_process.PropertyEquals, 'child_builds', ['101']),
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'tested_in_this_run'] is False)),
+      api.post_check(lambda check, steps: check(
+          'image_artifacts_uploaded_time' not in steps['set child_build_info'].
+          output_properties['child_build_info'][0])),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'tested-in-this-run',
       api.buildbucket.try_build(project='chromeos', bucket='cq',
                                 builder='cq-orchestrator'),
       api.buildbucket.simulated_search_results(
@@ -47,6 +71,22 @@ def GenTests(api):
       api.post_check(lambda check, steps: check(steps[
           'set child_build_info'].output_properties['child_build_info'][1][
               'tested_in_this_run'] is False)),
+      api.post_check(lambda check, steps: check(
+          'image_artifacts_uploaded_time' not in steps['set child_build_info'].
+          output_properties['child_build_info'][0])),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'cq-async-unit-testing',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='cq-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-cq'], async_unit_tests_enabled=True)),
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'image_artifacts_uploaded_time'] == json_format.MessageToDict(
+                  timestamp_pb2.Timestamp(seconds=101)))),
       api.post_process(post_process.DropExpectation),
   )
 

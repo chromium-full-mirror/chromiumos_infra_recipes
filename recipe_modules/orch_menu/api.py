@@ -31,9 +31,9 @@ from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
-CHILD_BUILD_PREDICATE_SET = frozenset({
+CHILD_BUILD_SEARCH_FIELDS = frozenset({
     'id', 'create_time', 'start_time', 'end_time', 'status', 'builder.bucket',
-    'builder.builder'
+    'builder.builder', 'output.properties'
 })
 
 _manifest_info = namedtuple('_manifest_info',
@@ -1295,7 +1295,7 @@ class OrchMenuApi(RecipeApi):
               parent_buildbucket_id=str(current_build.id)))
       predicate.builder.project = current_build.builder.project
       children = self.m.buildbucket.search(predicate,
-                                           fields=CHILD_BUILD_PREDICATE_SET)
+                                           fields=CHILD_BUILD_SEARCH_FIELDS)
     return children
 
   def add_child_info_to_output_property(self):
@@ -1319,6 +1319,13 @@ class OrchMenuApi(RecipeApi):
       if self.is_cq_orchestrator or self._is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
             b.builder.builder in self._relevant_child_builds)
+      # If running unit tests async, add the time the child build was elegible
+      # for collection.
+      if 'image_artifacts_uploaded_time' in b.output.properties:
+        child_build_dict['image_artifacts_uploaded_time'] = b.output.properties[
+            'image_artifacts_uploaded_time']
+      if 'output' in child_build_dict:
+        del child_build_dict['output']
 
       child_build_info.append(child_build_dict)
 
