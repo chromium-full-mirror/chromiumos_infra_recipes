@@ -115,14 +115,16 @@ def DoRunSteps(api, properties):
         './tools/build_tast_binaries.py', '--no-output-append-date',
         '--output=public-borealis-tast-binaries-' + version
     ])
+    # Only upload the tast tarball if not staging beacuse of permission issue.
     tast_archive_name = 'public-borealis-tast-binaries' + '-' + version + '.tar.zst'
-    with api.step.nest('upload tast tarball') as presentation:
-      bucket_url = 'chromiumos-test-assets-public'
-      path_url = 'tast/cros/borealis'
-      api.gsutil.upload(tast_archive_name, bucket_url, path_url)
-      presentation.links['tarball'] = api.path.join(_PANTHEON_PREFIX,
-                                                    bucket_url, path_url,
-                                                    tast_archive_name)
+    if not api.build_menu.is_staging:
+      with api.step.nest('upload tast tarball') as presentation:
+        bucket_url = 'chromiumos-test-assets-public'
+        path_url = 'tast/cros/borealis'
+        api.gsutil.upload(tast_archive_name, bucket_url, path_url)
+        presentation.links['tarball'] = api.path.join(_PANTHEON_PREFIX,
+                                                      bucket_url, path_url,
+                                                      tast_archive_name)
 
     with api.step.nest('update VERSION-PIN') as presentation:
       version_path = api.cros_source.workspace_path.join(
