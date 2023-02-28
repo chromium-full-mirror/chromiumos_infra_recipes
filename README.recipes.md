@@ -186,6 +186,7 @@
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
   * [chrome:tests/gclient_retry](#recipes-chrome_tests_gclient_retry) (Python3 ✅)
+  * [chrome:tests/is_chrome_pupr_atomic_uprev](#recipes-chrome_tests_is_chrome_pupr_atomic_uprev) (Python3 ✅)
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot) (Python3 ✅)
   * [chromite:examples/full](#recipes-chromite_examples_full) (Python3 ✅)
   * [chromiumos_codesearch](#recipes-chromiumos_codesearch) (Python3 ✅) &mdash; Recipe for enabling cross-references in code search for ChromiumOS.
@@ -418,6 +419,7 @@
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets) (Python3 ✅)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description) (Python3 ✅)
   * [gerrit:examples/get_change_mergeable](#recipes-gerrit_examples_get_change_mergeable) (Python3 ✅)
+  * [gerrit:examples/get_change_topic](#recipes-gerrit_examples_get_change_topic) (Python3 ✅)
   * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes) (Python3 ✅)
   * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes) (Python3 ✅)
   * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change) (Python3 ✅)
@@ -967,16 +969,16 @@ A module with steps used by image builders.
 Image builders do not call other recipe modules directly: they always get
 there via this module, and are a simple sequence of steps.
 
-&emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#72)(self):**
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#701)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#702)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#482)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#483)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -985,7 +987,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#584)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#585)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -998,7 +1000,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#539)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#540)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1009,15 +1011,15 @@ Args:
   include_version (bool): Whether or not to pass the workspace version
     to sysroot_util.build.
 
-&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_target](/recipe_modules/build_menu/api.py#76)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#162)(self):**
+&emsp; **@property**<br>&mdash; **def [chroot](/recipe_modules/build_menu/api.py#163)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/build_menu/api.py#80)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#84)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#205)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#206)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
 
 Initial setup steps for the builder.
 
@@ -1038,7 +1040,7 @@ Args:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [container\_version](/recipe_modules/build_menu/api.py#87)(self):**
+&emsp; **@property**<br>&mdash; **def [container\_version](/recipe_modules/build_menu/api.py#88)(self):**
 
 Return the version string for containers.
 
@@ -1046,7 +1048,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#715)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#716)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1060,11 +1062,11 @@ Args:
 Returns:
   None
 
-&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#166)(self):**
+&emsp; **@property**<br>&mdash; **def [dep\_graph](/recipe_modules/build_menu/api.py#167)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#139)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/build_menu/api.py#140)(self):**
 
-&mdash; **def [get\_cl\_affected\_sysroot\_packages](/recipe_modules/build_menu/api.py#173)(self, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_cl\_affected\_sysroot\_packages](/recipe_modules/build_menu/api.py#174)(self, packages=None, include_rev_deps=False):**
 
 Gets the list of sysroot packages affected by the input CLs.
 
@@ -1081,7 +1083,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#439)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#440)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1091,11 +1093,11 @@ the SDK will be marked as dirty out of an abundance of caution.
 Returns:
   The dependency graph from cros_relevance.get_dependency_graph.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#135)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/build_menu/api.py#136)(self):**
 
-&mdash; **def [initialize](/recipe_modules/build_menu/api.py#61)(self):**
+&mdash; **def [initialize](/recipe_modules/build_menu/api.py#62)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#495)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#496)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1116,9 +1118,9 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#143)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#144)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#871)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#873)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1128,7 +1130,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#851)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#853)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1141,14 +1143,14 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#599)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#600)(self, config=None):**
 
 run ebuild tests as specified by config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#319)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#320)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False):**
 
 Setup the chroot for the builder.
 
@@ -1162,7 +1164,7 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#363)(self, with_sysroot=True):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#364)(self, with_sysroot=True):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1176,7 +1178,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#288)(self, cherry_pick_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#289)(self, cherry_pick_changes=True):**
 
 Setup the workspace for the builder.
 
@@ -1185,7 +1187,7 @@ Args:
       checkout using cherry-pick. If set to False, will directly checkout
       the changes using the gerrit fetch refs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#264)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#265)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False):**
 
 Setup the workspace and chroot for the builder.
 
@@ -1202,9 +1204,9 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#147)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/build_menu/api.py#148)(self):**
 
-&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#151)(self):**
+&emsp; **@property**<br>&mdash; **def [target\_versions](/recipe_modules/build_menu/api.py#152)(self):**
 
 Get the current GetTargetVersionsResponse.
 
@@ -1213,7 +1215,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#569)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#570)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1222,7 +1224,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#655)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#656)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
@@ -1245,14 +1247,14 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#838)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#840)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#819)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#820)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1670,13 +1672,13 @@ Gets the BBIDs of the child builders that were successful.
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#63)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#85)(self, cache_path, sync=True, step_name='sync chrome'):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#90)(self, cache_path, sync=True, step_name='sync chrome'):**
 
 Sync Chrome cache using existing cached repositories.
 
@@ -1685,7 +1687,7 @@ Args:
   sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
   step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#222)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#227)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1698,7 +1700,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#302)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1714,11 +1716,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#70)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#248)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#275)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#313)(self, build_target, chroot, patch_sets):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#253)(self, gerrit_change):**
+
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#340)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1730,7 +1734,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#256)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#283)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1746,7 +1750,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#384)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#411)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1760,7 +1764,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#132)(self, chrome_root, chroot, build_target, internal, cache_dir=CHROMIUM_CACHE_DIR):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#137)(self, chrome_root, chroot, build_target, internal, cache_dir=CHROMIUM_CACHE_DIR):**
 
 Sync Chrome source code.
 
@@ -3080,7 +3084,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#536)(self, target, sysroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#546)(self, target, sysroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3089,7 +3093,7 @@ Args:
   sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#481)(self, target, sysroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#485)(self, target, sysroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -5881,15 +5885,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#261)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#268)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#264)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#271)(self, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#742)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#749)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
 
 Abandon the given change.
 
@@ -5897,7 +5901,7 @@ Args:
   gerrit_change: The change to abandon.
   message: Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#665)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#672)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -5907,7 +5911,7 @@ Args:
   project_path: If set, will use this as the project path rather than any
     value inferred from the gerrit_change.
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#421)(self, gerrit_changes: List[GerritChange], test_output_data: Union[(Callable, Dict, List, None)]=None):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#428)(self, gerrit_changes: List[GerritChange], test_output_data: Union[(Callable, Dict, List, None)]=None):**
 
 Check whether the given changes can be merged onto their Git branches.
 
@@ -5918,7 +5922,7 @@ Args:
 Raises:
   StepFailure if any of the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#466)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#473)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -5941,7 +5945,7 @@ Args:
 Returns:
   The newly created change.
 
-&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#343)(self, change: GerritChange, include_files: bool=False, include_commit_info: bool=False, test_output_data: Optional[Callable]=None):**
+&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#350)(self, change: GerritChange, include_files: bool=False, include_commit_info: bool=False, test_output_data: Optional[Callable]=None):**
 
 Fetch and return PatchSet associated with the given GerritChange.
 
@@ -5956,7 +5960,7 @@ Args:
 Raises:
   StepFailure: If the requested patch set is not found.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#288)(self, gerrit_changes: List[GerritChange], include_files: bool=False, include_commit_info: bool=False, include_messages: bool=False, test_output_data: Optional[Callable]=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#295)(self, gerrit_changes: List[GerritChange], include_files: bool=False, include_commit_info: bool=False, include_messages: bool=False, test_output_data: Optional[Callable]=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -5973,7 +5977,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#683)(self, gerrit_change: GerritChange, memoize: bool=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#690)(self, gerrit_change: GerritChange, memoize: bool=False):**
 
 Get the description of the given Gerrit change.
 
@@ -5985,7 +5989,7 @@ Args:
 Returns:
   The change description.
 
-&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#817)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#824)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -5997,7 +6001,19 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#369)(self, gerrit_change_url: str):**
+&mdash; **def [get\_change\_topic](/recipe_modules/gerrit/api.py#856)(self, change_num: int, gerrit_host: str, test_data: Optional[str]=None):**
+
+Get the topic of the given Gerrit change.
+
+Args:
+  change_num: The number of the change to check.
+  gerrit_host: Base URL to curl against.
+  test_data: Simulated data that is returned from the server (for testing).
+
+Returns:
+  The topic of the gerrit change.
+
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#376)(self, gerrit_change_url: str):**
 
 Return a GerritChange proto, parsed from the gerrit change URL.
 
@@ -6011,15 +6027,15 @@ This function expects the URL to be in one of these formats:
 and <change-number> is something like 12345.
 The https:// is optional.
 
-&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#399)(self, gerrit_change: GerritChange):**
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#406)(self, gerrit_change: GerritChange):**
 
 Return a Gerrit change URL, parsed from a GerritChange proto.
 
-&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#413)(self, gerrit_change: GerritChange):**
+&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#420)(self, gerrit_change: GerritChange):**
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#783)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#790)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -6031,7 +6047,7 @@ Args:
   label_constraints: Constraints on the changes' labels, to be used as a
       filter before returning.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#713)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#720)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
 
 Set the description of the given Gerrit change.
 
@@ -6044,7 +6060,7 @@ Args:
   project_path: If set, use this as the project path rather than any value
     inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#619)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#626)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -6060,7 +6076,7 @@ Args:
 Returns:
   The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#549)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#556)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
 
 Set the given labels for the given Gerrit change.
 
@@ -6074,7 +6090,7 @@ Args:
 Returns:
   The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#757)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#764)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
 
 Submit the given change.
 
@@ -9726,15 +9742,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#16)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_cq.py#16): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#59)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#72)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#33)(api):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#46)(api):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_release](#recipe_modules-cros_release), [signing](#recipe_modules-signing), [test\_util](#recipe_modules-test_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10179,6 +10195,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/gclient_retry.py#23)(api):**
+### *recipes* / [chrome:tests/is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/tests/is_chrome_pupr_atomic_uprev.py)
+
+[DEPS](/recipe_modules/chrome/tests/is_chrome_pupr_atomic_uprev.py#11): [chrome](#recipe_modules-chrome), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/tests/is_chrome_pupr_atomic_uprev.py#36)(api, expected_result):**
 ### *recipes* / [chromeos\_cbuildbot](/recipes/chromeos_cbuildbot.py)
 
 [DEPS](/recipes/chromeos_cbuildbot.py#16): [bot\_cost](#recipe_modules-bot_cost), [chromite](#recipe_modules-chromite), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -11077,11 +11100,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#29)(api, properties):**
 ### *recipes* / [cros\_prebuilts:tests/upload\_cq](/recipe_modules/cros_prebuilts/tests/upload_cq.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#11): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#24)(api):**
 ### *recipes* / [cros\_release:examples/buildspec](/recipe_modules/cros_release/examples/buildspec.py)
 
 [DEPS](/recipe_modules/cros_release/examples/buildspec.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12044,6 +12067,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_mergeable.py#23)(api, remote, expected):**
+### *recipes* / [gerrit:examples/get\_change\_topic](/recipe_modules/gerrit/examples/get_change_topic.py)
+
+[DEPS](/recipe_modules/gerrit/examples/get_change_topic.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_topic.py#25)(api, expected, simulated_response_from_server):**
 ### *recipes* / [gerrit:examples/has\_chromite\_changes](/recipe_modules/gerrit/examples/has_chromite_changes.py)
 
 [DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

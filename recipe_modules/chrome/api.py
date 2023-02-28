@@ -49,6 +49,11 @@ CHROMIUM_REBUILD_REGEXES = {
     ],
 }
 
+# Gerrit topic for the chrome atomic uprev CLs
+TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC = "chromeos-base/lacros-ash-atomic"
+# Cq-Cl-Tag footer value for the chrome atomic uprev CLs
+CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC = "pupr:chromeos-base/lacros-ash-atomic"
+
 CHROME_PACKAGE = PackageInfo(category='chromeos-base',
                              package_name='chromeos-chrome')
 
@@ -244,6 +249,28 @@ class ChromeApi(recipe_api.RecipeApi):
                 return True
       pres.step_text = 'no file diffs caused rebuild'
     return False
+
+  def is_chrome_pupr_atomic_uprev(self, gerrit_change):
+    # Check the topic.
+    topic = self.m.gerrit.get_change_topic(gerrit_change.change,
+                                           gerrit_change.host,
+                                           '"DUMMY_TOPIC_FOR_TESTING"')
+    if topic != TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC:
+      return False
+
+    # Check the 'Cq-Cl-Tag' field in the description.
+    cl_tags = self.m.git_footers.get_footer_values([gerrit_change], 'Cq-Cl-Tag')
+    if len(cl_tags) == 0:
+      return False
+    cl_tag = next(iter(cl_tags))
+    if cl_tag != CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC:
+      return False
+
+    patch_sets = self.m.cros_source.apply_gerrit_changes(
+        [gerrit_change], include_files=True, ignore_missing_projects=True)
+
+    # Check the ebuild file change is in the patch set.
+    return self.diffed_files_requires_rebuild(patch_sets)
 
   def has_chrome_prebuilt(self, build_target, chroot, internal=False,
                           ignore_prebuilts=False):

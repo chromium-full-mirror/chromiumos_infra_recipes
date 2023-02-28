@@ -8,6 +8,7 @@ package recipe_modules.chromeos.cros_prebuilts.examples;
 
 import "chromiumos/common.proto";
 import "chromite/api/sysroot.proto";
+import "chromiumos/builder_config.proto";
 
 message FullProperties {
   // The build_target for this builder.
@@ -30,4 +31,9 @@ message FullProperties {
 
   // Whether to make the source appear dirty.
   bool dirty_source = 7;
+
+  // Type of builder to override. The builder_config_id is overridden by this
+  // value if the value is not "BuilderConfig.Id.TYPE_UNSPECIFIED".
+  // The default value is BuilderConfig.Id.TYPE_UNSPECIFIED.
+  chromiumos.BuilderConfig.Id.Type overridden_builder_config = 8;
 }

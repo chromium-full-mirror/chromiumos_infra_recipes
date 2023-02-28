@@ -6199,6 +6199,17 @@
   },
   {
     "cmd": [],
+    "name": "upload prebuilts"
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.Check if the CQ uploads the prebuilts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build images"
   },
   {

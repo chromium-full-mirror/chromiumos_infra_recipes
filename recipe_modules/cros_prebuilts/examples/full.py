@@ -36,9 +36,15 @@ def RunSteps(api, properties):
       api.cros_prebuilts.get_package_index_info(properties.gs_bucket,
                                                 profile=properties.profile))
 
-  api.cros_prebuilts.upload_target_prebuilts(
-      properties.build_target, properties.sysroot, properties.profile,
-      BuilderConfig.Id.POSTSUBMIT, properties.gs_bucket, properties.private)
+  if properties.overridden_builder_config != BuilderConfig.Id.TYPE_UNSPECIFIED:
+    builder_config = properties.overridden_builder_config
+  else:
+    builder_config = BuilderConfig.Id.POSTSUBMIT
+  api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
+                                             properties.sysroot,
+                                             properties.profile, builder_config,
+                                             properties.gs_bucket,
+                                             properties.private)
 
   api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
                                                  properties.sysroot,
@@ -79,7 +85,8 @@ def GenTests(api):
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
                 commit_overlay_binhost=True, profile=None,
                 expected_package_indexes=None, dirty_source=False,
-                max_binhost_uris=1, upload_metadata=True):
+                max_binhost_uris=1, upload_metadata=True,
+                overridden_builder_config=None):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -95,10 +102,11 @@ def GenTests(api):
 
     ret = api.test_util.test_child_build(target, cq=False).build
     build_target = BuildTarget(name=target)
-    test_props = FullProperties(build_target=build_target,
-                                sysroot=Sysroot(build_target=build_target),
-                                private=private, gs_bucket=gs_bucket,
-                                profile=profile, dirty_source=dirty_source)
+    test_props = FullProperties(
+        build_target=build_target, sysroot=Sysroot(build_target=build_target),
+        private=private, gs_bucket=gs_bucket, profile=profile,
+        dirty_source=dirty_source,
+        overridden_builder_config=overridden_builder_config)
     for x in expected_package_indexes:
       test_props.expected_package_indexes.add().CopyFrom(x)
 
@@ -198,6 +206,14 @@ def GenTests(api):
   yield api.test(
       'with-profile',
       test_data(profile=Profile(name='generic_build'), max_binhost_uris=2))
+
+  # Ensure neither CQ nor POSTSUBMIT build types is supported.
+  yield api.test(
+      'release-build-type',
+      test_data(
+          profile=Profile(name='generic_build'),
+          overridden_builder_config=BuilderConfig.Id.RELEASE,
+          upload_metadata=False), api.expect_exception('ValueError'))
 
   # This test forces dirty source and thus tests the code path of
   # upload_target_prebuilts skipping binhost commit and metadata

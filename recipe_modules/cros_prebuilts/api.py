@@ -266,6 +266,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     name = BuilderConfig.Id.Type.Name(kind)
     try:
+      # TODO(b/271075149): Remove this hack after submitting crrev.com/c/4273070.
+      if name.upper() == "CQ":
+        return binhost_pb.BinhostKey.Value('POSTSUBMIT_BINHOST')
+
       return binhost_pb.BinhostKey.Value('%s_BINHOST' % name.upper())
     except ValueError as err:
       err.message = '%s builders may not upload prebuilts' % name.lower()
@@ -526,6 +530,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           self._profile_or_default(profile) == self._profile_or_default(None))
 
       if overlay_commit:
+        # On CQ, we must not update binhost at this timing, since the final
+        # result of entire CQ is not uncertain yet (i.e. other builder(s) in CQ
+        # may fail).
+        if BuilderConfig.Id.Type.Name(kind) == 'CQ':
+          raise ValueError('CQ should not set the binhost.')
+
         self._set_binhost(target, private, binhost_key, upload_uri,
                           push_retries=3)
 

@@ -240,3 +240,18 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       gerrit_change_url: Fake upload URL for the change.
     """
     return self.m.git_cl.output(step_name + '.git_cl status', gerrit_change_url)
+
+  def simulated_topic(self, topic: str, gerrit_host: str, change_num: int,
+                      step_name_prefix: str = '') -> recipe_test_api.TestData:
+    """Return a TestData that sets the response for get_change_topic().
+
+    Args:
+      topic: Topic to be returned.
+      gerrit_host: URL for the Gerrit host.
+      change_num: The number of the change to check.
+      step_name_prefix: Optional prefix to step name for testing nested calls.
+    """
+    step_name_prefix = f'{step_name_prefix}.' if step_name_prefix else ''
+    return self.step_data(
+        f'{step_name_prefix}curl https://{gerrit_host}/changes/{change_num}/topic',
+        stdout=self.m.raw_io.output(f'"{topic}"'))

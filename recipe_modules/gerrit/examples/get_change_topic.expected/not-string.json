@@ -1,0 +1,17 @@
+[
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://gerrit.host.test/changes/12345/topic"
+    ],
+    "name": "curl https://gerrit.host.test/changes/12345/topic"
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "This response it not valid: (type: <class 'dict'>)"
+    },
+    "name": "$result"
+  }
+]

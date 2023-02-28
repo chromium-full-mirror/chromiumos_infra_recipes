@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://gerrit.host.test/changes/12345/topic"
+    ],
+    "name": "curl https://gerrit.host.test/changes/12345/topic"
+  },
+  {
+    "name": "$result"
+  }
+]

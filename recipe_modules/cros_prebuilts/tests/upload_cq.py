@@ -12,7 +12,11 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_prebuilts',
+    'build_menu',
 ]
+
+GERRIT_HOST = 'gerrit.host.test'
+CHANGE_NUM = 12345
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -22,21 +26,77 @@ def RunSteps(api):
   # _binhost_key() is where we discover that we do not have a key for that
   # value.
   target = BuildTarget(name='target')
-  api.assertions.assertRaises(ValueError,
-                              api.cros_prebuilts.upload_target_prebuilts,
-                              target, Sysroot(build_target=target),
-                              Profile(name='profile_name'), BuilderConfig.Id.CQ,
-                              'prebuilts_gs_bucket')
+
+  with api.build_menu.configure_builder():
+    api.cros_prebuilts.upload_target_prebuilts(target,
+                                               Sysroot(build_target=target),
+                                               Profile(), BuilderConfig.Id.CQ,
+                                               'prebuilts_gs_bucket')
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.build_menu.test('basic')
 
-  yield api.test(
+  yield api.build_menu.test(
       'staging-branch',
       api.properties(
           **{
               "$chromeos/cros_prebuilts":
                   CrosPrebuiltsProperties(use_staging_branch=True)
           }),
+      cq=True,
+  )
+
+  yield api.build_menu.test(
+      'creating-prebuilt',
+      api.properties(
+          **{
+              "$chromeos/cros_prebuilts":
+                  CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
+                                          enable_snapshot_prebuilts=True,
+                                          commit_overlay_binhost=False)
+          }),
+      cq=True,
+  )
+
+  yield api.build_menu.test(
+      'staging-branch-creating-prebuilt',
+      api.properties(
+          **{
+              "$chromeos/cros_prebuilts":
+                  CrosPrebuiltsProperties(use_staging_branch=True,
+                                          send_snapshot_prebuilts=True,
+                                          enable_snapshot_prebuilts=True,
+                                          commit_overlay_binhost=False)
+          }),
+      cq=True,
+  )
+
+  # Ensure CQ doesn't support committing prebuilts.
+  yield api.build_menu.test(
+      'creating-and-commiting-prebuilt',
+      api.properties(
+          **{
+              "$chromeos/cros_prebuilts":
+                  CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
+                                          enable_snapshot_prebuilts=True,
+                                          commit_overlay_binhost=True)
+          }),
+      api.expect_exception('ValueError'),
+      cq=True,
+  )
+
+  # Ensure CQ doesn't support committing prebuilts (on staging branch).
+  yield api.build_menu.test(
+      'staging-branch-creating-and-commiting-prebuilt',
+      api.properties(
+          **{
+              "$chromeos/cros_prebuilts":
+                  CrosPrebuiltsProperties(use_staging_branch=True,
+                                          send_snapshot_prebuilts=True,
+                                          enable_snapshot_prebuilts=True,
+                                          commit_overlay_binhost=True)
+          }),
+      api.expect_exception('ValueError'),
+      cq=True,
   )

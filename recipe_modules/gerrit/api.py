@@ -36,6 +36,13 @@ JSONObject = Dict[str, Any]
 ChangeInfo = JSONObject
 
 
+def strip_xssi_prefix(json_string: str):
+  # Remove the magic prefix against XSSI attack in the response.
+  # See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
+  # TODO(b:264623293): replace this with removeprefix() when we're on Python 3.9.
+  return json_string[4:] if json_string.startswith(")]}'") else json_string
+
+
 class PatchSet:
   """PatchSet represents a single Gerrit patchset."""
 
@@ -833,11 +840,7 @@ class GerritApi(RecipeApi):
 
     data = self.m.easy.stdout_step(f'curl {get_url}',
                                    ['curl'] + curl_params + [get_url]).decode()
-    # Trim the magic prefix in the response.
-    # See https://gerrit-review.googlesource.com/Documentation/rest-api.html#output
-    # TODO(b:264623293): replace this with removeprefix() when we're on Python 3.9.
-    if data.startswith(')]}\''):
-      data = data[4:]
+    data = strip_xssi_prefix(data)
 
     try:
       result = self.m.json.loads(data)['mergeable']
@@ -847,6 +850,37 @@ class GerritApi(RecipeApi):
     if not isinstance(result, bool):
       raise StepFailure(
           f'"mergeable" value is not a bool: {data} (type: {type(result)})')
+
+    return result
+
+  def get_change_topic(self, change_num: int, gerrit_host: str,
+                       test_data: Optional[str] = None) -> str:
+    """Get the topic of the given Gerrit change.
+
+    Args:
+      change_num: The number of the change to check.
+      gerrit_host: Base URL to curl against.
+      test_data: Simulated data that is returned from the server (for testing).
+
+    Returns:
+      The topic of the gerrit change.
+    """
+    # "Get Topic" endpoint:
+    # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-topic
+    get_url = f'https://{gerrit_host}/changes/{change_num}/topic'
+    curl_params = ['-f']
+
+    data = self.m.easy.stdout_step(f'curl {get_url}',
+                                   ['curl'] + curl_params + [get_url],
+                                   test_stdout=test_data).decode()
+    data = strip_xssi_prefix(data)
+
+    try:
+      result = self.m.json.loads(data)
+    except json.decoder.JSONDecodeError as e:
+      raise StepFailure('The response is not a valid json: %s' % data) from e
+    if not isinstance(result, str):
+      raise StepFailure(f'This response it not valid: (type: {type(result)})')
 
     return result
 

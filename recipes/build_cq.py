@@ -5,8 +5,10 @@
 
 """Recipe for building a BuildTarget image for CQ."""
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
@@ -20,14 +22,25 @@ DEPS = [
     'recipe_engine/time',
     'bot_scaling',
     'build_menu',
+    'chrome',
     'cros_infra_config',
     'cros_tags',
     'easy',
+    'gerrit',
     'future_utils',
+    'repo',
+    'src_state',
     'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+GERRIT_HOST = 'chromium-review.googlesource.com'
+CHANGE_NUM = 123456
+PROJECT_NAME = 'chromiumos/overlays/chromiumos-overlay'
+
+GERRIT_CHANGE = GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)
+EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 
 def RunSteps(api):
@@ -76,11 +89,35 @@ def DoRunSteps(api, config):
   # thrown.
   #
   # TODO(b/261873853): Remove this experiment once this is the default flow.
-  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
+  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in \
+      api.buildbucket.build.input.experiments
+  upload_prebuilts_from_cq = 'chromeos.build_cq.upload_prebuilts' in \
+      api.buildbucket.build.input.experiments
+
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       # Create the test containers async.
+
+      with api.step.nest('upload prebuilts'):
+        upload = False
+        with api.step.nest(
+            'Check if the CQ uploads the prebuilts') as presentation:
+          if upload_prebuilts_from_cq:
+            if len(api.src_state.gerrit_changes) == 1:
+              if api.chrome.is_chrome_pupr_atomic_uprev(
+                  api.src_state.gerrit_changes[0]):
+                presentation.step_text = \
+                    'decided to upload by chrome pupr change'
+                upload = True
+              else:
+                presentation.step_text = \
+                    'decided not to upload: not Chrome pupr atomic uprev'
+
+        if upload:
+          with api.step.nest('do upload'):
+            api.build_menu.upload_prebuilts(config)
+
       test_containers_runner = api.future_utils.create_parallel_runner()
       test_containers_runner.run_function_async(
           lambda cfg, _: api.build_menu.create_containers(cfg), config)
@@ -156,6 +193,61 @@ def GenTests(api):
       cq=True,
       build_target='coral',
       experiments=['chromeos.build_cq.async_unit_tests'],
+  )
+
+  # Test of "upload_prebuilts" flag.
+  # CQ build on uprev CL, with uploading the prebuilts.
+  yield api.build_menu.test(
+      'upload-prebuilts-experiment',
+      api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
+      api.post_check(post_process.StatusSuccess),
+      #api.step_data('check if diff requires chrome rebuild', ),
+      api.repo.project_infos_step_data(
+          'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
+              'apply gerrit patch sets',
+          [dict(project=PROJECT_NAME)]),
+      api.gerrit.simulated_topic(
+          "chromeos-base/lacros-ash-atomic", GERRIT_HOST, CHANGE_NUM,
+          "upload prebuilts.Check if the CQ uploads the prebuilts"),
+      api.step_data(
+          'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
+              'read git footers',
+          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'upload prebuilts.Check if the CQ uploads the prebuilts',
+          [GERRIT_CHANGE], {
+              CHANGE_NUM: {
+                  'project': PROJECT_NAME,
+                  'branch': 'main',
+                  'files': {
+                      EBUILD_PATH: {},
+                  }
+              },
+          }, iteration=1),
+      cq=True,
+      input_properties=api.test_util.build_menu_properties(
+          override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
+      build_target='amd64-generic',
+      experiments=[
+          # Flag to enable to upload the prebuilts
+          'chromeos.build_cq.upload_prebuilts',
+      ],
+  )
+
+  # Test of "upload_prebuilts" flag.
+  # CQ build on non-uprev CL, without uploading the prebuilts.
+  yield api.build_menu.test(
+      'upload-prebuilts-experiment-on-non-uprev-cq',
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts.do upload'),
+      api.post_check(post_process.StatusSuccess),
+      cq=True,
+      input_properties=api.test_util.build_menu_properties(
+          override_prebuilts_config=BuilderConfig.Artifacts.PRIVATE),
+      build_target='coral',
+      experiments=[
+          # Flag to enable to upload the prebuilts
+          'chromeos.build_cq.upload_prebuilts',
+      ],
   )
 
   # This covers the Relevance check.

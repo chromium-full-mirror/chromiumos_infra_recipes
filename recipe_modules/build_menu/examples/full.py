@@ -185,6 +185,28 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'cherry-pick gerrit changes'),
       build_target='arm-generic', cq=True, bucket='postsubmit')
 
+  # Ensure CQ uploads the prebuilts if the prebuilt target is PUBLIC.
+  yield api.build_menu.test(
+      'cq-with-uploading-prebuilts',
+      api.test_util.test_orchestrator(bucket='cq').build,
+      api.properties(FullProperties(upload_prebuilts=True)),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.StatusSuccess), input_properties={
+          '$chromeos/build_menu':
+              dict(override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
+      }, cq=True)
+
+  # Ensure CQ does not upload the prebuilts if the prebuilt target is NONE.
+  yield api.build_menu.test(
+      'cq-without-uploading-prebuilts',
+      api.test_util.test_orchestrator(bucket='cq').build,
+      api.properties(FullProperties(upload_prebuilts=True)),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.StatusSuccess), input_properties={
+          '$chromeos/build_menu':
+              dict(override_prebuilts_config=BuilderConfig.Artifacts.NONE),
+      }, cq=True)
+
   yield api.build_menu.test(
       'postsubmit-with-snapshot-prebuilts',
       api.properties(

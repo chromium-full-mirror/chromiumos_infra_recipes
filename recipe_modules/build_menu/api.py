@@ -47,6 +47,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._artifact_build = props.artifact_build
     self._test_with_code_coverage = props.test_with_code_coverage
     self._test_with_rust_code_coverage = props.test_with_rust_code_coverage
+    self._override_prebuilts_config = props.override_prebuilts_config
     # Prebuilt information for the builder.  Created in setup_sysroot, used
     # there and install_packages.
     self._package_indexes = None
@@ -829,7 +830,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     # TODO(crbug/1112425): config.build.portage_profile is migrating.
     profile = Profile(name=config.build.portage_profile.profile)
-    if artifacts.prebuilts in self.UPLOADABLE_PREBUILTS:
+    prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
+    if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
           self.build_target, self.sysroot, profile, config.id.type,
           artifacts.prebuilts_gs_bucket,

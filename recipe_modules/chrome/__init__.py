@@ -10,6 +10,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/depot_tools',
@@ -17,7 +18,10 @@ DEPS = [
     'cros_infra_config',
     'cros_build_api',
     'cros_sdk',
+    'cros_source',
     'easy',
+    'gerrit',
+    'git_footers',
     'portage',
     'workspace_util',
 ]
