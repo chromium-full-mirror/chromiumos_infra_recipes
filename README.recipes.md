@@ -9631,15 +9631,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#16)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#58)(api, config):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#59)(api, config):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#33)(api):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#12): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

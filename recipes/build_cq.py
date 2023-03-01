@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/runtime',
     'recipe_engine/step',
+    'recipe_engine/time',
     'bot_scaling',
     'build_menu',
     'cros_infra_config',
@@ -90,6 +91,8 @@ def DoRunSteps(api, config):
         # Set a property to indicate image artifacts are uploaded, so CQ
         # orchestrator can poll for this property.
         api.easy.set_properties_step(image_artifacts_uploaded=True)
+        api.easy.set_properties_step(
+            image_artifacts_uploaded_time=api.time.utcnow().strftime("%FT%T.%fZ"))
         # We have no steps following unit_test_images, so we don't need to
         # check the return value.
         api.build_menu.unit_test_images(config)
