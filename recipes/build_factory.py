@@ -10,7 +10,11 @@ This recipe supports the workflow necessary to support factory builders."""
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/step',
     'build_menu',
+    'cros_build_api',
+    'cros_release',
+    'signing',
     'test_util',
 ]
 
@@ -25,6 +29,20 @@ def RunSteps(api):
     api.build_menu.install_packages(config, env_info.packages)
     api.build_menu.build_and_test_images(config, include_version=True)
     api.build_menu.upload_artifacts(config)
+    _, instructions = api.cros_release.push_and_sign_images(
+        config, api.build_menu.sysroot)
+
+    if instructions and not api.build_menu.is_staging:
+      with api.step.nest('get signed build metadata') as pres:
+        metadata = api.signing.wait_for_signing(instructions)
+        api.signing.get_signed_build_metadata(metadata)
+        api.signing.verify_signing_success(metadata, pres)
+    else:
+      with api.step.nest('skipping signing') as pres:
+        if not instructions:
+          pres.step_text = 'no signing instructions generated'
+        if api.build_menu.is_staging:
+          pres.step_text = 'signing is not run in staging'
 
 
 def GenTests(api):
@@ -33,4 +51,29 @@ def GenTests(api):
       'basic', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'get signed build metadata'),
+      api.post_process(post_process.DropExpectation),
+      builder='factory-corsola-15197.B-corsola')
+
+  yield api.build_menu.test(
+      'staging', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'skipping signing'),
+      api.post_check(post_process.StepTextContains, 'skipping signing',
+                     ['signing is not run in staging']),
+      api.post_process(post_process.DropExpectation),
+      builder='staging-factory-corsola-15197.B-corsola')
+
+  yield api.build_menu.test(
+      'no instructions', api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.cros_build_api.set_api_return(parent_step_name='push images',
+                                        endpoint='ImageService/PushImage',
+                                        data='{}', retcode=0),
+      api.post_check(post_process.MustRun, 'skipping signing'),
+      api.post_check(post_process.StepTextContains, 'skipping signing',
+                     ['no signing instructions generated']),
+      api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola')
