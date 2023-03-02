@@ -82,8 +82,6 @@ def RunSteps(api, properties):
     # Link a second time to handle case where link exists.
     api.cros_sdk.link_chroot(workspace)
 
-    api.cros_sdk.unmount_chroot()
-
     api.cros_sdk.unlink_chroot(workspace)
     api.cros_sdk.swarming_chmod_chroot()
 

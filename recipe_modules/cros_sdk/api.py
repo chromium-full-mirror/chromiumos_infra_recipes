@@ -18,7 +18,6 @@ from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
 from PB.chromite.api.sdk import UpdateRequest as UpdateSdkRequest
 from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
-from PB.chromite.api.sdk import UnmountRequest as UnmountSdkRequest
 
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
@@ -258,7 +257,6 @@ class CrosSdkApi(RecipeApi):
   def _remove_chroot(self, name=None):
     with self.m.step.nest(name or 'remove sdk'):
       self.cleanup_sysroot()
-      self.unmount_chroot()
       self._delete_chroot()
 
   def _delete_chroot(self, name=None):
@@ -565,7 +563,6 @@ class CrosSdkApi(RecipeApi):
         if self._chroot_initialized:
           self.cleanup_sysroot()
           self._write_sdk_cache_state()
-          self.unmount_chroot()
 
           if self._sdk_is_dirty:
             self._delete_chroot(name='Invalidating SDK due to dirty state')
@@ -577,11 +574,6 @@ class CrosSdkApi(RecipeApi):
             raise StepFailure('not all input test data used')
         else:
           self._delete_chroot(name='ensure no rogue SDK')
-
-  def unmount_chroot(self, chroot=None):
-    chroot = chroot or self.chroot
-    with self.m.step.nest('unmounting chroot'):
-      self.m.cros_build_api.SdkService.Unmount(UnmountSdkRequest(chroot=chroot))
 
   def cleanup_sysroot(self):
     with self.m.step.nest('removing sysroot'):
