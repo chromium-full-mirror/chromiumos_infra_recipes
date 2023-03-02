@@ -33,4 +33,4 @@ def GenTests(api):
       'basic', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      builder='factory-corsola-15196.B-branch')
+      builder='factory-corsola-15197.B-corsola')

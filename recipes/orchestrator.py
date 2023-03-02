@@ -260,7 +260,7 @@ def GenTests(api: RecipeTestApi):
                           manifest_gs_path='gs://foo/bar.xml'),
                       use_external_source_cache=True)
           }), api.post_check(post_process.StatusSuccess),
-      builder='factory-orchestrator', with_history=True,
+      builder='factory-corsola-15197.B-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,

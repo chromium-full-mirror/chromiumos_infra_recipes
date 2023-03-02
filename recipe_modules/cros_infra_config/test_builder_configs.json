@@ -2897,7 +2897,7 @@
     },
     {
       "id": {
-        "name": "factory-orchestrator",
+        "name": "factory-corsola-15197.B-orchestrator",
         "type": "FACTORY",
         "bucket": "factory"
       },
@@ -2913,7 +2913,7 @@
         },
         "child_specs": [
           {
-            "name": "factory-corsola-15196.B-branch",
+            "name": "factory-corsola-15197.B-corsola",
             "collectHandling": "COLLECT"
           }
         ]
@@ -2921,7 +2921,7 @@
     },
     {
       "id": {
-        "name": "factory-corsola-15196.B-branch",
+        "name": "factory-corsola-15197.B-corsola",
         "bucket": "factory"
       },
       "general": {
@@ -2948,10 +2948,9 @@
             "outputArtifacts": [
               {
                 "artifactTypes": [
-                  "GCE_TARBALL",
-                  "IMAGE_ZIP",
                   "AUTOTEST_FILES",
-                  "TAST_FILES"
+                  "TAST_FILES",
+                  "IMAGE_ARCHIVES"
                 ],
                 "gsLocations": []
               }
@@ -2966,11 +2965,108 @@
               }
             ]
           },
-          "infra": {
+          "sysroot": {
             "outputArtifacts": [
               {
                 "artifactTypes": [
-                  "BUILD_MANIFEST"
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "staging-factory-corsola-15197.B-orchestrator",
+        "type": "FACTORY",
+        "bucket": "staging"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        },
+        "child_specs": [
+          {
+            "name": "staging-factory-corsola-15197.B-corsola",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "staging-factory-corsola-15197.B-corsola",
+        "type": "FACTORY",
+        "bucket": "staging"
+      },
+      "general": {
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "IMAGE_ARCHIVES"
+                ],
+                "gsLocations": []
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FACTORY_IMAGE"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
                 ]
               }
             ]

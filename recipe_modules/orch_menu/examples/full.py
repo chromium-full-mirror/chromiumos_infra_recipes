@@ -428,7 +428,7 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main'),
-      builder='factory-orchestrator',
+      builder='factory-corsola-15197.B-orchestrator',
       with_history=True,
       bot_size='medium',
   )
