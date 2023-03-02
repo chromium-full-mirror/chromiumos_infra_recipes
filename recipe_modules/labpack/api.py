@@ -5,9 +5,20 @@
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map, add_assertion_to_map
 
+DEFAULT_CIPD_LABEL = 'prod'
+
 
 class LabpackCommand(recipe_api.RecipeApi):
-  """Labpack command is a singleton whose methods invoke the labpack CIPD executable"""
+  """Labpack command is a singleton whose methods invoke the labpack CIPD executable
+
+  Labpack has the following public attributes:
+  - cipd_label
+
+  """
+
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+    self.cipd_label = DEFAULT_CIPD_LABEL
 
   def get_cipd_path(self):
     """Get the path of the cipd package.
@@ -37,7 +48,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     with self.m.step.nest('ensure labpack'):
       pkgs = self.m.cipd.EnsureFile()
       # TODO(gregorynisbet): Consider modifying this to be overridable as a recipe input.
-      pkgs.add_package('chromiumos/infra/labpack/${platform}', 'prod')
+      pkgs.add_package('chromiumos/infra/labpack/${platform}', self.cipd_label)
       self.m.cipd.ensure(self.get_cipd_path(), pkgs)
 
       # So, we have to have a mock call here. Let me tell you why.

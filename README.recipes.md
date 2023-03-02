@@ -6951,11 +6951,14 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#24)(self):**
+Labpack has the following public attributes:
+- cipd_label
+
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#35)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -6967,7 +6970,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#12)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#23)(self):**
 
 Get the path of the cipd package.
 
