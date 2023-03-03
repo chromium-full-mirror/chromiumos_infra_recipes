@@ -453,7 +453,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       base_variant (dict): Variant attributes for the test results.
     """
     base_variant = {
-        'test_config': suite_name,
+        'test_config': self.m.rdb_util.get_shardless_test_config(suite_name),
     }
 
     if suite_name:

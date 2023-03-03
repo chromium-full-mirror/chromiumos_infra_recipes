@@ -521,6 +521,7 @@
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [pupr_local_uprev:tests/uprev_sdk](#recipes-pupr_local_uprev_tests_uprev_sdk) (Python3 ✅) &mdash; Verify that uprev_sdk() creates local uprev commits as expected.
   * [pvs_upload_mappings](#recipes-pvs_upload_mappings) (Python3 ✅) &mdash; Recipe for uploading mappings to the PVS database.
+  * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config) (Python3 ✅)
   * [rdb_util:examples/get_vm_suite](#recipes-rdb_util_examples_get_vm_suite) (Python3 ✅)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
   * [regen_build_cache](#recipes-regen_build_cache) (Python3 ✅) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
@@ -8086,6 +8087,17 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module for util functions associated with ResultDB.
 
+&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#29)(self, test_config: str):**
+
+Get the test config without shard suffix.
+
+Args:
+  test_config: Full test config name with the shard info.
+    eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5'
+
+Returns:
+  A string of just the test config name registered in RDB without the shard info.
+
 &mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#14)(self, composite_name: str):**
 
 Get the name of the suite of a VM/GCE run from the composite name.
@@ -12868,6 +12880,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe for uploading mappings to the PVS database.
 
 &mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#16)(api):**
+### *recipes* / [rdb\_util:examples/get\_shardless\_test\_config](/recipe_modules/rdb_util/examples/get_shardless_test_config.py)
+
+[DEPS](/recipe_modules/rdb_util/examples/get_shardless_test_config.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_shardless_test_config.py#14)(api):**
 ### *recipes* / [rdb\_util:examples/get\_vm\_suite](/recipe_modules/rdb_util/examples/get_vm_suite.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_vm_suite.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
