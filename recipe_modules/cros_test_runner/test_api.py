@@ -20,7 +20,7 @@ class CrosTestRunnerTestApi(recipe_test_api.RecipeTestApi):
     """
     if name != '':
       name += '.'
-    name += 'go cros_test_runner'
+    name += 'cros_test_runner'
     return (self.step_data(
         name,
         self.m.step.sub_build(build_pb2.Build(status=common_pb2.SUCCESS))))

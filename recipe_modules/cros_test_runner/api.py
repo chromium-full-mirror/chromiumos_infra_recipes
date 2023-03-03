@@ -33,7 +33,9 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
       build.ClearField(ofield)
     cmd = self._cipd_dir.join('cros_test_runner')
-    self.m.step.sub_build('go cros_test_runner', [cmd], build)
+
+    with self.m.context(infra_steps=True):
+      self.m.step.sub_build('cros_test_runner', [cmd], build, legacy_global_namespace=True)
 
   def ensure_cros_test_runner(self):
     """Ensure the cros_test_runner CLI is installed."""
