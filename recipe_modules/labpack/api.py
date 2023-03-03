@@ -4,8 +4,10 @@
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map, add_assertion_to_map
+from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path
 
 DEFAULT_CIPD_LABEL = 'prod'
+DEFAULT_CIPD_PACKAGE = 'chromiumos/infra/labpack/${platform}'
 
 
 class LabpackCommand(recipe_api.RecipeApi):
@@ -13,12 +15,18 @@ class LabpackCommand(recipe_api.RecipeApi):
 
   Labpack has the following public attributes:
   - cipd_label
+  - cipd_package
 
   """
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
     self.cipd_label = DEFAULT_CIPD_LABEL
+    self.cipd_package = DEFAULT_CIPD_PACKAGE
+
+  def get_cipd_executable_name(self):
+    """get_cipd_executable_name gets the executable name from the CIPD path"""
+    return extract_executable_name_from_cipd_path(self.cipd_package)
 
   def get_cipd_path(self):
     """Get the path of the cipd package.
@@ -48,7 +56,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     with self.m.step.nest('ensure labpack'):
       pkgs = self.m.cipd.EnsureFile()
       # TODO(gregorynisbet): Consider modifying this to be overridable as a recipe input.
-      pkgs.add_package('chromiumos/infra/labpack/${platform}', self.cipd_label)
+      pkgs.add_package(self.cipd_package, self.cipd_label)
       self.m.cipd.ensure(self.get_cipd_path(), pkgs)
 
       # So, we have to have a mock call here. Let me tell you why.
@@ -70,7 +78,8 @@ class LabpackCommand(recipe_api.RecipeApi):
       # that behavior in prod, though, I need a way to defuse the check
       # when testing. This means always running mock_add_file, which is
       # a no-op in prod.
-      self.m.path.mock_add_file(self.get_cipd_path().join('labpack'))
+      self.m.path.mock_add_file(self.get_cipd_path().join(
+          self.get_cipd_executable_name()))
     # Just to confirm that everything is functioning as expected,
     # check to see that the labpack executable is available at
     #
@@ -79,8 +88,9 @@ class LabpackCommand(recipe_api.RecipeApi):
     #
     with self.m.step.nest('confirm labpack is installed'):
       paths = [
-          self.get_cipd_path().join('labpack'),
-          self.get_cipd_path().join('labpack.exe'),
+          self.get_cipd_path().join(self.get_cipd_executable_name()),
+          self.get_cipd_path().join('{}.exe'.format(
+              self.get_cipd_executable_name())),
       ]
       tally = sum(self.m.path.exists(path) for path in paths)
       add_assertion_to_map(out, tally,
