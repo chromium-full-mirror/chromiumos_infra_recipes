@@ -96,9 +96,12 @@ def RunSteps(api, invalid_cr_commit_position):
       api.git_footers.edit_add_change_description(description_nonexisting,
                                                   "Cq-Depend", "baz"),
       expected_description)
-  api.assertions.assertIn(
-      'Change-Id: deadbeef',
-      api.git_footers.get_footer_values(gerrit_changes, 'Change-Id'))
+  api.assertions.assertEqual(
+      {'deadbeef'},
+      api.git_footers.get_footer_values(
+          gerrit_changes, 'Change-Id',
+          step_test_data=api.git_footers.test_api.step_test_data_factory(
+              'deadbeef')))
 
 
 def GenTests(api):
