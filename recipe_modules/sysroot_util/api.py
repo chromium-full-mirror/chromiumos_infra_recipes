@@ -210,17 +210,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                              dep_graph, check_pres):
           # This will change the return from _InstallPackagesRequest().
           chrome_root = self.m.path['start_dir'].join('chrome')
-          if 'chromeos.sysroot_util.chrome_cache' in self.m.cros_infra_config.experiments:
-            self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
-                                     step_name="populate chrome cache")
-            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
-                               self.sysroot.build_target,
-                               config.chrome.internal,
-                               cache_dir=chrome_root.join('chrome_cache'))
-          else:
-            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
-                               self.sysroot.build_target,
-                               config.chrome.internal)
+          self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
+                                   step_name="populate chrome cache")
+          self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
+                             self.sysroot.build_target, config.chrome.internal,
+                             cache_dir=chrome_root.join('chrome_cache'))
           self.m.cros_sdk.set_chrome_root(chrome_root)
           if install_packages.use_remoteexec:
             self.m.cros_sdk.configure_remoteexec()
@@ -260,10 +254,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                                    response,
                                                    self.m.file.read_raw)
       # If our experiments are enabled, clean up the chrome cache checkout.
-      if (chrome_root and 'chromeos.sysroot_util.chrome_cache' in
-          self.m.cros_infra_config.experiments and
-          'chromeos.sysroot_util.chrome_cache_purge' in
-          self.m.cros_infra_config.experiments):
+      if (chrome_root and 'chromeos.sysroot_util.chrome_cache_purge'
+          in self.m.cros_infra_config.experiments):
         self.m.file.rmtree('deleting chrome checkout', chrome_root)
         # Set the chrome root to None so it isn't used later.
         self.m.cros_sdk.set_chrome_root(None)
