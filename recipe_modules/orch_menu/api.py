@@ -21,14 +21,13 @@ from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
-from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.test_platform.request import Request
 from recipe_engine.engine_types import StepPresentation
-from recipe_engine.recipe_api import RecipeApi
+from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 CHILD_BUILD_SEARCH_FIELDS = frozenset({
@@ -124,7 +123,7 @@ class BuildsStatus():
             self._configs.get(build.builder.builder))
 
 
-class OrchMenuApi(RecipeApi):
+class OrchMenuApi(recipe_api.RecipeApi):
   """A module with steps used by orchestrators.
 
   Orchestrators do not call other recipe modules directly: they always get there
@@ -154,6 +153,16 @@ class OrchMenuApi(RecipeApi):
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
+
+    self._build_poller_cipd_package = (
+        self._properties.build_poller_cipd_package.encode('utf-8') or
+        "chromiumos/infra/build_poller/${platform}")
+    default_build_poller_cipd_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    self._build_poller_cipd_ref = (
+        self._properties.build_poller_cipd_ref.encode('utf-8') or
+        default_build_poller_cipd_ref)
+
+    self._build_poller_path = None
 
   @property
   def config(self):
@@ -565,18 +574,20 @@ class OrchMenuApi(RecipeApi):
           timeout=60 * 60 * 23,
       )
 
-  def _timeout_to_deadline(self, timeout: int) -> sections_pb2.Deadline:
-    """Return a Deadline timeout seconds from now."""
-    deadline = self.m.context.deadline
-    timeout_deadline = self.m.time.time() + timeout
+  def _ensure_build_poller(self):
+    if not self._build_poller_path:
+      with self.m.step.nest('ensure build poller'), self.m.context(
+          infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd_build_poller')
 
-    # If there is currently a deadline, take the min of this deadline and the
-    # current deadline, otherwise take this deadline.
-    deadline.soft_deadline = min(
-        deadline.soft_deadline,
-        timeout_deadline) if deadline.soft_deadline else timeout_deadline
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package(self._build_poller_cipd_package,
+                         self._build_poller_cipd_ref)
+        self.m.cipd.ensure(cipd_dir, pkgs)
 
-    return deadline
+        self._build_poller_path = cipd_dir.join('build_poller')
+
+    return self._build_poller_path
 
   def _poll_for_output_prop(
       self,
@@ -594,48 +605,41 @@ class OrchMenuApi(RecipeApi):
       build_ids: Ids of builds to poll.
       property: Name of the property to poll for. Note that the truthiness of
         the property will not be checked, just whether it is set.
-      timeout: Maximum time to wait for builds to complete or set property.
-      interval: Delay between requests for the state of the builds.
+      timeout: Maximum seconds to wait for builds to complete or set property.
+      interval: Delay in seconds between requests for the state of the builds.
 
     Returns:
       A map from build id -> build_pb2.Build
     """
-    # TODO(b/261873853): Explore moving this logic into a helper binary, so
-    # there aren't 100s of get_multi calls in the UI while the builds are
-    # being collected.
-    completed_builds: Dict[int, build_pb2.Build] = {}
+    build_poller_path = self._ensure_build_poller()
+
+    # Call build_poller with '-json -' to print build protos to stdout. Build
+    # protos will be printed as jsonproto, one per-line.
     try:
-      with self.m.context(deadline=self._timeout_to_deadline(
-          timeout)), self.m.step.nest('collect'):
+      poll_result = self.m.step(
+          'collect',
+          [
+              build_poller_path, '-outputprop', output_property, '-interval',
+              f'{interval}s', '-json', '-'
+          ] + build_ids,
+          timeout=timeout,
+          stdout=self.m.raw_io.output_text(add_output_log=True),
+      )
 
-        while len(completed_builds) < len(build_ids):
-          builds = self.m.buildbucket.get_multi(
-              build_ids, fields=self.m.buildbucket.DEFAULT_FIELDS | {'tags'})
-
-          # Find all builds that haven't ended or set property as an output.
-          running_builds = []
-          for bid, build in builds.items():
-            if (build.status
-                & common_pb2.ENDED_MASK
-               ) or output_property in build.output.properties:
-              completed_builds[bid] = build
-            else:
-              running_builds.append(build)
-
-          # If there are any running builds, log their ids for debugging and
-          # sleep.
-          if running_builds:
-            self.m.step.active_result.presentation.logs[
-                'running builds'] = ','.join(
-                    [str(b.id) for b in running_builds])
-            self.m.time.sleep(interval)
-
-    # TODO(b/261873853): It seems that context deadlines aren't actually
-    # respected in recipes tests, i.e. we can't actually hit this timeout in
-    # testing. Investigate further.
-    except StepFailure as ex:  #pragma: nocover
-      if not ex.had_timeout:
-        raise
+      completed_builds = {}
+      for line in poll_result.stdout.split('\n'):
+        build = build_pb2.Build()
+        json_format.Parse(line, build, ignore_unknown_fields=True)
+        completed_builds[build.id] = build
+    except recipe_api.StepFailure as ex:
+      # If build_poller timed out, return the current status of builds with
+      # get_multi.
+      if ex.had_timeout:
+        completed_builds = self.m.buildbucket.get_multi(
+            build_ids, fields=self.m.buildbucket.DEFAULT_FIELDS | {'tags'},
+            step_name='collect after timeout')
+      else:
+        raise ex
 
     return completed_builds
 

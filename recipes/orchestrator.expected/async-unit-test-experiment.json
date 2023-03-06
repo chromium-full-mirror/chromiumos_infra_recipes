@@ -2640,24 +2640,26 @@
   },
   {
     "cmd": [],
-    "name": "run builds.collect",
+    "name": "run builds.ensure build poller",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd_build_poller",
+      "-ensure-file",
+      "chromiumos/infra/build_poller/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337129604.5
-      },
       "realm": {
         "name": "chromeos:postsubmit"
       },
@@ -2669,85 +2671,55 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.collect.buildbucket.get_multi",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514000\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514002\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514003\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514004\"}}]}",
+    "name": "run builds.ensure build poller.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_poller/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514001\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514000\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514001\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514002\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514003\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }, @@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514004\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
-      "@@@STEP_LINK@8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_LINK@8922054662172514002@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@8922054662172514003@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
-      "@@@STEP_LINK@8922054662172514004@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd_build_poller/build_poller",
+      "-outputprop",
+      "image_artifacts_uploaded",
+      "-interval",
+      "60s",
+      "-json",
+      "-",
+      "8922054662172514000",
+      "8922054662172514001",
+      "8922054662172514002",
+      "8922054662172514003",
+      "8922054662172514004"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run builds.collect",
+    "timeout": 129600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"123\",  \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2771,38 +2743,6 @@
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing ",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "aggregating metadata.container metadata.processing  (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "aggregating metadata.container metadata.processing  (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "aggregating metadata.container metadata.processing  (4)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "aggregating metadata.container metadata.processing  (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
@@ -3021,19 +2961,7 @@
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@planner_input@    },@@@",
-      "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNGtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@planner_input@    },@@@",
-      "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@planner_input@    },@@@",
-      "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNOtpKubruDoe2AM\"@@@",
-      "@@@STEP_LOG_LINE@planner_input@    },@@@",
-      "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNStpKubruDoe2AM\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CHtgDA==\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"manifestCommit\": \"snapshot-HEAD-SHA\",@@@",
@@ -7357,7 +7285,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u000e\n\f\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f*\u000e\n\f\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f*\u000e\n\f\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f*\u000e\n\f\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f*\u000e\n\f\b\u052d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\u0006\n\u0004\b{`\f:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

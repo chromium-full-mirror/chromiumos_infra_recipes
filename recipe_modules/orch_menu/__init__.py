@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
+    'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/futures',
