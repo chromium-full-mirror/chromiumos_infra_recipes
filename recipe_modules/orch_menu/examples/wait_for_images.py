@@ -3,11 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
+
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
     'orch_menu',
 ]
 
@@ -39,12 +42,6 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  # amd64-generic-cq is originally in STARTED status, with no published image.
-  running_build = api.buildbucket.ci_build_message(
-      build_id=8922054662172514000,
-      builder='amd64-generic-cq',
-      status='STARTED',
-  )
   # arm-generic-cq is originally in STARTED status, with a published image.
   build_with_published_image = api.buildbucket.ci_build_message(
       build_id=8922054662172514001,
@@ -80,7 +77,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'basic',
       # Expect to schedule 7 child builds. 4 should have COLLECT behavior, so
-      # are included in the calls to get_multi.
+      # are included in the call build_poller.
       api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.amd64-generic-cq'),
       api.post_check(post_process.MustRun,
@@ -95,23 +92,23 @@ def GenTests(api):
                      'run builds.schedule new builds.coral-cq'),
       api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.eve-cq'),
-      # First call to get_multi has a build that is still running, and hasn't published an image.
-      api.buildbucket.simulated_get_multi([
-          running_build,
-          build_with_published_image,
-          successful_build,
-          failed_build,
-      ], step_name='run builds.collect.buildbucket.get_multi'),
-      api.post_process(post_process.LogEquals,
-                       'run builds.collect.buildbucket.get_multi',
-                       'running builds', '8922054662172514000'),
-      # Second call all builds have completed or published an image.
-      api.buildbucket.simulated_get_multi([
-          other_build_with_published_image,
-          build_with_published_image,
-          successful_build,
-          failed_build,
-      ], step_name='run builds.collect.buildbucket.get_multi (2)'),
+      api.step_data(
+          'run builds.collect',
+          stdout=api.raw_io.output_text(
+              '\n'.join([
+                  json_format.MessageToJson(b).replace('\n', '') for b in [
+                      build_with_published_image, successful_build,
+                      failed_build, other_build_with_published_image
+                  ]
+              ]),
+          ),
+      ),
+      api.post_check(post_process.StepCommandContains, 'run builds.collect', [
+          "[START_DIR]/cipd_build_poller/build_poller", "collect",
+          "-outputprop", "image_artifacts_uploaded", "-interval", "60s",
+          "-json", "-", "8922054662172514000", "8922054662172514001",
+          "8922054662172514002", "8922054662172514003"
+      ]),
       # The final build collect should collect all 7 builds.
       api.post_check(post_process.StepCommandRE,
                      'final build collect.collect.wait', [
@@ -136,4 +133,35 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       with_manifest_refs=True,
+  )
+
+  yield api.orch_menu.test(
+      'times-out',
+      # If the build_poller command times out, a get_multi should run after.
+      api.step_data('run builds.collect', times_out_after=60 * 60 * 40),
+      api.buildbucket.simulated_get_multi([
+          build_with_published_image, successful_build, failed_build,
+          other_build_with_published_image
+      ], step_name='run builds.collect after timeout'),
+      # The final build collect should collect all 7 builds.
+      api.post_check(post_process.StepCommandRE,
+                     'final build collect.collect.wait', [
+                         'bb', 'collect', '-host', '.*', '-interval', '.*',
+                         '8922054662172514000', '8922054662172514001',
+                         '8922054662172514002', '8922054662172514003',
+                         '8922054662172514004', '8922054662172514005',
+                         '8922054662172514006'
+                     ]),
+      api.post_check(post_process.MustRun,
+                     'final build collect.check build results'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+  )
+
+  yield api.orch_menu.test(
+      'build-poller-fails',
+      api.step_data('run builds.collect', retcode=1),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )
