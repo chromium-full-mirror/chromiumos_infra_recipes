@@ -9,4 +9,8 @@ package recipes.chromeos.build_sdk;
 message BuildSDKProperties {
   // Whether to build the SDK with the llvm-next USE flag
   bool use_llvm_next = 1;
+
+  // Override the default version, which is used for GS:// filepaths.
+  // Default: Build start timestamp, formatted as "%Y.%m.%d.%H%M%S"
+  string version = 2;
 }

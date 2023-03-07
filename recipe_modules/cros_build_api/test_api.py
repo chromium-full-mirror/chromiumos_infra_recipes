@@ -657,17 +657,21 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     step_name = step_name or 'call chromite.api.%s' % endpoint
     iteration = '' if iteration == 1 else ' (%d)' % iteration
 
+    # If there is a parent step, append a dot (.) to signify the substep.
+    # This allows us to have no dot if there is no parent step.
+    parent_step_prefix = f'{parent_step_name}.' if parent_step_name else ''
+
     # Set the step data for the Build API call.
     substep = 'call build API script'
     ret = self.step_data(
-        '%s.%s%s.%s' % (parent_step_name, step_name, iteration, substep),
+        '%s%s%s.%s' % (parent_step_prefix, step_name, iteration, substep),
         self.m.file.read_raw(content=data), retcode=retcode)
 
     # Set the step data for reading the output if retcode in 0 or 2.
     if retcode in (0, 2):
       substep = 'read output file'
       ret += self.step_data(
-          '%s.%s%s.%s' % (parent_step_name, step_name, iteration, substep),
+          '%s%s%s.%s' % (parent_step_prefix, step_name, iteration, substep),
           self.m.file.read_raw(content=data))
 
     return ret
