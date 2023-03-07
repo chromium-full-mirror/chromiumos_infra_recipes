@@ -6,20 +6,27 @@
 
 from collections import defaultdict
 from collections import namedtuple
+from typing import List
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
+    TestVariantFailureRateAnalysis
 from PB.chromiumos.test_disablement import TestDisablementCfg
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
+from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
+from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
-FailedTest = namedtuple('FailedTest',
-                        ['name', 'board', 'build_target', 'suite'])
+FailedTest = namedtuple(
+    'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
+CONSISTENT_FAILURES_THRESHOLD = 6
+FLAKE_PERCENT_THRESHOLD = 3
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -192,7 +199,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           continue
         self._failed_tests.add(
             FailedTest(name=test_case.name, board=board,
-                       build_target=build_target, suite=suite))
+                       build_target=build_target, suite=suite,
+                       test_config=f'{build_target}-cq.hw.{suite}'))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -348,7 +356,8 @@ class ExonerateApi(recipe_api.RecipeApi):
               # board == build_target for VM tests.
               board=build_target,
               build_target=build_target,
-              suite=suite))
+              suite=suite,
+              test_config=f'{build_target}-cq.tast_vm.{suite}'))
       if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:
@@ -448,12 +457,108 @@ class ExonerateApi(recipe_api.RecipeApi):
     md_string += ', '.join(all_links)
     return md_string
 
-  def auto_exoneration_dry_run(self):
-    """Skeleton of a function that will run Automated Exoneration dry-run.
+  def get_test_variant_dict(self, test_id: str, board: str, build_target: str,
+                            suite: str, test_config: str) -> dict:
+    """Create test_variant dict for LUCI Analysis from inputs.
+
+    Args:
+      test_id: Name of the test.
+      board: Name of the board.
+      build_target: Name of the build_target.
+      suite: Name of the suite.
+      test_config: test_config of the test.
+
+    Returns: A dict that contains the test & variant info.
     """
+    return {
+        'testId': test_id,
+        'variant': {
+            'def': {
+                'board': board,
+                'build_target': build_target,
+                'suite': suite,
+                'test_config': test_config
+            }
+        }
+    }
+
+  def get_consistent_failure_count_from_verdicts(
+      self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]
+  ) -> int:
+    """Get the number of failures in the last 10 independant runs from LUCI Analysis.
+
+    Args:
+      recent_verdicts: 10 most recent verdicts from LUCI Analysis.
+
+    Returns: Number of failures in the last 10 runs.
+    """
+    return sum([v.has_unexpected_runs for v in recent_verdicts])
+
+  def get_flake_percent_from_interval_stats(
+      self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]
+  ) -> int:
+    """Get the flake percent of the test for the last 24 hr period.
+
+    Args:
+      interval_stats: Verdict stats of the test over interval ranges.
+
+    Returns: Percent of verdict with unexpected or flaky result in
+      the last 24 hr period rounded to the nearest integer.
+    """
+    for interval_stat in interval_stats:
+      # interval_age = 1 is the last 24 hr period.
+      if interval_stat.interval_age == 1:
+        bad_verdicts = (
+            interval_stat.total_run_flaky_verdicts +
+            interval_stat.total_run_unexpected_verdicts)
+        total_verdicts = bad_verdicts + interval_stat.total_run_expected_verdicts
+        return 0 if total_verdicts == 0 else round(100 * (bad_verdicts) /
+                                                   total_verdicts)
+
+    # Adding a return statement here for pylint. We should only get here if the LUCI
+    # analysis response is bad. 0 is the fallback in that case.
+    return 0
+
+  def auto_exoneration_dry_run(self) -> None:
+    """Try Automatically Exonerating failed tests."""
     with self.m.step.nest('Automated Exoneration Dry-run') as pres:
       pres.logs['failed_tests'] = str(
           sorted(self._failed_tests, key=lambda x: x.name + x.build_target))
+      if self._dry_run:
+        # Convert failed tests into the format LUCI Analysis wants.
+        test_variant_list = []
+        for test in self._failed_tests:
+          test_variant_list.append(
+              self.get_test_variant_dict(test_id=test.name, board=test.board,
+                                         build_target=test.build_target,
+                                         suite=test.suite,
+                                         test_config=test.test_config))
+        # TODO(b/272052840): See if we need to skip auto exoneration.
+
+        failure_rates = self.m.luci_analysis.query_failure_rate(
+            test_variant_list, project='chromeos')
+        pres.logs['failure_rate'] = str(failure_rates)
+        all_stats = []
+        for failure_rate in failure_rates:
+          stat = FailedTestStats()
+          stat.test_id = failure_rate.test_id
+          stat.build_target = self.m.rdb_util.get_build_target_from_variant(
+              failure_rate.variant)
+          stat.manually_exonerated = self._is_test_name_exonerable(
+              str(stat.test_id), str(stat.build_target))
+          stat.consistent_failure_count = self.get_consistent_failure_count_from_verdicts(
+              failure_rate.recent_verdicts)
+          stat.flaky_verdict_percent = self.get_flake_percent_from_interval_stats(
+              failure_rate.interval_stats)
+          # This is Browser's current algorithm. Starting with this. Might change later.
+          stat.automatically_exonerated = (
+              stat.consistent_failure_count > CONSISTENT_FAILURES_THRESHOLD or
+              stat.flaky_verdict_percent > FLAKE_PERCENT_THRESHOLD)
+          all_stats.append(stat)
+
+        overall_stats = OverallTestStats(failed_tests=all_stats)
+        pres.logs['all_stats'] = str(overall_stats)
+        self.m.easy.set_properties_step(failed_test_stats=overall_stats)
 
   def _is_test_name_exonerable(self, test_name, build_target):
     """Checks to see if test is exonerable.

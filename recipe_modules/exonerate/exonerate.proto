@@ -17,7 +17,7 @@ message ExonerateProperties {
 }
 
 message ExonerateStats {
-  // Whether exoneration was run in dry_run mode.
+  // Whether to run automatic exoneration in dry_run mode.
   bool dry_run = 1;
 
   // Number of tests exonerated.
@@ -53,8 +53,21 @@ message FailedTestStats {
   bool automatically_exonerated = 4;
 
   // Number of failure in the last ten executions.
-  int32 consistent_failures = 5;
+  int32 consistent_failure_count = 5;
 
   // Percent of flaky/unexpected/exonerated verdicts in all verdicts.
   int32 flaky_verdict_percent = 6;
+}
+
+message OverallTestStats{
+  enum OverrideReason {
+    UNSPECIFIED = 0;
+    TOO_MANY_FAILED_TESTS_TOTAL = 1;
+    TOO_MANY_FAILED_TESTS_PER_TARGET = 2;
+  }
+
+  // Record why we skipped auto exoneration.
+  OverrideReason override_reason = 1;
+  // All failed test stats.
+  repeated FailedTestStats failed_tests = 2;
 }

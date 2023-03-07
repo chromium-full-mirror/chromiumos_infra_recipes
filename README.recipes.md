@@ -373,6 +373,7 @@
   * [easy:examples/stdout_json_step](#recipes-easy_examples_stdout_json_step) (Python3 ✅)
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
   * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step) (Python3 ✅)
+  * [exonerate:examples/auto_exoneration_dry_run](#recipes-exonerate_examples_auto_exoneration_dry_run) (Python3 ✅)
   * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration) (Python3 ✅)
   * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration) (Python3 ✅)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests) (Python3 ✅)
@@ -521,6 +522,7 @@
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [pupr_local_uprev:tests/uprev_sdk](#recipes-pupr_local_uprev_tests_uprev_sdk) (Python3 ✅) &mdash; Verify that uprev_sdk() creates local uprev commits as expected.
   * [pvs_upload_mappings](#recipes-pvs_upload_mappings) (Python3 ✅) &mdash; Recipe for uploading mappings to the PVS database.
+  * [rdb_util:examples/get_build_target_from_variant](#recipes-rdb_util_examples_get_build_target_from_variant) (Python3 ✅)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config) (Python3 ✅)
   * [rdb_util:examples/get_vm_suite](#recipes-rdb_util_examples_get_vm_suite) (Python3 ✅)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full) (Python3 ✅)
@@ -5019,18 +5021,17 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_dry\_run](/recipe_modules/exonerate/api.py#451)(self):**
+&mdash; **def [auto\_exoneration\_dry\_run](/recipe_modules/exonerate/api.py#522)(self):**
 
-Skeleton of a function that will run Automated Exoneration dry-run.
-    
+Try Automatically Exonerating failed tests.
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#256)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#264)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -5041,7 +5042,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#301)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#309)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -5052,7 +5053,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#327)(self, all_test_cases, build_target, suite):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#335)(self, all_test_cases, build_target, suite):**
 
 Exonerates VM test cases based on configs.
 
@@ -5065,7 +5066,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#365)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#374)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5076,7 +5077,7 @@ Returns:
   [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#47)(self, mock_data=None):**
+&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#54)(self, mock_data=None):**
 
 Download config file and return the extracted config proto.
 
@@ -5085,21 +5086,53 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#434)(self):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#485)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+
+Get the number of failures in the last 10 independant runs from LUCI Analysis.
+
+Args:
+  recent_verdicts: 10 most recent verdicts from LUCI Analysis.
+
+Returns: Number of failures in the last 10 runs.
+
+&mdash; **def [get\_exoneration\_markdown](/recipe_modules/exonerate/api.py#443)(self):**
 
 Return markdown style info about suites that were exonerated.
 
 Returns: str in markdown style.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#64)(self, test_name):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#497)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+
+Get the flake percent of the test for the last 24 hr period.
+
+Args:
+  interval_stats: Verdict stats of the test over interval ranges.
+
+Returns: Percent of verdict with unexpected or flaky result in
+  the last 24 hr period rounded to the nearest integer.
+
+&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#71)(self, test_name):**
 
 Return test_name without the tast prefix.
 
-&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#42)(self):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#460)(self, test_id: str, board: str, build_target: str, suite: str, test_config: str):**
+
+Create test_variant dict for LUCI Analysis from inputs.
+
+Args:
+  test_id: Name of the test.
+  board: Name of the board.
+  build_target: Name of the build_target.
+  suite: Name of the suite.
+  test_config: test_config of the test.
+
+Returns: A dict that contains the test & variant info.
+
+&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#49)(self):**
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#418)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#427)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5108,7 +5141,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#477)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#582)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5119,7 +5152,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#515)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#620)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5130,11 +5163,11 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if the result itself is a success.
 
-&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#70)(self, mock_data=None):**
+&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#77)(self, mock_data=None):**
 
 Load configs from binary/json files.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#116)(self):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#123)(self):**
 
 Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
@@ -8086,11 +8119,20 @@ Return the checkout path where the build is processed.
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [RDBUtilApi](/recipe_modules/rdb_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RDBUtilApi](/recipe_modules/rdb_util/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with ResultDB.
 
-&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#29)(self, test_config: str):**
+&mdash; **def [get\_build\_target\_from\_variant](/recipe_modules/rdb_util/api.py#43)(self, variant: Variant):**
+
+Get build_target info from Variant definition.
+
+Args:
+  variant: Variant definition of the test.
+
+Returns: build_target of the test or ''.
+
+&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#30)(self, test_config: str):**
 
 Get the test config without shard suffix.
 
@@ -8101,7 +8143,7 @@ Args:
 Returns:
   A string of just the test config name registered in RDB without the shard info.
 
-&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#14)(self, composite_name: str):**
+&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#15)(self, composite_name: str):**
 
 Get the name of the suite of a VM/GCE run from the composite name.
 
@@ -11645,6 +11687,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/easy/tests/log_parent_step.py#25)(api: RecipeApi):**
+### *recipes* / [exonerate:examples/auto\_exoneration\_dry\_run](/recipe_modules/exonerate/examples/auto_exoneration_dry_run.py)
+
+[DEPS](/recipe_modules/exonerate/examples/auto_exoneration_dry_run.py#13): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/auto_exoneration_dry_run.py#22)(api):**
 ### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#13): [exonerate](#recipe_modules-exonerate), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12535,7 +12584,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/set_child_builds.py#20)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#29): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/orchestrator.py#29): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [exonerate](#recipe_modules-exonerate), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -12543,9 +12592,9 @@ Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#62)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#63)(api: RecipeApi):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#47)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#48)(api: RecipeApi):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
 
 [DEPS](/recipes/os_install_vm.py#56): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12883,6 +12932,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe for uploading mappings to the PVS database.
 
 &mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#16)(api):**
+### *recipes* / [rdb\_util:examples/get\_build\_target\_from\_variant](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py)
+
+[DEPS](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#8): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#16)(api):**
 ### *recipes* / [rdb\_util:examples/get\_shardless\_test\_config](/recipe_modules/rdb_util/examples/get_shardless_test_config.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_shardless_test_config.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -13897,6 +13953,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-json
 [recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-led
 [recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-legacy_annotation
+[recipe_engine/recipe_modules/luci_analysis]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-luci_analysis
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/50793cf905fbb251346c64b722998b9e5b197429/README.recipes.md#recipe_modules-random

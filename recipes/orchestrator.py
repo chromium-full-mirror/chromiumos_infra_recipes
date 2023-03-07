@@ -35,6 +35,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'cros_try',
+    'exonerate',
     'orch_menu',
     'signing',
     'recipe_engine/buildbucket',
