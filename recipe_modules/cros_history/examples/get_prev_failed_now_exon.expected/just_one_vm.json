@@ -30,9 +30,16 @@
   },
   {
     "cmd": [],
-    "name": "get previous failed and now exonerable suites.find matching builds",
+    "name": "get previous failed and now exonerable suites.get previous test results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get previous failed and now exonerable suites.get previous test results.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/12345@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
@@ -53,9 +60,9 @@
       "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}}"
     ],
     "infra_step": true,
-    "name": "get previous failed and now exonerable suites.find matching builds.buildbucket.search",
+    "name": "get previous failed and now exonerable suites.get previous test results.find matching builds.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"2019-07-07T04:54:00Z\", \"endTime\": \"2019-07-07T04:54:02Z\", \"id\": \"12345\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"test_tasks\": {\"skylab_builder_ids\": [\"1\"], \"tast_vm_tests_builder_ids\": []}}}, \"startTime\": \"2019-07-07T04:54:01Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/12345@@@"
@@ -69,10 +76,10 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "get previous failed and now exonerable suites.get tast vm tests from previous run",
+    "name": "get previous failed and now exonerable suites.get previous test results.get tast vm tests from previous run",
     "stdin": "{}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -113,9 +120,9 @@
   },
   {
     "cmd": [],
-    "name": "get previous failed and now exonerable suites.get previous skylab tasks v2",
+    "name": "get previous failed and now exonerable suites.get previous test results.get previous skylab tasks v2",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -126,10 +133,10 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "get previous failed and now exonerable suites.get previous skylab tasks v2.buildbucket.get_multi",
+    "name": "get previous failed and now exonerable suites.get previous test results.get previous skylab tasks v2.buildbucket.get_multi",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"1\"}}]}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",

@@ -11,9 +11,15 @@ from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.taskstate import TaskState
 
 DEPS = [
-    'recipe_engine/assertions', 'recipe_engine/buildbucket',
-    'recipe_engine/json', 'recipe_engine/properties', 'recipe_engine/raw_io',
-    'cros_history', 'cros_test_plan', 'exonerate', 'skylab'
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/json',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
+    'cros_history',
+    'cros_test_plan',
+    'exonerate',
+    'skylab',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -31,11 +37,11 @@ def RunSteps(api, dry_run_exonerate_retried_suites):
   if dry_run_exonerate_retried_suites:
     api.assertions.assertEqual(result, ([], []))
 
-  hw_res = api.cros_history.get_failed_now_exonerable_hw_tests_results(
-      None, None)
+  hw_res = api.cros_history.get_failed_now_exonerable_hw_tests_results([])
   api.assertions.assertEqual(hw_res, [])
 
 def GenTests(api):
+
   yield api.test(
       'empty',
       api.properties(
@@ -43,8 +49,9 @@ def GenTests(api):
           {'$chromeos/exonerate': ExonerateProperties(
               enable_exoneration=True)}),
       api.buildbucket.simulated_search_results(
-          [], step_name=('get previous failed and now exonerable suites.find '
-                         'matching builds.buildbucket.search')),
+          [], step_name=('get previous failed and now exonerable suites'
+                         '.get previous test results'
+                         '.find matching builds.buildbucket.search')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 0 vm suite and 0 hw suite'))
@@ -52,8 +59,9 @@ def GenTests(api):
       'no_hist',
       api.buildbucket.simulated_search_results(
           [api.cros_history.empty_build_with_test_build_info('min_build')],
-          step_name=('get previous failed and now exonerable suites.find '
-                     'matching builds.buildbucket.search')),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.find matching builds.buildbucket.search')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 0 vm suite and 0 hw suite'))
@@ -66,8 +74,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
-      ], step_name=('get previous failed and now exonerable suites.find '
-                    'matching builds.buildbucket.search')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
           api.skylab.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
@@ -80,12 +89,14 @@ def GenTests(api):
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-      ], step_name=('get previous failed and now exonerable suites.get '
-                    'previous skylab tasks v2.buildbucket.get_multi')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.get previous skylab tasks v2.buildbucket.get_multi')),
       api.buildbucket.simulated_get_multi(
           api.cros_history.create_vm_builds(3, 2),
-          step_name=('get previous failed and now exonerable suites.get '
-                     'tast vm tests from previous run')),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.get tast vm tests from previous run')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 2 vm suites and 1 hw suite'),
@@ -108,8 +119,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
-      ], step_name=('get previous failed and now exonerable suites.find '
-                    'matching builds.buildbucket.search')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
           api.skylab.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
@@ -122,12 +134,14 @@ def GenTests(api):
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-      ], step_name=('get previous failed and now exonerable suites.get '
-                    'previous skylab tasks v2.buildbucket.get_multi')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.get previous skylab tasks v2.buildbucket.get_multi')),
       api.buildbucket.simulated_get_multi(
           api.cros_history.create_vm_builds(3, 2),
-          step_name=('get previous failed and now exonerable suites.get '
-                     'tast vm tests from previous run')),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.get tast vm tests from previous run')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 2 vm suites and 1 hw suite'),
@@ -146,12 +160,14 @@ def GenTests(api):
               enable_exoneration=True)}),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_test_build_ids_properties(['1'], [])],
-          step_name=('get previous failed and now exonerable suites.find '
-                     'matching builds.buildbucket.search')),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi(
           api.cros_history.create_vm_builds(0, 1),
-          step_name=('get previous failed and now exonerable suites.get '
-                     'tast vm tests from previous run')),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.get tast vm tests from previous run')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 1 vm suite and 0 hw suite'),
@@ -170,8 +186,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
-      ], step_name=('get previous failed and now exonerable suites.find '
-                    'matching builds.buildbucket.search')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
           api.skylab.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
@@ -185,8 +202,9 @@ def GenTests(api):
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-      ], step_name=('get previous failed and now exonerable suites.get '
-                    'previous skylab tasks v2.buildbucket.get_multi')),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.get previous skylab tasks v2.buildbucket.get_multi')),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 0 vm suite and 2 hw suites'),

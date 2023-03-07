@@ -180,52 +180,89 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       return all_passed_tests
 
   def get_failed_now_exonerable_hw_tests_results(
-      self, test_plan: GenerateTestPlanResponse,
-      hw_build_ids: List[str]) -> List[skylab_structs.SkylabResult]:
+      self, hw_test_results: List[skylab_structs.SkylabResult]
+  ) -> List[skylab_structs.SkylabResult]:
     """Get the results from the previous failed hardware tests that can now be exonerated.
 
     Args:
-      test_plan: The test plan for which to retrieve results.
-      hw_build_ids: The IDs of the previous builds to retrieve results for.
+      hw_test_results: The previous VM test builds to try to exonerate.
 
     Returns:
       A list of the exonerable hardware test results.
     """
-    unit_hw_tests = []
-    if not test_plan or not hw_build_ids:
-      return []
-    for unit in test_plan.hw_test_units:
-      for test in unit.hw_test_cfg.hw_test:
-        unit_hw_tests.append(self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
-    hw_results = self.m.skylab.get_previous_results(hw_build_ids, unit_hw_tests)
     exonerable_hw_results = [
-        result for result in hw_results
+        result for result in hw_test_results
         if self.m.exonerate.is_hw_result_exonerable(result)
     ]
     return exonerable_hw_results
 
-  def get_failed_now_exonerable_vm_test_builds(self, build_ids: List[str]
-                                              ) -> List[build_pb2.Build]:
+  def get_failed_now_exonerable_vm_test_builds(
+      self, vm_test_builds: List[build_pb2.Build]) -> List[build_pb2.Build]:
     """Get the results from the previous failed VM test builds that can now be exonerated.
 
     Args:
-      build_ids: The IDs of the previous builds to retrieve results for.
+      vm_test_builds: The previous VM test builds to try to exonerate.
 
     Returns:
       A list of the exonerable VM test builds.
     """
-    vm_tests_builds = self.m.buildbucket.get_multi(
-        build_ids, step_name='get tast vm tests from previous run')
     exonerable_vm_results = [
-        build for build in vm_tests_builds.values()
+        build for build in vm_test_builds
         if self.m.exonerate.is_vm_test_build_exonerable(build)
     ]
     return exonerable_vm_results
 
+  # TODO(b/271938042): Make this a public function and add better unit testing.
+  def _get_previous_test_results(
+      self, test_plan: GenerateTestPlanResponse
+  ) -> Tuple[List[build_pb2.Build], List[skylab_structs.SkylabResult]]:
+    """Get the tests from the previous run.
+
+    Args:
+      test_plan: The test plan which contains the tests for which to retrieve
+      the results from previous runs.
+
+    Returns:
+      A tuple containing the list of the previous VM test builds and the list
+      of the previous HW test results.
+    """
+
+    with self.m.step.nest('get previous test results'):
+      current_build = self.m.buildbucket.build
+      past_builds = self.get_matching_builds(current_build,
+                                             statuses=TERMINAL_STATUSES)
+      if not past_builds:
+        return [], []
+
+      last_build = past_builds[0]
+      build_output = json_format.MessageToDict(last_build.output.properties)
+      test_tasks = build_output.get(TEST_TASKS_KEY)
+      if not test_tasks:
+        return [], []
+
+      vm_build_ids = [
+          int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
+      ]
+      vm_test_results = self.m.buildbucket.get_multi(
+          vm_build_ids,
+          step_name='get tast vm tests from previous run').values()
+
+      hw_build_ids = [int(b) for b in test_tasks.get('skylab_builder_ids', [])]
+      hw_test_results = []
+      unit_hw_tests = []
+      if test_plan and hw_build_ids:
+        for unit in test_plan.hw_test_units:
+          for test in unit.hw_test_cfg.hw_test:
+            unit_hw_tests.append(
+                self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
+        hw_test_results = self.m.skylab.get_previous_results(
+            hw_build_ids, unit_hw_tests)
+      return vm_test_results, hw_test_results
+
   def get_prev_failed_now_exonerable_test_results(
       self, test_plan: GenerateTestPlanResponse, dry_run=False
   ) -> Tuple[List[build_pb2.Build], List[skylab_structs.SkylabResult]]:
-    """Get the tests  from the previous failed runs that are now exonerable.
+    """Get the tests from the previous failed runs that are now exonerable.
 
     Args:
       test_plan: The test plan which contains the tests for which to retrieve
@@ -255,27 +292,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
     with self.m.step.nest(
         'get previous failed and now exonerable suites') as presentation:
-      current_build = self.m.buildbucket.build
-      past_builds = self.get_matching_builds(current_build,
-                                             statuses=TERMINAL_STATUSES)
-      if not past_builds or not past_builds[0]:
-        presentation.step_text = _get_step_text([], [])
-        return [], []
-      last_build = past_builds[0]
-      build_output = json_format.MessageToDict(last_build.output.properties)
-      if TEST_TASKS_KEY not in build_output:
-        presentation.step_text = _get_step_text([], [])
-        return [], []
 
-      test_tasks = build_output.get(TEST_TASKS_KEY)
-      vm_build_ids = [
-          int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
-      ]
-      hw_build_ids = [int(b) for b in test_tasks.get('skylab_builder_ids', [])]
+      vm_test_results, hw_test_results = self._get_previous_test_results(
+          test_plan)
+
       exonerable_vms = self.get_failed_now_exonerable_vm_test_builds(
-          vm_build_ids)
+          vm_test_results)
       exonerable_hw_res = self.get_failed_now_exonerable_hw_tests_results(
-          test_plan, hw_build_ids)
+          hw_test_results)
       presentation.step_text = _get_step_text(exonerable_vms, exonerable_hw_res)
       _log_results(exonerable_vms, exonerable_hw_res)
       if dry_run:

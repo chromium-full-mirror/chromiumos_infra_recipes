@@ -2646,28 +2646,27 @@ Args:
 Returns:
   build_pb2.Build of the annealing build or None.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/cros_history/api.py#182)(self, test_plan: GenerateTestPlanResponse, hw_build_ids: List[str]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/cros_history/api.py#182)(self, hw_test_results: List[skylab_structs.SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
 Args:
-  test_plan: The test plan for which to retrieve results.
-  hw_build_ids: The IDs of the previous builds to retrieve results for.
+  hw_test_results: The previous VM test builds to try to exonerate.
 
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/cros_history/api.py#207)(self, build_ids: List[str]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/cros_history/api.py#199)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
 Args:
-  build_ids: The IDs of the previous builds to retrieve results for.
+  vm_test_builds: The previous VM test builds to try to exonerate.
 
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#339)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#363)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2697,9 +2696,9 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#225)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#262)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
-Get the tests  from the previous failed runs that are now exonerable.
+Get the tests from the previous failed runs that are now exonerable.
 
 Args:
   test_plan: The test plan which contains the tests for which to retrieve
@@ -2709,7 +2708,7 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#300)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#324)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2742,14 +2741,14 @@ Args:
 Returns:
   list(PackageCPV) of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#367)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#391)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#285)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#309)(self, tests):**
 
 Record the tests that passed in the current run.
 
@@ -10851,7 +10850,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#23)(api, dry_run_exonerate_retried_suites):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_prev_failed_now_exon.py#29)(api, dry_run_exonerate_retried_suites):**
 ### *recipes* / [cros\_history:examples/get\_snapshot\_builds](/recipe_modules/cros_history/examples/get_snapshot_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_snapshot_builds.py#12): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
