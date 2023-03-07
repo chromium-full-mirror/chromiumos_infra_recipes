@@ -1,0 +1,16 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.labpack;
+
+message LabpackProperties {
+  message Version {
+    string cipd_label = 1;
+    string cipd_package = 2;
+  }
+
+  Version version = 1;
+}

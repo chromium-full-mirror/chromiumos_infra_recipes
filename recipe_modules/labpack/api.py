@@ -19,10 +19,10 @@ class LabpackCommand(recipe_api.RecipeApi):
 
   """
 
-  def __init__(self, **kwargs):
+  def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
-    self.cipd_label = DEFAULT_CIPD_LABEL
-    self.cipd_package = DEFAULT_CIPD_PACKAGE
+    self.cipd_label = properties.version.cipd_label or DEFAULT_CIPD_LABEL
+    self.cipd_package = properties.version.cipd_package or DEFAULT_CIPD_PACKAGE
 
   def get_cipd_executable_name(self):
     """get_cipd_executable_name gets the executable name from the CIPD path"""
