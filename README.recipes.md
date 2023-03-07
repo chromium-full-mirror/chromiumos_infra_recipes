@@ -523,7 +523,7 @@
   * [pupr_local_uprev:tests/rebase_cl](#recipes-pupr_local_uprev_tests_rebase_cl) (Python3 ✅) &mdash; Verify that rebase_cl() locally rebases existing commits as expected.
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [pupr_local_uprev:tests/uprev_sdk](#recipes-pupr_local_uprev_tests_uprev_sdk) (Python3 ✅) &mdash; Verify that uprev_sdk() creates local uprev commits as expected.
-  * [pvs_upload_mappings](#recipes-pvs_upload_mappings) (Python3 ✅) &mdash; Recipe for uploading mappings to the PVS database.
+  * [pvs_run_script](#recipes-pvs_run_script) (Python3 ✅) &mdash; Recipe for running PVS-related scripts.
   * [rdb_util:examples/get_build_target_from_variant](#recipes-rdb_util_examples_get_build_target_from_variant) (Python3 ✅)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config) (Python3 ✅)
   * [rdb_util:examples/get_vm_suite](#recipes-rdb_util_examples_get_vm_suite) (Python3 ✅)
@@ -12966,15 +12966,15 @@ Verify that uprev_sdk() creates local uprev commits as expected.
 &mdash; **def [RunSteps](/recipe_modules/pupr_local_uprev/tests/uprev_sdk.py#21)(api: RecipeApi):**
 
 Main test case logic.
-### *recipes* / [pvs\_upload\_mappings](/recipes/pvs_upload_mappings.py)
+### *recipes* / [pvs\_run\_script](/recipes/pvs_run_script.py)
 
-[DEPS](/recipes/pvs_upload_mappings.py#11): [build\_menu](#recipe_modules-build_menu)
+[DEPS](/recipes/pvs_run_script.py#12): [build\_menu](#recipe_modules-build_menu), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-Recipe for uploading mappings to the PVS database.
+Recipe for running PVS-related scripts.
 
-&mdash; **def [RunSteps](/recipes/pvs_upload_mappings.py#16)(api):**
+&mdash; **def [RunSteps](/recipes/pvs_run_script.py#20)(api, properties):**
 ### *recipes* / [rdb\_util:examples/get\_build\_target\_from\_variant](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#8): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

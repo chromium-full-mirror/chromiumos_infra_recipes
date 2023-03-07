@@ -2038,6 +2038,13 @@
     ]
   },
   {
+    "cmd": [
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Call "
+  },
+  {
     "cmd": [],
     "name": "clean up SDK chroot"
   },
