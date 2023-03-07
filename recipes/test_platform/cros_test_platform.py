@@ -291,6 +291,13 @@ def _reconstruct_build_target(r):
 
   Returns: str or None
   """
+  # If build_target is provided via keyvals, use it.
+  if r.params.decorations.autotest_keyvals:
+    build_target = r.params.decorations.autotest_keyvals.get('build_target')
+    if build_target:
+      return build_target
+
+  # Otherwise constrcut build_target.
   dep = None
   for dep in r.params.software_dependencies:
     if dep.WhichOneof('dep') == 'chromeos_build':
@@ -1330,6 +1337,11 @@ def _cft_test_request(request_name, build_target="foo-build-target",
 def _cft_test_request_without_container_metadata(tag):
   test_req = _cft_test_request(tag)
   test_req.params.metadata.container_metadata_url = ""
+  return test_req
+
+def _cft_test_request_with_build_target_in_keyvals(tag):
+  test_req = _cft_test_request(tag)
+  test_req.params.decorations.CopyFrom(Request.Params.Decorations(autotest_keyvals = {"build_target": "foo-build-target"}))
   return test_req
 
 
@@ -2515,6 +2527,22 @@ def GenTests(api):
           CrosTestPlatformProperties(
               requests={
                   'default': _cft_test_request('foo', individual_test=True)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }), _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.post_check(post_process.StatusSuccess))
+
+  yield api.test(
+      'cft-individual-test-execution-with-keyval-build_target-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default': _cft_test_request_with_build_target_in_keyvals('foo')
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
