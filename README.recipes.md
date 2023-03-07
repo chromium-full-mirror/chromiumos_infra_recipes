@@ -561,6 +561,8 @@
   * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target) (Python3 ✅)
   * [skylab_results:examples/get_previous_results](#recipes-skylab_results_examples_get_previous_results) (Python3 ✅)
   * [skylab_results:examples/get_previous_results_empty_arg](#recipes-skylab_results_examples_get_previous_results_empty_arg) (Python3 ✅)
+  * [skylab_results:tests/extract_failed_test_case_names](#recipes-skylab_results_tests_extract_failed_test_case_names) (Python3 ✅)
+  * [skylab_results:tests/extract_failed_test_shard_names](#recipes-skylab_results_tests_extract_failed_test_shard_names) (Python3 ✅)
   * [skylab_results:tests/get_tagged_response](#recipes-skylab_results_tests_get_tagged_response) (Python3 ✅)
   * [skylab_results:tests/translate_result](#recipes-skylab_results_tests_translate_result) (Python3 ✅)
   * [source_cache_builder](#recipes-source_cache_builder) (Python3 ✅) &mdash; Recipe for generating ChromeOS source cache snapshots.
@@ -584,6 +586,7 @@
   * [tast_results:examples/convert_to_taskcaseresult](#recipes-tast_results_examples_convert_to_taskcaseresult) (Python3 ✅)
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results) (Python3 ✅)
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs) (Python3 ✅)
+  * [tast_results:tests/extract_failed_test_names](#recipes-tast_results_tests_extract_failed_test_names) (Python3 ✅)
   * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) (Python3 ✅) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
@@ -8701,11 +8704,34 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SkylabResultsApi](/recipe_modules/skylab_results/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabResultsApi](/recipe_modules/skylab_results/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for working with Skylab Structs and Hw Test Results.
 
-&mdash; **def [get\_previous\_results](/recipe_modules/skylab_results/api.py#47)(self, task_ids: List[str], unit_hw_tests: List[UnitHwTest]):**
+&mdash; **def [extract\_failed\_test\_case\_names](/recipe_modules/skylab_results/api.py#76)(self, hw_test_results: List[ExecuteResponse.TaskResult], ensure_complete: bool=True):**
+
+Returns the names of the test cases which failed all attempts.
+
+Args:
+  hw_test_results: The results from which to extract the failed tests cases.
+  ensure_complete: Only return failed test case names if at least one
+    attempt for each shard had terminated uniterrupted. This is to ensure
+    the list of failed test cases returned is complete.
+
+Returns:
+  The names of the failed test cases.
+
+&mdash; **def [extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/api.py#108)(self, hw_test_results: List[ExecuteResponse.TaskResult]):**
+
+Returns the names of the tests shards which failed all attempts.
+
+Args:
+  hw_test_results: The results from which to extract the failed shard names.
+
+Returns:
+  The names of the failed hw_test_results.
+
+&mdash; **def [get\_previous\_results](/recipe_modules/skylab_results/api.py#48)(self, task_ids: List[str], unit_hw_tests: List[UnitHwTest]):**
 
 Get the results from the previous tasks with the specified task_ids.
 
@@ -8717,11 +8743,11 @@ Returns:
   The list of Skylab results for the specified unit_hw_tests that ran in
   the tasks with the specified task_ids.
 
-&mdash; **def [get\_tagged\_execute\_responses\_from\_build](/recipe_modules/skylab_results/api.py#20)(self, build):**
+&mdash; **def [get\_tagged\_execute\_responses\_from\_build](/recipe_modules/skylab_results/api.py#21)(self, build):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [request\_tag](/recipe_modules/skylab_results/api.py#43)(hw_test):**
+&emsp; **@staticmethod**<br>&mdash; **def [request\_tag](/recipe_modules/skylab_results/api.py#44)(hw_test):**
 
-&mdash; **def [translate\_result](/recipe_modules/skylab_results/api.py#29)(self, result, task):**
+&mdash; **def [translate\_result](/recipe_modules/skylab_results/api.py#30)(self, result, task):**
 
 Translates result to a Skylab result.
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
@@ -9150,15 +9176,15 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#27)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#29)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#46)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#48)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -9169,7 +9195,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#189)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#191)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -9182,7 +9208,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#164)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#166)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -9192,7 +9218,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#148)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#150)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -9202,7 +9228,11 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#71)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
+&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#526)(self, vm_test_build: Build):**
+
+Returns the failed test names from the output properties of the build.
+
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#73)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -9219,7 +9249,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#278)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#280)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -9230,7 +9260,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#227)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#229)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -9238,14 +9268,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#252)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#254)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#486)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#488)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
 
 Upload the test results to ResultDB.
 
@@ -13272,6 +13302,20 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/skylab_results/examples/get_previous_results_empty_arg.py#15)(api):**
+### *recipes* / [skylab\_results:tests/extract\_failed\_test\_case\_names](/recipe_modules/skylab_results/tests/extract_failed_test_case_names.py)
+
+[DEPS](/recipe_modules/skylab_results/tests/extract_failed_test_case_names.py#13): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/extract_failed_test_case_names.py#22)(api):**
+### *recipes* / [skylab\_results:tests/extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/tests/extract_failed_test_shard_names.py)
+
+[DEPS](/recipe_modules/skylab_results/tests/extract_failed_test_shard_names.py#13): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/extract_failed_test_shard_names.py#22)(api):**
 ### *recipes* / [skylab\_results:tests/get\_tagged\_response](/recipe_modules/skylab_results/tests/get_tagged_response.py)
 
 [DEPS](/recipe_modules/skylab_results/tests/get_tagged_response.py#12): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13440,6 +13484,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/tast_results/examples/record_logs.py#14)(api):**
+### *recipes* / [tast\_results:tests/extract\_failed\_test\_names](/recipe_modules/tast_results/tests/extract_failed_test_names.py)
+
+[DEPS](/recipe_modules/tast_results/tests/extract_failed_test_names.py#8): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/tast_results/tests/extract_failed_test_names.py#18)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
 [DEPS](/recipes/tast_vm.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

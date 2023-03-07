@@ -8,6 +8,7 @@ from typing import List
 import zlib
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 from recipe_engine import recipe_api
@@ -71,3 +72,64 @@ class SkylabResultsApi(recipe_api.RecipeApi):
                               unit=uht.unit)
             results.append(self.translate_result(result, task))
       return results
+
+  def extract_failed_test_case_names(
+      self, hw_test_results: List[ExecuteResponse.TaskResult],
+      ensure_complete: bool = True):
+    """Returns the names of the test cases which failed all attempts.
+
+    Args:
+      hw_test_results: The results from which to extract the failed tests cases.
+      ensure_complete: Only return failed test case names if at least one
+        attempt for each shard had terminated uniterrupted. This is to ensure
+        the list of failed test cases returned is complete.
+
+    Returns:
+      The names of the failed test cases.
+    """
+    if ensure_complete:
+      if not any(result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED
+                 for result in hw_test_results):
+        return []
+
+    failed_test_names = set()
+    passed_test_names = set()
+    for result in hw_test_results:
+      for tc in result.test_cases:
+        if tc.verdict == TaskState.VERDICT_PASSED:
+          passed_test_names.add(tc.name)
+        else:
+          failed_test_names.add(tc.name)
+
+    # Remove any failed tests which passed in another attempt.
+    failed_test_names = failed_test_names.difference(passed_test_names)
+    return list(failed_test_names)
+
+  def extract_failed_test_shard_names(
+      self, hw_test_results: List[ExecuteResponse.TaskResult]) -> List[str]:
+    """Returns the names of the tests shards which failed all attempts.
+
+    Args:
+      hw_test_results: The results from which to extract the failed shard names.
+
+    Returns:
+      The names of the failed hw_test_results.
+    """
+
+    if not hw_test_results:
+      return []
+
+    # Group the tasks by shard.
+    shard_name_to_task_map = {}
+    for result in hw_test_results:
+      if result.name not in shard_name_to_task_map:
+        shard_name_to_task_map[result.name] = []
+      shard_name_to_task_map[result.name].append(result)
+
+    failed_test_shard_names = []
+    for name, results in shard_name_to_task_map.items():
+      if not any(result.state.verdict == TaskState.VERDICT_PASSED
+                 for result in results):
+        failed_test_shard_names.append(name)
+
+    return failed_test_shard_names

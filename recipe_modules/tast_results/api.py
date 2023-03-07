@@ -4,11 +4,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import datetime
+from typing import List
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
@@ -520,3 +522,10 @@ class TastResultsApi(recipe_api.RecipeApi):
       behavior = TestPlatformRequest.Params.TestExecutionBehavior.NON_CRITICAL
       self.m.cros_resultdb.apply_exonerations(
           [self.m.cros_resultdb.current_invocation_id], behavior)
+
+  def extract_failed_test_names(self, vm_test_build: Build) -> List[str]:
+    """Returns the failed test names from the output properties of the build."""
+    props = jsonpb.MessageToDict(vm_test_build.output.properties)
+    failed_test_cases = props.get('failed_test_cases', [])
+    failed_test_names = [test_case['name'] for test_case in failed_test_cases]
+    return failed_test_names
