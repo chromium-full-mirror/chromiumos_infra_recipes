@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import base64
+from typing import Iterable
 
 from google.protobuf.json_format import MessageToJson
 
@@ -55,17 +56,33 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
           self.m.buildbucket.build.start_time)
       self._data_proto.builder_metadata.build_type = config.id.type
       self._data_proto.builder_metadata.build_config_name = config.id.name
-      self._data_proto.builder_metadata.annealing_commit_id = self.m.cros_version.version.snapshot
+      self._data_proto.builder_metadata.annealing_commit_id = (
+          self.m.cros_version.version.snapshot or 0)
       self._data_proto.builder_metadata.manifest_commit = self.m.src_state.gitiles_commit.id
 
-  def _get_image_size_data(self, image_data):
-    """Get image/partition/package size data."""
+  def _get_image_size_data(
+      self, image_data: Iterable['PB.chromite.api.image.Image']) -> bool:
+    """Get image/partition/package size data.
+
+    Args:
+      image_data: The images that were built.
+
+    Returns:
+      bool: False when the endpoint could not be called, True otherwise.
+    """
+    if not self.m.cros_build_api.has_endpoint(
+        self.m.cros_build_api.ObservabilityService, 'GetImageSizeData'):
+      # Branch doesn't have the endpoint.
+      return False
+
     with self.m.step.nest('add data from images'):
       request = GetImageSizeDataRequest(built_images=image_data)
       response = self.m.cros_build_api.ObservabilityService.GetImageSizeData(
           request)
       for img_data in response.image_data:
         self._data_proto.image_data.add().CopyFrom(img_data)
+
+      return True
 
   def publish(self, config, build_target, target_versions, built_images):
     """Collect and publish the image size data."""
@@ -77,9 +94,13 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       if not built_images:
         raise recipe_api.StepFailure('No images provided.')
 
+      if not self._get_image_size_data(built_images):
+        pres.step_text = 'Skipped: Image size data could not be collected.'
+        return
+
       self._add_target_versions(target_versions)
       self._add_builder_metadata(config, build_target)
-      self._get_image_size_data(built_images)
+
       pres.logs['image_data.json'] = MessageToJson(self._data_proto)
       with self.m.step.nest('publish image size data'):
         # Data is passed to the publish-message support binary via JSON. The

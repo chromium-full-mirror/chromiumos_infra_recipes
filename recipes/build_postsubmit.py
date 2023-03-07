@@ -55,13 +55,7 @@ def DoRunSteps(api, config):
     # build failure for debug purposes).
     failing_build_exception = sf
 
-  try:
-    api.build_menu.publish_image_size_data(config)
-  except StepFailure as sf:
-    # Swallow the exception unilaterally, since this should never be a blocker
-    # for postsubmit builds or release builds.
-    # TODO(b/259704135): set up monitoring.
-    pass
+  api.build_menu.publish_image_size_data(config)
 
   try:
     api.build_menu.upload_artifacts(config)

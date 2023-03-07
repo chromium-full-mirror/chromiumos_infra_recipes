@@ -191,6 +191,17 @@ def GenTests(api):
                        ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
+      'no-endpoint', test_build(),
+      api.properties(image_types=[common_pb2.IMAGE_TYPE_BASE]),
+      api.cros_build_api.remove_endpoints([
+          'ObservabilityService/GetImageSizeData',
+      ]),
+      api.post_check(post_process.StepTextEquals, 'collect image size data',
+                     'Skipped: Image size data could not be collected.'),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
       'no-packages', test_build(),
       api.properties(image_types=[common_pb2.IMAGE_TYPE_BASE]),
       api.cros_build_api.set_api_return(

@@ -878,6 +878,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config: A BuilderConfig object.
     """
-    self.m.observability_image_size.publish(config, self.build_target,
-                                            self.target_versions,
-                                            self._built_images)
+    # Ignore exceptions, since this should never be a blocker for builds.
+    # TODO(b/259704135): set up monitoring.
+    with self.m.failures.ignore_exceptions():
+      self.m.observability_image_size.publish(config, self.build_target,
+                                              self.target_versions,
+                                              self._built_images)

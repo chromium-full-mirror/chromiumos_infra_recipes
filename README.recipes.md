@@ -7315,11 +7315,11 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ObservabilityImageSizeApi](/recipe_modules/observability_image_size/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ObservabilityImageSizeApi](/recipe_modules/observability_image_size/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Collect image size data.
 
-&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#70)(self, config, build_target, target_versions, built_images):**
+&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#87)(self, config, build_target, target_versions, built_images):**
 
 Collect and publish the image size data.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)

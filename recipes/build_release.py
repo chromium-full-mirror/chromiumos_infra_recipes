@@ -154,13 +154,7 @@ def DoRunSteps(api, config, properties):
                 api.cros_source.manifest_branch, builder_metadata)
 
           # Publish image and package sizes.
-          try:
-            api.build_menu.publish_image_size_data(config)
-          except StepFailure:
-            # Swallow the exception unilaterally, since this should never be a
-            # blocker for postsubmit builds or release builds.
-            # TODO(b/259704135): set up monitoring.
-            pass
+          api.build_menu.publish_image_size_data(config)
 
           # We upload devinstall prebuilts at this stage instead of earlier on
           # because ImageService/Create (which is called in build_images above) is

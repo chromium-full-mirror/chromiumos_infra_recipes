@@ -5372,20 +5372,6 @@
   },
   {
     "cmd": [],
-    "name": "collect image size data.add version data",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "collect image size data.add metadata from builder",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "collect image size data.add data from images",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -5490,6 +5476,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ignored exception",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.call build API script') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
     ]
   },
   {
