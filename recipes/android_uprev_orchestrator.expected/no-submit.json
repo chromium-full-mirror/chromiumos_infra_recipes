@@ -13406,6 +13406,7 @@
     "name": "clean up orchestrator.Automated Exoneration Dry-run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no failed tests@@@",
       "@@@STEP_LOG_LINE@failed_tests@[]@@@",
       "@@@STEP_LOG_END@failed_tests@@@"
     ]

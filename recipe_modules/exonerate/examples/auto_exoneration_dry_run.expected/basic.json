@@ -1,6 +1,15 @@
 [
   {
     "cmd": [],
+    "name": "Automated Exoneration Dry-run",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no failed tests@@@",
+      "@@@STEP_LOG_LINE@failed_tests@[]@@@",
+      "@@@STEP_LOG_END@failed_tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "exonerate vm tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated test1 on betty@@@",
@@ -29,7 +38,7 @@
   },
   {
     "cmd": [],
-    "name": "Automated Exoneration Dry-run",
+    "name": "Automated Exoneration Dry-run (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='test1', board='betty', build_target='betty', suite='tast_vm_default', test_config='betty-cq.tast_vm.tast_vm_default')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@",
@@ -86,7 +95,7 @@
   },
   {
     "cmd": [],
-    "name": "Automated Exoneration Dry-run.query LUCI Analysis for failure rates",
+    "name": "Automated Exoneration Dry-run (2).query LUCI Analysis for failure rates",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -98,7 +107,7 @@
       "luci-analysis.appspot.com",
       "luci.analysis.v1.TestVariants.QueryFailureRate"
     ],
-    "name": "Automated Exoneration Dry-run.query LUCI Analysis for failure rates.rpc call",
+    "name": "Automated Exoneration Dry-run (2).query LUCI Analysis for failure rates.rpc call",
     "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"testId\": \"test1\", \"variant\": {\"def\": {\"board\": \"betty\", \"build_target\": \"betty\", \"suite\": \"tast_vm_default\", \"test_config\": \"betty-cq.tast_vm.tast_vm_default\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -216,7 +225,7 @@
   },
   {
     "cmd": [],
-    "name": "Automated Exoneration Dry-run.set failed_test_stats",
+    "name": "Automated Exoneration Dry-run (2).set failed_test_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@failed_test_stats@{\"failedTests\": [{\"manuallyExonerated\": true, \"testId\": \"test1\"}]}@@@"

@@ -524,6 +524,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     with self.m.step.nest('Automated Exoneration Dry-run') as pres:
       pres.logs['failed_tests'] = str(
           sorted(self._failed_tests, key=lambda x: x.name + x.build_target))
+      if not self._failed_tests:
+        pres.step_text = 'no failed tests'
+        return
       if self._dry_run:
         # Convert failed tests into the format LUCI Analysis wants.
         test_variant_list = []
