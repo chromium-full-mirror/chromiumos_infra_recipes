@@ -213,6 +213,8 @@
       "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
       "--",
       "echo"
     ],
@@ -578,6 +580,8 @@
       "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
       "--",
       "echo"
     ],

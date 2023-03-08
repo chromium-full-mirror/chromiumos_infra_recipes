@@ -867,6 +867,8 @@
       "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
       "--",
       "echo"
     ],
@@ -1728,6 +1730,8 @@
       "[CLEANUP]/test-results_tmp_2/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_2",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
       "--",
       "echo"
     ],
@@ -3819,6 +3823,8 @@
       "[CLEANUP]/test-results_tmp_3/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_3",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
       "--",
       "echo"
     ],
@@ -4660,6 +4666,8 @@
       "[CLEANUP]/test-results_tmp_4/streamed_results.jsonl",
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_4",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
       "--",
       "echo"
     ],
