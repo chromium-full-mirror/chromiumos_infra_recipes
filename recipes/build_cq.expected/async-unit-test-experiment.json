@@ -5147,7 +5147,6 @@
   },
   {
     "cmd": [
-      "python",
       "RECIPE_REPO[depot_tools]/git_cache.py",
       "populate",
       "-v",

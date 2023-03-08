@@ -119,10 +119,9 @@ class ChromeApi(recipe_api.RecipeApi):
             CHROMIUM_GIT_URL,
             '--reset-fetch-config',
         ]
-        self.m.step(
-            'populate git cache',
-            ['python', self.m.depot_tools.root.join('git_cache.py')] +
-            cache_cmd, infra_step=True)
+        self.m.step('populate git cache',
+                    [self.m.depot_tools.root.join('git_cache.py')] + cache_cmd,
+                    infra_step=True)
         if sync:
           gclient_sync_cmd = [
               'sync',
