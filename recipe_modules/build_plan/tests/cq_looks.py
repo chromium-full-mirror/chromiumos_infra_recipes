@@ -22,24 +22,35 @@ DEPS = [
     'gerrit',
 ]
 
-PROPERTIES = {
-    'expected_experiments': Property(default=[]),
-    'expected_internal_sha': Property(default='internalSHA'),
-    'is_dry_run': Property(default=False),
-}
-
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 INTERNAL_HOST_URL = 'chrome-internal.googlesource.com'
+EXTERNAL_HOST_URL = 'chromium.googlesource.com'
+
+ORIGINAL_INTERNAL_SHA = 'internalSHA'
+ORIGINAL_EXTERNAL_SHA = 'externalSHA'
+
+MODIFIED_INTERNAL_SHA = 'i' * 40
+MODIFIED_EXTERNAL_SHA = 'e' * 40
+
+PROPERTIES = {
+    'expected_experiments': Property(default=[]),
+    'expected_internal_sha': Property(default=ORIGINAL_INTERNAL_SHA),
+    'expected_external_sha': Property(default=ORIGINAL_EXTERNAL_SHA),
+    'is_dry_run': Property(default=False),
+}
 
 
-def RunSteps(api, expected_experiments, expected_internal_sha):
+def RunSteps(api, expected_experiments, expected_internal_sha,
+             expected_external_sha):
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
   _, _, new_requests = api.build_plan.get_build_plan(
       child_specs, True, api.cros_infra_config.gerrit_changes,
-      common_pb2.GitilesCommit(id='internalSHA', host=INTERNAL_HOST_URL),
-      common_pb2.GitilesCommit(id='externalSHA'))
+      common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
+                               host=INTERNAL_HOST_URL),
+      common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
+                               host=EXTERNAL_HOST_URL))
 
   enabled_experiments = {
       exp: enabled
@@ -52,6 +63,9 @@ def RunSteps(api, expected_experiments, expected_internal_sha):
     if request.gitiles_commit.host == INTERNAL_HOST_URL:
       api.assertions.assertEqual(expected_internal_sha,
                                  request.gitiles_commit.id)
+    elif request.gitiles_commit.host == EXTERNAL_HOST_URL:
+      api.assertions.assertEqual(expected_external_sha,
+                                 request.gitiles_commit.id)
 
 
 def GenTests(api):
@@ -63,7 +77,7 @@ def GenTests(api):
     return api.buildbucket.try_build(project='chromeos', **kwargs)
 
   build_input = build_pb2.Build.Input()
-  build_input.gitiles_commit.id = 'internalSHA2'
+  build_input.gitiles_commit.id = MODIFIED_INTERNAL_SHA
   build_input.gitiles_commit.host = INTERNAL_HOST_URL
 
   output = build_pb2.Build.Output()
@@ -92,7 +106,8 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
-          expected_internal_sha='internalSHA2'),
+          expected_internal_sha=MODIFIED_INTERNAL_SHA,
+          expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -155,7 +170,7 @@ def GenTests(api):
               'enable_looks_for_green': True,
               'use_complete_snapshot': True
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
-          expected_internal_sha='internalSHA2'),
+          expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'

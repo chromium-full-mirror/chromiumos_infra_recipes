@@ -14,6 +14,7 @@ DEPS = [
     'cros_infra_config',
     'cros_history',
     'cros_relevance',
+    'cros_source',
     'cros_tags',
     'looks_for_green',
     'easy',

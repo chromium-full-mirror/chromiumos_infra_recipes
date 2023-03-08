@@ -1262,7 +1262,7 @@ Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
-[DEPS](/recipe_modules/build_plan/__init__.py#8): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_plan/__init__.py#8): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -1270,18 +1270,20 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to plan the builds to be launched.
 
-&mdash; **def [choose\_snapshot](/recipe_modules/build_plan/api.py#415)(self, original_snapshot: GitilesCommit, gerrit_changes: List[GerritChange], manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#415)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
 Args:
-  original_snapshot: Latest manifest snapshot.
+  original_internal: Latest internal manifest snapshot.
+  original_external: Latest external manifest snapshot.
   gerrit_changes: List of changes to be tested by CQ.
-  manifest: Manifest project for the snapshot.
+  internal_manifest: Manifest project for the internal snapshot.
   cq_looks_enabled: Whether to run CQ looks for green logic.
 
 Returns:
-  chosen_snapshot: The manifest snapshot that CQ will run with.
+  chosen_internal: The internal manifest snapshot that CQ will run with.
+  chosen_external: The external manifest snapshot that CQ will run with.
 
 &mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#38)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
@@ -9896,7 +9898,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/cq_looks.py#36)(api, expected_experiments, expected_internal_sha):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/cq_looks.py#44)(api, expected_experiments, expected_internal_sha, expected_external_sha):**
 ### *recipes* / [build\_plan:tests/get\_forced\_rebuilds](/recipe_modules/build_plan/tests/get_forced_rebuilds.py)
 
 [DEPS](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#10): [build\_plan](#recipe_modules-build_plan), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
