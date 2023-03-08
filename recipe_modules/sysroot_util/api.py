@@ -32,6 +32,10 @@ from recipe_engine import recipe_api
 class SysrootUtilApi(recipe_api.RecipeApi):
   """A module for sysroot setup, manipulation, and use."""
 
+  def __init__(self, properties, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._disable_chrome_source_purge = properties.disable_chrome_source_purge
+
   def initialize(self):
     self._sysroot = None
 

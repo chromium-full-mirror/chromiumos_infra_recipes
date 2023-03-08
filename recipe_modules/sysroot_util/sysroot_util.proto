@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package recipe_modules.chromeos.sysroot_util;
+
+message SysrootUtilProperties {
+
+    // Feature flag: toggle the chrome source purge capability.
+    bool disable_chrome_source_purge = 1;
+}

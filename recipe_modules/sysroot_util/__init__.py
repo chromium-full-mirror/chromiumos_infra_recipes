@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.sysroot_util.sysroot_util import SysrootUtilProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
@@ -22,3 +24,5 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = SysrootUtilProperties
