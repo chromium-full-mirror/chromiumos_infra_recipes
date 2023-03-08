@@ -634,6 +634,7 @@
   * [test_util:examples/full](#recipes-test_util_examples_full) (Python3 ✅)
   * [test_util:tests/build_target_properties](#recipes-test_util_tests_build_target_properties) (Python3 ✅)
   * [tricium](#recipes-tricium) (Python3 ✅) &mdash; Recipe for running tricium on CLs.
+  * [upload_prebuilts_from_cq](#recipes-upload_prebuilts_from_cq) (Python3 ✅) &mdash; Recipe that retrieves locations from google storage that the binpkgs are uploaded to by the Chrome PUpr and updates *_CQ_BINHOST.
   * [uprev_borealis_deps](#recipes-uprev_borealis_deps) (Python3 ✅) &mdash; Recipe for upreving Borealis build dependencies.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) (Python3 ✅) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) (Python3 ✅) &mdash; Recipe for generating Parallels uprev CLs.
@@ -3170,6 +3171,20 @@ Args:
 
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
+
+&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#370)(self, target, private, key, uri, push_retries):**
+
+Set the target's Portage binhost to point to the given URI.
+
+This function updates a conf file within the target's overlay, commits the
+change, and pushes it.
+
+Args:
+  target (BuildTarget): Build target to update the binhost for.
+  private (bool): Whether the target's binhost is private.
+  key (BinhostKey): The binhost key, e.g. POSTSUBMIT_BINHOST.
+  uri (str): The new binhost URI.
+  push_retries (int): Number of times to retry pushing the changes.
 
 &mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#546)(self, target, sysroot, gs_bucket):**
 
@@ -14445,6 +14460,21 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe for running tricium on CLs.
 
 &mdash; **def [RunSteps](/recipes/tricium.py#41)(api: RecipeApi):**
+### *recipes* / [upload\_prebuilts\_from\_cq](/recipes/upload_prebuilts_from_cq.py)
+
+[DEPS](/recipes/upload_prebuilts_from_cq.py#32): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe that retrieves locations from google storage that the binpkgs are
+uploaded to by the Chrome PUpr and updates *_CQ_BINHOST.conf files with
+the locations.
+
+See go/cros-faster-cq-by-ealier-binpkg for the detail.
+
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#118)(api: RecipeApi):**
+
+&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#57)(api: RecipeApi):**
 ### *recipes* / [uprev\_borealis\_deps](/recipes/uprev_borealis_deps.py)
 
 [DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

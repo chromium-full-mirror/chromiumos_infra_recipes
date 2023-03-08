@@ -1,0 +1,273 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "search the last merged uprev CL",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 4567890@https://crrev.com/c/4567890@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-base/lacros-ash-atomic",
+      "-p",
+      "project=chromiumos/overlays/chromiumos-overlay",
+      "-p",
+      "branch=main",
+      "-p",
+      "status=merged",
+      "-o",
+      "ALL_REVISIONS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com.gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 4567890, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"current_revision\": \"0123456789abcdef0123456789abcdef01234567\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"chromiumos%2Foverlays%2Fchromiumos-overlay~main~I0123456789abcdef0123456789abcdef01234567\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromiumos/overlays/chromiumos-overlay\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"0123456789abcdef0123456789abcdef01234567\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 3@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"2222222222222222222222222222222222222222\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 2@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2023-01-01 00:00:00.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 4567891@https://crrev.com/c/4567891@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-base/lacros-ash-atomic",
+      "-p",
+      "project=chromiumos/overlays/chromiumos-overlay",
+      "-p",
+      "branch=main",
+      "-p",
+      "status=merged",
+      "-p",
+      "mergedafter=2023-01-01 00:00:00.000000000",
+      "-o",
+      "ALL_REVISIONS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (2).gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 4567891, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"chromiumos%2Foverlays%2Fchromiumos-overlay~main~Ixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2023-01-02 00:00:00.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 4567892@https://crrev.com/c/4567892@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-base/lacros-ash-atomic",
+      "-p",
+      "project=chromiumos/overlays/chromiumos-overlay",
+      "-p",
+      "branch=main",
+      "-p",
+      "status=merged",
+      "-p",
+      "mergedafter=2023-01-02 00:00:00.000000000",
+      "-o",
+      "ALL_REVISIONS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (3).gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 4567892, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"chromiumos%2Foverlays%2Fchromiumos-overlay~main~Iyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2023-01-03 00:00:00.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found 1 matching CLs@@@",
+      "@@@STEP_LINK@found CL 4567893@https://crrev.com/c/4567893@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "-p",
+      "topic=chromeos-base/lacros-ash-atomic",
+      "-p",
+      "project=chromiumos/overlays/chromiumos-overlay",
+      "-p",
+      "branch=main",
+      "-p",
+      "status=merged",
+      "-p",
+      "mergedafter=2023-01-03 00:00:00.000000000",
+      "-o",
+      "ALL_REVISIONS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "search the last merged uprev CL.query https://chromium-review.googlesource.com (4).gerrit changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": 4567893, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"chromiumos%2Foverlays%2Fchromiumos-overlay~main~Izzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"submitted\": \"2023-01-04 00:00:00.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Unable to get the last merged change."
+    },
+    "name": "$result"
+  }
+]

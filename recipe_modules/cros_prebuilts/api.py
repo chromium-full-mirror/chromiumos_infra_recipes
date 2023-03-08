@@ -367,7 +367,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
-  def _set_binhost(self, target, private, key, uri, push_retries):
+  def set_binhost(self, target, private, key, uri, push_retries):
     """Set the target's Portage binhost to point to the given URI.
 
     This function updates a conf file within the target's overlay, commits the
@@ -536,8 +536,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         if BuilderConfig.Id.Type.Name(kind) == 'CQ':
           raise ValueError('CQ should not set the binhost.')
 
-        self._set_binhost(target, private, binhost_key, upload_uri,
-                          push_retries=3)
+        self.set_binhost(target, private, binhost_key, upload_uri,
+                         push_retries=3)
 
       if self._enable_snapshot_prebuilts:
         self._upload_metadata(target, profile, kind, gs_bucket, acls,
