@@ -11,7 +11,7 @@ All builders run against the same source tree.
 import json
 from typing import Callable, Dict
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
+from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -40,7 +40,6 @@ DEPS = [
     'signing',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -390,18 +389,12 @@ def GenTests(api: RecipeTestApi):
       'async-unit-test-experiment',
       data.ctp_normal,
       api.post_check(post_process.MustRun, 'run builds.schedule new builds'),
+      api.post_check(post_process.MustRun,
+                     'run builds.collect.buildbucket.get_multi'),
       api.post_check(post_process.MustRun, 'aggregating metadata'),
       api.post_check(post_process.MustRun, 'collect.get'),
       api.post_check(post_process.MustRun, 'check build results'),
       api.post_check(post_process.StatusSuccess),
-      api.step_data(
-          'run builds.collect',
-          stdout=api.raw_io.output_text(
-              MessageToJson(build_pb2.Build(id=123,
-                                            status=common_pb2.SUCCESS)).replace(
-                                                '\n', ''),
-          ),
-      ),
       builder='cq-orchestrator',
       experiments=['chromeos.build_cq.async_unit_tests'],
   )
