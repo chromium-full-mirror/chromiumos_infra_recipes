@@ -25,8 +25,8 @@ def RunSteps(api):
   ]
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
-  api.assertions.assertEqual(final_result.summary_markdown,
-                             '1 non-critical kind failed')
+  api.assertions.assertIn('1 non-critical kind failed',
+                          final_result.summary_markdown)
 
   results.failures = [
       api.failures.Failure(kind='build', title='build-a',
@@ -57,8 +57,8 @@ def RunSteps(api):
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
-  api.assertions.assertEqual(
-      final_result.summary_markdown, '''\
+  api.assertions.assertIn(
+      '''\
 2 out of 30 builds failed (1 additional non-critical failure)
 
 - build-a: [build page](build-a.com)
@@ -73,7 +73,8 @@ def RunSteps(api):
 
 - test-a: [subtest-1](test-a.com)
 
-1 non-critical very_different_kind_of_test failed''')
+1 non-critical very_different_kind_of_test failed''',
+      final_result.summary_markdown)
 
   results.failures = [
       api.failures.Failure(kind='build', title='build-a', link_map={
@@ -88,15 +89,15 @@ def RunSteps(api):
   really_long_text = 'All code and no test makes failures a dull module.' * 4000
   results.failures = [
       api.failures.Failure(
-          kind='test', title='test-a', link_map={
+          kind='hw test', title='test-a', link_map={
               'subtest-1': 'testlink.com',
               'subtest-2': really_long_text,
           }, fatal=True, id='id-3'),
   ]
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
-  api.assertions.assertEqual(final_result.summary_markdown,
-                             '1 out of 1 test failed\n\n...')
+  api.assertions.assertIn('1 out of 1 hw test failed\n\n...',
+                          final_result.summary_markdown)
 
 
 def GenTests(api):

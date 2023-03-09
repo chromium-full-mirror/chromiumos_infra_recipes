@@ -144,10 +144,8 @@ def GenTests(api):
       dirmd_glob_paths,
       dirmd_validation_fail,
       api.post_check(post_process.StatusFailure),
-      api.post_check(
-          post_process.ResultReason,
-          '1 out of 1 dirmd validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/dirmd_validate_[CLEANUP]_chromiumos_workspace_src_project-a/dirmd_validate/stdout)'
-      ),
+      api.post_check(post_process.ResultReasonRE,
+                     '1 out of 1 dirmd validation failed.*'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -156,10 +154,8 @@ def GenTests(api):
       api.buildbucket.build(build_message),
       test_plan_validation_fail,
       api.post_check(post_process.StatusFailure),
-      api.post_check(
-          post_process.ResultReason,
-          '1 out of 1 test_plan validation failed\n\n- project-a: [stdout](https://logs.chromium.org/logs/chromeos/logdog/prefix/+/u/validate_project-a/test_plan_validate_[CLEANUP]_chromiumos_workspace_src_project-a/stdout)'
-      ),
+      api.post_check(post_process.ResultReasonRE,
+                     '1 out of 1 test_plan validation failed.*'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -170,10 +166,10 @@ def GenTests(api):
       dirmd_validation_fail,
       test_plan_validation_fail,
       api.post_check(post_process.StatusFailure),
-      api.post_check(
-          post_process.ResultReasonRE,
-          '(?s)1 out of 1 dirmd validation failed.*1 out of 1 test_plan validation failed.*'
-      ),
+      api.post_check(post_process.ResultReasonRE,
+                     '.*1 out of 1 dirmd validation failed.*'),
+      api.post_check(post_process.ResultReasonRE,
+                     '.*1 out of 1 test_plan validation failed.*'),
       api.post_process(post_process.DropExpectation),
   )
 

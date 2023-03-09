@@ -286,6 +286,11 @@ class FailuresApi(RecipeApi):
     """
 
     fatal_failures = [failure for failure in results.failures if failure.fatal]
+
+    status = common_pb2.SUCCESS if (
+        (not fatal_failures) or
+        ignore_build_test_failures) else common_pb2.FAILURE
+
     non_fatal_failures = [
         failure.kind for failure in results.failures if not failure.fatal
     ]
@@ -342,11 +347,13 @@ class FailuresApi(RecipeApi):
       summary_lines.append('{} non-critical {} failed'.format(
           non_fatal_count, kind + 's' if non_fatal_count > 1 else kind))
 
+    if 'hw test' in failures_by_kind:
+      summary_lines.append('')
+      summary_lines.append('📢: If this CQ attempted failed on an unrelated test, '
+                           'please read go/chromeos-cq-customization-psa')
+
     summary_markdown = self._format_summary_markdown(summary_lines)
 
-    status = common_pb2.SUCCESS if (
-        (not fatal_failures) or
-        ignore_build_test_failures) else common_pb2.FAILURE
     return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
 

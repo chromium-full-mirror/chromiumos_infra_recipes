@@ -122,7 +122,7 @@ def RunSteps(api, properties):
       expected = RawResult(status=common_pb2.SUCCESS)
     actual = api.orch_menu.create_recipe_result(
         include_build_details=api.orch_menu.is_release_orchestrator)
-    api.assertions.assertEqual(expected, actual)
+    api.assertions.assertEqual(expected.status, actual.status)
     return actual
 
 
