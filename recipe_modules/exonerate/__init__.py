@@ -13,7 +13,6 @@ DEPS = [
     'easy',
     'naming',
     'rdb_util',
-    'skylab',
     'urls',
 ]
 

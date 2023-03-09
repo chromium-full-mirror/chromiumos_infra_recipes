@@ -5037,7 +5037,7 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -7229,8 +7229,6 @@ Args:
 Returns:
   str, path to the file written.
 ### *recipe_modules* / [naming](/recipe_modules/naming)
-
-[DEPS](/recipe_modules/naming/__init__.py#6): [skylab](#recipe_modules-skylab)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 

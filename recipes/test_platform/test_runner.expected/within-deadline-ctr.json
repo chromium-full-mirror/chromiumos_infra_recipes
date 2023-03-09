@@ -346,8 +346,8 @@
     "name": "execution steps.CrosToolRunner: run provision",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@deadline information@start: Fri Feb  3 00:00:06 2045@@@",
-      "@@@STEP_LOG_LINE@deadline information@end: Fri Feb  3 00:45:06 2045@@@",
+      "@@@STEP_LOG_LINE@deadline information@start: Fri Feb  3 00:00:04 2045@@@",
+      "@@@STEP_LOG_LINE@deadline information@end: Fri Feb  3 00:45:04 2045@@@",
       "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",
       "@@@STEP_LOG_END@deadline information@@@"
     ]
@@ -423,7 +423,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 2369695506.0
+        "soft_deadline": 2369695504.5
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
@@ -462,7 +462,7 @@
     "luci_context": {
       "deadline": {
         "grace_period": 30.0,
-        "soft_deadline": 2369695506.0
+        "soft_deadline": 2369695504.5
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
