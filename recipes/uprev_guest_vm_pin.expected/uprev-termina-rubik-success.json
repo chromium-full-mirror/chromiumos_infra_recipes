@@ -1630,28 +1630,6 @@
   {
     "cmd": [
       "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"general\", \"builder\": \"LegacyRelease\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"cbb_config\", \"value\": \"tatl-release\"}]}"
-    ],
-    "infra_step": true,
-    "name": "get latest build version.query-tatl.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
       "builders",
       "-host",
       "cr-buildbucket.appspot.com",
@@ -1752,6 +1730,64 @@
   },
   {
     "cmd": [],
+    "name": "get latest build version.query-tatl.release-R107-15117.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-R107-15117.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.release-R107-15117.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tatl.release-R102-14695.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tatl-release-R102-14695.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tatl.release-R102-14695.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "get latest build version.query-tatl.stabilize-15129.B",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1813,28 +1849,6 @@
     "name": "get latest build version.query-tael",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"general\", \"builder\": \"LegacyRelease\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"cbb_config\", \"value\": \"tael-release\"}]}"
-    ],
-    "infra_step": true,
-    "name": "get latest build version.query-tael.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1936,6 +1950,64 @@
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
       "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tael.release-R107-15117.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-R107-15117.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.release-R107-15117.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tael.release-R102-14695.B",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"tael-release-R102-14695.B\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-29T00:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.release-R102-14695.B.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2375,7 +2447,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-base.*",
+      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-base.tar.xz",
       "gs://termina-component-testing/uprev-test/amd64/1.2.3/"
     ],
     "infra_step": true,
@@ -2394,7 +2466,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-test.*",
+      "gs://chromeos-image-archive/tatl-release/-1.2.3/guest-vm-test.tar.xz",
       "gs://termina-component-testing/uprev-test/amd64/1.2.3/"
     ],
     "infra_step": true,
@@ -2445,7 +2517,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-base.*",
+      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-base.tar.xz",
       "gs://termina-component-testing/uprev-test/arm/1.2.3/"
     ],
     "infra_step": true,
@@ -2464,7 +2536,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-test.*",
+      "gs://chromeos-image-archive/tael-release/-1.2.3/guest-vm-test.tar.xz",
       "gs://termina-component-testing/uprev-test/arm/1.2.3/"
     ],
     "infra_step": true,
@@ -3140,7 +3212,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-base.*",
+      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-base.tar.xz",
       "gs://termina-component-testing/uprev-test/amd64/108.1.2.3/"
     ],
     "infra_step": true,
@@ -3159,7 +3231,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-test.*",
+      "gs://chromeos-image-archive/tatl-release/R108-1.2.3/guest-vm-test.tar.xz",
       "gs://termina-component-testing/uprev-test/amd64/108.1.2.3/"
     ],
     "infra_step": true,
@@ -3210,7 +3282,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-base.*",
+      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-base.tar.xz",
       "gs://termina-component-testing/uprev-test/arm/108.1.2.3/"
     ],
     "infra_step": true,
@@ -3229,7 +3301,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-test.*",
+      "gs://chromeos-image-archive/tael-release/R108-1.2.3/guest-vm-test.tar.xz",
       "gs://termina-component-testing/uprev-test/arm/108.1.2.3/"
     ],
     "infra_step": true,
