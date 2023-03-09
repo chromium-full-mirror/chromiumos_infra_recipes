@@ -16,7 +16,7 @@ DEPS = [
     'easy',
     'exonerate',
     'naming',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

@@ -8,6 +8,7 @@ from google.protobuf import duration_pb2
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.lab import license as license_pb2
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 DEPS = [
     'recipe_engine/assertions',
@@ -29,22 +30,22 @@ def RunSteps(api):
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.skylab_board = 'specific-model'
   hw_test.common.display_name = 'my_first_little_hwtest'
-  unit_hw_test = api.skylab.UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
+  unit_hw_test = UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
 
   another_hw_test_unit = api.cros_test_plan.test_api.another_hw_test_unit
   another_hw_test_unit.common.builder_name = builder_name
   another_hw_test = another_hw_test_unit.hw_test_cfg.hw_test[0]
   another_hw_test.common.display_name = 'my_second_little_hwtest'
-  another_unit_hw_test = api.skylab.UnitHwTest(unit=another_hw_test_unit,
-                                               hw_test=another_hw_test)
+  another_unit_hw_test = UnitHwTest(unit=another_hw_test_unit,
+                                    hw_test=another_hw_test)
 
   non_crit_hw_test_unit = api.cros_test_plan.test_api.non_critical_hw_test_unit(
   )
   non_crit_hw_test_unit.common.builder_name = builder_name
   non_crit_hw_test = non_crit_hw_test_unit.hw_test_cfg.hw_test[0]
   non_crit_hw_test.common.display_name = 'my_third_little_hwtest'
-  non_crit_unit_hw_test = api.skylab.UnitHwTest(unit=non_crit_hw_test_unit,
-                                                hw_test=non_crit_hw_test)
+  non_crit_unit_hw_test = UnitHwTest(unit=non_crit_hw_test_unit,
+                                     hw_test=non_crit_hw_test)
 
   hw_test_unit_with_license = api.cros_test_plan.test_api.hw_test_unit
   hw_test_unit_with_license.common.builder_name = builder_name
@@ -53,8 +54,8 @@ def RunSteps(api):
       license_pb2.LICENSE_TYPE_WINDOWS_10_PRO,
       license_pb2.LICENSE_TYPE_MS_OFFICE_STANDARD,
   ])
-  unit_hw_test_with_license = api.skylab.UnitHwTest(
-      unit=hw_test_unit_with_license, hw_test=hw_test_with_license)
+  unit_hw_test_with_license = UnitHwTest(unit=hw_test_unit_with_license,
+                                         hw_test=hw_test_with_license)
 
   api.skylab.set_qs_account('a_new_quota_account')
 
@@ -68,7 +69,7 @@ def RunSteps(api):
       ctr_test_suite.TestSuite.TestCaseTagCriteria(
           tags=["include_this_tag_1", "include_this_tag_2"],
           tag_excludes=["exclude_this_tag_1", "exclude_this_tag_2"]))
-  unit_hw_test_container = api.skylab.UnitHwTest(
+  unit_hw_test_container = UnitHwTest(
       unit=hw_test_unit_container,
       hw_test=hw_test_container,
   )

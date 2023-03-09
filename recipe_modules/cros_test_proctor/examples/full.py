@@ -27,7 +27,7 @@ DEPS = [
     'cros_cq_additional_tests',
     'easy',
     'gerrit',
-    'skylab',
+    'skylab_results',
     'src_state',
     'test_util',
     'git_footers',
@@ -110,7 +110,7 @@ def GenTests(api):
       responses=[dict(schedule_build=cros_test_platforms[1])])
 
   hw_tests = [
-      api.skylab.test_with_multi_response(
+      api.skylab_results.test_with_multi_response(
           bid=4321, names=[
               'htarget.hw.bvt-cq',
               'htarget.hw.bvt-inline',
@@ -225,7 +225,7 @@ def GenTests(api):
   ]
 
   multi_hw_tests = [
-      api.skylab.test_with_multi_response(
+      api.skylab_results.test_with_multi_response(
           bid=1234, names=[
               'htarget.hw.bvt-cq', 'htarget.hw.bvt-inline',
               'htarget.hw.some-suite', 'htarget.hw.some-other-suite'
@@ -249,7 +249,7 @@ def GenTests(api):
           [], step_name='run tests.collect tests.collect tast GCE tests'))
 
   hw_tests = [
-      api.skylab.test_with_multi_response(
+      api.skylab_results.test_with_multi_response(
           bid=4321, names=[
               'htarget.hw.bvt-cq',
               'htarget.hw.bvt-inline',
@@ -258,7 +258,7 @@ def GenTests(api):
   ]
 
   hw_tests = [
-      api.skylab.test_with_multi_response(
+      api.skylab_results.test_with_multi_response(
           bid=1234, names=[
               'htarget.hw.bvt-cq',
               'htarget.hw.some-other-suite',

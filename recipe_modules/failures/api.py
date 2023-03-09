@@ -20,6 +20,7 @@ from PB.recipe_engine import result as result_pb2
 
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 
 class FailuresApi(RecipeApi):
@@ -496,7 +497,7 @@ class FailuresApi(RecipeApi):
     """
     if isinstance(test, build_pb2.Build):
       return self.is_critical_build_failure(test)
-    if isinstance(test, self.m.skylab.SkylabResult):
+    if isinstance(test, SkylabResult):
       return self.is_critical_hw_test_failure(test)
     raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
 

@@ -67,7 +67,7 @@ DEPS = [
     'easy',
     'result_flow',
     'service_version',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -1106,7 +1106,7 @@ def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
     step.presentation.logs["output"] = json_format.MessageToJson(responses)
-    marshalled = api.skylab.test_api.marshal_responses(responses)
+    marshalled = api.skylab_results.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
     # request cannot handle compressed responses, see crbug.com/1086075 or
@@ -1117,10 +1117,10 @@ def set_output_properties(api, responses):
                                                sort_keys=True)
 
     step.properties[
-        'compressed_responses'] = api.skylab.test_api.base64_compress_proto(
+        'compressed_responses'] = api.skylab_results.test_api.base64_compress_proto(
             responses).decode('utf-8')
     step.properties[
-        'compressed_json_responses'] = api.skylab.test_api.base64_compress_dict(
+        'compressed_json_responses'] = api.skylab_results.test_api.base64_compress_dict(
             marshalled).decode('utf-8')
 
 

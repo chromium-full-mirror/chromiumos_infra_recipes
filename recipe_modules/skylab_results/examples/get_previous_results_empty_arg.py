@@ -6,14 +6,14 @@
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  responses = api.skylab.get_previous_results([], [])
+  responses = api.skylab_results.get_previous_results([], [])
   api.assertions.assertEqual(len(responses), 0)
 
 

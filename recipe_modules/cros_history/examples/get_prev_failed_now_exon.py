@@ -19,7 +19,7 @@ DEPS = [
     'cros_history',
     'cros_test_plan',
     'exonerate',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -78,14 +78,14 @@ def GenTests(api):
                     '.get previous test results'
                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               5679, names=['htarget.hw.bvt-inline'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
@@ -123,14 +123,14 @@ def GenTests(api):
                     '.get previous test results'
                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               5679, names=['htarget.hw.bvt-inline'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
@@ -190,15 +190,15 @@ def GenTests(api):
                     '.get previous test results'
                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               5679, names=['htarget.hw.bvt-inline'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               9877, names=['htarget.hw.some-other-suite'],
               task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
               test_cases_verdict=TaskState.VERDICT_FAILED),

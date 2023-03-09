@@ -44,6 +44,7 @@ DEPS = [
     'naming',
     'metadata',
     'skylab',
+    'skylab_results',
     'src_state',
     'test_util',
     'workspace_util',

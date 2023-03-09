@@ -8,6 +8,7 @@ from collections import defaultdict
 from collections import OrderedDict
 
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
@@ -596,7 +597,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           if not _is_skippable(test):
             build_target = unit.common.build_target
             tests_to_run[build_target.name].append(
-                self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
+                UnitHwTest(unit=unit, hw_test=test))
             hw_build_targets.add(build_target.name)
 
             # Record information about what is getting tested.

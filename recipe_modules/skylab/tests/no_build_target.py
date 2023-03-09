@@ -8,6 +8,7 @@ import functools
 from google.protobuf import duration_pb2
 
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import post_process
 
@@ -29,7 +30,7 @@ def RunSteps(api):
   hw_test.common.display_name = 'my_first_little_hwtest'
   hw_test.run_via_cft = True
   hw_test.run_via_trv2 = True
-  unit_hw_test = api.skylab.UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
+  unit_hw_test = UnitHwTest(unit=hw_test_unit, hw_test=hw_test)
 
   api.skylab.schedule_suites(
       [

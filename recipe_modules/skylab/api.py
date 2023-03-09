@@ -3,29 +3,23 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import base64
-import zlib
-
-from typing import List
-from RECIPE_MODULES.chromeos.skylab import structs
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
 from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse
-from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 from recipe_engine import recipe_api
+
+_DEFAULT_FAILED_RESPONSE = ExecuteResponse(
+    state=TaskState(verdict=TaskState.VERDICT_FAILED,
+                    life_cycle=TaskState.LIFE_CYCLE_COMPLETED))
 
 
 class SkylabApi(recipe_api.RecipeApi):
   """Module for issuing commands to Skylab"""
-
-  SkylabTask = structs.SkylabTask
-  SkylabResult = structs.SkylabResult
-  UnitHwTest = structs.UnitHwTest
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -213,7 +207,8 @@ class SkylabApi(recipe_api.RecipeApi):
             configure_step.logs['request'] = [
                 json_format.MessageToJson(request)
             ]
-            reqs[_request_tag(uht.hw_test)] = json_format.MessageToDict(request)
+            reqs[self.m.skylab_results.request_tag(
+                uht.hw_test)] = json_format.MessageToDict(request)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
@@ -228,8 +223,8 @@ class SkylabApi(recipe_api.RecipeApi):
       tasks = []
       for uht in unit_hw_tests:
         tasks.append(
-            self.SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
-                            unit=uht.unit))
+            SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
+                       unit=uht.unit))
       return tasks
 
   def _set_pool(self, scheduling, pool_name):
@@ -318,73 +313,14 @@ class SkylabApi(recipe_api.RecipeApi):
       results = []
       responses = {}
       for build in hw_test_builds.values():
-        responses.update(self._get_multi_response_binary(build))
+        responses.update(
+            self.m.skylab_results.get_tagged_execute_responses_from_build(
+                build))
       for t in tasks:
         result = responses.get(
-            _request_tag(t.test), self._default_failed_response())
-        results.append(self._translate_result(result, t))
+            self.m.skylab_results.request_tag(t.test), _DEFAULT_FAILED_RESPONSE)
+        results.append(self.m.skylab_results.translate_result(result, t))
 
       self.m.greenness.update_hwtest_info(results)
       presentation.logs['return value'] = [str(r) for r in results]
       return results
-
-  def get_previous_results(self, task_ids: List[str],
-                           unit_hw_tests: List[structs.UnitHwTest]
-                          ) -> List[structs.SkylabResult]:
-    """Get the results from the previous tasks with the specified task_ids.
-
-    Args:
-      task_ids: The list of Skylab task IDs for which to retrieve results.
-      unit_hw_tests: The list of unit_hw_tests for which to retrieve results.
-
-    Returns:
-      The list of Skylab results for the specified unit_hw_tests that ran in
-      the tasks with the specified task_ids.
-    """
-    with self.m.step.nest('get previous skylab tasks v2'):
-      hw_test_builds = self.m.buildbucket.get_multi(task_ids)
-      results = []
-      for build in hw_test_builds.values():
-        build_url = self.m.buildbucket.build_url(build_id=build.id)
-        response = self._get_multi_response_binary(build)
-        for uht in unit_hw_tests:
-          disp_name = _request_tag(uht.hw_test)
-          if disp_name in response:
-            result = response.get(disp_name)
-            task = self.SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
-                                   unit=uht.unit)
-            results.append(self._translate_result(result, task))
-      return results
-
-  def _get_multi_response_binary(self, build):
-    try:
-      resps = build.output.properties['compressed_responses']
-    except ValueError:
-      return ExecuteResponses().tagged_responses
-    wire_format = zlib.decompress(base64.b64decode(resps))
-    responses = ExecuteResponses.FromString(wire_format)
-    return responses.tagged_responses
-
-  def _default_failed_response(self):
-    response = ExecuteResponse()
-    response.state.verdict = TaskState.VERDICT_FAILED
-    response.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
-    return response
-
-  def _translate_result(self, result, task):
-    """Translates result to a Skylab result."""
-    if result.state.verdict == TaskState.VERDICT_PASSED:
-      status = common_pb2.SUCCESS
-    elif result.state.life_cycle in (TaskState.LIFE_CYCLE_CANCELLED,
-                                     TaskState.LIFE_CYCLE_PENDING,
-                                     TaskState.LIFE_CYCLE_ABORTED,
-                                     TaskState.LIFE_CYCLE_REJECTED):
-      status = common_pb2.INFRA_FAILURE
-    else:
-      status = common_pb2.FAILURE
-    return self.SkylabResult(task=task, status=status,
-                             child_results=result.task_results)
-
-
-def _request_tag(hw_test):
-  return hw_test.common.display_name

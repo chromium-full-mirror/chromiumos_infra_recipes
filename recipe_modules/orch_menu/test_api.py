@@ -361,7 +361,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     def _skylab_resp(task_id, suite_names=None, passed=True):
       verdict = TaskState.VERDICT_PASSED if passed else TaskState.VERDICT_FAILED
-      return self.m.skylab.test_with_multi_response(
+      return self.m.skylab_results.test_with_multi_response(
           bid=task_id, names=suite_names or [],
           task_state=TaskState(verdict=verdict))
 

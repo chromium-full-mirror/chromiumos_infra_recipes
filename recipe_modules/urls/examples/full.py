@@ -15,7 +15,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'skylab',
+    'skylab_results',
     'urls',
 ]
 
@@ -33,11 +33,11 @@ def RunSteps(api):
       api.urls.get_vm_test_link_map(build),
       {'test page': api.buildbucket.build_url(build_id=123)})
 
-  skylab_task = api.skylab.test_api.skylab_task(url='skylab.whatever')
+  skylab_task = api.skylab_results.test_api.skylab_task(url='skylab.whatever')
   api.assertions.assertEqual(
       api.urls.get_skylab_task_url(skylab_task), 'skylab.whatever')
 
-  skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
+  skylab_result = api.skylab_results.test_api.skylab_result(task=skylab_task)
   api.assertions.assertEqual(
       api.urls.get_skylab_result_link_map(skylab_result),
       {'suite page': 'skylab.whatever'})
@@ -58,7 +58,7 @@ def RunSteps(api):
   expected_map = {
       'first test - dut_unreachable_post_provision': 'link.com',
   }
-  skylab_result = api.skylab.test_api.skylab_result(
+  skylab_result = api.skylab_results.test_api.skylab_result(
       task=skylab_task, status=common_pb2.FAILURE,
       child_results=response.task_results)
   api.assertions.assertEqual(
@@ -99,7 +99,7 @@ def RunSteps(api):
       'tast.speaker.IsReallyLoud': 'newlink.com',
       'tast.cpu.IsVeryFast': 'newlink.com',
   }
-  skylab_result = api.skylab.test_api.skylab_result(
+  skylab_result = api.skylab_results.test_api.skylab_result(
       task=skylab_task, status=common_pb2.FAILURE,
       child_results=response.task_results)
   api.assertions.assertEqual(

@@ -21,6 +21,8 @@ from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 FailedTest = namedtuple(
@@ -292,9 +294,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           suite_name = str(skylab_res.task.test.common.display_name)
           new_child_results, new_status = self._exonerate_child_results(
               skylab_res.child_results, build_target, board, suite_name)
-          new_skylab_res = self.m.skylab.SkylabResult(
-              task=skylab_res.task, status=new_status,
-              child_results=new_child_results)
+          new_skylab_res = SkylabResult(task=skylab_res.task, status=new_status,
+                                        child_results=new_child_results)
           new_test_results.append(new_skylab_res)
           if new_status == common_pb2.SUCCESS:
             link_text = '{}.{}'.format(build_target, suite_name)

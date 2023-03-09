@@ -18,7 +18,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.chromite.api.packages import UprevPackagesResponse
 
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.skylab import structs as skylab_structs
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult, UnitHwTest
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 from google.protobuf import json_format
@@ -180,8 +180,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       return all_passed_tests
 
   def get_failed_now_exonerable_hw_tests_results(
-      self, hw_test_results: List[skylab_structs.SkylabResult]
-  ) -> List[skylab_structs.SkylabResult]:
+      self, hw_test_results: List[SkylabResult]) -> List[SkylabResult]:
     """Get the results from the previous failed hardware tests that can now be exonerated.
 
     Args:
@@ -215,7 +214,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
   # TODO(b/271938042): Make this a public function and add better unit testing.
   def _get_previous_test_results(
       self, test_plan: GenerateTestPlanResponse
-  ) -> Tuple[List[build_pb2.Build], List[skylab_structs.SkylabResult]]:
+  ) -> Tuple[List[build_pb2.Build], List[SkylabResult]]:
     """Get the tests from the previous run.
 
     Args:
@@ -253,15 +252,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if test_plan and hw_build_ids:
         for unit in test_plan.hw_test_units:
           for test in unit.hw_test_cfg.hw_test:
-            unit_hw_tests.append(
-                self.m.skylab.UnitHwTest(unit=unit, hw_test=test))
-        hw_test_results = self.m.skylab.get_previous_results(
+            unit_hw_tests.append(UnitHwTest(unit=unit, hw_test=test))
+        hw_test_results = self.m.skylab_results.get_previous_results(
             hw_build_ids, unit_hw_tests)
       return vm_test_results, hw_test_results
 
   def get_prev_failed_now_exonerable_test_results(
-      self, test_plan: GenerateTestPlanResponse, dry_run=False
-  ) -> Tuple[List[build_pb2.Build], List[skylab_structs.SkylabResult]]:
+      self, test_plan: GenerateTestPlanResponse,
+      dry_run=False) -> Tuple[List[build_pb2.Build], List[SkylabResult]]:
     """Get the tests from the previous failed runs that are now exonerable.
 
     Args:

@@ -9,7 +9,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
     'failures',
-    'skylab',
+    'skylab_results',
     'urls',
 ]
 
@@ -17,12 +17,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  skylab_success = api.skylab.test_api.skylab_result()
-  skylab_failure = api.skylab.test_api.skylab_result(
-      task=api.skylab.test_api.skylab_task(
-          test=api.skylab.test_api.hw_test(critical=False)),
+  skylab_success = api.skylab_results.test_api.skylab_result()
+  skylab_failure = api.skylab_results.test_api.skylab_result(
+      task=api.skylab_results.test_api.skylab_task(
+          test=api.skylab_results.test_api.hw_test(critical=False)),
       status=common_pb2.FAILURE)
-  skylab_critical_failure = api.skylab.test_api.skylab_result(
+  skylab_critical_failure = api.skylab_results.test_api.skylab_result(
       status=common_pb2.FAILURE)
   skylab_critical_link_map = api.urls.get_skylab_result_link_map(
       skylab_critical_failure)

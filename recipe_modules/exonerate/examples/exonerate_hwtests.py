@@ -14,7 +14,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'exonerate',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -74,15 +74,16 @@ def RunSteps(api):
                                  test_cases=(failing_unexonerable_test_cases)),
   ]
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
-                                        status=common_pb2.FAILURE,
-                                        child_results=child_results),
-      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
-                                        status=common_pb2.SUCCESS,
-                                        child_results=child_results[:1]),
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE, child_results=child_results),
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.SUCCESS, child_results=child_results[:1]),
       # Suite with a mix of flaked and exonerable child results.
-      api.skylab.test_api.skylab_result(
-          task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE,
           child_results=flaked_child_results + child_results),
   ]
   # Testing for exoneration fail. (As the result was a success to begin with)
@@ -112,9 +113,9 @@ def RunSteps(api):
           test_cases=(passing_test_cases + failing_unexonerable_test_cases))
   ]
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
-                                        status=common_pb2.FAILURE,
-                                        child_results=child_results),
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE, child_results=child_results),
   ]
   is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
   api.assertions.assertEqual(is_exonerable, False)
@@ -127,9 +128,9 @@ def RunSteps(api):
 
   # Testing the case of empty child_results and empty test_cases.
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(task=api.skylab.test_api.skylab_task(),
-                                        status=common_pb2.FAILURE,
-                                        child_results=[])
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE, child_results=[])
   ]
 
   is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
@@ -144,8 +145,9 @@ def RunSteps(api):
       ExecuteResponse.TaskResult(name='suite1', state=fail_state, test_cases=[])
   ]
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(
-          task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE,
           child_results=child_results_with_empty_test_cases)
   ]
   is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])
@@ -161,8 +163,9 @@ def RunSteps(api):
                                  test_cases=failing_incomplete_test_case)
   ]
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(
-          task=api.skylab.test_api.skylab_task(), status=common_pb2.FAILURE,
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE,
           child_results=child_results_with_incomplete_test_cases)
   ]
   is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failures[0])

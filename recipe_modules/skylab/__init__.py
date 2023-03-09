@@ -16,6 +16,7 @@ DEPS = [
     'git_footers',
     'greenness',
     'metadata',
+    'skylab_results',
     'src_state',
 ]
 

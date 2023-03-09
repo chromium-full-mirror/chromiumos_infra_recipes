@@ -9,7 +9,7 @@ from PB.test_platform.taskstate import TaskState
 DEPS = [
     'recipe_engine/assertions',
     'greenness',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -33,8 +33,9 @@ def RunSteps(api):
       ),
   ]
   results = [
-      api.skylab.test_api.skylab_result(child_results=child_results),
-      api.skylab.test_api.skylab_result(child_results=child_results[:2]),
+      api.skylab_results.test_api.skylab_result(child_results=child_results),
+      api.skylab_results.test_api.skylab_result(
+          child_results=child_results[:2]),
   ]
   api.greenness.update_hwtest_info(results)
   api.assertions.assertEqual(

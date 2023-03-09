@@ -13,19 +13,18 @@ DEPS = [
     'recipe_engine/buildbucket',
     'cros_test_plan',
     'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  # Unused, but needed for coverage
-  api.skylab.test_api.hw_test()
 
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.common.display_name = 'please_wait_on_me'
-  task = api.skylab.test_api.skylab_task(
+  task = api.skylab_results.test_api.skylab_task(
       bid=1234,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=hw_test, unit=hw_test_unit)
@@ -33,7 +32,7 @@ def RunSteps(api):
   another_hw_test_unit = api.cros_test_plan.test_api.another_hw_test_unit
   another_hw_test = another_hw_test_unit.hw_test_cfg.hw_test[0]
   another_hw_test.common.display_name = 'please_wait_on_me_too'
-  another_task = api.skylab.test_api.skylab_task(
+  another_task = api.skylab_results.test_api.skylab_task(
       bid=1234,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b8899866335707109280',
       test=another_hw_test,
@@ -43,7 +42,7 @@ def RunSteps(api):
   separate_ctp_unit = api.cros_test_plan.test_api.some_other_hw_test_unit
   separate_ctp_test = separate_ctp_unit.hw_test_cfg.hw_test[0]
   separate_ctp_test.common.display_name = 'wait_on_separate_ctp'
-  separate_ctp_task = api.skylab.test_api.skylab_task(
+  separate_ctp_task = api.skylab_results.test_api.skylab_task(
       bid=5679,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b5678',
       test=separate_ctp_test,
@@ -67,10 +66,10 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.buildbucket.simulated_collect_output([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               5679, names=['wait_on_separate_ctp'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
       ], step_name='collect skylab tasks v2.buildbucket.collect'),
@@ -79,7 +78,7 @@ def GenTests(api):
   yield api.test(
       'basic-without-JSON-output',
       api.buildbucket.simulated_collect_output([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234,
               names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(verdict=TaskState.VERDICT_PASSED),
@@ -91,7 +90,7 @@ def GenTests(api):
   yield api.test(
       'infra-failure',
       api.buildbucket.simulated_collect_output([
-          api.skylab.test_with_multi_response(
+          api.skylab_results.test_with_multi_response(
               1234, names=['please_wait_on_me', 'please_wait_on_me_too'],
               task_state=TaskState(life_cycle=TaskState.LIFE_CYCLE_CANCELLED)),
       ], step_name='collect skylab tasks v2.buildbucket.collect'),

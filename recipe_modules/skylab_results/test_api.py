@@ -7,7 +7,7 @@ import base64
 import json
 import zlib
 
-from RECIPE_MODULES.chromeos.skylab import structs
+from RECIPE_MODULES.chromeos.skylab_results import structs
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
 
@@ -24,7 +24,7 @@ from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from recipe_engine import recipe_test_api
 
 
-class SkylabTestApi(recipe_test_api.RecipeTestApi):
+class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for test_plan api."""
 
   def hw_test_unit(self, common=None, hw_tests=None):
@@ -51,7 +51,7 @@ class SkylabTestApi(recipe_test_api.RecipeTestApi):
         suite=suite or 'bvt-cq',
         skylab_board=board or 'target',
         pool='recipe_test_pool',
-    )
+    )  # pragma: no cover
 
   def skylab_task(self, bid=None, url=None, test=None, unit=None):
     if test is None and unit is None:

@@ -11,7 +11,7 @@ DEPS = [
     'recipe_engine/assertions',
     'git',
     'naming',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -32,14 +32,14 @@ Plagueis the Wise?
   ''')
   api.assertions.assertEqual(api.naming.get_commit_title(commit), 'title')
 
-  hw_test = api.skylab.test_api.hw_test(name='hw-test')
+  hw_test = api.skylab_results.test_api.hw_test(name='hw-test')
   api.assertions.assertEqual(api.naming.get_hw_test_title(hw_test), 'hw-test')
 
-  skylab_task = api.skylab.test_api.skylab_task(test=hw_test)
+  skylab_task = api.skylab_results.test_api.skylab_task(test=hw_test)
   api.assertions.assertEqual(
       api.naming.get_skylab_task_title(skylab_task), 'hw-test')
 
-  skylab_result = api.skylab.test_api.skylab_result(task=skylab_task)
+  skylab_result = api.skylab_results.test_api.skylab_result(task=skylab_task)
   api.assertions.assertEqual(
       api.naming.get_skylab_result_title(skylab_result), 'hw-test')
   api.assertions.assertEqual(

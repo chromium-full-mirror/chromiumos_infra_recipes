@@ -12,6 +12,7 @@ from PB.recipes.chromeos.tast_vm import TastVmProperties
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 
 class NamingApi(recipe_api.RecipeApi):
@@ -39,7 +40,7 @@ class NamingApi(recipe_api.RecipeApi):
     """
     if isinstance(test, build_pb2.Build):
       return self.get_vm_test_title(test)
-    if isinstance(test, self.m.skylab.SkylabResult):
+    if isinstance(test, SkylabResult):
       return self.get_skylab_result_title(test)
     raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
 

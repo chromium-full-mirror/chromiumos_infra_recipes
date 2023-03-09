@@ -12,7 +12,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'exonerate',
-    'skylab',
+    'skylab_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -33,9 +33,9 @@ def RunSteps(api):
                                  test_cases=failing_test_cases),
   ]
   hw_test_failures = [
-      api.skylab.test_api.skylab_result(
-          task=api.skylab.test_api.skylab_task(
-              test=api.skylab.test_api.hw_test(critical=False)),
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(
+              test=api.skylab_results.test_api.hw_test(critical=False)),
           status=common_pb2.FAILURE, child_results=child_results)
   ]
   hw_test_failures, exonerated_test_names = api.exonerate.exonerate_hwtests(
