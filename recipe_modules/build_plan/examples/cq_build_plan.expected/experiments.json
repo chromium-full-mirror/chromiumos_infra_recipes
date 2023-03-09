@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
     "name": "read builder configs"
   },
   {
@@ -1086,6 +1090,36 @@
       "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
       "@@@SET_BUILD_PROPERTY@count_skip_public_builders@0@@@",
       "@@@SET_BUILD_PROPERTY@slim_eligible_run@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter additional chrome pupr builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no additional builds needed@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://chromium-review.googlesource.com/changes/123456/topic"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter additional chrome pupr builds.curl https://chromium-review.googlesource.com/changes/123456/topic",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

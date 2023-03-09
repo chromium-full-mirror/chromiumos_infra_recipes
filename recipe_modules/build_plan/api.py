@@ -66,12 +66,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = [b.id.name for b in builder_configs]
+    skipped_builders = []
     if gerrit_changes and not self._properties.disable_build_plan_pruning:
       builders_tuple = self.m.cros_relevance.run_build_planner(
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
           ])
       necessary_builders = builders_tuple.necessary
+      skipped_builders = builders_tuple.run_when_rules_skipped
     # Handle forced relevancy.
     forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
         gerrit_changes, builder_configs)
@@ -271,6 +273,41 @@ class BuildPlanApi(recipe_api.RecipeApi):
           count_scheduled_slim_builds=count_scheduled_slim_builds,
           slim_eligible_run=slim_eligible_run,
           count_skip_public_builders=count_skip_public_builders)
+
+    with self.m.step.nest(
+        'filter additional chrome pupr builds') as presentation:
+      if (len(gerrit_changes) == 1 and
+          self.m.chrome.is_chrome_pupr_atomic_uprev(gerrit_changes[0]) and
+          'chromeos.build_plan.add_chrome_pupr_builders'
+          in self.m.cros_infra_config.experiments):
+        chrome_log = []
+
+        # Schedule additional non-critical builds for Chrome PUpr Uprev CLs.
+        for builder in skipped_builders:
+          builder_config = self.m.cros_infra_config.get_builder_config(builder)
+
+          # Only schedule builds for critical CQ builders.
+          if not builder_config.general.critical.value:
+            continue
+
+          child_build_snapshot = internal_snapshot
+          if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
+            child_build_snapshot = external_snapshot
+          tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+          properties = self.m.cq.props_for_child_build
+          properties.update(self.m.cros_infra_config.props_for_child_build)
+
+          new_build_requests.append(
+              self.m.buildbucket.schedule_request(
+                  gitiles_commit=child_build_snapshot, builder=builder,
+                  bucket=builder_config.id.bucket,
+                  gerrit_changes=gerrit_changes, critical=False, tags=tags,
+                  properties=properties))
+          chrome_log.append(
+              'Scheduled {} as non-critical builder'.format(builder))
+        presentation.logs['additional builds'] = chrome_log
+      else:
+        presentation.step_text = 'no additional builds needed'
 
     return completed_builds, filtered_snapshot_builds, new_build_requests
 
