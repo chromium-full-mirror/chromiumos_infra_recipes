@@ -603,6 +603,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
     """
+
+    def _has_manifest_changes(presentation):
+      affected_paths = self.m.cros_relevance.get_affected_paths(
+          self.m.workspace_util.patch_sets)
+      manifest_changes_present = any(
+          re.match(r'^(manifest-internal|manifest)\/.*\.xml$', p)
+          for p in affected_paths)
+      if manifest_changes_present:
+        presentation.step_text = 'running all unit tests on manifest changes'
+      return manifest_changes_present
+
     unit_tests = config.unit_tests
 
     if self.m.cros_infra_config.should_run(unit_tests.ebuilds_run_spec):
@@ -610,8 +621,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         relevant_testable_packages = unit_tests.packages
         testable_packages_optional = False
         filter_only_cros_workon = False
-        if (config.unit_tests.dependencies ==
-            BuilderConfig.CL_AFFECTED_DEPENDENCIES):
+        if (config.unit_tests.dependencies
+            == BuilderConfig.CL_AFFECTED_DEPENDENCIES and
+            not _has_manifest_changes(presentation)):
           testable_packages_optional = True
           filter_only_cros_workon = True
           relevant_testable_packages = self.get_cl_affected_sysroot_packages(
@@ -623,7 +635,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           # and package_name fields.
           if unit_tests.packages:
             relevant_testable_packages = [
-                x for x in self._cl_affected_sysroot_packages
+                x for x in self._cl_affected_sysroot_packages or []
                 if PackageInfo(category=x.category, package_name=x.package_name)
                 in list(unit_tests.packages)
             ]

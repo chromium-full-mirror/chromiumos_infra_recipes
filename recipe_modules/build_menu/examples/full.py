@@ -20,6 +20,8 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_history',
+    'gerrit',
+    'repo',
     'test_util',
 ]
 
@@ -391,6 +393,41 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'get package dependencies'),
       api.post_check(
           post_process.DoesNotRun,
+          'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest'),
+  )
+
+  gerrit_changes = [
+      GerritChange(host='chrome-internal-review.googlesource.com',
+                   project='chromeos/manifest-internal', change=1235)
+  ]
+  yield api.test(
+      'ebuild-tests-manifest-change',
+      api.buildbucket.try_build(builder='cave-slim-cq',
+                                gerrit_changes=gerrit_changes),
+      api.repo.project_infos_step_data('run ebuild tests.get affected paths', [
+          dict(project='chromeos/manifest-internal', path='manifest-internal')
+      ]),
+      api.repo.project_infos_step_data(
+          'run ebuild tests (2).get affected paths', [
+              dict(project='chromeos/manifest-internal',
+                   path='manifest-internal')
+          ]),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'cherry-pick gerrit changes', gerrit_changes, {
+              1235: {
+                  'files': {
+                      'a/b/d/test.txt': {},
+                      'otherfile.xml': {}
+                  },
+              },
+          }, iteration=1),
+      api.properties(**{'$recipe_engine/cq': {
+          'active': True
+      }}),
+      api.post_process(post_process.StepTextEquals, 'run ebuild tests',
+                       'running all unit tests on manifest changes'),
+      api.post_check(
+          post_process.MustRun,
           'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest'),
   )
 
