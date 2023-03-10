@@ -53,7 +53,35 @@ def RunSteps(api, properties):
                       gs_locations=[
                           'chromeos-toolchain-artifacts/orderfile/vetted'
                       ])
-              ])), test_data=properties.api_response)
+              ]),
+      ), test_data=properties.api_response)
+  api.assertions.assertEqual(properties.relevance, resp)
+
+  resp = api.cros_artifacts.prepare_for_build(
+      chroot=chroot, sysroot=sysroot, artifacts_info=common.ArtifactsByService(
+          toolchain=Toolchain(
+              input_artifacts=[
+                  Toolchain.ArtifactInfo(
+                      artifact_types=['UNVERIFIED_CHROME_LLVM_ORDERFILE'],
+                      gs_locations=[
+                          'chromeos-toolchain-artifacts/orderfile/unvetted'
+                      ]),
+                  Toolchain.ArtifactInfo(
+                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
+                      gs_locations=[
+                          'chromeos-toolchain-artifacts/orderfile/vetted'
+                      ])
+              ], output_artifacts=[
+                  Toolchain.ArtifactInfo(
+                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
+                      gs_locations=[
+                          'chromeos-toolchain-artifacts/orderfile/vetted'
+                      ])
+              ]),
+          legacy=Legacy(output_artifacts=[
+              Legacy.ArtifactInfo(artifact_types=['IMAGE_ZIP'])
+          ]),
+      ), test_data=properties.api_response)
   api.assertions.assertEqual(properties.relevance, resp)
 
   # API Version 1.0.0 has more logic in the module.

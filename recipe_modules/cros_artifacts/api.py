@@ -1069,10 +1069,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # By default, artifacts will get 'UNKNOWN'.
     # EBUILD_LOGS are not relevant.
     _IGNORE_ARTIFACT_TYPES = [BuilderConfig.Artifacts.EBUILD_LOGS]
+    POINTLESS = artifacts.BuildSetupResponse.POINTLESS
+    NEEDED = artifacts.BuildSetupResponse.NEEDED
+    UNKNOWN = artifacts.BuildSetupResponse.UNKNOWN
 
     if (self._test_data.enabled and
         self._test_data.get('set_prepare_pointless', False)):
-      return artifacts.BuildSetupResponse.POINTLESS
+      return POINTLESS
 
     funcs = collections.defaultdict(list)
     input_artifacts = []
@@ -1096,7 +1099,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                   input_artifact_type=atype,
                   input_artifact_gs_locations=in_art.gs_locations))
 
-    result = artifacts.BuildSetupResponse.POINTLESS
+    res = {}
     # TODO(crbug/1034529): Eventually ArtifactsService/BuildSetup will handle
     # everything for us.  To ease migration, call both and merge the results.
     ArtifactsService = self.m.cros_build_api.ArtifactsService
@@ -1104,25 +1107,33 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       req = artifacts.BuildSetupRequest(
           chroot=chroot, sysroot=sysroot, artifact_info=artifacts_info,
           forced_build_relevance=forced_build_relevance)
-      result = ArtifactsService.BuildSetup(
+      res[ArtifactsService.BuildSetup] = ArtifactsService.BuildSetup(
           req, infra_step=True, test_output_data=test_data).build_relevance
     elif not funcs:
-      return artifacts.BuildSetupResponse.UNKNOWN
+      return UNKNOWN
 
     # Sorting is done here only to give us consistency in the expected.json
     # for our tests.
     with self.m.step.nest('call prepare funcs') as pres:
       for func, types in sorted(funcs.items(), key=lambda x: x[0].__name__):
-        res = func(chroot, sysroot, types, input_artifacts,
-                   artifacts_info.profile_info, test_data=test_data)
+        res[func] = func(chroot, sysroot, types, input_artifacts,
+                         artifacts_info.profile_info, test_data=test_data)
         pres.logs[func.__name__] = '%s => %s' % ([
             BuilderConfig.Artifacts.ArtifactTypes.Name(x) for x in types
-        ], artifacts.BuildSetupResponse.BuildRelevance.Name(res))
-        # If this func says NEEDED, or the result so far is POINTLESS, then the
-        # result is what this func said.
-        if (res == artifacts.BuildSetupResponse.NEEDED or
-            result == artifacts.BuildSetupResponse.POINTLESS):
-          result = res
+        ], artifacts.BuildSetupResponse.BuildRelevance.Name(res[func]))
+
+    result = POINTLESS
+    if NEEDED in res.values():
+      # NEEDED has the highest priority.
+      result = NEEDED
+    elif res.get(self._prepare_toolchain, UNKNOWN) == POINTLESS:
+      # Prefer returning a pointless toolchain result to returning unknown results.
+      result = POINTLESS
+    elif UNKNOWN in res.values():
+      result = UNKNOWN
+    # We come here if there are:
+    # - no NEEDED and UNKNOWN results and
+    # - there are no toolchain artifacts.
 
     return result
 
