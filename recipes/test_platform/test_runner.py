@@ -1522,10 +1522,17 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       if len(run_test_response.test_dut_responses) > 0:
         ctr_test_response = run_test_response.test_dut_responses[0].data
         results_dir = ctr_test_response.result_dir_path.path
-      crossystem_file_path = os.path.join(results_dir, 'sysinfo', 'crossystem')
-      crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-      kernel_log_file_path = os.path.join(results_dir, 'sysinfo', 'uname')
-      kernel_version = _read_kernel_version(api, kernel_log_file_path)
+
+      # Skips reading the log files when the result_dir_path is empty. When
+      # test/harness crashes, result_dir_path will be empty
+      crossystem_keyvals = {}
+      kernel_version = {}
+      if results_dir:
+        crossystem_file_path = os.path.join(results_dir, 'sysinfo',
+                                            'crossystem')
+        crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
+        kernel_log_file_path = os.path.join(results_dir, 'sysinfo', 'uname')
+        kernel_version = _read_kernel_version(api, kernel_log_file_path)
       autotest_keyvals = test_metadata.autotest_keyvals
       # TODO(b/259569300): Provisioning error during CFT provisioning
       # This prevents the validation of adding ash_versoin and lacros_version
@@ -2663,21 +2670,26 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   def _failed_run_test_step_for_ctr():
     return _run_test_step_with_state_for_ctr('fail')
 
-  def _run_test_step_with_state_for_ctr(state):
+  def _successful_run_test_step_for_ctr_without_result_dir():
+    return _run_test_step_with_state_for_ctr('pass', has_result_dir=False)
+
+  def _run_test_step_with_state_for_ctr(state, has_result_dir=True):
     return (api.step_data(
         'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
         stdout=api.raw_io.output(
             json_format.MessageToJson(
                 ctr_api.cros_tool_runner_cli.CrosToolRunnerTestResponse(
                     test_case_results=[
-                        _test_case_result_resp_with_state_for_ctr(state=state)
+                        _test_case_result_resp_with_state_for_ctr(
+                            state=state, has_result_dir=has_result_dir)
                     ])))))
 
-  def _test_case_result_resp_with_state_for_ctr(state):
+  def _test_case_result_resp_with_state_for_ctr(state, has_result_dir=True):
     test_case_result = ctr_api.test_case_result.TestCaseResult(
         test_case_id=ctr_api.test_case.TestCase.Id(value="tauto.dummy_id"),
-        result_dir_path=StoragePath(host_type=StoragePath.HostType.LOCAL,
-                                    path="dummy-results-dir/subdir"),
+        result_dir_path=StoragePath(
+            host_type=StoragePath.HostType.LOCAL,
+            path="dummy-results-dir/subdir" if has_result_dir else ""),
         reason="reason", start_time=timestamp_pb2.Timestamp(seconds=2369692800),
         duration=duration_pb2.Duration(seconds=3600))
     data = {state: {}}
@@ -3988,6 +4000,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
                  _skipped_run_test_step_for_ctr())
+
+  yield api.test('success-with-ctr-without-result-dir', _set_build(bid=42),
+                 _misc_properties(cft_is_enabled=True),
+                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+                 _successful_prejob_step_for_ctr(),
+                 _successful_run_test_step_for_ctr_without_result_dir())
 
   yield api.test(
       'success-with-ctr-misconfigured-prejob', _set_build(bid=42),
