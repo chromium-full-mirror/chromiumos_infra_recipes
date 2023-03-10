@@ -315,6 +315,14 @@
   },
   {
     "cmd": [],
+    "name": "apply changes and run presubmits for p1.set cros_source_git_strategy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "apply changes and run presubmits for p1.run presubmit checks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

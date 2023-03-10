@@ -22,6 +22,7 @@ from recipe_engine.config_types import Path
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
 from RECIPE_MODULES.chromeos.util.util import exponential_retry
 
 # Default sync options for syncing the named cache.
@@ -1246,6 +1247,7 @@ class CrosSourceApi(RecipeApi):
       commit = self.m.git.fetch_ref(patch.git_fetch_url, patch.git_fetch_ref)
       merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
                                             infra_step=False)
+      git_strategy = GitStrategy.MERGE
       if not merged:
         self.m.git.merge_abort()
         if self.m.git.is_merge_commit(commit):
@@ -1256,7 +1258,9 @@ class CrosSourceApi(RecipeApi):
         presentation.status = self.m.step.SUCCESS
         presentation.step_text = 'merge failed. will try cherry-pick instead'
         self.m.git.cherry_pick(commit, infra_step=False)
+        git_strategy = GitStrategy.CHERRY_PICK
 
+      self.m.easy.set_properties_step(cros_source_git_strategy=git_strategy)
       self._applied_patches[patch.display_id].append(patch)
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)

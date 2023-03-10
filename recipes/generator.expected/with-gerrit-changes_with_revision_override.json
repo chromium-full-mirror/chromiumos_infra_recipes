@@ -2015,6 +2015,14 @@
   },
   {
     "cmd": [],
+    "name": "apply gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "apply gerrit changes.update policy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

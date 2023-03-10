@@ -5,6 +5,10 @@
 
 from recipe_engine import post_process
 
+from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
+
+from RECIPE_MODULES.chromeos.cros_source.test_utils import GitStrategyEquals
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -27,11 +31,13 @@ def GenTests(api):
       'apply-gerrit-changes-fail',
       manifest_branch,
       api.repo.fail_repo_sync(True),
+      api.post_check(GitStrategyEquals, GitStrategy.MERGE),
       api.post_check(post_process.StatusException),
   )
 
   yield api.cros_source.test(
       'apply-gerrit-changes-success',
       manifest_branch,
+      api.post_check(GitStrategyEquals, GitStrategy.MERGE),
       api.post_check(post_process.StatusSuccess),
   )

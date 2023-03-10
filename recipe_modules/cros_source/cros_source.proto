@@ -24,6 +24,12 @@ message ManifestLocation {
   string manifest_gs_path = 4;
 }
 
+enum GitStrategy{
+  UNSPECIFIED = 0;
+  MERGE = 1;
+  CHERRY_PICK = 2;
+}
+
 message CrosSourceProperties {
 
   message SnapshotCas {
@@ -49,4 +55,7 @@ message CrosSourceProperties {
   // If set, will use the external `chromiumos` source cache instead of the
   // `chromeos` source cache.
   bool use_external_source_cache = 7;
+
+  // Strategy used to apply changes.
+  GitStrategy git_strategy = 8;
 }
