@@ -464,6 +464,17 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
   """
   with api.step.nest("Shard test cases") as step:
     seed = request.test_plan.seed
+    max_in_shard = 100
+    # TODO (b/272816888): Short term experiment, replace with value from configs later.
+    if suite_name.__contains__(
+        "tast-first-class-cq-experiment"):  # pragma: no cover
+      if request.test_plan.tag_criteria.test_names:
+        if request.test_plan.tag_criteria.test_names[0] == "tast.arc.*":
+          max_in_shard = 100
+        elif request.test_plan.tag_criteria.test_names[0] == "tast.crostini.*":
+          max_in_shard = 50
+      else:
+        max_in_shard = 150
     if seed is None or seed == 0:
       seed = int(api.time.time())
     step.presentation.logs["shard seed"] = json.dumps({"seed": seed},
@@ -476,7 +487,7 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
           list(test_suite.test_cases.test_cases))
       shards = []
       for bucket in test_buckets:
-        shards.extend(_shard_test_cases(api, bucket))
+        shards.extend(_shard_test_cases(api, bucket, max_in_shard))
       step.presentation.tags["shard_count"] = str(len(shards))
       step.presentation.tags["unique_dependencies_count"] = str(
           len(test_buckets))
@@ -557,7 +568,7 @@ def _bucket_by_dependencies(test_cases):
   return list(bucket.values())
 
 
-def _shard_test_cases(api, test_cases):
+def _shard_test_cases(api, test_cases, max_in_shard=100):
   """Create groupings of the test_cases.
 
   Args:
@@ -566,7 +577,6 @@ def _shard_test_cases(api, test_cases):
   Returns: List[List[api.TestCase]].
   """
   api.random.shuffle(test_cases)
-  max_in_shard = 100
   num_shards = math.ceil(len(test_cases) / max_in_shard)
   num_in_shard = int(len(test_cases) / num_shards)
 
@@ -616,15 +626,22 @@ def _ctr_test_suite(request):
 
   tags = []
   tag_excludes = []
+  test_names = []
+  test_name_excludes = []
   tag_criteria = request.test_plan.tag_criteria
-  if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
+  if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes or
+                       tag_criteria.test_names or
+                       tag_criteria.test_name_excludes):
     tags = tag_criteria.tags
     tag_excludes = tag_criteria.tag_excludes
+    test_names = tag_criteria.test_names
+    test_name_excludes = tag_criteria.test_name_excludes
   else:
     tags = ["suite:%s" % s.name for s in request.test_plan.suite]
   return ctr_test_suite.TestSuite(
       test_case_tag_criteria=ctr_test_suite.TestSuite.TestCaseTagCriteria(
-          tags=tags, tag_excludes=tag_excludes))
+          tags=tags, tag_excludes=tag_excludes, test_names=test_names,
+          test_name_excludes=test_name_excludes))
 
 
 def _enumeration_log(response):

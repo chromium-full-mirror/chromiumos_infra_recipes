@@ -175,6 +175,7 @@ class SkylabApi(recipe_api.RecipeApi):
 
       # str -> (Request dict)
       reqs = {}
+      suiteReqCount = {}
       with self.m.step.nest('create test requests'):
         for uht in unit_hw_tests:
           step_name = 'configure {}'.format(uht.unit.common.builder_name)
@@ -207,8 +208,14 @@ class SkylabApi(recipe_api.RecipeApi):
             configure_step.logs['request'] = [
                 json_format.MessageToJson(request)
             ]
-            reqs[self.m.skylab_results.request_tag(
-                uht.hw_test)] = json_format.MessageToDict(request)
+
+            key = self.m.skylab_results.request_tag(uht.hw_test)
+            if key in reqs:
+              if key not in suiteReqCount:
+                suiteReqCount[key] = 1
+              suiteReqCount[key] += 1
+              key += "_{}".format(suiteReqCount[key])
+            reqs[key] = json_format.MessageToDict(request)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
