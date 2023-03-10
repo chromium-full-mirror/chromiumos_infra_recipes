@@ -15,10 +15,8 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 class CoverageFileSettings():
   """Contains parameters used to drive different coverage upload workflows."""
 
-  def __init__(self, should_clean, filter_coverage_to_cl_files,
-               to_absolute_path):
+  def __init__(self, should_clean, to_absolute_path):
     self.should_clean = should_clean
-    self.filter_coverage_to_cl_files = filter_coverage_to_cl_files
     self.to_absolute_path = to_absolute_path
 
 
@@ -98,8 +96,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         'LCOV',
         step_name=step_name,
         # Filtering only works for llvm json files.
-        incremental_settings=CoverageFileSettings(True, False, False),
-        absolute_cs_settings=CoverageFileSettings(True, False, True),
+        incremental_settings=CoverageFileSettings(True, False),
+        absolute_cs_settings=CoverageFileSettings(True, True),
     )
 
   def upload_code_coverage(self, tarfile, coverage_type, gs_artifact_bucket,
@@ -115,11 +113,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
     """
     # Settings for capturing incremental coverage.
-    incremental_settings = CoverageFileSettings(False, True, False)
+    incremental_settings = CoverageFileSettings(False, False)
     # Settings for capturing absolute coverage.
-    absolute_settings = CoverageFileSettings(False, False, True)
+    absolute_settings = CoverageFileSettings(False, True)
     # Settings for capturing absolute coverage on Chromium dashboard.
-    absolute_chromium_settings = CoverageFileSettings(False, False, True)
+    absolute_chromium_settings = CoverageFileSettings(False, True)
 
     self.process_coverage_data(tarfile, coverage_type, True, gs_artifact_bucket,
                                gs_artifact_path, step_name,
@@ -160,11 +158,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                                                test_data=('coverage.json',))
 
           for coverage_file in coverage_files:
-            self._upload_incremental_coverage_to_gerrit(coverage_file,
-                                                        coverage_type,
-                                                        incremental_settings,
-                                                        gs_artifact_bucket,
-                                                        gs_artifact_path)
+            self._upload_incremental_coverage_to_gerrit(
+                coverage_file, coverage_type, incremental_settings,
+                gs_artifact_bucket, gs_artifact_path, merger_flow_enabled)
             self._upload_absolute_coverage_to_code_search(
                 coverage_file, coverage_type, absolute_cs_settings,
                 merger_flow_enabled, gs_artifact_bucket, gs_artifact_path)
@@ -404,59 +400,63 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
       codesearch_commit_id = self.m.gitiles.fetch_revision(
           PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
-      build = self.m.buildbucket.build
       if merger_flow_enabled:
         self._merger_absolute(absolute_coverage_file, codesearch_commit_id,
                               gs_artifact_bucket, gs_artifact_path,
                               coverage_type)
-      chunks_file = self._chunk_coverage_file(absolute_coverage_file,
-                                              coverage_type)
+      else:
+        build = self.m.buildbucket.build
+        chunks_file = self._chunk_coverage_file(absolute_coverage_file,
+                                                coverage_type)
 
-      presentation.logs['chunked_files'] = [str(chunks_file)]
+        presentation.logs['chunked_files'] = [str(chunks_file)]
 
-      for chunk_file in chunks_file:
-
-        self.m.step(
-            'absolute coverage upload for {}'.format(fpath),
-            [
-                'luci-auth',
-                'context',
-                '--',
-                self._absolute_coverage_tool,
-                '--absolute_coverage_service_env',
-                self._coverage_env,
-                '--timeout',
-                '10m',
-                '--host',
-                PUBLIC_CODE_HOST,
-                '--project',
-                CODESEARCH_PROJECT,
-                '--commit_id',
-                codesearch_commit_id,
-                '--ref',
-                # self._branch,
-                # TODO(b/189193947): must be main for code search integration.
-                DEFAULT_CODE_BRANCH,
-                '--uploader_name',
-                build.builder.builder,
-                '--uploader_id',
-                codesearch_commit_id + '_' + str(build.id),
-                '--format',
-                coverage_type,
-                '--coverage_file',
-                str(chunk_file),
-            ])
+        for chunk_file in chunks_file:
+          self.m.step(
+              'absolute coverage upload for {}'.format(fpath),
+              [
+                  'luci-auth',
+                  'context',
+                  '--',
+                  self._absolute_coverage_tool,
+                  '--absolute_coverage_service_env',
+                  self._coverage_env,
+                  '--timeout',
+                  '10m',
+                  '--host',
+                  PUBLIC_CODE_HOST,
+                  '--project',
+                  CODESEARCH_PROJECT,
+                  '--commit_id',
+                  codesearch_commit_id,
+                  '--ref',
+                  # self._branch,
+                  # TODO(b/189193947): must be main for code search integration.
+                  DEFAULT_CODE_BRANCH,
+                  '--uploader_name',
+                  build.builder.builder,
+                  '--uploader_id',
+                  codesearch_commit_id + '_' + str(build.id),
+                  '--format',
+                  coverage_type,
+                  '--coverage_file',
+                  str(chunk_file),
+              ])
 
   def _upload_incremental_coverage_to_gerrit(self, fpath, coverage_type,
                                              incremental_settings,
                                              gs_artifact_bucket,
-                                             gs_artifact_path):
+                                             gs_artifact_path,
+                                             merger_flow_enabled=False):
     """Uploads the coverage data to gerrit.
 
       Args:
         fpath (str): path to the coverage file.
         coverage_type (str): type of coverage being uploaded (LCOV, or LLVM).
         incremental_settings (CoverageFileSettings): settings for uploading coverage.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+        merger_flow_enabled (bool): whether merger flow is enabled or not.
     """
     if incremental_settings is None:
       return
@@ -469,23 +469,18 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       incremental_coverage_file = self._write_cleaned_coverage_file(
           fpath, incremental_settings)
 
-      if not incremental_settings.filter_coverage_to_cl_files:
-        for change in self.m.cros_infra_config.gerrit_changes:
-          self._invoke_incremental_coverage_tool(incremental_coverage_file,
-                                                 change, coverage_type)
-      else:
+      if merger_flow_enabled:
         change_to_filtered_coverage = self._filter_coverage_to_cl_files(
             incremental_coverage_file)
-
         for change in self.m.cros_infra_config.gerrit_changes:
           if change.change in change_to_filtered_coverage:
             self._merger_incremental(change_to_filtered_coverage[change.change],
                                      change, gs_artifact_bucket,
                                      gs_artifact_path, coverage_type)
-
-            self._invoke_incremental_coverage_tool(
-                change_to_filtered_coverage[change.change], change,
-                coverage_type)
+      else:
+        for change in self.m.cros_infra_config.gerrit_changes:
+          self._invoke_incremental_coverage_tool(incremental_coverage_file,
+                                                 change, coverage_type)
 
   def _invoke_incremental_coverage_tool(self, path, change, coverage_type):
     self.m.step(

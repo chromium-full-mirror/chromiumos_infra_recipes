@@ -33,6 +33,10 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'upload code coverage data.upload incremental coverage to gerrit'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'upload code coverage data.upload incremental coverage to gerrit.upload filtered.file.123456 for 123456 (ps #7)'
+      ),
       api.post_check(post_process.MustRun,
                      'upload code coverage data.Set merger properties'),
       api.post_check(
@@ -75,10 +79,6 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'upload code coverage data.upload absolute coverage to chromium coverage'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'upload code coverage data.upload absolute coverage to Code Search.Chunking coverage file'
       ),
       cq=False,
       input_properties={

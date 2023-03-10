@@ -1938,17 +1938,17 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#74)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#72)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#129)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#127)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -1963,7 +1963,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
   absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
 
-&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#105)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
+&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#103)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
 
 Uploads code coverage llvm json and golang.
 
@@ -1974,7 +1974,7 @@ Args:
   gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
   gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#88)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#86)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 

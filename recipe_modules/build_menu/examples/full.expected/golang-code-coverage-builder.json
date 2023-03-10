@@ -7517,50 +7517,6 @@
     ]
   },
   {
-    "cmd": [
-      "luci-auth",
-      "context",
-      "--",
-      "[START_DIR]/code_coverage/incremental_code_coverage",
-      "--env",
-      "prod",
-      "--host",
-      "chromium-review.googlesource.com",
-      "--project",
-      "project-a",
-      "--change_id",
-      "123456",
-      "--patchset",
-      "7",
-      "--uploader_name",
-      "amd64-generic-cq",
-      "--uploader_id",
-      "123456_7_8945511751514863184",
-      "--format",
-      "GO_COV",
-      "--coverage_file",
-      "[CLEANUP]/filtered-coverage_tmp_1/filtered.file.123456"
-    ],
-    "cwd": "[CLEANUP]/ccov-upload_tmp_1",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.upload code coverage data.upload incremental coverage to gerrit.upload filtered.file.123456 for 123456 (ps #7)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "upload artifacts.upload code coverage data.Set merger properties",
     "~followup_annotations": [

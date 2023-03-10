@@ -70,6 +70,10 @@ def GenTests(api):
           'upload code coverage data (firmware lcov).upload absolute coverage to Code Search'
       ),
       api.post_check(
+          post_process.MustRun,
+          'upload code coverage data (firmware lcov).upload absolute coverage to Code Search.Chunking coverage file'
+      ),
+      api.post_check(
           post_process.DoesNotRun,
           'upload code coverage data (firmware lcov).Set merger properties'),
       api.post_check(
