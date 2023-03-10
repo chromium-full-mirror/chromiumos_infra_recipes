@@ -444,8 +444,6 @@ class TastResultsApi(recipe_api.RecipeApi):
     This function adds the following tags:
       * test_config:
           e.g. reven-vmtest-cq.tast_vm.tast_vm_default
-      * suite:
-          e.g. tast_vm_default
       * builder_name
           e.g. reven-vmtest-cq
       * build_target:
@@ -460,9 +458,6 @@ class TastResultsApi(recipe_api.RecipeApi):
     base_variant = {
         'test_config': self.m.rdb_util.get_shardless_test_config(suite_name),
     }
-
-    if suite_name:
-      base_variant['suite'] = self.m.rdb_util.get_vm_suite(suite_name)
 
     build_target = self.m.cros_infra_config.get_build_target_name()
     if build_target:
