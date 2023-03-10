@@ -94,6 +94,9 @@ class CrosSourceApi(RecipeApi):
         with self.m.context(cwd=workspace):
           self.m.step('ls', ['ls', '-l'])
           self.m.step('mounts', ['cat', '/proc/mounts'])
+    self.git_strategy = GitStrategy.CHERRY_PICK if (
+        'chromeos.cros_source.git_cherry_pick'
+        in self.m.cros_infra_config.experiments) else GitStrategy.MERGE
 
   @property
   def mirrored_manifest_files(self):
@@ -1245,22 +1248,35 @@ class CrosSourceApi(RecipeApi):
         project_path)
     with self.m.context(cwd=path):
       commit = self.m.git.fetch_ref(patch.git_fetch_url, patch.git_fetch_ref)
-      merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
-                                            infra_step=False)
-      git_strategy = GitStrategy.MERGE
-      if not merged:
-        self.m.git.merge_abort()
-        if self.m.git.is_merge_commit(commit):
-          raise StepFailure(
-              'merge %s failed. Aborting: cannot cherry-pick merge commits' %
-              commit)
-        presentation = self.m.step.active_result.presentation
-        presentation.status = self.m.step.SUCCESS
-        presentation.step_text = 'merge failed. will try cherry-pick instead'
-        self.m.git.cherry_pick(commit, infra_step=False)
-        git_strategy = GitStrategy.CHERRY_PICK
-
-      self.m.easy.set_properties_step(cros_source_git_strategy=git_strategy)
+      if self.git_strategy == GitStrategy.CHERRY_PICK and not self.m.git.is_merge_commit(
+          commit):
+        cherry_picked = self.m.git.cherry_pick_silent_fail(
+            commit, infra_step=False)
+        self.git_strategy = GitStrategy.CHERRY_PICK
+        if not cherry_picked:
+          self.m.git.cherry_pick_abort()
+          presentation = self.m.step.active_result.presentation
+          presentation.status = self.m.step.SUCCESS
+          presentation.step_text = 'cherry-pick failed. will try merge instead'
+          self.m.git.merge(commit, 'merge gerrit changes', infra_step=False)
+          self.git_strategy = GitStrategy.MERGE
+      else:
+        merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
+                                              infra_step=False)
+        self.git_strategy = GitStrategy.MERGE
+        if not merged:
+          self.m.git.merge_abort()
+          if self.m.git.is_merge_commit(commit):
+            raise StepFailure(
+                'merge %s failed. Aborting: cannot cherry-pick merge commits' %
+                commit)
+          presentation = self.m.step.active_result.presentation
+          presentation.status = self.m.step.SUCCESS
+          presentation.step_text = 'merge failed. will try cherry-pick instead'
+          self.m.git.cherry_pick(commit, infra_step=False)
+          self.git_strategy = GitStrategy.CHERRY_PICK
+      self.m.easy.set_properties_step(
+          cros_source_git_strategy=self.git_strategy)
       self._applied_patches[patch.display_id].append(patch)
 
   retry_timeouts = lambda e: getattr(e, 'had_timeout', False)

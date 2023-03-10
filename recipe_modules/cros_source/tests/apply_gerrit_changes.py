@@ -11,6 +11,7 @@ from RECIPE_MODULES.chromeos.cros_source.test_utils import GitStrategyEquals
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_source',
     'repo',
@@ -40,4 +41,54 @@ def GenTests(api):
       manifest_branch,
       api.post_check(GitStrategyEquals, GitStrategy.MERGE),
       api.post_check(post_process.StatusSuccess),
+  )
+
+  yield api.cros_source.test(
+      'cherry-pick-success',
+      manifest_branch,
+      api.buildbucket.try_build(
+          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit patch sets.git cherry-pick'),
+      api.post_check(post_process.DoesNotRun,
+                     'apply gerrit patch sets.git cherry-pick --abort'),
+      api.post_check(post_process.DoesNotRun,
+                     'apply gerrit patch sets.git merge'),
+      api.post_check(GitStrategyEquals, GitStrategy.CHERRY_PICK),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.cros_source.test(
+      'cherry-pick-fail',
+      manifest_branch,
+      api.buildbucket.try_build(
+          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.step_data('apply gerrit patch sets.git cherry-pick', retcode=1),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit patch sets.git cherry-pick'),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit patch sets.git cherry-pick --abort'),
+      api.post_check(post_process.MustRun, 'apply gerrit patch sets.git merge'),
+      api.post_check(GitStrategyEquals, GitStrategy.MERGE),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.cros_source.test(
+      'cherry-pick-fail-merge-fail',
+      manifest_branch,
+      api.buildbucket.try_build(
+          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.step_data('apply gerrit patch sets.git cherry-pick', retcode=1),
+      api.step_data('apply gerrit patch sets.git merge', retcode=1),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit patch sets.git cherry-pick'),
+      api.post_check(post_process.MustRun,
+                     'apply gerrit patch sets.git cherry-pick --abort'),
+      api.post_check(post_process.MustRun, 'apply gerrit patch sets.git merge'),
+      api.post_check(post_process.DoesNotRun,
+                     'apply gerrit patch sets.set cros_source_git_strategy'),
+      api.post_check(post_process.StatusFailure),
+      api.post_process(post_process.DropExpectation),
   )

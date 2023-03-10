@@ -312,9 +312,25 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('stdout', self.m.raw_io.output_text())
     self._step(['cherry-pick', commit], **kwargs)
 
+  def cherry_pick_silent_fail(self, commit, **kwargs):
+    """Runs 'git cherry-pick' and returns whether the cherry-pick succeeded.
+
+    Args:
+      commit (str): The commit to cherry pick.
+      kwargs (dict): Passed to recipe_engine/step.
+    """
+    kwargs.setdefault('stdout', self.m.raw_io.output_text())
+    success = self._step(['cherry-pick', commit], ok_ret=(0, 1),
+                         **kwargs).retcode == 0
+    return success
+
   def merge_abort(self):
     """Runs 'git merge --abort'."""
     self._step(['merge', '--abort'], name='git merge --abort')
+
+  def cherry_pick_abort(self):
+    """Runs 'git cherry_pick --abort'."""
+    self._step(['cherry-pick', '--abort'], name='git cherry-pick --abort')
 
   def amend_head_message(self, message, **kwargs):
     """Runs 'git commit --amend' with the given description.
