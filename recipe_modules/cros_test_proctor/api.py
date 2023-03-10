@@ -623,6 +623,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   require_stable_devices=require_stable_devices,
                   name=None if test_build_target == _ALL_BUILD_TARGETS else
                   test_build_target,
+                  previous_results=previous_test_results,
               ))
       self.m.easy.set_properties_step(
           hw_test_build_targets=len(hw_build_targets))

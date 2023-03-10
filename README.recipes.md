@@ -563,6 +563,7 @@
   * [signing:tests/get_failure](#recipes-signing_tests_get_failure) (Python3 ✅) &mdash; Verify that method get_failure has error handling.
   * [signing:tests/invalid_file_format](#recipes-signing_tests_invalid_file_format) (Python3 ✅) &mdash; Verify that instructions files are in the appropriate format.
   * [signing:tests/sequence_error](#recipes-signing_tests_sequence_error) (Python3 ✅) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
+  * [skylab:examples/direct_test_retry](#recipes-skylab_examples_direct_test_retry) (Python3 ✅)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites) (Python3 ✅)
   * [skylab:examples/schedule_suites_direct_tast_testing](#recipes-skylab_examples_schedule_suites_direct_tast_testing) (Python3 ✅)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites) (Python3 ✅)
@@ -8765,13 +8766,13 @@ Returns
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#44)(self):**
+&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#47)(self):**
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#70)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#73)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -8788,29 +8789,32 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#122)(self, unit_hw_tests, timeout, name=None, async_suite_run=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#125)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
 Args:
-* unit_hw_tests (list[UnitHwTest]): Hardware test suites to execute
-* timeout (Duration): Timeout in timestamp_pb2.Duration.
-* name (str): The step name. Defaults to 'schedule skylab tests v2'
-* async_suite_run (bool): If set, indicates that caller does not intend to wait for
-  the scheduled suites to complete, and the child build can outlive the parent build.
-* container_metadata (ContainerMetadata): Information on container
-    images used for test execution.
-* require_stable_devices (bool): If set, only run on devices with
-    label-device-stable: True
+  unit_hw_tests: Hardware test suites to execute
+  timeout: Timeout in timestamp_pb2.Duration.
+  name: The step name. Defaults to 'schedule skylab tests v2'
+  async_suite_run: If set, indicates that caller does not intend to wait for
+      the scheduled suites to complete, and the child build can outlive the
+      parent build.
+  container_metadata: Information on container images used for test
+      execution.
+  require_stable_devices (bool): If set, only run on devices with
+      'label-device-stable: True'
+  previous_results: The results of the previous invocation. The results are
+      a dict mapping the unit_hw_test's display name to an ExecuteResponse.
 
 Returns:
-  list[SkylabTask]: with buildbucket_id of the recipe launched.
+  A list of SkylabTasks with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#40)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#43)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#358)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#384)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -13454,6 +13458,13 @@ Verify that wait_for_signing is required before retrieving signed build
 metadata.
 
 &mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
+### *recipes* / [skylab:examples/direct\_test\_retry](/recipe_modules/skylab/examples/direct_test_retry.py)
+
+[DEPS](/recipe_modules/skylab/examples/direct_test_retry.py#13): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/direct_test_retry.py#25)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites.py#13): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

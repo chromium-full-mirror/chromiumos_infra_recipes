@@ -3,12 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import List
+from typing import Dict, List
 
-from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask, UnitHwTest
+from google.protobuf.duration_pb2 import Duration
 from google.protobuf import json_format
 
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.test.api.test_suite import TestSuite
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -119,24 +122,30 @@ class SkylabApi(recipe_api.RecipeApi):
     return self.m.buildbucket.schedule(
         [bb_request], include_sub_invs=not self._exclude_sub_invs)[0]
 
-  def schedule_suites(self, unit_hw_tests, timeout, name=None,
-                      async_suite_run=False, container_metadata=None,
-                      require_stable_devices=False):
+  def schedule_suites(
+      self, unit_hw_tests: List[UnitHwTest], timeout: Duration,
+      name: str = None, async_suite_run: bool = False,
+      container_metadata: ContainerMetadata = None,
+      require_stable_devices: bool = False,
+      previous_results: Dict[str, ExecuteResponse] = None) -> List[SkylabTask]:
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
-    * unit_hw_tests (list[UnitHwTest]): Hardware test suites to execute
-    * timeout (Duration): Timeout in timestamp_pb2.Duration.
-    * name (str): The step name. Defaults to 'schedule skylab tests v2'
-    * async_suite_run (bool): If set, indicates that caller does not intend to wait for
-      the scheduled suites to complete, and the child build can outlive the parent build.
-    * container_metadata (ContainerMetadata): Information on container
-        images used for test execution.
-    * require_stable_devices (bool): If set, only run on devices with
-        label-device-stable: True
+      unit_hw_tests: Hardware test suites to execute
+      timeout: Timeout in timestamp_pb2.Duration.
+      name: The step name. Defaults to 'schedule skylab tests v2'
+      async_suite_run: If set, indicates that caller does not intend to wait for
+          the scheduled suites to complete, and the child build can outlive the
+          parent build.
+      container_metadata: Information on container images used for test
+          execution.
+      require_stable_devices (bool): If set, only run on devices with
+          'label-device-stable: True'
+      previous_results: The results of the previous invocation. The results are
+          a dict mapping the unit_hw_test's display name to an ExecuteResponse.
 
     Returns:
-      list[SkylabTask]: with buildbucket_id of the recipe launched.
+      A list of SkylabTasks with buildbucket_id of the recipe launched.
     """
 
     def create_test_request(uht):
@@ -198,6 +207,7 @@ class SkylabApi(recipe_api.RecipeApi):
     ####
     # Start of main body
     have_container_metadata = container_metadata is not None
+    previous_results = previous_results or {}
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
@@ -217,6 +227,7 @@ class SkylabApi(recipe_api.RecipeApi):
           with self.m.step.nest(step_name) as configure_step:
             request = create_test_request(uht)
 
+            tast_first_class = False
             # If a test config has run_via_cft set, then check that we have
             # container metadata for the build target we're testing, and set run_via_cft
             # in the Request's execution parameters.
@@ -243,7 +254,22 @@ class SkylabApi(recipe_api.RecipeApi):
                   uht.hw_test.suite != 'bvt-tast-cq'):
                 request.test_plan.tag_criteria.CopyFrom(
                     uht.hw_test.tag_criteria)
+                if uht.hw_test.tag_criteria != TestSuite.TestCaseTagCriteria():
+                  tast_first_class = True
               configure_step.step_summary_text = "(Executing via CFT)"
+
+              # Only pass the names of previously failed tests if the run is
+              # elegible for direct tast testing.
+              # TODO(b/271938042): Remove gating after the rollout is complete.
+              if self.direct_tast_testing_enabled():
+                previous_result = previous_results.get(
+                    self.m.skylab_results.request_tag(uht.hw_test),
+                    ExecuteResponse())
+                test_cases = self._tests_to_retry(previous_result,
+                                                  tast_first_class)
+                for t in test_cases or []:
+                  test_case = request.test_plan.test.add()
+                  test_case.autotest.name = t
 
             configure_step.logs['request'] = [
                 json_format.MessageToJson(request)
