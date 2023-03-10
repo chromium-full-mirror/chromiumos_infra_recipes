@@ -25,6 +25,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._properties = properties
+    self._additional_chrome_pupr_builders = (
+        properties.additional_chrome_pupr_builders or [])
 
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
@@ -34,6 +36,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
   # enable an experiment.  This name was chosen to avoid conflicting with a
   # similar feature being added to LUCI CQ.
   CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
+
+  @property
+  def additional_chrome_pupr_builders(self):
+    return self._additional_chrome_pupr_builders
 
   def get_build_plan(self, child_specs, enable_history, gerrit_changes,
                      internal_snapshot, external_snapshot):
@@ -293,6 +299,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
                     bucket=builder_config.id.bucket,
                     gerrit_changes=gerrit_changes, critical=False, tags=tags,
                     properties=properties))
+            self._additional_chrome_pupr_builders.append(builder)
             chrome_log.append(
                 'Scheduled {} as non-critical builder'.format(builder))
           presentation.logs['additional builds'] = chrome_log

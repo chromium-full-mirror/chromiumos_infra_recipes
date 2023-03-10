@@ -950,6 +950,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       when.
     """
     values = BuilderConfig.Orchestrator.ChildSpec
+
+    # For Chrome PUpr Uprev CLs, set the collect value of the additional
+    # non-critical builders to NO_COLLECT.
+    if build.builder.builder in self.m.build_plan.additional_chrome_pupr_builders:
+      return values.NO_COLLECT
+
     ret = values.COLLECT
     child_spec = child_specs_dict.get(build.builder.builder)
     if not child_spec:

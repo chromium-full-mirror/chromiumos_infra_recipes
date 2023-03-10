@@ -12,4 +12,7 @@ message BuildPlanProperties {
 
   // Whether to honor slim builders' criticality.
   bool honor_slim_builder_criticality = 2;
+
+  // The builder names of the additional Chrome PUpr Uprev builders.
+  repeated string additional_chrome_pupr_builders = 3;
 }

@@ -1290,7 +1290,9 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to plan the builds to be launched.
 
-&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#453)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#40)(self):**
+
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#460)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1305,7 +1307,7 @@ Returns:
   chosen_internal: The internal manifest snapshot that CQ will run with.
   chosen_external: The external manifest snapshot that CQ will run with.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#38)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#44)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -1328,7 +1330,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#315)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#322)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1342,7 +1344,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#401)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#408)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1358,7 +1360,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#440)(self, builder_name):**
+&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#447)(self, builder_name):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1369,7 +1371,7 @@ Args:
 Returns:
    A string of the slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#372)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#379)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 
@@ -7491,11 +7493,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1309)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1315)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1153)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1159)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7563,7 +7565,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1042)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1048)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7596,11 +7598,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#970)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#976)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#976)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#982)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -12844,11 +12846,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#21)(api):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
-[DEPS](/recipe_modules/orch_menu/tests/collect.py#11): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/orch_menu/tests/collect.py#12): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/collect.py#25)(api, properties):**
 ### *recipes* / [orch\_menu:tests/no\_necessary\_builds](/recipe_modules/orch_menu/tests/no_necessary_builds.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/no_necessary_builds.py#8): [cros\_relevance](#recipe_modules-cros_relevance), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

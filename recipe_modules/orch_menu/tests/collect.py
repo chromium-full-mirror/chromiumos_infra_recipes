@@ -6,6 +6,7 @@
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 from PB.recipe_modules.chromeos.orch_menu.tests.collect import CollectProperties
 
 DEPS = [
@@ -29,7 +30,6 @@ def RunSteps(api, properties):
     child_specs_dict[build.builder.builder] = properties.child_spec
   if properties.child_target.name:
     child_targets_dict[properties.build_target.name] = properties.child_target
-
   # pylint: disable=protected-access
   api.assertions.assertEqual(
       properties.expected_collect,
@@ -68,3 +68,17 @@ def GenTests(api):
             api.properties(properties),
             api.post_process(post_process.DropExpectation),
         )
+
+  yield api.orch_menu.test(
+      'additional-chrome-pupr-builders',
+      api.test_util.test_child_build(build_target,
+                                     builder=f'{build_target}-cq').build,
+      api.properties(
+          CollectProperties(expected_collect=ChildSpec.NO_COLLECT), **{
+              '$chromeos/build_plan':
+                  BuildPlanProperties(
+                      additional_chrome_pupr_builders=['amd64-generic-cq'],
+                  ),
+          }),
+      api.post_process(post_process.DropExpectation),
+  )

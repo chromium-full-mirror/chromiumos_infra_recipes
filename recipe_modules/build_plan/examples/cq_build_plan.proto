@@ -25,5 +25,6 @@ message CqBuildPlanProperties {
   // The IDs of expected failed snapshots.
   repeated string expected_failed_snapshots = 6;
 
-
+  // The builder names of the expected additional Chrome PUpr Uprev builders.
+  repeated string expected_additional_chrome_pupr_builders = 7;
 }

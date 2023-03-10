@@ -54,6 +54,9 @@ def RunSteps(api, properties):
   }
   api.assertions.assertEqual({x: True for x in properties.expected_experiments},
                              enabled_experiments)
+  api.assertions.assertEqual(
+      api.build_plan.additional_chrome_pupr_builders,
+      properties.expected_additional_chrome_pupr_builders)
 
 
 def GenTests(api):
@@ -113,6 +116,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
@@ -145,6 +149,7 @@ def GenTests(api):
               'cave-cq',
           ],
           expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
@@ -177,6 +182,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers(['eve-cq'],
                                             'check force relevance'),
@@ -210,6 +216,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers(['coral-cq'],
                                             'check disallow recycled builds'),
@@ -240,7 +247,10 @@ def GenTests(api):
               'coral-cq',
               'arm-generic-cq',
               'cave-cq',
-          ], expected_completed_builds=[]),
+          ],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
       api.git_footers.simulated_get_footers(['all'],
                                             'check disallow recycled builds'),
       api.cros_relevance.simulated_run_build_planner(
@@ -273,6 +283,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers(['test-failures'],
                                             'check disallow recycled builds'),
@@ -313,6 +324,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
+          expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
@@ -346,7 +358,7 @@ def GenTests(api):
           ], expected_completed_builds=[
               'amd64-generic-slim-cq',
               'cave-cq',
-          ], **{
+          ], expected_additional_chrome_pupr_builders=[], **{
               '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(config_ref=config_ref),
           }),
@@ -375,13 +387,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
-          expected_experiments=[], expected_build_requests=[
+          expected_experiments=[],
+          expected_build_requests=[
               'atlas-slim-cq',
               'arm64-generic-cq',
-          ], expected_completed_builds=[
+          ],
+          expected_completed_builds=[
               'amd64-generic-slim-cq',
               'cave-cq',
-          ]),
+          ],
+          expected_additional_chrome_pupr_builders=[],
+      ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
       api.cros_relevance.simulated_run_build_planner(
@@ -412,6 +428,10 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
           expected_experiments=['chromeos.build_plan.add_chrome_pupr_builders'],
+          expected_additional_chrome_pupr_builders=[
+              'atlas-cq',
+              'arm64-generic-cq',
+          ],
       ),
       api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic",
                                  'chromium-review.googlesource.com', 123456,
@@ -472,13 +492,18 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True,
-          }}, expected_build_requests=[
+          }},
+          expected_build_requests=[
               'atlas-cq',
               'arm64-generic-cq',
-          ], expected_completed_builds=[
+          ],
+          expected_completed_builds=[
               'amd64-generic-slim-cq',
               'cave-cq',
-          ], expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+          ],
+          expected_experiments=['chromeos.cros_infra_config.cq_looks'],
+          expected_additional_chrome_pupr_builders=[],
+      ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
       api.cros_relevance.simulated_run_build_planner(
