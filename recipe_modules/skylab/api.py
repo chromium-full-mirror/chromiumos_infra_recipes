@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import List
+
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
 from google.protobuf import json_format
 
@@ -290,6 +292,30 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     req.params.retry.max = 30
     req.params.retry.allow = True
+
+  def _tests_to_retry(self, response: ExecuteResponse,
+                      tast_first_class: bool = False) -> List[str]:
+    """Returns the names of the failed tests that should be directly retried.
+
+    If the test suite is running Tast first class, then return the names of the
+    failed test cases; otherwise return the names of the failed task results.
+
+    Args:
+      response: The result from which to get the failed tests names.
+      tast_first_class: Whether the suite is running Tast first class.
+
+    Returns:
+      The names of the tests to retry.
+    """
+    if len(response.task_results) == 0:
+      return []
+
+    if tast_first_class:
+      return self.m.skylab_results.extract_failed_test_case_names(
+          response.task_results)
+
+    return self.m.skylab_results.extract_failed_test_shard_names(
+        response.task_results)
 
   def wait_on_suites(self, tasks, timeout):
     """Wait for the single Skylab multi-request to finish and return the result
