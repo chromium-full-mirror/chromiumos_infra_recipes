@@ -39,7 +39,7 @@ def RunSteps(api):
   api.exonerate.auto_exoneration_dry_run()
   # To unittest the final return statement.
   api.assertions.assertEqual(
-      api.exonerate.get_flake_percent_from_interval_stats([]), 0)
+      api.exonerate.get_flake_percent_from_interval_stats([]), (0, 0))
 
 
 def GenTests(api):

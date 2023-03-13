@@ -28,7 +28,8 @@ EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 FailedTest = namedtuple(
     'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
 CONSISTENT_FAILURES_THRESHOLD = 6
-FLAKE_PERCENT_THRESHOLD = 3
+FLAKY_PERCENT_THRESHOLD = 1
+FLAKY_VERDICT_THRESHOLD = 3
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -353,7 +354,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       test_name = test_case['name']
       self._failed_tests.add(
           FailedTest(
-              name=test_case['name'],
+              name='tast.{}'.format(test_case['name']),
               # board == build_target for VM tests.
               board=build_target,
               build_target=build_target,
@@ -498,27 +499,29 @@ class ExonerateApi(recipe_api.RecipeApi):
   def get_flake_percent_from_interval_stats(
       self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]
   ) -> int:
-    """Get the flake percent of the test for the last 24 hr period.
+    """Get the flake count & percent of the test for the last 24 hr period.
 
     Args:
       interval_stats: Verdict stats of the test over interval ranges.
 
-    Returns: Percent of verdict with unexpected or flaky result in
-      the last 24 hr period rounded to the nearest integer.
+    Returns: Number of flaky verdict and percent of verdict with flaky
+      result in the last 24 hr period rounded to the nearest integer.
     """
     for interval_stat in interval_stats:
       # interval_age = 1 is the last 24 hr period.
       if interval_stat.interval_age == 1:
-        bad_verdicts = (
-            interval_stat.total_run_flaky_verdicts +
+        flaky_verdicts = interval_stat.total_run_flaky_verdicts
+        non_flaky_verdicts = (
+            interval_stat.total_run_expected_verdicts +
             interval_stat.total_run_unexpected_verdicts)
-        total_verdicts = bad_verdicts + interval_stat.total_run_expected_verdicts
-        return 0 if total_verdicts == 0 else round(100 * (bad_verdicts) /
-                                                   total_verdicts)
+        total_verdicts = flaky_verdicts + non_flaky_verdicts
+        flaky_percent = 0 if total_verdicts == 0 else round(
+            (100 * flaky_verdicts) / total_verdicts)
+        return flaky_verdicts, flaky_percent
 
     # Adding a return statement here for pylint. We should only get here if the LUCI
     # analysis response is bad. 0 is the fallback in that case.
-    return 0
+    return 0, 0
 
   def auto_exoneration_dry_run(self) -> None:
     """Try Automatically Exonerating failed tests."""
@@ -552,12 +555,15 @@ class ExonerateApi(recipe_api.RecipeApi):
               str(stat.test_id), str(stat.build_target))
           stat.consistent_failure_count = self.get_consistent_failure_count_from_verdicts(
               failure_rate.recent_verdicts)
-          stat.flaky_verdict_percent = self.get_flake_percent_from_interval_stats(
-              failure_rate.interval_stats)
+          flaky_verdicts, stat.flaky_verdict_percent = (
+              self.get_flake_percent_from_interval_stats(
+                  failure_rate.interval_stats))
           # This is Browser's current algorithm. Starting with this. Might change later.
-          stat.automatically_exonerated = (
-              stat.consistent_failure_count > CONSISTENT_FAILURES_THRESHOLD or
-              stat.flaky_verdict_percent > FLAKE_PERCENT_THRESHOLD)
+          consistently_failing = stat.consistent_failure_count >= CONSISTENT_FAILURES_THRESHOLD
+          was_flaky = (
+              flaky_verdicts >= FLAKY_VERDICT_THRESHOLD and
+              stat.flaky_verdict_percent >= FLAKY_PERCENT_THRESHOLD)
+          stat.automatically_exonerated = consistently_failing or was_flaky
           all_stats.append(stat)
 
         overall_stats = OverallTestStats(failed_tests=all_stats)

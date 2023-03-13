@@ -55,7 +55,8 @@ message FailedTestStats {
   // Number of failure in the last ten executions.
   int32 consistent_failure_count = 5;
 
-  // Percent of flaky/unexpected/exonerated verdicts in all verdicts.
+  // Percent of flaky verdicts in
+  // all verdicts for the last 24 hour period.
   int32 flaky_verdict_percent = 6;
 }
 
