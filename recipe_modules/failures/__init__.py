@@ -11,7 +11,6 @@ DEPS = [
     'cros_som',
     'exonerate',
     'naming',
-    'skylab',
     'urls',
 ]
 

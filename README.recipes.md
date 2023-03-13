@@ -5210,7 +5210,7 @@ Load configs from binary/json files.
 Write exoneration stats to output properties.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 

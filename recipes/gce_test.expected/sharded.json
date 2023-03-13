@@ -116,7 +116,7 @@
       "compute",
       "images",
       "create",
-      "board-8361843",
+      "board-2491483",
       "--source-uri=https://storage.googleapis.com/artifacts-bucket/artifacts-path/chromiumos_test_image_gce.tar.gz",
       "--licenses=https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
     ],
@@ -202,8 +202,8 @@
       "compute",
       "instances",
       "create",
-      "board-8361843",
-      "--image=board-8361843",
+      "board-2491483",
+      "--image=board-2491483",
       "--project=project",
       "--machine-type=machine-type",
       "--no-scopes",
@@ -778,7 +778,7 @@
       "compute",
       "images",
       "delete",
-      "board-8361843",
+      "board-2491483",
       "--quiet"
     ],
     "env": {
