@@ -728,36 +728,36 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#56)(self):**
+&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#57)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#69)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#70)(self):**
 
 Set build cost after running.
 
 Returns:
   A context that sets build_cost on exit.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#81)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#82)(self):**
 
 Set cq cost after running.
 
 Returns:
   A context that sets cq_run_cost on exit.
 
-&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#49)(self):**
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#50)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#93)(self):**
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#94)(self):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
 Calculate the cost of creating the build and set it as a build output
 property.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#148)(self, child_builds: List[Build]=None):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#149)(self, child_builds: List[Build]=None):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
