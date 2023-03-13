@@ -211,7 +211,29 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     ]
     return exonerable_vm_results
 
-  # TODO(b/271938042): Make this a public function and add better unit testing.
+  def get_previous_test_task_ids(self) -> Tuple[List[int], List[int]]:
+    """Get the task ids of the latest test invocations."""
+    current_build = self.m.buildbucket.build
+    past_builds = self.get_matching_builds(current_build,
+                                           statuses=TERMINAL_STATUSES)
+    if not past_builds:
+      return [], []
+
+    # TODO(b/271938042): Iterate through the list until we find a build that
+    # does has the TEST_TASKS_KEY. This is useful in case the previous build was
+    # terminated unexpectedly before scheduling tests.
+    last_build = past_builds[0]
+    build_output = json_format.MessageToDict(last_build.output.properties)
+    test_tasks = build_output.get(TEST_TASKS_KEY)
+    if not test_tasks:
+      return [], []
+
+    vm_build_ids = [
+        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
+    ]
+    hw_build_ids = [int(b) for b in test_tasks.get('skylab_builder_ids', [])]
+    return vm_build_ids, hw_build_ids
+
   def _get_previous_test_results(
       self, test_plan: GenerateTestPlanResponse
   ) -> Tuple[List[build_pb2.Build], List[SkylabResult]]:
@@ -227,26 +249,14 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
 
     with self.m.step.nest('get previous test results'):
-      current_build = self.m.buildbucket.build
-      past_builds = self.get_matching_builds(current_build,
-                                             statuses=TERMINAL_STATUSES)
-      if not past_builds:
+      vm_build_ids, hw_build_ids = self.get_previous_test_task_ids()
+      if not (vm_build_ids or hw_build_ids):
         return [], []
 
-      last_build = past_builds[0]
-      build_output = json_format.MessageToDict(last_build.output.properties)
-      test_tasks = build_output.get(TEST_TASKS_KEY)
-      if not test_tasks:
-        return [], []
-
-      vm_build_ids = [
-          int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
-      ]
       vm_test_results = self.m.buildbucket.get_multi(
           vm_build_ids,
           step_name='get tast vm tests from previous run').values()
 
-      hw_build_ids = [int(b) for b in test_tasks.get('skylab_builder_ids', [])]
       hw_test_results = []
       unit_hw_tests = []
       if test_plan and hw_build_ids:

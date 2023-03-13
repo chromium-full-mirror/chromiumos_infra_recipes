@@ -2680,7 +2680,7 @@ Args:
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#361)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#371)(self, build, statuses=None, start_build_id=None, limit=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -2710,7 +2710,7 @@ Find all tests that have passed with the given patches.
 Returns:
   set[str]: Names of passed tests, if any.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#260)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/cros_history/api.py#270)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -2722,7 +2722,11 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#322)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+&mdash; **def [get\_previous\_test\_task\_ids](/recipe_modules/cros_history/api.py#214)(self):**
+
+Get the task ids of the latest test invocations.
+
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#332)(self, snapshot, builder_list=None, statuses=None, patches=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -2755,14 +2759,14 @@ Args:
 Returns:
   list(PackageCPV) of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#389)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#399)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#307)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#317)(self, tests):**
 
 Record the tests that passed in the current run.
 
