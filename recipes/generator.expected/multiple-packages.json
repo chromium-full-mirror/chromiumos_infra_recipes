@@ -4346,6 +4346,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "success"
   }
 ]

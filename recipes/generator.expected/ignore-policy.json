@@ -1343,6 +1343,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "ignore by policy"
   }
 ]

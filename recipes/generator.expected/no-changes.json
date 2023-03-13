@@ -1490,6 +1490,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "no modified projects"
   }
 ]

@@ -28,6 +28,8 @@ from google.protobuf.json_format import MessageToJson
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine import result
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import CronTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
@@ -101,8 +103,10 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = GeneratorProperties
 
 
-def RunSteps(api: RecipeApi, properties: GeneratorProperties):
-  GeneratorRun(api, properties).run()
+def RunSteps(api: RecipeApi,
+             properties: GeneratorProperties) -> result.RawResult:
+  summary = GeneratorRun(api, properties).run()
+  return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 
 class PolicyInfo(NamedTuple):
@@ -225,7 +229,12 @@ class GeneratorRun:
     assert self._modified_projects is not None
     return self._modified_projects
 
-  def run(self):
+  def make_summary(self, msg: str) -> str:
+    if self.retry_only_run:
+      return '[retry-only] ' + msg
+    return msg
+
+  def run(self) -> str:
     """Run the Generator."""
     self.m.cros_source.configure_builder(self.m.src_state.gitiles_commit,
                                          self.m.src_state.gerrit_changes)
@@ -249,7 +258,7 @@ class GeneratorRun:
       self.set_policy(policy_info.policy)
       if self.policy.ignore:
         self.m.step.empty('policy set to ignore')
-        return
+        return self.make_summary('ignore by policy')
       self.checkout_branch(policy_info)
 
       if self.m.cq.active or self.m.src_state.gerrit_changes:
@@ -262,7 +271,7 @@ class GeneratorRun:
       if not self.retry_only_run:
         self._modified_projects = self.create_local_uprev()
         if self._modified_projects is None:
-          return
+          return self.make_summary('no modified projects')
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self._projects_by_remote, self.topic)
@@ -275,6 +284,7 @@ class GeneratorRun:
                                                       open_changes,
                                                       do_open_cls_remain,
                                                       self.policy, self.topic)
+      return self.make_summary('success')
 
   def create_local_uprev(self) -> Optional[List[ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.

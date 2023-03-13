@@ -1860,6 +1860,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "[retry-only] success"
   }
 ]
