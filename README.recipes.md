@@ -350,6 +350,7 @@
   * [cros_test_proctor:examples/ctp2](#recipes-cros_test_proctor_examples_ctp2) (Python3 ✅)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full) (Python3 ✅)
   * [cros_test_proctor:tests/builders_tested_in_this_run](#recipes-cros_test_proctor_tests_builders_tested_in_this_run) (Python3 ✅)
+  * [cros_test_proctor:tests/previous_test_results](#recipes-cros_test_proctor_tests_previous_test_results) (Python3 ✅)
   * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests) (Python3 ✅)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full) (Python3 ✅)
   * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full) (Python3 ✅)
@@ -4520,15 +4521,15 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#7): [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#54)(self):**
+&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#56)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#532)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#534)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4537,7 +4538,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#154)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#156)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4565,14 +4566,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#130)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#132)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#408)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#410)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4599,7 +4600,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#66)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#68)(self, test_summary):**
 
 Set the test_summary for this build.
 
@@ -11593,6 +11594,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/builders_tested_in_this_run.py#24)(api, expected_tested_builders):**
+### *recipes* / [cros\_test\_proctor:tests/previous\_test\_results](/recipe_modules/cros_test_proctor/tests/previous_test_results.py)
+
+[DEPS](/recipe_modules/cros_test_proctor/tests/previous_test_results.py#16): [cros\_history](#recipe_modules-cros_history), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/tests/previous_test_results.py#29)(api):**
 ### *recipes* / [cros\_test\_proctor:tests/schedule\_tests](/recipe_modules/cros_test_proctor/tests/schedule_tests.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/tests/schedule_tests.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

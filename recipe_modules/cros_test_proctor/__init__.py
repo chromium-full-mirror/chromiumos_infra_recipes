@@ -28,6 +28,7 @@ DEPS = [
     'future_utils',
     'naming',
     'skylab',
+    'skylab_results',
     'src_state',
 ]
 

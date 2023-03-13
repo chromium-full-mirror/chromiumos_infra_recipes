@@ -6,6 +6,7 @@
 
 from collections import defaultdict
 from collections import OrderedDict
+from typing import Dict
 
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
@@ -20,6 +21,7 @@ from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_api
 
 TEST_SUMMARY_KEY = 'test_summary'
@@ -589,6 +591,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       # A map from {build_target_name: [test_name]}.
       tests_to_run = defaultdict(list)
       hw_build_targets = set()
+      # pylint: disable=unused-variable
+      previous_test_results = self._previous_test_results()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
           # Do not run non-critical tests on retries.
@@ -864,3 +868,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     properties.update(self.m.cq.props_for_child_build)
     return properties
+
+  def _previous_test_results(self) -> Dict[str, ExecuteResponse]:
+    """Gets the test results from the latest test invocation.
+
+    Currently only returns HW test results.
+    TODO(b/271938042): Also return VM test results.
+
+    Returns:
+      The ExecuteResponses.tagged_response from the latest invocation.
+    """
+    previous_test_results = {}
+    if (self.m.cros_infra_config.is_staging and self.m.cq.active and
+        self.m.cros_history.is_retry()):
+      _, test_task_ids = self.m.cros_history.get_previous_test_task_ids()
+      # CQ only launches one cros_test_platform builder.
+      if len(test_task_ids) == 1:
+        build = self.m.buildbucket.get(test_task_ids[0])
+        previous_test_results = self.m.skylab_results.get_tagged_execute_responses_from_build(
+            build)
+    return previous_test_results
