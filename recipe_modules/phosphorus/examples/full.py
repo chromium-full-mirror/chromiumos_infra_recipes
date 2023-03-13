@@ -91,3 +91,23 @@ def GenTests(api):
                       results_dir='placeholder-results-dir')))),
   ) + api.post_process(StatusSuccess) +  # recipe should pass
          api.post_process(DropExpectation))
+  yield (api.test(
+      'cros-host-with-bot-prefix',
+      api.phosphorus.properties(dut_name='cros-chromeos1-row2-rack3-host4'),
+      api.step_data(
+          'call `phosphorus` (12).load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='placeholder-results-dir')))),
+  ) + api.post_process(StatusSuccess) +  # recipe should pass
+         api.post_process(DropExpectation))
+  yield (api.test(
+      'host-without-valid-bot-prefix',
+      api.phosphorus.properties(dut_name='noprefix-chromeos1-row2-rack3-host4'),
+      api.step_data(
+          'call `phosphorus` (12).load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  skylab_local_state.load.LoadResponse(
+                      results_dir='placeholder-results-dir')))),
+  ) + api.post_process(StatusSuccess) +  # recipe should pass
+         api.post_process(DropExpectation))

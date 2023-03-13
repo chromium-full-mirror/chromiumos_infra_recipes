@@ -25,14 +25,15 @@ class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
         'cros_ufs_service': 'ufs-service',
         'autotest_dir': '/path/to/autotest',
     }
-    default_prefix = 'crossk-'
-
     if not dut_name:  # pragma: nocover
       dut_name = 'placeholder-dut-name'
 
+    bot_id = ''
     if bot_prefix:
       config['bot_prefix'] = bot_prefix
-      default_prefix = bot_prefix
+      bot_id = bot_prefix + dut_name
+    else:
+      bot_id = dut_name
 
     return self.m.properties(
         **{
@@ -42,6 +43,6 @@ class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
                         cipd_label='some-cipd-label',
                     ), config=config),
         }) + self.m.properties.environ(
-            PhosphorusEnvProperties(SWARMING_BOT_ID=default_prefix + dut_name,
+            PhosphorusEnvProperties(SWARMING_BOT_ID=bot_id,
                                     SWARMING_TASK_ID='placeholder-task-id',
                                     SKYLAB_DUT_ID='placeholder-dut-id'))

@@ -72,18 +72,21 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.cros_tool_runner.properties(bot_id='dut_host_name', bot_is_dut=True))
+  yield api.test('basic',
+                 api.cros_tool_runner.properties(bot_id='crossk-dut_host_name'))
   yield api.test(
       'running-on-gce-bot',
       api.cros_tool_runner.properties(
-          bot_id='chromeos-test-crostfe-us-east1-d-x1-1061-de02',
-          bot_is_dut=False))
+          bot_id='chromeos-test-crostfe-us-east1-d-x1-1061-de02'))
   yield (api.test(
       'with-bot-prefix',
       api.cros_tool_runner.properties(
           bot_id='chromeos-test-crostfe-us-east1-d-x1-1061-de02',
-          bot_is_dut=False, bot_prefix='someprefix')) +
+          bot_prefix='someprefix')) +
          api.post_process(StatusSuccess) +  # recipe should pass
+         api.post_process(DropExpectation))
+  yield (api.test(
+      'basic-with-new-bot-prefix',
+      api.cros_tool_runner.properties(bot_id='cros-chromeos1-row2-rack3-host4'))
+         + api.post_process(StatusSuccess) +  # recipe should pass
          api.post_process(DropExpectation))

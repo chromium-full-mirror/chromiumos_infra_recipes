@@ -4670,7 +4670,7 @@ Run provision via `provision` subcommand.
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#227)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#225)(self):**
 
 "Return the DUT hostname.
 
@@ -7886,7 +7886,7 @@ Run a prejob or a provision via `prejob` subcommand.
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#288)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#287)(self):**
 
 "Return the DUT hostname.
 

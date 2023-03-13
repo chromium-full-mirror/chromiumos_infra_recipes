@@ -213,15 +213,13 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
   def _dut_hostname_from_bot_id(self, swarming_bot_id):
     """Extract the DUT hostname from the env vars.
 
-        Args:
-          * env_vars: CrosToolRunnerEnvProperties instance.
-
-        Raises:
-          * AssertionError if the Swarming bot ID env var is missing or invalid.
-        """
-    expected_prefix = self._read_bot_prefix()
-    if swarming_bot_id.startswith(expected_prefix):
-      return swarming_bot_id[len(expected_prefix):]
+    Args:
+      * env_vars: CrosToolRunnerEnvProperties instance.
+    """
+    expected_prefixes = self._read_bot_prefix()
+    for expected_prefix in expected_prefixes:
+      if swarming_bot_id.startswith(expected_prefix):
+        return swarming_bot_id[len(expected_prefix):]
     return swarming_bot_id
 
   def read_dut_hostname(self):
@@ -231,5 +229,5 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
   def _read_bot_prefix(self):
     """Extract the bot prefix from the config properties."""
     if self._config and self._config.bot_prefix:
-      return str(self._config.bot_prefix)
-    return 'crossk-'
+      return [str(self._config.bot_prefix)]
+    return ['crossk-', 'cros-']

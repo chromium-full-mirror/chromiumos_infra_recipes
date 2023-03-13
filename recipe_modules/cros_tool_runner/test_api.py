@@ -14,15 +14,13 @@ from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import \
 class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
   """Test data for CrosToolRunner api."""
 
-  def properties(self, bot_id=None, bot_is_dut=False, bot_prefix=None):
+  def properties(self, bot_id=None, bot_prefix=None):
     """Gets properties to pass to api.test().
 
     For use in recipes and modules using cros_tool_runner.
     """
     if not bot_id:  # pragma: nocover
       bot_id = 'placeholder-bot-name'
-    if bot_is_dut:
-      bot_id = 'crossk-' + bot_id
     if not bot_prefix:
       ctr_properties = CrosToolRunnerProperties(
           version=CrosToolRunnerProperties.Version(
