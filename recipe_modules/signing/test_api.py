@@ -3,7 +3,9 @@
 # found in the LICENSE file.
 import json
 from typing import Any, Dict
+from typing import List
 
+from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_test_api
 from recipe_engine.recipe_test_api import TestData
 
@@ -62,6 +64,34 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
 
     result = data[0]
     for dd in data[1:]:
+      result += dd
+    return result
+
+  def set_timeout(self, timeout: int = 1) -> TestData:
+    return self.m.properties(
+        **{"$chromeos/signing": SigningProperties(timeout=timeout)})
+
+  def mock_signing_successes(self, file_names: List[str],
+                             prestep: str = '') -> TestData:
+    """Mock a successful response for a bunch of file names.
+
+    Args:
+      file_names: List of file names to mock success for.
+      prestep: A parent step wrapping the gsutil call.
+
+    Returns:
+      TestData object (for chaining within `yield` statements).
+    """
+    ret = []
+    for file_name in file_names:
+      ret.append(
+          self.mock_meta(file_name, {
+              'status': {
+                  'status': 'passed'
+              },
+          }, prestep=prestep))
+    result = ret[0]
+    for dd in ret[1:]:
       result += dd
     return result
 

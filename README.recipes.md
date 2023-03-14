@@ -8576,7 +8576,7 @@ Module for issuing ServiceVersion commands
 Validate the caller's service version if they sent one.
 ### *recipe_modules* / [signing](/recipe_modules/signing)
 
-[DEPS](/recipe_modules/signing/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/signing/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -9817,7 +9817,7 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [RunSteps](/recipes/build_cq.py#46)(api):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
-[DEPS](/recipes/build_factory.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_release](#recipe_modules-cros_release), [signing](#recipe_modules-signing), [test\_util](#recipe_modules-test_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_factory.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_release](#recipe_modules-cros_release), [signing](#recipe_modules-signing), [test\_util](#recipe_modules-test_util), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -9825,7 +9825,7 @@ Recipe for generating artifacts for Factory builders.
 
 This recipe supports the workflow necessary to support factory builders.
 
-&mdash; **def [RunSteps](/recipes/build_factory.py#24)(api):**
+&mdash; **def [RunSteps](/recipes/build_factory.py#23)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]

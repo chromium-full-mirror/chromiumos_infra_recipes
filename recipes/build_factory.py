@@ -6,7 +6,6 @@
 """Recipe for generating artifacts for Factory builders.
 
 This recipe supports the workflow necessary to support factory builders."""
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -48,10 +47,19 @@ def RunSteps(api):
 def GenTests(api):
 
   yield api.build_menu.test(
-      'basic', api.post_check(post_process.MustRun, 'build images'),
+      'basic',
+      # Make sure signing times out after 5 seconds to not explode test runs.
+      api.signing.set_timeout(timeout=5),
+      # Mock signing responses.
+      api.signing.mock_signing_successes([
+          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions.json',
+          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions.json'
+      ], prestep='get signed build metadata.'),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'get signed build metadata'),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola')
 
@@ -62,6 +70,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(post_process.StepTextContains, 'skipping signing',
                      ['signing is not run in staging']),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='staging-factory-corsola-15197.B-corsola')
 
@@ -75,5 +84,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(post_process.StepTextContains, 'skipping signing',
                      ['no signing instructions generated']),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola')

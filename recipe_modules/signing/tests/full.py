@@ -138,13 +138,11 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-sleep-if-first-poll-succeeds',
-      api.properties(**{"$chromeos/signing": SigningProperties(timeout=5)}),
-      api.signing.mock_meta(
+      api.signing.set_timeout(5),
+      api.signing.mock_signing_successes([
           'gs://bucket/directory1/directory2/releases/file1.instructions.json',
-          _PASSED),
-      api.signing.mock_meta(
-          'gs://bucket/directory1/directory2/releases/file2.instructions.json',
-          _PASSED),
+          'gs://bucket/directory1/directory2/releases/file2.instructions.json'
+      ]),
       step_passed('verify results.parse metadata'),
       api.post_check(StepMetaEquals, 'verify results',
                      [_PASSED_COMPLETE, _PASSED_COMPLETE]),
