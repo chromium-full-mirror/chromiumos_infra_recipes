@@ -10,7 +10,6 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.build_plan.examples.cq_build_plan import (
     CqBuildPlanProperties)
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from google.protobuf import timestamp_pb2
 
@@ -19,14 +18,11 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'build_plan',
     'cros_history',
     'cros_infra_config',
     'cros_relevance',
-    'gerrit',
     'git_footers',
-    'repo',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -395,47 +391,6 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds, 'get build history.find matching builds.'
-          'buildbucket.search'),
-  )
-
-  yield api.test(
-      'chrome-pupr-additional-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.build_plan.add_chrome_pupr_builders']),
-      api.properties(
-          expected_build_requests=[
-              'eve-cq',
-              'atlas-cq',
-              'arm64-generic-cq',
-          ],
-          expected_experiments=['chromeos.build_plan.add_chrome_pupr_builders'],
-      ),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic",
-                                 'chromium-review.googlesource.com', 123456,
-                                 "filter additional chrome pupr builds"),
-      api.step_data(
-          'filter additional chrome pupr builds.read git footers',
-          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'filter additional chrome pupr builds', [
-              GerritChange(host='chromium-review.googlesource.com',
-                           change=123456)
-          ], {
-              123456: {
-                  'project': 'chromiumos/overlays/chromiumos-overlay',
-                  'branch': 'main',
-                  'files': {
-                      'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild':
-                          {},
-                  }
-              },
-          }, iteration=1),
-      api.cros_relevance.simulated_run_build_planner(
-          necessary_builders=['eve-cq'],
-          skipped_builders=['atlas-cq', 'arm-generic-cq', 'arm64-generic-cq']),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),

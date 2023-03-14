@@ -2396,37 +2396,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.filter additional chrome pupr builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no additional builds needed@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-f",
-      "https://chromium.googlesource.com/changes/1234/topic"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run builds.filter additional chrome pupr builds.curl https://chromium.googlesource.com/changes/1234/topic",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.schedule new builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

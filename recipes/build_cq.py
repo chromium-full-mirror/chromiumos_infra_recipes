@@ -201,6 +201,11 @@ def GenTests(api):
       'upload-prebuilts-experiment',
       api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
       api.post_check(post_process.StatusSuccess),
+      #api.step_data('check if diff requires chrome rebuild', ),
+      api.repo.project_infos_step_data(
+          'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
+              'apply gerrit patch sets',
+          [dict(project=PROJECT_NAME)]),
       api.gerrit.simulated_topic(
           "chromeos-base/lacros-ash-atomic", GERRIT_HOST, CHANGE_NUM,
           "upload prebuilts.Check if the CQ uploads the prebuilts"),

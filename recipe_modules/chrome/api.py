@@ -265,8 +265,8 @@ class ChromeApi(recipe_api.RecipeApi):
     if cl_tag != CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC:
       return False
 
-    patch_sets = self.m.gerrit.fetch_patch_sets([gerrit_change],
-                                                include_files=True)
+    patch_sets = self.m.cros_source.apply_gerrit_changes(
+        [gerrit_change], include_files=True, ignore_missing_projects=True)
 
     # Check the ebuild file change is in the patch set.
     return self.diffed_files_requires_rebuild(patch_sets)

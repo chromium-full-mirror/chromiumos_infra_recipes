@@ -1,10 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [],
     "name": "check disallow recycled builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@force rebuild 3 target(s)@@@",

@@ -1,10 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [],
     "name": "get completed builds",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
