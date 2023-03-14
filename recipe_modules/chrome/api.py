@@ -20,7 +20,6 @@ from PB.chromite.api.packages import NeedsChromeSourceRequest
 from PB.chromite.api.packages import NeedsChromeSourceResponse
 from PB.chromiumos.common import PackageInfo
 
-CHROMIUM_CACHE_DIR = '/preload/chrome_cache'
 CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
 
 DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS = 10800  # 3 hrs.
@@ -133,8 +132,7 @@ class ChromeApi(recipe_api.RecipeApi):
           self.m.gclient('sync', gclient_sync_cmd, infra_step=True,
                          timeout=self.gclient_sync_timeout_seconds)
 
-  def sync(self, chrome_root, chroot, build_target, internal,
-           cache_dir=CHROMIUM_CACHE_DIR):
+  def sync(self, chrome_root, chroot, build_target, internal, cache_dir):
     """Sync Chrome source code.
 
     Must be run with cwd inside a chromiumos source root.
@@ -144,7 +142,7 @@ class ChromeApi(recipe_api.RecipeApi):
       chroot (chromiumos.Chroot): Information on the chroot for the build.
       build_target (chromiumos.BuildTarget): Build target of the build.
       internal (bool): True for internal checkout.
-      cache_dir (str): Path of the chrome cache. Defaults to '/preload/chrome_cache'.
+      cache_dir (str): Path of the chrome cache.
     """
     with self.m.step.nest('sync chrome') as pres:
       if self._version or self._deps_cas:

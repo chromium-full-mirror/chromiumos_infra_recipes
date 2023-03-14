@@ -112,6 +112,7 @@ def RunSteps(api, properties):
         chroot=chroot,
         build_target=build_target,
         internal=not properties.external,
+        cache_dir=api.path['start_dir'].join('chrome').join('cache'),
     )
 
 

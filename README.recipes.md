@@ -1686,9 +1686,9 @@ Updates the retry_summary output property with the given step/status.
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#67)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#90)(self, cache_path, sync=True, step_name='sync chrome'):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#89)(self, cache_path, sync=True, step_name='sync chrome'):**
 
 Sync Chrome cache using existing cached repositories.
 
@@ -1697,7 +1697,7 @@ Args:
   sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
   step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#226)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#224)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1710,7 +1710,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#301)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#299)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1726,13 +1726,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#70)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#69)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#274)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#272)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#252)(self, gerrit_change):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#250)(self, gerrit_change):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#339)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#337)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1744,7 +1744,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#282)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#280)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1760,7 +1760,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#410)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#408)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1774,7 +1774,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#136)(self, chrome_root, chroot, build_target, internal, cache_dir=CHROMIUM_CACHE_DIR):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#135)(self, chrome_root, chroot, build_target, internal, cache_dir):**
 
 Sync Chrome source code.
 
@@ -1785,7 +1785,7 @@ Args:
   chroot (chromiumos.Chroot): Information on the chroot for the build.
   build_target (chromiumos.BuildTarget): Build target of the build.
   internal (bool): True for internal checkout.
-  cache_dir (str): Path of the chrome cache. Defaults to '/preload/chrome_cache'.
+  cache_dir (str): Path of the chrome cache.
 ### *recipe_modules* / [chromite](/recipe_modules/chromite)
 
 [DEPS](/recipe_modules/chromite/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gcloud](#recipe_modules-gcloud), [gitiles](#recipe_modules-gitiles), [goma](#recipe_modules-goma), [repo](#recipe_modules-repo), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -27,14 +27,17 @@ def RunSteps(api):
   api.assertions.assertEqual(api.chrome.gclient_sync_timeout_seconds, 1)
 
   with api.step.nest('checkout passes retry'):
-    api.chrome.sync(chrome_root=api.path['start_dir'].join('chrome'),
-                    chroot=chroot, build_target=build_target, internal=False)
+    api.chrome.sync(
+        chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
+        build_target=build_target, internal=False,
+        cache_dir=api.path['start_dir'].join('chrome').join('cache'))
 
   with api.step.nest('checkout fails retry'):
     api.assertions.assertRaises(
         api.step.InfraFailure, api.chrome.sync,
         chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
-        build_target=build_target, internal=True)
+        build_target=build_target, internal=True,
+        cache_dir=api.path['start_dir'].join('chrome').join('cache'))
 
 
 def GenTests(api):

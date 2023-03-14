@@ -646,7 +646,7 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "config",
       "--spec",
-      "cache_dir = '/preload/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '[START_DIR]/chrome/DEPS', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+      "cache_dir = '[START_DIR]/chrome/cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '[START_DIR]/chrome/DEPS', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
     ],
     "cwd": "[START_DIR]/chrome",
     "env_suffixes": {
