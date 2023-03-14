@@ -2016,6 +2016,34 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.deleting chrome checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "failed compilation for 3 packages\n\n- [edge-base/shortpackagename-0.0.1-r197](https:///logs///+/u/install_packages/edge-base_shortpackagename_log)\n\n- [chromeos-base/thislongpackagenameomg-0.0.1-r199](https:///logs///+/u/install_packages/chromeos-base_thislongpackagenameomg_log)\n\n- [safari-base/thisotherexceedinglylongpackage-0.0.1-r129](https:///logs///+/u/install_packages/safari-base_thisotherexceedinglylongpackage_log)"

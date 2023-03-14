@@ -6032,6 +6032,38 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chrome"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.install packages.deleting chrome checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Create test containers.create test service containers",
     "~followup_annotations": [
@@ -6070,8 +6102,7 @@
       "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"version\": \"amd64-generic-postsubmit-postsubmit.R99-1234.56.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"tags\": [@@@",
@@ -6095,7 +6126,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"chromeDir\": \"[START_DIR]/chrome\"\n  },\n  \"version\": \"amd64-generic-postsubmit-postsubmit.R99-1234.56.0-101-8945511751514863184\",\n  \"tags\": [\n    \"amd64-generic-postsubmit-postsubmit.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic-postsubmit\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  },\n  \"version\": \"amd64-generic-postsubmit-postsubmit.R99-1234.56.0-101-8945511751514863184\",\n  \"tags\": [\n    \"amd64-generic-postsubmit-postsubmit.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6527,8 +6558,7 @@
       "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -6544,7 +6574,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"chromeDir\": \"[START_DIR]/chrome\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "infra_step": true,

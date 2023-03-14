@@ -257,9 +257,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
                                                    response,
                                                    self.m.file.read_raw)
-      # If our experiments are enabled, clean up the chrome cache checkout.
-      if (chrome_root and 'chromeos.sysroot_util.chrome_cache_purge'
-          in self.m.cros_infra_config.experiments):
+      # If we have a chrome checkout and the prop to disable cleanup is not off,
+      # clean up the chrome cache checkout.
+      if (chrome_root and not self._disable_chrome_source_purge):
         self.m.file.rmtree('deleting chrome checkout', chrome_root)
         # Set the chrome root to None so it isn't used later.
         self.m.cros_sdk.set_chrome_root(None)
