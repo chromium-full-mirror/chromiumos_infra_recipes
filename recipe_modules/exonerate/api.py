@@ -292,18 +292,18 @@ class ExonerateApi(recipe_api.RecipeApi):
         else:
           build_target = skylab_res.task.unit.common.build_target.name
           board = skylab_res.task.test.skylab_board
-          suite_name = str(skylab_res.task.test.common.display_name)
+          display_name = str(skylab_res.task.test.common.display_name)
+          suite_name = display_name.split('.')[-1]
           new_child_results, new_status = self._exonerate_child_results(
               skylab_res.child_results, build_target, board, suite_name)
           new_skylab_res = SkylabResult(task=skylab_res.task, status=new_status,
                                         child_results=new_child_results)
           new_test_results.append(new_skylab_res)
           if new_status == common_pb2.SUCCESS:
-            link_text = '{}.{}'.format(build_target, suite_name)
             self._exoneration_link_map[
-                link_text] = self.m.urls.get_skylab_task_url(skylab_res.task)
-            exonerated_test_names.append(suite_name)
-            self._suite_stats_map[suite_name] += 1
+                display_name] = self.m.urls.get_skylab_task_url(skylab_res.task)
+            exonerated_test_names.append(display_name)
+            self._suite_stats_map[display_name] += 1
             self._stats.suite_count += 1
       self._print_logs(pres)
       return new_test_results, exonerated_test_names
