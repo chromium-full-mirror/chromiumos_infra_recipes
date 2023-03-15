@@ -115,6 +115,16 @@
   },
   {
     "cmd": [
+      "sed",
+      "-e",
+      "s#^\\(../\\)*##g",
+      "[CLEANUP]/distfile_lists_tmp_1/new_symlinked.txt"
+    ],
+    "infra_step": true,
+    "name": "make distfiles paths absolute"
+  },
+  {
+    "cmd": [
       "rsync",
       "--recursive",
       "--links",
@@ -128,7 +138,7 @@
       "--ignore-existing",
       "--timeout=180",
       "--bwlimit=1m",
-      "--files-from=[CLEANUP]/distfile_lists_tmp_1/new_symlinked.txt",
+      "--files-from=[CLEANUP]/distfile_lists_tmp_1/fixed_symlinked.txt",
       "rsync://mirrors.do.not.exists/distfiles/",
       "[CLEANUP]/distfiles_tmp_1"
     ],

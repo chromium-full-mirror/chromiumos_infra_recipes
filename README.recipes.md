@@ -2634,15 +2634,15 @@ Args:
     syncing that is interpreted by datetime strftime (using UTC). Gets
     added to the end of 'gs_uri_for_archival_sync'.
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#503)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#513)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#495)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#505)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#499)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#509)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#491)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#501)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#507)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#517)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

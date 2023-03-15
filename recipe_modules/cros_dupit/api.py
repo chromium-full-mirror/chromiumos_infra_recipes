@@ -309,7 +309,17 @@ class DupItApi(recipe_api.RecipeApi):
                   name='get list of symlinked distfiles', stdin=stdin,
                   stdout=stdout)
 
-      rsync_cmd = self._get_rsync_cmd(new_symlinked)
+      # (b/273524588) Remove leading `../` from paths. As of rsync 3.1.2 this
+      # is no longer allowed since the files being received aren't the same as
+      # those in the --files-from list.
+      fixed_symlinked = self._tmp_distfile_lists_path.join(
+          'fixed_symlinked.txt')
+      stdout = self.m.raw_io.output(leak_to=fixed_symlinked)
+      cmd = ['sed', '-e', r's#^\(../\)*##g', new_symlinked]
+      self.m.step(cmd=cmd, infra_step=True,
+                  name='make distfiles paths absolute', stdout=stdout)
+
+      rsync_cmd = self._get_rsync_cmd(fixed_symlinked)
       rsync_name = ('ensure symlinked distfiles from %s' %
                     self.rsync_mirror_address)
       self.m.step(cmd=rsync_cmd, infra_step=True, name=rsync_name)
