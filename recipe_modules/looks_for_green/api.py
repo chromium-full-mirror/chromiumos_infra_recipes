@@ -63,11 +63,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   @property
   def _greenness_builder(self) -> str:
     '''Returns builder to query for greenness.
-
-    Using staging-postsubmit-orchestrator since snapshot-orchestrator is not
-    enabled in staging.
     '''
-    return 'staging-postsubmit-orchestrator' if self.m.cros_infra_config.is_staging else 'snapshot-orchestrator'
+    prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
+    return f'{prefix}snapshot-orchestrator'
 
   def _get_snapshots(self,
                      limit: Optional[int] = None) -> List[build_pb2.Build]:

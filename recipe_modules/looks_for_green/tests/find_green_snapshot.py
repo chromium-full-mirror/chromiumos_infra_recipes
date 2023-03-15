@@ -75,10 +75,20 @@ def GenTests(api):
       api.properties(expected_bbid=123, expected_greenness=80,
                      expected_commit_sha='ababab'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='cq-orchestrator'),
       api.buildbucket.simulated_search_results(
           builds=[green_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find green snapshot.buildbucket.search',
+          [
+              "-predicate",
+              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
+          ],
+      ),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
@@ -103,6 +113,29 @@ def GenTests(api):
           builds=[green_build, green_build2],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'staging',
+      api.properties(expected_bbid=123, expected_greenness=80,
+                     expected_commit_sha='ababab'),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.ci_build(project='chromeos', bucket='staging',
+                               builder='staging-cq-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          builds=[green_build],
+          step_name='find green snapshot.buildbucket.search'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find green snapshot.buildbucket.search',
+          [
+              "-predicate",
+              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
+          ],
+      ),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
