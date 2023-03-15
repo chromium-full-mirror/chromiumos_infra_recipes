@@ -82,6 +82,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           # Resource limits for docker.
           "DRONE_AGENT_BOT_BLKIO_READ_BPS",
           "DRONE_AGENT_BOT_BLKIO_WRITE_BPS"
+
+          # BBID
+          "LOGDOG_STREAM_PREFIX"
       ]
       cmd = [
           "sudo",
