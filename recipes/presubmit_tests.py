@@ -34,6 +34,24 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PresubmitTestsProperties
 
+# NB: Keep in sync with mock_CLs.
+REPO_PROJECTS_INFO_TEST_DATA = [
+    {
+        'project': 'p1'
+    },
+    {
+        'project': 'p1'
+    },
+    {
+        'project': 'p2'
+    },
+    {
+        'project': 'p2',
+        'upstream': 'refs/heads/dev',
+        'path': 'src/p2-dev'
+    },
+]
+
 
 def RunSteps(api: RecipeApi, properties: PresubmitTestsProperties):
   with api.bot_cost.build_cost_context():
@@ -78,7 +96,9 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
       # For example, if a project is listed twice in the manifest under two
       # different paths will return two ProjectInfos.
       project_infos = api.repo.project_infos(
-          projects=[patch.project for patch in api.workspace_util.patch_sets])
+          projects=[patch.project for patch in api.workspace_util.patch_sets],
+          test_data=api.repo.test_api.project_infos_test_data(
+              REPO_PROJECTS_INFO_TEST_DATA))
       checked_paths = set()
 
       for project_info in project_infos:
@@ -91,6 +111,17 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
           # not on the list.
           if project_names and project_info.name not in project_names:
             presentation.step_text = 'Excluded by properties.project_names.'
+            continue
+
+          # See if any of the CLs were applied to this specific checkout.  If a
+          # project has multiple branches checked out (e.g. the kernel), we only
+          # want to run presubmit checks against the branches that were patched.
+          # The manifest branch will be fully qualified (e.g. refs/heads/foo)
+          # while the Gerrit CL will not (e.g. foo).
+          if not any((x.project, x.branch) == (project_info.name,
+                                               project_info.branch_name)
+                     for x in api.workspace_util.patch_sets):
+            presentation.step_text = 'No CLs apply to this project & branch'
             continue
 
           # All of the projects will have a branch defined by the manifest.
@@ -129,6 +160,8 @@ def GenTests(api: RecipeTestApi):
                               project='p1', change=1235),
       common_pb2.GerritChange(host='chrome-internal.googlesource.com',
                               project='p2', change=2341),
+      common_pb2.GerritChange(host='chrome-internal.googlesource.com',
+                              project='p2', change=2999),
   ]
 
   def test_builder(**kwargs) -> TestData:
