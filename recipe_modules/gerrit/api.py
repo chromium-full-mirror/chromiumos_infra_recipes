@@ -44,7 +44,11 @@ def strip_xssi_prefix(json_string: str):
 
 
 class PatchSet:
-  """PatchSet represents a single Gerrit patchset."""
+  """PatchSet represents a single Gerrit patchset.
+
+  For details on the various fields, see Gerrit's ChangeInfo entity:
+  https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+  """
 
   INFO_ATTRS = ('project', 'branch', 'subject')
 
@@ -84,7 +88,10 @@ class PatchSet:
 
   @property
   def branch(self) -> str:
-    """Return the PatchSet's branch."""
+    """Return the PatchSet's branch.
+
+    The refs/head/ prefix is always omitted.
+    """
     return self._change_info['branch']
 
   @property
