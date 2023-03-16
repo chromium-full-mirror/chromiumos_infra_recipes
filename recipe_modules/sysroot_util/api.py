@@ -210,6 +210,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:
+        # Block and wait for the chrome checkout of main.
+        self.m.chrome.wait_for_sync_chrome_source_async()
         if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
                                              dep_graph, check_pres):
           # This will change the return from _InstallPackagesRequest().
@@ -220,10 +222,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                              self.sysroot.build_target, config.chrome.internal,
                              cache_dir=chrome_root.join('chrome_cache'))
           self.m.cros_sdk.set_chrome_root(chrome_root)
+
           if install_packages.use_remoteexec:
             self.m.cros_sdk.configure_remoteexec()
           elif not install_packages.disable_goma:
             self.m.cros_sdk.configure_goma()
+        else:
+          # Since we don't need chrome source, delete the checkout.
+          self.m.chrome.delete_main_checkout()
 
       if self.m.cq.active:
         self.m.android.uprev_if_unstable_ebuild_changed(
