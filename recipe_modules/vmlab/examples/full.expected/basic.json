@@ -1,0 +1,104 @@
+[
+  {
+    "cmd": [],
+    "name": "lease vm"
+  },
+  {
+    "cmd": [],
+    "name": "lease vm.ensure vmlab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/vmlab",
+      "-ensure-file",
+      "chromiumos/infra/vmlab/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "lease vm.ensure vmlab.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/vmlab/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "lease vm.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "lease",
+      "--config",
+      "vmlab-config",
+      "--gce-image-name",
+      "vm-image",
+      "--gce-image-project",
+      "betty-cloud-prototype",
+      "--json"
+    ],
+    "name": "lease vm.call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "lease vm (2)"
+  },
+  {
+    "cmd": [],
+    "name": "lease vm (2).call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "lease",
+      "--config",
+      "vmlab-config",
+      "--gce-image-name",
+      "vm-image",
+      "--gce-image-project",
+      "betty-cloud-prototype",
+      "--json",
+      "--swarming-bot-name",
+      "bot-name"
+    ],
+    "name": "lease vm (2).call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

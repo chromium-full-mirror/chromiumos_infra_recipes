@@ -111,6 +111,7 @@
   * [test_util](#recipe_modules-test_util) (Python3 ✅) &mdash; API to simpify testing Chrome OS recipes.
   * [urls](#recipe_modules-urls) (Python3 ✅) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) (Python3 ✅) &mdash; Module providing importable utilities.
+  * [vmlab](#recipe_modules-vmlab) (Python3 ✅)
   * [workspace_util](#recipe_modules-workspace_util) (Python3 ✅) &mdash; API for various support functions for building.
 
 **[Recipes](#Recipes)**
@@ -622,6 +623,7 @@
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
   * [validate_dirmd](#recipes-validate_dirmd) (Python3 ✅) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
+  * [vmlab:examples/full](#recipes-vmlab_examples_full) (Python3 ✅)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full) (Python3 ✅)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch) (Python3 ✅)
   * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups) (Python3 ✅)
@@ -9528,6 +9530,36 @@ Module providing importable utilities.
 #### **class [UtilApi](/recipe_modules/util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Includable utilities.
+### *recipe_modules* / [vmlab](/recipe_modules/vmlab)
+
+[DEPS](/recipe_modules/vmlab/__init__.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [VmlabApi](/recipe_modules/vmlab/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module to interact with Chrome OS VMLab.
+
+&mdash; **def [\_\_init\_\_](/recipe_modules/vmlab/api.py#16)(self, properties, \*args, \*\*kwargs):**
+
+Initialize GcloudApi.
+
+&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#78)(self):**
+
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#81)(self):**
+
+&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self):**
+
+&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#56)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
+
+Lease a VM.
+
+Args:
+  config: config name preconfigured in vmlab CLI.
+  image_name: name of the image to use.
+  image_project: GCP project where the image is stored.
+  swarming_bot_name: name of the sarming bot. cleanup_vm may not work well
+if empty swarming_bot_name is provided at some backend.
 ### *recipe_modules* / [workspace\_util](/recipe_modules/workspace_util)
 
 [DEPS](/recipe_modules/workspace_util/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14222,6 +14254,13 @@ This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
 files in projects touched by the input CLs.
 
 &mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
+### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
+
+[DEPS](/recipe_modules/vmlab/examples/full.py#6): [vmlab](#recipe_modules-vmlab)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/vmlab/examples/full.py#11)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#16): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
