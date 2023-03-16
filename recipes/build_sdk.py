@@ -120,7 +120,7 @@ class BuildSDKRun:
     request = CreateManifestFromSdkRequest(
         chroot=self.m.cros_sdk.chroot,
         sdk_path=common_pb2.Path(
-            path=f'build/{SDK_BUILD_TARGET}',
+            path=f'/build/{SDK_BUILD_TARGET}',
             location=common_pb2.Path.INSIDE,
         ),
         dest_dir=common_pb2.Path(

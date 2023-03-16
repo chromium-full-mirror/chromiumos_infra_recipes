@@ -2305,7 +2305,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"sdkPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"build/amd64-host\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/amd64-host\",@@@",
       "@@@STEP_LOG_LINE@request@    \"location\": 1@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"destDir\": {@@@",
@@ -2326,7 +2326,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"sdkPath\": {\n    \"path\": \"build/amd64-host\",\n    \"location\": 1\n  },\n  \"destDir\": {\n    \"path\": \"[CLEANUP]/chromiumos_workspace\",\n    \"location\": 2\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"sdkPath\": {\n    \"path\": \"/build/amd64-host\",\n    \"location\": 1\n  },\n  \"destDir\": {\n    \"path\": \"[CLEANUP]/chromiumos_workspace\",\n    \"location\": 2\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
