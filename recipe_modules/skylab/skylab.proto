@@ -23,4 +23,7 @@ message SkylabProperties {
   // false (i.e. defaults to including scheduled CTP builds in the current
   // build's ResultRB invocation).
   bool exclude_sub_invs = 10;
+
+  // Projects prefixes which have direct Tast testing enabled.
+  repeated string direct_tast_testing_projects = 11;
 }

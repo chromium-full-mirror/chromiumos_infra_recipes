@@ -68,7 +68,9 @@ def RunSteps(api):
   hw_test_container.tag_criteria.CopyFrom(
       ctr_test_suite.TestSuite.TestCaseTagCriteria(
           tags=["include_this_tag_1", "include_this_tag_2"],
-          tag_excludes=["exclude_this_tag_1", "exclude_this_tag_2"]))
+          tag_excludes=["exclude_this_tag_1",
+                        "exclude_this_tag_2"], test_names=['include_this_test'],
+          test_name_excludes=['exlude_this_test']))
   unit_hw_test_container = UnitHwTest(
       unit=hw_test_unit_container,
       hw_test=hw_test_container,

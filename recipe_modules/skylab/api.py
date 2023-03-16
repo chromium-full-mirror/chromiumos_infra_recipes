@@ -19,6 +19,8 @@ _DEFAULT_FAILED_RESPONSE = ExecuteResponse(
     state=TaskState(verdict=TaskState.VERDICT_FAILED,
                     life_cycle=TaskState.LIFE_CYCLE_COMPLETED))
 
+_DIRECT_TAST_EXP = 'chromeos.skylab.direct_tast_testing'
+
 
 class SkylabApi(recipe_api.RecipeApi):
   """Module for issuing commands to Skylab"""
@@ -28,6 +30,8 @@ class SkylabApi(recipe_api.RecipeApi):
     self._qs_account = str(properties.skylab_qs_account) or 'pcq'
     self._ctp_builder = str(properties.ctp_builder) or 'cros_test_platform'
     self._exclude_sub_invs = properties.exclude_sub_invs
+    self._direct_tast_testing_enabled = None
+    self._direct_tast_testing_projects = properties.direct_tast_testing_projects
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -36,6 +40,32 @@ class SkylabApi(recipe_api.RecipeApi):
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
+
+  def direct_tast_testing_enabled(self):
+
+    def is_change_allowlisted(change):
+      return any(
+          change.project.startswith(p)
+          for p in self._direct_tast_testing_projects)
+
+    if self._direct_tast_testing_enabled is not None:
+      return self._direct_tast_testing_enabled
+
+    if _DIRECT_TAST_EXP in self.m.cros_infra_config.experiments:
+      self._direct_tast_testing_enabled = True
+      return self._direct_tast_testing_enabled
+
+    if len(self._direct_tast_testing_projects) == 0:
+      self._direct_tast_testing_enabled = False
+      return self._direct_tast_testing_enabled
+
+    if len(self.m.src_state.gerrit_changes) == 0:
+      self._direct_tast_testing_enabled = False
+      return self._direct_tast_testing_enabled
+
+    self._direct_tast_testing_enabled = all(
+        is_change_allowlisted(gc) for gc in self.m.src_state.gerrit_changes)
+    return self._direct_tast_testing_enabled
 
   def schedule_ctp_requests(self, tagged_requests, can_outlive_parent=True,
                             bb_tags=None, **kwargs):
@@ -204,7 +234,15 @@ class SkylabApi(recipe_api.RecipeApi):
               request.params.run_via_trv2 = uht.hw_test.run_via_trv2
               request.params.trv2_steps_config.CopyFrom(
                   uht.hw_test.trv2_steps_config)
-              request.test_plan.tag_criteria.CopyFrom(uht.hw_test.tag_criteria)
+              # Only pass in tags if the experiment is enabled or the suite is
+              # not bvt-tast-cq. This will prevent us from causing enumeration
+              # errors if the suite name does not correspond to a Tauto control
+              # file.
+              # TODO(b/271938042): Remove gating after the rollout is complete.
+              if (self.direct_tast_testing_enabled() or
+                  uht.hw_test.suite != 'bvt-tast-cq'):
+                request.test_plan.tag_criteria.CopyFrom(
+                    uht.hw_test.tag_criteria)
               configure_step.step_summary_text = "(Executing via CFT)"
 
             configure_step.logs['request'] = [
