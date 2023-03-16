@@ -139,13 +139,11 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
                   '%s/%s' % (project_info.remote, branch)
               ])
               api.path.mock_add_paths(full_path.join(properties.test_filename))
-              if api.path.exists(full_path.join('PRESUBMIT.cfg')):
+              if (api.path.exists(full_path.join('PRESUBMIT.cfg')) or
+                  api.path.exists(full_path.join('PRESUBMIT.py'))):
                 api.step('repo presubmit', [
                     workpath.join('src/repohooks/pre-upload.py'), '--pre-submit'
                 ])
-              elif api.path.exists(full_path.join('PRESUBMIT.py')):
-                api.step('git cl presubmit',
-                         ['git', 'cl', 'presubmit', '--verbose'])
               else:
                 presentation.step_text = 'No PRESUBMIT file found.'
             # The branch isn't merged, so we have to use -D.
