@@ -466,6 +466,7 @@
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
   * [key_value_store:tests/parse](#recipes-key_value_store_tests_parse) (Python3 ✅)
+  * [key_value_store:tests/update_one_value](#recipes-key_value_store_tests_update_one_value) (Python3 ✅)
   * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) (Python3 ✅) &mdash; test_ensure_labpack.
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
@@ -7082,9 +7083,9 @@ Note: If you're designing a new data store, please use JSON rather than this
 format. This library is designed to work with legacy/external files where JSON
 isn't an option.
 
-#### **class [KeyValueStoreApi](/recipe_modules/key_value_store/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [KeyValueStoreApi](/recipe_modules/key_value_store/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [parse\_contents](/recipe_modules/key_value_store/api.py#50)(self, contents: str, source: str=''):**
+&mdash; **def [parse\_contents](/recipe_modules/key_value_store/api.py#57)(self, contents: str, source: str=''):**
 
 Return the contents of a key-value store interpreted as a dict.
 
@@ -7096,6 +7097,35 @@ Args:
 Returns:
   A dictionary of {key: value} containing the key-values from contents, in
   the order that the keys were found.
+
+&mdash; **def [update\_one\_value](/recipe_modules/key_value_store/api.py#133)(self, original_contents: str, key: str, new_value: str, append_if_missing: bool=False):**
+
+Update a single value in the contents of a key-value store.
+
+Right now, this function will not work if the existing value spans multiple
+lines. Implement that if it becomes necessary.
+
+Other lines, such as comments and newlines, will be preserved.
+
+Args:
+  original_contents: The complete contents of a key-value store file.
+  key: The key whose value will be updated.
+  new_value: The new value to set for the key.
+  append_if_missing: If True and the key is not in original_contents, then
+    the key and value will be appended to the file. If False and the key is
+    not in original_contents, then an exception will be raised.
+
+Returns:
+  A new string containing the contents of an updated key-value store, with
+    the key set to the new value.
+
+Raises:
+  StepFailure: If append_if_missing is False and the key is not found.
+  StepFailure: If the key is assigned multiple times in original_contents.
+  InfraFailure: If the key cannot be wrapped in single or double quotes.
+  InfraFailure: If the key's value in original_contents is multiline. If
+    you ever see this failure mode in production, consider implementing
+    multiline support!
 ### *recipe_modules* / [labpack](/recipe_modules/labpack)
 
 [DEPS](/recipe_modules/labpack/__init__.py#7): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12526,6 +12556,13 @@ Recipe to enforce go/kernel-upstream-tracking-process
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/key_value_store/tests/parse.py#31)(api: RecipeApi, contents: str, expected_json_str: str):**
+### *recipes* / [key\_value\_store:tests/update\_one\_value](/recipe_modules/key_value_store/tests/update_one_value.py)
+
+[DEPS](/recipe_modules/key_value_store/tests/update_one_value.py#11): [key\_value\_store](#recipe_modules-key_value_store), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/key_value_store/tests/update_one_value.py#28)(api: RecipeApi, original_contents: str, key: str, new_value: str, expected_new_contents: str, append_if_missing: bool):**
 ### *recipes* / [labpack:tests/test\_ensure\_labpack](/recipe_modules/labpack/tests/test_ensure_labpack.py)
 
 [DEPS](/recipe_modules/labpack/tests/test_ensure_labpack.py#16): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

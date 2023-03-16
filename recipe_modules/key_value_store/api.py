@@ -39,10 +39,17 @@ isn't an option.
 
 import collections
 import json
-from typing import Optional, OrderedDict
+import re
+from typing import List, Optional, OrderedDict
 
+from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+
+# Simple quote characters we'll use often, to avoid confusion like '"' vs. "'"
+SINGLE_QUOTE = "'"
+DOUBLE_QUOTE = '"'
+QUOTE_CHARS = (SINGLE_QUOTE, DOUBLE_QUOTE)
 
 
 class KeyValueStoreApi(RecipeApi):
@@ -60,7 +67,6 @@ class KeyValueStoreApi(RecipeApi):
       A dictionary of {key: value} containing the key-values from contents, in
       the order that the keys were found.
     """
-    QUOTE_CHARS = ('"', "'")
     step_name = 'parse key-value store'
     if source:
       step_name = f'{step_name} from {source}'
@@ -123,3 +129,85 @@ class KeyValueStoreApi(RecipeApi):
         raise StepFailure(f'Unterminated value (key={key}): {contents}.*')
       presentation.logs['parsed data'] = json.dumps(result, indent=4)
     return result
+
+  def update_one_value(self, original_contents: str, key: str, new_value: str,
+                       append_if_missing: bool = False) -> str:
+    """Update a single value in the contents of a key-value store.
+
+    Right now, this function will not work if the existing value spans multiple
+    lines. Implement that if it becomes necessary.
+
+    Other lines, such as comments and newlines, will be preserved.
+
+    Args:
+      original_contents: The complete contents of a key-value store file.
+      key: The key whose value will be updated.
+      new_value: The new value to set for the key.
+      append_if_missing: If True and the key is not in original_contents, then
+        the key and value will be appended to the file. If False and the key is
+        not in original_contents, then an exception will be raised.
+
+    Returns:
+      A new string containing the contents of an updated key-value store, with
+        the key set to the new value.
+
+    Raises:
+      StepFailure: If append_if_missing is False and the key is not found.
+      StepFailure: If the key is assigned multiple times in original_contents.
+      InfraFailure: If the key cannot be wrapped in single or double quotes.
+      InfraFailure: If the key's value in original_contents is multiline. If
+        you ever see this failure mode in production, consider implementing
+        multiline support!
+    """
+    with self.m.step.nest(f'update {key} in key-value store') as presentation:
+      # re_keyval finds the key=value.
+      # When applied to a single line, it only finds single-line values.
+      # When applied to the entire file, it can also detect multi-line values.
+      # We must compile with re.DOTALL in order to catch multi-line values;
+      # this should not be a problem for single-line values, since we'll only
+      # run it on individual lines when searching for single-line values.
+      re_keyval = re.compile(
+          rf'(?:\n|^)\s*{key}\s*=\s*(?P<quote>["\'])(?P<value>.*)(?P=quote)\s*(?:\n|$)',
+          re.DOTALL)
+      new_lines: List[str] = []
+      found = False
+
+      # Pre-make the new line that we'll eventually slot in.
+      quote_char: str
+      first_char, last_char = new_value[0], new_value[-1]
+      if (first_char in QUOTE_CHARS and last_char in QUOTE_CHARS and
+          first_char != last_char):
+        raise InfraFailure(
+            f'New value {new_value} is wrapped in mismatched quotes')
+      if DOUBLE_QUOTE in (first_char, last_char):
+        quote_char = SINGLE_QUOTE
+      else:
+        quote_char = DOUBLE_QUOTE
+      new_value_line = f'{key}={quote_char}{new_value}{quote_char}'
+
+      for old_line in original_contents.split('\n'):
+        m = re_keyval.match(old_line)
+        if not m:
+          new_lines.append(old_line)
+          continue
+        if found:
+          raise StepFailure(
+              f'Found key {key} multiple times in key-value store:\n{original_contents}'
+          )
+        found = True
+        old_value = m.group('value')
+        presentation.step_text = f'{old_value} -> {new_value}'
+        new_lines.append(new_value_line)
+      if not found:
+        multiline_match = re_keyval.search(original_contents)
+        if multiline_match:
+          raise InfraFailure(
+              f'Found multiline value for {key} in key-value store:\n{original_contents}'
+          )
+        if append_if_missing:
+          new_lines.append('')
+          new_lines.append(new_value_line)
+        else:
+          raise StepFailure(
+              f'Key-value store missing {key}: {original_contents}')
+      return '\n'.join(new_lines)
