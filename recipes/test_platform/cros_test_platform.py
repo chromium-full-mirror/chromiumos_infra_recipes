@@ -466,15 +466,14 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
     seed = request.test_plan.seed
     max_in_shard = 100
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
-    if suite_name.__contains__(
-        "tast-first-class-cq-experiment"):  # pragma: no cover
+    if suite_name.__contains__("tast-tags-test-suite"):  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
         if request.test_plan.tag_criteria.test_names[0] == "tast.arc.*":
           max_in_shard = 100
         elif request.test_plan.tag_criteria.test_names[0] == "tast.crostini.*":
-          max_in_shard = 50
+          max_in_shard = 40
       else:
-        max_in_shard = 150
+        max_in_shard = 225
     if seed is None or seed == 0:
       seed = int(api.time.time())
     step.presentation.logs["shard seed"] = json.dumps({"seed": seed},
