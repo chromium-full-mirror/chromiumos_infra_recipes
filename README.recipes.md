@@ -76,6 +76,7 @@
   * [gs_step_logging](#recipe_modules-gs_step_logging) (Python3 ✅) &mdash; APIs for logging step output to Google Storage.
   * [ipc](#recipe_modules-ipc) (Python3 ✅)
   * [iterutils](#recipe_modules-iterutils) (Python3 ✅)
+  * [key_value_store](#recipe_modules-key_value_store) (Python3 ✅) &mdash; Module to interact with key-value store files.
   * [labpack](#recipe_modules-labpack) (Python3 ✅)
   * [looks_for_green](#recipe_modules-looks_for_green) (Python3 ✅)
   * [manifest_doctor](#recipe_modules-manifest_doctor) (Python3 ✅) &mdash; API wrapping the manifest_doctor tool.
@@ -464,6 +465,7 @@
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
+  * [key_value_store:tests/parse](#recipes-key_value_store_tests_parse) (Python3 ✅)
   * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) (Python3 ✅) &mdash; test_ensure_labpack.
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
@@ -7041,6 +7043,59 @@ Returns the one item from iterable matching predicate.
 Raises:
   A ValueError with error_msg if iterable doesn't have exactly one item
   matching predicate.
+### *recipe_modules* / [key\_value\_store](/recipe_modules/key_value_store)
+
+[DEPS](/recipe_modules/key_value_store/__init__.py#6): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Module to interact with key-value store files.
+
+Key-value stores are used commonly by Chromite, including some locations in our
+codebase and in our Google Storage files.
+
+Key-value store files comprise a series of key="value" pairs, each on distinct
+lines. Values can span multiple lines; they end when they reach a line that ends
+with the same quote character (' or ") that started the value. Lines may be
+blank. Comments are lines beginning with "#". Any line may also begin with
+whitespace, and there may be whitespace surrounding the "=".
+
+Below is a sample valid key-value store.
+
+    # Copyright 2023 The ChromiumOS Authors
+    # Etc etc etc
+    simple_value_1="hello"
+        simple_value_2   =      'hello'
+    simple_value_3 = "I contain an internal quote (")!"
+
+    multiline_1 = "Hello,
+    world!"
+
+    multiline_2 = "Mismatched end quote: '
+    That didn't end the value because it didn't match the starting quote."
+
+    multiline_3 = "Check this one out...
+    not_really_a_value = 'Did I fool you?'
+    The above line wasn't parsed because it's part of a value."
+
+Note: If you're designing a new data store, please use JSON rather than this
+format. This library is designed to work with legacy/external files where JSON
+isn't an option.
+
+#### **class [KeyValueStoreApi](/recipe_modules/key_value_store/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [parse\_contents](/recipe_modules/key_value_store/api.py#50)(self, contents: str, source: str=''):**
+
+Return the contents of a key-value store interpreted as a dict.
+
+Args:
+  contents: The complete contents of the key-value store.
+  source: Optional string describing where the contents came from. If
+    provided, this will be included in the step name.
+
+Returns:
+  A dictionary of {key: value} containing the key-values from contents, in
+  the order that the keys were found.
 ### *recipe_modules* / [labpack](/recipe_modules/labpack)
 
 [DEPS](/recipe_modules/labpack/__init__.py#7): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10069,13 +10124,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_to_gs.py#18)(api):**
 ### *recipes* / [build\_sdk](/recipes/build_sdk.py)
 
-[DEPS](/recipes/build_sdk.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_sdk.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [key\_value\_store](#recipe_modules-key_value_store), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe that builds a ChromiumOS SDK and cross-compilers.
 
-&mdash; **def [RunSteps](/recipes/build_sdk.py#52)(api: RecipeApi, properties: BuildSDKProperties):**
+&mdash; **def [RunSteps](/recipes/build_sdk.py#54)(api: RecipeApi, properties: BuildSDKProperties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12464,6 +12519,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe to enforce go/kernel-upstream-tracking-process
 
 &mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#32)(api: RecipeApi):**
+### *recipes* / [key\_value\_store:tests/parse](/recipe_modules/key_value_store/tests/parse.py)
+
+[DEPS](/recipe_modules/key_value_store/tests/parse.py#15): [key\_value\_store](#recipe_modules-key_value_store), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/key_value_store/tests/parse.py#31)(api: RecipeApi, contents: str, expected_json_str: str):**
 ### *recipes* / [labpack:tests/test\_ensure\_labpack](/recipe_modules/labpack/tests/test_ensure_labpack.py)
 
 [DEPS](/recipe_modules/labpack/tests/test_ensure_labpack.py#16): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -23,12 +23,14 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/gsutil',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'key_value_store',
     'workspace_util',
 ]
 
@@ -77,6 +79,7 @@ class BuildSDKRun:
       if not self.m.build_menu.is_staging:
         self._upload_prebuilts()
         self._upload_sdk_tarball_and_manifest()
+        self._update_gs_latest_file()
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -233,6 +236,23 @@ class BuildSDKRun:
       manifest_dest_path = f'{tarball_dest_path}.Manifest'
       self.m.gsutil.upload(self._sdk_manifest_path, SDK_BUCKET,
                            manifest_dest_path)
+
+  def _update_gs_latest_file(self) -> None:
+    """Update the GS:// latest SDK file to point to the newly built SDK.
+
+    TODO(b/270142110): Implement this more fully. For now, just parse the file.
+    """
+    uri = f'gs://{SDK_BUCKET}/cros-sdk-latest'
+    contents = self.m.gsutil.cat(
+        uri, stdout=self.m.raw_io.output(),
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+            '# The most recent SDK that is tested and ready for use.\n'
+            'LATEST_SDK="2023.03.13.222421\n'
+            '\n'
+            '# The most recently built version. New uprev attempts should target this.\n'
+            '# Warning: This version may not be tested yet.\n'
+            'LATEST_SDK_UPREV_TARGET="2023.03.14.159265"')).stdout.decode()
+    self.m.key_value_store.parse_contents(contents, source='remote latest file')
 
   def _proto_path_to_str(self, path: common_pb2.Path) -> str:
     """Return an absolute (outside) path equivalent to the common_pb2.Path."""

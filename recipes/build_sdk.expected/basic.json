@@ -2540,6 +2540,31 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromiumos-sdk/cros-sdk-latest"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "gsutil cat"
+  },
+  {
+    "cmd": [],
+    "name": "parse key-value store from remote latest file",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@parsed data@{@@@",
+      "@@@STEP_LOG_LINE@parsed data@    \"LATEST_SDK\": \"2023.03.13.222421\\n\\n# The most recently built version. New uprev attempts should target this.\\n# Warning: This version may not be tested yet.\\nLATEST_SDK_UPREV_TARGET=\\\"2023.03.14.159265\"@@@",
+      "@@@STEP_LOG_LINE@parsed data@}@@@",
+      "@@@STEP_LOG_END@parsed data@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "clean up SDK chroot"
   },
