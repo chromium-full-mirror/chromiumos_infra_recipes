@@ -4214,39 +4214,6 @@
   },
   {
     "cmd": [],
-    "name": "build results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1 builds failed, 2 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results.arm-generic-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results.amd64-generic-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results.atlas-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "non-critical build check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@new non-critical builders@arm-generic-cq@@@",
@@ -13896,22 +13863,6 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.build results.cave-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "final build collect.non-critical build check",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -14131,38 +14082,6 @@
     "name": "final build collect (2).check build results.build results. (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect (2).build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect (2).build results.",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect (2).build results. (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect (2).build results. (3)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },

@@ -3921,13 +3921,6 @@
   },
   {
     "cmd": [],
-    "name": "build results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "non-critical build check"
   },
   {

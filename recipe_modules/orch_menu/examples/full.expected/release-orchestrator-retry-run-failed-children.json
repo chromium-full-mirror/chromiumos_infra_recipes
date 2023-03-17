@@ -2430,21 +2430,6 @@
   },
   {
     "cmd": [],
-    "name": "build results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results.",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/123@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "non-critical build check"
   },
   {
@@ -2558,22 +2543,6 @@
     "name": "(RETRY-MODE) previously successful builds.check build results.build results.",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "(RETRY-MODE) previously successful builds.build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "(RETRY-MODE) previously successful builds.build results.",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },

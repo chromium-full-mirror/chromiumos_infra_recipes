@@ -804,7 +804,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
     # non-critical.
-    failures = self.m.failures.get_build_results(builds).failures
     self._non_critical_build_check(
         check_critical_step_name or 'non-critical build check', builds,
         failures)

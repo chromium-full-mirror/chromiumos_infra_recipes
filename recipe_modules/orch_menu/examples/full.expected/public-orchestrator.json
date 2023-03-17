@@ -3470,21 +3470,6 @@
   },
   {
     "cmd": [],
-    "name": "build results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results.",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "non-critical build check"
   },
   {
