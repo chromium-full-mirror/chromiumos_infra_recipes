@@ -240,8 +240,19 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
   def create_uprev_cls(self, repo_projects: List[ProjectInfo],
                        open_changes: List[GerritChange], existing_cls: bool,
-                       policy: BranchPolicy, topic: str):
-    """Create appropriate CLs for the uprevs."""
+                       policy: BranchPolicy, topic: str) -> str:
+    """Create appropriate CLs for the uprevs.
+
+    Args:
+      repo_projects: The projects to create uprev CLs for.
+      open_changes: Open uprev CLs.
+      existing_cls: Whether any open CLs remain after abandoning.
+      policy: The branch policy set for the builder.
+      topic: Gerrit topic name added to the Changes managed by this builder.
+
+    Returns:
+      Human-readable summary of the operation.
+    """
     send_to_cq_policy = (
         policy.existing_cls_policy
         if existing_cls else policy.no_existing_cls_policy)
@@ -322,6 +333,15 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if send_to_cq_policy == SUBMIT:
         with self.m.step.nest('submit CL'):
           self.m.gerrit.submit_change(change)
+
+      def gerrit_url(c: GerritChange) -> str:
+        if c.host == 'chromium-review.googlesource.com':
+          return f'crrev/c/{c.change}'
+        if c.host == 'chrome-internal-review.googlesource.com':
+          return f'crrev/i/{c.change}'
+        return str(c.change)
+
+      return 'created ' + ','.join([f'{gerrit_url(c)}' for c in changes])
 
   def upload_new_patch_set(self, gerrit_patch_set: PatchSet,
                            message: Optional[str] = None):

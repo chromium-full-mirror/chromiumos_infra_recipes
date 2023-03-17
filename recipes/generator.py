@@ -280,10 +280,9 @@ class GeneratorRun:
           self.retry_only_run)
 
       if not self.retry_only_run:
-        self.m.pupr_gerrit_interface.create_uprev_cls(self._repo_projects,
-                                                      open_changes,
-                                                      do_open_cls_remain,
-                                                      self.policy, self.topic)
+        return self.m.pupr_gerrit_interface.create_uprev_cls(
+            self._repo_projects, open_changes, do_open_cls_remain, self.policy,
+            self.topic)
       return self.make_summary('success')
 
   def create_local_uprev(self) -> Optional[List[ProjectInfo]]:

@@ -8145,13 +8145,23 @@ A module to interface between PUpr builders and Gerrit.
 
 Initialize the module's attributes.
 
-&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#351)(self, open_changes: List[GerritChange], most_recent_uprev: List[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
+&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#371)(self, open_changes: List[GerritChange], most_recent_uprev: List[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
 
 Retry any open uprev CLs based on the retry policy.
 
 &mdash; **def [create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#241)(self, repo_projects: List[ProjectInfo], open_changes: List[GerritChange], existing_cls: bool, policy: BranchPolicy, topic: str):**
 
 Create appropriate CLs for the uprevs.
+
+Args:
+  repo_projects: The projects to create uprev CLs for.
+  open_changes: Open uprev CLs.
+  existing_cls: Whether any open CLs remain after abandoning.
+  policy: The branch policy set for the builder.
+  topic: Gerrit topic name added to the Changes managed by this builder.
+
+Returns:
+  Human-readable summary of the operation.
 
 &mdash; **def [find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#76)(self, projects_by_remote: ProjectsByRemote, topic: str):**
 
@@ -8179,7 +8189,7 @@ Args:
 Returns:
   A bool stating whether any open CLs remain after abandoning.
 
-&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#337)(self, patch_set: PatchSet, cq_label: int):**
+&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#357)(self, patch_set: PatchSet, cq_label: int):**
 
 Retry sending the CL through CQ by setting its Gerrit labels.
 
@@ -8198,7 +8208,7 @@ TODO(b/259445191): All of these attributes should be moved from
 
 Return a dict which sorts the given projects by their remote.
 
-&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#326)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
+&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#346)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
 
 Upload a new revision onto an existing Gerrit PatchSet.
 
@@ -13170,13 +13180,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#20)(api):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py)
 
-[DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#23): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#25): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Verify that create_uprev_cls() runs the expected process.
 
-&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#38)(api: recipe_api.RecipeApi, policy: any, existing_cls: bool, projects: int):**
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#41)(api: recipe_api.RecipeApi, policy: any, existing_cls: bool, projects: int):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py)
 
 [DEPS](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py#20): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

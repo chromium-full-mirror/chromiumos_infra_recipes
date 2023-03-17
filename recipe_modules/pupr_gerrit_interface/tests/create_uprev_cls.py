@@ -7,6 +7,8 @@
 
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
+from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipe_engine import result
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import DRY_RUN
@@ -21,6 +23,7 @@ from recipe_engine.recipe_api import Property
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/properties',
     'gerrit',
@@ -52,8 +55,9 @@ def RunSteps(api: recipe_api.RecipeApi, policy: any, existing_cls: bool,
       for i in range(1, projects + 1)
   ]
 
-  api.pupr_gerrit_interface.create_uprev_cls(path_, [], existing_cls,
-                                             branch_policy, 'a topic')
+  summary = api.pupr_gerrit_interface.create_uprev_cls(path_, [], existing_cls,
+                                                       branch_policy, 'a topic')
+  return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
@@ -135,4 +139,18 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
       api.post_check(post_process.MustRun, 'update CL labels.abandon CL 123'),
       api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'summary', api.properties(policy=FULL_RUN, projects=2, existing_cls=True),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://chromium-review.googlesource.com/c/project/+/123'),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project2',
+          'https://chrome-internal-review.googlesource.com/c/project/+/456'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.StatusSuccess),
+      api.post_process(post_process.SummaryMarkdown,
+                       'created crrev/c/123,crrev/i/456'),
       api.post_process(post_process.DropExpectation))
