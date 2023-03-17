@@ -250,6 +250,10 @@ class ChromeApi(recipe_api.RecipeApi):
     return False
 
   def is_chrome_pupr_atomic_uprev(self, gerrit_change):
+    # Check the host.
+    if gerrit_change.host == INTERNAL_GERRIT_HOST:
+      return False
+
     # Check the topic.
     topic = self.m.gerrit.get_change_topic(gerrit_change.change,
                                            gerrit_change.host,
