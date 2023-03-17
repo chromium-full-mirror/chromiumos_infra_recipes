@@ -31,6 +31,8 @@ from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
 
+INTERNAL_GERRIT_HOST = 'chrome-internal-review.googlesource.com'
+
 DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS = 10800  # 3 hrs.
 
 # This cache config is a slightly strange json format in that it needs the
@@ -329,6 +331,10 @@ class ChromeApi(recipe_api.RecipeApi):
     return False
 
   def is_chrome_pupr_atomic_uprev(self, gerrit_change: GerritChange) -> bool:
+    # Check the host.
+    if gerrit_change.host == INTERNAL_GERRIT_HOST:
+      return False
+
     # Check the topic.
     topic = self.m.gerrit.get_change_topic(gerrit_change.change,
                                            gerrit_change.host,

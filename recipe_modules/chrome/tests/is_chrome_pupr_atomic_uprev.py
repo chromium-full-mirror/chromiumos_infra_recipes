@@ -22,6 +22,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 GERRIT_HOST = 'gerrit.host.test'
+INTERNAL_GERRIT_HOST = 'chrome-internal-review.googlesource.com'
 CHANGE_NUM = 12345
 PROJECT_NAME = 'chromiumos/overlays/chromiumos-overlay'
 
@@ -30,11 +31,13 @@ PROPERTIES = {
         Property(
             help='Expected return value from is_chrome_pupr_atomic_uprev().',
             default=True),
+    'gerrit_host':
+        Property(help='The host for the gerrit change.', default=GERRIT_HOST),
 }
 
 
-def RunSteps(api, expected_result):
-  gerrit_changes = [GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)]
+def RunSteps(api, expected_result, gerrit_host):
+  gerrit_changes = [GerritChange(host=gerrit_host, change=CHANGE_NUM)]
 
   api.assertions.assertEqual(1, len(gerrit_changes))
 
@@ -66,6 +69,12 @@ def GenTests(api):
                   }
               },
           }),
+      api.post_process(post_process.StatusSuccess),
+  )
+
+  yield api.test(
+      'incorrect-host',
+      api.properties(expected_result=False, gerrit_host=INTERNAL_GERRIT_HOST),
       api.post_process(post_process.StatusSuccess),
   )
 
