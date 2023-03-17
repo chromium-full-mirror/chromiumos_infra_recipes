@@ -548,6 +548,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "109.0.5391.0"
     * lacros_version: Lacros browser version,
         e.g. "109.0.5391.0"
+    * suite: test suite,
+        e.g. "bluetooth_sa"
+    * builder_name: builder config name,
+        e.g. "eve-release"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -697,11 +701,23 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     base_tags.append(('logs_url', logs_url))
 
   # Fetches the following information from autotest keyvals.
-  # TODO(b/259613599): Consolidate autotest_keyval_file and autotest_keyval as
-  # the information in autotest_keyval_file should be a superset.
+  suite = autotest_keyval_file.get('suite')
+  if not suite:
+    # Fallback to Buildbucket tags because CFT test request doesn't populate
+    # `suite` in autotest_keyvals.
+    suite = api.cros_tags.get_values('suite')[0] if api.cros_tags.get_values(
+        'suite') else None
+  if suite:
+    base_tags.append(('suite', suite))
+
+  builder_name = autotest_keyval_file.get('build_config')
+  if builder_name:
+    base_tags.append(('builder_name', builder_name))
+
   branch = autotest_keyval_file.get('branch')
   if branch:
     base_tags.append(('branch', branch))
+
   main_builder_name = autotest_keyval_file.get('master_build_config')
   if main_builder_name:
     base_tags.append(('main_builder_name', main_builder_name))
@@ -763,19 +779,6 @@ def _generate_resultdb_variant_def(api, parent_request_uid,
     base_variant['test_config'] = test_config_display_name
 
   # Fetches the following information from the autotest.keyvals in the request.
-  suite = autotest_keyval_file.get('suite')
-  if not suite:
-    # Fallback to Buildbucket tags because CFT test request doesn't populate
-    # `suite` in autotest_keyvals.
-    suite = api.cros_tags.get_values('suite')[0] if api.cros_tags.get_values(
-        'suite') else None
-  if suite:
-    base_variant['suite'] = suite
-
-  builder_name = autotest_keyval_file.get('build_config')
-  if builder_name:
-    base_variant['builder_name'] = builder_name
-
   build_target = autotest_keyval_file.get('build_target')
   if build_target:
     base_variant['build_target'] = build_target

@@ -342,7 +342,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     # and retried task has "2" in suffix.
     return swarming_task_run_id[:-1] + "0"
 
-  def _generate_resultdb_base_tags(self, tag):
+  def _generate_resultdb_base_tags(self, tag, suite_name):
     """Generate the base tags for the test results.
 
     This function adds the following tags:
@@ -372,9 +372,12 @@ class TastResultsApi(recipe_api.RecipeApi):
           e.g. "ChromeOSSkylab"
       * kernel_version:
           e.g. "5.4.151-16902-g93699f4e73de"
+      * builder_name
+          e.g. reven-vmtest-cq
 
     Args:
       tag (str): Tag for this execution. Used to distinguish archive folders.
+      suite_name (str): Name of the whole test suite.
     Returns:
       base_tags (list[tuples]): Tags for the test results.
     """
@@ -411,6 +414,19 @@ class TastResultsApi(recipe_api.RecipeApi):
     if ancestor_buildbucket_ids:
       base_tags.append(('ancestor_buildbucket_ids', ancestor_buildbucket_ids))
 
+    # Fetches builder name from "artifactsGsPath" input property first and then
+    # fallback to the suite if required.
+    builder_name = None
+    if "buildPayload" in build.input.properties \
+      and "artifactsGsPath" in build.input.properties["buildPayload"]:
+      image = build.input.properties["buildPayload"]["artifactsGsPath"]
+      if image:
+        builder_name = image.split('/')[0]
+    if not builder_name:
+      builder_name = suite_name.split('.')[0] if suite_name else None
+    if builder_name:
+      base_tags.append(('builder_name', builder_name))
+
     # Fetches the following information from buildbucket.build.infra.swarming.
     suite_task_id = self._convert_to_task_request_id(
         build.infra.swarming.parent_run_id)
@@ -444,8 +460,6 @@ class TastResultsApi(recipe_api.RecipeApi):
     This function adds the following tags:
       * test_config:
           e.g. reven-vmtest-cq.tast_vm.tast_vm_default
-      * builder_name
-          e.g. reven-vmtest-cq
       * build_target:
           e.g. reven-vmtest
 
@@ -462,22 +476,6 @@ class TastResultsApi(recipe_api.RecipeApi):
     build_target = self.m.cros_infra_config.get_build_target_name()
     if build_target:
       base_variant['build_target'] = build_target
-
-    build = self.m.buildbucket.build
-
-    # Fetches builder name from "artifactsGsPath" input property first and then
-    # fallback to the suite if required.
-    builder_name = None
-    if "buildPayload" in build.input.properties \
-      and "artifactsGsPath" in build.input.properties["buildPayload"]:
-      image = build.input.properties["buildPayload"]["artifactsGsPath"]
-      if image:
-        builder_name = image.split('/')[0]
-    if not builder_name:
-      builder_name = suite_name.split('.')[0] if suite_name else None
-    if builder_name:
-      base_variant['builder_name'] = builder_name
-
     return base_variant
 
   def upload_to_resultdb(self, test_results_path, suite_name,
@@ -498,7 +496,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         'result_file': test_results_path.join('streamed_results.jsonl'),
         'artifact_directory': self.m.path.abspath(test_results_path),
         'base_variant': self._generate_resultdb_variant_def(suite_name),
-        'base_tags': self._generate_resultdb_base_tags(tag),
+        'base_tags': self._generate_resultdb_base_tags(tag, suite_name),
         'include': new_invocation,
     }
 
