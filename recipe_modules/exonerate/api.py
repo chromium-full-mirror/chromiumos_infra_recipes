@@ -334,14 +334,13 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return test_case
 
-  def exonerate_vm_testcases(self, all_test_cases, build_target, suite):
+  def exonerate_vm_testcases(self, all_test_cases, build_target):
     """Exonerates VM test cases based on configs.
 
     Args:
       all_test_cases([Dict with predefined keys]): Failed VM test_cases
         to be conditionally exonerated.
       build_target(str): build_target on which the test was executed.
-      suite(str): suite in which the test was executed.
 
     Returns: list of test cases modified based on configs and the new
       overall status(common_pb2.status).
@@ -358,8 +357,8 @@ class ExonerateApi(recipe_api.RecipeApi):
               # board == build_target for VM tests.
               board=build_target,
               build_target=build_target,
-              suite=suite,
-              test_config=f'{build_target}-cq.tast_vm.{suite}'))
+              suite='',
+              test_config=''))
       if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:
@@ -404,21 +403,20 @@ class ExonerateApi(recipe_api.RecipeApi):
           new_build = build_pb2.Build()
           new_build.CopyFrom(build)
           build_target = self.m.cros_infra_config.get_build_target_name(build)
-          suite = self.m.rdb_util.get_vm_suite(build.input.properties['name'])
           prop_struct = build.output.properties['failed_test_cases']
           all_test_cases = json_format.MessageToDict(prop_struct)
           new_test_cases, new_status = self.exonerate_vm_testcases(
-              all_test_cases, build_target, suite)
+              all_test_cases, build_target)
           new_build.status = new_status
           new_build.output.properties.update(
               {'failed_test_cases': new_test_cases})
           if new_status == common_pb2.SUCCESS:
-            suite_name = self.m.naming.get_vm_test_title(build)
-            link_text = '{}.{}'.format(build_target, suite_name)
+            display_name = self.m.naming.get_vm_test_title(build)
+            link_text = display_name
             self._exoneration_link_map[
                 link_text] = self.m.buildbucket.build_url(build_id=build.id)
-            exonerated_test_names.append(suite_name)
-            self._suite_stats_map[suite_name] += 1
+            exonerated_test_names.append(display_name)
+            self._suite_stats_map[display_name] += 1
             self._stats.suite_count += 1
           new_vm_builds.append(new_build)
 
@@ -472,17 +470,16 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: A dict that contains the test & variant info.
     """
-    return {
-        'testId': test_id,
-        'variant': {
-            'def': {
-                'board': board,
-                'build_target': build_target,
-                'suite': suite,
-                'test_config': test_config
-            }
-        }
-    }
+    # VM tests don't have suite and board info.
+    # test_config is on its way out. b/270366935
+    def_map = {'build_target': build_target}
+    if suite:
+      def_map['suite'] = suite
+    if board:
+      def_map['board'] = board
+    if test_config:
+      def_map['test_config'] = test_config
+    return {'testId': test_id, 'variant': {'def': def_map}}
 
   def get_consistent_failure_count_from_verdicts(
       self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]
