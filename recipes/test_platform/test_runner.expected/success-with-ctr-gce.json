@@ -888,22 +888,6 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to TKO",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
-      "@@@STEP_LOG_END@TKO upload skipped@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "execution steps.CrosToolRunner: upload to rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -921,6 +905,22 @@
     "name": "execution steps.CrosToolRunner: upload to rdb.exonerate ResultDB results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to TKO.tauto.dummy_id",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@TKO upload skipped@TKO upload skipped for test 'tauto.dummy_id' which is of test harness type 'None'. Only 'tauto' harness type is allowed for TKO upload.@@@",
+      "@@@STEP_LOG_END@TKO upload skipped@@@"
     ]
   },
   {

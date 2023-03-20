@@ -1238,20 +1238,22 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
   try:
     with api.context(deadline=deadline):
       try:
-        if result is not None and not result.prejob_response.is_failure():
-          interface.upload_to_tko(test_metadata, run_test_response)
-        archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                         result=result)
+        try:
+          archive_all_logs(api, interface=interface,
+                           test_metadata=test_metadata, result=result)
 
-        api.cts_results_archive.archive(
-            interface.get_results_directory(test_metadata))
+          api.cts_results_archive.archive(
+              interface.get_results_directory(test_metadata))
+        finally:
+          # We'd want to prioritize CTS artifact upload as much as possible
+          # since it would be fairly expensive to rerun CTS tests if it fails
+          # only on the upload step. Even though the GCS artifact upload fails,
+          # the ResultDB upload will still be executed.
+          _upload_to_resultdb(api, result, properties, interface, test_metadata)
+
+          if result is not None and not result.prejob_response.is_failure():
+            interface.upload_to_tko(test_metadata, run_test_response)
       finally:
-        # We'd want to prioritize CTS artifact upload as much as possible since
-        # it would be fairly expensive to rerun CTS tests if it fails only on
-        # the upload step. Even though the GCS artifact upload fails, the
-        # ResultDB upload will still be executed.
-        _upload_to_resultdb(api, result, properties, interface, test_metadata)
-
         interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
         publish_to_result_flow(api, properties.config,
@@ -1607,40 +1609,41 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
   # Upload results with context
   try:
     with api.context(deadline=deadline):
-      if (result_for_uploading is not None and
-          not result_for_uploading.prejob_response.any_provision_failed):
-        # TODO(b/246473902): Populate additional info to Tauto results for CFT
-        # MVP, e.g. timestamps, full test name. The logic would be added to
-        # crostoolrunner_interface.py and could be similar to the
-        # `_post_process_tauto_result()` method above.
+      try:
+        if (result_for_uploading is not None and
+            not result_for_uploading.prejob_response.any_provision_failed):
+          # TODO(b/246473902): Populate additional info to Tauto results for CFT
+          # MVP, e.g. timestamps, full test name. The logic would be added to
+          # crostoolrunner_interface.py and could be similar to the
+          # `_post_process_tauto_result()` method above.
 
-        # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
-        # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
-        # could be similar to the `_upload_incomplete_test_to_resultdb()` method
-        # above.
-        # If this builder is configured to be private-partner, we don't want to
-        # publish to the board-model realm
-        interface.upload_to_tko(test_metadata,
-                                result_for_uploading.test_responses)
-        interface.upload_to_rdb(test_metadata,
-                                result_for_uploading.test_responses,
-                                properties.common_config.partner_private)
+          # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
+          # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
+          # could be similar to the `_upload_incomplete_test_to_resultdb()` method
+          # above.
+          # If this builder is configured to be private-partner, we don't want to
+          # publish to the board-model realm
+          interface.upload_to_rdb(test_metadata,
+                                  result_for_uploading.test_responses,
+                                  properties.common_config.partner_private)
+          interface.upload_to_tko(test_metadata,
+                                  result_for_uploading.test_responses)
+      finally:
+        interface.submit_post_job()
+        archive_all_logs(api, interface=interface, test_metadata=test_metadata,
+                         result=result_for_uploading)
+        # TODO(b/252945582): Handle multiple test results if needed
+        if results_dir:
+          # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
+          # results. To align with that, we need to pass the directory
+          # .../cros-test/artifacts/tauto/, not its sub directory.
+          api.cts_results_archive.archive(os.path.dirname(results_dir))
 
-      interface.submit_post_job()
-      archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                       result=result_for_uploading)
-      # TODO(b/252945582): Handle multiple test results if needed
-      if results_dir:
-        # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
-        # results. To align with that, we need to pass the directory
-        # .../cros-test/artifacts/tauto/, not its sub directory.
-        api.cts_results_archive.archive(os.path.dirname(results_dir))
+        interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
-      interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
-
-      publish_to_result_flow(api, properties.config,
-                             properties.cft_test_request.parent_request_uid,
-                             should_poll_for_completion=True)
+        publish_to_result_flow(api, properties.config,
+                               properties.cft_test_request.parent_request_uid,
+                               should_poll_for_completion=True)
     # Set output properties whether or not we encounter a timeout. This is
     # required because CQ only reads results from output props and not
     # ResultsDB.
