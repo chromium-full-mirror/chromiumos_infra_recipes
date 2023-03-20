@@ -53,8 +53,6 @@ def GenTests(api):
       api.properties(expected_result=True),
       api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
                                  CHANGE_NUM),
-      api.repo.project_infos_step_data('apply gerrit patch sets',
-                                       [dict(project=PROJECT_NAME)]),
       api.step_data(
           'read git footers',
           stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
@@ -109,8 +107,6 @@ def GenTests(api):
       api.properties(expected_result=False),
       api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
                                  CHANGE_NUM),
-      api.repo.project_infos_step_data('apply gerrit patch sets',
-                                       [dict(project=PROJECT_NAME)]),
       api.step_data(
           'read git footers',
           stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),

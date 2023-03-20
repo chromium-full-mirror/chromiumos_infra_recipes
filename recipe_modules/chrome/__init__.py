@@ -18,7 +18,6 @@ DEPS = [
     'cros_infra_config',
     'cros_build_api',
     'cros_sdk',
-    'cros_source',
     'easy',
     'gerrit',
     'git_footers',

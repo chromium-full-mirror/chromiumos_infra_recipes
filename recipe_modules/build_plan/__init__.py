@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/step',
     'recipe_engine/swarming',
+    'chrome',
     'cros_infra_config',
     'cros_history',
     'cros_relevance',
