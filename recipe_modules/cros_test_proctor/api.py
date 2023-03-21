@@ -879,8 +879,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       The ExecuteResponses.tagged_response from the latest invocation.
     """
     previous_test_results = {}
-    if (self.m.cros_infra_config.is_staging and self.m.cq.active and
-        self.m.cros_history.is_retry()):
+    if (self.m.cq.active and self.m.skylab.direct_tast_testing_enabled()):
       _, test_task_ids = self.m.cros_history.get_previous_test_task_ids()
       # CQ only launches one cros_test_platform builder.
       if len(test_task_ids) == 1:

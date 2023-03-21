@@ -66,9 +66,9 @@ def GenTests(api):
 
   yield api.test(
       'elegible',
-      api.buildbucket.try_build(builder='staging-cq-orchestrator'),
+      api.buildbucket.try_build(
+          experiments=['chromeos.skylab.direct_tast_testing']),
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.cros_history.is_retry(True),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
           'find matching builds.buildbucket.search'),
