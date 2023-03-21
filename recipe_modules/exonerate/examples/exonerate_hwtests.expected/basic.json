@@ -121,7 +121,7 @@
     "cmd": [],
     "name": "Automated Exoneration Dry-run",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name', suite='bvt-cq', test_config='build_target_name-cq.hw.bvt-cq'), FailedTest(name='test2', board='target', build_target='build_target_name', suite='bvt-cq', test_config='build_target_name-cq.hw.bvt-cq'), FailedTest(name='test3', board='target', build_target='build_target_name', suite='bvt-cq', test_config='build_target_name-cq.hw.bvt-cq'), FailedTest(name='test5', board='target', build_target='build_target_name', suite='bvt-cq', test_config='build_target_name-cq.hw.bvt-cq'), FailedTest(name='test6', board='target', build_target='build_target_name', suite='bvt-cq', test_config='build_target_name-cq.hw.bvt-cq')]@@@",
+      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name', suite='bvt-cq', test_config=''), FailedTest(name='test2', board='target', build_target='build_target_name', suite='bvt-cq', test_config=''), FailedTest(name='test3', board='target', build_target='build_target_name', suite='bvt-cq', test_config=''), FailedTest(name='test5', board='target', build_target='build_target_name', suite='bvt-cq', test_config=''), FailedTest(name='test6', board='target', build_target='build_target_name', suite='bvt-cq', test_config='')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@"
     ]
   },

@@ -202,8 +202,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           continue
         self._failed_tests.add(
             FailedTest(name=test_case.name, board=board,
-                       build_target=build_target, suite=suite,
-                       test_config=f'{build_target}-cq.hw.{suite}'))
+                       build_target=build_target, suite=suite, test_config=''))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -458,7 +457,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     return md_string
 
   def get_test_variant_dict(self, test_id: str, board: str, build_target: str,
-                            suite: str, test_config: str) -> dict:
+                            suite: str) -> dict:
     """Create test_variant dict for LUCI Analysis from inputs.
 
     Args:
@@ -466,19 +465,16 @@ class ExonerateApi(recipe_api.RecipeApi):
       board: Name of the board.
       build_target: Name of the build_target.
       suite: Name of the suite.
-      test_config: test_config of the test.
 
     Returns: A dict that contains the test & variant info.
     """
     # VM tests don't have suite and board info.
-    # test_config is on its way out. b/270366935
+    # test_config is out. b/270366935
     def_map = {'build_target': build_target}
     if suite:
       def_map['suite'] = suite
     if board:
       def_map['board'] = board
-    if test_config:
-      def_map['test_config'] = test_config
     return {'testId': test_id, 'variant': {'def': def_map}}
 
   def get_consistent_failure_count_from_verdicts(
@@ -535,8 +531,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           test_variant_list.append(
               self.get_test_variant_dict(test_id=test.name, board=test.board,
                                          build_target=test.build_target,
-                                         suite=test.suite,
-                                         test_config=test.test_config))
+                                         suite=test.suite))
         # TODO(b/272052840): See if we need to skip auto exoneration.
 
         failure_rates = self.m.luci_analysis.query_failure_rate(
