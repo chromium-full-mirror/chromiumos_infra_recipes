@@ -9355,7 +9355,7 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#519)(self, vm_test_build: Build):**
+&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#512)(self, vm_test_build: Build):**
 
 Returns the failed test names from the output properties of the build.
 
@@ -9402,7 +9402,7 @@ Print system logs to MILO.
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#481)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#474)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
 
 Upload the test results to ResultDB.
 

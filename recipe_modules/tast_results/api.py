@@ -454,24 +454,17 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     return base_tags
 
-  def _generate_resultdb_variant_def(self, suite_name):
+  def _generate_resultdb_variant_def(self):
     """Generate the variant defintions for the test results.
 
     This function adds the following tags:
-      * test_config:
-          e.g. reven-vmtest-cq.tast_vm.tast_vm_default
       * build_target:
           e.g. reven-vmtest
-
-    Args:
-      suite_name (str): Name of the whole test suite.
 
     Returns:
       base_variant (dict): Variant attributes for the test results.
     """
-    base_variant = {
-        'test_config': self.m.rdb_util.get_shardless_test_config(suite_name),
-    }
+    base_variant = {}
 
     build_target = self.m.cros_infra_config.get_build_target_name()
     if build_target:
@@ -495,7 +488,7 @@ class TastResultsApi(recipe_api.RecipeApi):
         'result_format': 'tast',
         'result_file': test_results_path.join('streamed_results.jsonl'),
         'artifact_directory': self.m.path.abspath(test_results_path),
-        'base_variant': self._generate_resultdb_variant_def(suite_name),
+        'base_variant': self._generate_resultdb_variant_def(),
         'base_tags': self._generate_resultdb_base_tags(tag, suite_name),
         'include': new_invocation,
     }
