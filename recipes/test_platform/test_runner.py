@@ -746,13 +746,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   return base_tags
 
 
-def _generate_resultdb_variant_def(api, parent_request_uid,
-                                   autotest_keyval_file):
+def _generate_resultdb_variant_def(api, autotest_keyval_file):
   """Generate the variant defintions for the test results.
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
-    * parent_request_uid (str): parent request uid.
     * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
 
     Returns:
@@ -768,15 +766,6 @@ def _generate_resultdb_variant_def(api, parent_request_uid,
   model = api.cros_tags.get_values('label-model')
   if model:
     base_variant['model'] = model[0]
-
-  # The template of a parent_request_uid is
-  # "TestPlanRuns/{ctp buildbucket id}/{tagged_request key}" where the
-  # tagged_request key is the test config's display_name in
-  # the GenerateTestPlanResponse. See http://shortn/_oPSae8w6Xc for more info.
-  test_config_display_name = (
-      parent_request_uid.split('/')[-1] if parent_request_uid else '')
-  if test_config_display_name:
-    base_variant['test_config'] = test_config_display_name
 
   # Fetches the following information from the autotest.keyvals in the request.
   build_target = autotest_keyval_file.get('build_target')
@@ -1070,8 +1059,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                         'uname')
     kernel_version = _read_kernel_version(api, kernel_log_file_path)
 
-  base_variant = _generate_resultdb_variant_def(
-      api, properties.request.parent_request_uid, autotest_keyval_file)
+  base_variant = _generate_resultdb_variant_def(api, autotest_keyval_file)
   base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
                                            autotest_keyval_file,
                                            crossystem_keyvals, kernel_version,
@@ -1549,8 +1537,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
           api, properties, test_metadata, autotest_keyval_file,
           crossystem_keyvals, kernel_version, cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
-          api, properties.cft_test_request.parent_request_uid,
-          autotest_keyval_file)
+          api, autotest_keyval_file)
 
     # Result for uploading
     result_for_uploading = interface.parse_test_results(test_metadata)
