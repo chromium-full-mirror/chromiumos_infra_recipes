@@ -350,7 +350,7 @@ class FailuresApi(RecipeApi):
 
     if 'hw test' in failures_by_kind:
       summary_lines.append('')
-      summary_lines.append('📢: If this CQ attempted failed on an unrelated test, '
+      summary_lines.append('📢: If this CQ attempt failed on an unrelated test, '
                            'please read go/chromeos-cq-customization-psa')
 
     summary_markdown = self._format_summary_markdown(summary_lines)

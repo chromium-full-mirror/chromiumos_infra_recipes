@@ -13022,7 +13022,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:\n\n\n\n\ud83d\udce2: If this CQ attempted failed on an unrelated test, please read go/chromeos-cq-customization-psa"
+      "humanReason": "3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:\n\n- htarget.hw.bvt-inline:\n\n- htarget.hw.some-other-suite:\n\n\n\n\ud83d\udce2: If this CQ attempt failed on an unrelated test, please read go/chromeos-cq-customization-psa"
     },
     "name": "$result"
   }
