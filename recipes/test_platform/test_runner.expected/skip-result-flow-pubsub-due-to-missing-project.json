@@ -689,6 +689,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -712,9 +719,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read autotest keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read autotest keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@keyval@@@"
     ]
   },
@@ -742,9 +749,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.write skylab_test_runner result",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.write skylab_test_runner result",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@{@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"autotest_result\": {},@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
@@ -782,9 +789,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read crossystem keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read crossystem keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
@@ -812,9 +819,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read kernel log file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read kernel log file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@uname@@@"
     ]
   },
@@ -842,17 +849,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test results from test_runner_result.json",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read test results from test_runner_result.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@test_runner_result.json@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.exonerate ResultDB results",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.exonerate ResultDB results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

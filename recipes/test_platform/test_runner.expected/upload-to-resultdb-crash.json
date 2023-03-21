@@ -805,6 +805,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -828,9 +836,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read autotest keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read autotest keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@keyval@@@"
     ]
   },
@@ -858,9 +866,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read crossystem keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read crossystem keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
@@ -888,9 +896,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read kernel log file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read kernel log file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@uname@@@"
     ]
   },
@@ -918,9 +926,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test results from streamed_results.jsonl",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read test results from streamed_results.jsonl",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@{@@@",
       "@@@STEP_LOG_LINE@streamed_results.jsonl@   \"name\":\"crostini.SSHFSMount.bullseye_stable\",@@@",
@@ -958,9 +966,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/autoserv_test\", @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
@@ -1023,9 +1031,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.ensure result_adapter",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1054,9 +1062,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1124,17 +1132,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload test results to rdb.run rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.run rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.exonerate ResultDB results",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.exonerate ResultDB results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

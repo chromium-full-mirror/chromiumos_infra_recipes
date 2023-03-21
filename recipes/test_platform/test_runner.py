@@ -85,6 +85,7 @@ _PROVISION_DEADLINE = 45 * MINUTE
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
 
+RESULTDB_UPLOAD_STEP = 'Phosphorus: upload to resultdb'
 
 # API STEP HELPERS
 def s_log(step, name, log):
@@ -947,152 +948,156 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
     """
-  if not api.resultdb.enabled:
-    return
+  with api.step.nest(RESULTDB_UPLOAD_STEP) as step:
+    if not api.resultdb.enabled:
+      s_log(step, 'logging.warning',
+            'The resultdb upload is not enabled in this builder.')
+      return
 
-  # Don't try to upload if there are no results.
-  if not result:
-    return
+    # Don't try to upload if there are no results.
+    if not result:
+      s_log(step, 'logging.info', 'No test result to upload.')
+      return
 
-  # Autotest keyval file is created after test execution `interface.run_test()`
-  # is done, so the file needs to be read after test execution.
-  base_dir = interface.get_results_directory(test_metadata)
-  autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
+    # Autotest keyval file is created after test execution `interface.run_test()`
+    # is done, so the file needs to be read after test execution.
+    base_dir = interface.get_results_directory(test_metadata)
+    autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
 
-  # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
-  if (test_metadata.test.autotest.test_args and
-      'resultdb_settings' in test_metadata.test.autotest.test_args):
-    # Extract rdb config from test args.
-    config = api.cros_resultdb.extract_chromium_resultdb_settings(
-        test_metadata.test.autotest.test_args)
-    pres = api.step.active_result.presentation
-    pres.logs['extracted configs from test_args'] = api.json.dumps(
-        config, indent=4)
+    # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
+    if (test_metadata.test.autotest.test_args and
+        'resultdb_settings' in test_metadata.test.autotest.test_args):
+      # Extract rdb config from test args.
+      config = api.cros_resultdb.extract_chromium_resultdb_settings(
+          test_metadata.test.autotest.test_args)
+      pres = api.step.active_result.presentation
+      pres.logs['extracted configs from test_args'] = api.json.dumps(
+          config, indent=4)
 
-    # Modify extracted configs if necessary.
-    result_format = config.get('result_format')
-    artifact_directory = config.get('artifact_directory')
-    if result_format in {'tast', 'gtest', 'native'}:
-      config['result_file'] = api.cros_resultdb.get_drone_result_file(
-          base_dir, result_format,
-          autotest_name=test_metadata.test.autotest.name)
-      config[
-          'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
-              base_dir, result_format, artifact_directory)
+      # Modify extracted configs if necessary.
+      result_format = config.get('result_format')
+      artifact_directory = config.get('artifact_directory')
+      if result_format in {'tast', 'gtest', 'native'}:
+        config['result_file'] = api.cros_resultdb.get_drone_result_file(
+            base_dir, result_format,
+            autotest_name=test_metadata.test.autotest.name)
+        config[
+            'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
+                base_dir, result_format, artifact_directory)
 
-    # Upload to rdb using extracted configs.
-    api.cros_resultdb.upload(config,
-                             step_name='upload chromium test results to rdb')
-    # Uploads incomplete test result for browser tests running with Tauto and Tast
-    _upload_incomplete_test_to_resultdb(api, test_metadata, result,
-                                        autotest_keyval_file,
-                                        config.get('base_variant'),
-                                        config.get('base_tag'))
-    _upload_missing_tast_results(api, config.get('base_variant'),
-                                 config.get('base_tag'), autotest_keyval_file)
-    return
+      # Upload to rdb using extracted configs.
+      api.cros_resultdb.upload(config,
+                               step_name='upload chromium test results to rdb')
+      # Uploads incomplete test result for browser tests running with Tauto and Tast
+      _upload_incomplete_test_to_resultdb(api, test_metadata, result,
+                                          autotest_keyval_file,
+                                          config.get('base_variant'),
+                                          config.get('base_tag'))
+      _upload_missing_tast_results(api, config.get('base_variant'),
+                                   config.get('base_tag'), autotest_keyval_file)
+      return
 
-  first_test_case_name = ''
-  tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
-  is_tast_result = os.path.exists(tast_results_dir) or api.properties.get(
-      'result_format') == 'tast'
-  if is_tast_result:
-    result_format = 'tast'
-    result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
-    artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
-        base_dir, result_format)
-  else:
-    # Initializes a new autotest result proto with required fields instead of
-    # modifying the original DUT result object directly.
-    autotest_result = Result(autotest_result=result.data.autotest_result,
-                             log_data=result.data.log_data,
-                             prejob=result.data.prejob,
-                             state_update=result.data.state_update)
+    first_test_case_name = ''
+    tast_results_dir = os.path.join(base_dir, 'autoserv_test/tast')
+    is_tast_result = os.path.exists(tast_results_dir) or api.properties.get(
+        'result_format') == 'tast'
+    if is_tast_result:
+      result_format = 'tast'
+      result_file = api.cros_resultdb.get_drone_result_file(base_dir, 'tast')
+      artifact_directory = api.cros_resultdb.get_drone_artifact_directory(
+          base_dir, result_format)
+    else:
+      # Initializes a new autotest result proto with required fields instead of
+      # modifying the original DUT result object directly.
+      autotest_result = Result(autotest_result=result.data.autotest_result,
+                               log_data=result.data.log_data,
+                               prejob=result.data.prejob,
+                               state_update=result.data.state_update)
 
-    # Populates additional info for autotest results that are required by
-    # ResultDB upload.
-    autotest_result = _populate_additional_info_for_autotest_result(
-        test_metadata, autotest_result, autotest_keyval_file)
+      # Populates additional info for autotest results that are required by
+      # ResultDB upload.
+      autotest_result = _populate_additional_info_for_autotest_result(
+          test_metadata, autotest_result, autotest_keyval_file)
 
-    # Writes the result to a file which can be parsed by result_adapter.
-    temp_dir = api.path.mkdtemp()
-    test_runner_result_file = temp_dir.join('test_runner_result.json')
-    api.file.write_proto('write skylab_test_runner result',
-                         test_runner_result_file, autotest_result, 'JSONPB')
-    result_format = 'skylab-test-runner'
-    result_file = test_runner_result_file
-    artifact_directory = None
+      # Writes the result to a file which can be parsed by result_adapter.
+      temp_dir = api.path.mkdtemp()
+      test_runner_result_file = temp_dir.join('test_runner_result.json')
+      api.file.write_proto('write skylab_test_runner result',
+                           test_runner_result_file, autotest_result, 'JSONPB')
+      result_format = 'skylab-test-runner'
+      result_file = test_runner_result_file
+      artifact_directory = None
 
-    # Gets the initial test name from the first test case in the iniital result
-    # instead of the full test name from the first test case in the modified
-    # autotest_result. That's becaise the upstream is still using the initial
-    # test name to construct the log artifact directory.
-    # The first_test_case_name will be used to read log files below.
-    # Context: b/238706967
-    for test_case in result.data.autotest_result.test_cases:
-      first_test_case_name = test_case.name
-      break
+      # Gets the initial test name from the first test case in the iniital result
+      # instead of the full test name from the first test case in the modified
+      # autotest_result. That's becaise the upstream is still using the initial
+      # test name to construct the log artifact directory.
+      # The first_test_case_name will be used to read log files below.
+      # Context: b/238706967
+      for test_case in result.data.autotest_result.test_cases:
+        first_test_case_name = test_case.name
+        break
 
-  # Fetches rich information from log artifacts.
-  # Fallback to the autotest keyval in the input test metadata.
-  if not autotest_keyval_file or len(autotest_keyval_file) == 0:
-    autotest_keyval_file = test_metadata.test.autotest.keyvals
-  # For Tauto, read files from the parent result dir and then the first test
-  # case dir if files don't exist because some files might be missing in the
-  # parent result dir or in the first test case dir. Thus, we will need to read
-  # both places for the worst case.
-  # For Tast, read files from the parent result dir only.
-  crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
-                                      'crossystem')
-  crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-  if crossystem_keyvals is None and first_test_case_name:
-    crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
-                                        first_test_case_name, 'sysinfo',
+    # Fetches rich information from log artifacts.
+    # Fallback to the autotest keyval in the input test metadata.
+    if not autotest_keyval_file or len(autotest_keyval_file) == 0:
+      autotest_keyval_file = test_metadata.test.autotest.keyvals
+    # For Tauto, read files from the parent result dir and then the first test
+    # case dir if files don't exist because some files might be missing in the
+    # parent result dir or in the first test case dir. Thus, we will need to read
+    # both places for the worst case.
+    # For Tast, read files from the parent result dir only.
+    crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                         'crossystem')
     crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-  kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
-                                      'uname')
-  kernel_version = _read_kernel_version(api, kernel_log_file_path)
-  if kernel_version is None and first_test_case_name:
-    kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
-                                        first_test_case_name, 'sysinfo',
+    if crossystem_keyvals is None and first_test_case_name:
+      crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
+                                          first_test_case_name, 'sysinfo',
+                                          'crossystem')
+      crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
+    kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
                                         'uname')
     kernel_version = _read_kernel_version(api, kernel_log_file_path)
+    if kernel_version is None and first_test_case_name:
+      kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
+                                          first_test_case_name, 'sysinfo',
+                                          'uname')
+      kernel_version = _read_kernel_version(api, kernel_log_file_path)
 
-  base_variant = _generate_resultdb_variant_def(api, autotest_keyval_file)
-  base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
-                                           autotest_keyval_file,
-                                           crossystem_keyvals, kernel_version,
-                                           cft_is_enabled=False)
-  config = {
-      'result_format': result_format,
-      'base_variant': base_variant,
-      'base_tags': base_tags,
-      'result_file': result_file,
-      'artifact_directory': artifact_directory,
-  }
+    base_variant = _generate_resultdb_variant_def(api, autotest_keyval_file)
+    base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
+                                             autotest_keyval_file,
+                                             crossystem_keyvals, kernel_version,
+                                             cft_is_enabled=False)
+    config = {
+        'result_format': result_format,
+        'base_variant': base_variant,
+        'base_tags': base_tags,
+        'result_file': result_file,
+        'artifact_directory': artifact_directory,
+    }
 
-  # Uploads test results to ResultDB only when the test result file exists.
-  result_file_content = _read_test_result_file(api, result_file)
-  if result_file_content:
-    api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
-                             str(result.get_testhaus_log_url()))
+    # Uploads test results to ResultDB only when the test result file exists.
+    result_file_content = _read_test_result_file(api, result_file)
+    if result_file_content:
+      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
+                               str(result.get_testhaus_log_url()))
 
-  # Uploads an additional Autotest wrapper result for Tast test.
-  if is_tast_result:
-    _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
-                                             autotest_keyval_file, base_variant,
-                                             base_tags)
+    # Uploads an additional Autotest wrapper result for Tast test.
+    if is_tast_result:
+      _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
+                                               autotest_keyval_file,
+                                               base_variant, base_tags)
 
-  # Uploads incomplete test result for both Tauto and Tast.
-  _upload_incomplete_test_to_resultdb(api, test_metadata, result,
-                                      autotest_keyval_file, base_variant,
-                                      base_tags)
-  _upload_missing_tast_results(api, base_variant, base_tags,
-                               autotest_keyval_file)
-  api.cros_resultdb.apply_exonerations(
-      [api.cros_resultdb.current_invocation_id],
-      properties.request.default_test_execution_behavior)
+    # Uploads incomplete test result for both Tauto and Tast.
+    _upload_incomplete_test_to_resultdb(api, test_metadata, result,
+                                        autotest_keyval_file, base_variant,
+                                        base_tags)
+    _upload_missing_tast_results(api, base_variant, base_tags,
+                                 autotest_keyval_file)
+    api.cros_resultdb.apply_exonerations(
+        [api.cros_resultdb.current_invocation_id],
+        properties.request.default_test_execution_behavior)
 
 
 def _execution_steps_for_test_with_phosphorus(api, properties, interface,
@@ -1903,7 +1908,8 @@ def GenTests(api):
 
   def _autotest_keyval_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read autotest keyval file',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read autotest keyval file',
         api.file.read_text("""
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
@@ -1932,7 +1938,8 @@ tast_missing_test.3=bar.YetAnotherTest
 
   def _autotest_keyval_file_step_data_no_timestamps():
     return api.step_data(
-        'execution steps.original_test.read autotest keyval file',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read autotest keyval file',
         api.file.read_text("""
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
@@ -1956,7 +1963,8 @@ tast_missing_test.3=bar.YetAnotherTest
 
   def _crossystem_keyval_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read crossystem keyval file',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read crossystem keyval file',
         api.file.read_text("""
 fw_prev_result          = success                        # [RO/str] Firmware result of previous boot
 fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)
@@ -1974,14 +1982,16 @@ ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only fi
 
   def _kernel_log_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read kernel log file',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read kernel log file',
         api.file.read_text("""
 Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
   """))
 
   def _tast_test_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test results from streamed_results.jsonl',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read test results from streamed_results.jsonl',
         api.file.read_text("""
 {
    "name":"crostini.SSHFSMount.bullseye_stable",
@@ -2017,7 +2027,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _tauto_test_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test results from test_runner_result.json',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read test results from test_runner_result.json',
         api.file.read_text("""
 {
   "autotest_result": {
@@ -2049,7 +2060,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _autotest_wrapper_tast_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test results from autotest_wrapper_tast_result.json',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read test results from autotest_wrapper_tast_result.json',
         api.file.read_text("""
 {
   "autotest_result": {
@@ -2081,7 +2093,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _incomplete_test_result_file_step_data():
     return api.step_data(
-        'execution steps.original_test.read test results from incomplete_test_result.json',
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read test results from incomplete_test_result.json',
         api.file.read_text("""
 {
   "autotest_result": {
@@ -2493,8 +2506,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _successful_resultdb_upload_step():
     return api.post_process(
-        post_process.MustRun,
-        'execution steps.original_test.upload test results to rdb.run rdb')
+        post_process.MustRun, 'execution steps.original_test.' +
+        RESULTDB_UPLOAD_STEP + '.upload test results to rdb.run rdb')
 
   ######## CFT MVP Testing related functions ############
 
@@ -2783,8 +2796,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-wifi_chip': 'marvell',
           }),
       api.properties(result_format='tast'),
-      api.step_data('execution steps.original_test.read autotest keyval file',
-                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read autotest keyval file',
+          api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       # Sets Tast test name in the test request for Autotest wrapper result
       # upload.
@@ -2818,8 +2833,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
-      api.step_data('execution steps.original_test.read crossystem keyval file',
-                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read crossystem keyval file',
+          api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
           TestExecutionBehavior.NON_CRITICAL),
@@ -2861,10 +2878,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                               verdict=Result.Autotest.TestCase.VERDICT_PASS),
                       ]),
                   )))),
-      api.step_data('execution steps.original_test.read crossystem keyval file',
-                    api.file.read_text(errno_name='file does not exist')),
       api.step_data(
-          'execution steps.original_test.read crossystem keyval file (2)',
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read crossystem keyval file',
+          api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read crossystem keyval file (2)',
           api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
@@ -2895,8 +2915,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
           }),
-      api.step_data('execution steps.original_test.read kernel log file',
-                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read kernel log file',
+          api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
           TestExecutionBehavior.NON_CRITICAL),
@@ -2938,10 +2960,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                               verdict=Result.Autotest.TestCase.VERDICT_PASS),
                       ]),
                   )))),
-      api.step_data('execution steps.original_test.read kernel log file',
-                    api.file.read_text(errno_name='file does not exist')),
-      api.step_data('execution steps.original_test.read kernel log file (2)',
-                    api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read kernel log file',
+          api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read kernel log file (2)',
+          api.file.read_text(errno_name='file does not exist')),
       _misc_properties(),
       _request_properties_with_test_exec_behavior(
           TestExecutionBehavior.NON_CRITICAL),
@@ -2980,11 +3006,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       api.step_data(
-          'execution steps.original_test.read test results from test_runner_result.json',
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read test results from test_runner_result.json',
           api.file.read_text(errno_name='file does not exist')),
       api.post_process(
-          post_process.DoesNotRun,
-          'execution steps.original_test.upload test results to rdb.run rdb'),
+          post_process.DoesNotRun, 'execution steps.original_test.' +
+          RESULTDB_UPLOAD_STEP + '.upload test results to rdb.run rdb'),
   )
 
   yield api.test(
@@ -3500,8 +3527,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.properties(result_format='tast'),
       _tast_test_result_file_step_data(),
       api.step_data(
-          'execution steps.original_test.upload test results to rdb.run rdb',
-          retcode=1),
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.upload test results to rdb.run rdb', retcode=1),
       # The resultdb upload failure above won't block the following steps.
       api.post_process(
           post_process.MustRun,
@@ -3525,7 +3552,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _tast_test_result_file_step_data(),
       _mock_autotest_wrapper_tast_result(),
       api.step_data(
-          'execution steps.original_test.read test results from autotest_wrapper_tast_result.json',
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read test results from autotest_wrapper_tast_result.json',
           retcode=1),
       # The autotest wrapper result rdb upload failure above won't block the
       # following steps.
@@ -3559,8 +3587,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                       ]))))),
       _autotest_keyval_file_step_data(),
       api.step_data(
-          'execution steps.original_test.read test results from incomplete_test_result.json',
-          retcode=1),
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read test results from incomplete_test_result.json', retcode=1),
       # The incomplete result rdb upload failure above won't block the
       # following steps.
       api.post_process(
@@ -3794,7 +3822,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       api.post_process(
           post_process.StepCommandContains,
-          'execution steps.original_test.upload chromium test results '
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.upload chromium test results '
           'to rdb.run rdb',
           [
               '[START_DIR]/cipd/result_adapter/result_adapter',
@@ -3806,8 +3835,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           ],
       ),
       api.post_process(
-          post_process.MustRun,
-          'execution steps.original_test.upload chromium test results to rdb.'
+          post_process.MustRun, 'execution steps.original_test.' +
+          RESULTDB_UPLOAD_STEP + '.upload chromium test results to rdb.'
           'run rdb'),
   )
 
@@ -3823,11 +3852,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_fetch_crashes_step(),
       _successful_logs_archive_step(),
       api.step_data(
-          'execution steps.original_test.upload chromium test results '
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.upload chromium test results '
           'to rdb.run rdb', retcode=1),
       api.post_process(
           post_process.StepFailure, 'execution steps.'
-          'original_test.upload chromium test results to rdb'),
+          'original_test.' + RESULTDB_UPLOAD_STEP +
+          '.upload chromium test results to rdb'),
       api.post_process(
           post_process.MustRun,
           'execution steps.Phosphorus: remove autotest results dir'),

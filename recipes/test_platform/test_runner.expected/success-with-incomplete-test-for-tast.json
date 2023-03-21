@@ -815,6 +815,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -838,9 +845,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read autotest keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read autotest keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@keyval@@@@",
       "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
       "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
@@ -893,9 +900,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read crossystem keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read crossystem keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@crossystem@@@"
     ]
   },
@@ -923,9 +930,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read kernel log file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read kernel log file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@uname@@@"
     ]
   },
@@ -953,9 +960,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test results from streamed_results.jsonl",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read test results from streamed_results.jsonl",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@streamed_results.jsonl@@@"
     ]
   },
@@ -983,9 +990,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.write incomplete test result",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.write incomplete test result",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@{@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"autotest_result\": {@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@    \"incomplete\": true,@@@",
@@ -1042,9 +1049,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read test results from incomplete_test_result.json",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read test results from incomplete_test_result.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@{@@@",
       "@@@STEP_LOG_LINE@incomplete_test_result.json@  \"autotest_result\": {@@@",
@@ -1079,9 +1086,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": null, @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
@@ -1167,9 +1174,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.ensure result_adapter",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1198,9 +1205,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1282,9 +1289,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload test results to rdb.run rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload test results to rdb.run rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1308,10 +1315,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload missing test cases (count: 4)",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload missing test cases (count: 4)",
     "stdin": "{\"invocation\": \"invocations/build:42\", \"requests\": [{\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"declared_name\", \"value\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/tast.login_LoginSuccess\"}, {\"key\": \"board\", \"value\": \"fake-board\"}, {\"key\": \"model\", \"value\": \"fake-model\"}, {\"key\": \"multiduts\", \"value\": \"False\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"task_id\", \"value\": \"dummy-task-id0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/test_runner/test_runner\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"image\", \"value\": \"guybrush-release/R105-14989.97.0\"}, {\"key\": \"build\", \"value\": \"R105-14989.97.0\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"}, {\"key\": \"suite\", \"value\": \"sweet-cq\"}, {\"key\": \"builder_name\", \"value\": \"eve-release\"}, {\"key\": \"branch\", \"value\": \"main\"}, {\"key\": \"main_builder_name\", \"value\": \"master-release\"}, {\"key\": \"ash_version\", \"value\": \"109.0.5391.0\"}, {\"key\": \"lacros_version\", \"value\": \"109.0.5391.0\"}], \"testId\": \"tast.foo.SomeTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"target\", \"model\": \"fake-model\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"declared_name\", \"value\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/tast.login_LoginSuccess\"}, {\"key\": \"board\", \"value\": \"fake-board\"}, {\"key\": \"model\", \"value\": \"fake-model\"}, {\"key\": \"multiduts\", \"value\": \"False\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"task_id\", \"value\": \"dummy-task-id0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/test_runner/test_runner\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"image\", \"value\": \"guybrush-release/R105-14989.97.0\"}, {\"key\": \"build\", \"value\": \"R105-14989.97.0\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"}, {\"key\": \"suite\", \"value\": \"sweet-cq\"}, {\"key\": \"builder_name\", \"value\": \"eve-release\"}, {\"key\": \"branch\", \"value\": \"main\"}, {\"key\": \"main_builder_name\", \"value\": \"master-release\"}, {\"key\": \"ash_version\", \"value\": \"109.0.5391.0\"}, {\"key\": \"lacros_version\", \"value\": \"109.0.5391.0\"}], \"testId\": \"tast.foo.SomeOtherTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"target\", \"model\": \"fake-model\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"declared_name\", \"value\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/tast.login_LoginSuccess\"}, {\"key\": \"board\", \"value\": \"fake-board\"}, {\"key\": \"model\", \"value\": \"fake-model\"}, {\"key\": \"multiduts\", \"value\": \"False\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"task_id\", \"value\": \"dummy-task-id0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/test_runner/test_runner\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"image\", \"value\": \"guybrush-release/R105-14989.97.0\"}, {\"key\": \"build\", \"value\": \"R105-14989.97.0\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"}, {\"key\": \"suite\", \"value\": \"sweet-cq\"}, {\"key\": \"builder_name\", \"value\": \"eve-release\"}, {\"key\": \"branch\", \"value\": \"main\"}, {\"key\": \"main_builder_name\", \"value\": \"master-release\"}, {\"key\": \"ash_version\", \"value\": \"109.0.5391.0\"}, {\"key\": \"lacros_version\", \"value\": \"109.0.5391.0\"}], \"testId\": \"tast.bar.DifferentTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"target\", \"model\": \"fake-model\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"declared_name\", \"value\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/tast.login_LoginSuccess\"}, {\"key\": \"board\", \"value\": \"fake-board\"}, {\"key\": \"model\", \"value\": \"fake-model\"}, {\"key\": \"multiduts\", \"value\": \"False\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"task_id\", \"value\": \"dummy-task-id0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/test_runner/test_runner\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"image\", \"value\": \"guybrush-release/R105-14989.97.0\"}, {\"key\": \"build\", \"value\": \"R105-14989.97.0\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"}, {\"key\": \"suite\", \"value\": \"sweet-cq\"}, {\"key\": \"builder_name\", \"value\": \"eve-release\"}, {\"key\": \"branch\", \"value\": \"main\"}, {\"key\": \"main_builder_name\", \"value\": \"master-release\"}, {\"key\": \"ash_version\", \"value\": \"109.0.5391.0\"}, {\"key\": \"lacros_version\", \"value\": \"109.0.5391.0\"}], \"testId\": \"tast.bar.YetAnotherTest\", \"variant\": {\"def\": {\"board\": \"fake-board\", \"build_target\": \"target\", \"model\": \"fake-model\"}}}}]}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1695,9 +1702,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.exonerate ResultDB results",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.exonerate ResultDB results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1725,9 +1732,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.exonerate ResultDB results.rdb query",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.exonerate ResultDB results.rdb query",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

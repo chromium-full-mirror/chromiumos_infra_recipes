@@ -801,6 +801,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -824,9 +831,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.read autotest keyval file",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read autotest keyval file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@keyval@@@@",
       "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
       "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
@@ -870,9 +877,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload chromium test results to rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload chromium test results to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@config@{@@@",
       "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/autoserv_test\", @@@",
       "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
@@ -892,9 +899,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.upload chromium test results to rdb.ensure result_adapter",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload chromium test results to rdb.ensure result_adapter",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -923,9 +930,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload chromium test results to rdb.ensure result_adapter.ensure_installed",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload chromium test results to rdb.ensure result_adapter.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -971,9 +978,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload chromium test results to rdb.run rdb",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload chromium test results to rdb.run rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -997,10 +1004,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.original_test.upload missing test cases (count: 4)",
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload missing test cases (count: 4)",
     "stdin": "{\"invocation\": \"invocations/build:42\", \"requests\": [{\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"tast.foo.SomeTest\", \"variant\": {\"def\": {\"test_suite\": \"lacros_all_tast_tests\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"tast.foo.SomeOtherTest\", \"variant\": {\"def\": {\"test_suite\": \"lacros_all_tast_tests\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"tast.bar.DifferentTest\", \"variant\": {\"def\": {\"test_suite\": \"lacros_all_tast_tests\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"testId\": \"tast.bar.YetAnotherTest\", \"variant\": {\"def\": {\"test_suite\": \"lacros_all_tast_tests\"}}}}]}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
