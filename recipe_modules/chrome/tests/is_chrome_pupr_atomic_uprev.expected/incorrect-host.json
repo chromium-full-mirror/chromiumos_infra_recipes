@@ -4,6 +4,14 @@
     "name": "configure chroot path"
   },
   {
+    "cmd": [
+      "curl",
+      "-f",
+      "https://chrome-internal-review.googlesource.com/changes/12345/topic"
+    ],
+    "name": "curl https://chrome-internal-review.googlesource.com/changes/12345/topic"
+  },
+  {
     "name": "$result"
   }
 ]

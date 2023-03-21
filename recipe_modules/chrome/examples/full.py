@@ -6,8 +6,6 @@
 from collections import namedtuple
 import json
 
-from recipe_engine import post_process
-
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
@@ -110,10 +108,12 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(source_needed, properties.expected_builds_from)
   if source_needed:
     api.chrome.sync(
-        chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
-        build_target=build_target, internal=not properties.external,
+        chrome_root=api.path['start_dir'].join('chrome'),
+        chroot=chroot,
+        build_target=build_target,
+        internal=not properties.external,
         cache_dir=api.path['start_dir'].join('chrome').join('cache'),
-        omit_version=api.properties.get('omit_version') or False)
+    )
 
 
 def GenTests(api):
@@ -175,15 +175,6 @@ def GenTests(api):
       'basic',
       test_data(chrome_prebuilt=False),
   )
-
-  yield api.test(
-      'basic-no-version', test_data(chrome_prebuilt=False),
-      api.properties(omit_version=True),
-      api.post_check(post_process.StepCommandDoesNotContain,
-                     'sync chrome.gclient sync', ['--version']),
-      api.post_check(post_process.DoesNotRun,
-                     'chromite.api.PackageService/GetChromeVersion'),
-      api.post_check(post_process.StatusSuccess))
 
   yield api.test(
       'no-changes',
