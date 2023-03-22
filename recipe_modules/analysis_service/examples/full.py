@@ -155,3 +155,18 @@ def GenTests(api: RecipeTestApi):
                   AnalysisServiceProperties(max_stdout_stderr_bytes=4)
           }),
   )
+
+  # This test uses unicode characters aligned to force the truncation method to
+  # try to split a character in half.
+  yield api.test(
+      'unicode-truncated',
+      api.buildbucket.ci_build(),
+      api.step_data('basic_with_stdout',
+                    stdout=api.raw_io.output('Test ομτρμt'),
+                    stderr=api.raw_io.output('Errors')),
+      api.properties(
+          **{
+              '$chromeos/analysis_service':
+                  AnalysisServiceProperties(max_stdout_stderr_bytes=4)
+          }),
+  )

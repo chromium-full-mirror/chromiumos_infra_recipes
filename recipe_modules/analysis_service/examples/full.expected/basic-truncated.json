@@ -46,7 +46,7 @@
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"1970-01-01T00:03:20Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"basic_with_stdout\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stdout\": \"tput\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stdout\": \"put'\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
@@ -56,7 +56,7 @@
     "name": "publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CgoKCAoGL2EvYi9jEh8iHQoLCglBIHBhY2thZ2USDgoML3BhdGgvdG8vbG9nGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBHRwdXQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CgoKCAoGL2EvYi9jEh8iHQoLCglBIHBhY2thZ2USDgoML3BhdGgvdG8vbG9nGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBHB1dCc=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -131,7 +131,7 @@
       }
     },
     "name": "publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEh8iHQoLCglBIHBhY2thZ2USDgoML3BhdGgvdG8vbG9nGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBHRwdXQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CgoKCAoGL2EvYi9jEh8iHQoLCglBIHBhY2thZ2USDgoML3BhdGgvdG8vbG9nGgIIZCIDCMgB0ALQ7IDZrvG1knzaAhFiYXNpY193aXRoX3N0ZG91dJIDBHB1dCc=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

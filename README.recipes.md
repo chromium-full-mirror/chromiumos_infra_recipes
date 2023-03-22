@@ -635,9 +635,9 @@
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#64)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#72)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#191)(self, request: Any, response: Any):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#199)(self, request: Any, response: Any):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -658,7 +658,7 @@ Args:
 Return:
   Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#215)(self, request: Any, response: Any, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: str=None):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#223)(self, request: Any, response: Any, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: str=None):**
 
 Publish request and response on Cloud Pub/Sub.
 

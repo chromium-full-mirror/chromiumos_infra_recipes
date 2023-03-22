@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 import base64
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 from google.protobuf import json_format
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -15,7 +15,7 @@ from recipe_engine import recipe_api
 from recipe_engine.step_data import StepData
 
 
-def _truncate_output(full_output: str,
+def _truncate_output(full_output: Union[str, bytes],
                      max_output_bytes: int) -> Tuple[str, int]:
   """Truncate full_output if needed for sending/storing/querying.
 
@@ -28,13 +28,21 @@ def _truncate_output(full_output: str,
   Return:
     A tuple of truncated string, bytes removed.
   """
-  # In python2, len returns the number of bytes needed to represent a string.
-  # See recipe_modules/analysis_service/examples/full.py
-  # api.test('basic-nonascii') for an example of non-ascii characters.
-  output_length = len(full_output)
-  if output_length <= max_output_bytes:
-    return full_output, 0
-  return full_output[-max_output_bytes:], output_length - max_output_bytes
+  # Some callers are still passing in bytes, so cooerce the input to a string.
+  # We use UTF-32 to make all characters 4 bytes wide while we are manipulating
+  # the string.
+  full_string = str(full_output).encode('utf-32')
+  # Divide by 4, as we have 4-byte wide characters, but remove an extra 1 as
+  # UTF-32 has a '\xff\xfe\x00\x00' prefix on the string.
+  len_in_chars = len(full_string) / 4 - 1
+  removed = 0
+  if len_in_chars > max_output_bytes:
+    removed = len_in_chars - max_output_bytes
+    # We need to keep the first 4 bytes, as they are the UTF-32 prefix.
+    truncated_string = full_string[0:4] + full_string[-max_output_bytes * 4:]
+  else:
+    truncated_string = full_string
+  return truncated_string.decode('utf-32'), removed
 
 
 def _set_step_execution_result_fields(
