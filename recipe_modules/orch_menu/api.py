@@ -25,7 +25,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
-from PB.test_platform.request import Request
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -504,20 +503,23 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       self.builds_status.update(failures=updated_failures)
 
-      updated_test_config_names = self._update_test_summary()
+      # TODO(b/274664680): Reinstate and refactor this.
+      #updated_test_config_names = self._update_test_summary()
+      _ = self._update_test_summary()
 
-      self._exonerate_resultdb_results(updated_test_config_names)
+      #self._exonerate_resultdb_results(updated_test_config_names)
 
-  def _exonerate_resultdb_results(self, test_config_names):
-    """Apply exonerations to test results for which are now non-critical."""
-    if not test_config_names:
-      return
+  # TODO(b/274664680): Reinstate and refactor this.
+  # def _exonerate_resultdb_results(self, test_config_names):
+  #   """Apply exonerations to test results for which are now non-critical."""
+  #   if not test_config_names:
+  #     return
 
-    for t in test_config_names:
-      self.m.cros_resultdb.apply_exonerations(
-          [self.m.cros_resultdb.current_invocation_id],
-          Request.Params.TestExecutionBehavior.NON_CRITICAL,
-          variant_filter={'test_config': t})
+  #   for t in test_config_names:
+  #     self.m.cros_resultdb.apply_exonerations(
+  #         [self.m.cros_resultdb.current_invocation_id],
+  #         Request.Params.TestExecutionBehavior.NON_CRITICAL,
+  #         variant_filter={'test_config': t})
 
   def _non_critical_build_check(self, step_name, builds, failures):
     """Update failures based on the current criticality of the builders.

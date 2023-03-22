@@ -10,8 +10,6 @@ from google.protobuf import json_format
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.go.chromium.org.luci.resultdb.proto.v1 import common as resultdb_common_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
 
@@ -460,30 +458,6 @@ def GenTests(api):
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
-  variant_1 = api.json.dumps({'def': {'test_config': 'htarget.hw.bvt-cq'}})
-  variant_2 = api.json.dumps({'def': {'test_config': 'htarget.hw.bvt-inline'}})
-  variant_3 = api.json.dumps(
-      {'def': {
-          'test_config': 'htarget.hw.some-other-suite'
-      }})
-
-  inv_bundle = {
-      'build:123':
-          api.resultdb.Invocation(test_results=[
-              test_result_pb2.TestResult(
-                  test_id='test/1', expected=False, status=test_result_pb2.FAIL,
-                  variant=json_format.Parse(variant_1,
-                                            resultdb_common_pb2.Variant())),
-              test_result_pb2.TestResult(
-                  test_id='test/2', expected=False, status=test_result_pb2.FAIL,
-                  variant=json_format.Parse(variant_2,
-                                            resultdb_common_pb2.Variant())),
-              test_result_pb2.TestResult(
-                  test_id='test/3', expected=False, status=test_result_pb2.FAIL,
-                  variant=json_format.Parse(variant_3,
-                                            resultdb_common_pb2.Variant())),
-          ]),
-  }
   summary = (
       '1 out of 1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
   )
@@ -495,12 +469,6 @@ def GenTests(api):
           api.file.read_raw(
               api.cros_test_plan.reduced_criticality_generate_test_plan_response
               .SerializeToString())),
-      api.resultdb.query(
-          inv_bundle, step_name='clean up orchestrator.'
-          'non-critical test check.exonerate ResultDB results.rdb query'),
-      api.resultdb.query(
-          inv_bundle, step_name='clean up orchestrator.'
-          'non-critical test check.exonerate ResultDB results (2).rdb query'),
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
@@ -516,15 +484,6 @@ def GenTests(api):
           api.file.read_raw(
               api.cros_test_plan.all_non_critical_generate_test_plan_response
               .SerializeToString())),
-      api.resultdb.query(
-          inv_bundle, step_name='clean up orchestrator.'
-          'non-critical test check.exonerate ResultDB results.rdb query'),
-      api.resultdb.query(
-          inv_bundle, step_name='clean up orchestrator.'
-          'non-critical test check.exonerate ResultDB results (2).rdb query'),
-      api.resultdb.query(
-          inv_bundle, step_name='clean up orchestrator.'
-          'non-critical test check.exonerate ResultDB results (3).rdb query'),
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.SUCCESS,
