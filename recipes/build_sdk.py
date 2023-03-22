@@ -153,7 +153,7 @@ class BuildSDKRun:
     assert not self.m.build_menu.is_staging
     with self.m.step.nest('upload host prebuilts'):
       source_dir = os.path.join(self.m.cros_sdk.chroot.path, 'var', 'lib',
-                                'pkgs')
+                                'portage', 'pkgs')
       dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
                                f'chroot-{self._version}', 'packages')
       self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path)
