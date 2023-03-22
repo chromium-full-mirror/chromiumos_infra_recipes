@@ -1,3 +1,4 @@
+logsBucket: 'gs://${PROJECT_ID}-logs'
 steps:
 - name: 'gcr.io/cloud-builders/git'
   entrypoint: 'bash'
