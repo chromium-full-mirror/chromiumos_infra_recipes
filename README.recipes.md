@@ -493,7 +493,6 @@
   * [observability_image_size:tests/publish](#recipes-observability_image_size_tests_publish) (Python3 ✅)
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata) (Python3 ✅)
   * [orch_menu:examples/full](#recipes-orch_menu_examples_full) (Python3 ✅)
-  * [orch_menu:examples/ps_relevant](#recipes-orch_menu_examples_ps_relevant) (Python3 ✅)
   * [orch_menu:examples/wait_for_images](#recipes-orch_menu_examples_wait_for_images) (Python3 ✅)
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status) (Python3 ✅)
   * [orch_menu:tests/child_build_info](#recipes-orch_menu_tests_child_build_info) (Python3 ✅)
@@ -7493,11 +7492,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1318)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1307)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1162)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1151)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7565,7 +7564,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1051)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1040)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7598,18 +7597,11 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#766)(self, tags: List[common_pb2.StringPair]):**
-
-Whether the postsubmit child build was relevant.
-
-Args:
-  tags: Tags of the child build.
-
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#979)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#968)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#985)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#974)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -12830,13 +12822,6 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#43)(api, properties):**
-### *recipes* / [orch\_menu:examples/ps\_relevant](/recipe_modules/orch_menu/examples/ps_relevant.py)
-
-[DEPS](/recipe_modules/orch_menu/examples/ps_relevant.py#8): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/ps_relevant.py#16)(api):**
 ### *recipes* / [orch\_menu:examples/wait\_for\_images](/recipe_modules/orch_menu/examples/wait_for_images.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#10): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

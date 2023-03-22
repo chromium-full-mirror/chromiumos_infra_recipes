@@ -763,24 +763,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     return self._builds_status
 
-  def ps_relevant(self, tags: List[common_pb2.StringPair]) -> bool:
-    """Whether the postsubmit child build was relevant.
-
-    Args:
-      tags: Tags of the child build.
-    """
-    for tag in tags:
-      if tag.key == 'relevance':
-        return tag.value == 'relevant'
-
-    # If relevance tag is not set, assume relevance
-    return True
-
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
     # Assume relevant if the child doesn't have the relevant_build prop.
     cq_relevant = lambda build: ('relevant_build' not in build.output.properties
                                  or build.output.properties['relevant_build'])
+    ps_relevant = lambda build: ('relevance' not in build.tags or
+                                 (build.tags['relevance'] == 'relevant'))
     with self.m.step.nest(results_step_name or 'check build results') as pres:
       if self.config.id.type == BuilderConfig.Id.CQ:
         cq_relevant_builds = [
@@ -803,7 +792,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         ps_relevant_builds = [
             x.builder.builder
             for x in self._builds_status.completed_builds
-            if self.ps_relevant(x)
+            if ps_relevant(x)
         ]
         self._relevant_child_builds = ps_relevant_builds
         if not ps_relevant_builds:
