@@ -147,6 +147,7 @@
   * [build_factory](#recipes-build_factory) (Python3 ✅) &mdash; Recipe for generating artifacts for Factory builders.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
+  * [build_kabuto_shadercache](#recipes-build_kabuto_shadercache) (Python3 ✅) &mdash; Recipe for building Borealis shadercache using Kabuto.
   * [build_legacy_factory](#recipes-build_legacy_factory) (Python3 ✅) &mdash; Recipe that builds factory images/artifacts on a factory branch.
   * [build_legacy_fw](#recipes-build_legacy_fw) (Python3 ✅) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
   * [build_linters](#recipes-build_linters) (Python3 ✅) &mdash; Recipe for linting CLs.
@@ -9992,6 +9993,15 @@ This recipe supports the workflow necessary to support asan, UBsan, and fuzzer
 builder profiles.
 
 &mdash; **def [RunSteps](/recipes/build_informational.py#26)(api: RecipeApi):**
+### *recipes* / [build\_kabuto\_shadercache](/recipes/build_kabuto_shadercache.py)
+
+[DEPS](/recipes/build_kabuto_shadercache.py#11): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for building Borealis shadercache using Kabuto.
+
+&mdash; **def [RunSteps](/recipes/build_kabuto_shadercache.py#16)(api: RecipeApi):**
 ### *recipes* / [build\_legacy\_factory](/recipes/build_legacy_factory.py)
 
 [DEPS](/recipes/build_legacy_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
