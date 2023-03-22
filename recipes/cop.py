@@ -170,8 +170,8 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
   with api.step.nest('send Tricium comments') as presentation:
     api.tricium.add_comment(f"CoP Result: {results['result']['status']}",
                             results['result']['log'], '/COMMIT_MSG')
-    for i, step in enumerate(results['steps']):
-      name = f"CoP Step {i} ({step['id']}): {step['status']})"
+    for step in results['steps']:
+      name = f"CoP Step {step['id']} ({step['name']}): {step['status']}"
       api.tricium.add_comment(name, step['log'], '/COMMIT_MSG')
     api.tricium.write_comments()
 
@@ -263,7 +263,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'log': 'Soo good',
       },
       'steps': [{
-          'id': 'run hello world',
+          'id': '1',
+          'name': 'run hello world',
           'status': 'SUCCESS',
           'log': 'Hello World'
       }]

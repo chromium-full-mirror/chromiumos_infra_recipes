@@ -13,25 +13,43 @@ from google.cloud import storage
 from google.cloud.devtools import cloudbuild_v1
 import google.oauth2.credentials
 
+MAX_COMMENT_SIZE = 16000
 
-def get_logs(storage_client, gs_path):
-  """Return a Google Cloud Build log from Cloud Storage as a string."""
+
+def download_file(storage_client, gs_path):
+  """Return a Google Cloud blob as a string, or None if the blob does not exist"""
   blob = storage.blob.Blob.from_string(gs_path, client=storage_client)
   if not blob.exists():
-    return f'{gs_path} not found.'
+    return None
   return blob.download_as_text()
 
 
 def get_result_logs(storage_client, build):
   """Return the log from a Google Cloud Build."""
   gs_path = f'{build.logs_bucket}/log-{build.id}.txt'
-  return get_logs(storage_client, gs_path)
+  log = download_file(storage_client, gs_path)
+  if not log:
+    return f'{gs_path} not found.'
+  return log
 
 
-def get_step_logs(storage_client, build, step_id):
+def filter_result(step_id, result):
+  """Filter the lines from a specific step from a combined result log"""
+  prefix = f'Step #{step_id}'
+  lines = filter(lambda x: x.startswith(prefix), result.splitlines())
+  return '\n'.join(lines)
+
+
+def get_step_logs(storage_client, build, step_id, result):
   """Return the log from a Google Cloud Build's step."""
   gs_path = f'{build.logs_bucket}/log-{build.id}-step-{step_id}.txt'
-  return get_logs(storage_client, gs_path)
+  log = download_file(storage_client, gs_path)
+  if log:
+    return log
+  log = filter_result(step_id, result)
+  if log == '':
+    return f'Log for Step {step_id} not found.'
+  return log
 
 
 def get_build_info(credentials, project, build_id):
@@ -55,12 +73,14 @@ def main(args):
                          input_json['build_id'])
   storage_client = storage.Client(credentials=credentials)
 
+  result_logs = get_result_logs(storage_client, build)
+
   result = dict()
   result['result'] = {
       'status':
           build.Status(build.status).name,
       'log':
-          f'CoP Log URL: {build.log_url}\n {get_result_logs(storage_client, build)}',
+          f'CoP Log URL: {build.log_url}\n {result_logs[-MAX_COMMENT_SIZE:]}',
   }
   steps = list()
   for i, step in enumerate(build.steps):
@@ -68,9 +88,15 @@ def main(args):
     if status == 'SUCCESS':
       continue
     steps.append({
-        'id': step.id,
-        'status': status,
-        'log': get_step_logs(storage_client, build, i)
+        'id':
+            i,
+        'name':
+            step.id,
+        'status':
+            status,
+        'log':
+            get_step_logs(storage_client, build, i, result_logs)
+            [-MAX_COMMENT_SIZE:]
     })
   result['steps'] = steps
 
