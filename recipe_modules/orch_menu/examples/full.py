@@ -9,6 +9,7 @@ from google.protobuf import json_format
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
@@ -130,6 +131,15 @@ def GenTests(api):
   def orch_menu_properties(**kwargs):
     return {'$chromeos/orch_menu': kwargs}
 
+  builder = builder_common_pb2.BuilderID(project='chromeos',
+                                         bucket='postsubmit',
+                                         builder='betty-postsubmit')
+  irrelevant_build = build_pb2.Build(id=8922054662172514002, status='SUCCESS',
+                                     builder=builder)
+  tag = irrelevant_build.tags.add()
+  tag.key = 'relevance'
+  tag.value = 'not relevant'
+
   yield api.orch_menu.test(
       'basic', data.ctp_normal, api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
@@ -137,7 +147,26 @@ def GenTests(api):
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       builder='postsubmit-orchestrator', with_manifest_refs=True,
-      with_history=True)
+      collect_builds=[irrelevant_build], with_history=True)
+
+  relevant_build1 = build_pb2.Build(id=8922054662172514002, status='SUCCESS',
+                                    builder=builder)
+  relevant_build2 = build_pb2.Build(id=8922054662172514003, status='SUCCESS',
+                                    builder=builder)
+  tag = relevant_build2.tags.add()
+  tag.key = 'relevance'
+  tag.value = 'relevant'
+  relevant_builds = [relevant_build1, relevant_build2]
+
+  yield api.orch_menu.test(
+      'postsubmit-irrelevant', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.post_check(post_process.MustRun,
+                     'update manifest ref refs/heads/test.git push'),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test')),
+      builder='postsubmit-orchestrator', with_manifest_refs=True,
+      collect_builds=relevant_builds, with_history=True)
 
   yield api.orch_menu.test(
       'release-orchestrator',
