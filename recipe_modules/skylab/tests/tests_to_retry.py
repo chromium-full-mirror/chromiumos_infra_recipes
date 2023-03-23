@@ -45,6 +45,9 @@ def GenTests(api):
   tr = execute_response.task_results.add()
   tr.name = 'tauto.something-something'
   tr.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
+  prejob = tr.prejob_steps.add()
+  prejob.name = 'provision'
+  prejob.verdict = TaskState.VERDICT_PASSED
   test_case = tr.test_cases.add()
   test_case.name = 'tast.something-something'
   test_case.verdict = TaskState.VERDICT_FAILED

@@ -48,31 +48,40 @@ def RunSteps(api):
           ExecuteResponse(task_results=[
               ExecuteResponse.TaskResult(
                   name='tast.shard-0', state=TaskState(
-                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED), test_cases=[
-                          ExecuteResponse.TaskResult.TestCaseResult(
-                              name='tast.test1',
-                              verdict=TaskState.VERDICT_FAILED)
-                      ])
+                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+                  prejob_steps=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='provision', verdict=TaskState.VERDICT_PASSED)
+                  ], test_cases=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='tast.test1', verdict=TaskState.VERDICT_FAILED)
+                  ])
           ]),
       'not-tast-first-class':
           ExecuteResponse(task_results=[
               ExecuteResponse.TaskResult(
                   name='tast.shard-0', state=TaskState(
-                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED), test_cases=[
-                          ExecuteResponse.TaskResult.TestCaseResult(
-                              name='tast.test1',
-                              verdict=TaskState.VERDICT_FAILED)
-                      ])
+                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+                  prejob_steps=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='provision', verdict=TaskState.VERDICT_PASSED)
+                  ], test_cases=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='tast.test1', verdict=TaskState.VERDICT_FAILED)
+                  ])
           ]),
       'not-cft':
           ExecuteResponse(task_results=[
               ExecuteResponse.TaskResult(
                   name='tast.shard-0', state=TaskState(
-                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED), test_cases=[
-                          ExecuteResponse.TaskResult.TestCaseResult(
-                              name='tast.test1',
-                              verdict=TaskState.VERDICT_FAILED)
-                      ])
+                      life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+                  prejob_steps=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='provision', verdict=TaskState.VERDICT_PASSED)
+                  ], test_cases=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name='tast.test1', verdict=TaskState.VERDICT_FAILED)
+                  ])
           ])
   }
   api.skylab.schedule_suites(

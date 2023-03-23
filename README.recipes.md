@@ -8856,7 +8856,7 @@ Args:
 Returns:
   The names of the failed test cases.
 
-&mdash; **def [extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/api.py#108)(self, hw_test_results: List[ExecuteResponse.TaskResult]):**
+&mdash; **def [extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/api.py#122)(self, hw_test_results: List[ExecuteResponse.TaskResult]):**
 
 Returns the names of the tests shards which failed all attempts.
 

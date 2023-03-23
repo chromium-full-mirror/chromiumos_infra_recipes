@@ -87,10 +87,24 @@ class SkylabResultsApi(recipe_api.RecipeApi):
     Returns:
       The names of the failed test cases.
     """
+    # Group the tasks by shard.
+    shard_name_to_task_map = {}
+    for result in hw_test_results:
+      if result.name not in shard_name_to_task_map:
+        shard_name_to_task_map[result.name] = []
+      shard_name_to_task_map[result.name].append(result)
+
     if ensure_complete:
-      if not any(result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED
-                 for result in hw_test_results):
-        return []
+      for results in shard_name_to_task_map.values():
+        if not any(result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED
+                   for result in results):
+          return []
+
+        if not any(
+            len(result.prejob_steps) > 0 and
+            result.prejob_steps[0].verdict == TaskState.VERDICT_PASSED
+            for result in results):
+          return []
 
     failed_test_names = set()
     passed_test_names = set()

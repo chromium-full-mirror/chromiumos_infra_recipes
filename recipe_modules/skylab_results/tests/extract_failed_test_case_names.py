@@ -34,10 +34,17 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def task_result(failed_test_names=None, passed_test_names=None,
-                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED):
+  def task_result(task_result_name='task-1', failed_test_names=None,
+                  passed_test_names=None,
+                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED,
+                  provision_verdict=TaskState.VERDICT_PASSED):
     tr = ExecuteResponse.TaskResult()
     tr.state.life_cycle = life_cycle
+    tr.name = task_result_name
+    if provision_verdict is not None:
+      provision = tr.prejob_steps.add()
+      provision.name = 'provision'
+      provision.verdict = provision_verdict
     for test_name in passed_test_names or []:
       test_case = tr.test_cases.add()
       test_case.name = test_name
@@ -100,5 +107,33 @@ def GenTests(api):
       'failed-test-passed-in-other-attempt',
       api.properties(child_results=child_results,
                      expected_failed_test_names=['test2']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  child_results = [
+      task_result(task_result_name='task-1', failed_test_names=['test3'],
+                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED,
+                  provision_verdict=None),
+      task_result(task_result_name='task-2',
+                  failed_test_names=['test1', 'test2'],
+                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+  ]
+  yield api.test(
+      'missing-prejob-result',
+      api.properties(child_results=child_results),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  child_results = [
+      task_result(task_result_name='task-1', failed_test_names=['test3'],
+                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED,
+                  provision_verdict=TaskState.VERDICT_FAILED),
+      task_result(task_result_name='task-2',
+                  failed_test_names=['test1', 'test2'],
+                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+  ]
+  yield api.test(
+      'failed-prejob',
+      api.properties(child_results=child_results),
       api.post_process(post_process.DropExpectation),
   )
