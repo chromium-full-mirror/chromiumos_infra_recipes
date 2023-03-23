@@ -2116,7 +2116,6 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate uprev commit",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2426,7 +2425,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "invalid label-type push option (\"Code-Review+1\"): only Auto-Submit, Verified, Commit-Queue, Bot-Commit labels with value are allowed"
+      "humanReason": "invalid push options (\"\"): should start with %"
     },
     "name": "$result"
   }
