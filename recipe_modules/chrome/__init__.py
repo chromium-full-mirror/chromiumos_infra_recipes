@@ -21,6 +21,7 @@ DEPS = [
     'easy',
     'gerrit',
     'git_footers',
+    'future_utils',
     'portage',
     'workspace_util',
 ]

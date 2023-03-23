@@ -187,6 +187,7 @@
   * [checkpoint:tests/cascade](#recipes-checkpoint_tests_cascade) (Python3 ✅)
   * [checkpoint:tests/update_summary](#recipes-checkpoint_tests_update_summary) (Python3 ✅)
   * [chrome:examples/cache_sync](#recipes-chrome_examples_cache_sync) (Python3 ✅)
+  * [chrome:examples/chrome_sync](#recipes-chrome_examples_chrome_sync) (Python3 ✅)
   * [chrome:examples/full](#recipes-chrome_examples_full) (Python3 ✅)
   * [chrome:tests/follower_needs_chrome_no_has_prebuilt](#recipes-chrome_tests_follower_needs_chrome_no_has_prebuilt) (Python3 ✅)
   * [chrome:tests/gclient_retry](#recipes-chrome_tests_gclient_retry) (Python3 ✅)
@@ -979,7 +980,7 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#8): [bot\_cost](#recipe_modules-bot_cost), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/build_menu/__init__.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -994,14 +995,14 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#72)(self):**
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#714)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#719)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#483)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#488)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -1010,7 +1011,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#585)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#590)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -1023,7 +1024,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#540)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#545)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1071,7 +1072,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#728)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#733)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1106,7 +1107,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#440)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#445)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1120,7 +1121,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#62)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#496)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#501)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1143,7 +1144,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#144)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#885)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#890)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1153,7 +1154,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#865)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#870)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1166,7 +1167,7 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#600)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#605)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1187,7 +1188,7 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#364)(self, with_sysroot=True):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#369)(self, with_sysroot=True):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1238,7 +1239,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#570)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#575)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1247,7 +1248,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#668)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#673)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
@@ -1270,14 +1271,14 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#852)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#857)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#832)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#837)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1697,22 +1698,49 @@ Gets the BBIDs of the child builders that were successful.
 Updates the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [portage](#recipe_modules-portage), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#67)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#77)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#89)(self, cache_path, sync=True, step_name='sync chrome'):**
+Module for managing chrome source code.
+
+Note: in general, ChromeOS builders check out the source code at a specific
+version. That version is obtained by hitting the BuildAPI to read an overlay,
+which requires a sysroot. This module includes some code to support speeding
+up those chrome checkouts by doing the following:
+  - checkout the chrome source on ToT asynchronously (with all refs and tags)
+    (sync_main_async).
+  - wait for the async main sync (wait_for_sync_chrome_source_async).
+  - delete the checkout of main (delete_main_checkout) for cases where it is
+    unused.
+
+This supports the general workflow on all builders of:
+  1.  As early as possible, kick off an async chrome checkout on ToT.
+  2.  Whenever chrome source is definitely going to be needed, block and wait
+        for that async checkout to complete.
+  3a. If the chrome source code isn't needed, delete the checkout.
+  3b. If the chrome source code is needed, check out the specific version
+        needed (much faster with the repo already checked out).
+
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#123)(self, cache_path: Path, sync: bool=True, step_name: str='sync chrome'):**
 
 Sync Chrome cache using existing cached repositories.
 
 Args:
-  cache_path (Path): Path to mount of cache.
-  sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
-  step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
+  cache_path: Path to mount of cache.
+  sync: whether or not to call sync after setting up the cache. Defaults to true.
+  step_name: the name to use for the surrounding step. Defaults to "sync chrome".
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#225)(self, patch_sets=None):**
+&mdash; **def [delete\_main\_checkout](/recipe_modules/chrome/api.py#202)(self):**
+
+Delete unnecessary chrome checkout.
+
+Allows to delete the chrome source synced in sync_main_async() function when it
+turns out to be unnecessary for the build.
+
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#306)(self, patch_sets: Optional[List[PatchSet]]=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1720,12 +1748,12 @@ The patch_sets object supplied must have been constructed with the file
 information populated.
 
 Args:
-  patch_sets (list[PatchSet]): List of patch sets (with FileInfo).
+  patch_sets: List of patch sets (with FileInfo).
 
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#304)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#388)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1734,32 +1762,31 @@ This is independent of if we need to actually build chrome, as we've
 allowed 'follower' packages to be built out of chrome's source.
 
 Args:
-  build_target (chromiumos.BuildTarget): Build target of the build.
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  packages (list[chromiumos.PackageInfo]): Packages that the builder needs
-      to build.
+  build_target: Build target of the build.
+  chroot: Information on the chroot for the build.
+  packages: Packages that the builder needs to build.
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#99)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#277)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#359)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#251)(self, gerrit_change):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#333)(self, gerrit_change: GerritChange):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#342)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#426)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
 Args:
-  build_target (chromiumos.BuildTarget): Build target of the build.
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  patch_sets (list[PatchSet]): A list of patch sets to examine.
+  build_target: Build target of the build.
+  chroot: Information on the chroot for the build.
+  patch_sets: A list of patch sets to examine.
 
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#285)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#368)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1767,40 +1794,56 @@ Returns whether or not this run needs chrome, that is, will require a
 prebuilt, or will need to build it from source.
 
 Args:
-  build_target (chromiumos.BuildTarget): Build target of the build.
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  packages (list[chromiumos.PackageInfo]): Packages that the builder needs
+  build_target: Build target of the build.
+  chroot: Information on the chroot for the build.
+  packages: Packages that the builder needs
       to build, or empty / None for default packages.
 
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#413)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#499)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
 
 Checks whether chrome source is needed.
 
 Args:
-  request (InstallPackagesRequest): InstallPackagesRequest for the build.
-  dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
-  presentation (StepPresentation): Step to update.
-  patch_sets (list[PatchSet]): Applied patchsets.  Default: the list
-    from workspace_util.
+  request: InstallPackagesRequest for the build.
+  dep_graph: From cros_relevance.get_dependency_graph.
+  presentation: Step to update.
+  patch_sets: Applied patchsets. Default: the list from workspace_util.
 
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#135)(self, chrome_root, chroot, build_target, internal, cache_dir):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#211)(self, chrome_root: Path, chroot: Chroot, build_target: BuildTarget, internal: bool, cache_dir: str, omit_version: bool=False):**
 
 Sync Chrome source code.
 
 Must be run with cwd inside a chromiumos source root.
 
 Args:
-  chrome_root (Path): Directory to sync the Chrome source code to.
-  chroot (chromiumos.Chroot): Information on the chroot for the build.
-  build_target (chromiumos.BuildTarget): Build target of the build.
-  internal (bool): True for internal checkout.
-  cache_dir (str): Path of the chrome cache.
+  chrome_root: Directory to sync the Chrome source code to.
+  chroot: Information on the chroot for the build.
+  build_target: Build target of the build.
+  internal: True for internal checkout.
+  cache_dir: Path of the chrome cache.
+  omit_version: Omit the version from the sync command. Defaults to False.
+
+&mdash; **def [sync\_main\_async](/recipe_modules/chrome/api.py#170)(self, config: BuilderConfig, build_target: BuildTarget):**
+
+Sync chrome source async.
+
+Intentionally checking out the chrome source on main instead of the
+appropriate version for the build. The purpose is to speed up the
+subsequent chrome source sync.
+
+Args:
+  config: The Builder Config for the build.
+  build_target: Build target of the build.
+
+&mdash; **def [wait\_for\_sync\_chrome\_source\_async](/recipe_modules/chrome/api.py#197)(self):**
+
+Wait for async chrome source sync.
 ### *recipe_modules* / [chromite](/recipe_modules/chromite)
 
 [DEPS](/recipe_modules/chromite/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gcloud](#recipe_modules-gcloud), [gitiles](#recipe_modules-gitiles), [goma](#recipe_modules-goma), [repo](#recipe_modules-repo), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -9116,7 +9159,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#268)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None, skip_image_tests=False, verify_image_size_delta=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#275)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None, skip_image_tests=False, verify_image_size_delta=False):**
 
 Build and validate images.
 
@@ -10402,15 +10445,22 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/cache_sync.py#16)(api):**
-### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
+### *recipes* / [chrome:examples/chrome\_sync](/recipe_modules/chrome/examples/chrome_sync.py)
 
-[DEPS](/recipe_modules/chrome/examples/full.py#20): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/chrome/examples/chrome_sync.py#11): [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#42)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/chrome_sync.py#22)(api):**
+### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
-&mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#37)(\*\*kwargs):**
+[DEPS](/recipe_modules/chrome/examples/full.py#22): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/full.py#44)(api, properties):**
+
+&mdash; **def [jsonify](/recipe_modules/chrome/examples/full.py#39)(\*\*kwargs):**
 
 Return the kwargs as a json string.
 ### *recipes* / [chrome:tests/follower\_needs\_chrome\_no\_has\_prebuilt](/recipe_modules/chrome/tests/follower_needs_chrome_no_has_prebuilt.py)
@@ -13700,11 +13750,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/create_sysroot.py#21)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/full](/recipe_modules/sysroot_util/examples/full.py)
 
-[DEPS](/recipe_modules/sysroot_util/examples/full.py#15): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/sysroot_util/examples/full.py#15): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#31)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#32)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/update\_for\_artifact\_build](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

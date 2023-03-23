@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'chrome',
     'cros_build_api',
     'cros_infra_config',
     'cros_relevance',
@@ -41,12 +42,15 @@ def RunSteps(api, properties):
   name = properties.builder_name or 'amd64-generic-postsubmit'
   config = api.cros_infra_config.get_builder_config(name)
 
-  sysroot = api.sysroot_util.create_sysroot(common.BuildTarget(name='eve'))
+  target = common.BuildTarget(name='eve')
+  sysroot = api.sysroot_util.create_sysroot(target)
   api.assertions.assertEqual(sysroot, api.sysroot_util.sysroot)
 
   api.sysroot_util.bootstrap_sysroot()
 
   dep_graph = api.cros_relevance.get_dependency_graph(sysroot, common.Chroot())
+  if properties.checkout_chrome:
+    api.chrome.sync_main_async(config, target)
   api.sysroot_util.install_packages(config, dep_graph,
                                     artifact_build=properties.artifact_build)
 
@@ -158,6 +162,24 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'install packages.check chrome source needed',
           'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'),
+  )
+
+  yield api.test(
+      'no-chrome-source-experiment-enabled',
+      test_build(cq=True),
+      api.properties(FullTestProperties(checkout_chrome=True)),
+      api.buildbucket.ci_build(
+          builder='atlas-cq', experiments=[
+              'chromeos.build_menu.chrome_main_sync',
+          ]),
+      api.cros_build_api.set_api_return(
+          'install packages.check chrome source needed',
+          'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'),
+      api.post_check(
+          post_process.StepSuccess,
+          'install packages.check chrome source needed.deleting chrome checkout'
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

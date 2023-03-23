@@ -344,6 +344,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     if not self.artifact_build or relevance != Relevance.POINTLESS:
       self.m.cros_source.uprev_packages()
+      # Kick off a chrome source checkout on main asynchronously. Check the
+      # docs of the chrome module for more information.
+      if ('chromeos.build_menu.chrome_main_sync'
+          in self.m.cros_infra_config.experiments):
+        self.m.chrome.sync_main_async(config, self.build_target)
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,

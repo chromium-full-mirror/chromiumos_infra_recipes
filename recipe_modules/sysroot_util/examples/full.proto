@@ -32,4 +32,7 @@ message FullTestProperties {
 
   // Whether to do the image size regression check.
   bool verify_image_size_delta = 8;
+
+  // Whether to check out the chrome source as part of the test setup.
+  bool checkout_chrome = 9;
 }

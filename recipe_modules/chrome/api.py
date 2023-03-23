@@ -6,9 +6,15 @@
 import datetime
 import re
 
-from recipe_engine import recipe_api
-from recipe_engine.recipe_api import StepFailure
+from pathlib import Path
+from typing import Optional, List
 
+from recipe_engine import recipe_api
+from recipe_engine.engine_types import StepPresentation
+from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+
+from PB.chromite.api.depgraph import DepGraph
 from PB.chromite.api.packages import BuildsChromeRequest
 from PB.chromite.api.packages import GetChromeVersionRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
@@ -16,7 +22,11 @@ from PB.chromite.api.packages import HasPrebuiltRequest
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromite.api.packages import NeedsChromeSourceRequest
 from PB.chromite.api.packages import NeedsChromeSourceResponse
-from PB.chromiumos.common import PackageInfo
+from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget, Chroot, PackageInfo
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
 CHROMIUM_GIT_URL = 'https://chromium.googlesource.com/chromium/src.git'
 
@@ -65,12 +75,32 @@ CHROME_FOLLOWER_PACKAGES = [
 
 
 class ChromeApi(recipe_api.RecipeApi):
+  """Module for managing chrome source code.
+
+  Note: in general, ChromeOS builders check out the source code at a specific
+  version. That version is obtained by hitting the BuildAPI to read an overlay,
+  which requires a sysroot. This module includes some code to support speeding
+  up those chrome checkouts by doing the following:
+    - checkout the chrome source on ToT asynchronously (with all refs and tags)
+      (sync_main_async).
+    - wait for the async main sync (wait_for_sync_chrome_source_async).
+    - delete the checkout of main (delete_main_checkout) for cases where it is
+      unused.
+
+  This supports the general workflow on all builders of:
+    1.  As early as possible, kick off an async chrome checkout on ToT.
+    2.  Whenever chrome source is definitely going to be needed, block and wait
+          for that async checkout to complete.
+    3a. If the chrome source code isn't needed, delete the checkout.
+    3b. If the chrome source code is needed, check out the specific version
+          needed (much faster with the repo already checked out).
+  """
 
   @property
-  def gclient_sync_timeout_seconds(self):
+  def gclient_sync_timeout_seconds(self) -> int:
     return self._gclient_sync_timeout_seconds
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: ChromeProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._deps_cas = (
         properties.deps_cas if properties.HasField('deps_cas') else None)
@@ -80,19 +110,24 @@ class ChromeApi(recipe_api.RecipeApi):
         properties.gclient_sync_timeout_seconds or
         DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS)
 
-  def _get_local_version(self, chroot, build_target):
+    self._parallel_runner = None
+    self._chrome_root = None
+
+  def _get_local_version(self, chroot: Chroot,
+                         build_target: BuildTarget) -> str:
     """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
     request = GetChromeVersionRequest(chroot=chroot, build_target=build_target)
     return self.m.cros_build_api.PackageService.GetChromeVersion(
         request, infra_step=True).version
 
-  def cache_sync(self, cache_path, sync=True, step_name='sync chrome'):
+  def cache_sync(self, cache_path: Path, sync: bool = True,
+                 step_name: str = 'sync chrome') -> None:
     """Sync Chrome cache using existing cached repositories.
 
     Args:
-      cache_path (Path): Path to mount of cache.
-      sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
-      step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
+      cache_path: Path to mount of cache.
+      sync: whether or not to call sync after setting up the cache. Defaults to true.
+      step_name: the name to use for the surrounding step. Defaults to "sync chrome".
 
     """
     with self.m.step.nest(step_name):
@@ -132,23 +167,69 @@ class ChromeApi(recipe_api.RecipeApi):
           self.m.gclient('sync', gclient_sync_cmd, infra_step=True,
                          timeout=self.gclient_sync_timeout_seconds)
 
-  def sync(self, chrome_root, chroot, build_target, internal, cache_dir):
+  def sync_main_async(self, config: BuilderConfig,
+                      build_target: BuildTarget) -> None:
+    """Sync chrome source async.
+
+    Intentionally checking out the chrome source on main instead of the
+    appropriate version for the build. The purpose is to speed up the
+    subsequent chrome source sync.
+
+    Args:
+      config: The Builder Config for the build.
+      build_target: Build target of the build.
+    """
+
+    def _sync_chrome_source(builder_config: BuilderConfig) -> None:
+      with self.m.step.nest('sync chrome source async'):
+        chrome_root = self._chrome_root
+        self.cache_sync(cache_path=chrome_root, sync=False,
+                        step_name="populate chrome cache")
+        self.sync(chrome_root, self.m.cros_sdk.chroot, build_target,
+                  builder_config.chrome.internal,
+                  cache_dir=chrome_root.join('chrome_cache'), omit_version=True)
+
+    self._chrome_root = self.m.path['start_dir'].join('chrome')
+    self._parallel_runner = self.m.future_utils.create_parallel_runner()
+    self._parallel_runner.run_function_async(
+        lambda cfg, _: _sync_chrome_source(cfg), config)
+
+  def wait_for_sync_chrome_source_async(self) -> None:
+    """Wait for async chrome source sync."""
+    if self._parallel_runner:
+      self._parallel_runner.wait_for_and_throw()
+
+  def delete_main_checkout(self) -> None:
+    """Delete unnecessary chrome checkout.
+
+    Allows to delete the chrome source synced in sync_main_async() function when it
+    turns out to be unnecessary for the build.
+    """
+    if self._chrome_root:
+      self.m.file.rmtree('deleting chrome checkout', self._chrome_root)
+
+  def sync(self, chrome_root: Path, chroot: Chroot, build_target: BuildTarget,
+           internal: bool, cache_dir: str, omit_version: bool = False) -> None:
     """Sync Chrome source code.
 
     Must be run with cwd inside a chromiumos source root.
 
     Args:
-      chrome_root (Path): Directory to sync the Chrome source code to.
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      build_target (chromiumos.BuildTarget): Build target of the build.
-      internal (bool): True for internal checkout.
-      cache_dir (str): Path of the chrome cache.
+      chrome_root: Directory to sync the Chrome source code to.
+      chroot: Information on the chroot for the build.
+      build_target: Build target of the build.
+      internal: True for internal checkout.
+      cache_dir: Path of the chrome cache.
+      omit_version: Omit the version from the sync command. Defaults to False.
     """
     with self.m.step.nest('sync chrome') as pres:
-      if self._version or self._deps_cas:
-        version = self._version
+      if omit_version:
+        version = None
       else:
-        version = self._get_local_version(chroot, build_target)
+        if self._version or self._deps_cas:
+          version = self._version
+        else:
+          version = self._get_local_version(chroot, build_target)
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
@@ -199,7 +280,7 @@ class ChromeApi(recipe_api.RecipeApi):
           # see the context (inside of util) and elide the sleep.
           @self.m.time.exponential_retry(retries=1,
                                          delay=datetime.timedelta(seconds=120))
-          def _call_chrome_sync(self):
+          def _call_chrome_sync(self) -> None:
             try:
               # Writes out the .gclient file.
               self.m.gclient('config', config_cmd, infra_step=True)
@@ -222,14 +303,15 @@ class ChromeApi(recipe_api.RecipeApi):
 
           _call_chrome_sync(self)
 
-  def diffed_files_requires_rebuild(self, patch_sets=None):
+  def diffed_files_requires_rebuild(
+      self, patch_sets: Optional[List[PatchSet]] = None) -> bool:
     """Returns a bool if patch_sets includes files that require rebuilding.
 
     The patch_sets object supplied must have been constructed with the file
     information populated.
 
     Args:
-      patch_sets (list[PatchSet]): List of patch sets (with FileInfo).
+      patch_sets: List of patch sets (with FileInfo).
 
     Returns:
       A bool that indicates a rebuild should be triggered.
@@ -248,7 +330,7 @@ class ChromeApi(recipe_api.RecipeApi):
       pres.step_text = 'no file diffs caused rebuild'
     return False
 
-  def is_chrome_pupr_atomic_uprev(self, gerrit_change):
+  def is_chrome_pupr_atomic_uprev(self, gerrit_change: GerritChange) -> bool:
     # Check the host.
     if gerrit_change.host == INTERNAL_GERRIT_HOST:
       return False
@@ -274,24 +356,26 @@ class ChromeApi(recipe_api.RecipeApi):
     # Check the ebuild file change is in the patch set.
     return self.diffed_files_requires_rebuild(patch_sets)
 
-  def has_chrome_prebuilt(self, build_target, chroot, internal=False,
-                          ignore_prebuilts=False):
+  def has_chrome_prebuilt(self, build_target: BuildTarget, chroot: Chroot,
+                          internal: bool = False,
+                          ignore_prebuilts: bool = False) -> bool:
     if ignore_prebuilts or self._deps_cas:
       return False
     return self.m.cros_build_api.PackageService.HasChromePrebuilt(
         HasChromePrebuiltRequest(build_target=build_target, chroot=chroot,
                                  chrome=internal)).has_prebuilt
 
-  def needs_chrome(self, build_target, chroot, packages=None):
+  def needs_chrome(self, build_target: BuildTarget, chroot: Chroot,
+                   packages: Optional[List[PackageInfo]] = None) -> bool:
     """Returns whether or not this run needs chrome.
 
     Returns whether or not this run needs chrome, that is, will require a
     prebuilt, or will need to build it from source.
 
     Args:
-      build_target (chromiumos.BuildTarget): Build target of the build.
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      packages (list[chromiumos.PackageInfo]): Packages that the builder needs
+      build_target: Build target of the build.
+      chroot: Information on the chroot for the build.
+      packages: Packages that the builder needs
           to build, or empty / None for default packages.
 
     Returns:
@@ -301,7 +385,8 @@ class ChromeApi(recipe_api.RecipeApi):
         BuildsChromeRequest(build_target=build_target, chroot=chroot,
                             packages=packages)).builds_chrome
 
-  def follower_lacks_prebuilt(self, build_target, chroot, packages):
+  def follower_lacks_prebuilt(self, build_target: BuildTarget, chroot: Chroot,
+                              packages: List[PackageInfo]) -> bool:
     """Returns whether we need the chrome source to be synced.
 
     Returns whether or not this run needs chrome source to be synced locally.
@@ -309,10 +394,9 @@ class ChromeApi(recipe_api.RecipeApi):
     allowed 'follower' packages to be built out of chrome's source.
 
     Args:
-      build_target (chromiumos.BuildTarget): Build target of the build.
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      packages (list[chromiumos.PackageInfo]): Packages that the builder needs
-          to build.
+      build_target: Build target of the build.
+      chroot: Information on the chroot for the build.
+      packages: Packages that the builder needs to build.
     Returns:
       bool: Whether or not this run needs chrome.
     """
@@ -339,13 +423,14 @@ class ChromeApi(recipe_api.RecipeApi):
       pres.step_text = str(any_lack_pb)
       return any_lack_pb
 
-  def maybe_uprev_local_chrome(self, build_target, chroot, patch_sets):
+  def maybe_uprev_local_chrome(self, build_target: BuildTarget, chroot: Chroot,
+                               patch_sets: List[PatchSet]) -> bool:
     """Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
     Args:
-      build_target (chromiumos.BuildTarget): Build target of the build.
-      chroot (chromiumos.Chroot): Information on the chroot for the build.
-      patch_sets (list[PatchSet]): A list of patch sets to examine.
+      build_target: Build target of the build.
+      chroot: Information on the chroot for the build.
+      patch_sets: A list of patch sets to examine.
 
     Returns:
       bool: If we upreved the local Chrome.
@@ -367,14 +452,15 @@ class ChromeApi(recipe_api.RecipeApi):
         return True
     return False
 
-  def _fallback_needs_chrome_source(self, request, dep_graph, patch_sets=None):
+  def _fallback_needs_chrome_source(
+      self, request: InstallPackagesRequest, dep_graph: DepGraph,
+      patch_sets: Optional[List[PatchSet]] = None) -> NeedsChromeSourceResponse:
     """Legacy fallback to check whether chrome source is needed.
 
     Args:
-      request (InstallPackagesRequest): InstallPackagesRequest for the build.
-      dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
-      patch_sets (list[PatchSet]): Applied patchsets.  Default: the list
-        from workspace_util.
+      request: InstallPackagesRequest for the build.
+      dep_graph: From cros_relevance.get_dependency_graph.
+      patch_sets: Applied patchsets. Default: the list from workspace_util.
 
     Returns:
       NeedsChromeSourceResponse: Response from BuildAPI
@@ -410,16 +496,16 @@ class ChromeApi(recipe_api.RecipeApi):
 
     return response
 
-  def needs_chrome_source(self, request, dep_graph, presentation,
-                          patch_sets=None):
+  def needs_chrome_source(self, request: InstallPackagesRequest,
+                          dep_graph: DepGraph, presentation: StepPresentation,
+                          patch_sets: Optional[List[PatchSet]] = None) -> bool:
     """Checks whether chrome source is needed.
 
     Args:
-      request (InstallPackagesRequest): InstallPackagesRequest for the build.
-      dep_graph (DepGraph): From cros_relevance.get_dependency_graph.
-      presentation (StepPresentation): Step to update.
-      patch_sets (list[PatchSet]): Applied patchsets.  Default: the list
-        from workspace_util.
+      request: InstallPackagesRequest for the build.
+      dep_graph: From cros_relevance.get_dependency_graph.
+      presentation: Step to update.
+      patch_sets: Applied patchsets. Default: the list from workspace_util.
 
     Returns:
       bool: Whether Chrome source is needed.
