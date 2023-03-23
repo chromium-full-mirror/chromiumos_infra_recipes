@@ -93,6 +93,22 @@ class UrlsApi(recipe_api.RecipeApi):
       if task_result.name in passed_at_least_once:
         continue
 
+      # If the prejob failed, do not attempt to return per-test case results.
+      # Note: Prejob failures don't always contain a status or human readable
+      # summary.
+      if any(tc.verdict in failure_verdicts for tc in task_result.prejob_steps):
+        for tc in task_result.prejob_steps:
+          if tc.verdict in failure_verdicts:
+            if tc.human_readable_summary:
+              summary = tc.human_readable_summary.lower() or tc.name
+              summary = summary[7:] if summary.startswith(
+                  'reason_') else summary
+            else:
+              summary = tc.name + ' failed'
+            fail_text = task_result.name + ' - ' + summary
+            link_map[fail_text] = task_result.task_url
+        continue
+
       # Return per-test case results if possible.
       test_cases_empty = len(task_result.test_cases) == 0 or (
           len(task_result.test_cases) == 1 and
@@ -109,15 +125,7 @@ class UrlsApi(recipe_api.RecipeApi):
         # When per-test results are not available.
         task_name = (
             task_result.name + self.get_state_suffix(task_result.state))
-        for tc in task_result.prejob_steps:
-          if tc.verdict in failure_verdicts:
-            summary = tc.human_readable_summary.lower()
-            summary = summary[7:] if summary.startswith('reason_') else summary
-            fail_text = task_result.name + ' - ' + summary
-            link_map[fail_text] = task_result.task_url
-        if not link_map:
-          # If it was not a prejob failure, link to the task.
-          link_map[task_name] = task_result.task_url
+        link_map[task_name] = task_result.task_url
 
     return link_map
 
