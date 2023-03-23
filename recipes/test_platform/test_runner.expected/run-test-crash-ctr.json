@@ -662,6 +662,14 @@
       "@@@STEP_LOG_LINE@skylab_result@      {@@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tauto.stub_Pass\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tast.example.Fail\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@      {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"name\": \"tast.example.Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@      }@@@",
       "@@@STEP_LOG_LINE@skylab_result@    ],@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"incomplete\": true@@@",
@@ -684,6 +692,14 @@
       "@@@STEP_LOG_LINE@skylab_result@        {@@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tauto.stub_Pass\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tast.example.Fail\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        },@@@",
+      "@@@STEP_LOG_LINE@skylab_result@        {@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"name\": \"tast.example.Pass\",@@@",
+      "@@@STEP_LOG_LINE@skylab_result@          \"verdict\": \"VERDICT_NO_VERDICT\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@        }@@@",
       "@@@STEP_LOG_LINE@skylab_result@      ],@@@",
       "@@@STEP_LOG_LINE@skylab_result@      \"incomplete\": true@@@",
@@ -698,7 +714,7 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjEucS5uIvSSwtydcrLilNig9ILC4WYBZgFOLn4uXiLCjKL8sszszPE2CSYlDi4+LJS01NKY4vSi1IzCwy0uDizS/KTM/MS8yJL0ktLhHCZRgAgUMcmQ==\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJzjcuUS5uIvSSwtydcrLilNig9ILC4WYOYS5RIsSSwu0UutSMwtyEnVc0vMzMEiDFEtwCjEz8XLxVlQlF+WWZyZnyfAJMWgxMfFk5eamlIcX5RakJhZZBTGxZtflJmemZeYE1+SWlwiRB2rAUmGOI0=\"@@@"
     ]
   },
   {

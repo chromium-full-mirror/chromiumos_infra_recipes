@@ -1683,7 +1683,7 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
     # Even though test_runner(for CFT workflow) itself supports multiple suites/test-cases together,
     # CTPV1 does not. So there should be always one test-case in one suite.
     test_suite = properties.cft_test_request.test_suites[0]
-    test_name = test_suite.test_case_ids.test_case_ids[0].value
+    test_names = [test.value for test in test_suite.test_case_ids.test_case_ids]
 
     # Default values
     prejob_verdict = Result.Prejob.Step.VERDICT_FAIL
@@ -1719,9 +1719,10 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
         log_data.testhaus_url = ctr_result.testhaus_url
 
     if not test_cases:
-      # if prejob failed, add the default test case
+      # if prejob failed, add the test cases
       test_cases = [
           Result.Autotest.TestCase(name=test_name, verdict=test_verdict)
+          for test_name in test_names
       ]
       prejob_reason = _get_prejob_failure_reason_from_ctr_results(ctr_result)
 
