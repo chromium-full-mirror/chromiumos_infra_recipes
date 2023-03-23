@@ -13891,7 +13891,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1832)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1864)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#166)(api, interface, test_metadata, result):**
 

@@ -1829,6 +1829,38 @@ def _get_failure_reason_from_test_result(test_result):
   return test_result.data.reason
 
 
+def _trv2_post_processing(api):
+  """Post process test runner v2 results: locate test result directory and send
+    to CTS archiver.
+    Example of test result directory (with TRv2 & cros-tool-runner v2):
+    - On GCE bot: /b/s/w/ir/x/w
+                  /recipe_cleanup/tmphizmnig2/cros-test-9n2da52a
+                  /cros-test/results/tauto
+    - On Drone bot: /home/chromeos-test/skylab_bots/f-v-d13.1401099833/w/ir/x/w
+                    /recipe_cleanup/output_dirwbzlcct1/cros-test-bf71b245
+                    /cros-test/results/tauto
+    Note that CWR a.k.a. api.path['start_dir'] is isolated for each build.
+    Random directory is created e.g. `recipe_cleanup/*`.
+    TRv2 creates a unique folder for each docker container e.g. `cros-test-*`
+    We simply use `**` to match any of those randomly named folders and rely on
+    the pattern `cros-test/results/tauto` to identify the test result directory.
+    (cros-test/results is defined in cros-tool-runner v2 cros-test template)
+
+    Args:
+      * api (RecipeScriptApi): Ubiquitous recipe api.
+    """
+  with api.step.nest('Post processing test results') as step:  # pragma: nocover
+    dirs = api.file.glob_paths(
+        "List test results directories for CTS archiver", api.path['start_dir'],
+        os.path.join('**', 'cros-test', 'results', 'tauto'))
+    if len(dirs) == 0:
+      s_log(step, 'Skip processing', 'No directories found, skip CTS archiving')
+      step.presentation.step_summary_text = 'Skipped: no test directory found'
+      return
+    for directory in dirs:
+      api.cts_results_archive.archive(str(directory))
+
+
 def RunSteps(api, properties):
   api.easy.log_parent_step()
   # Set max_threads to 1 for whole test_runner build. Details: b/270152591.
@@ -1836,8 +1868,11 @@ def RunSteps(api, properties):
 
   if properties.cft_is_enabled and properties.cft_test_request.run_via_trv2 and api.cros_test_runner.is_enabled(
   ):  # pragma: nocover
-    # Use cros_test_runner binary rather than the normal test_runner workflow.
-    api.cros_test_runner.execute_luciexe()
+    try:
+      # Use cros_test_runner binary rather than the normal test_runner workflow.
+      api.cros_test_runner.execute_luciexe()
+    finally:
+      _trv2_post_processing(api)
     return
   if properties.cft_is_enabled:
     result = execution_steps_with_ctr(api, properties)
