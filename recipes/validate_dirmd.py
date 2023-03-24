@@ -123,7 +123,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.buildbucket.build(build_message),
-      api.post_check(post_process.StatusSuccess),
   )
 
   # Step data for dirmd and test_plan validation failures.
@@ -143,20 +142,20 @@ def GenTests(api):
       api.buildbucket.build(build_message),
       dirmd_glob_paths,
       dirmd_validation_fail,
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReasonRE,
                      '1 out of 1 dirmd validation failed.*'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
       'test_plan validation failure',
       api.buildbucket.build(build_message),
       test_plan_validation_fail,
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReasonRE,
                      '1 out of 1 test_plan validation failed.*'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -165,12 +164,12 @@ def GenTests(api):
       dirmd_glob_paths,
       dirmd_validation_fail,
       test_plan_validation_fail,
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReasonRE,
                      '.*1 out of 1 dirmd validation failed.*'),
       api.post_check(post_process.ResultReasonRE,
                      '.*1 out of 1 test_plan validation failed.*'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -179,6 +178,5 @@ def GenTests(api):
       api.repo.project_infos_step_data(
           'cherry-pick gerrit changes.apply gerrit patch sets',
           [dict(project='otherproject')]),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -9,7 +9,6 @@ from collections import OrderedDict
 import contextlib
 from typing import Dict, Generator, List, Optional, Tuple
 
-from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -314,8 +313,9 @@ def _extract_host_name(api: RecipeApi,
     return list(host_names)[0]
 
 
-def _collect_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]
-                    ) -> Dict[str, VerifierRunInfo]:
+def _collect_results(
+    api: RecipeApi,
+    verifiers: Dict[str, VerifierRunInfo]) -> Dict[str, VerifierRunInfo]:
   """Collect results from swarming, blocking if necessary.
 
   Args:
@@ -338,9 +338,9 @@ def _collect_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]
     return verifiers
 
 
-def _update_skipped_verifiers(api: RecipeApi,
-                              verifiers: Dict[str, VerifierRunInfo]
-                             ) -> Dict[str, VerifierRunInfo]:
+def _update_skipped_verifiers(
+    api: RecipeApi,
+    verifiers: Dict[str, VerifierRunInfo]) -> Dict[str, VerifierRunInfo]:
   """Return a subset of 'builders' that are not skipped by CL footers.
 
   Args:
@@ -376,8 +376,8 @@ def _update_skipped_verifiers(api: RecipeApi,
     return verifiers
 
 
-def _analyze_swarming_results(api: RecipeApi,
-                              verifiers: Dict[str, VerifierRunInfo]):
+def _analyze_swarming_results(api: RecipeApi, verifiers: Dict[str,
+                                                              VerifierRunInfo]):
   """Raise a StepFailure if any swarming task was unsuccessful.
 
   Args:
@@ -756,7 +756,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=['annealing']),
       # swarming TaskResults contain a failed task.
       collect_results_failed_test_data(),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -778,20 +778,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # The skipped builder isn't part of the specified builders.
       get_non_skipped_builders_test_data(skipped_builders=['other-builder']),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield api.test(
-      'no-successful-builds', api.cq(run_mode=api.cq.FULL_RUN),
+      'no-successful-builds',
+      api.cq(run_mode=api.cq.FULL_RUN),
       get_non_skipped_builders_test_data(),
-      try_build(project='chromeos', bucket='infra', builder='test-recipes'))
-
-  yield api.test('no_gerrit_changes', api.cq(run_mode=api.cq.FULL_RUN),
-                 api.post_check(post_process.StatusFailure))
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      status='FAILURE',
+  )
 
   yield api.test(
-      'invalid-builders', api.cq(run_mode=api.cq.FULL_RUN),
+      'no_gerrit_changes',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'invalid-builders',
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           TestRecipesProperties(verifiers=[{
               'name': 'production-builder',
               'critical': True
-          }])), api.post_check(post_process.StatusFailure))
+          }])),
+      status='FAILURE',
+  )
