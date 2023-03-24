@@ -49,8 +49,6 @@ def _gs_path(bucket: str, path: str) -> str:
 
 def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
   with api.step.nest('validate properties') as presentation:
-    if not properties.version_file:
-      raise StepFailure('must set version_file')
     if not properties.package_info.category:
       raise StepFailure('must set package_info.category')
     if not properties.package_info.package_name:
@@ -88,7 +86,14 @@ def DoRunSteps(api: RecipeApi,
     # src/platform/borealis/docs/build-and-deploy.md
     # TODO(davidriley): Perform the build steps in parallel.
     api.step('borealis_kernel', ['./tools/borealis_kernel.py'])
-    api.step('borealis build_full.py', ['./tools/build_full.py', '--no-cache'])
+    if properties.docker_variant:
+      api.step('borealis build_full.py', [
+          './tools/build_full.py', '--no-cache', '--variant',
+          properties.docker_variant
+      ])
+    else:
+      api.step('borealis build_full.py',
+               ['./tools/build_full.py', '--no-cache'])
     api.step('convert_docker_image', ['./tools/convert_docker_image.py'])
 
     # Version the archive.
@@ -114,6 +119,10 @@ def DoRunSteps(api: RecipeApi,
       presentation.links['VM image'] = api.path.join(
           _PANTHEON_PREFIX, properties.destination_gs_bucket,
           properties.destination_gs_path, archive_name)
+
+    # If the version_file is not set, skip updating the version_file
+    if not properties.version_file:
+      return
 
     with api.step.nest('update VERSION-PIN') as presentation:
       version_path = api.cros_source.workspace_path.join(
@@ -163,12 +172,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('basic', api.properties(**good_props),
                  api.post_check(post_process.StatusSuccess))
 
+  # version-pin is optional, if not set, it still passes but would not update
+  # the PIN.
   props = good_props.copy()
   del props['version_file']
   yield api.test('no-version_file', api.properties(**props),
                  api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_check(post_process.StatusFailure))
+                 api.post_check(post_process.StatusSuccess))
+
+  props = good_props.copy()
+  props['docker_variant'] = 'chroot'
+  yield api.test('docker_variant chroot', api.properties(**props),
+                 api.post_check(post_process.StatusSuccess))
 
   props = good_props.copy()
   del props['package_info']
