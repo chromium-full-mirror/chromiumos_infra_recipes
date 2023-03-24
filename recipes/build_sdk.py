@@ -156,7 +156,8 @@ class BuildSDKRun:
                                 'portage', 'pkgs')
       dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
                                f'chroot-{self._version}', 'packages')
-      self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path)
+      self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path, args=['-r'],
+                           multithreaded=True)
 
   def _upload_target_prebuilts(self) -> None:
     """Upload binaries for the amd64-host build target to GS://.
@@ -175,7 +176,8 @@ class BuildSDKRun:
                                 SDK_BUILD_TARGET, 'packages')
       dest_path = os.path.join('board', SDK_BUILD_TARGET,
                                f'chroot-{self._version}', 'packages')
-      self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path)
+      self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path, args=['-r'],
+                           multithreaded=True)
 
   def _upload_packages_index(self) -> None:
     """Upload the packages index file to Google Storage.
@@ -274,7 +276,7 @@ def GenTests(api: RecipeTestApi):
                      'call chromite.api.SdkService/BuildSdkTarball'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/CreateManifestFromSdk'),
-      api.post_check(post_process.StatusSuccess))
+      status='SUCCESS')
 
   yield api.test(
       'llvm-next',
@@ -285,6 +287,7 @@ def GenTests(api: RecipeTestApi):
                      'call chromite.api.SdkService/BuildSdkToolchain',
                      'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
       api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
   )
 
   yield api.test(
@@ -294,5 +297,6 @@ def GenTests(api: RecipeTestApi):
           'SdkService/BuildSdkTarball',
           '{"sdk_tarball_path": {"path": "/path/to/sdk.tar.xz"}}',
       ),
-      api.post_check(post_process.StatusException),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )
