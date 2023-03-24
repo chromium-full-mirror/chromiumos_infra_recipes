@@ -3021,7 +3021,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "RECIPE_MODULE[chromeos::disk_usage]/resources/track_disk_usage.py",
       "--depth",
       "2",
