@@ -135,7 +135,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   program_configs_path = api.path.mkstemp()
   # yapf: disable
   api.step('aggregating program configs', [
-    'vpython', merge_script,
+    'vpython3', merge_script,
     '-m', 'chromiumos.config.payload.ConfigBundle',
     '-a', 'chromiumos.config.payload.ConfigBundleList',
     '-o', program_configs_path] + files)
@@ -178,7 +178,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
       result = api.step(
           'generate flat payload',
-          ['vpython'] + cmd,
+          ['vpython3'] + cmd,
           stdout=api.raw_io.output_text(),
       )
 
@@ -214,12 +214,12 @@ def _flatten_configs(api, properties, project_infos, dry_run):
     ] + flat_files
     # yapf: enable
 
-    api.step('generate flattened configs', ['vpython'] + cmd)
+    api.step('generate flattened configs', ['vpython3'] + cmd)
 
     # join with program definitions
     # yapf: disable
     api.step('joining program and project configs', [
-      'vpython', program_join_script,
+      'vpython3', program_join_script,
       '-l', 'debug',
       '-o', output_path,
       '-b', binary_output_path,
@@ -282,7 +282,7 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
     api.step(
         'merge ConfigBundles to config-internal',
         [
-            'vpython', merge_script, '-m',
+            'vpython3', merge_script, '-m',
             'chromiumos.config.payload.ConfigBundle', '-a',
             'chromiumos.config.payload.ConfigBundleList', '-o', output_path
         ] + files,
@@ -319,7 +319,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
        api.step.nest("upload configs to ufs"):
 
     api.step("upload generated configs to UFS datastore", [
-        "vpython",
+        "vpython3",
         config_to_ufs_datastore,
         "--env",
         ufs_env,
