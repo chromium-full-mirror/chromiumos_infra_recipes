@@ -135,7 +135,7 @@ def _run_filter_command_and_commit(api: RecipeApi, input_file: PathLike,
       FILTER_TESTS_BY_AVAILABILITY_PATH)
 
   filter_command = [
-      'vpython',
+      'vpython3',
       filter_test_script,
       '--input',
       input_file,
@@ -183,7 +183,7 @@ def _run_generate_command_and_commit(api: RecipeApi, input_file: PathLike,
       output_file,
   ]
 
-  api.step('generate test plan summary step', ['vpython'] + generate_command)
+  api.step('generate test plan summary step', ['vpython3'] + generate_command)
 
   api.git.add([output_file])
 

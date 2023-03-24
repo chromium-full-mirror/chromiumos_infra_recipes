@@ -1727,7 +1727,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base1/file1.jsonproto",
@@ -1759,7 +1759,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base1/file1.filtered.jsonproto",
@@ -1787,7 +1787,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base2/file2.jsonproto",
@@ -1819,7 +1819,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base2/file2.filtered.jsonproto",
@@ -1847,7 +1847,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/infra/config/scripts/device_usage/filter_test_plans_by_availability.py",
       "--input",
       "[START_DIR]/base3/file3.jsonproto",
@@ -1879,7 +1879,7 @@
   },
   {
     "cmd": [
-      "vpython",
+      "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/config-internal/test/scripts/generate_test_plan_summary.py",
       "--input",
       "[START_DIR]/base3/file3.filtered.jsonproto",
