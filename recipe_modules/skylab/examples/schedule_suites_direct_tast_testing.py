@@ -46,6 +46,7 @@ def RunSteps(api):
       [
           uht('a-cq', 'bvt-tast-cq'),
           uht('b-cq', 'tast-tags-test-suite'),
+          uht('c-cq', 'bvt-tast-cq-hw'),
       ],
       timeout=duration_pb2.Duration(seconds=3600),
       container_metadata=api.metadata.test_api.mock_metadata(target="target"),
@@ -60,6 +61,9 @@ def GenTests(api):
       api.post_check(lambda check, steps: check('tagCriteria' not in steps[
           'schedule skylab tests v2.create test requests.configure a-cq'].logs[
               'request'])),
+      api.post_check(lambda check, steps: check('tagCriteria' not in steps[
+          'schedule skylab tests v2.create test requests.configure c-cq'].logs[
+              'request'])),
       api.post_check(lambda check, steps: check('tagCriteria' in steps[
           'schedule skylab tests v2.create test requests.configure b-cq'].logs[
               'request'])),
@@ -72,6 +76,9 @@ def GenTests(api):
           experiments=['chromeos.skylab.direct_tast_testing']),
       api.post_check(lambda check, steps: check('tagCriteria' in steps[
           'schedule skylab tests v2.create test requests.configure a-cq'].logs[
+              'request'])),
+      api.post_check(lambda check, steps: check('tagCriteria' in steps[
+          'schedule skylab tests v2.create test requests.configure b-cq'].logs[
               'request'])),
       api.post_check(lambda check, steps: check('tagCriteria' in steps[
           'schedule skylab tests v2.create test requests.configure b-cq'].logs[

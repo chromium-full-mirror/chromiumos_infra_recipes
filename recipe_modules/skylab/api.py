@@ -251,7 +251,7 @@ class SkylabApi(recipe_api.RecipeApi):
               # file.
               # TODO(b/271938042): Remove gating after the rollout is complete.
               if (self.direct_tast_testing_enabled() or
-                  uht.hw_test.suite != 'bvt-tast-cq'):
+                  uht.hw_test.suite not in ['bvt-tast-cq', 'bvt-tast-cq-hw']):
                 request.test_plan.tag_criteria.CopyFrom(
                     uht.hw_test.tag_criteria)
                 if uht.hw_test.tag_criteria != TestSuite.TestCaseTagCriteria():
