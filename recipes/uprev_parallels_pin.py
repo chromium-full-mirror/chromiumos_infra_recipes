@@ -12,14 +12,14 @@ This recipe involves booting up Windows in a virtual machine. The
 caller is responsible for ensuring this is only invoked in contexts
 where the necessary license(s) have been obtained.
 """
-
+import datetime
 import json
 import re
 from collections import namedtuple
 from typing import Dict, Optional
 
 from RECIPE_MODULES.chromeos.gerrit.api import Label
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
@@ -193,7 +193,7 @@ def uprev_package(api: RecipeApi, properties: UprevParallelsPinProperties,
     ]
 
 
-@exponential_retry(retries=2)
+@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))
 def build_vm_image(api: RecipeApi, properties: UprevParallelsPinProperties,
                    artifacts_path: BuildPath,
                    parallels_version: str) -> Dict[str, str]:

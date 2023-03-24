@@ -11,6 +11,7 @@ DEPS = {
     'context': 'recipe_engine/context',
     'properties': 'recipe_engine/properties',
     'step': 'recipe_engine/step',
+    'time': 'recipe_engine/time',
     'url': 'recipe_engine/url',
     'depot_gitiles': 'depot_tools/gitiles',
 

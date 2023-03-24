@@ -8,7 +8,7 @@ from typing import List
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.test_platform.request import Request as TestPlatformRequest
@@ -45,7 +45,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     return 'gs://%s/%s/%s/%s' % (self._archive_gs_bucket, build.builder.builder,
                                  build.id, tag)
 
-  @exponential_retry(retries=3,
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def archive_dir(self, dir_path, tag):
     """Archive dir to Google Storage.

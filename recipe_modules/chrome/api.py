@@ -9,8 +9,6 @@ import re
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
-
 from PB.chromite.api.packages import BuildsChromeRequest
 from PB.chromite.api.packages import GetChromeVersionRequest
 from PB.chromite.api.packages import HasChromePrebuiltRequest
@@ -199,7 +197,8 @@ class ChromeApi(recipe_api.RecipeApi):
         with self.m.depot_tools.on_path():
           # Define the step call with exp retry attached, pass self to help tests
           # see the context (inside of util) and elide the sleep.
-          @exponential_retry(retries=2, delay=datetime.timedelta(seconds=120))
+          @self.m.time.exponential_retry(retries=1,
+                                         delay=datetime.timedelta(seconds=120))
           def _call_chrome_sync(self):
             try:
               # Writes out the .gclient file.

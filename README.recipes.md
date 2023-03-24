@@ -1699,9 +1699,9 @@ Updates the retry_summary output property with the given step/status.
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ChromeApi](/recipe_modules/chrome/api.py#69)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ChromeApi](/recipe_modules/chrome/api.py#67)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#91)(self, cache_path, sync=True, step_name='sync chrome'):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#89)(self, cache_path, sync=True, step_name='sync chrome'):**
 
 Sync Chrome cache using existing cached repositories.
 
@@ -1710,7 +1710,7 @@ Args:
   sync (bool): whether or not to call sync after setting up the cache. Defaults to true.
   step_name (str): the name to use for the surrounding step. Defaults to "sync chrome".
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#226)(self, patch_sets=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#225)(self, patch_sets=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1723,7 +1723,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#305)(self, build_target, chroot, packages):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#304)(self, build_target, chroot, packages):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1739,13 +1739,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#71)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#69)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#278)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#277)(self, build_target, chroot, internal=False, ignore_prebuilts=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#252)(self, gerrit_change):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#251)(self, gerrit_change):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#343)(self, build_target, chroot, patch_sets):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#342)(self, build_target, chroot, patch_sets):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1757,7 +1757,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#286)(self, build_target, chroot, packages=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#285)(self, build_target, chroot, packages=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1773,7 +1773,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#414)(self, request, dep_graph, presentation, patch_sets=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#413)(self, request, dep_graph, presentation, patch_sets=None):**
 
 Checks whether chrome source is needed.
 
@@ -1787,7 +1787,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#137)(self, chrome_root, chroot, build_target, internal, cache_dir):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#135)(self, chrome_root, chroot, build_target, internal, cache_dir):**
 
 Sync Chrome source code.
 
@@ -1911,7 +1911,7 @@ Returns: (context manager) A context manager that inserts system python
     into the front of PATH.
 ### *recipe_modules* / [cloud\_pubsub](/recipe_modules/cloud_pubsub)
 
-[DEPS](/recipe_modules/cloud_pubsub/__init__.py#10): [support](#recipe_modules-support), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cloud_pubsub/__init__.py#10): [support](#recipe_modules-support), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -1921,7 +1921,7 @@ APIs for using Cloud Pub/Sub
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
 
 Publish a message to Cloud Pub/Sub
 
@@ -2665,7 +2665,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#53)(self, snapshot_id):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#53)(self, snapshot_id):**
 
 Find the annealing build that created snapshot with given ID.
 
@@ -2796,7 +2796,7 @@ Args:
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
 
-[DEPS](/recipe_modules/cros_infra_config/__init__.py#8): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+[DEPS](/recipe_modules/cros_infra_config/__init__.py#8): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -2868,7 +2868,7 @@ Get the builder group for the currently running builder.
 
 Configure the builder's knowledge of whether it's running in staging.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#200)(self, filename, step_test_data, timeout=None, repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#200)(self, filename, step_test_data, timeout=None, repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):**
 
 Helper method to fetch a file from gitiles.
 
@@ -2953,7 +2953,7 @@ Get TrackingPolicyCfg as defined in infra/config.
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#221)(self):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#221)(self):**
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
@@ -3871,7 +3871,7 @@ Args:
 Returns: A str
 ### *recipe_modules* / [cros\_source](/recipe_modules/cros_source)
 
-[DEPS](/recipe_modules/cros_source/__init__.py#7): [bot\_cost](#recipe_modules-bot_cost), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_source/__init__.py#7): [bot\_cost](#recipe_modules-bot_cost), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [overlayfs](#recipe_modules-overlayfs), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -4128,7 +4128,7 @@ Returns:
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1497)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1499)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4158,7 +4158,7 @@ Args:
       saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1376)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1377)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -4177,7 +4177,7 @@ Uses the `sync_to_manifest` property.
 
 Returns: ManifestLocation, or None.
 
-&emsp; **@exponential_retry(retries=3, condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1306)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1306)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -4194,7 +4194,7 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1476)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1478)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -5529,7 +5529,7 @@ A module to interact with Google Cloud.
 
 Initialize GcloudApi.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#343)(self, name, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [attach\_disk](/recipe_modules/gcloud/api.py#343)(self, name, instance, disk, zone):**
 
 Attach a disk to a GCE instance.
 
@@ -5594,7 +5594,7 @@ Args:
 Returns:
   The stdout of the gcloud command.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_gcloud\_image](/recipe_modules/gcloud/api.py#716)(self, step_name: str, image_name: str, props: List[str]):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [create\_gcloud\_image](/recipe_modules/gcloud/api.py#716)(self, step_name: str, image_name: str, props: List[str]):**
 
 Create an image.
 
@@ -5656,9 +5656,9 @@ Args:
   disk (str): Google Cloud disk name.
   zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#218)(self, image_name):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#218)(self, image_name):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#787)(self, images):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#787)(self, images):**
 
 Delete the list of provided images from GCE.
 
@@ -5674,7 +5674,7 @@ Args:
   project (str): Google Cloud project name.
   zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#390)(self, instance, disk, zone):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [detach\_disk](/recipe_modules/gcloud/api.py#390)(self, instance, disk, zone):**
 
 Detach a disk to a GCE instance.
 
@@ -5707,7 +5707,7 @@ Args:
 Returns:
   Bool of whether the disk is attached or not.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#617)(self, disk, zone):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [disk\_exists](/recipe_modules/gcloud/api.py#617)(self, disk, zone):**
 
 Check whether a disk exists.
 
@@ -5726,7 +5726,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#143)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#753)(self, retention_days, prefixes, protected_images=None):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#753)(self, retention_days, prefixes, protected_images=None):**
 
 Calculate the list of images that have expired.
 
@@ -5739,7 +5739,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [host\_zone](/recipe_modules/gcloud/api.py#121)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [image\_exists](/recipe_modules/gcloud/api.py#589)(self, image):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [image\_exists](/recipe_modules/gcloud/api.py#589)(self, image):**
 
 Check whether a image exists.
 
@@ -5753,7 +5753,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/gcloud/api.py#74)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#644)(self):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [list\_all\_disks](/recipe_modules/gcloud/api.py#644)(self):**
 
 Pulls a list of all disks that exist.
 
@@ -5791,7 +5791,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [mounted\_snapshot](/recipe_modules/gcloud/api.py#151)(self):**
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [resize\_disk](/recipe_modules/gcloud/api.py#681)(self, disk, zone, size):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [resize\_disk](/recipe_modules/gcloud/api.py#681)(self, disk, zone, size):**
 
 Resize the GCE disk above the default of 200GB.
 
@@ -5800,7 +5800,7 @@ Args:
   zone (str): GCE zone which the disk is located.
   size (str): New size of the disk in GB.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#564)(self, instance, name, zone):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [set\_disk\_autodelete](/recipe_modules/gcloud/api.py#564)(self, instance, name, zone):**
 
 Set a disk to autodelete when a GCE instance is deleted.
 
@@ -5912,7 +5912,7 @@ Args:
   name (str): An alphanumeric name for the mount, used for display.
 ### *recipe_modules* / [gerrit](/recipe_modules/gerrit)
 
-[DEPS](/recipe_modules/gerrit/__init__.py#6): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gerrit/__init__.py#6): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -6134,7 +6134,7 @@ Args:
     inferred from the gerrit_change.
 ### *recipe_modules* / [git](/recipe_modules/git)
 
-[DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/git/__init__.py#5): [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -6162,7 +6162,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#809)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#810)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -6171,7 +6171,7 @@ Args:
 
 Returns: (str): commit author email.
 
-&mdash; **def [branch\_exists](/recipe_modules/git/api.py#849)(self, branch):**
+&mdash; **def [branch\_exists](/recipe_modules/git/api.py#850)(self, branch):**
 
 Check if a branch exists.
 
@@ -6209,7 +6209,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#628)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
+&mdash; **def [clone](/recipe_modules/git/api.py#629)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -6238,7 +6238,7 @@ Args:
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_branch](/recipe_modules/git/api.py#835)(self, branch, remote_branch=None):**
+&mdash; **def [create\_branch](/recipe_modules/git/api.py#836)(self, branch, remote_branch=None):**
 
 Create a branch.
 
@@ -6248,7 +6248,7 @@ Args:
   * remote_branch (str): Name of the remote branch to track, e.g.
     origin/main or cros/mybranch.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#614)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#615)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -6260,7 +6260,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#432)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#433)(self):**
 
 Returns the currently checked out branch name.
 
@@ -6268,7 +6268,7 @@ Returns:
   (str): The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
-&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#865)(self, branch):**
+&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#866)(self, branch):**
 
 Deletes the local branch (if it exists).
 Args:
@@ -6285,7 +6285,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#694)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#695)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -6299,7 +6299,7 @@ Args:
 Returns:
   (str): the extracted branch name.
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#175)(self, remote, refs=None, timeout_sec=None, retries=3):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#175)(self, remote, refs=None, timeout_sec=None, retries=2):**
 
 Runs 'git fetch'.
 
@@ -6307,7 +6307,7 @@ Args:
   remote (str): The remote repository to fetch from.
   refs (list[str]): The refs to fetch.
   timeout_sec (int): Timeout in seconds.
-  retry (int): Number of times to retry.
+  retries (int): Number of times to retry.
 
 &mdash; **def [fetch\_ref](/recipe_modules/git/api.py#229)(self, remote, ref, timeout_sec=None):**
 
@@ -6335,7 +6335,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#713)(self, branch):**
+&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#714)(self, branch):**
 
 Creates the full ref for a branch.
 
@@ -6363,7 +6363,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#728)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#729)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -6377,7 +6377,7 @@ Returns:
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#753)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#754)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -6388,15 +6388,15 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#475)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#476)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#483)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#484)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#742)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#743)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -6406,7 +6406,7 @@ Args:
 Returns:
   (bool): whether the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#547)(self, revision, head='HEAD'):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#548)(self, revision, head='HEAD'):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -6417,7 +6417,7 @@ Args:
 Returns:
   (bool): Whether the revision is reachable from (is an ancestor of) |head|.
 
-&mdash; **def [log](/recipe_modules/git/api.py#514)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#515)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -6430,7 +6430,7 @@ Args:
 Returns:
   (list[Commit]): A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#493)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#494)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -6455,7 +6455,7 @@ Args:
 
 Runs 'git merge --abort'.
 
-&mdash; **def [merge\_base](/recipe_modules/git/api.py#580)(self, \*args, \*\*kwargs):**
+&mdash; **def [merge\_base](/recipe_modules/git/api.py#581)(self, \*args, \*\*kwargs):**
 
 Return the output from `git merge-base`.
 
@@ -6497,7 +6497,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#668)(self, force=False, branch=None, strategy_option=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#669)(self, force=False, branch=None, strategy_option=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -6507,13 +6507,13 @@ Args:
   strategy_option (str): If set, sets the --strategy-option flag. See
     `git help rebase` for details.
 
-&mdash; **def [remote](/recipe_modules/git/api.py#821)(self):**
+&mdash; **def [remote](/recipe_modules/git/api.py#822)(self):**
 
 Return the name of the remote.
 
 Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#449)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#450)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -6524,7 +6524,7 @@ Returns:
    (str): ref contained in the remote HEAD (ie the default branch), or None
       on error.
 
-&emsp; **@exponential_retry(retries=20, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#248)(self, step_name, timeout_sec=None):**
+&emsp; **@exponential_retry(retries=19, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#248)(self, step_name, timeout_sec=None):**
 
 Runs 'git remote update'.
 
@@ -6532,7 +6532,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#777)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#778)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -6552,14 +6552,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#686)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#687)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#793)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#794)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -6570,7 +6570,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#597)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#598)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -6581,7 +6581,7 @@ Args:
 Returns:
   (str): The contents of the file, None if the file does not exist in |rev|.
 
-&mdash; **def [stash](/recipe_modules/git/api.py#861)(self):**
+&mdash; **def [stash](/recipe_modules/git/api.py#862)(self):**
 
 Stash changes.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
@@ -7843,7 +7843,7 @@ Returns:
   A list of completed builds.
 ### *recipe_modules* / [paygen\_testing](/recipe_modules/paygen_testing)
 
-[DEPS](/recipe_modules/paygen_testing/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/paygen_testing/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -9184,15 +9184,15 @@ Returns:
   (BuildSetupResponse): Whether the build is relevant.
 ### *recipe_modules* / [tast\_exec](/recipe_modules/tast_exec)
 
-[DEPS](/recipe_modules/tast_exec/__init__.py#8): [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/tast_exec/__init__.py#8): [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastExecApi](/recipe_modules/tast_exec/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to execute tast commands.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#505)(self, image, project, machine, zone, network, subnet, private_key_path):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#506)(self, image, project, machine, zone, network, subnet, private_key_path):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -9211,7 +9211,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#394)(self, qcow_image_path, private_key_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#395)(self, qcow_image_path, private_key_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -9226,7 +9226,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#93)(self, build_payload, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#94)(self, build_payload, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -9236,7 +9236,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#113)(self, build_payload, vm_dir, modify_image=None):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#114)(self, build_payload, vm_dir, modify_image=None):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -9254,7 +9254,7 @@ Returns:
   private_key_path (Path): The location of the SSH key. This will be
     a location inside image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#478)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#479)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -9264,7 +9264,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#250)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#251)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -9277,7 +9277,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#215)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#216)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -9292,7 +9292,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#158)(self, suite_name, vm_context, tast_inputs):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#159)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
@@ -9307,7 +9307,7 @@ Returns:
    empty and a dict mapping a task kind with the number of successes.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [rdb\_util](#recipe_modules-rdb_util), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [rdb\_util](#recipe_modules-rdb_util), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -9319,7 +9319,7 @@ A module to process tast-results/ directory.
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=3, condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#48)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#48)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -12970,7 +12970,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#16)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#30): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen.py#29): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_testing](#recipe_modules-paygen_testing), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -14161,7 +14161,7 @@ Args:
 Returns:
   Where the build artifacts were uploaded.
 
-&emsp; **@exponential_retry(retries=2)**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#196)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
+&emsp; **@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#196)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
 
 Builds a new VM image for testing.
 
@@ -14259,11 +14259,11 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#24)(api):**
 ### *recipes* / [util:tests/util](/recipe_modules/util/tests/util.py)
 
-[DEPS](/recipe_modules/util/tests/util.py#8): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/util/tests/util.py#7): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#17)(api):**
+&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#22)(api):**
 ### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
 
 [DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]

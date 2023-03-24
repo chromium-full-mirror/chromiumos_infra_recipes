@@ -14,6 +14,7 @@ DEPS = {
     'properties': 'recipe_engine/properties',
     'raw_io': 'recipe_engine/raw_io',
     'step': 'recipe_engine/step',
+    'time': 'recipe_engine/time',
     'depot_gitiles': 'depot_tools/gitiles',
     'bot_cost': 'bot_cost',
     'cros_build_api': 'cros_build_api',

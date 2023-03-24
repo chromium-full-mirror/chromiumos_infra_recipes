@@ -15,7 +15,7 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine import recipe_api
 
 from PB.recipe_modules.chromeos.gcloud.gcloud import (SourceCacheAction)
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
 GCE_BUILD_PROJECT = 'chromeos-bot'
@@ -215,7 +215,7 @@ class GcloudApi(recipe_api.RecipeApi):
         self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('gce create image', cmd, infra_step=True)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def delete_image(self, image_name):
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       self.m.step('delete image', [
@@ -340,7 +340,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
     return disk_device_map.get(disk_name, None)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def attach_disk(self, name, instance, disk, zone):
     """Attach a disk to a GCE instance.
 
@@ -387,7 +387,7 @@ class GcloudApi(recipe_api.RecipeApi):
           path_to_sync,
       ], infra_step=True)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def detach_disk(self, instance, disk, zone):
     """Detach a disk to a GCE instance.
 
@@ -561,7 +561,7 @@ class GcloudApi(recipe_api.RecipeApi):
               'UUID={} {} ext4 discard,defaults,noatime,nofail 0 2'.format(
                   uuid, mount_path)), infra_step=True)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def set_disk_autodelete(self, instance, name, zone):
     """Set a disk to autodelete when a GCE instance is deleted.
 
@@ -586,7 +586,7 @@ class GcloudApi(recipe_api.RecipeApi):
           '--zone={}'.format(zone),
       ], infra_step=True)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def image_exists(self, image):
     """Check whether a image exists.
 
@@ -614,7 +614,7 @@ class GcloudApi(recipe_api.RecipeApi):
         return True
     return False
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def disk_exists(self, disk, zone):
     """Check whether a disk exists.
 
@@ -641,7 +641,7 @@ class GcloudApi(recipe_api.RecipeApi):
       return True
     return False
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def list_all_disks(self):
     """Pulls a list of all disks that exist.
 
@@ -678,7 +678,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._dev_ref = self.lookup_device_id(disk_name=disk_name)
     return bool(self._dev_ref)
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def resize_disk(self, disk, zone, size):
     """Resize the GCE disk above the default of 200GB.
 
@@ -713,7 +713,7 @@ class GcloudApi(recipe_api.RecipeApi):
           test_stdout='The filesystem on /dev/{} is now 262143739 (4k) blocks long.'
           .format(self._dev_ref))
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def create_gcloud_image(self, step_name: str, image_name: str,
                           props: List[str]):
     """Create an image.
@@ -750,7 +750,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self.create_gcloud_image('create image from image', image_name,
                              ['--source-image={}'.format(existing_image)])
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def get_expired_images(self, retention_days, prefixes, protected_images=None):
     """Calculate the list of images that have expired.
 
@@ -784,7 +784,7 @@ class GcloudApi(recipe_api.RecipeApi):
       del cmd[:]
     return image_list
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def delete_images(self, images):
     """Delete the list of provided images from GCE.
 

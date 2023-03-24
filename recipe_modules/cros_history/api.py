@@ -19,7 +19,7 @@ from PB.chromite.api.packages import UprevPackagesResponse
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult, UnitHwTest
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
@@ -50,7 +50,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_seconds
 
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=30))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def get_annealing_from_snapshot(self, snapshot_id):
     """Find the annealing build that created snapshot with given ID.
 

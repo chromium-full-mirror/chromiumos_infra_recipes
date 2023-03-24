@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 
 Reference = namedtuple('Reference', ['hash', 'ref'])
@@ -172,19 +172,19 @@ class GitApi(recipe_api.RecipeApi):
       args += refspecs
     self._step(args, timeout=timeout_sec)
 
-  def fetch(self, remote, refs=None, timeout_sec=None, retries=3):
+  def fetch(self, remote, refs=None, timeout_sec=None, retries=2):
     """Runs 'git fetch'.
 
     Args:
       remote (str): The remote repository to fetch from.
       refs (list[str]): The refs to fetch.
       timeout_sec (int): Timeout in seconds.
-      retry (int): Number of times to retry.
+      retries (int): Number of times to retry.
     """
     func = self._fetch
     if retries:
       delay = timedelta(seconds=1)
-      func = exponential_retry(retries=retries, delay=delay)(func)
+      func = self.m.time.exponential_retry(retries=retries, delay=delay)(func)
     return func(remote, refs, timeout_sec)
 
   def fetch_refs(self, remote, ref, timeout_sec=None, count=1, test_ids=None):
@@ -245,7 +245,7 @@ class GitApi(recipe_api.RecipeApi):
                            test_stdout='%s\n' % self.test_api.test_commit_id)
     return step_data.stdout.strip()
 
-  @exponential_retry(retries=20, delay=timedelta(minutes=1))
+  @exponential_retry(retries=19, delay=timedelta(minutes=1))
   def remote_update(self, step_name, timeout_sec=None):
     """Runs 'git remote update'.
 
@@ -424,8 +424,9 @@ class GitApi(recipe_api.RecipeApi):
     """
     func = self._push
     if retry:
-      func = exponential_retry(retries=3, delay=timedelta(seconds=2))(
-          self._push)
+      func = self.m.time.exponential_retry(retries=2,
+                                           delay=timedelta(seconds=2))(
+                                               self._push)
     return func(remote, refspec, dry_run, capture_stdout, capture_stderr, force,
                 **kwargs)
 

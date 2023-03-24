@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/file',
+    'recipe_engine/time',
     'src_state',
     'util',
 ]

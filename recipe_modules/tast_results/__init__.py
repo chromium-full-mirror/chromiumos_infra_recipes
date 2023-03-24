@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/swarming',
+    'recipe_engine/time',
     'cros_infra_config',
     'cros_resultdb',
     'cros_tags',

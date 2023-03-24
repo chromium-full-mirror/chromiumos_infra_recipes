@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 
 """API for working with CrOS source."""
-
+import datetime
 from collections import defaultdict
 from collections import namedtuple
 import contextlib
@@ -23,7 +23,7 @@ from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 # Default sync options for syncing the named cache.
 DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
@@ -1303,7 +1303,8 @@ class CrosSourceApi(RecipeApi):
     else:
       self.m.cros_source.sync_to_gitiles_commit(commit, manifest_url, **kwargs)
 
-  @exponential_retry(retries=3, condition=retry_timeouts)
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
+                     condition=retry_timeouts)
   def sync_to_pinned_manifest(self, manifest_url='', manifest_branch='',
                               manifest_path='', manifest_gs_path='', **kwargs):
     """Sync a checkout to the specified [pinned] manifest.
@@ -1373,7 +1374,8 @@ class CrosSourceApi(RecipeApi):
       self._pinned_manifest = (
           self.m.repo.ensure_pinned_manifest(test_data='') or manifest_xml)
 
-  @exponential_retry(retries=3, condition=retry_timeouts)
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
+                     condition=retry_timeouts)
   def sync_to_gitiles_commit(self, gitiles_commit, manifest_url=None, **kwargs):
     """Sync a checkout to the specified gitiles commit.
 

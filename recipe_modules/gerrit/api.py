@@ -19,7 +19,7 @@ from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.config_types import Path
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
@@ -585,7 +585,7 @@ class GerritApi(RecipeApi):
                                                   gerrit_change.host)
       return applied_labels
 
-  @exponential_retry(retries=5, delay=timedelta(seconds=5))
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
   def _do_set_change_labels(self, change_num: int, labels: Dict[Label, int],
                             gerrit_host: str,
                             test_output_data: Optional[Dict] = None) -> str:

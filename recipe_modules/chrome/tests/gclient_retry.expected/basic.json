@@ -588,6 +588,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checkout fails retry.sync chrome.sleep 488",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",

@@ -9,7 +9,6 @@ import datetime
 import json
 from typing import Any, Callable, Dict, Optional, List
 
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
@@ -35,6 +34,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
     'bot_scaling',
     'cros_build_api',
     'cros_infra_config',
@@ -214,8 +214,8 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
     # Create chroot, with retries!
     timeout = properties.init_sdk_timeout_secs or None
 
-    @exponential_retry(
-        retries=3,
+    @api.time.exponential_retry(
+        retries=2,
         delay=datetime.timedelta(seconds=properties.sdk_retry_delay or 300))
     def _retry_chroot_init_wrapper() -> Optional[StepFailure]:
       try:

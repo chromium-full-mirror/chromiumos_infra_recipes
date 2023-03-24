@@ -13,6 +13,7 @@ DEPS = {
     'path': 'recipe_engine/path',
     'raw_io': 'recipe_engine/raw_io',
     'step': 'recipe_engine/step',
+    'time': 'recipe_engine/time',
     'git': 'git',
     'gitiles': 'gitiles',
     'git_cl': 'git_cl',

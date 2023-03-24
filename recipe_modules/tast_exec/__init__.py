@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'recipe_engine/time',
     'easy',
     'gcloud',
     'tast_results',

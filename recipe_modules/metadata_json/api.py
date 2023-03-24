@@ -13,7 +13,7 @@ from google.protobuf import timestamp_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
 
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
@@ -170,7 +170,7 @@ class MetadataJsonApi(RecipeApi):
               template='gs://{}/{}'.format(location.gs_location, filename))
           self._upload(file_path, upload_location)
 
-  @exponential_retry(retries=3,
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def _upload(self, source, dest):
     self.m.gsutil(['cp', source, dest], timeout=10 * 60)

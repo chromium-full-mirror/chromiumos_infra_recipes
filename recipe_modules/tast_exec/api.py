@@ -5,10 +5,11 @@
 
 import contextlib
 import copy
+import datetime
 import os
 from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from PB.test_platform.taskstate import TaskState
 
 SYS_LOG_DIR = '/var/log'
@@ -427,7 +428,7 @@ class TastExecApi(RecipeApi):
 
     return qemu_vm_context
 
-  @exponential_retry(retries=2)
+  @exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))
   def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
                  kvm_monitor_serial_file, private_key_path, second_image_path):
     n_proc = self.m.easy.stdout_step(

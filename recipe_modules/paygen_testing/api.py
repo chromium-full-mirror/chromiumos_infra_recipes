@@ -12,7 +12,7 @@ from datetime import timedelta
 from os import path
 from typing import Dict, List, Optional, Tuple
 
-from RECIPE_MODULES.chromeos.util import util
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from RECIPE_MODULES.chromeos.cros_storage.api import FullPayload
 from RECIPE_MODULES.chromeos.cros_storage.api import Payload
 from google.protobuf import duration_pb2
@@ -404,7 +404,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
         target_version=payload_info['target_version'],
         size=payload_info['size'], recovery_key_version=recovery_key_version)
 
-  @util.exponential_retry(retries=6, delay=timedelta(minutes=2))
+  @exponential_retry(retries=5, delay=timedelta(minutes=2))
   def _discover_source_test_full_payload(self, root_uri: str) -> FullPayload:
     """Find a source full unsigned image to act as starting image for tests.
 

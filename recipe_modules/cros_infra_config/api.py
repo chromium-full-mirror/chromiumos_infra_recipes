@@ -2,7 +2,7 @@
 # Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
+import datetime
 import typing
 from typing import Union
 
@@ -26,7 +26,7 @@ from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.util.util import exponential_retry
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 CHROME_OS_INFRA_CONFIG_REPO_URL = (
     'https://chrome-internal.googlesource.com/chromeos/infra/config')
@@ -197,7 +197,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     return self.m.properties.get('target_builder_group')
 
-  @exponential_retry(retries=3,
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def download_binproto(self, filename, step_test_data, timeout=None,
                         repo=CHROME_OS_INFRA_CONFIG_REPO_URL,
@@ -218,7 +218,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             step_test_data=step_test_data, timeout=timeout or
             self.test_api.gitiles_timeout_seconds))
 
-  @exponential_retry(retries=3,
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def get_realms_list(self):
     """Helper method to fetch the list of chromeos realms from gitiles."""
