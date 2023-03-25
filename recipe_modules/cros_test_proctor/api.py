@@ -880,11 +880,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       The ExecuteResponses.tagged_response from the latest invocation.
     """
     previous_test_results = {}
-    if (self.m.cq.active and self.m.skylab.direct_tast_testing_enabled()):
+    if not (self.m.cq.active and self.m.skylab.direct_tast_testing_enabled()):
+      return previous_test_results
+
+    with self.m.step.nest('get previous test results') as presentation:
       _, test_task_ids = self.m.cros_history.get_previous_test_task_ids()
       # CQ only launches one cros_test_platform builder.
       if len(test_task_ids) == 1:
         build = self.m.buildbucket.get(test_task_ids[0])
         previous_test_results = self.m.skylab_results.get_tagged_execute_responses_from_build(
             build)
+        for name, results in previous_test_results.items():
+          presentation.logs[name] = json_format.MessageToJson(results)
+
     return previous_test_results

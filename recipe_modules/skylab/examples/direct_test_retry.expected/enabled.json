@@ -153,6 +153,16 @@
   },
   {
     "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder.get failed test cases",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@found 1 failed test case(s)@@@",
+      "@@@STEP_LOG_LINE@tests@tast.test1@@@",
+      "@@@STEP_LOG_END@tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "schedule skylab tests v2.create test requests.configure test-builder (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -221,6 +231,16 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-builder (2).get failed test shards",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@found 1 failed test shard(s)@@@",
+      "@@@STEP_LOG_LINE@tests@tast.shard-0@@@",
+      "@@@STEP_LOG_END@tests@@@"
     ]
   },
   {

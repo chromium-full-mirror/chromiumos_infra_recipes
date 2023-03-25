@@ -60,8 +60,9 @@ def GenTests(api):
       api.properties(
           expected_execute_responses=json_format.MessageToJson(
               ExecuteResponses())),
-      api.post_check(post_process.DoesNotRun, 'find matching builds'),
+      api.post_check(post_process.DoesNotRun, 'get previous test results'),
       api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
   )
 
   yield api.test(
@@ -71,10 +72,12 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
-          'find matching builds.buildbucket.search'),
-      api.buildbucket.simulated_get(ctp_build),
+          'get previous test results.find matching builds.buildbucket.search'),
+      api.buildbucket.simulated_get(
+          ctp_build, 'get previous test results.buildbucket.get'),
       api.properties(
           expected_execute_responses=json_format.MessageToJson(
               execute_responses())),
       api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
   )

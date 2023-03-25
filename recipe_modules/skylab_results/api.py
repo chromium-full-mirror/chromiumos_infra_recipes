@@ -87,37 +87,48 @@ class SkylabResultsApi(recipe_api.RecipeApi):
     Returns:
       The names of the failed test cases.
     """
-    # Group the tasks by shard.
-    shard_name_to_task_map = {}
-    for result in hw_test_results:
-      if result.name not in shard_name_to_task_map:
-        shard_name_to_task_map[result.name] = []
-      shard_name_to_task_map[result.name].append(result)
+    with self.m.step.nest('get failed test cases') as presentation:
+      # Group the tasks by shard.
+      shard_name_to_task_map = {}
+      for result in hw_test_results:
+        if result.name not in shard_name_to_task_map:
+          shard_name_to_task_map[result.name] = []
+        shard_name_to_task_map[result.name].append(result)
 
-    if ensure_complete:
-      for results in shard_name_to_task_map.values():
-        if not any(result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED
-                   for result in results):
+      if ensure_complete:
+        incomplete_shards = set()
+        for shard_name, results in shard_name_to_task_map.items():
+          if not any(result.state.life_cycle == TaskState.LIFE_CYCLE_COMPLETED
+                     for result in results):
+            incomplete_shards.add(shard_name)
+
+          if not any(
+              len(result.prejob_steps) > 0 and
+              result.prejob_steps[0].verdict == TaskState.VERDICT_PASSED
+              for result in results):
+            incomplete_shards.add(shard_name)
+
+        if incomplete_shards:
+          presentation.step_text = (
+              'results may be incomplete, not returning failed test cases')
+          presentation.logs['incomplete shards'] = incomplete_shards
           return []
 
-        if not any(
-            len(result.prejob_steps) > 0 and
-            result.prejob_steps[0].verdict == TaskState.VERDICT_PASSED
-            for result in results):
-          return []
+      failed_test_names = set()
+      passed_test_names = set()
+      for result in hw_test_results:
+        for tc in result.test_cases:
+          if tc.verdict == TaskState.VERDICT_PASSED:
+            passed_test_names.add(tc.name)
+          else:
+            failed_test_names.add(tc.name)
 
-    failed_test_names = set()
-    passed_test_names = set()
-    for result in hw_test_results:
-      for tc in result.test_cases:
-        if tc.verdict == TaskState.VERDICT_PASSED:
-          passed_test_names.add(tc.name)
-        else:
-          failed_test_names.add(tc.name)
-
-    # Remove any failed tests which passed in another attempt.
-    failed_test_names = failed_test_names.difference(passed_test_names)
-    return list(failed_test_names)
+      # Remove any failed tests which passed in another attempt.
+      failed_test_names = failed_test_names.difference(passed_test_names)
+      presentation.step_text = 'found %d failed test case(s)' % len(
+          failed_test_names)
+      presentation.logs['tests'] = list(failed_test_names)
+      return list(failed_test_names)
 
   def extract_failed_test_shard_names(
       self, hw_test_results: List[ExecuteResponse.TaskResult]) -> List[str]:
@@ -129,21 +140,24 @@ class SkylabResultsApi(recipe_api.RecipeApi):
     Returns:
       The names of the failed hw_test_results.
     """
+    with self.m.step.nest('get failed test shards') as presentation:
+      if not hw_test_results:
+        return []
 
-    if not hw_test_results:
-      return []
+      # Group the tasks by shard.
+      shard_name_to_task_map = {}
+      for result in hw_test_results:
+        if result.name not in shard_name_to_task_map:
+          shard_name_to_task_map[result.name] = []
+        shard_name_to_task_map[result.name].append(result)
 
-    # Group the tasks by shard.
-    shard_name_to_task_map = {}
-    for result in hw_test_results:
-      if result.name not in shard_name_to_task_map:
-        shard_name_to_task_map[result.name] = []
-      shard_name_to_task_map[result.name].append(result)
+      failed_test_shard_names = []
+      for name, results in shard_name_to_task_map.items():
+        if not any(result.state.verdict == TaskState.VERDICT_PASSED
+                   for result in results):
+          failed_test_shard_names.append(name)
 
-    failed_test_shard_names = []
-    for name, results in shard_name_to_task_map.items():
-      if not any(result.state.verdict == TaskState.VERDICT_PASSED
-                 for result in results):
-        failed_test_shard_names.append(name)
-
-    return failed_test_shard_names
+      presentation.step_text = 'found %d failed test shard(s)' % len(
+          failed_test_shard_names)
+      presentation.logs['tests'] = failed_test_shard_names
+      return failed_test_shard_names
