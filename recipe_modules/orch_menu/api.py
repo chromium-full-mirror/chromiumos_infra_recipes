@@ -8,6 +8,7 @@
 from __future__ import division
 
 from typing import Any, Dict, List, Optional, Tuple
+import re
 
 import contextlib
 from collections import defaultdict
@@ -148,6 +149,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._builder_to_collect_value = defaultdict(
         lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
             BuilderConfig.Orchestrator.ChildSpec.COLLECT_HANDLING_UNSPECIFIED))
+
+  TESTING_OVERRIDE_FOOTER = 'Testing-Override'
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -1080,11 +1083,29 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Returns:
       The current status of the builds.
     """
-    # Is the build tagged as overriding the PCQ quota scheduler account?
-    if self.m.cros_tags.has_entry('cq_cl_tag',
-                                  'pupr:chromeos-base/lacros-ash-atomic',
-                                  self.m.buildbucket.build.tags):
-      self.m.skylab.set_qs_account('pupr')
+    testing_override_values = self.m.git_footers.get_footer_values(
+        self.gerrit_changes, self.TESTING_OVERRIDE_FOOTER)
+
+    # Buganizer id must be at least 9 digits long.
+    regex = re.compile('^(?P<qs_account>' + self.m.skylab.QS_UNMANAGED_PATTERN +
+                       r')\s+b/\d{9,}\s*$')
+
+    # Pick up only values matching the pattern.
+    qs_accounts = []
+    for testing_override_value in testing_override_values:
+      for match in [regex.search(testing_override_value)]:
+        if match:
+          qs_accounts.append(match.group('qs_account'))
+
+    if qs_accounts:
+      qs_account = sorted(qs_accounts, reverse=True).pop()
+      self.m.skylab.set_qs_account(qs_account)
+    else:
+      # Is the build tagged as overriding the PCQ quota scheduler account?
+      if self.m.cros_tags.has_entry('cq_cl_tag',
+                                    'pupr:chromeos-base/lacros-ash-atomic',
+                                    self.m.buildbucket.build.tags):
+        self.m.skylab.set_qs_account('pupr')
 
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
     if gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(

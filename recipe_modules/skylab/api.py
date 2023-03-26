@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import re
 from typing import Dict, List
 
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask, UnitHwTest
@@ -43,6 +44,9 @@ class SkylabApi(recipe_api.RecipeApi):
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
   CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
+
+  # A 'Testing-Override' git footer value pattern.
+  QS_UNMANAGED_PATTERN = 'p[0-3]_cq_unmanaged'
 
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
@@ -234,7 +238,12 @@ class SkylabApi(recipe_api.RecipeApi):
 
       tags = self._get_ctp_tags(uht.hw_test, image_path)
       request_tags = ['{}:{}'.format(key, value) for key, value in tags.items()]
+
       req.params.decorations.tags.extend(request_tags)
+
+      if re.search(self.QS_UNMANAGED_PATTERN, self._qs_account):
+        req.params.decorations.tags.append('label-quota-account:{}'.format(
+            self._qs_account))
 
       release_autotest_keyvals = self._get_release_autotest_keyvals(uht)
       if release_autotest_keyvals:

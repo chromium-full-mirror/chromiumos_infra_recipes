@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 import copy
+import json
+from typing import Callable, Dict
 
 from google.protobuf import json_format
 
@@ -15,6 +17,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
 from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
 
 DEPS = [
     'recipe_engine/assertions',
@@ -839,3 +842,59 @@ def GenTests(api):
       extra_changes=gerrit_changes,
       status='FAILURE',
   )
+
+  def verify_qs_account_unmanaged(check: Callable[[bool],
+                                                  bool], steps: Dict[str, Step],
+                                  p: int, expected: bool) -> bool:
+    data = json.loads(
+        steps['run tests.schedule tests.schedule hardware tests.'
+              'schedule skylab tests v2.buildbucket.schedule'].stdin)
+    return check(expected ^ (
+        'label-quota-account:p{}_cq_unmanaged'.format(
+            p) not in data['requests'][0]['scheduleBuild']['properties']
+        ['requests']['htarget.hw.bvt-inline']['params']['decorations']['tags']))
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-p0-cq-unmanaged', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['p0_cq_unmanaged b/123456789']),
+      api.post_check(verify_qs_account_unmanaged, p=0, expected=True), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-p3-cq-unmanaged', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['p3_cq_unmanaged b/123456789']),
+      api.post_check(verify_qs_account_unmanaged, p=3, expected=True), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-p4-cq-unmanaged', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['p4_cq_unmanaged b/123456789']),
+      api.post_check(verify_qs_account_unmanaged, p=4, expected=False), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-cq-unmanaged-short-bid', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['p0_cq_unmanaged b/12345678']),
+      api.post_check(verify_qs_account_unmanaged, p=0, expected=False), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-cq-unmanaged-no-bid', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['p0_cq_unmanaged']),
+      api.post_check(verify_qs_account_unmanaged, p=0, expected=False), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-cq-unmanaged-multi-footer', data.ctp_normal,
+      api.git_footers.simulated_get_footers([
+          'p0_cq_unmanaged b/1234567890', 'p3_cq_unmanaged b/1234567893',
+          'an incorrect value', 'p2_cq_unmanaged b/1234567892',
+          'p1_cq_unmanaged b/1234567891'
+      ]), api.post_check(verify_qs_account_unmanaged, p=0, expected=True),
+      cq=True, with_history=True, git_footers=[], collect_builds=data.builds)
+
+  yield api.orch_menu.test(
+      'quota-scheduler-override-cq-unmanaged-no-account', data.ctp_normal,
+      api.git_footers.simulated_get_footers(['b/123456789']),
+      api.post_check(verify_qs_account_unmanaged, p=0, expected=False), cq=True,
+      with_history=True, git_footers=[], collect_builds=data.builds)

@@ -57,7 +57,8 @@ def RunSteps(api):
   unit_hw_test_with_license = UnitHwTest(unit=hw_test_unit_with_license,
                                          hw_test=hw_test_with_license)
 
-  api.skylab.set_qs_account('a_new_quota_account')
+  qs_account = api.properties.get('qs_account') or 'a_new_quota_account'
+  api.skylab.set_qs_account(qs_account)
 
   # HW Test Unit opted-in to running via container
   hw_test_unit_container = api.cros_test_plan.test_api.hw_test_unit
@@ -119,3 +120,6 @@ def GenTests(api):
       'experiments', api.buildbucket.build(build),
       api.git_footers.simulated_get_footers(['chromeos.c.d', 'chromeos.e.f'],
                                             'schedule skylab tests v2'))
+
+  yield api.test('unmanaged_qs_account',
+                 api.properties(qs_account='p0_cq_unmanaged'))
