@@ -11,8 +11,10 @@ localmirror and then modifies the Guest VM's version pin to match this version.
 """
 
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict
+from typing import List
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 from google.protobuf.struct_pb2 import Struct
@@ -27,11 +29,9 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
 from PB.recipes.chromeos.uprev_guest_vm_pin import VmBoardImage
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
-from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -574,7 +574,6 @@ def GenTests(api: RecipeTestApi):
       api.properties(**sludge_properties),
       api.git.diff_check(True),
       mock_sludge_build_search,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -583,7 +582,6 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       mock_tatl_build_search_success,
       mock_tael_build_search_success,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -592,7 +590,7 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       mock_tatl_build_search_success,
       mock_tael_build_search_no_common,
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -601,7 +599,6 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       mock_tatl_build_search_subversion,
       mock_tael_build_search_subversion,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -610,7 +607,6 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       mock_tatl_build_search_falloff,
       mock_tael_build_search_falloff,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -619,7 +615,6 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_success,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -628,7 +623,6 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(False),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_success,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -636,7 +630,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(**termina_release_properties),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_no_match,
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -644,7 +638,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(**termina_release_properties),
       mock_tatl_release_build_search_success,
       mock_tael_release_build_search_partial_match,
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -657,21 +651,20 @@ def GenTests(api: RecipeTestApi):
       mock_tael_rubik_main_search,
       mock_tatl_rubik_R108_search,
       mock_tael_rubik_R108_search,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
       'no-version-file',
       api.properties(**sludge_properties),
       api.properties(versionFile=''),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
       'no-vm-board-images',
       api.properties(**sludge_properties),
       api.properties(vmBoardImages=[]),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -685,7 +678,7 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='distfiles/sludge',
               ))
       ]),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -699,7 +692,7 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='distfiles/sludge',
               ))
       ]),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -713,14 +706,14 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='',
               ))
       ]),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
       'unknown-build-type',
       api.properties(**sludge_properties),
       api.properties(builderType=123),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -728,7 +721,6 @@ def GenTests(api: RecipeTestApi):
       api.properties(**sludge_properties),
       api.git.diff_check(False),
       mock_sludge_build_search,
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -737,7 +729,7 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_search_results(
           [],
           step_name='get latest build version.query-sludge.buildbucket.search'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -746,14 +738,14 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_search_results(
           [],
           step_name='get latest build version.query-tatl.buildbucket.search'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
       'legacy-release-wrong-branch',
       api.properties(**termina_release_properties),
       mock_tatl_release_builds_too_recent,
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -762,7 +754,6 @@ def GenTests(api: RecipeTestApi):
       api.properties(userAcls=[], groupAcls=[]),
       api.git.diff_check(True),
       mock_sludge_build_search,
-      api.post_check(post_process.StatusSuccess),
   )
 
 

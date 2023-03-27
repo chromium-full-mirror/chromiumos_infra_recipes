@@ -9752,11 +9752,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/android/examples/misc.py#15)(api: RecipeApi):**
 ### *recipes* / [android:examples/uprev](/recipe_modules/android/examples/uprev.py)
 
-[DEPS](/recipe_modules/android/examples/uprev.py#12): [android](#recipe_modules-android)
+[DEPS](/recipe_modules/android/examples/uprev.py#11): [android](#recipe_modules-android)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#19)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/android/examples/uprev.py#18)(api: RecipeApi):**
 ### *recipes* / [android\_uprev\_orchestrator](/recipes/android_uprev_orchestrator.py)
 
 [DEPS](/recipes/android_uprev_orchestrator.py#29): [android](#recipe_modules-android), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

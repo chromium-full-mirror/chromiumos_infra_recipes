@@ -537,6 +537,8 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.git_footers.step_data(
           'fetch previous snapshot identifier.read git footers', ''),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -805,7 +807,9 @@ def GenTests(api):
       api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
                      'src/private-overlay'),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
-                     'src/overlay'))
+                     'src/overlay'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   yield api.test(
       'retry-unknown',
@@ -827,7 +831,9 @@ def GenTests(api):
       api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
                      'src/private-overlay'),
       api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
-                     'src/overlay'))
+                     'src/overlay'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
@@ -867,9 +873,9 @@ def GenTests(api):
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data('recreating older run.read git footers',
                     stdout=api.raw_io.output('')),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'record new gerrit changes'),
       api.post_check(post_process.DoesNotRun, 'publish internal snapshot'),
+      status='FAILURE',
   )
 
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
@@ -954,7 +960,7 @@ def GenTests(api):
   yield api.test(
       'missing-required-properties',
       api.properties(AnnealingProperties()),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   # TODO(crbug/1169277) this will become multiple tests.
@@ -981,7 +987,6 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -1008,7 +1013,6 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -1036,7 +1040,6 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -1058,5 +1061,5 @@ def GenTests(api):
               '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
           )),
       api.step_data('ensure manifest cq-depend fulfilled.git log', retcode=3),
-      api.post_check(post_process.StatusAnyFailure),
+      status='INFRA_FAILURE',
   )

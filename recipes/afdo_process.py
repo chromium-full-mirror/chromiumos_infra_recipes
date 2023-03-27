@@ -60,6 +60,7 @@ def GenTests(api: RecipeTestApi):
            input_artifacts: Optional[List[
                ArtifactsByService.Toolchain.ArtifactInfo]] = None,
            artifact_pointless: bool = False, **kwargs) -> TestData:
+    status = kwargs.pop('status', 'SUCCESS')
     kwargs['builder'] = builder
 
     afdo_props = AfdoProcessProperties(artifact_build=True)
@@ -74,7 +75,7 @@ def GenTests(api: RecipeTestApi):
       ret += api.build_menu.set_build_api_return(
           'prepare artifacts', 'ArtifactsService/BuildSetup',
           '{"build_relevance": "POINTLESS"}')
-    return api.test(name, ret)
+    return api.test(name, ret, status=status)
 
   input_artifact = ArtifactsByService.Toolchain.ArtifactInfo(
       artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
@@ -88,4 +89,6 @@ def GenTests(api: RecipeTestApi):
 
   yield test('with-input-artifacts', input_artifacts=[input_artifact])
 
-  yield test('builder-no-longer-exists', builder='no-such-builder')
+  # TODO (b/275363240): audit this test.
+  yield test('builder-no-longer-exists', builder='no-such-builder',
+             status='FAILURE')

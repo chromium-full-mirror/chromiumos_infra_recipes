@@ -169,41 +169,38 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(android_package='android-package', submit_uprev=True),
       api.post_check(post_process.MustRun, 'run builds'),
       api.post_check(post_process.MustRun,
-                     'commit and generate CL.submit CL 1'),
-      api.post_check(post_process.StatusSuccess), with_history=True,
+                     'commit and generate CL.submit CL 1'), with_history=True,
       collect_builds=data.builds)
 
   yield api.orch_menu.test(
       'no-submit', data.ctp_normal,
       api.properties(android_package='android-package'),
       api.post_check(post_process.DoesNotRun,
-                     'commit and generate CL.submit CL 1'),
-      api.post_check(post_process.StatusSuccess), with_history=True,
+                     'commit and generate CL.submit CL 1'), with_history=True,
       collect_builds=data.builds)
 
-  yield api.orch_menu.test('android-package-not-set',
-                           api.post_check(post_process.StatusFailure))
+  yield api.orch_menu.test('android-package-not-set', status='FAILURE')
 
   yield api.orch_menu.test(
-      'lkgb-unmodified', api.properties(android_package='android-package'),
+      'lkgb-unmodified',
+      api.properties(android_package='android-package'),
       api.android.set_write_lkgb_response(modified_files=[]),
       api.post_check(post_process.DoesNotRun, 'run builds'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.orch_menu.test(
       'always-build', data.ctp_normal,
       api.properties(android_package='android-package', always_build=True),
       api.android.set_write_lkgb_response(modified_files=[]),
-      api.post_check(post_process.MustRun, 'run builds'),
-      api.post_check(post_process.StatusSuccess), with_history=True,
+      api.post_check(post_process.MustRun, 'run builds'), with_history=True,
       collect_builds=data.builds)
 
   yield api.orch_menu.test('build-failure', data.ctp_normal,
                            api.properties(android_package='android-package'),
-                           api.post_check(post_process.StatusFailure),
-                           with_history=True, collect_builds=data.crit_fail)
+                           with_history=True, collect_builds=data.crit_fail,
+                           status='FAILURE')
 
   yield api.orch_menu.test('test-failure', data.ctp_failure,
                            api.properties(android_package='android-package'),
-                           api.post_check(post_process.StatusFailure),
-                           with_history=True, collect_builds=data.builds)
+                           with_history=True, collect_builds=data.builds,
+                           status='FAILURE')

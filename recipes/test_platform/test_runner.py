@@ -4121,7 +4121,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='primary_dut')),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -4130,34 +4130,50 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_with_missing_field(
               missing_field_name='test_suites')),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
-      'provision-crash-ctr', _set_build(bid=42),
-      _misc_properties(cft_is_enabled=True), _request_properties_for_ctr(),
+      'provision-crash-ctr',
+      _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(),
       _mock_load_step_for_ctr(),
       api.step_data(
           'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
-          retcode=1), api.post_check(post_process.StatusException))
+          retcode=1),
+      status='FAILURE',
+  )
 
   yield api.test(
-      'run-test-crash-ctr', _misc_properties(cft_is_enabled=True),
-      _request_properties_for_ctr(), _mock_load_step_for_ctr(),
+      'run-test-crash-ctr',
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(),
       _successful_prejob_step_for_ctr(),
       api.step_data(
           'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
-          retcode=1), api.post_check(post_process.StatusFailure))
+          retcode=1),
+      status='FAILURE',
+  )
 
-  yield api.test('provision-failed-ctr', _set_build(bid=42),
-                 _misc_properties(cft_is_enabled=True),
-                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
-                 _failed_prejob_step_for_ctr(),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'provision-failed-ctr',
+      _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(),
+      _failed_prejob_step_for_ctr(),
+      status='FAILURE',
+  )
 
-  yield api.test('test-failed-ctr', _set_build(bid=42),
-                 _misc_properties(cft_is_enabled=True),
-                 _request_properties_for_ctr(), _mock_load_step_for_ctr(),
-                 _successful_prejob_step_for_ctr(),
-                 _failed_run_test_step_for_ctr(),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'test-failed-ctr',
+      _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(),
+      _successful_prejob_step_for_ctr(),
+      _failed_run_test_step_for_ctr(),
+      status='FAILURE',
+  )

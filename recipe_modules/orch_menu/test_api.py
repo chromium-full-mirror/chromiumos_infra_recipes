@@ -60,6 +60,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       (recipe_test_api.TestData) TestData for the test.
     """
     # Because of *args and **kwargs, we need to fetch our arguments from kwargs.
+    status = kwargs.pop('status', 'SUCCESS')
     with_history = kwargs.pop('with_history', False)
     with_manifest_refs = kwargs.pop('with_manifest_refs', False)
     max_build_failure_ratio = kwargs.pop('max_build_failure_ratio', 0.0)
@@ -180,7 +181,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                 [follow_on_orch], 'run follow on orchestrator.collect'))
 
     # Call recipe_test_api.test().
-    return super().test(name, ret, *args)
+    return super().test(name, ret, *args, status=status)
 
   def get_default_module_properties(self, with_manifest_refs=False,
                                     with_history=False,

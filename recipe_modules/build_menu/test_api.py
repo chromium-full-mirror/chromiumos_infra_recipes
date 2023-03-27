@@ -68,6 +68,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     """
     # The combination of *args and **kwargs above makes this the least messy way
     # to have our own parameters, with defaults.
+    status = kwargs.pop('status', 'SUCCESS')
     build_target = kwargs.pop('build_target', 'amd64-generic')
     artifact_pointless = kwargs.pop('artifact_pointless', False)
     pointless = kwargs.pop('pointless', False)
@@ -78,4 +79,4 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     if pointless:
       ret += self.set_pointless_return(True)
     # Call recipe_test_api.test().
-    return super().test(name, ret, *args)
+    return super().test(name, ret, *args, status=status)

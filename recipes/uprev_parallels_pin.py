@@ -498,48 +498,42 @@ def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'no-package', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   props = good_props.copy()
   del props['upstream_gs_bucket']
   yield api.build_menu.test(
       'no-upstream-bucket', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   props = good_props.copy()
   del props['upstream_gs_path']
   yield api.build_menu.test(
       'no-upstream-path', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   props = good_props.copy()
   del props['version_file']
   yield api.build_menu.test(
       'no-version-file', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   props = good_props.copy()
   del props['test_image_gs_bucket']
   yield api.build_menu.test(
       'no-test-image-bucket', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   props = good_props.copy()
   del props['test_image_gs_path']
   yield api.build_menu.test(
       'no-test-image-path', api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE')
 
   # Upstream version cannot be found.
   yield api.build_menu.test(
@@ -547,12 +541,12 @@ def GenTests(api: RecipeTestApi):
       api.step_data('find latest upstream version.gsutil list',
                     stdout=api.raw_io.output('')),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure))
+      status='FAILURE')
 
   yield api.build_menu.test(
       'snapshot-not-found', api.properties(**good_props), bad_snapshot_search,
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure))
+      status='FAILURE')
 
   # Upstream version is the same as in Chrome OS (nothing to do).
   yield api.build_menu.test(
@@ -580,10 +574,9 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      _BUILD_STEP_NAME + '.upload artifacts.publish artifacts'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return(
           _BUILD_STEP_NAME + '.install packages',
-          'SysrootService/InstallPackages', retcode=1))
+          'SysrootService/InstallPackages', retcode=1), status='FAILURE')
 
   yield api.build_menu.test(
       'bundle-fail', api.properties(**good_props), api.git.diff_check(True),
@@ -594,10 +587,9 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      _BUILD_STEP_NAME + '.upload artifacts'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return(
           _BUILD_STEP_NAME + '.upload artifacts.call artifacts service',
-          'ArtifactsService/Get', retcode=1))
+          'ArtifactsService/Get', retcode=1), status='INFRA_FAILURE')
 
   yield api.build_menu.test(
       'install-packages-and-bundle-fail', api.properties(**good_props),
@@ -609,13 +601,12 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      _BUILD_STEP_NAME + '.upload artifacts'),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return(
           _BUILD_STEP_NAME + '.install packages',
           'SysrootService/InstallPackages', retcode=1),
       api.build_menu.set_build_api_return(
           _BUILD_STEP_NAME + '.upload artifacts.call artifacts service',
-          'ArtifactsService/Get', retcode=1))
+          'ArtifactsService/Get', retcode=1), status='INFRA_FAILURE')
 
   # Build image fails to schedule (infra failure)
   yield api.build_menu.test(
@@ -630,8 +621,8 @@ def GenTests(api: RecipeTestApi):
       api.override_step_data(
           '{} (2).run build-parallels-image.schedule'.format(_IMAGE_STEP_NAME),
           api.json.invalid(None), retcode=1),
-      api.post_check(post_process.StatusException),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='INFRA_FAILURE',
   )
 
   # Build image fails
@@ -651,8 +642,8 @@ def GenTests(api: RecipeTestApi):
                                             status='FAILURE'),
       ], step_name='{} (2).run build-parallels-image.collect'.format(
           _IMAGE_STEP_NAME)),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='FAILURE',
   )
 
   # Success
@@ -673,7 +664,9 @@ def GenTests(api: RecipeTestApi):
       'image_sha256': 'aabbccddeeff0011223344556677889900',
   })
   yield api.build_menu.test(
-      'uprev-success', api.properties(**good_props), api.git.diff_check(True),
+      'uprev-success',
+      api.properties(**good_props),
+      api.git.diff_check(True),
       good_snapshot_search,
       api.buildbucket.simulated_collect_output(
           [build_success],
@@ -685,7 +678,7 @@ def GenTests(api: RecipeTestApi):
                      _BUILD_STEP_NAME + '.upload artifacts'),
       api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
       api.post_check(post_process.MustRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Staging success
   staging_build_success = build_pb2.Build(
@@ -728,6 +721,5 @@ def GenTests(api: RecipeTestApi):
                      _BUILD_STEP_NAME + '.upload artifacts'),
       api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
       api.post_check(post_process.MustRun, 'update VERSION-PIN'),
-      api.post_check(post_process.StatusSuccess),
       # Leverage test data for existing postsubmit builder.
       builder='amd64-generic-postsubmit', bucket='staging')
