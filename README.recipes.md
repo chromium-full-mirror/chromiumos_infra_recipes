@@ -9707,7 +9707,7 @@ Whether there are toolchain CLs applied to the source tree.
 
 ### *recipes* / [afdo\_orchestrator](/recipes/afdo_orchestrator.py)
 
-[DEPS](/recipes/afdo_orchestrator.py#18): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/afdo_orchestrator.py#19): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -9715,9 +9715,9 @@ Recipe that generates artifacts using HW Test results.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#37)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
+&mdash; **def [DoRunSteps](/recipes/afdo_orchestrator.py#38)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
 
-&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#29)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
+&mdash; **def [RunSteps](/recipes/afdo_orchestrator.py#30)(api: RecipeApi, properties: AfdoOrchestratorProperties):**
 ### *recipes* / [afdo\_process](/recipes/afdo_process.py)
 
 [DEPS](/recipes/afdo_process.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util)

@@ -12,6 +12,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from PB.chromiumos.common import ArtifactsByService
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
 
@@ -57,21 +58,23 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
             art_property(b)['gs_bucket'],
             art_property(b)['gs_path'])
             for b in builds_status.testable_builds
-            if art_property(b)['gs_bucket']))
+            if 'artifacts' in b.output.properties and
+            'gs_bucket' in art_property(b)))
     input_artifacts = [
         dict(artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
              gs_locations=locs)
     ]
 
-    # Schedule and wait for any process_child builder.
-    api.orch_menu.schedule_wait_build(
-        properties.process_child,
-        await_completion=True,
-        properties=dict(input_artifacts=input_artifacts),
-        check_failures=True,
-        step_name='run {}'.format(properties.process_child),
-        timeout_sec=4 * 60 * 60,
-    )
+    if locs:
+      # Schedule and wait for any process_child builder.
+      api.orch_menu.schedule_wait_build(
+          properties.process_child,
+          await_completion=True,
+          properties=dict(input_artifacts=input_artifacts),
+          check_failures=True,
+          step_name='run {}'.format(properties.process_child),
+          timeout_sec=4 * 60 * 60,
+      )
 
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()
@@ -118,5 +121,18 @@ def GenTests(api: RecipeTestApi):
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=data.builds, process_child=data.process_child,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
+      builder='orderfile-generate-orchestrator', with_history=True,
+      git_footers=[])
+
+  pointless_child_build = build_pb2.Build(
+      builder={
+          'builder': 'benchmark-afdo-process',
+          'bucket': 'toolchain'
+      }, status='SUCCESS')
+  yield api.orch_menu.test(
+      'orchestrator-with-pointless-process-child', data.ctp_normal,
+      api.post_check(post_process.StatusSuccess),
+      api.properties(process_child='benchmark-afdo-process'),
+      collect_builds=[pointless_child_build], bucket='toolchain',
       builder='orderfile-generate-orchestrator', with_history=True,
       git_footers=[])
