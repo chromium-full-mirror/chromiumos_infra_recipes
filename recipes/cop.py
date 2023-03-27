@@ -207,7 +207,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'unset-properties', test_builder(revision=None, cq=False),
       api.post_check(post_process.StepException, 'validate properties'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')
 
   yield api.test('basic', api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation)) + \
@@ -228,7 +228,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('too-many-changes', test_builder(gerrit_changes=two_changes),
                  api.post_check(post_process.StepSuccess, 'validate properties'),
                  api.post_check(post_process.StepFailure, 'validate inputs'),
-                 api.post_process(post_process.DropExpectation)) + \
+                 api.post_process(post_process.DropExpectation),
+                 status = 'FAILURE') + \
                  api.properties(CopProperties(project_name='name'))
 
   change = [
