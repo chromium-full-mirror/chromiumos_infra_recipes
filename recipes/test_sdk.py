@@ -76,6 +76,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
   )
 
+  # TODO (b/275363240): audit this test.
   yield api.test(
       'not-relevant-postsubmit',
       api.buildbucket.ci_build(builder='host-packages-cq'),
@@ -101,6 +102,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.MustRun, 'run SDK package unit tests'),
   )
 
+  # TODO (b/275363240): audit this test.
   yield api.test(
       'builder-no-longer-exists',
       api.buildbucket.ci_build(builder='deleted-builder'),
