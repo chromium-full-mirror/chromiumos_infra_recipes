@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'git_footers',
     'skylab',
     'src_state',
 ]
@@ -78,7 +79,7 @@ def GenTests(api):
   )
 
   gc3 = GerritChange(host='chrome-internal-review.googlesource.com',
-                     project='chromiumos/something/else')
+                     project='chromiumos/something/else', change=567)
   yield api.test(
       'not-all-allowlisted',
       api.buildbucket.try_build(gerrit_changes=[gc1, gc2, gc3]),
@@ -91,5 +92,23 @@ def GenTests(api):
               'expected':
                   False
           }),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'enabled-via-footer',
+      api.buildbucket.try_build(gerrit_changes=[gc1, gc2, gc3]),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(direct_tast_testing_projects=[
+                      'chromiumos/chromite', 'chromiumos/infra'
+                  ]),
+              'expected':
+                  True
+          }),
+      api.git_footers.simulated_get_footers(
+          ['chromeos.skylab.direct_tast_testing'],
+      ),
       api.post_process(post_process.DropExpectation),
   )

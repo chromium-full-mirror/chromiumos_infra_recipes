@@ -92,7 +92,15 @@ class SkylabApi(recipe_api.RecipeApi):
     if self._direct_tast_testing_enabled is not None:
       return self._direct_tast_testing_enabled
 
-    if _DIRECT_TAST_EXP in self.m.cros_infra_config.experiments:
+    # Experiments can be enabled via build input or CL footer.
+    experiments = set(
+        self.m.git_footers.get_footer_values(
+            self.m.src_state.gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
+            step_test_data=self.m.git_footers.test_api.step_test_data_factory(
+                '')))
+    experiments.update(self.m.cros_infra_config.experiments)
+
+    if _DIRECT_TAST_EXP in experiments:
       self._direct_tast_testing_enabled = True
       return self._direct_tast_testing_enabled
 

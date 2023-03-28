@@ -8844,7 +8844,7 @@ Returns whether the hw test is elegible for direct test retries.
 
 Returns the hw tests which ran as Tast first class in the last run.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#111)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#119)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -8861,7 +8861,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#163)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#171)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -8886,7 +8886,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#427)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#435)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -13597,11 +13597,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#17)(api):**
 ### *recipes* / [skylab:tests/direct\_tast\_testing\_enabled](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py)
 
-[DEPS](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#11): [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#11): [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#23)(api):**
 ### *recipes* / [skylab:tests/no\_build\_target](/recipe_modules/skylab/tests/no_build_target.py)
 
 [DEPS](/recipe_modules/skylab/tests/no_build_target.py#15): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
