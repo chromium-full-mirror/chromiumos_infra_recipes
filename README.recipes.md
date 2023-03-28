@@ -381,6 +381,7 @@
   * [easy:examples/stdout_jsonpb_step](#recipes-easy_examples_stdout_jsonpb_step) (Python3 ✅)
   * [easy:tests/log_parent_step](#recipes-easy_tests_log_parent_step) (Python3 ✅)
   * [exonerate:examples/auto_exoneration_dry_run](#recipes-exonerate_examples_auto_exoneration_dry_run) (Python3 ✅)
+  * [exonerate:examples/auto_exoneration_failure](#recipes-exonerate_examples_auto_exoneration_failure) (Python3 ✅)
   * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration) (Python3 ✅)
   * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration) (Python3 ✅)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests) (Python3 ✅)
@@ -5190,7 +5191,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#584)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#588)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5201,7 +5202,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#622)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#626)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -11975,6 +11976,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/auto_exoneration_dry_run.py#22)(api):**
+### *recipes* / [exonerate:examples/auto\_exoneration\_failure](/recipe_modules/exonerate/examples/auto_exoneration_failure.py)
+
+[DEPS](/recipe_modules/exonerate/examples/auto_exoneration_failure.py#14): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/auto_exoneration_failure.py#23)(api):**
 ### *recipes* / [exonerate:examples/disabled\_hw\_exoneration](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py)
 
 [DEPS](/recipe_modules/exonerate/examples/disabled_hw_exoneration.py#13): [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
