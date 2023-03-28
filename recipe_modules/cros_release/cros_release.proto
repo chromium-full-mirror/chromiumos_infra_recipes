@@ -31,4 +31,7 @@ message CrosReleaseProperties {
   // If set, don't upload buildspecs to manifest-versions.
   // The buildspec still may be uploaded to GS, depending on the situation.
   bool dont_upload_to_manifest_versions = 7;
+
+  // Whether the build supports minios.
+  bool minios_unsupported = 8;
 }

@@ -62,4 +62,6 @@ message GetRequestTestInputProperties {
 
   // The expected results of calling gen_requests.
   repeated chromite.api.GenerationRequest expected_reqs = 8;
+
+  bool no_minios = 11;
 }

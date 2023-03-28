@@ -55,6 +55,7 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   au_testing_models = properties.au_testing_models or []
   au_fsi_testing_models = properties.au_fsi_testing_models or []
+  minios = properties.minios
 
   # Since this job is intended to be run via a release build, log the
   # parent's build ID.
@@ -128,7 +129,8 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
 
     # Do N2N testing payloads.
     n2n_gen_reqs = api.paygen_orchestration.get_n2n_requests(
-        target_artifacts, properties.dest_bucket, True, properties.dryrun)
+        target_artifacts, properties.dest_bucket, True, properties.dryrun,
+        minios=minios)
     pres.logs['%s n2n' %
               len(n2n_gen_reqs)] = [MessageToJson(x) for x in n2n_gen_reqs]
     gen_reqs.extend(n2n_gen_reqs)
@@ -137,11 +139,9 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
     delta_gen_reqs = []
     for payload_cfg in configured_payloads:
       delta_gen_reqs.extend(
-          api.paygen_orchestration.get_delta_requests(payload_cfg,
-                                                      source_artifacts,
-                                                      target_artifacts,
-                                                      properties.dest_bucket,
-                                                      True, properties.dryrun))
+          api.paygen_orchestration.get_delta_requests(
+              payload_cfg, source_artifacts, target_artifacts,
+              properties.dest_bucket, True, properties.dryrun, minios=minios))
     gen_reqs.extend(delta_gen_reqs)
 
     pres.logs['%s deltas' %
@@ -149,7 +149,8 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
 
     # Do full payloads.
     full_gen_reqs = api.paygen_orchestration.get_full_requests(
-        target_artifacts, properties.dest_bucket, True, properties.dryrun)
+        target_artifacts, properties.dest_bucket, True, properties.dryrun,
+        minios=minios)
     pres.logs['%s full' %
               len(full_gen_reqs)] = [MessageToJson(x) for x in full_gen_reqs]
     gen_reqs.extend(full_gen_reqs)

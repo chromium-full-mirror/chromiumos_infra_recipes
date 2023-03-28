@@ -22,6 +22,7 @@ PROPERTIES = GetRequestTestInputProperties
 
 
 def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
+  minios = not properties.no_minios
   payload_cfg = json.loads(properties.payload_cfg)
 
   if properties.request_type == GetRequestTestInputProperties.SIGNED:
@@ -35,7 +36,8 @@ def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
     tgts = properties.dlc_tgts
 
   reqs = api.paygen_orchestration.get_delta_requests(payload_cfg, srcs, tgts,
-                                                     'b', True, False)
+                                                     'b', True, False,
+                                                     minios=minios)
 
   api.assertions.assertEqual(len(properties.expected_reqs), len(reqs))
   for x, y in zip(properties.expected_reqs, reqs):
@@ -44,7 +46,8 @@ def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
   # Show that if generate_delta is false, there are no full deltas.
   payload_cfg['generate_delta'] = False
   no_reqs = api.paygen_orchestration.get_delta_requests(payload_cfg, srcs, tgts,
-                                                        'b', True, False)
+                                                        'b', True, False,
+                                                        minios=minios)
   api.assertions.assertEqual([], no_reqs)
 
 
@@ -53,7 +56,16 @@ def GenTests(api: RecipeTestApi):
       'basic-signed',
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.SIGNED,
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED,
+          api.paygen_orchestration.get_example_gen_requests_delta_signed(),
+          **api.paygen_orchestration.BASIC_TEST_PROPS),
+  )
+
+  yield api.test(
+      'basic-signed-no-minios',
+      api.paygen_orchestration.props(
+          api.properties, GetRequestTestInputProperties.SIGNED,
+          api.paygen_orchestration.get_example_gen_requests_delta_signed(
+              minios=False), no_minios=True,
           **api.paygen_orchestration.BASIC_TEST_PROPS),
   )
 
@@ -82,6 +94,6 @@ def GenTests(api: RecipeTestApi):
       'multiple-signed',
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.SIGNED,
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED * 2,
+          api.paygen_orchestration.get_example_gen_requests_delta_signed() * 2,
           **multi_src_props),
   )

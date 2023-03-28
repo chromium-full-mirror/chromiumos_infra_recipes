@@ -64,4 +64,7 @@ message PaygenOrchestratorProperties {
   // The bbid of the release job that we're rerunning the paygen of, so
   // GoldenEye can look up the job metadata.
   int64 rerun_buildbucket_id = 13;
+
+  // Whether to generate minios payloads.
+  bool minios = 14;
 }

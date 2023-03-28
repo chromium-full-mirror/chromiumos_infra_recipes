@@ -3196,9 +3196,9 @@ An API for providing release related operations (e.g. paygen, signing).
 
 #### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#68)(self, buildspec: ManifestLocation):**
+&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#69)(self, buildspec: ManifestLocation):**
 
-&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#72)(self, fatal: bool=False):**
+&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#73)(self, fatal: bool=False):**
 
 Checks that the build was given a buildspec and that there doesn't
   already exist a build for this buildspec (and this build is not a retry).
@@ -3206,7 +3206,7 @@ Checks that the build was given a buildspec and that there doesn't
 Args:
   fatal: Whether or not to kill the build if the build already ran.
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#112)(self, specs_dir='buildspecs', branch='release', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#113)(self, specs_dir='buildspecs', branch='release', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -3222,7 +3222,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#299)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#301)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3235,7 +3235,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#337)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#339)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3254,7 +3254,7 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#224)(self):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#225)(self):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3262,7 +3262,7 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#408)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#410)(self):**
 
 Set release-related output properties for the build.
 
@@ -7796,7 +7796,7 @@ API for orchestrating payload generation. Used by paygen_orchestrator.
 
 A module for CrOS-specific paygen orchestration steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#296)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#307)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Determine which hardware tests need to be run for the given payload.
 
@@ -7846,7 +7846,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#178)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#181)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -7861,11 +7861,12 @@ Args:
   bucket: The bucket containing the requests (and destination).
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
+  minios: Should we generate minios payloads.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#253)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#260)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -7874,11 +7875,12 @@ Args:
   bucket: The bucket containing the requests (and destination).
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
+  minios: Should we generate minios payloads.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#147)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#147)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
 
 Generate a N2N testing payloads.
 
@@ -7891,6 +7893,7 @@ Args:
   bucket: The bucket containing the requests (and destination).
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
+  minios: Should we generate minios payloads.
 
 Returns:
   A list[GenerationRequest] or [].
@@ -7908,7 +7911,7 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#347)(self, paygen_reqs: List[PaygenProperties.PaygenRequest]):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#358)(self, paygen_reqs: List[PaygenProperties.PaygenRequest]):**
 
 Launch paygen builders to generate payloads and run configured tests.
 

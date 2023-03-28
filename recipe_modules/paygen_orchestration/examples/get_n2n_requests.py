@@ -20,8 +20,10 @@ PROPERTIES = GetRequestTestInputProperties
 
 
 def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
+  minios = not properties.no_minios
   reqs = api.paygen_orchestration.get_n2n_requests(properties.unsigned_tgts,
-                                                   'b', True, False)
+                                                   'b', True, False,
+                                                   minios=minios)
   for x, y in zip(properties.expected_reqs, reqs):
     api.assertions.assertEqual(x, y)
 
@@ -31,6 +33,15 @@ def GenTests(api: RecipeTestApi):
       'basic',
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.UNSIGNED,
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N,
+          api.paygen_orchestration.get_example_gen_requests_delta_n2n(),
+          **api.paygen_orchestration.BASIC_TEST_PROPS),
+  )
+
+  yield api.test(
+      'no-minios',
+      api.paygen_orchestration.props(
+          api.properties, GetRequestTestInputProperties.UNSIGNED,
+          api.paygen_orchestration.get_example_gen_requests_delta_n2n(
+              minios=False), no_minios=True,
           **api.paygen_orchestration.BASIC_TEST_PROPS),
   )

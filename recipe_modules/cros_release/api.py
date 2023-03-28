@@ -59,6 +59,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._paygen_dryrun = properties.paygen_dryrun
     self._buildspec = None
     self._dont_upload_to_manifest_versions = properties.dont_upload_to_manifest_versions
+    self._minios_unsupported = properties.minios_unsupported
 
   @property
   def buildspec(self):
@@ -246,6 +247,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'dryrun': self._paygen_dryrun,
           'delta_payload_test_override': 'RESPECT_CONFIG',
           'full_payload_test_override': 'RESPECT_CONFIG',
+          'minios': not self._minios_unsupported,
       }
       request = self.m.buildbucket.schedule_request(
           builder=pg_orch_builder,

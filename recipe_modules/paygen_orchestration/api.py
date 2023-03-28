@@ -145,7 +145,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return match_boards
 
   def get_n2n_requests(self, tgt_artifacts: List[Image], bucket: str,
-                       verify: bool, dryrun: bool) -> List[GenerationRequest]:
+                       verify: bool, dryrun: bool,
+                       minios: bool = True) -> List[GenerationRequest]:
     """Generate a N2N testing payloads.
 
     We will examine all the artifacts in tgt artifacts for unsigned
@@ -157,6 +158,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       bucket: The bucket containing the requests (and destination).
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
+      minios: Should we generate minios payloads.
 
     Returns:
       A list[GenerationRequest] or [].
@@ -169,16 +171,17 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
                               chroot=self.m.cros_sdk.chroot))
-        reqs.append(
-            GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
-                              bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot, minios=True))
+        if minios:
+          reqs.append(
+              GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
+                                bucket=bucket, verify=verify, dryrun=dryrun,
+                                chroot=self.m.cros_sdk.chroot, minios=True))
     return reqs
 
   def get_delta_requests(self, payload_def: PaygenConfig,
                          src_artifacts: List[Image], tgt_artifacts: List[Image],
-                         bucket: str, verify: bool,
-                         dryrun: bool) -> List[GenerationRequest]:
+                         bucket: str, verify: bool, dryrun: bool,
+                         minios: bool = True) -> List[GenerationRequest]:
     """Examine def, source, and target and return list(GenerationRequests).
 
     If there isn't a matching source and target available, then return [].
@@ -192,6 +195,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       bucket: The bucket containing the requests (and destination).
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
+      minios: Should we generate minios payloads.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -225,10 +229,11 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
               GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
                                 chroot=self.m.cros_sdk.chroot))
-          reqs.append(
-              GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
-                                bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot, minios=True))
+          if minios:
+            reqs.append(
+                GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
+                                  bucket=bucket, verify=verify, dryrun=dryrun,
+                                  chroot=self.m.cros_sdk.chroot, minios=True))
         elif isinstance(src, UnsignedImage_pb2):
           # We don't create delta paygens for unsigned recovery images.
           if src.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -237,10 +242,12 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
                                 chroot=self.m.cros_sdk.chroot))
-          reqs.append(
-              GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
-                                bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot, minios=True))
+          if minios:
+            reqs.append(
+                GenerationRequest(src_unsigned_image=src,
+                                  tgt_unsigned_image=tgt, bucket=bucket,
+                                  verify=verify, dryrun=dryrun,
+                                  chroot=self.m.cros_sdk.chroot, minios=True))
         elif isinstance(src, DLCImage_pb2):
           if not self.m.cros_storage.DLCImage.compatible(tgt, src):
             continue  # pragma: nocover
@@ -251,7 +258,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return reqs
 
   def get_full_requests(self, tgt_artifacts: List[Image], bucket: str,
-                        verify: bool, dryrun: bool) -> List[GenerationRequest]:
+                        verify: bool, dryrun: bool,
+                        minios: bool = True) -> List[GenerationRequest]:
     """Get the configured full requests for a set of artifacts.
 
     Args:
@@ -259,6 +267,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       bucket: The bucket containing the requests (and destination).
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
+      minios: Should we generate minios payloads.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -270,10 +279,11 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             GenerationRequest(full_update=True, tgt_signed_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
                               chroot=self.m.cros_sdk.chroot))
-        reqs.append(
-            GenerationRequest(full_update=True, tgt_signed_image=tgt,
-                              bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot, minios=True))
+        if minios:
+          reqs.append(
+              GenerationRequest(full_update=True, tgt_signed_image=tgt,
+                                bucket=bucket, verify=verify, dryrun=dryrun,
+                                chroot=self.m.cros_sdk.chroot, minios=True))
       elif isinstance(tgt, UnsignedImage_pb2):
         # We don't create full payloads for unsigned recovery images.
         if tgt.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -282,10 +292,11 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
                               chroot=self.m.cros_sdk.chroot))
-        reqs.append(
-            GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
-                              bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot, minios=True))
+        if minios:
+          reqs.append(
+              GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
+                                bucket=bucket, verify=verify, dryrun=dryrun,
+                                chroot=self.m.cros_sdk.chroot, minios=True))
       elif isinstance(tgt, DLCImage_pb2):
         reqs.append(
             GenerationRequest(full_update=True, tgt_dlc_image=tgt,

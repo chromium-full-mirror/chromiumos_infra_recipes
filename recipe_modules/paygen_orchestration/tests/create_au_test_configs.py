@@ -159,7 +159,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'delta-(n2n)-force-tests',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+          api.paygen_orchestration.get_example_gen_requests_delta_n2n()[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_DELTA_N2N],
           delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
   )
@@ -167,20 +167,21 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'full-respect-configs',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+          api.paygen_orchestration.get_example_gen_requests_full_unsigned()[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_N2N]),
   )
 
   yield api.test(
       'full-minios-skipped',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[1], []),
-  )
+          api.paygen_orchestration.get_example_gen_requests_full_unsigned()[1],
+          []))
 
   yield api.test(
       'full-force-tests',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [
+          api.paygen_orchestration.get_example_gen_requests_full_unsigned()[0],
+          [
               api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_N2N,
               api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_OMAHA
           ], full_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
@@ -189,14 +190,15 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'full-force-no-tests',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [],
-          full_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
+          api.paygen_orchestration.get_example_gen_requests_full_unsigned()[0],
+          [], full_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
   )
 
   yield api.test(
       'not-unsigned-image',
       create_properties(
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0], []),
+          api.paygen_orchestration.get_example_gen_requests_delta_signed()[0],
+          []),
   )
 
   yield api.test(

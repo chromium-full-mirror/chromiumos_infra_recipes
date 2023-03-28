@@ -20,6 +20,7 @@ PROPERTIES = GetRequestTestInputProperties
 
 
 def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
+  minios = not properties.no_minios
   if properties.request_type == GetRequestTestInputProperties.SIGNED:
     tgts = properties.signed_tgts
   elif properties.request_type == GetRequestTestInputProperties.UNSIGNED:
@@ -27,7 +28,8 @@ def RunSteps(api: RecipeApi, properties: GetRequestTestInputProperties):
   elif properties.request_type == GetRequestTestInputProperties.DLC:
     tgts = properties.dlc_tgts
 
-  reqs = api.paygen_orchestration.get_full_requests(tgts, 'b', True, True)
+  reqs = api.paygen_orchestration.get_full_requests(tgts, 'b', True, True,
+                                                    minios=minios)
 
   api.assertions.assertEqual(len(properties.expected_reqs), len(reqs))
   for x, y in zip(properties.expected_reqs, reqs):
@@ -39,7 +41,7 @@ def GenTests(api: RecipeTestApi):
       'basic-signed',
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.SIGNED,
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_SIGNED,
+          api.paygen_orchestration.get_example_gen_requests_full_signed(),
           **api.paygen_orchestration.BASIC_TEST_PROPS),
   )
 
@@ -47,7 +49,7 @@ def GenTests(api: RecipeTestApi):
       'basic-unsigned',
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.UNSIGNED,
-          api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED,
+          api.paygen_orchestration.get_example_gen_requests_full_unsigned(),
           **api.paygen_orchestration.BASIC_TEST_PROPS),
   )
 
@@ -56,5 +58,14 @@ def GenTests(api: RecipeTestApi):
       api.paygen_orchestration.props(
           api.properties, GetRequestTestInputProperties.DLC,
           api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC,
+          **api.paygen_orchestration.BASIC_TEST_PROPS),
+  )
+
+  yield api.test(
+      'basic-signed-no-minos',
+      api.paygen_orchestration.props(
+          api.properties, GetRequestTestInputProperties.SIGNED,
+          api.paygen_orchestration.get_example_gen_requests_full_signed(
+              minios=False), no_minios=True,
           **api.paygen_orchestration.BASIC_TEST_PROPS),
   )

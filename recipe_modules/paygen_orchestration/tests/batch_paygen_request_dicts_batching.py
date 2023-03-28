@@ -160,15 +160,17 @@ def GenTests(api: RecipeTestApi):
       'n2n-batches-alongside-full',
       api.properties(
           paygen_requests=tuple(r.SerializeToString() for r in [
-              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+              api.paygen_orchestration.get_example_gen_requests_full_unsigned()
+              [0],
+              api.paygen_orchestration.get_example_gen_requests_delta_n2n()[0],
           ])),
       api.properties(
           expected_batches=tuple([[
               r.SerializeToString() for r in [
                   api.paygen_orchestration
-                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                  .get_example_gen_requests_full_unsigned()[0],
+                  api.paygen_orchestration.get_example_gen_requests_delta_n2n()
+                  [0],
               ]
           ]])),
   )
@@ -177,9 +179,7 @@ def GenTests(api: RecipeTestApi):
       'n2n-without-matching-full',
       api.properties(
           paygen_requests=tuple([
-              api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
-              .SerializeToString(),
-          ])),
-      api.post_check(post_process.StepFailure, 'run test'),
-      status='FAILURE',
-  )
+              api.paygen_orchestration.get_example_gen_requests_delta_n2n()
+              [0].SerializeToString(),
+          ])), api.post_check(post_process.StepFailure, 'run test'),
+      status="FAILURE")

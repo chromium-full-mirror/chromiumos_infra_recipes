@@ -53,13 +53,5 @@ def GenTests(api: RecipeTestApi):
       'basic-hit', good_json,
       api.properties(builder_name='amenia', expected_length=1,
                      delta_type='NO_DELTA'))
-  yield api.test(
-      'bad-json',
-      bad_json,
-      status='FAILURE',
-  )
-  yield api.test(
-      'not-json',
-      not_json,
-      status='FAILURE',
-  )
+  yield api.test('bad-json', bad_json, status="FAILURE")
+  yield api.test('not-json', not_json, status="FAILURE")
