@@ -258,10 +258,12 @@ class BuildSDKRun:
 
   def _proto_path_to_str(self, path: common_pb2.Path) -> str:
     """Return an absolute (outside) path equivalent to the common_pb2.Path."""
+    assert path.path.startswith('/'), f'Cannot convert relative path: {path}'
     if path.location == common_pb2.Path.Location.OUTSIDE:
       return path.path
     if path.location == common_pb2.Path.Location.INSIDE:
-      return os.path.join(self.m.cros_sdk.chroot.path, path.path)
+      relative_to_chroot = os.path.relpath(path.path, '/')
+      return os.path.join(self.m.cros_sdk.chroot.path, relative_to_chroot)
     raise InfraFailure(f'Cannot process path with unspecified location: {path}')
 
 

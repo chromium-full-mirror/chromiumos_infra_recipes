@@ -2468,7 +2468,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "/tmp/toolchain-pkgs/foo.tar.gz",
+      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.gz",
       "gs://chromiumos-sdk/2012/05/foo.tar.gz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2488,7 +2488,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "/tmp/toolchain-pkgs/bar.tar.gz",
+      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.gz",
       "gs://chromiumos-sdk/2012/05/bar.tar.gz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2532,7 +2532,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "/build/amd64-host/built-sdk.tar.gz.Manifest",
+      "[CACHE]/cros_chroot/chroot/build/amd64-host/built-sdk.tar.gz.Manifest",
       "gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
