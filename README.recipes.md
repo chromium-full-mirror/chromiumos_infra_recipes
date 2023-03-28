@@ -477,6 +477,7 @@
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) (Python3 ✅) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [looks_for_green:tests/calc_approx_snap_age_hours](#recipes-looks_for_green_tests_calc_approx_snap_age_hours) (Python3 ✅)
+  * [looks_for_green:tests/disabled_footer](#recipes-looks_for_green_tests_disabled_footer) (Python3 ✅)
   * [looks_for_green:tests/find_green_snapshot](#recipes-looks_for_green_tests_find_green_snapshot) (Python3 ✅)
   * [looks_for_green:tests/get_latest_snapshot_greenness](#recipes-looks_for_green_tests_get_latest_snapshot_greenness) (Python3 ✅)
   * [lvfs_mirror](#recipes-lvfs_mirror) (Python3 ✅) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
@@ -7220,7 +7221,7 @@ See documentation below for details:
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
-[DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -7228,7 +7229,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#162)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#166)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -7238,11 +7239,21 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#191)(self):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#195)(self):**
 
 Find a green snapshot within the lookback period if one exists.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#135)(self):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#234)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+
+Check the incoming gerrit changes for disallow looks for green footer.
+
+Args:
+  gerrit_changes: The gerrit changes.
+
+Returns:
+  Whether the disallow LFG footer is included and not set to false.
+
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#139)(self):**
 
 Returns aggregate greenness of latest scored snapshot-orchestrator.
 
@@ -7253,7 +7264,7 @@ Returns:
   aggregate greenness for latest scored snapshot-orchestrator, or -1 if
   not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#212)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#216)(self):**
 
 Returns whether the latest scored snapshot-orchestrator greenness is
 
@@ -7262,7 +7273,7 @@ higher than greenness threshold.
 Returns:
   Whether latest scored snap-orch run is green
 
-&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#50)(self):**
 
 Returns the current UTC time.
 
@@ -10204,11 +10215,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#22)(api):**
 ### *recipes* / [build\_plan:tests/cq\_looks](/recipe_modules/build_plan/tests/cq_looks.py)
 
-[DEPS](/recipe_modules/build_plan/tests/cq_looks.py#14): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/build_plan/tests/cq_looks.py#14): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/cq_looks.py#43)(api, expected_experiments, expected_internal_sha, expected_external_sha):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/cq_looks.py#44)(api, expected_experiments, expected_internal_sha, expected_external_sha):**
 ### *recipes* / [build\_plan:tests/get\_forced\_rebuilds](/recipe_modules/build_plan/tests/get_forced_rebuilds.py)
 
 [DEPS](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#10): [build\_plan](#recipe_modules-build_plan), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12758,6 +12769,13 @@ Runs the presubmit for a project with checkout per local manifest.
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/calc_approx_snap_age_hours.py#30)(api, expected_approx_snap_age_hours, test_start_str):**
+### *recipes* / [looks\_for\_green:tests/disabled\_footer](/recipe_modules/looks_for_green/tests/disabled_footer.py)
+
+[DEPS](/recipe_modules/looks_for_green/tests/disabled_footer.py#10): [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/disabled_footer.py#23)(api, expected_disallow):**
 ### *recipes* / [looks\_for\_green:tests/find\_green\_snapshot](/recipe_modules/looks_for_green/tests/find_green_snapshot.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#14): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]

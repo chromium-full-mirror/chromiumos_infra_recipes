@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/time',
     'cros_infra_config',
     'easy',
+    'git_footers',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

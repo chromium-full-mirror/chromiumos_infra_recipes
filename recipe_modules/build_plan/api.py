@@ -486,9 +486,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
         cq_looks_log = []
         if cq_looks_enabled:
           cq_looks_log.append('CQ looks experiment enabled')
-          should_find_green_snapshot = \
-            self.m.looks_for_green.use_complete_snapshot \
-            or not self.m.looks_for_green.is_snap_orch_green()
+          disallow = self.m.looks_for_green.found_disallow_lfg_footer(
+              gerrit_changes)
+          if disallow:
+            cq_looks_log.append(
+                f'Found footer to disable looks for green: {disallow}. Using original snapshot.'
+            )
+          should_find_green_snapshot = not disallow and (
+              self.m.looks_for_green.use_complete_snapshot or
+              not self.m.looks_for_green.is_snap_orch_green())
           if should_find_green_snapshot:
             suggested_internal = self.m.looks_for_green.find_green_snapshot()
             if not suggested_internal:

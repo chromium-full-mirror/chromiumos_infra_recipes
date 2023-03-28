@@ -32,6 +32,10 @@ Snapshot = namedtuple('Snapshot', [
 class LooksForGreenApi(recipe_api.RecipeApi):
   """A module to look for green snapshots."""
 
+  # A git footer that can be included in commit messages to tell the cq run to
+  # disallow looks for green behavior.
+  DISALLOW_LOOKS_FOR_GREEN_FOOTER = 'Disallow-Looks-For-Green'
+
   def __init__(self, properties: LooksForGreenProperties,
                **kwargs: Any) -> None:
     super().__init__(**kwargs)
@@ -226,3 +230,29 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
     self.m.easy.set_properties_step(looks_for_green=self._stats)
     return is_snap_orch_green
+
+  def found_disallow_lfg_footer(
+      self, gerrit_changes: List[common_pb2.GerritChange]) -> bool:
+    """Check the incoming gerrit changes for disallow looks for green footer.
+
+    Args:
+      gerrit_changes: The gerrit changes.
+
+    Returns:
+      Whether the disallow LFG footer is included and not set to false.
+    """
+    with self.m.step.nest('check disallow looks for green') as presentation:
+      found_disallow = False
+      git_footers = self.m.git_footers.get_footer_values(
+          gerrit_changes, self.DISALLOW_LOOKS_FOR_GREEN_FOOTER)
+      presentation.logs['check disallow looks for green'] = (
+          f'Found {self.DISALLOW_LOOKS_FOR_GREEN_FOOTER} footers: '
+          f'{git_footers}')
+      for git_footer in git_footers:
+        if git_footer.lower() != 'false':
+          found_disallow = True
+          presentation.step_text = (
+              f'Found {self.DISALLOW_LOOKS_FOR_GREEN_FOOTER}. Disabling looks '
+              f'for green behavior.')
+
+      return found_disallow
