@@ -20,4 +20,7 @@ message TestInputProperties {
 
   // Whether or not to set publish_conditions to PUBLISH_ALWAYS.
   bool publish_always = 5;
+
+  // Relevance of the kernel AFDO build.
+  chromite.api.PrepareForBuildResponse.BuildRelevance kernel_afdo_relevance = 6;
 }

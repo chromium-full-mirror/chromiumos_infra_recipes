@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
+    'cros_version',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -84,6 +85,19 @@ def RunSteps(api, properties):
       ), test_data=properties.api_response)
   api.assertions.assertEqual(properties.relevance, resp)
 
+  resp = api.cros_artifacts.prepare_for_build(
+      chroot=chroot, sysroot=sysroot, artifacts_info=common.ArtifactsByService(
+          toolchain=Toolchain(
+              input_artifacts=[
+                  Toolchain.ArtifactInfo(
+                      artifact_types=['VERIFIED_KERNEL_CWP_AFDO_FILE'],
+                      gs_locations=[
+                          'chromeos-prebuilt/afdo-job/cwp/kernel/amd64/5.15'
+                      ]),
+              ], output_artifacts=[]),
+      ), test_data=properties.api_response)
+  api.assertions.assertEqual(properties.kernel_afdo_relevance, resp)
+
   # API Version 1.0.0 has more logic in the module.
   if not api.cros_build_api.has_endpoint(api.cros_build_api.ArtifactsService,
                                          'BuildSetup'):
@@ -120,16 +134,31 @@ def GenTests(api):
       api.properties(
           TestInputProperties(
               relevance=BuildSetupResponse.POINTLESS,
+              kernel_afdo_relevance=BuildSetupResponse.POINTLESS,
           )), api.cros_artifacts.set_prepare_pointless(True))
 
   for state in 'no-setup', 'default':
     for resp in 'UNKNOWN', 'POINTLESS', 'NEEDED':
       yield api.test(
           '%s_%s' % (resp.lower(), state),
+          api.cros_version.workspace_version('R112-12345.0.0'),
           api.properties(
               TestInputProperties(
                   api_response='{"build_relevance": "%s"}' % resp,
                   relevance=BuildSetupResponse.BuildRelevance.Value(resp),
+                  kernel_afdo_relevance=BuildSetupResponse.POINTLESS,
               )),
           api.cros_build_api.remove_endpoints(
               ['ArtifactsService/BuildSetup'] if state == 'no-setup' else []))
+
+  for resp in 'UNKNOWN', 'POINTLESS', 'NEEDED':
+    yield api.test(
+        'amd64_kernel_5-15_relevant_%s' % resp.lower(),
+        api.cros_version.workspace_version('R113-45678.0.0'),
+        api.properties(
+            TestInputProperties(
+                api_response='{"build_relevance": "%s"}' % resp,
+                relevance=BuildSetupResponse.BuildRelevance.Value(resp),
+                kernel_afdo_relevance=BuildSetupResponse.BuildRelevance.Value(
+                    resp),
+            )))

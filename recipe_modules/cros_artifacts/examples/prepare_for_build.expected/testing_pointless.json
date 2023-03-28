@@ -30,6 +30,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "prepare artifacts (3)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Build is POINTLESS@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "prepare artifacts (3).set artifact_prep",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"POINTLESS\"}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
