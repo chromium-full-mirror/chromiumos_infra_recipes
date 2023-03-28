@@ -213,6 +213,39 @@ class TastExecApi(RecipeApi):
                                              tests,
                                              new_invocation=new_invocation)
 
+  def _amend_tast_inputs(self, tast_inputs: TastInputs) -> TastInputs:
+    """Modifies TastInputs based on the given Tast version.
+
+    Ensures that newer flags are not passed in when running Tast on images
+    created using an older source.
+
+    Currently checks for the existance of the following flags:
+      * systemservicestimeout:
+          Not passed in by default, added if it is supported.
+      * shardmethod:
+          Passed in by default, removed if it is not supported.
+
+    Args:
+      TastInputs: Inputs for executing Tast.
+
+    Returns:
+      A copy of TastInputs with potentially modified flags.
+    """
+    tast_inputs = tast_inputs.copy()
+    if self._flag_exists(
+        tast_inputs.test_artifacts_dir.join('tast'), 'systemservicestimeout'):
+      tast_inputs.run_args.append('-systemservicestimeout={}'.format(
+          self._vm_system_services_timeout))
+
+    # Check if the shardmethod flag exists before passing it in.
+    if not self._flag_exists(
+        tast_inputs.test_artifacts_dir.join('tast'), 'shardmethod'):
+      tast_inputs.shard_args = [
+          x for x in tast_inputs.shard_args if not x.startswith('-shardmethod')
+      ]
+
+    return tast_inputs
+
   def run_direct_vm(self, vm_context, test_results_dir, tast_inputs):
     """Run tast tests in a VM without retries or results processing.
 
@@ -227,11 +260,7 @@ class TastExecApi(RecipeApi):
     Returns:
       list[str]: The list of tests that met the specified expression(s).
     """
-    tast_inputs = tast_inputs.copy()
-    if self._flag_exists(
-        tast_inputs.test_artifacts_dir.join('tast'), 'systemservicestimeout'):
-      tast_inputs.run_args.append('-systemservicestimeout={}'.format(
-          self._vm_system_services_timeout))  # pragma: no cover
+    tast_inputs = self._amend_tast_inputs(tast_inputs)
 
     # Entering vm_context instantiates the VM we are to test against. The VM
     # is cleaned up automatically when exiting the context.
@@ -343,7 +372,7 @@ class TastExecApi(RecipeApi):
       tast_help_stdout = self.m.easy.stdout_step('tast help run', [
           str(tast_dir.join('tast')), \
           'help', \
-          'run']).decode('utf-8')
+          'run'], test_stdout='-shardmethod\n-systemservicestimeout').decode('utf-8')
       self._tast_cli_supported_flags = [
           t.strip().split(' ')[0]
           for t in tast_help_stdout.splitlines()
