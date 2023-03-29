@@ -18,6 +18,7 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 Snapshot = namedtuple('Snapshot', [
     'bbid',
@@ -71,6 +72,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
 
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
   def _get_snapshots(self,
                      limit: Optional[int] = None) -> List[build_pb2.Build]:
     '''Get snapshot builds within the lookback period.
@@ -93,7 +95,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = self._greenness_bucket
     predicate.builder.builder = self._greenness_builder
-    return self.m.buildbucket.search([predicate], limit=limit, fields=fields)
+    return self.m.buildbucket.search([predicate], limit=limit, fields=fields,
+                                     timeout=60)
 
   def _parse_snapshot_result(self,
                              snapshot_result: build_pb2.Build) -> Snapshot:

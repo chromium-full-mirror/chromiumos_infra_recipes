@@ -73,6 +73,37 @@ def GenTests(api):
   )
 
   yield api.test(
+      'success-on-retry',
+      api.properties(expected_greenness=100, expected_is_snap_orch_green=True),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.step_data(
+          'checking latest scored snapshot greenness.buildbucket.search',
+          retcode=1),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ],
+          step_name='checking latest scored snapshot greenness.buildbucket.search (2)'
+      ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ],
+          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
+      ),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_RAN_LATEST_MINTED),
+      api.post_check(
+          post_process.MustRun,
+          'checking latest scored snapshot greenness.buildbucket.search (2)'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'staging',
       api.properties(expected_greenness=100, expected_is_snap_orch_green=True,
                      expected_staging=True),

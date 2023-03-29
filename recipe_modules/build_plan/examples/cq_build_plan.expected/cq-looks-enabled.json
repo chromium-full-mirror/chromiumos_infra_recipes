@@ -1150,6 +1150,7 @@
       }
     },
     "name": "filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search",
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
