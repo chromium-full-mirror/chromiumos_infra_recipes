@@ -54,12 +54,14 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/time',
+    'cros_history',
     'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
@@ -746,6 +748,8 @@ def RunSteps(api, properties):
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
   _top_level_export_to_bigquery(api, properties.force_export)
+  if api.cq.active:
+    api.easy.set_properties_step(is_retry=api.cros_history.is_retry())
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.
@@ -2026,6 +2030,33 @@ def GenTests(api):
           api.cipd.example_describe(
               'chromiumos/infra/cros_test_platform/${platform}',
               version='latest', test_data_tags=['random-key:random-value'])))
+
+  # An end-to-end CQ retry run.
+  yield api.test(
+      'end-to-end-execution-cq-retry',
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cros_history.is_retry(True),
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))),
+      api.post_check(post_process.PropertyEquals, 'is_retry', True),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # An end-to-end CQ first attempt.
+  yield api.test(
+      'end-to-end-execution-cq-first-attempt',
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'))),
+      api.post_check(post_process.PropertyEquals, 'is_retry', False),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'end-to-end-execution-with-passed-tasks',
