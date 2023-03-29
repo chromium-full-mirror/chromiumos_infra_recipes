@@ -6,6 +6,7 @@
 from typing import Dict, List
 
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask, UnitHwTest
+from RECIPE_MODULES.chromeos.cros_history.api import TERMINAL_STATUSES
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf import json_format
 
@@ -37,6 +38,7 @@ class SkylabApi(recipe_api.RecipeApi):
     self._exclude_sub_invs = properties.exclude_sub_invs
     self._direct_tast_testing_enabled = None
     self._direct_tast_testing_projects = properties.direct_tast_testing_projects
+    self._last_run_tast_first_class_tests = None
 
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
@@ -45,6 +47,40 @@ class SkylabApi(recipe_api.RecipeApi):
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
+
+  @property
+  def last_run_tast_first_class_tests(self) -> List[str]:
+    """Returns the hw tests which ran as Tast first class in the last run."""
+    if self._last_run_tast_first_class_tests is not None:
+      return self._last_run_tast_first_class_tests
+
+    # Pass in any test data overrides if running unit tests.
+    test_data = self._test_data.get('last_run_tast_first_class_tests')
+    if test_data is not None:
+      self._last_run_tast_first_class_tests = test_data
+      return self._last_run_tast_first_class_tests
+
+    # Get the output property from the last orchestrator.
+    prev_orch = self.m.cros_history.get_matching_builds(
+        self.m.buildbucket.build, statuses=TERMINAL_STATUSES, limit=1)
+    build_output = json_format.MessageToDict(
+        prev_orch.output.properties) if prev_orch else {}
+    self._last_run_tast_first_class_tests = build_output.get(
+        _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP, [])
+
+    return self._last_run_tast_first_class_tests
+
+  def direct_test_retries_elegible(self, uht: UnitHwTest,
+                                   tast_first_class: bool) -> bool:
+    """Returns whether the hw test is elegible for direct test retries."""
+    # TODO(b/271938042): Remove gating after the rollout is complete.
+    if not self.direct_tast_testing_enabled():
+      return False
+
+    tast_first_class_last_run = (
+        self.m.skylab_results.request_tag(uht.hw_test)
+        in self.last_run_tast_first_class_tests)
+    return tast_first_class == tast_first_class_last_run
 
   def direct_tast_testing_enabled(self):
 
@@ -266,7 +302,7 @@ class SkylabApi(recipe_api.RecipeApi):
               # Only pass the names of previously failed tests if the run is
               # elegible for direct tast testing.
               # TODO(b/271938042): Remove gating after the rollout is complete.
-              if self.direct_tast_testing_enabled():
+              if self.direct_test_retries_elegible(uht, tast_first_class):
                 previous_result = previous_results.get(
                     self.m.skylab_results.request_tag(uht.hw_test),
                     ExecuteResponse())

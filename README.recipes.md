@@ -8826,17 +8826,25 @@ Returns
   complete signing operations.
 ### *recipe_modules* / [skylab](/recipe_modules/skylab)
 
-[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#49)(self):**
+&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#85)(self):**
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#75)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#73)(self, uht: UnitHwTest, tast_first_class: bool):**
+
+Returns whether the hw test is elegible for direct test retries.
+
+&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#51)(self):**
+
+Returns the hw tests which ran as Tast first class in the last run.
+
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#111)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -8853,7 +8861,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#127)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#163)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -8874,11 +8882,11 @@ Args:
 Returns:
   A list of SkylabTasks with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#45)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#47)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#391)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#427)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
