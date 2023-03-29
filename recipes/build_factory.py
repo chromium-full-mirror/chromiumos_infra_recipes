@@ -59,7 +59,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'get signed build metadata'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola')
 
@@ -70,7 +69,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(post_process.StepTextContains, 'skipping signing',
                      ['signing is not run in staging']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='staging-factory-corsola-15197.B-corsola')
 
@@ -84,6 +82,5 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(post_process.StepTextContains, 'skipping signing',
                      ['no signing instructions generated']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola')

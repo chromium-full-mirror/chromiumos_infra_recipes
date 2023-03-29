@@ -176,7 +176,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.apply the "foo-recipe-ref" ref of the "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes" package to "foo-recipe-version".cipd set-tag infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
           api.json.output({})),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -206,6 +206,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepFailure,
           'package chromiumos/infra/phosphorus/linux-amd64.validate package instructions'
       ),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -221,4 +222,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepFailure,
           'package chromiumos/infra/phosphorus/linux-amd64.validate package instructions'
       ),
+      status='FAILURE',
   )

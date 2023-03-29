@@ -36,17 +36,35 @@ def attempt_retry_repo(api, attempt):
 
 
 def GenTests(api):
-  yield api.test('repo-retry-failure-unspecified', attempt_retry_repo(api, 1),
-                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
-                 api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED))
+  yield api.test(
+      'repo-retry-failure-unspecified',
+      attempt_retry_repo(api, 1),
+      attempt_retry_repo(api, 2),
+      attempt_retry_repo(api, 3),
+      api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
-  yield api.test('repo-retry-failure-clean', attempt_retry_repo(api, 1),
-                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
-                 api.repo.repo_current_state(RepoState.STATE_CLEAN))
+  yield api.test(
+      'repo-retry-failure-clean',
+      attempt_retry_repo(api, 1),
+      attempt_retry_repo(api, 2),
+      attempt_retry_repo(api, 3),
+      api.repo.repo_current_state(RepoState.STATE_CLEAN),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
-  yield api.test('repo-retry-failure-dirty', attempt_retry_repo(api, 1),
-                 attempt_retry_repo(api, 2), attempt_retry_repo(api, 3),
-                 api.repo.repo_current_state(RepoState.STATE_DIRTY))
+  yield api.test(
+      'repo-retry-failure-dirty',
+      attempt_retry_repo(api, 1),
+      attempt_retry_repo(api, 2),
+      attempt_retry_repo(api, 3),
+      api.repo.repo_current_state(RepoState.STATE_DIRTY),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   yield api.test(
       'repo-selfupdate-failure',

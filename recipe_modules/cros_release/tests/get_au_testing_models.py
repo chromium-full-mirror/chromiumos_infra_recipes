@@ -55,7 +55,7 @@ def GenTests(api):
           _generate_test_config_step, stdout=api.raw_io.output(
               '{"%s": {"model1": ["au"], "model2": []}}' % BUILDER)),
       api.properties(expected_models=['model1']),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'fsi',
@@ -64,16 +64,20 @@ def GenTests(api):
               '{"%s": {"model1": ["au"], "model2": []}}' % BUILDER)),
       api.properties(fsi=True),
       api.properties(expected_models=['model1', 'model2']),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'no-generate_test_config-response',
       api.step_data(_generate_test_config_step, stdout=api.raw_io.output('')),
-      api.post_check(post_process.StepFailure, 'determine au testing models'))
+      api.post_check(post_process.StepFailure, 'determine au testing models'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'generate_test_config-response-does-not-contain-builder',
       api.step_data(
           _generate_test_config_step,
           stdout=api.raw_io.output('{"other_builder": {"foo": ["au"]}}')),
-      api.post_check(post_process.StepFailure, 'determine au testing models'))
+      api.post_check(post_process.StepFailure, 'determine au testing models'),
+      status='FAILURE',
+  )

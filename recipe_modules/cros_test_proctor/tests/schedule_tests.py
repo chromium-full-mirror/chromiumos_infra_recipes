@@ -7,8 +7,10 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperties
-
-from recipe_engine.post_process import DropExpectation, LogContains, MustRun, PropertyEquals, StatusSuccess
+from recipe_engine.post_process import DropExpectation
+from recipe_engine.post_process import LogContains
+from recipe_engine.post_process import MustRun
+from recipe_engine.post_process import PropertyEquals
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -163,7 +165,7 @@ def GenTests(api):
       api.post_check(
           MustRun,
           'schedule hardware tests.another_target.buildbucket.schedule'),
-      api.post_check(StatusSuccess))
+  )
 
   previously_failed_now_exonerable_hw_suites = [
       'htarget.hw.bvt-cq',

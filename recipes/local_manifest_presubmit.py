@@ -312,6 +312,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.ResultReasonRE,
                        '.*project must be specified.*'),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -324,6 +325,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.ResultReasonRE,
                        '.*manifest group must be specified.*'),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -337,4 +339,5 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one gerrit_change.*'),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )

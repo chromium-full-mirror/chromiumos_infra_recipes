@@ -7,7 +7,6 @@ from google.protobuf import text_format
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -156,6 +155,5 @@ def GenTests(api):
               "/input/generatetestplanresp.binaryproto",
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

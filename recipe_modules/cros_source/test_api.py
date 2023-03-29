@@ -42,6 +42,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
       (TestData) the build with cros_source properties included.
     """
     kwargs = kwargs or {}
+    status = kwargs.pop('status', 'SUCCESS')
     cros_source_properties = kwargs.pop('cros_source_properties', {})
     kwargs.setdefault('revision', '2d72510e447ab60a9728aeea2362d8be2cbd7789')
     kwargs.setdefault('git_repo', self.m.src_state.internal_manifest.url)
@@ -53,7 +54,7 @@ class CrosSourceTestApi(recipe_test_api.RecipeTestApi):
       data += self.m.properties(
           **{'$chromeos/cros_source': cros_source_properties})
 
-    return super().test(name, data, *args)
+    return super().test(name, data, *args, status=status)
 
   @recipe_test_api.mod_test_data
   @staticmethod

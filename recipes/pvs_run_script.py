@@ -6,7 +6,6 @@
 """Recipe for running PVS-related scripts.
 """
 
-from recipe_engine import post_process
 from PB.recipes.chromeos.pvs_run_script import PVSRunScriptProperties
 
 DEPS = [
@@ -26,4 +25,4 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield api.test('basic', api.post_check(post_process.StatusSuccess))
+  yield api.test('basic')

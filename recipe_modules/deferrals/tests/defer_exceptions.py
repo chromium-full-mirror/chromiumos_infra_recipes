@@ -28,5 +28,5 @@ def GenTests(api):
                  api.step_data('a subsequent step'),
                  api.post_check(post_process.StepFailure, 'a failed step'),
                  api.post_check(post_process.StepSuccess, 'a subsequent step'),
-                 api.post_check(post_process.StatusFailure),
-                 api.post_process(post_process.DropExpectation))
+                 api.post_process(post_process.DropExpectation),
+                 status='FAILURE')

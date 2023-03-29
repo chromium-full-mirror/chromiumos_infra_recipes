@@ -2768,7 +2768,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'test-name-missing',
       _misc_properties(),
       _request_properties_no_name(),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3240,6 +3240,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.properties(TestRunnerProperties(request=r_with_passed_deadline)),
       _mock_load_step(),
       _successful_logs_archive_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3431,6 +3433,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _incomplete_test_result_file_step_data(),
       # Uploads a placeholder test case manually for the incomplete test.
       _successful_resultdb_upload_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3477,6 +3481,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _incomplete_test_result_file_step_data(),
       # Uploads a placeholder test case manually for the incomplete test.
       _successful_resultdb_upload_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3512,6 +3518,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Uploads a placeholder test case manually for the failed prejob though
       # the test execution step is skipped.
       _successful_resultdb_upload_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3523,6 +3531,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.original_test.Phosphorus: run prejob.call '
           '`phosphorus`.prejob', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -3534,6 +3544,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.original_test.Phosphorus: run test.call '
           '`phosphorus`.run-test', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3547,6 +3559,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.original_test.Phosphorus: upload to TKO.call '
           '`phosphorus`.upload-to-tko', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -3630,6 +3644,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.post_process(
           post_process.MustRun,
           'execution steps.Phosphorus: remove autotest results dir'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3654,6 +3670,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                   phosphorus.runtest.RunTestResponse(
                       results_dir='not-a-subdir-of-dummy-results-dir',
                       state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -3687,6 +3705,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.original_test.Phosphorus: get test results.'
           'call `phosphorus`.parse', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -3717,6 +3737,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                                   human_readable_summary='failing test case',
                                   verdict=Result.Autotest.TestCase.VERDICT_FAIL)
                           ], incomplete=True))))),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3727,6 +3749,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _mock_load_step(),
       _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
       _successful_logs_archive_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -3738,6 +3762,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_prejob_step(),
       _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
       _successful_logs_archive_step(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -4041,6 +4067,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _set_build(bid=42),
       _misc_properties(),
       _request_properties_for_bad_vm_request(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   ############ CTR Test Cases ##########
@@ -4109,11 +4137,16 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_prejob_step_for_ctr(), _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'deadline-passed-ctr', api.time.seed(2369692800),
+      'deadline-passed-ctr',
+      api.time.seed(2369692800),
       _misc_properties(cft_is_enabled=True),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_passed_deadline(
-              current_time_sec=2369692800)), _mock_load_step_for_ctr())
+              current_time_sec=2369692800)),
+      _mock_load_step_for_ctr(),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'primary-dut-missing',
@@ -4142,7 +4175,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.step_data(
           'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
           retcode=1),
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )
 
   yield api.test(

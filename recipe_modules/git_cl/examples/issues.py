@@ -5,7 +5,6 @@
 
 from typing import Generator
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -33,5 +32,4 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'refs/heads/main': '123123',
           'refs/heads/branch': '456456'
       }),
-      api.post_check(post_process.StatusSuccess),
   )

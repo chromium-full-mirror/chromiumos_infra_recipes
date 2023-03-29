@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/properties',
     'phosphorus',
@@ -26,7 +24,9 @@ def GenTests(api):
   yield api.test('basic', api.phosphorus.properties(dut_name='my-dut-name'))
 
   yield api.test(
-      'provision-fail', api.phosphorus.properties(dut_name='my-dut-name'),
+      'provision-fail',
+      api.phosphorus.properties(dut_name='my-dut-name'),
       api.override_step_data(
           'call `phosphorus`.build-parallels-image-provision', retcode=2),
-      api.post_check(post_process.StatusException))
+      status='INFRA_FAILURE',
+  )

@@ -5,8 +5,6 @@
 
 from google.protobuf.json_format import MessageToJson
 
-from recipe_engine import post_process
-
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos.build_report import BuildReport
@@ -14,6 +12,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
 from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -139,8 +138,9 @@ def GenTests(api):
       api.post_check(post_process.StepFailure, 'generate payloads'),
       api.post_check(post_process.StepFailure,
                      'generate payloads.inspect failure'),
-      api.post_check(post_process.StatusFailure),
-      api.test_util.test_child_build('amd64-generic').build)
+      api.test_util.test_child_build('amd64-generic').build,
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       'paygen-infra-failure',
@@ -165,6 +165,7 @@ def GenTests(api):
       api.post_check(post_process.StepException, 'generate payloads'),
       api.post_check(post_process.StepException,
                      'generate payloads.inspect failure'),
-      api.post_check(post_process.StatusException),
       api.test_util.test_child_build('amd64-generic').build,
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )

@@ -7,14 +7,13 @@
 
 from typing import Generator
 
+from PB.chromiumos.branch import Branch
+from PB.recipes.chromeos.brancher import BrancherProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
-
-from PB.chromiumos.branch import Branch
-from PB.recipes.chromeos.brancher import BrancherProperties
 
 DEPS = [
     'recipe_engine/properties',
@@ -110,6 +109,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandContains, 'create branch.'
           'create branch from buildspec manifest 89/13729.0.0.xml',
           ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -138,6 +139,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           BrancherProperties(branch_info=Branch(type=Branch.RELEASE))),
       api.post_check(post_process.StepFailure, 'validate properties'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -146,6 +149,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.FACTORY))),
       api.post_check(post_process.StepFailure, 'validate properties'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -155,6 +160,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BrancherProperties(source_version='R107-15000.0.0',
                              branch_info=Branch(type=Branch.STABILIZE))),
       api.post_check(post_process.StepFailure, 'validate properties'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -167,6 +174,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           '.create branch from buildspec manifest 109/15194.0.0.xml',
           stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(post_process.StepSuccess, 'validate properties'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -175,4 +184,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BrancherProperties(source_version='R89-13729.0.0',
                              branch_info=Branch(type=Branch.RELEASE))),
       api.post_check(post_process.StepFailure, 'create branch'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )

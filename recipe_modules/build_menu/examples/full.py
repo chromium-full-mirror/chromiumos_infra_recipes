@@ -3,12 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.build_menu.examples.full import FullProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -88,7 +87,6 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           )
       ),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
   )
 
@@ -101,7 +99,6 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           )
       ),
-      api.post_check(post_process.StatusSuccess),
       build_target='staging-amd64-generic',
       cq=True,
   )
@@ -116,7 +113,6 @@ def GenTests(api):
             '{staging?}{build-target}-cq.{cros-version}-{bbid}'
         )
     ),
-    api.post_check(post_process.StatusSuccess),
     cq=True,
   )
 
@@ -183,9 +179,13 @@ def GenTests(api):
       }, build_target='arm-generic')
 
   yield api.build_menu.test(
-      'postsubmit-with-changes', api.post_check(post_process.StatusFailure),
+      'postsubmit-with-changes',
       api.post_check(post_process.DoesNotRun, 'cherry-pick gerrit changes'),
-      build_target='arm-generic', cq=True, bucket='postsubmit')
+      build_target='arm-generic',
+      cq=True,
+      bucket='postsubmit',
+      status='FAILURE',
+  )
 
   # Ensure CQ uploads the prebuilts if the prebuilt target is PUBLIC.
   yield api.build_menu.test(
@@ -193,7 +193,7 @@ def GenTests(api):
       api.test_util.test_orchestrator(bucket='cq').build,
       api.properties(FullProperties(upload_prebuilts=True)),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
-      api.post_check(post_process.StatusSuccess), input_properties={
+      input_properties={
           '$chromeos/build_menu':
               dict(override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
       }, cq=True)
@@ -204,7 +204,7 @@ def GenTests(api):
       api.test_util.test_orchestrator(bucket='cq').build,
       api.properties(FullProperties(upload_prebuilts=True)),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
-      api.post_check(post_process.StatusSuccess), input_properties={
+      input_properties={
           '$chromeos/build_menu':
               dict(override_prebuilts_config=BuilderConfig.Artifacts.NONE),
       }, cq=True)
@@ -262,7 +262,12 @@ def GenTests(api):
           '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
       }))
 
-  yield api.build_menu.test('no-config', builder='no-config')
+  yield api.build_menu.test(
+      'no-config',
+      builder='no-config',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       'missing-ok-config',
@@ -287,13 +292,13 @@ def GenTests(api):
       )
     ),
     api.expect_exception('RuntimeError'),
-    api.post_check(post_process.StatusException),
     api.post_check(
       post_process.ResultReasonRE,
       'Unknown fields found in version format string',
     ),
       api.post_process(post_process.DropExpectation),
     cq=True,
+    status='INFRA_FAILURE',
   )
 
   # Cq build with bad container version string, should throw exception
@@ -307,13 +312,13 @@ def GenTests(api):
       )
     ),
     api.expect_exception('RuntimeError'),
-    api.post_check(post_process.StatusException),
     api.post_check(
       post_process.ResultReasonRE,
       'Invalid tag format',
     ),
       api.post_process(post_process.DropExpectation),
     cq=True,
+    status='INFRA_FAILURE',
   )
 
   # Cq build with bad container version string, should throw exception
@@ -326,13 +331,13 @@ def GenTests(api):
       )
     ),
     api.expect_exception('RuntimeError'),
-    api.post_check(post_process.StatusException),
     api.post_check(
       post_process.ResultReasonRE,
       'Tag is too long',
     ),
       api.post_process(post_process.DropExpectation),
     cq=True,
+    status='INFRA_FAILURE',
   )
 
   # Cq build with bad container version string, should throw exception
@@ -369,6 +374,8 @@ def GenTests(api):
       data='{ "results": [ { "failure" : {} } ]}',
     ),
     cq=True,
+    # TODO (b/275363240): audit this test.
+    status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -387,6 +394,8 @@ def GenTests(api):
       data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
     ),
     cq=True,
+    # TODO (b/275363240): audit this test.
+    status='FAILURE',
   )
 
   yield api.test(
@@ -520,6 +529,8 @@ def GenTests(api):
           'upload artifacts.upload code coverage data'
       ),
     cq=True,
+    # TODO (b/275363240): audit this test.
+    status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -534,7 +545,6 @@ def GenTests(api):
       api.step_data('validate SDK reuse.depgraph relevance check.run check', retcode=1),
       api.step_data('validate SDK reuse (2).depgraph relevance check.run check', retcode=1),
       api.post_check(post_process.PropertyEquals, 'sdk_state', 'DIRTY'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       build_target='amd64-generic',
       cq=True,

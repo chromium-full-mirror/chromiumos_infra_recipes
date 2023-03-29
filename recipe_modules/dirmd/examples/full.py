@@ -46,7 +46,6 @@ def GenTests(api):
           post_process.DoesNotRun,
           'dirmd validate [CLEANUP]/tmp_tmp_2.dirmd validate',
       ),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -54,6 +53,6 @@ def GenTests(api):
       dirmd_glob_paths,
       api.step_data('dirmd validate [CLEANUP]/tmp_tmp_1.dirmd validate',
                     retcode=1),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

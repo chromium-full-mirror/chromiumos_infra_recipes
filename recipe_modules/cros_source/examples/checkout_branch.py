@@ -3,9 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.recipe_modules.chromeos.cros_source.examples.checkout_branch import CheckoutBranchProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -51,7 +50,6 @@ def GenTests(api):
       'basic', 'snapshot',
       api.properties(
           CheckoutBranchProperties(branch_name=branch, is_staging=False)),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %
@@ -68,7 +66,6 @@ def GenTests(api):
       api.step_data(
           'checkout branch %s.ensure manifest is pinned.repo forall' % branch,
           stdout=api.raw_io.output('')),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.DoesNotRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %
@@ -87,7 +84,6 @@ def GenTests(api):
       api.step_data(
           'checkout branch %s.ensure manifest is pinned.repo forall' % branch,
           stdout=api.raw_io.output('')),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.DoesNotRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %
@@ -105,7 +101,6 @@ def GenTests(api):
       api.step_data(
           'checkout branch %s.ensure manifest is pinned.repo forall' % branch,
           stdout=api.raw_io.output('')),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.DoesNotRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %
@@ -124,7 +119,6 @@ def GenTests(api):
       api.step_data(
           'checkout branch %s.ensure manifest is pinned.repo forall' % branch,
           stdout=api.raw_io.output('')),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.DoesNotRun,
           'checkout branch %s.ensure manifest is pinned.repo manifest' %

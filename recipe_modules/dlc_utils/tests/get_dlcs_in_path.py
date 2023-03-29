@@ -5,8 +5,8 @@
 
 """Tests to verify dlc_utils.get_dlcs_in_path."""
 
-from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'depot_tools/gsutil',
@@ -36,8 +36,7 @@ def GenTests(api):
       api.properties(expected_locations=[
           'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
           'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img',
-      ]), mock_dlc(api), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+      ]), mock_dlc(api), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'pulls-from-additional-directories',
@@ -52,7 +51,6 @@ def GenTests(api):
                   'dlc_directories': ['dlc', 'dlc-scaling']
               }
           }), mock_dlc(api), mock_dlc_scaling(api),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -66,7 +64,6 @@ def GenTests(api):
                   'dlc_directories': ['dlc', 'dlc-scaling']
               }
           }), mock_dlc(api), mock_dlc_scaling(api, failed=True),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -87,7 +84,6 @@ def GenTests(api):
                   'dlc_file_names': ['dlc.img', 'imageloader.json']
               }
           }), mock_dlc(api), mock_dlc_scaling(api),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
 

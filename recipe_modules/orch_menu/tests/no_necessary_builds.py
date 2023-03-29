@@ -27,7 +27,6 @@ def GenTests(api):
               'arm64-generic-cq',
           ], step_name='run builds.plan builds.read output file'),
       api.post_process(post_process.DoesNotRun, 'run builds.collect'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       cq=True,
   )

@@ -16,17 +16,18 @@
 
 import os
 import re
-from typing import Any, OrderedDict
 import string
+from typing import Any
+from typing import OrderedDict
 
-from PB.chromiumos import sign_image as sign_image_os
 from PB.chromiumos import common as common_os
-from PB.chromiumos.common import ImageType
+from PB.chromiumos import sign_image as sign_image_os
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import ImageType
 from PB.chromiumos.sign_image import GscInstructions
-from PB.recipes.chromeos.sign_image import SignImageProperties
-from PB.recipe_engine import result as result_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.sign_image import SignImageProperties
 from recipe_engine import post_process
 from recipe_engine.internal.test.magic_check_fn import Checker
 from recipe_engine.recipe_api import RecipeApi
@@ -304,7 +305,11 @@ def GenTests(api: RecipeTestApi):
     return check(
         post_process.GetBuildProperties(steps).get(output_prop) == value)
 
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'gsc',
@@ -320,7 +325,10 @@ def GenTests(api: RecipeTestApi):
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,
           keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases-test/canary-channel/eve/12499.10.0/'
-                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')))
+                   'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2')),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'gsc-staging-with-prod-path',
@@ -339,7 +347,10 @@ def GenTests(api: RecipeTestApi):
           keyset='cr50-accessory-mp', channel=common_os.CHANNEL_CANARY,
           archive=('gs://chromeos-releases/canary-channel/eve/12499.10.0/'
                    'ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2'),
-          gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED)))
+          gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED)),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'gsc-NodeLocked',
@@ -362,7 +373,7 @@ def GenTests(api: RecipeTestApi):
           allow_non_release_signer_bucket=True),
       api.buildbucket.generic_build(tags=[
           common_pb2.StringPair(key='parent_buildbucket_id', value='1234')
-      ]), api.post_check(post_process.StatusSuccess),
+      ]),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'),
       api.post_check(lambda check, steps: check_build_output(
@@ -378,7 +389,6 @@ def GenTests(api: RecipeTestApi):
           archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
                    'R97-14299.0.0-55770-8832698563268919201/ti50.efi.tar.bz2'),
           allow_non_release_signer_bucket=True),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(lambda check, steps: check_build_output(
           check, steps, 'instructions_file',
@@ -393,9 +403,10 @@ def GenTests(api: RecipeTestApi):
           archive=('gs://chromeos-image-archive/firmware-ti50-postsubmit/'
                    'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=False),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun,
-                     'copy artifacts to release bucket'))
+                     'copy artifacts to release bucket'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'gsc-non-release-bucket-staging',
@@ -408,7 +419,6 @@ def GenTests(api: RecipeTestApi):
               'gs://staging-chromeos-image-archive/firmware-ti50-postsubmit/'
               'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=True),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(post_process.DoesNotRun,
                      'trigger gsc signing.trigger file'))
@@ -423,6 +433,7 @@ def GenTests(api: RecipeTestApi):
               'gs://staging-chromeos-image-archive/firmware-ti50-postsubmit/'
               'R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2'),
           allow_non_release_signer_bucket=False),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun,
-                     'copy artifacts to release bucket'))
+                     'copy artifacts to release bucket'),
+      status='FAILURE',
+  )

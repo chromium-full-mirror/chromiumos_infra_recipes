@@ -5,13 +5,13 @@
 
 """Recipe for building a BuildTarget image for CQ."""
 
-from typing import Generator, Optional
+from typing import Generator
+from typing import Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
+from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -182,8 +182,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral')
+                     'upload artifacts.publish artifacts'), cq=True,
+      build_target='coral')
 
   # Normal CQ build, with the async_unit_tests experiment enabled. Note that
   # this build runs multiple upload artifact steps.
@@ -205,7 +205,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.build_menu.test(
       'upload-prebuilts-experiment',
       api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
-      api.post_check(post_process.StatusSuccess),
       api.gerrit.simulated_topic(
           "chromeos-base/lacros-ash-atomic", GERRIT_HOST, CHANGE_NUM,
           "upload prebuilts.Check if the CQ uploads the prebuilts"),
@@ -239,7 +238,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.build_menu.test(
       'upload-prebuilts-experiment-on-non-uprev-cq',
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.do upload'),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
       input_properties=api.test_util.build_menu_properties(
           override_prebuilts_config=BuilderConfig.Artifacts.PRIVATE),
@@ -257,8 +255,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
+                     'upload artifacts.publish artifacts'), cq=True,
+      build_target='coral',
       input_properties=api.test_util.build_menu_properties(artifact_build=True),
       artifact_pointless=True)
 
@@ -269,8 +267,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True,
+                     'upload artifacts.publish artifacts'), cq=True,
       build_target='staging-amd64-generic', pointless=True)
 
   # CQ build with install-packages failure.
@@ -281,22 +278,29 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return(
           'install packages', endpoint='SysrootService/InstallPackages',
           retcode=2,
           data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
-      ), build_target='coral', cq=True)
+      ),
+      build_target='coral',
+      cq=True,
+      status='FAILURE',
+  )
 
 
   # CQ build with artifact bundling failure.
   yield api.build_menu.test(
-      'bundle-fail', api.post_check(post_process.MustRun, 'build images'),
+      'bundle-fail',
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), cq=True, build_target='coral')
+          retcode=1),
+      cq=True,
+      build_target='coral',
+      status='INFRA_FAILURE',
+  )
 
   # CQ build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -304,13 +308,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), cq=True, build_target='coral')
+          retcode=1),
+      cq=True,
+      build_target='coral',
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       'parent-cancelled',
@@ -320,11 +327,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.ResultReason,
           'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
       ),
-      api.post_process(post_process.StatusException),
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,
       build_target='coral',
+      status='CANCELED',
   )
 
   # This covers any staging-specific logic.
@@ -335,7 +342,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
       build_target='staging-amd64-generic',
       pointless=False)

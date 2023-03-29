@@ -154,8 +154,13 @@ def GenTests(api: RecipeTestApi):
       'with-manifest-name-only-changes',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['chromeos/manifest-internal']),
-      internal_exists, no_tests_internal, *common_args,
+      internal_exists,
+      no_tests_internal,
+      *common_args,
       api.repo.project_infos_step_data(
           'get new project infos', data=[
               dict(project='new-project-c', path='src/project-c'),
-          ]))
+          ]),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

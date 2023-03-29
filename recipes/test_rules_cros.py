@@ -33,8 +33,16 @@ def RunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
 
   def test(name, **kwargs):
-    return api.test(name, api.test_util.test_child_build(None, **kwargs).build)
+    status = kwargs.pop('status', 'SUCCESS')
+    return api.test(name,
+                    api.test_util.test_child_build(None, **kwargs).build,
+                    status=status)
 
   yield test('cq', cq=True, builder='rules-cros-cq')
 
-  yield test('builder-no-longer-exists', builder='none')
+  yield test(
+      'builder-no-longer-exists',
+      builder='none',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

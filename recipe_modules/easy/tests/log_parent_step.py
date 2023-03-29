@@ -3,11 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -39,10 +38,11 @@ def GenTests(api: RecipeTestApi):
               tags=api.cros_tags.tags(parent_buildbucket_id=str(PARENT_ID)))),
       api.post_check(post_process.MustRun, PARENT_BUILD_STEP),
       api.post_check(post_process.DoesNotRun, NO_PARENT_BUILD_STEP),
-      api.post_check(post_process.StatusSuccess))
+  )
 
-  yield api.test('no-parent',
-                 api.buildbucket.build(api.buildbucket.ci_build_message()),
-                 api.post_check(post_process.MustRun, NO_PARENT_BUILD_STEP),
-                 api.post_check(post_process.DoesNotRun, PARENT_BUILD_STEP),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'no-parent',
+      api.buildbucket.build(api.buildbucket.ci_build_message()),
+      api.post_check(post_process.MustRun, NO_PARENT_BUILD_STEP),
+      api.post_check(post_process.DoesNotRun, PARENT_BUILD_STEP),
+  )

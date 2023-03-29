@@ -41,8 +41,7 @@ def GenTests(api: RecipeTestApi):
                  api.properties(
                      contents='',
                      expected_json_str='{}',
-                 ), api.post_check(post_process.StatusSuccess),
-                 api.post_process(post_process.DropExpectation))
+                 ), api.post_process(post_process.DropExpectation))
 
   expected_dict = collections.OrderedDict()
   expected_dict["my_key"] = "my value"
@@ -51,8 +50,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           contents="my_key='my value'",
           expected_json_str=json.dumps(expected_dict),
-      ), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+      ), api.post_process(post_process.DropExpectation))
 
   expected_dict = collections.OrderedDict()
   expected_dict['double_quotes'] = 'hey'
@@ -79,8 +77,7 @@ world!"
 
 """,
           expected_json_str=json.dumps(expected_dict),
-      ), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+      ), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'line-without-equals',
@@ -90,10 +87,11 @@ Hey, how's it going?""",
       ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.SummaryMarkdown,
                      'Invalid line (no assignment): Hey, how\'s it going?'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'unterminated-multiline-value',
@@ -106,16 +104,19 @@ l""",
       ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.SummaryMarkdownRE,
                      r'Unterminated value \(key=my_key\): .*'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
-      'invalid-quote-char', api.properties(contents="my_key=`my value`"),
+      'invalid-quote-char',
+      api.properties(contents="my_key=`my value`"),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.SummaryMarkdown,
                      'Invalid line (bad quote char): my_key=`my value`'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

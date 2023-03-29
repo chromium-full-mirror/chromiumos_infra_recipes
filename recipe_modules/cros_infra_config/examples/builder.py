@@ -3,11 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_infra_config.examples.builder import BuilderProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -110,8 +109,11 @@ def GenTests(api):
       props.is_staging.value = is_staging
     # None of these example cases should fail, so verify that the build finished
     # successfully.  We will inherit the name from the other call to api.test.
-    return api.test(None, build.build, api.properties(props),
-                    api.post_check(post_process.StatusSuccess))
+    return api.test(
+        None,
+        build.build,
+        api.properties(props),
+    )
 
   # This has a commit and no changes.
   yield api.test('basic', builder())

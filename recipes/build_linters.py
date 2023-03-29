@@ -5,20 +5,27 @@
 
 """Recipe for linting CLs."""
 
-from collections import OrderedDict
-from typing import Any, Dict, Generator, List, Optional, Set
 import json
+from collections import OrderedDict
+from typing import Any
+from typing import Dict
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Set
 
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
-from PB.chromite.api.depgraph import ListRequest, SourcePath
-from PB.chromite.api.toolchain import LinterRequest, LinterFinding
+from PB.chromite.api.depgraph import ListRequest
+from PB.chromite.api.depgraph import SourcePath
+from PB.chromite.api.toolchain import LinterFinding
+from PB.chromite.api.toolchain import LinterRequest
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import PackageInfo
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange, SUCCESS
-from PB.recipes.chromeos.build_linters import BuildLintersProperties
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import SUCCESS
 from PB.recipe_engine.result import RawResult
-
+from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -350,7 +357,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
-      api.post_check(post_process.StatusSuccess), revision=None, cq=False)
+      revision=None, cq=False)
 
   # No changes to relevant projects
   yield api.build_menu.test(
@@ -364,7 +371,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
-      api.post_check(post_process.StatusSuccess),
       **BuildTestArgs(input_properties={'relevant_projects': []}))
 
   # No changes with Relevant extensions
@@ -377,7 +383,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
-      api.post_check(post_process.StatusSuccess),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get relevant patches', changes[:1],
           OrderedDict({
@@ -424,7 +429,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        data=project_info),
       api.build_menu.set_build_api_return('get affected packages for golint',
                                           'DependencyService/List', data='{}'),
-      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
+      **BuildTestArgs())
 
   # Normal build with relevant changes
   yield api.build_menu.test(
@@ -449,8 +454,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.repo.project_infos_step_data('get affected packages for golint',
-                                       data=project_info),
-      api.post_check(post_process.StatusSuccess), **BuildTestArgs())
+                                       data=project_info), **BuildTestArgs())
 
   # Multiple change lists with relevant changes
   yield api.build_menu.test(
@@ -471,7 +475,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.repo.project_infos_step_data('get affected packages for clippy',
@@ -507,7 +510,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
-      api.post_check(post_process.StatusFailure),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -526,7 +528,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       }
                   }
               }
-          })), **BuildTestArgs())
+          })),
+      **BuildTestArgs(),
+      status='FAILURE',
+  )
 
   # CROS Build API failure in DependencyService.List
   yield api.build_menu.test(
@@ -542,14 +547,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.build_menu.set_build_api_return('get affected packages for clippy',
                                           'DependencyService/List', retcode=1),
-      **BuildTestArgs())
+      **BuildTestArgs(),
+      status='FAILURE',
+  )
 
   # CROS Build API failure in ToolchainService.EmergeWithLinting
   yield api.build_menu.test(
@@ -569,11 +575,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.build_menu.set_build_api_return('linting packages with clippy',
                                           'ToolchainService/EmergeWithLinting',
-                                          retcode=1), **BuildTestArgs())
+                                          retcode=1),
+      **BuildTestArgs(),
+      status='FAILURE',
+  )

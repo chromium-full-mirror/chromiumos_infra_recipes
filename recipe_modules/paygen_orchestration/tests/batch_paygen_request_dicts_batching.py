@@ -6,7 +6,6 @@
 from typing import Tuple
 
 from PB.chromite.api.payload import GenerationRequest
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
@@ -87,7 +86,8 @@ def GenTests(api: RecipeTestApi):
                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ]
-          ]])), api.post_check(post_process.StatusSuccess))
+          ]])),
+  )
 
   yield api.test(
       'chunked-schedule-requests',
@@ -102,10 +102,12 @@ def GenTests(api: RecipeTestApi):
                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
                   api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               ] * 300
-          ]])), api.post_check(post_process.StatusSuccess))
+          ]])),
+  )
 
   yield api.test(
-      'max-batch-size-1', api.properties(max_batch_size=1),
+      'max-batch-size-1',
+      api.properties(max_batch_size=1),
       api.properties(
           paygen_requests=tuple(r.SerializeToString() for r in [
               api.paygen_orchestration.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
@@ -120,10 +122,12 @@ def GenTests(api: RecipeTestApi):
                [
                    api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
                    .SerializeToString()
-               ]])), api.post_check(post_process.StatusSuccess))
+               ]])),
+  )
 
   yield api.test(
-      'last-batch-smaller-than-max', api.properties(max_batch_size=2),
+      'last-batch-smaller-than-max',
+      api.properties(max_batch_size=2),
       api.properties(
           paygen_requests=tuple(r.SerializeToString() for r in [
               api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
@@ -149,7 +153,8 @@ def GenTests(api: RecipeTestApi):
                [
                    api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
                    .SerializeToString()
-               ]])), api.post_check(post_process.StatusSuccess))
+               ]])),
+  )
 
   yield api.test(
       'n2n-batches-alongside-full',
@@ -165,7 +170,8 @@ def GenTests(api: RecipeTestApi):
                   .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
                   api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
               ]
-          ]])), api.post_check(post_process.StatusSuccess))
+          ]])),
+  )
 
   yield api.test(
       'n2n-without-matching-full',
@@ -173,4 +179,7 @@ def GenTests(api: RecipeTestApi):
           paygen_requests=tuple([
               api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
               .SerializeToString(),
-          ])), api.post_check(post_process.StepFailure, 'run test'))
+          ])),
+      api.post_check(post_process.StepFailure, 'run test'),
+      status='FAILURE',
+  )

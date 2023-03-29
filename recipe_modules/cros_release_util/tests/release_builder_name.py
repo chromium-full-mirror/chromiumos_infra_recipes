@@ -51,30 +51,25 @@ def GenTests(api):
       'zork',
       api.properties(build_target='zork',
                      expected_builder_name='zork-release-main'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
   yield api.test(
       'staging-zork',
       api.properties(build_target='zork', is_staging=True,
                      expected_builder_name='staging-zork-release-main'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
   yield api.test(
       'zork-R98',
       api.properties(build_target='zork', branch_name='release-R98-14388.B',
                      expected_builder_name='zork-release-R98-14388.B'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
   yield api.test(
       'zork-tracking-snapshot',
       api.properties(build_target='zork', branch_name='snapshot',
                      expected_builder_name='zork-release-main'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
   yield api.test(
       'staging-zork-tracking-snapshot',
       api.properties(build_target='zork', is_staging=True,
                      branch_name='staging-snapshot',
                      expected_builder_name='staging-zork-release-main'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

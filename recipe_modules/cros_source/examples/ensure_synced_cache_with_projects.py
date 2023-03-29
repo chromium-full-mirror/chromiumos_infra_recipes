@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/swarming',
@@ -26,5 +24,8 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic-success')
 
-  yield api.test('basic-failure', api.repo.fail_repo_sync(True),
-                 api.post_check(post_process.StatusException))
+  yield api.test(
+      'basic-failure',
+      api.repo.fail_repo_sync(True),
+      status='INFRA_FAILURE',
+  )

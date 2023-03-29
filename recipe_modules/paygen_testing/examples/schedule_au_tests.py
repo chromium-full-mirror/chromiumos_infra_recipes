@@ -106,8 +106,7 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-  yield api.test('basic', api.post_check(post_process.StatusSuccess),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test('basic', api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'with-request-overrides',
@@ -118,8 +117,7 @@ def GenTests(api: RecipeTestApi):
                       test_request_opts=TestRequestOpts(
                           max_retries=1, timeout=duration_pb2.Duration(
                               seconds=100)))
-          }), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+          }), api.post_process(post_process.DropExpectation))
 
   # TODO(b/243580346): While I work on untangling the code here, we have these
   # mock methods being used in paygen.py but not triggering coverage. Call them

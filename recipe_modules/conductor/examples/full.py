@@ -5,12 +5,12 @@
 
 from google.protobuf import json_format
 
+from PB.chromiumos.conductor import CollectConfig
+from PB.chromiumos.conductor import RetryRule
+from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
-
-from PB.chromiumos.conductor import CollectConfig, RetryRule
-from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -71,7 +71,6 @@ def GenTests(api: RecipeTestApi):
           ['--bbids', '123,456', '--polling_interval', '120', '--dryrun']),
       api.post_check(post_process.PropertyEquals, 'conductor_report',
                      {'child builds': TEST_REPORT}),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -92,6 +91,5 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.StepCommandContains,
                      'ensure conductor.ensure_installed',
                      ['chromiumos/infra/conductor_foo bar']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

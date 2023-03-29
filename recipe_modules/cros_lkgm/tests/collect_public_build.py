@@ -22,4 +22,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.StepFailure, 'collect public orchestrator'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')

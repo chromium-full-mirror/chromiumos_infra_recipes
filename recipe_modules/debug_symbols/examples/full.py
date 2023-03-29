@@ -2,8 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -30,5 +28,8 @@ def GenTests(api):
                   "staging": True,
                   "dryrun": False,
               }
-          }), api.post_check(post_process.StatusSuccess))
-  yield api.test('needs-gs-path', api.post_check(post_process.StatusFailure))
+          }))
+  yield api.test(
+      'needs-gs-path',
+      status='FAILURE',
+  )

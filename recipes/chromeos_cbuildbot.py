@@ -9,7 +9,6 @@ from typing import Generator
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
-
 from recipe_engine.recipe_api import AggregatedStepFailure
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
@@ -148,7 +147,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.step_data('cbuildbot_launch [swarming-build-config]',
                     api.legacy_annotation.failure_step),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Test a plain tryjob.
   yield api.test(

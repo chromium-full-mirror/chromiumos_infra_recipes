@@ -5,7 +5,6 @@
 
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import GetRequestTestInputProperties
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -34,4 +33,4 @@ def GenTests(api: RecipeTestApi):
           api.properties, GetRequestTestInputProperties.UNSIGNED,
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N,
           **api.paygen_orchestration.BASIC_TEST_PROPS),
-      api.post_check(post_process.StatusSuccess))
+  )

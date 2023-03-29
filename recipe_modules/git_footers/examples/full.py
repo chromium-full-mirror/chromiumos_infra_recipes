@@ -5,10 +5,8 @@
 
 """Test git_footers calls."""
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -105,9 +103,10 @@ def RunSteps(api, invalid_cr_commit_position):
 
 
 def GenTests(api):
-  yield api.test('basic', api.post_check(post_process.StatusSuccess))
+  yield api.test('basic')
 
-  yield api.test('bad-cr-commit-position',
-                 api.properties(invalid_cr_commit_position=True),
-                 api.step_data('read git footers (5)', retcode=1),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'bad-cr-commit-position',
+      api.properties(invalid_cr_commit_position=True),
+      api.step_data('read git footers (5)', retcode=1),
+  )

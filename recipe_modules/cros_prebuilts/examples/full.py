@@ -5,12 +5,14 @@
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget, Profile
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Profile
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
 from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import FullProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
-
-from recipe_engine.post_process import MustRun, DoesNotRun, StepException
+from recipe_engine.post_process import DoesNotRun
+from recipe_engine.post_process import MustRun
+from recipe_engine.post_process import StepException
 
 DEPS = [
     'recipe_engine/assertions',
@@ -173,7 +175,8 @@ def GenTests(api):
                                'upload devinstall prebuilts (2)',
                                'no bucket specified, skipping'))
   yield api.test(
-      'update-retry-exhaustion', test_data(upload_metadata=False),
+      'update-retry-exhaustion',
+      test_data(upload_metadata=False),
       api.step_data(
           'upload prebuilts.update binhost conf file.'
           'update ref.gerrit transaction.diff check.git diff', retcode=1),
@@ -187,7 +190,10 @@ def GenTests(api):
           'upload prebuilts.update binhost conf file.'
           'update ref (4).gerrit transaction.diff check.git diff', retcode=1),
       api.post_check(StepException,
-                     'upload prebuilts.update binhost conf file'))
+                     'upload prebuilts.update binhost conf file'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'update-retry-not-called', test_data(),
@@ -213,7 +219,10 @@ def GenTests(api):
       test_data(
           profile=Profile(name='generic_build'),
           overridden_builder_config=BuilderConfig.Id.RELEASE,
-          upload_metadata=False), api.expect_exception('ValueError'))
+          upload_metadata=False),
+      api.expect_exception('ValueError'),
+      status='INFRA_FAILURE',
+  )
 
   # This test forces dirty source and thus tests the code path of
   # upload_target_prebuilts skipping binhost commit and metadata

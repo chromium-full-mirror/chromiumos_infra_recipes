@@ -156,13 +156,17 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'no-data-fails', test_build(),
+      'no-data-fails',
+      test_build(),
       api.post_check(post_process.StepFailure, 'collect image size data'),
       api.post_check(post_process.ResultReason, 'No images provided.'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
-      'bad-platform-version', test_build(),
+      'bad-platform-version',
+      test_build(),
       api.properties(
           PublishTestProperties(
               image_types=[common_pb2.IMAGE_TYPE_BASE],
@@ -171,7 +175,9 @@ def GenTests(api):
       api.post_check(post_process.StepFailure,
                      'collect image size data.add version data'),
       api.post_check(post_process.ResultReason, 'Invalid platform version 1.2'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'valid-platform-version', test_build(),
@@ -198,7 +204,6 @@ def GenTests(api):
       ]),
       api.post_check(post_process.StepTextEquals, 'collect image size data',
                      'Skipped: Image size data could not be collected.'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -217,9 +222,12 @@ def GenTests(api):
                        ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'no-images', test_build(),
+      'no-images',
+      test_build(),
       api.post_process(post_process.StepFailure, 'collect image size data'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'base-image', test_build(),

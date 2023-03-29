@@ -39,7 +39,10 @@ def GenTests(api):
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
                           crosfleet_tool=4, skylab_tool=3))
-          }))
+          }),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'bad-crosfleet-version-good-skylab-version',
@@ -49,7 +52,10 @@ def GenTests(api):
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
                           crosfleet_tool=3, skylab_tool=4))
-          }))
+          }),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'bad-crosfleet-version-bad-skylab-version',
@@ -59,7 +65,10 @@ def GenTests(api):
                   ServiceVersionProperties(
                       version=service_version.ServiceVersion(
                           crosfleet_tool=3, skylab_tool=3))
-          }))
+          }),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'good-crosfleet-version-good-skylab-version',

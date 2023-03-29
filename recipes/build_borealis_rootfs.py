@@ -8,14 +8,15 @@
 import re
 from typing import Generator
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_test_api import RecipeTestApi
-from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+
 from PB.recipes.chromeos.build_borealis_rootfs import (
     BuildBorealisRootfsProperties)
-from RECIPE_MODULES.chromeos.gerrit.api import Label
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -169,50 +170,64 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'destination_gs_bucket': 'chromeos-localmirror-private',
       'destination_gs_path': 'borealis',
   }
-  yield api.test('basic', api.properties(**good_props),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'basic',
+      api.properties(**good_props),
+  )
 
   # version-pin is optional, if not set, it still passes but would not update
   # the PIN.
   props = good_props.copy()
   del props['version_file']
-  yield api.test('no-version_file', api.properties(**props),
-                 api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'no-version_file',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+  )
 
   props = good_props.copy()
   props['docker_variant'] = 'chroot'
-  yield api.test('docker_variant chroot', api.properties(**props),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'docker_variant chroot',
+      api.properties(**props),
+  )
 
   props = good_props.copy()
   del props['package_info']
-  yield api.test('no-package_info', api.properties(**props),
-                 api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'no-package_info',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='FAILURE',
+  )
 
   props = good_props.copy()
   props['package_info'] = good_props['package_info'].copy()
   del props['package_info']['package_name']
-  yield api.test('no-package_info.package_name', api.properties(**props),
-                 api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'no-package_info.package_name',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='FAILURE',
+  )
 
   props = good_props.copy()
   del props['destination_gs_bucket']
-  yield api.test('no-destination_gs_bucket', api.properties(**props),
-                 api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'no-destination_gs_bucket',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='FAILURE',
+  )
 
   props = good_props.copy()
   del props['destination_gs_path']
-  yield api.test('no-destination_gs_path', api.properties(**props),
-                 api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
-                 api.post_check(post_process.StatusAnyFailure),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'no-destination_gs_path',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      status='FAILURE',
+  )
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
@@ -235,10 +250,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               '--archive',
               'borealis-dlc-105.2012.05.14.125330.tar.xz',
           ],
-      ), api.post_check(post_process.StatusSuccess))
+      ))
 
   props = good_props.copy()
   props['manifest_branch'] = 'abcdefg'
-  yield api.test('bad-manifest-branch', api.properties(**props),
-                 api.expect_exception('AttributeError'),
-                 api.post_check(post_process.StatusException))
+  yield api.test(
+      'bad-manifest-branch',
+      api.properties(**props),
+      api.expect_exception('AttributeError'),
+      status='INFRA_FAILURE',
+  )

@@ -26,7 +26,6 @@ def GenTests(api):
       'success',
       api.post_process(post_process.MustRun, 'git cherry-pick'),
       api.post_process(post_process.MustRun, 'git cherry-pick --abort'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -35,7 +34,6 @@ def GenTests(api):
       api.step_data('git cherry-pick', retcode=1),
       api.post_process(post_process.MustRun, 'git cherry-pick'),
       api.post_process(post_process.MustRun, 'git cherry-pick --abort'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -44,6 +42,6 @@ def GenTests(api):
       api.step_data('git cherry-pick --abort', retcode=1),
       api.post_process(post_process.MustRun, 'git cherry-pick'),
       api.post_process(post_process.MustRun, 'git cherry-pick --abort'),
-      api.post_check(post_process.StatusException),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )

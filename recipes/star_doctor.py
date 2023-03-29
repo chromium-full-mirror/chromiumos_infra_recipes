@@ -9,13 +9,19 @@ Automatically updates binary config files and updates Goldeneye config
 json files.
 """
 
-from typing import Generator, List, Optional, Set
-
 import base64
 import functools
 import json
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Set
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintKind
 from google.protobuf.text_format import MessageToString
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.star_doctor import RemoteConfigFile
 from PB.recipes.chromeos.star_doctor import StarDoctorProperties
@@ -26,10 +32,6 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import StepTestData
 from recipe_engine.recipe_test_api import TestData
-from RECIPE_MODULES.chromeos.gerrit.api import Label
-from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
-from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintKind
-
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -499,15 +501,19 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                 project.review_host, iteration=iteration))
     return sum(test_datas[1:], test_datas[0])
 
-  yield api.test('dont-commit', api.time.seed(1613694623.0),
-                 api.properties(commit_changes=False),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'dont-commit',
+      api.time.seed(1613694623.0),
+      api.properties(commit_changes=False),
+  )
 
   yield api.test(
-      'full', api.time.seed(1613694623.0),
+      'full',
+      api.time.seed(1613694623.0),
       api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
-                     branches=['R9000']), _set_gerrit_query_changes_responses(),
-      api.post_check(post_process.StatusSuccess))
+                     branches=['R9000']),
+      _set_gerrit_query_changes_responses(),
+  )
 
   yield api.test(
       'skip-pending-project', api.time.seed(1613694623.0),
@@ -530,10 +536,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(
           post_process.MustRun,
           'commit changes.chromeos/infra/config.committing to chromeos/infra/config'
-      ), api.post_check(post_process.StatusSuccess))
+      ))
 
   yield api.test(
-      'only-irrelevant', api.time.seed(1613694623.0),
+      'only-irrelevant',
+      api.time.seed(1613694623.0),
       api.step_data(
           'commit changes.chromeos/infra/config.committing to chromeos/infra/config.git status',
           stdout=api.raw_io.output_text(
@@ -544,7 +551,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(
           post_process.DoesNotRun,
           'commit changes.committing to chromeos/infra/config.git commit'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'old-and-new-properties-set',
@@ -566,4 +573,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                        ('.*ge_bucket and branches cannot be set if'
                         ' remote_config_files is set..*')),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

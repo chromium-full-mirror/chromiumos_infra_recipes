@@ -11,8 +11,7 @@ from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
 from PB.test_platform.phosphorus.upload_to_gs import UploadToGSRequest
 from PB.test_platform.phosphorus.upload_to_tko import UploadToTkoRequest
-
-from recipe_engine.post_process import DropExpectation, StatusSuccess
+from recipe_engine.post_process import DropExpectation
 
 DEPS = [
     'recipe_engine/assertions',
@@ -89,8 +88,7 @@ def GenTests(api):
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='placeholder-results-dir')))),
-  ) + api.post_process(StatusSuccess) +  # recipe should pass
-         api.post_process(DropExpectation))
+  ) + api.post_process(DropExpectation))
   yield (api.test(
       'cros-host-with-bot-prefix',
       api.phosphorus.properties(dut_name='cros-chromeos1-row2-rack3-host4'),
@@ -99,8 +97,7 @@ def GenTests(api):
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='placeholder-results-dir')))),
-  ) + api.post_process(StatusSuccess) +  # recipe should pass
-         api.post_process(DropExpectation))
+  ) + api.post_process(DropExpectation))
   yield (api.test(
       'host-without-valid-bot-prefix',
       api.phosphorus.properties(dut_name='noprefix-chromeos1-row2-rack3-host4'),
@@ -109,5 +106,4 @@ def GenTests(api):
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='placeholder-results-dir')))),
-  ) + api.post_process(StatusSuccess) +  # recipe should pass
-         api.post_process(DropExpectation))
+  ) + api.post_process(DropExpectation))

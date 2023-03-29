@@ -37,8 +37,7 @@ test_bbids = [str(8922054662172514000 + i) for i in range(805)]
 
 def GenTests(api: RecipeTestApi):
 
-  yield api.test('basic', api.post_check(post_process.StatusSuccess),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test('basic', api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'conductor',
@@ -53,5 +52,4 @@ def GenTests(api: RecipeTestApi):
           }),
       api.conductor.set_collect_output(test_bbids,
                                        step_name='running children'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

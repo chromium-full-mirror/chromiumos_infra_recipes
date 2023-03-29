@@ -58,5 +58,9 @@ def GenTests(api):
           'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/eve-release/LATEST-main'
       ))
 
-  yield api.test('no-builder-config',
-                 api.post_check(post_process.StepFailure, 'write LATEST files'))
+  yield api.test(
+      'no-builder-config',
+      api.post_check(post_process.StepFailure, 'write LATEST files'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

@@ -8,11 +8,11 @@ Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 """
 
-from recipe_engine.engine_types import freeze
-from recipe_engine.post_process import (PropertyEquals, DropExpectation)
-from recipe_engine.recipe_api import Property
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from recipe_engine.engine_types import freeze
+from recipe_engine.post_process import DropExpectation
+from recipe_engine.post_process import PropertyEquals
+from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -242,7 +242,10 @@ def GenTests(api):
         api.buildbucket.generic_build(builder='%s-generic-codesearch' % b),
         api.properties(codesearch_mirror_revision='a' * 40,
                        codesearch_mirror_revision_timestamp='1531887759',
-                       manifest_hash='d3adb33f'))
+                       manifest_hash='d3adb33f'),
+        # TODO (b/275363240): audit this test.
+        status='FAILURE',
+    )
 
   yield api.test(
       'repo sync to manifest_hash',
@@ -253,4 +256,8 @@ def GenTests(api):
       api.post_process(
           PropertyEquals, 'commit',
           '{"host":"chromium.googlesource.com","id":"d3adb33f","project":"chromiumos/manifest","ref":"refs/heads/snapshot"}'
-      ), api.post_process(DropExpectation))
+      ),
+      api.post_process(DropExpectation),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

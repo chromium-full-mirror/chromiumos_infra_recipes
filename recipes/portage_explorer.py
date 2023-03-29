@@ -82,7 +82,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'Portage Explorer Service.gsutil upload', [
               'gs://portage_explorer/2012/05/14/8945511751514863184/portage_explorer.json'
-          ]), api.post_check(post_process.StatusSuccess))
+          ]))
 
   yield api.test(
       'configure-failure',
@@ -92,7 +92,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepTextEquals, 'failure',
           "Infra Failure: Step('configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit') (canceled) (retcode: None)"
-      ), api.post_check(post_process.StatusAnyFailure))
+      ),
+      # TODO (b/275363240): is this status code wrong?
+      status='CANCELED',
+  )
 
   yield api.test(
       'api-endpoint-failure',
@@ -102,4 +105,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepTextEquals, 'failure',
           "Step('Portage Explorer Service.call chromite.api.PortageExplorerService/RunSpiders.call build API script') (retcode: 1)"
-      ), api.post_check(post_process.StatusFailure))
+      ),
+      status='FAILURE',
+  )

@@ -196,8 +196,10 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
 
 def GenTests(api: RecipeTestApi):
   good_props = {'uprev_arch_mirror': True, 'uprev_pkgbuilds': True}
-  yield api.test('basic', api.properties(**good_props),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test(
+      'basic',
+      api.properties(**good_props),
+  )
 
   yield api.test(
       'borealis build_full.py args', api.properties(**good_props),
@@ -227,8 +229,7 @@ def GenTests(api: RecipeTestApi):
               '--skip-license-report',
               '--skip-termina',
           ],
-      ), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+      ), api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
   del props['uprev_arch_mirror']
@@ -236,7 +237,6 @@ def GenTests(api: RecipeTestApi):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
                  api.post_check(post_process.MustRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
@@ -245,7 +245,6 @@ def GenTests(api: RecipeTestApi):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.MustRun, 'Arch mirror uprev'),
                  api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
   props = good_props.copy()
@@ -255,5 +254,4 @@ def GenTests(api: RecipeTestApi):
                  api.post_check(post_process.MustRun, 'Borealis build_full.py'),
                  api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
                  api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))

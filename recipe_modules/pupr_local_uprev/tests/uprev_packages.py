@@ -11,7 +11,6 @@ from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
@@ -90,7 +89,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -102,7 +100,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.git.diff_check(False),
       api.post_check(post_process.DoesNotRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -120,7 +117,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'try uprev chromeos-base/chromeos-lacros.verify updates.diff check.git diff',
           retcode=False),
       api.post_check(post_process.DoesNotRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -139,7 +135,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'try uprev chromeos-base/chromeos-lacros.verify updates.diff check.git diff',
           retcode=False),
       api.post_check(post_process.MustRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -154,7 +149,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.git.diff_check(False),
       api.post_check(post_process.DoesNotRun, 'commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -169,7 +163,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandRE,
           'commit uprev.commit in overlay.write commit message',
           ['.*', '.*', '.*', '.*', '.*', '.*', r'(?s).*\n\nTEST\n.*', '.*']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -181,7 +174,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'try uprev chromeos-base/chromeos-chrome.uprev versioned package'
           '.read output file', api.file.read_raw(content='{}')),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 

@@ -12,6 +12,7 @@ import re
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
+
 from PB.chromite.api import test_metadata
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import BuildTarget
@@ -47,7 +48,6 @@ from PB.test_platform.taskstate import TaskState
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
 from recipe_engine.recipe_api import StepFailure
-
 
 DEPS = [
     'depot_tools/gsutil',
@@ -1696,7 +1696,11 @@ def GenTests(api):
     return api.buildbucket.build(build_msg)
 
   # Missing request and requests should cause a recipe crash
-  yield api.test('no-requests')
+  yield api.test(
+      'no-requests',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Setting request should cause a recipe crash
   yield api.test(
@@ -1705,7 +1709,10 @@ def GenTests(api):
           CrosTestPlatformProperties(
               request=Request(),
               requests={'first': Request()},
-          )))
+          )),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Request with a very long timeout should cause build failure.
   yield api.test(
@@ -1721,11 +1728,17 @@ def GenTests(api):
                                       maximum_duration=duration_pb2.Duration(
                                           seconds=3600))),
                       )
-              })))
+              })),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'neither-priority-and-qs_account-set',
-      api.properties(CrosTestPlatformProperties(requests={'first': Request()})))
+      api.properties(CrosTestPlatformProperties(requests={'first': Request()})),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Request with too large priority should cause build failure.
   yield api.test(
@@ -1739,7 +1752,10 @@ def GenTests(api):
                               scheduling=Request.Params.Scheduling(
                                   priority=300)),
                       )
-              })))
+              })),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Request setting both priority and qs_account should cause build failure.
   yield api.test(
@@ -1753,7 +1769,10 @@ def GenTests(api):
                               scheduling=Request.Params.Scheduling(
                                   priority=100, qs_account='foo-qs-account')),
                       )
-              })))
+              })),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'deprecated-managed-pool',
@@ -1767,7 +1786,10 @@ def GenTests(api):
                                   priority=120,
                                   managed_pool='MANAGED_POOL_BVT',
                               )))
-              })))
+              })),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'skylab-tool-launched-build-with-invalid-service-version',
@@ -1776,7 +1798,10 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version_pb.ServiceVersion(skylab_tool=3)),
-          }))
+          }),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'skylab-tool-launched-build-with-valid-service-version',
@@ -1785,7 +1810,10 @@ def GenTests(api):
               '$chromeos/service_version':
                   ServiceVersionProperties(
                       version=service_version_pb.ServiceVersion(skylab_tool=4)),
-          }))
+          }),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'Duplicate-software-dependencies',
@@ -1818,7 +1846,10 @@ def GenTests(api):
                       )
               },
           ),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Config set the result flow pubsub project and topic should push build ID.
   yield api.test(
@@ -2063,7 +2094,10 @@ def GenTests(api):
       api.cros_test_platform.set_execute_luciexe_response(
           'execute',
           ExecuteResponses(tagged_responses={}),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   failed_task_results = [
       ExecuteResponse.TaskResult(
@@ -2110,7 +2144,10 @@ def GenTests(api):
                                   attempts=failed_task_results)
                           ])
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   retried_task_results = [
       ExecuteResponse.TaskResult(
@@ -2262,7 +2299,10 @@ def GenTests(api):
                           ],
                       )
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   pending_task_result = ExecuteResponse.TaskResult(
       task_url=None,
@@ -2293,7 +2333,10 @@ def GenTests(api):
                           ],
                       )
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   task_results = [
       ExecuteResponse.TaskResult(
@@ -2324,7 +2367,10 @@ def GenTests(api):
                           ],
                       ),
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   aborted_task_result = ExecuteResponse.TaskResult(
       task_url=None,
@@ -2352,7 +2398,10 @@ def GenTests(api):
                                                attempts=task_results)
                                        ])
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'empty-enumeration',
@@ -2360,7 +2409,8 @@ def GenTests(api):
           CrosTestPlatformProperties(requests={'first': _test_request('foo')},
                                      config=_test_config('foo'))),
       _empty_enumerate_response(api),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield api.test(
       'enumeration-error',
@@ -2387,7 +2437,10 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_FAILED'))
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   task_result_foo = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
@@ -2451,7 +2504,10 @@ def GenTests(api):
                                   attempts=[task_result_baz])
                           ]),
               }),
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'end-to-end-multi-requests',
@@ -2484,7 +2540,10 @@ def GenTests(api):
               }),
       ),
       api.post_check(lambda check, steps: check(
-          len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)))
+          len(GetBuildProperties(steps).get('compressed_responses', {})) > 0)),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-suite-with-tags-execution-with-passed-tasks',
@@ -2501,10 +2560,11 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-suite-with-tags-with-multiple-tests-with-passed-tasks',
@@ -2521,10 +2581,11 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _multiple_test_cases_cft_enumerate_response(api, 101),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-suite-with-tags-but-no-tests-with-passed-tasks',
@@ -2541,10 +2602,11 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _multiple_test_cases_cft_enumerate_response(api, 0),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-suite-without-tags-execution-with-passed-tasks',
@@ -2556,10 +2618,11 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-individual-test-execution-with-passed-tasks',
@@ -2572,26 +2635,29 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-individual-test-execution-with-keyval-build_target-with-passed-tasks',
       api.properties(
           CrosTestPlatformProperties(
               requests={
-                  'default': _cft_test_request_with_build_target_in_keyvals('foo')
+                  'default':
+                      _cft_test_request_with_build_target_in_keyvals('foo')
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-suite-mixed-with-non-cft-suite',
@@ -2610,10 +2676,12 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
-      _generic_enumerate_response(api), _generic_cft_enumerate_response(api),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_enumerate_response(api),
+      _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'cft-empty-enumeration',
@@ -2630,7 +2698,8 @@ def GenTests(api):
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
-              }), _mock_container_metadata_step(api, 'foo'),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _empty_cft_enumerate_response(api),
       api.cros_test_platform.set_execute_luciexe_response(
           'execute',
@@ -2641,7 +2710,9 @@ def GenTests(api):
                           state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
                                           verdict='VERDICT_FAILED'))
               }),
-      ), api.post_check(post_process.StatusFailure))
+      ),
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-test-execution-with-missing-container-metadata',
@@ -2650,7 +2721,8 @@ def GenTests(api):
               requests={
                   'default': _cft_test_request_without_container_metadata('foo')
               }, config=_test_config('foo'))),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-test-execution-with-failed-metadata-reading-but-forgiven',
@@ -2665,9 +2737,11 @@ def GenTests(api):
           '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
           .format(tag='foo'),
           retcode=1,
-      ), _generic_enumerate_response(api),
+      ),
+      _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-test-execution-with-failed-metadata-reading-and-cft-is-turned-off',
@@ -2687,7 +2761,9 @@ def GenTests(api):
           '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
           .format(tag='foo'),
           retcode=1,
-      ), api.post_check(post_process.StatusFailure))
+      ),
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-test-execution-with-no-valid-container-metadata-for-build-target',
@@ -2698,8 +2774,10 @@ def GenTests(api):
                   'cft-default': _cft_test_request('foo', 'build_target123')
               }, config=_test_config('foo'))),
       _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
-      _generic_enumerate_response(api), _generic_passing_execute_response(api),
-      api.post_check(post_process.StatusFailure))
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      status='FAILURE',
+  )
 
   yield api.test(
       'cft-test-execution-with-no-valid-container-metadata-for-build-target-request-only',
@@ -2709,4 +2787,5 @@ def GenTests(api):
                   'cft-default': _cft_test_request('foo', 'build_target123')
               }, config=_test_config('foo'))),
       _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )

@@ -7,7 +7,11 @@
 
 import datetime
 import json
-from typing import Any, Callable, Dict, Optional, List
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
@@ -273,8 +277,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.StepTextEquals, 'initialization',
                      'SDK initialization timed out'),
       api.post_check(post_process.DoesNotRun, 'doing paygen'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -291,8 +295,8 @@ def GenTests(api: RecipeTestApi):
           retcode=1),
       api.post_check(post_process.StepFailure, 'initialization'),
       api.post_check(post_process.DoesNotRun, 'doing paygen'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   def generate_payload_response(
@@ -376,7 +380,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -403,7 +406,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -459,7 +461,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -500,7 +501,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -515,8 +515,8 @@ def GenTests(api: RecipeTestApi):
                                 failure_reason=2),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.StatusFailure),
       # api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -532,8 +532,8 @@ def GenTests(api: RecipeTestApi):
                                 failure_reason=2, retry=1),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.StatusFailure),
       # api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -548,7 +548,6 @@ def GenTests(api: RecipeTestApi):
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -564,7 +563,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -620,7 +618,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.LogContains,
                      'testing paygen.buildbucket.schedule (2)', 'request',
                      ['"key": "label-model",', '"value": "woomax"']),
-      api.post_check(post_process.StatusSuccess),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -640,8 +637,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusFailure),
       # api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -660,6 +657,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.StatusFailure),
       # api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

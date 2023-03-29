@@ -53,13 +53,15 @@ def GenTests(api: RecipeTestApi):
       'source_path': 'src/third_party/kernel/v5.15',
   }
   yield api.test(
-      'basic', api.properties(**props),
+      'basic',
+      api.properties(**props),
       api.post_check(post_process.MustRun, 'kernelconfig checkconfig'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   props = {}
   yield api.test(
-      'no_source_path', api.properties(**props),
+      'no_source_path',
+      api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'kernelconfig checkconfig'),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )

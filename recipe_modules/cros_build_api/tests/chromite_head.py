@@ -37,7 +37,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandContains,
           'call chromite.api.ArtifactsService/BundleFirmware.call build API script',
           ['[CLEANUP]/chromiumos_workspace/chromite/bin/build_api']),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -48,6 +47,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandContains,
           'call chromite.api.ArtifactsService/BundleFirmware.call build API script',
           ['[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api']),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -36,8 +36,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'image-does-not-exist',
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -64,7 +64,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'initial-chromeos-source-snapshot',
               '--source-image=initial-chromeos-source-snapshot-fallback'
           ]),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -79,7 +78,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           ['initial-chromeos-source-snapshot', '--source-image=image-123']),
       api.post_check(post_process.DoesNotRun, 'delete image'),
       api.post_check(post_process.DoesNotRun, 'create image from image (2)'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -112,7 +110,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'initial-chromeos-source-snapshot',
               '--source-image=initial-chromeos-source-snapshot-fallback'
           ]),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -136,6 +133,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepCommandContains,
                      'create image from image (2)',
                      ['foooooo', '--source-image=foooooo-fallback']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )

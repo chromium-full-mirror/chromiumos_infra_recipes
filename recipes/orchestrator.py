@@ -9,9 +9,11 @@ All builders run against the same source tree.
 """
 
 import json
-from typing import Callable, Dict
+from typing import Callable
+from typing import Dict
 
-from google.protobuf.json_format import MessageToDict, MessageToJson
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -148,7 +150,6 @@ def GenTests(api: RecipeTestApi):
   data = api.orch_menu.standard_test_data()
 
   yield api.orch_menu.test('basic', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            with_history=True, collect_builds=data.builds,
                            with_manifest_refs=True)
 
@@ -187,7 +188,6 @@ def GenTests(api: RecipeTestApi):
                      'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
-      api.post_check(post_process.StatusSuccess),
       builder='release-main-orchestrator',
       with_history=True,
       collect_builds=data.builds,
@@ -220,7 +220,6 @@ def GenTests(api: RecipeTestApi):
                      'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
-      api.post_check(post_process.StatusSuccess),
       builder='release-main-orchestrator',
       with_history=True,
       collect_builds=data.builds,
@@ -237,8 +236,7 @@ def GenTests(api: RecipeTestApi):
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),
                       use_external_source_cache=True)
-          }), api.post_check(post_process.StatusSuccess),
-      builder='public-main-orchestrator', with_history=True,
+          }), builder='public-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   # Needed to check `cros_source` instantiation in extra_child_props.
@@ -248,8 +246,7 @@ def GenTests(api: RecipeTestApi):
           **{
               "$chromeos/cros_source":
                   CrosSourceProperties(use_external_source_cache=True)
-          }), api.post_check(post_process.StatusSuccess),
-      builder='public-main-orchestrator', with_history=True,
+          }), builder='public-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test(
@@ -261,16 +258,13 @@ def GenTests(api: RecipeTestApi):
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),
                       use_external_source_cache=True)
-          }), api.post_check(post_process.StatusSuccess),
-      builder='factory-corsola-15197.B-orchestrator', with_history=True,
+          }), builder='factory-corsola-15197.B-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            builder='bisecting-orchestrator')
 
-  yield api.orch_menu.test('builds-with-history', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess), cq=True,
+  yield api.orch_menu.test('builds-with-history', data.ctp_normal, cq=True,
                            collect_builds=data.builds, with_history=True,
                            git_footers=[])
 
@@ -282,7 +276,6 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
           builder='postsubmit-orchestrator',
@@ -293,36 +286,35 @@ def GenTests(api: RecipeTestApi):
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
       'join-if-inflight-orchs', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
       cq=True, with_history=True)
 
   yield api.orch_menu.test(
       'runs-if-no-inflight-orchs', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, find_inflight_name),
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
 
   yield api.orch_menu.test('updates-refs', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True, collect_builds=data.builds)
 
   yield api.orch_menu.test(
-      'does-not-update-refs', data.ctp_normal,
-      api.post_check(post_process.StatusAnyFailure),
+      'does-not-update-refs',
+      data.ctp_normal,
       api.post_check(post_process.DoesNotRun,
                      'update manifest-internal ref refs/heads/stable'),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/stable'),
-      with_manifest_refs=True, max_build_failure_ratio=0.49,
-      collect_builds=data.crit_fail)
+      with_manifest_refs=True,
+      max_build_failure_ratio=0.49,
+      collect_builds=data.crit_fail,
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test(
       'missing-gitiles-commit', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest-internal ref refs/heads/postsubmit'),
       api.post_check(post_process.MustRun,
@@ -330,7 +322,6 @@ def GenTests(api: RecipeTestApi):
       collect_builds=data.builds, revision=None, with_manifest_refs=True)
 
   yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds,
                            follow_on_orch=data.follow_on_orchestrator,
                            bucket='toolchain',
@@ -338,13 +329,11 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test('missing-gitiles-commit-with-defaults',
                            data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds, revision=None,
                            with_manifest_refs=True)
 
   yield api.orch_menu.test('missing-gitiles-commit-with-changes',
                            data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            collect_builds=data.builds, revision=None, cq=True,
                            with_history=True, git_footers=[])
 
@@ -359,30 +348,29 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test(
       'quota-scheduler-override', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(verify_qs_account_pupr), cq=True, with_history=True,
       tags=dict(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'),
       git_footers=[], collect_builds=data.builds)
 
   yield api.orch_menu.test('retry-only-critical-builds', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess), cq=True,
-                           with_history=True, git_footers=[],
+                           cq=True, with_history=True, git_footers=[],
                            collect_builds=data.non_crit_fail)
 
-  yield api.orch_menu.test('critical-child-builder-fails', data.ctp_normal,
-                           api.post_check(post_process.StatusAnyFailure),
-                           with_manifest_refs=True,
-                           collect_builds=data.crit_fail)
+  yield api.orch_menu.test(
+      'critical-child-builder-fails',
+      data.ctp_normal,
+      with_manifest_refs=True,
+      collect_builds=data.crit_fail,
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test('critical-child-builder-fails-but-release',
                            data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            builder='release-main-orchestrator',
                            with_manifest_refs=True,
                            collect_builds=data.crit_fail)
 
   yield api.orch_menu.test('non-critical-child-builder-fails', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            with_manifest_refs=True,
                            collect_builds=data.non_crit_fail)
 
@@ -393,7 +381,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'aggregating metadata'),
       api.post_check(post_process.MustRun, 'collect.get'),
       api.post_check(post_process.MustRun, 'check build results'),
-      api.post_check(post_process.StatusSuccess),
       api.step_data(
           'run builds.collect',
           stdout=api.raw_io.output_text(

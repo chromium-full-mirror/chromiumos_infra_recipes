@@ -41,7 +41,6 @@ def GenTests(api: RecipeTestApi):
           new_value='New',
           expected_new_contents='# A comment!\nmy_key="New"',
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -49,7 +48,6 @@ def GenTests(api: RecipeTestApi):
       'with-whitespace',
       api.properties(original_contents='   my_key  \t=\t "Old"', key='my_key',
                      new_value='New', expected_new_contents='my_key="New"'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -60,7 +58,6 @@ def GenTests(api: RecipeTestApi):
           key='punctuation_time', new_value='This is a quotation mark: "',
           expected_new_contents='punctuation_time=\'This is a quotation mark: "\''
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -73,12 +70,12 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.StepException,
                      'update my_key in key-value store'),
-      api.post_check(post_process.StatusException),
       api.post_check(
           post_process.ResultReason,
           'New value "Why would anybody do this?\' is wrapped in mismatched quotes'
       ),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -90,10 +87,10 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.StepFailure,
                      'update my_key in key-value store'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReasonRE,
                      'Found key my_key multiple times in key-value store:.*'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -105,7 +102,6 @@ def GenTests(api: RecipeTestApi):
           append_if_missing=True,
           expected_new_contents='present_key="One"\n\nmissing_key="Two"',
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -118,10 +114,10 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.StepFailure,
                      'update missing_key in key-value store'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReasonRE,
                      'Key-value store missing missing_key:.*'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -133,8 +129,8 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.StepException,
                      'update my_key in key-value store'),
-      api.post_check(post_process.StatusException),
       api.post_check(post_process.ResultReasonRE,
                      'Found multiline value for my_key in key-value store:.*'),
       api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
   )

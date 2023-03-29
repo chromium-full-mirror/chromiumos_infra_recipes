@@ -27,8 +27,10 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test(
-      'basic', api.step_data('a step that should happen no matter what'),
+      'basic',
+      api.step_data('a step that should happen no matter what'),
       api.post_check(post_process.StepSuccess,
                      'a step that should happen no matter what'),
-      api.post_check(post_process.StatusException),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )

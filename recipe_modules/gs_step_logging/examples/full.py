@@ -52,7 +52,7 @@ def GenTests(api):
           r'.*gsutil cp',
           at_most=1,
       ),
-      # Recipe should still fail.
-      api.post_process(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      # Recipe should still fail.
+      status='FAILURE',
   )

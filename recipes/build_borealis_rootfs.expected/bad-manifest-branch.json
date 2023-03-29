@@ -2336,9 +2336,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 73, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 74, in RunSteps",
       "    return DoRunSteps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 105, in DoRunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 106, in DoRunSteps",
       "    milestone_number = match.group(1)",
       "AttributeError(''NoneType' object has no attribute 'group'')"
     ]

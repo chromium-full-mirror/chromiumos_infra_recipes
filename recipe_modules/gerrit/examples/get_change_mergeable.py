@@ -53,8 +53,10 @@ def GenTests(api):
       api.post_process(
           post_process.MustRun,
           'curl https://mygithost.google.com/somerepo/changes/1/revisions/current/mergeable'
-      ), api.post_check(post_process.StatusAnyFailure),
-      api.post_process(post_process.DropExpectation))
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
   yield api.test(
       'malformed-mergeable',
       api.properties(remote='mygithost.google.com/somerepo', expected=None),
@@ -63,5 +65,7 @@ def GenTests(api):
       api.post_process(
           post_process.MustRun,
           'curl https://mygithost.google.com/somerepo/changes/1/revisions/current/mergeable'
-      ), api.post_check(post_process.StatusAnyFailure),
-      api.post_process(post_process.DropExpectation))
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

@@ -6,7 +6,6 @@
 from typing import Generator
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -73,7 +72,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'json.output',
           ['"change_number": 123', '"change_number": 456'],
       ),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -93,5 +91,4 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'successful apply changes.apply gerrit patch sets',
           'Discarded changes: chrome-internal:123, chrome-internal:456, chrome-internal:789',
       ),
-      api.post_check(post_process.StatusSuccess),
   )

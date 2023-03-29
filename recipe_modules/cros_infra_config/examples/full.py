@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.recipe_modules.chromeos.cros_infra_config.examples.full import FullProperties
 
@@ -58,5 +56,4 @@ def GenTests(api):
       api.test_util.test_orchestrator().build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(FullProperties(children_names=['builder1'])),
-      api.post_check(post_process.StatusSuccess),
   )

@@ -40,4 +40,5 @@ def GenTests(api):
           GetCurrentConfigProperties(prefix="prefix-should-return-none")),
       api.post_process(post_process.StepSuccess,
                        'getting config for prefix-should-return-none'),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )

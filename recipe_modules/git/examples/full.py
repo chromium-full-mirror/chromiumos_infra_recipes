@@ -143,6 +143,8 @@ def GenTests(api):
   yield api.test(
       'is-merge-commit-fails',
       api.step_data('git log (2)', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(

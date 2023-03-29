@@ -5,7 +5,6 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -67,20 +66,17 @@ def GenTests(api):
                   }
               },
           }),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
       'incorrect-host',
       api.properties(expected_result=False, gerrit_host=INTERNAL_GERRIT_HOST),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
       'incorrect-topic',
       api.properties(expected_result=False),
       api.gerrit.simulated_topic("INCORRECT_TOPIC", GERRIT_HOST, CHANGE_NUM),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -90,7 +86,6 @@ def GenTests(api):
                                  CHANGE_NUM),
       api.step_data('read git footers',
                     stdout=api.raw_io.output('INCORRECT_CQ_CL_TAG')),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -99,7 +94,6 @@ def GenTests(api):
       api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
                                  CHANGE_NUM),
       api.step_data('read git footers', stdout=api.raw_io.output('')),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -120,5 +114,4 @@ def GenTests(api):
                   }
               },
           }),
-      api.post_process(post_process.StatusSuccess),
   )

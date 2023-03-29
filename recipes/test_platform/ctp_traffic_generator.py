@@ -9,11 +9,10 @@ from google.protobuf import struct_pb2
 from google.protobuf import timestamp_pb2
 from google.protobuf.json_format import MessageToDict
 
-from PB.recipes.chromeos.test_platform.ctp_traffic_generator import Properties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as bb_service
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
-
+from PB.recipes.chromeos.test_platform.ctp_traffic_generator import Properties
 from recipe_engine import post_process
 
 PROPERTIES = Properties
@@ -298,7 +297,10 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           [],
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
-      ))
+      ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'ctp-build-not-found-matching-runtime-limit',
@@ -315,4 +317,5 @@ def GenTests(api):
           previous_replayed_runs,
           step_name='replay prod CTP run.filter out already-replayed builds'),
       api.post_check(post_process.StepFailure, 'replay prod CTP run'),
+      status='FAILURE',
   )

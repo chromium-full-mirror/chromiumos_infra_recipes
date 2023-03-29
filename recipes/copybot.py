@@ -61,7 +61,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepSuccess,
           'Run Copybot.call chromite.api.CopybotService/RunCopybot',
       ),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.build_menu.test(
@@ -76,7 +75,7 @@ def GenTests(api: RecipeTestApi):
           post_process.StepFailure,
           'Run Copybot.call chromite.api.CopybotService/RunCopybot',
       ),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -90,5 +89,5 @@ def GenTests(api: RecipeTestApi):
           post_process.StepFailure,
           'Run Copybot.call chromite.api.CopybotService/RunCopybot',
       ),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )

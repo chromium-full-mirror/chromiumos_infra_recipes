@@ -28,7 +28,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data('my-tool', stdout=api.json.output(dict(output='data'))),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -43,7 +42,6 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'ensure support CIPD package.ensure_installed',
                      ['chromiumos/infra/support/${platform} staging']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -60,6 +58,5 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'ensure support CIPD package.ensure_installed',
                      ['chromiumos/infra/support_foo bar']),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

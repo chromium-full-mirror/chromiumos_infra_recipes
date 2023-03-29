@@ -4,7 +4,9 @@
 # found in the LICENSE file.
 
 """Verify that method get_failure has error handling."""
-from typing import Any, Dict, Optional
+from typing import Any
+from typing import Dict
+from typing import Optional
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
@@ -44,7 +46,6 @@ def GenTests(api: RecipeTestApi):
                   'details': 'failed for reason foo',
               }
           }, expected="failed for reason foo"),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
   yield api.test(
@@ -52,18 +53,15 @@ def GenTests(api: RecipeTestApi):
       api.properties(instructions={'status': {
           'status': 'failed',
       }}, expected=None),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
   yield api.test(
       'missing-status',
       api.properties(instructions={}, expected=None),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
   yield api.test(
       'missing-meta',
       api.properties(instructions=None, expected=None),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -2,14 +2,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipes.chromeos.test_platform.dut_leaser import DutLeaserProperties
-from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusProperties
-from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusEnvProperties
-from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
-from PB.test_platform import skylab_local_state, service_version
-
 from google.protobuf import json_format
 
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusEnvProperties
+from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusProperties
+from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
+from PB.recipes.chromeos.test_platform.dut_leaser import DutLeaserProperties
+from PB.test_platform import service_version
+from PB.test_platform import skylab_local_state
 from recipe_engine import post_process
 
 DEPS = [
@@ -84,7 +84,6 @@ def GenTests(api):
                       results_dir='dummy-results-dir', dut_topology=[
                           skylab_local_state.load.Dut(hostname="dummy-hostname")
                       ])))),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -111,4 +110,7 @@ def GenTests(api):
       api.properties.environ(
           PhosphorusEnvProperties(SWARMING_BOT_ID='crossk-dummy',
                                   SWARMING_TASK_ID='dummy-task-id',
-                                  SKYLAB_DUT_ID='dummy-dut-id')))
+                                  SKYLAB_DUT_ID='dummy-dut-id')),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

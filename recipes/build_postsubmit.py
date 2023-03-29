@@ -5,12 +5,12 @@
 
 """Recipe for building a BuildTarget image for Postsubmit."""
 
-from typing import Generator, Optional
+from typing import Generator
+from typing import Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -87,15 +87,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.MustRun, 'build images'),
+          }}),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Pointless postsubmit build.
   yield api.build_menu.test(
-      'pointless-postsubmit-build', api.post_check(post_process.StatusSuccess),
+      'pointless-postsubmit-build',
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
@@ -107,16 +108,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.DoesNotRun, 'build images'),
+          }}),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
-                                          retcode=1))
+                                          retcode=1),
+      status='FAILURE',
+  )
 
   # Postsubmit build with artifact bundling failure.
   yield api.build_menu.test(
@@ -124,14 +127,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.StatusAnyFailure),
+          }}),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1))
+          retcode=1),
+      status='INFRA_FAILURE',
+  )
+
 
   # Postsubmit build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -139,24 +145,26 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.DoesNotRun, 'build images'),
+          }}),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1))
+          retcode=1),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       'publish-image-size-fail',
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.StatusSuccess),
+          }}),
       api.build_menu.set_build_api_return(
           'collect image size data.add data from images',
           'ObservabilityService/GetImageSizeData', retcode=1),
@@ -180,7 +188,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess),
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
 
   # This builder has no output artifacts, and builds no images. (In the test
@@ -194,8 +201,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess), build_target='grunt',
-      builder='grunt-postsubmit')
+      build_target='grunt', builder='grunt-postsubmit')
 
   # Build that does commits overlay binhost.
   yield api.build_menu.test(
@@ -211,7 +217,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }),
       api.post_check(post_process.MustRun,
                      'upload prebuilts.update binhost conf file'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Build that does not commit overlay binhost.
   yield api.build_menu.test(
@@ -227,4 +233,4 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }),
       api.post_check(post_process.DoesNotRun,
                      'upload prebuilts.update binhost conf file'),
-      api.post_check(post_process.StatusSuccess))
+  )

@@ -3,9 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
-from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 DEPS = [
     'recipe_engine/assertions',
@@ -57,4 +58,6 @@ def GenTests(api):
       api.step_data('set labels on CL 12345678.git push', retcode=1),
       api.step_data('set labels on CL 12345678.git push (2)', retcode=1),
       api.step_data('set labels on CL 12345678.git push (3)', retcode=1),
-      api.post_check(post_process.StepException, 'set labels on CL 12345678'))
+      api.post_check(post_process.StepException, 'set labels on CL 12345678'),
+      status='INFRA_FAILURE',
+  )

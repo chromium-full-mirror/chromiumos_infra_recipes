@@ -106,4 +106,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data(
           'fetch latest chromium.get chromium head',
           stdout=api.raw_io.output_text(
-              'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')))
+              'cb10da20a312790d1d2421ae2f8dc2ea831cffa3\n')),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

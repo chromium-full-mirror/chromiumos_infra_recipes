@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 DEPS = [
@@ -83,4 +81,4 @@ def GenTests(api):
                                                    [changes[1]],
                                                    _get_values_dict(),
                                                    iteration=2),
-      api.post_check(post_process.StatusSuccess))
+  )

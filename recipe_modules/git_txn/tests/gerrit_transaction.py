@@ -22,17 +22,27 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
   yield api.test(
       'fail-empty-push-response',
       api.step_data('update ref.gerrit transaction.git push',
-                    stderr=api.raw_io.output_text((''))))
+                    stderr=api.raw_io.output_text((''))),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
   yield api.test(
       'fail-incorrect-git-response',
       api.step_data(
           'update ref.gerrit transaction.git push',
           stderr=api.raw_io.output_text(
-              ('https://chromium-review.googlesource.com'))))
+              ('https://chromium-review.googlesource.com'))),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'update-ref-has-diff-has-change',
@@ -44,7 +54,10 @@ def GenTests(api):
       api.step_data('update ref (3).gerrit transaction.diff check.git ls-files',
                     retcode=0),
       api.step_data('update ref (3).gerrit transaction.diff check.git diff',
-                    retcode=1))
+                    retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'update-ref-has-diff-has-no-change',

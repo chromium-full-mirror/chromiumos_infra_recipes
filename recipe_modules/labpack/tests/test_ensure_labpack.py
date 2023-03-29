@@ -8,10 +8,12 @@ success on the ensure_labpack step when the fake file .../labpack/labpack
 exists.
 """
 
+from RECIPE_MODULES.chromeos.labpack.result_map import add_assertion_to_map
+from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeScriptApi
 from recipe_engine.recipe_test_api import RecipeTestApi
-from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map, add_assertion_to_map
 
 DEPS = [
     'recipe_engine/assertions', 'recipe_engine/step', 'recipe_engine/path',
@@ -59,6 +61,5 @@ def GenTests(api):
       'basic',
       api.post_check(post_process.StepTextEquals, 'labpack test suite',
                      'SUCCESS'),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -17,8 +17,6 @@ import collections
 import textwrap
 from urllib.parse import urlparse
 
-from recipe_engine import post_process
-
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
@@ -27,6 +25,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_backfill import ConfigBackfillProperties
 from PB.testplans.generate_test_plan import BuildPayload
+from recipe_engine import post_process
 
 # Recipe dependencies
 DEPS = [
@@ -652,7 +651,6 @@ def GenTests(api):
               'program_name': 'test_program',
           }),
       mock_workspace_path('src/project/test_program/test_project'),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -673,7 +671,6 @@ def GenTests(api):
               'program_name': 'test_program',
           }),
       mock_workspace_path('src/project/test_program/test_project'),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -696,7 +693,7 @@ def GenTests(api):
           '.update ref.git transaction'
           '.Generate imported configuration', retcode=1),
       mock_workspace_path('src/project/test_program/test_project'),
-      api.post_process(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -732,7 +729,6 @@ def GenTests(api):
               'gs://chromeos-image-archive/custom/image-path-123/config.yaml'
           ],
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -757,7 +753,6 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.download latest config yaml.buildbucket.search'),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -782,7 +777,6 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.download latest config yaml.buildbucket.search'),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -807,7 +801,6 @@ def GenTests(api):
           'processing test_program/test_project'
           '.update ref.git transaction'
           '.download latest config yaml.buildbucket.search'),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -834,7 +827,6 @@ def GenTests(api):
           ".git push",
           ["git", "push", "--dry-run"],
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -862,7 +854,6 @@ def GenTests(api):
           'processing test_program/test_project',
           'not in manifest',
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -885,7 +876,6 @@ def GenTests(api):
           'processing test_program/test_project',
           'not checked out',
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(

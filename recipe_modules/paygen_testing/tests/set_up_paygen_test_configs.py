@@ -82,6 +82,7 @@ def GenTests(api: RecipeTestApi):
               ])),
       api.post_check(post_process.StepFailure, 'setting up paygen test config'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -103,6 +104,5 @@ def GenTests(api: RecipeTestApi):
           ('gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
            'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc'),
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

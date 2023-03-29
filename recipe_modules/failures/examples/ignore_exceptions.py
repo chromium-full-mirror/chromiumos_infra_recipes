@@ -20,5 +20,4 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic', api.step_data('a failed step', retcode=1),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))

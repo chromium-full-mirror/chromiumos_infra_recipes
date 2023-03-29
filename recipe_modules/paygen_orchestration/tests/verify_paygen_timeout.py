@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -23,4 +22,4 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-  yield api.test('basic', api.post_check(post_process.StatusSuccess))
+  yield api.test('basic')

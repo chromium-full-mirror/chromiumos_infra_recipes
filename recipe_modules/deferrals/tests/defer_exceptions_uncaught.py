@@ -29,5 +29,6 @@ def GenTests(api):
       api.step_data('a failed step', retcode=1),
       api.post_check(post_process.StepFailure, 'a failed step'),
       # Infra failure, not regular exception.
-      api.post_check(post_process.StatusException),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )

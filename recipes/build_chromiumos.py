@@ -6,6 +6,7 @@
 """Recipe for building public ChromiumOS images."""
 
 from typing import Generator
+
 from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.build_report import BuildReport
@@ -13,7 +14,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipes.chromeos.build_chromiumos import BuildChromiumosProperties
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -146,7 +146,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'gs://chromeos-releases-test/kukui-public-main/R99-1234.56.0-101-8945511751514863184/build_report.json'
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-public-main',
       bucket='release',
@@ -157,11 +156,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepFailure, 'check buildspec property'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-public-main',
       bucket='release',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -178,11 +177,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepFailure, 'check buildspec property'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-public-main',
       bucket='release',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -196,7 +195,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
           }),
-      api.post_check(post_process.StatusSuccess),
       build_target='staging-eve',
       builder='staging-eve-public-main',
       bucket='release',
@@ -219,13 +217,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       bucket='release',
       builder='kukui-public-main',
       build_target='kukui',
+      status='FAILURE',
   )
 
   # Public build with artifact bundling failure.
@@ -240,7 +238,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
           }),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.build_menu.set_build_api_return(
@@ -249,6 +246,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       bucket='release',
       builder='kukui-public-main',
       build_target='kukui',
+      status='INFRA_FAILURE',
   )
 
   # Public build with failures in install packages and bundle artifacts.
@@ -266,7 +264,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
@@ -276,4 +273,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       bucket='release',
       builder='kukui-public-main',
       build_target='kukui',
+      status='FAILURE',
   )

@@ -100,12 +100,26 @@ def GenTests(api):
 
   build = api.buildbucket.ci_build_message()
   build.input.properties['buildTarget'] = {'name': 'amd64-generic'}
-  yield api.test('basic', api.buildbucket.build(build))
+  yield api.test(
+      'basic',
+      api.buildbucket.build(build),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
-  yield api.test('resultdb-not-enabled')
+  yield api.test(
+      'resultdb-not-enabled',
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   build.critical = common_pb2.NO
-  yield api.test('non-critical', api.buildbucket.build(build))
+  yield api.test(
+      'non-critical',
+      api.buildbucket.build(build),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   yield api.test(
       'success-with-full-tags-for-resultdb',
@@ -121,4 +135,6 @@ def GenTests(api):
                   'name': 'amd64-generic'
               }
           }),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )

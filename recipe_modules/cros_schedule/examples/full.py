@@ -5,8 +5,6 @@
 
 from PB.recipe_modules.chromeos.cros_schedule.examples.test import TestInputProperties
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -39,24 +37,36 @@ def GenTests(api):
   yield api.test('basic', api.time.seed(1613694623.0))
 
   # Start as if you were querying in the past (before 88) to cover exception.
-  yield api.test('back-to-the-future', api.time.seed(1513694623.0),
-                 api.post_check(post_process.StatusFailure))
-
-  yield api.test('not-jq-return', override_fetch('not json'),
-                 api.post_check(post_process.StatusFailure))
-
-  yield api.test('bad-jq-return', override_fetch('{}'),
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'back-to-the-future',
+      api.time.seed(1513694623.0),
+      status='FAILURE',
+  )
 
   yield api.test(
-      'fetch-one', api.properties(start_mstone=88, fetch_n=1),
+      'not-jq-return',
+      override_fetch('not json'),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'bad-jq-return',
+      override_fetch('{}'),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'fetch-one',
+      api.properties(start_mstone=88, fetch_n=1),
       override_fetch(
           api.cros_schedule.test_chromiumdash_fetch_response(
               fetch_n=1, ltr_last_refresh_date='2023-01-01T00:00:00')),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
-      'fetch-too-few', api.properties(start_mstone=88, fetch_n=2),
+      'fetch-too-few',
+      api.properties(start_mstone=88, fetch_n=2),
       override_fetch(
           api.cros_schedule.test_chromiumdash_fetch_response(fetch_n=1)),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )

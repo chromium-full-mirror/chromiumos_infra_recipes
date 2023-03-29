@@ -9,12 +9,9 @@ This recipe is not deprecated. All branched firmware builds should use this
 recipe.
 """
 
+import re
 from collections import defaultdict
 from contextlib import contextmanager
-import re
-
-from recipe_engine import post_process
-from recipe_engine import recipe_api
 
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.sysroot import Sysroot
@@ -23,6 +20,8 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
+from recipe_engine import post_process
+from recipe_engine import recipe_api
 
 DEPS = [
     'recipe_engine/bcid_reporter',
@@ -524,6 +523,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def test(name, *args, **kwargs):
+    status = kwargs.pop('status', 'SUCCESS')
     version_str = kwargs.pop('version', 'R109-15236.0.0')
     version = api.cros_version.workspace_version(version_str)
     cq = kwargs.get('cq', False)
@@ -538,7 +538,7 @@ def GenTests(api):
       input_props['build_targets'] = targets
     kwargs['input_properties'] = input_props
     build = api.test_util.test_child_build('target', **kwargs).build
-    return api.test(name, build, version, *args)
+    return api.test(name, build, version, *args, status=status)
 
   exists = lambda *x: api.path.exists(api.src_state.workspace_path.join(*x))
 
@@ -560,7 +560,6 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepCommandContains,
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-releases']),
@@ -584,8 +583,7 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-throw-away-bucket']),
-      api.post_check(post_process.StatusSuccess), bucket='staging',
-      input_properties=dict(
+      bucket='staging', input_properties=dict(
           bump_version=True, set_suite_scheduling=True,
           buildspec_gs_path='gs://chromeos-manifest-versions/staging/'))
 
@@ -604,8 +602,7 @@ def GenTests(api):
                      'push image.call pushimage', ['-n']),
       api.post_check(StepCommandLacks, 'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-throw-away-bucket']),
-      api.post_check(post_process.StatusSuccess), bucket='staging',
-      version='R39-6301.202.44',
+      bucket='staging', version='R39-6301.202.44',
       input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
   yield test(
@@ -619,10 +616,11 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield test(
-      'postsubmit-outside', api.properties(chroot_outside=True),
+      'postsubmit-outside',
+      api.properties(chroot_outside=True),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
@@ -632,7 +630,7 @@ def GenTests(api):
                      'build target.install packages', ['build_packages']),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['--withdebugsymbols']),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield test(
       'old-postsubmit',
@@ -648,8 +646,7 @@ def GenTests(api):
           'uprev packages', data=[
               dict(project='chromiumos/chromite',
                    upstream='refs/heads/firmware-target-6301.202.B')
-          ]), api.post_check(post_process.StatusSuccess),
-      suite_scheduling(False), version='R39-6301.202.44')
+          ]), suite_scheduling(False), version='R39-6301.202.44')
 
   yield test(
       'cq',
@@ -657,8 +654,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
-      suite_scheduling(False), api.post_check(post_process.StatusSuccess),
-      cq=True)
+      suite_scheduling(False), cq=True)
 
   yield test(
       'cq-bump',
@@ -666,44 +662,47 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.MustRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
-      suite_scheduling(False), api.post_check(post_process.StatusSuccess),
-      cq=True, input_properties=dict(bump_version=True,
-                                     set_suite_scheduling=True))
+      suite_scheduling(False), cq=True,
+      input_properties=dict(bump_version=True, set_suite_scheduling=True))
 
   yield test(
       'two-targets',
       api.post_check(post_process.MustRun, 'board1.build board1.setup board'),
       api.post_check(post_process.MustRun, 'board2.build board2.setup board'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
-      api.post_check(post_process.StatusSuccess), suite_scheduling(False),
+      suite_scheduling(False),
       build_targets=[dict(name='board1'),
                      dict(name='board2')])
 
   yield test(
       'no-firmware',
       api.step_data('upload artifacts.create firmware archive.list files',
-                    api.file.listdir()), suite_scheduling(False),
+                    api.file.listdir()),
+      suite_scheduling(False),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.bundle tarball'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'push image'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield test(
       'some-boards-firmware',
       api.step_data(
           'board1.upload artifacts.create firmware archive.list files',
-          api.file.listdir()), suite_scheduling(False),
+          api.file.listdir()),
+      suite_scheduling(False),
       api.post_check(post_process.StepException, 'board1.upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'board1.upload artifacts.bundle tarball'),
       api.post_check(post_process.DoesNotRun, 'board1.push image'),
       api.post_check(post_process.StepSuccess, 'board2.upload artifacts'),
       api.post_check(post_process.MustRun, 'board2.push image'),
-      api.post_check(post_process.StatusFailure),
       build_targets=[dict(name='board1'),
-                     dict(name='board2')])
+                     dict(name='board2')],
+      status='FAILURE',
+  )
 
   yield test('chroot-exists', exists('chroot'))
 

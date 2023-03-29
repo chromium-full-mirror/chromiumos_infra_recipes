@@ -115,7 +115,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -202,7 +201,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      'apply retry policy RETRY_LATEST_PINNED.retry CL 1234'),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -254,7 +252,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      'apply retry policy RETRY_LATEST_PINNED.retry CL 1234'),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -299,7 +296,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.DoesNotRunRE,
                      r'.*\.upload patch set for Change-Id 1234'),
       api.post_check(post_process.DoesNotRunRE, '.*retry CL 1234'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -381,7 +377,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.retry CL 1234'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -479,7 +474,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -505,7 +499,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ), api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -522,7 +515,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           post_process.DoesNotRun,
           'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.abandon CL 1234'
       ), api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -539,7 +531,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           post_process.DoesNotRun,
           'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.abandon CL 1234'
       ), api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -558,7 +549,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           'act on outdated CLs with policy: OUTDATED_ABANDON.abandon CL 1234'),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -571,5 +561,4 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'outdated CLs'),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

@@ -5,8 +5,6 @@
 
 import itertools
 
-from recipe_engine import post_process
-
 import PB.chromiumos.common as common_pb2
 
 DEPS = [
@@ -46,4 +44,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic', api.post_check(post_process.StatusSuccess))
+  yield api.test('basic')

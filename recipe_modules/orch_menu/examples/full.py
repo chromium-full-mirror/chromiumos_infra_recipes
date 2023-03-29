@@ -8,12 +8,12 @@ import copy
 from google.protobuf import json_format
 
 from PB.chromiumos.checkpoint import RetryStep
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.orch_menu.examples.full import FullProperties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -141,7 +141,7 @@ def GenTests(api):
   tag.value = 'not relevant'
 
   yield api.orch_menu.test(
-      'basic', data.ctp_normal, api.post_check(post_process.StatusSuccess),
+      'basic', data.ctp_normal,
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
@@ -160,7 +160,6 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'postsubmit-irrelevant', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
@@ -177,7 +176,6 @@ def GenTests(api):
               skip_paygen=True, expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0'))),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.StepTextEquals,
@@ -236,7 +234,6 @@ def GenTests(api):
           }),
       api.buildbucket.simulated_get(
           original_build, step_name='RUNNING IN RETRY MODE.get original build'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
@@ -278,7 +275,6 @@ def GenTests(api):
           child_build
       ], step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
                                          ),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
@@ -349,7 +345,6 @@ def GenTests(api):
           child_builds,
           step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
@@ -382,7 +377,6 @@ def GenTests(api):
               is_release_orchestrator=True, use_extra_props=True,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
       api.post_check(
@@ -398,6 +392,7 @@ def GenTests(api):
       with_manifest_refs=True,
       with_history=True,
       bot_size='medium',
+      status='FAILURE',
   )
 
   yield api.orch_menu.test(
@@ -409,7 +404,6 @@ def GenTests(api):
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0'))),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.MustRun,
@@ -439,7 +433,6 @@ def GenTests(api):
           }),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.sync to specified manifest'),
-      api.post_check(post_process.StatusSuccess),
       builder='public-main-orchestrator',
       with_manifest_refs=True,
       with_history=True,
@@ -450,7 +443,6 @@ def GenTests(api):
   yield api.orch_menu.test(
       'factory-orchestrator',
       data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
@@ -461,8 +453,7 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
-      'branch', data.ctp_normal, api.post_check(post_process.StatusSuccess),
-      api.cros_source.snapshot_xml_exists(False),
+      'branch', data.ctp_normal, api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.DoesNotRun,
@@ -475,23 +466,27 @@ def GenTests(api):
              '\n\n- htarget.hw.bvt-inline:'
              '\n\n- htarget.hw.some-other-suite:')
   yield api.orch_menu.test(
-      'test-failure', data.ctp_failure,
+      'test-failure',
+      data.ctp_failure,
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
-      with_manifest_refs=True, with_history=True)
+      with_manifest_refs=True,
+      with_history=True,
+      status='FAILURE',
+  )
 
   summary = (
       '1 out of 1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
   )
   yield api.orch_menu.test(
-      'non-crit-test-check-updates-some', data.ctp_failure,
+      'non-crit-test-check-updates-some',
+      data.ctp_failure,
       api.step_data(
           'clean up orchestrator.'
           'non-critical test check.generate test plan.read output file',
@@ -502,11 +497,13 @@ def GenTests(api):
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      api.post_check(post_process.StatusAnyFailure))
+      status='FAILURE',
+  )
 
   summary = '3 non-critical hw tests failed'
   yield api.orch_menu.test(
-      'non-crit-test-check-updates-all', data.ctp_failure,
+      'non-crit-test-check-updates-all',
+      data.ctp_failure,
       api.step_data(
           'clean up orchestrator.'
           'non-critical test check.generate test plan.read output file',
@@ -517,18 +514,25 @@ def GenTests(api):
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.SUCCESS,
                                                summary_markdown=summary))),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.orch_menu.test(
-      'bad-ref', api.properties(FullProperties(expect_missing_config=True)),
+      'bad-ref',
+      api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(start='missing-ref-heads')))
+          update_manifest_refs=dict(start='missing-ref-heads')),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test(
       'bad-failure-ratio',
       api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(max_build_failure_ratio=1.1)))
+          update_manifest_refs=dict(max_build_failure_ratio=1.1)),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test(
       'required-missing-config',
@@ -537,8 +541,12 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'fails-if-changes-not-submittable',
-      api.gerrit.simulated_changes_are_submittable(submittable=False), cq=True,
-      with_history=True)
+      api.gerrit.simulated_changes_are_submittable(submittable=False),
+      cq=True,
+      with_history=True,
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
   # Annealing builds.
@@ -672,21 +680,28 @@ def GenTests(api):
       'cr-buildbucket.appspot.com/build/8922054662172514000)')
   yield api.orch_menu.test(
       'critical-child-builder-fails',
-      api.post_check(post_process.StatusAnyFailure),
       api.properties(
           FullProperties(
               expected_completed_builds=builds,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      collect_builds=builds, history_builds=data.history_builds,
-      with_manifest_refs=True, with_history=True)
+      collect_builds=builds,
+      history_builds=data.history_builds,
+      with_manifest_refs=True,
+      with_history=True,
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test(
-      'non-critical-child-builder-fails', data.ctp_normal,
+      'non-critical-child-builder-fails',
+      data.ctp_normal,
       api.properties(
           FullProperties(expected_completed_builds=data.non_crit_fail)),
-      collect_builds=data.non_crit_fail, history_builds=data.history_builds,
-      with_manifest_refs=True, with_history=True)
+      collect_builds=data.non_crit_fail,
+      history_builds=data.history_builds,
+      with_manifest_refs=True,
+      with_history=True,
+  )
 
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,
@@ -695,7 +710,6 @@ def GenTests(api):
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary))),
-      api.post_check(post_process.StatusSuccess),
       api.buildbucket.ci_build(
           project='chromeos', bucket='postsubmit',
           builder='postsubmit-orchestrator',
@@ -746,7 +760,8 @@ def GenTests(api):
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,
-  )
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   input_props_with_generate_ctpv1_format = copy.deepcopy(input_props)
   input_props_with_generate_ctpv1_format['$chromeos/cros_test_plan_v2'][
@@ -810,7 +825,6 @@ def GenTests(api):
           },
       ),
       data.ctp_failure,
-      api.post_check(post_process.StatusFailure),
       # The criticality update step should not run if test planning v2 is
       # enabled.
       api.post_process(post_process.PropertiesDoNotContain,
@@ -823,4 +837,5 @@ def GenTests(api):
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,
+      status='FAILURE',
   )

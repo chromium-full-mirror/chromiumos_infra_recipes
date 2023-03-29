@@ -184,7 +184,11 @@ def GenTests(api):
 
   gerrit_change = common_pb2.GerritChange(host='unknow-review.googlesource.com',
                                           project='p1', change=1234)
-  yield api.test('cannot-resolve-repo-url',
-                 api.buildbucket.try_build(gerrit_changes=[gerrit_change]),
-                 api.properties(test_presubmit_file=''),
-                 api.properties(project_names=['p1', 'p2']))
+  yield api.test(
+      'cannot-resolve-repo-url',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change]),
+      api.properties(test_presubmit_file=''),
+      api.properties(project_names=['p1', 'p2']),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

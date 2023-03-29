@@ -120,7 +120,6 @@ def GenTests(api):
                      ]),
       api.post_check(post_process.MustRun,
                      'final build collect.check build results'),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
   )
 
@@ -133,6 +132,7 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       with_manifest_refs=True,
+      status='INFRA_FAILURE',
   )
 
   yield api.orch_menu.test(
@@ -154,7 +154,6 @@ def GenTests(api):
                      ]),
       api.post_check(post_process.MustRun,
                      'final build collect.check build results'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       cq=True,
   )
@@ -162,6 +161,6 @@ def GenTests(api):
   yield api.orch_menu.test(
       'build-poller-fails',
       api.step_data('run builds.collect', retcode=1),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

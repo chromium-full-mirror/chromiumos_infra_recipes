@@ -125,7 +125,12 @@ def GenTests(api: RecipeTestApi):
           cq=True, extra_changes=[common_pb2.GerritChange(change=1235)]).build)
 
   # LUCI CQ doesn't generally give us a gitiles_commit, but we support that.
-  yield api.test('commit_with_no_changes', api.test_util.test_build().build)
+  yield api.test(
+      'commit_with_no_changes',
+      api.test_util.test_build().build,
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'commit-with-one-change',

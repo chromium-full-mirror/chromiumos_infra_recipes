@@ -19,9 +19,16 @@ instructions.
 
 import re
 from functools import cached_property
-from typing import List, NamedTuple, Optional
-
+from typing import List
+from typing import NamedTuple
+from typing import Optional
 from urllib import parse
+
+from RECIPE_MODULES.chromeos.git.api import Reference
+from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
+from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
+from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
@@ -29,12 +36,12 @@ from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine import result
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import CronTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import WebUITrigger
+from PB.recipe_engine import result
 # pylint: disable=unused-import
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
@@ -47,13 +54,10 @@ from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
-from PB.recipes.chromeos.generator import OutdatedClsPolicy
 from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
-from PB.recipes.chromeos.generator import RetryClPolicy
 from PB.recipes.chromeos.generator import RetryRef
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
-from PB.recipes.chromeos.generator import SendToCqPolicy
 from PB.recipes.chromeos.generator import UprevTargetKind
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
@@ -61,12 +65,6 @@ from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
-from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
-from RECIPE_MODULES.chromeos.git.api import Reference
-from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
-from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
-from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -605,34 +603,36 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'fail-validate-props-on-gitiles-fetch-info',
       _props(gitiles_info=GitilesFetchInfo()),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
       'no-matching-policy',
       _props(branch_policies=[]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.DoesNotRun, 'set policy'),
+      status='FAILURE',
   )
 
   yield api.test(
       'no-packages',
       api.properties(uprev_target_kind=UprevTargetKind.PACKAGE),
-      api.post_check(post_process.StatusAnyFailure),
+      status='FAILURE',
   )
 
   yield api.test(
       'no-reviewers',
       _props(branch_policies=[_policy(reviewers=None)]),
-      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
+      status='FAILURE',
   )
 
   yield api.test(
       'blank-reviewer',
       _props(branch_policies=[_policy(reviewers=[{}])]),
-      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -641,8 +641,8 @@ def GenTests(api: RecipeTestApi):
       api.scheduler(triggers=[
           Trigger(id='456', webui=WebUITrigger()),
       ]),
-      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -773,7 +773,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
                      'checkout branch.checkout branch release-R79-*.B'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield _with_infos(
@@ -784,7 +783,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       api.post_check(post_process.MustRun,
                      'checkout branch.checkout branch release-R79-*.B'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -793,7 +791,7 @@ def GenTests(api: RecipeTestApi):
       _props(packages=[package_chrome],
              branch_policies=[branch_policy, _policy()]),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
-      api.post_check(post_process.StatusAnyFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -801,7 +799,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(triggers=[trigger_prop]),
       _props(packages=[package_chrome], branch_policies=[no_pattern_policy]),
       api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
-      api.post_check(post_process.StatusAnyFailure),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -813,7 +811,6 @@ def GenTests(api: RecipeTestApi):
                            reviewers=[Reviewer(email='a@example.com')])
           ]),
       api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -829,7 +826,7 @@ def GenTests(api: RecipeTestApi):
               'refs/remotes/cros-internal/release-R79-9999.B',
               '',
           ]))),
-      api.post_check(post_process.StatusAnyFailure),
+      status='FAILURE',
   )
 
   yield _with_infos(
@@ -846,7 +843,6 @@ def GenTests(api: RecipeTestApi):
                      'try uprev chromeos-base/chromeos-chrome'),
       api.post_check(post_process.MustRun,
                      'try uprev chromeos-base/chromeos-lacros'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.StepCommandRE,
           'commit uprev.commit in overlay.write commit message', [
@@ -932,7 +928,6 @@ def GenTests(api: RecipeTestApi):
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
           [], 'https://chrome-internal-review.googlesource.com'),
       api.post_check(post_process.DoesNotRun, 'outdated CLs'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -969,7 +964,6 @@ def GenTests(api: RecipeTestApi):
           post_process.DoesNotRun,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
       api.post_check(post_process.MustRun, 'generate CLs'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -996,7 +990,6 @@ def GenTests(api: RecipeTestApi):
           post_process.DoesNotRunRE,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
       api.post_check(post_process.MustRun, 'generate CLs'),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -1014,7 +1007,6 @@ def GenTests(api: RecipeTestApi):
           post_process.DoesNotRun,
           r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
       api.post_check(post_process.MustRun, 'generate CLs'),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -1029,8 +1021,8 @@ def GenTests(api: RecipeTestApi):
       'no-triggers',
       _props(),
       api.scheduler(triggers=[]),
-      api.post_check(post_process.StatusAnyFailure),
       api.git.diff_check(True),
+      status='FAILURE',
   )
 
   revision = '83a1812dddfc24f604d92bf61ad58efe9227a6fc'
@@ -1220,6 +1212,10 @@ def GenTests(api: RecipeTestApi):
       ),
   )
 
-  yield api.test('sdk-uprev', _props(uprev_target_kind=UprevTargetKind.SDK),
-                 api.scheduler(triggers=[chromite_gitiles_trigger]),
-                 api.post_check(post_process.StepException, 'uprev sdk'))
+  yield api.test(
+      'sdk-uprev',
+      _props(uprev_target_kind=UprevTargetKind.SDK),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.StepException, 'uprev sdk'),
+      status='INFRA_FAILURE',
+  )

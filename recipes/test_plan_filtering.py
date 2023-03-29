@@ -27,13 +27,15 @@
 #   Commit the resulting diff (if any) back to config-internal.
 
 import os
-from typing import List, Optional, Union
+from typing import List
+from typing import Optional
+from typing import Union
 
+from PB.recipes.chromeos.test_plan_filtering import TestPlanFilteringProperties
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
-from PB.recipes.chromeos.test_plan_filtering import TestPlanFilteringProperties
 
 PROPERTIES = TestPlanFilteringProperties
 
@@ -306,6 +308,8 @@ def GenTests(api: RecipeTestApi):
           stdout=api.raw_io.output_text('changes')),
       api.post_check(post_process.MustRun, 'update ref.gerrit transaction.'
                      'git push'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(

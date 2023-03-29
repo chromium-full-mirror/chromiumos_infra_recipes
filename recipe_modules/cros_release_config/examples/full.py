@@ -5,10 +5,9 @@
 
 import datetime
 
-from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties
+from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 from PB.recipe_modules.chromeos.cros_release_config.examples.full import TestProperties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -164,7 +163,7 @@ def GenTests(api):
               expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
                               new_block(branch_milestone, branch, '2023-01-15'),
                               BLOCK_3, BLOCK_2, BLOCK_1)
-          ]), api.post_check(post_process.StatusSuccess))
+          ]))
 
   six_months_out = (datetime.datetime.today() +
                     datetime.timedelta(days=30 * 6)).strftime("%Y-%m-%d")
@@ -188,27 +187,35 @@ def GenTests(api):
                   MAIN_BLOCK, BLOCK_EXPIRATION,
                   new_stabilize_block('stabilize-12345.B', six_months_out),
                   BLOCK_3, BLOCK_2, BLOCK_1)
-          ]), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
-
-  yield api.test('bad-branch', api.properties(**{
-      'branch': 'factory-foo.B',
-  }), api.post_check(post_process.StepFailure, 'validate branch'),
-                 api.post_check(post_process.StatusFailure))
+          ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'bad-release-branch', api.properties(**{
+      'bad-branch',
+      api.properties(**{
+          'branch': 'factory-foo.B',
+      }),
+      api.post_check(post_process.StepFailure, 'validate branch'),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'bad-release-branch',
+      api.properties(**{
           'branch': 'release-foo.B',
       }),
       api.post_check(post_process.StepFailure,
                      'validate branch.validate release branch'),
-      api.post_check(post_process.StatusFailure))
+      status='FAILURE',
+  )
 
   yield api.test(
-      'no-reviewers-no-autosubmit', api.properties(**{
+      'no-reviewers-no-autosubmit',
+      api.properties(**{
           'branch': branch,
-      }), api.post_check(post_process.StepFailure, 'validate CL settings'),
-      api.post_check(post_process.StatusFailure))
+      }),
+      api.post_check(post_process.StepFailure, 'validate CL settings'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'auto-submit',
@@ -218,7 +225,7 @@ def GenTests(api):
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(auto_submit=True),
-          }), api.post_check(post_process.StatusSuccess))
+          }))
 
   yield api.test(
       'prune',
@@ -248,7 +255,7 @@ def GenTests(api):
           }),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'with-build-creator-duplicate-email',
@@ -263,4 +270,4 @@ def GenTests(api):
           }),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
-      api.post_check(post_process.StatusSuccess))
+  )

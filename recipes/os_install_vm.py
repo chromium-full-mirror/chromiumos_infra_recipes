@@ -38,10 +38,14 @@
 """
 
 import copy
-from typing import Generator, List
+from typing import Generator
+from typing import List
 
 import gevent
+from RECIPE_MODULES.chromeos.tast_exec.api import TastExecApi
 
+from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
@@ -49,9 +53,6 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import StepTestData
 from recipe_engine.recipe_test_api import TestData
-from PB.recipe_engine import result as result_pb2
-from PB.recipes.chromeos.os_install_vm import OsInstallVmProperties
-from RECIPE_MODULES.chromeos.tast_exec.api import TastExecApi
 
 DEPS = [
     'recipe_engine/file',
@@ -277,8 +278,9 @@ Partition name: 'ROOT-B'
                      'setup vm image.make image into installer'),
       api.post_check(post_process.ResultReason,
                      "unexpected partition name: 'ROOT-A'"),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   # Test unexpected ROOT-B partition type.
   yield api.test(
@@ -292,8 +294,9 @@ Partition name: 'ROOT-B'
                      'setup vm image.make image into installer'),
       api.post_check(post_process.ResultReason,
                      'unexpected type GUID: somebadval'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   # Test "tast run" exiting before the VM exits.
   yield api.test(
@@ -306,8 +309,9 @@ Partition name: 'ROOT-B'
           stdout=api.raw_io.output(good_root_b)),
       api.post_check(post_process.StepFailure,
                      'run OS install test.wait for install to complete'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   # Test tast failure.
   yield api.test(
@@ -327,8 +331,9 @@ Partition name: 'ROOT-B'
           make_results_jsonl(failure_json)),
       api.post_check(post_process.StepFailure, 'run OS install test'),
       api.post_check(post_process.ResultReasonRE, 'installer is broken'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   # Test successful run.
   yield api.test(
@@ -347,5 +352,4 @@ Partition name: 'ROOT-B'
           'run OS install test.process tast output.read streamed_results.jsonl',
           make_results_jsonl(success_json)),
       api.post_check(post_process.StepSuccess, 'run OS install test'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

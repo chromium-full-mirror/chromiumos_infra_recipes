@@ -36,7 +36,6 @@ def GenTests(api):
       api.buildbucket.try_build(project='chromeos', bucket='release',
                                 builder='release-main-orchestrator'),
       api.properties(expected_ref='refs/heads/main'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -48,7 +47,6 @@ def GenTests(api):
           ], project='chromeos', bucket='release',
           builder='release-main-orchestrator'),
       api.properties(expected_ref='refs/heads/snapshot'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -59,6 +57,5 @@ def GenTests(api):
           ], project='chromeos', bucket='staging',
           builder='staging-release-main-orchestrator'),
       api.properties(expected_ref='refs/heads/staging-snapshot'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

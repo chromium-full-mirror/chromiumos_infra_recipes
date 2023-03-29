@@ -3,9 +3,9 @@
 # found in the LICENSE file.
 
 from google.protobuf import text_format
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -105,6 +105,5 @@ def GenTests(api):
               '[CLEANUP]/test_plan_tmp_2',
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

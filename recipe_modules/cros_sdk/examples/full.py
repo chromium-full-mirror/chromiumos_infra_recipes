@@ -6,11 +6,10 @@
 from PB.chromiumos import common
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
-from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -170,7 +169,10 @@ def GenTests(api):
           }),
       api.step_data(
           'init sdk.call chromite.api.SdkService/'
-          'Create.call build API script', retcode=1))
+          'Create.call build API script', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'failed-step-update-sdk',
@@ -183,7 +185,10 @@ def GenTests(api):
           }),
       api.step_data(
           'update sdk.call chromite.api.SdkService/'
-          'Update.call build API script', retcode=1))
+          'Update.call build API script', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'failed-step-destroy-chroot-tests',
@@ -194,17 +199,24 @@ def GenTests(api):
                       goma_approach=common.GomaConfig.RBE_PROD,
                   ),
           }),
-      api.step_data('link chroot in workspace.ensure workspace', retcode=1))
+      api.step_data('link chroot in workspace.ensure workspace', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   yield api.test(
-      'remaining-test-data', api.cros_sdk.is_chroot_usable([False, True]),
+      'remaining-test-data',
+      api.cros_sdk.is_chroot_usable([False, True]),
       api.properties(
           **{
               '$chromeos/goma':
                   GomaProperties(
                       goma_approach=common.GomaConfig.RBE_PROD,
                   ),
-          }), api.post_check(post_process.StepFailure, 'clean up SDK chroot'))
+          }),
+      api.post_check(post_process.StepFailure, 'clean up SDK chroot'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'preload-does-not-exists', api.cros_sdk.preload_path_exists(False),

@@ -43,7 +43,10 @@ def GenTests(api):
   yield api.test(
       'other-failure',
       attempt_git_step(1, 'push', retcode=1,
-                       stdout='! HEAD:refs/fake [remote failed]'))
+                       stdout='! HEAD:refs/fake [remote failed]'),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   yield api.test(
       'retry-too-many-times',
@@ -62,7 +65,10 @@ def GenTests(api):
           stdout='deadbeef22',
       ),
       attempt_git_step(3, 'push', retcode=1,
-                       stdout='! HEAD:refs/fake [remote rejected]'))
+                       stdout='! HEAD:refs/fake [remote rejected]'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'update-ref-has-diff-has-new-file',

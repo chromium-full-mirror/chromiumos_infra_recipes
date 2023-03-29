@@ -42,14 +42,16 @@ def GenTests(api):
       'release-orchestrator',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'staging-release-orchestrator',
       api.test_util.test_orchestrator(
           bucket='staging', builder='staging-release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'no-builder-config',
-      api.post_check(post_process.StepFailure, 'schedule public build'))
+      api.post_check(post_process.StepFailure, 'schedule public build'),
+      status='FAILURE',
+  )

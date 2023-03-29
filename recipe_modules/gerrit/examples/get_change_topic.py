@@ -40,13 +40,20 @@ def GenTests(api):
       api.properties(expected="TOPIC",
                      simulated_response_from_server=')]}\'"TOPIC"'))
 
-  yield api.test('not-string',
-                 api.properties(simulated_response_from_server='{}'))
+  yield api.test(
+      'not-string',
+      api.properties(simulated_response_from_server='{}'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'invalid-json',
       api.properties(expected="TOPIC",
-                     simulated_response_from_server='INVALIDJSON)]}'))
+                     simulated_response_from_server='INVALIDJSON)]}'),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test('simulated_topic method', api.properties(expected="TOPIC"),
                  api.gerrit.simulated_topic("TOPIC", GERRIT_HOST, CHANGE_NUM))

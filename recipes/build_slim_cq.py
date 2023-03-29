@@ -5,13 +5,14 @@
 
 """Recipe for building and testing a BuildTarget's packages."""
 
-from typing import Generator, List, Optional
+from typing import Generator
+from typing import List
+from typing import Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -161,7 +162,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
       build_target='atlas-slim',
   )
@@ -173,8 +173,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess), cq=True, build_target='coral',
+                     'upload artifacts.publish artifacts'), cq=True,
+      build_target='coral',
       input_properties=api.test_util.build_menu_properties(artifact_build=True),
       artifact_pointless=True)
 
@@ -186,7 +186,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       cq=True,
       build_target='staging-amd64-generic',
       pointless=True,
@@ -201,12 +200,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install toolchain',
                                           'SysrootService/InstallToolchain',
                                           retcode=1),
       cq=True,
       build_target='atlas-slim',
+      status='FAILURE',
   )
 
   # Failure to resolve package list.
@@ -217,7 +216,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       api.build_menu.set_build_api_return(
           'Determine which packages to build.Attempt to resolve package list',
           'SysrootService/InstallPackages', retcode=1),
@@ -238,7 +236,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       build_target='atlas-slim',
       cq=True,
   )
@@ -251,12 +248,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       build_target='atlas-slim',
       cq=True,
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   # Upload artifacts failure.
@@ -264,12 +262,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'upload-artifacts-fail',
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.StatusAnyFailure),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
       build_target='atlas-slim',
       cq=True,
+      status='INFRA_FAILURE',
   )
 
   # Ebuild test failure.
@@ -281,12 +279,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('run ebuild tests',
                                           'TestService/BuildTargetUnitTest',
                                           retcode=1),
       build_target='atlas-slim',
       cq=True,
+      status='FAILURE',
   )
 
   # Toolchain CLs applied.
@@ -299,7 +297,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusSuccess),
       build_target='atlas-slim',
       cq=True,
   )
@@ -312,9 +309,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.ResultReason,
           'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
       ),
-      api.post_process(post_process.StatusException),
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,
       build_target='atlas-slim',
+      status='CANCELED',
   )

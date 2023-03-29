@@ -3,10 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_lkgm.examples.do_lkgm import DoLkgmProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -52,6 +52,7 @@ def GenTests(api):
     return builds
 
   def lgkm_test(name, *args, **kwargs):
+    status = kwargs.pop('status', 'SUCCESS')
     release_builds = kwargs.pop('release_builds', [])
     public_builds = kwargs.pop('public_builds', None)
     use_branch = kwargs.pop('use_branch', False)
@@ -92,7 +93,7 @@ def GenTests(api):
                     'full_run':
                         kwargs.pop('full_run', False),
                 },
-            }), *args, **kwargs)
+            }), *args, **kwargs, status=status)
 
   yield api.test(
       'disable-lkgm',
@@ -111,7 +112,6 @@ def GenTests(api):
       'lkgm-candidate',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),
@@ -135,7 +135,6 @@ def GenTests(api):
       'lkgm-candidate-branch',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),
@@ -157,7 +156,6 @@ def GenTests(api):
       'lkgm-candidate-branch-failure',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),
@@ -174,13 +172,15 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       release_builds=create_builds(6, 4),
       public_builds=create_builds(7, 3, start_id=PUBLIC_BUILDER_START_ID),
-      full_run=True, use_branch=True)
+      full_run=True,
+      use_branch=True,
+      status='FAILURE',
+  )
 
   yield lgkm_test(
       'lkgm-candidate-dry-run',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),
@@ -201,7 +201,6 @@ def GenTests(api):
       'not-lkgm-candidate-release-threshold',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['40.00%', '50%']),
@@ -217,7 +216,6 @@ def GenTests(api):
       'not-lkgm-candidate-release-no-builds',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextEquals,
                      'assess LKGM readiness.assess release build results',
                      'no release builds'),
@@ -233,7 +231,6 @@ def GenTests(api):
       'not-lkgm-candidate-public-threshold',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),
@@ -250,7 +247,6 @@ def GenTests(api):
       'not-lkgm-candidate-public-no-builds',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepTextContains,
                      'assess LKGM readiness.assess release build results',
                      ['60.00%', '50%']),

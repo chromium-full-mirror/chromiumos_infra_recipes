@@ -29,14 +29,12 @@
 
 import fnmatch
 import re
-
 from collections import defaultdict
-
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.check_fit_image import CheckFitImageProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 PROPERTIES = CheckFitImageProperties
 
@@ -395,7 +393,6 @@ def GenTests(api):
       setup_build(basic_config),
       mock_file("checking change 1.read reference file", mock_version_file()),
       mock_modified_file(1, "fitimage-test-versions.txt", mock_version_file()),
-      api.post_process(post_process.StatusSuccess),
   )
 
   # No changes, should do nothing
@@ -415,7 +412,8 @@ def GenTests(api):
               "some/project|project|project|refs/heads/main|")),
       api.post_process(post_process.ResultReasonRE,
                        "not found in project info"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if hashes in versions file don't match
   yield api.test(
@@ -432,7 +430,8 @@ def GenTests(api):
       api.post_process(
           post_process.ResultReasonRE,
           r"Error\(s\) occurred when checking FIT image versions:"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if no version information in reference file
   yield api.test(
@@ -441,7 +440,8 @@ def GenTests(api):
       mock_file("checking change 1.read reference file", mock_version_file("")),
       api.post_process(post_process.ResultReasonRE,
                        "FIT version information not found in"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if no version information in input file
   yield api.test(
@@ -457,14 +457,16 @@ def GenTests(api):
               })),
       api.post_process(post_process.ResultReasonRE,
                        "FIT version information not found in"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if we modified a -versions.txt but not the corresponding .bin file
   yield api.test(
       "no-matching-bin-change",
       setup_build([("foo", ["fitimage-test-versions.txt"])]),
       api.post_process(post_process.ResultReasonRE, "no change in binary blob"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if we modified a .bin file but not the corresponding -versions.txt
   yield api.test(
@@ -472,7 +474,8 @@ def GenTests(api):
       setup_build([("foo", ["fitimage-test.bin"])]),
       api.post_process(post_process.ResultReasonRE,
                        "no change in versions file"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if FIT versions in input and reference don't match
   yield api.test(
@@ -489,7 +492,8 @@ def GenTests(api):
               })),
       api.post_process(post_process.ResultReasonRE,
                        "FIT tool versions don't match"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Fail if versions file is missing any of the files from the reference
   yield api.test(
@@ -502,7 +506,8 @@ def GenTests(api):
                          )),
       api.post_process(post_process.ResultReasonRE,
                        "file 'pchc.bin' from reference not in"),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   # Define set of changes to simulate stacked CLs
   stacked_config = [("foo", ["fitimage-foo.bin", "fitimage-foo-versions.txt"]),
@@ -517,5 +522,4 @@ def GenTests(api):
       mock_modified_file(1, "fitimage-foo-versions.txt", mock_version_file()),
       mock_file("checking change 2.read reference file", mock_version_file()),
       mock_modified_file(2, "fitimage-bar-versions.txt", mock_version_file()),
-      api.post_process(post_process.StatusSuccess),
   )

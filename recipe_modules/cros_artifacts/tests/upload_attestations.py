@@ -85,7 +85,6 @@ def GenTests(api):
           }, sort_keys=True)),
       api.post_process(post_process.MustRun,
                        'upload artifacts.snoop: report_gcs'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -96,5 +95,4 @@ def GenTests(api):
       api.post_process(post_process.LogEquals, 'upload artifacts',
                        'report_to_spike',
                        'IMAGE_ARCHIVES not in files_by_artifact'),
-      api.post_check(post_process.StatusSuccess),
   )

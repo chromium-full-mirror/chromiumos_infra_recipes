@@ -26,10 +26,16 @@ def RunSteps(api: RecipeApi):
 
 def GenTests(api: RecipeTestApi):
 
-  def test(name: str, status: str, bot_size: str):
+  def test(name: str, status: str, bot_size: str, test_status='SUCCESS'):
     bld_msg = build_pb2.Build(id=123, status=status)
     bld_msg.infra.swarming.bot_dimensions.extend(
         api.cros_tags.tags(bot_size=bot_size))
-    return api.test(name, api.buildbucket.build(bld_msg))
+    return api.test(name, api.buildbucket.build(bld_msg), status=test_status)
 
-  yield test('bad-size', status='STARTED', bot_size='bad')
+  # TODO (b/275363240): audit this test.
+  yield test(
+      'bad-size',
+      status='STARTED',
+      bot_size='bad',
+      test_status='FAILURE',
+  )

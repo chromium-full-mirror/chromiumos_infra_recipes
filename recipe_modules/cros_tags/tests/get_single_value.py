@@ -3,10 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.go.chromium.org.luci.swarming.proto.api.swarming import StringPair
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -41,18 +39,18 @@ def GenTests(api):
       'basic',
       api.properties(keyvals=[('test-key', 'foo')], check_key='test-key',
                      expected_value='foo'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'multiple-occurrences',
       api.properties(
           keyvals=[('key1', 'foo'), ('key2', 'bar'), ('key1', 'baz')],
           check_key='key1', expected_value='foo'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'no-results',
       api.properties(
           keyvals=[('key1', 'foo'), ('key2', 'bar'), ('key1', 'baz')],
           check_key='not-present-key', expected_value=DEFAULT_VALUE),
-      api.post_check(post_process.StatusSuccess))
+  )

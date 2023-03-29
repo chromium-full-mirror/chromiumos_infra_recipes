@@ -7,8 +7,6 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
 from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
@@ -56,5 +54,4 @@ def GenTests(api):
       api.properties(**{
           '$chromeos/chrome': ChromeProperties(gclient_sync_timeout_seconds=1)
       }),
-      api.post_process(post_process.StatusSuccess),
   )

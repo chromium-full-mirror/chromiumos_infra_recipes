@@ -117,7 +117,9 @@ def GenTests(api):
       'upload-artifacts-exception',
       api.cros_build_api.set_api_return(
           parent_step_name='upload artifacts.call artifacts service',
-          endpoint='ArtifactsService/Get', retcode=1))
+          endpoint='ArtifactsService/Get', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   yield api.test(
       'skip-publish',

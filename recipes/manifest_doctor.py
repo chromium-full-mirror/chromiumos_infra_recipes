@@ -130,7 +130,9 @@ def GenTests(api: RecipeTestApi):
       'validate',
       api.properties(
           **{"internal_buildspecs_bucket": "chromeos-manifest-versions"}),
-      api.post_check(post_process.StepFailure, 'validate properties'))
+      api.post_check(post_process.StepFailure, 'validate properties'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'basic',

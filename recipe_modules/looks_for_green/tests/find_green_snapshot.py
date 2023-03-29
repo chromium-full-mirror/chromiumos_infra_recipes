@@ -3,15 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
+from google.protobuf import timestamp_pb2
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
-
-from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
-
-from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
-
-from google.protobuf import timestamp_pb2
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -89,7 +87,6 @@ def GenTests(api):
               "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -100,7 +97,6 @@ def GenTests(api):
           builds=[red_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -113,7 +109,6 @@ def GenTests(api):
           builds=[green_build, green_build2],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -136,6 +131,5 @@ def GenTests(api):
               "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

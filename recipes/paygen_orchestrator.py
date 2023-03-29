@@ -8,7 +8,9 @@
 import itertools
 import json
 from os import path
-from typing import Callable, Dict, List
+from typing import Callable
+from typing import Dict
+from typing import List
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
@@ -488,7 +490,6 @@ def GenTests(api: RecipeTestApi):
           'examining beta-channel.target artifacts.'
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
       api.buildbucket.simulated_collect_output(
@@ -508,7 +509,6 @@ def GenTests(api: RecipeTestApi):
           'examining beta-channel.target artifacts.'
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
       # Status overall started.
@@ -526,7 +526,9 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'some-failures', get_props(), good_paygen_cfg,
+      'some-failures',
+      get_props(),
+      good_paygen_cfg,
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -539,10 +541,12 @@ def GenTests(api: RecipeTestApi):
           build_pb2.Build(id=8922054662172514000 + x,
                           status=('FAILURE' if x % 2 == 0 else 'SUCCESS'))
           for x in range(21)
-      ], 'running children.collect'), api.post_check(SummaryMarkdownLength),
-      api.post_check(post_process.StatusFailure),
+      ], 'running children.collect'),
+      api.post_check(SummaryMarkdownLength),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
-      api.post_check(post_process.MustRun, 'results'))
+      api.post_check(post_process.MustRun, 'results'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'truncate-failures',
@@ -573,13 +577,14 @@ def GenTests(api: RecipeTestApi):
           ],
           'running children.collect'),
       api.post_check(SummaryMarkdownLength),
-      api.post_check(post_process.StatusException),
       api.post_check(post_process.MustRun, 'pairing artifacts'),
       api.post_check(post_process.MustRun, 'results'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
 
   yield api.test('no-payloads', get_props(builder_name='goobolywhobbly'),
-                 good_paygen_cfg, api.post_check(post_process.StatusSuccess))
+                 good_paygen_cfg)
 
   # Successful lists but don't find a suitable pair in get_requests().
   yield api.test(
@@ -593,7 +598,6 @@ def GenTests(api: RecipeTestApi):
           'discover gs artifacts.gsutil list',
           test_data='gs://chromeos-releases/beta-channel/coral/13505.15.0/'
           'ChromeOS-factory-R87-13505.15.0-coral.tar.xz'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun, 'running children'))
 
   yield api.test(
@@ -607,7 +611,6 @@ def GenTests(api: RecipeTestApi):
           'examining beta-channel.target artifacts.'
           'discover gs artifacts.gsutil list',
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
-      api.post_check(post_process.StatusSuccess),
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(5)], 'running children.collect'),
   )

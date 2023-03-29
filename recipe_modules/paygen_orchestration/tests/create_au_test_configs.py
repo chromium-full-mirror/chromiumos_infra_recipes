@@ -5,12 +5,12 @@
 # pylint: disable=protected-access
 
 import json
-from typing import List, Tuple
+from typing import List
+from typing import Tuple
 
 from PB.chromite.api.payload import GenerationRequest
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
-from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -130,7 +130,7 @@ def GenTests(api: RecipeTestApi):
       'delta-(m2n)-respect-configs',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0], []),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'delta-(m2n)-force-tests',
@@ -138,7 +138,7 @@ def GenTests(api: RecipeTestApi):
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_DELTA_OMAHA],
           delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'delta-(fsi)-force tests',
@@ -146,14 +146,15 @@ def GenTests(api: RecipeTestApi):
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_DELTA_FSI],
           delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS,
-          fsi=True), api.post_check(post_process.StatusSuccess))
+          fsi=True),
+  )
 
   yield api.test(
       'delta-(m2n)-force-no-tests',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_UNSIGNED[0], [],
           delta_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'delta-(n2n)-force-tests',
@@ -161,20 +162,20 @@ def GenTests(api: RecipeTestApi):
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_DELTA_N2N],
           delta_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'full-respect-configs',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
           [api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_N2N]),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'full-minios-skipped',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[1], []),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'full-force-tests',
@@ -183,24 +184,24 @@ def GenTests(api: RecipeTestApi):
               api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_N2N,
               api.paygen_orchestration.EXAMPLE_TEST_REQUEST_FULL_OMAHA
           ], full_test_override=PaygenOrchestratorProperties.FORCE_TESTS),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'full-force-no-tests',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0], [],
           full_test_override=PaygenOrchestratorProperties.FORCE_NO_TESTS),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'not-unsigned-image',
       create_properties(
           api.paygen_orchestration.EXAMPLE_GEN_REQUESTS_DELTA_SIGNED[0], []),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'unsigned-not-test-image',
       create_properties(
           api.paygen_orchestration
           .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY[0], []),
-      api.post_check(post_process.StatusSuccess))
+  )

@@ -5,9 +5,12 @@
 
 import copy
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraint
+from RECIPE_MODULES.chromeos.gerrit.api import LabelConstraintKind
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
-from RECIPE_MODULES.chromeos.gerrit.api import Label, LabelConstraint, LabelConstraintKind
 
 DEPS = [
     'recipe_engine/assertions',
@@ -81,7 +84,6 @@ def GenTests(api):
           '', gerrit_changes_json_no_labels,
           'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827, 91828]),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -90,7 +92,6 @@ def GenTests(api):
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827],
                      label_constraints=[require_cq_approved]),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -99,7 +100,6 @@ def GenTests(api):
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91828],
                      label_constraints=[require_cq_unapproved]),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -111,7 +111,9 @@ def GenTests(api):
                      label_constraints=[require_cq_approved]),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'specific-label-missing',
@@ -121,7 +123,9 @@ def GenTests(api):
                      label_constraints=[require_botcommit_approved]),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'invalid-constraint-type',
@@ -131,4 +135,6 @@ def GenTests(api):
                      label_constraints=[bogus_constraint_type]),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

@@ -18,7 +18,6 @@ from typing import Generator
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipes.chromeos.android_uprev import AndroidUprevProperties
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -90,11 +89,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), uprev_props, api.android.set_mark_stable_success(),
+          }}),
+      uprev_props,
+      api.android.set_mark_stable_success(),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Android uprev build where uprev is not needed.
   yield api.build_menu.test(
@@ -102,11 +103,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), uprev_props, api.android.set_mark_stable_early_exit(),
+          }}),
+      uprev_props,
+      api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Android uprev build where uprev is not needed yet |always_build| is set.
   yield api.build_menu.test(
@@ -117,11 +120,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                   'force_postsubmit_relevance': True,
               },
               'always_build': True,
-          }), uprev_props, api.android.set_mark_stable_early_exit(),
+          }),
+      uprev_props,
+      api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   # Android uprev build with install-packages failure.
   yield api.build_menu.test(
@@ -129,7 +134,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), uprev_props, api.android.set_mark_stable_success(),
+          }}),
+      uprev_props,
+      api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
@@ -138,7 +145,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure))
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   # Android uprev build with artifact bundling failure.
   yield api.build_menu.test(
@@ -149,11 +158,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), api.post_check(post_process.StatusAnyFailure),
+          retcode=1),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'), uprev_props,
-      api.android.set_mark_stable_success())
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      uprev_props,
+      api.android.set_mark_stable_success(),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
 
   # Android uprev build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
@@ -161,13 +174,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), uprev_props, api.android.set_mark_stable_success(),
+          }}),
+      uprev_props,
+      api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), api.post_check(post_process.DoesNotRun, 'build images'),
+          retcode=1),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure))
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

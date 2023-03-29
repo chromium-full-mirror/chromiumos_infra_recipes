@@ -63,5 +63,4 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test('basic',
                  api.properties(manifest_branch='factory-brya-14909.B'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))

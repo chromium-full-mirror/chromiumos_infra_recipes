@@ -3,8 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from recipe_engine import post_process
 
 DEPS = [
     'gerrit',
@@ -31,7 +31,10 @@ def GenTests(api):
       'retry-succeed', api.step_data('submit CL 123.git_cl land', retcode=1),
       api.post_check(post_process.MustRun, 'submit CL 123.git_cl land (2)'))
 
-  yield api.test('retry-fail',
-                 api.step_data('submit CL 123.git_cl land', retcode=1),
-                 api.step_data('submit CL 123.git_cl land (2)', retcode=1),
-                 api.post_check(post_process.StepFailure, 'submit CL 123'))
+  yield api.test(
+      'retry-fail',
+      api.step_data('submit CL 123.git_cl land', retcode=1),
+      api.step_data('submit CL 123.git_cl land (2)', retcode=1),
+      api.post_check(post_process.StepFailure, 'submit CL 123'),
+      status='FAILURE',
+  )

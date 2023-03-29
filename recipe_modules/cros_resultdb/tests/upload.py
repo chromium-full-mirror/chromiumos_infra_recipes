@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -26,5 +24,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic', api.buildbucket.ci_build(),
-                 api.post_check(post_process.StatusSuccess))
+  yield api.test('basic', api.buildbucket.ci_build())

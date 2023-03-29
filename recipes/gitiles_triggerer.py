@@ -113,4 +113,4 @@ def GenTests(api: RecipeTestApi):
               jobs=[GitilesTriggererProperties.Job(name='{branch}-branch-job')],
               delay_trigger_seconds=60)),
       api.post_check(post_process.MustRun, 'trigger chromeos jobs'),
-      api.post_check(post_process.StatusSuccess))
+  )

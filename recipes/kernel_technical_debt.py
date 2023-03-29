@@ -122,8 +122,7 @@ def GenTests(api: RecipeTestApi):
         },
     }
 
-  yield api.test('basic', api.post_check(post_process.StatusSuccess),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test('basic', api.post_process(post_process.DropExpectation))
 
   yield api.test('no-changes-given', test_builder(revision=None, cq=False),
                  api.post_check(post_process.StepSuccess, 'validate inputs'),
@@ -147,7 +146,6 @@ def GenTests(api: RecipeTestApi):
   yield api.test('unknown project', test_builder(gerrit_changes=changes),
                  api.post_check(post_process.StepSuccess, 'known project'),
                  api.post_check(post_process.DoesNotRun, 'check branch'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
   changes = [
@@ -162,7 +160,6 @@ def GenTests(api: RecipeTestApi):
           gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile', branch='kcam')),
       api.post_check(post_process.StepSuccess, 'check branch'),
       api.post_check(post_process.DoesNotRun, 'check if tech debt'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -172,7 +169,6 @@ def GenTests(api: RecipeTestApi):
           gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile')),
       api.post_check(post_process.StepSuccess, 'check if tech debt'),
       api.post_check(post_process.DoesNotRun, 'check tag'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -182,7 +178,6 @@ def GenTests(api: RecipeTestApi):
           gen_patch_sets('CHROMIUM: add config', 'chromeos/configs/hi')),
       api.post_check(post_process.StepSuccess, 'check if tech debt'),
       api.post_check(post_process.DoesNotRun, 'check tag'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -191,7 +186,6 @@ def GenTests(api: RecipeTestApi):
           'fetch patch set', changes,
           gen_patch_sets('CHROMIUM: IPU6 non Kcam', 'Makefile')),
       api.post_check(post_process.StepSuccess, 'write comments'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -202,7 +196,6 @@ def GenTests(api: RecipeTestApi):
           gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:1234567\n',
                          'Makefile')),
       api.post_check(post_process.DoesNotRun, 'write comments'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -215,5 +208,4 @@ def GenTests(api: RecipeTestApi):
               'Makefile')), api.post_check(post_process.StepSuccess,
                                            'check tag'),
       api.post_check(post_process.DoesNotRun, 'write comments'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

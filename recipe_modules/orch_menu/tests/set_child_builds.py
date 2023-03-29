@@ -45,6 +45,5 @@ def GenTests(api):
                      schedule_build_step('arm-generic-postsubmit')),
       api.post_check(post_process.DoesNotRun,
                      schedule_build_step('grunt-postsubmit')),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

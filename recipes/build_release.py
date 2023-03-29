@@ -5,22 +5,21 @@
 
 """Recipe for building images for release."""
 
+from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_FAILED
+from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_SUCCESS
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
-from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_FAILED, STATUS_SUCCESS
-
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.checkpoint import RetryStep
-from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
-from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from PB.recipes.chromeos.build_release import BuildReleaseProperties
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -394,7 +393,6 @@ def GenTests(api):
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
               RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
-      api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -407,10 +405,10 @@ def GenTests(api):
           'check that test config exists.generate target test requirements.generate_test_config',
           retcode=1),
       api.post_check(post_process.StepFailure, 'check that test config exists'),
-      api.post_check(post_process.StatusFailure),
       build_target='eve',
       builder='eve-kernelnext-release-main',
       bucket='release',
+      status='FAILURE',
   )
 
   # Normal release build.
@@ -444,7 +442,6 @@ def GenTests(api):
           }),
       api.signing.setup_mocks(),
       api.post_process(post_process.PropertyEquals, 'critical', '0'),
-      api.post_check(post_process.StatusSuccess),
       build_target='eve',
       builder='eve-kernelnext-release-main',
       bucket='release',
@@ -484,7 +481,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'skipping signing'),
       api.post_check(post_process.DoesNotRun, 'generate payloads'),
       api.post_check(post_process.MustRun, 'skipping payloads'),
-      api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -511,13 +507,13 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun,
                      'upload artifacts.publish artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+      status='FAILURE',
   )
 
   # Release build with artifact bundling failure.
@@ -529,7 +525,6 @@ def GenTests(api):
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
           }),
-      api.post_check(post_process.StatusAnyFailure),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.build_menu.set_build_api_return(
@@ -538,6 +533,7 @@ def GenTests(api):
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+      status='INFRA_FAILURE',
   )
 
   # Release build with failures in install packages and bundle artifacts.
@@ -552,7 +548,6 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
@@ -562,12 +557,12 @@ def GenTests(api):
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+      status='FAILURE',
   )
 
   # Release build with failure publishing image/package size data.
   yield api.build_menu.test(
       'publish-image-size-fail',
-      api.post_check(post_process.StatusSuccess),
       api.signing.setup_mocks(),
       api.build_menu.set_build_api_return(
           'collect image size data.add data from images',
@@ -615,7 +610,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.StepFailure, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
@@ -628,6 +622,7 @@ def GenTests(api):
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -649,17 +644,16 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusFailure),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
               id=8922054662172514000, status='FAILURE',
               summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
           )
       ], 'generate payloads.running paygen orchestrator.collect'),
-      api.post_check(post_process.StatusFailure),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
+      status='FAILURE',
   )
 
   yield api.build_menu.test(
@@ -684,7 +678,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun, 'generate payloads'),
-      api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -697,12 +690,12 @@ def GenTests(api):
           post_process.ResultReason,
           'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
       ),
-      api.post_process(post_process.StatusException),
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,
       builder='kukui-cq',
       build_target='kukui',
+      status='CANCELED',
   )
 
   # Release build with container creation failure.
@@ -733,7 +726,6 @@ def GenTests(api):
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.StatusSuccess),
       bucket='release',
       builder='kukui-release-main',
       build_target='kukui',
@@ -814,7 +806,6 @@ def GenTests(api):
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
               RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
-      api.post_check(post_process.StatusSuccess),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',

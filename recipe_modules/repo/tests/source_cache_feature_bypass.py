@@ -5,8 +5,6 @@
 
 from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
-from recipe_engine import post_process
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
@@ -27,7 +25,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.repo.test(
       'basic-on',
-      api.post_check(post_process.StatusSuccess),
       api.properties(
           **
           {'$chromeos/repo': RepoProperties(

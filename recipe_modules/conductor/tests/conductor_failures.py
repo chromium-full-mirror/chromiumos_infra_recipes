@@ -3,12 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.chromiumos.conductor import CollectConfig
+from PB.chromiumos.conductor import RetryRule
+from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
-
-from PB.chromiumos.conductor import CollectConfig, RetryRule
-from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -58,7 +58,6 @@ def GenTests(api: RecipeTestApi):
       api.step_data('read conductor output.read output json',
                     api.file.read_text('{bad json')),
       api.post_check(post_process.StepFailure, 'conductor collect'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -75,6 +74,5 @@ def GenTests(api: RecipeTestApi):
       api.step_data('conductor collect', retcode=0),
       api.conductor.set_collect_output([]),
       api.post_check(post_process.StepFailure, 'read conductor output'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

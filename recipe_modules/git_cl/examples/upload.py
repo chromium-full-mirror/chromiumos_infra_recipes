@@ -3,11 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Generator, Optional
+from typing import Generator
+from typing import Optional
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import Property
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
@@ -47,13 +48,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'basic',
       api.git_cl.output('git_cl upload', 'pytorch forever'),
       api.properties(expected_output=b'pytorch forever'),
-      api.post_check(post_process.StatusSuccess),
   )
   yield api.test(
       'local-diff',
       api.properties(use_local_diff=True, expected_output=b'success'),
       api.git_cl.output('git_cl upload', 'success'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepCommandContains, 'git_cl upload',
                      ['HEAD~', 'HEAD']),
       api.post_process(post_process.DropExpectation),
@@ -63,7 +62,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(use_local_diff=True, expected_output=b'success',
                      message='the second patchset'),
       api.git_cl.output('git_cl upload', 'success'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepCommandContains, 'git_cl upload',
                      ['--message', 'the second patchset']),
       api.post_process(post_process.DropExpectation),

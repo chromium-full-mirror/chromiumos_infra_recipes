@@ -6,11 +6,13 @@
 """Builds and uploads the Chromium OS toolchain."""
 
 import re
-from typing import Any, Dict, Generator
+from typing import Any
+from typing import Dict
+from typing import Generator
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
-from PB.chromite.api.sdk import CreateBinhostCLsRequest
 from PB.chromite.api.sdk import BuildSdkTarballRequest
+from PB.chromite.api.sdk import CreateBinhostCLsRequest
 from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.build_toolchain import BuildToolchainProperties
@@ -359,8 +361,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               prebuilts_gs_bucket="prebuilt-bucket-is-here")),
       api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.DoesNotRun, "identify key CLs"),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       "missing-prebuilts-bucket",
@@ -368,11 +371,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BuildToolchainProperties(archive_gs_bucket="archive-bucket-is-here")),
       api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.DoesNotRun, "identify key CLs"),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "no-cl", api.properties(good_properties),
+      "no-cl",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response("identify key CLs", [],
                                                    fetch_changes_responses),
       api.post_check(post_process.MustRun, "check properties"),
@@ -381,31 +386,36 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[]))
+      **builder_args(gerrit_changes=[]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "no-central-cl", api.properties(good_properties),
+      "no-central-cl",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_without_trybots, another_change_without_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "check properties"),
+      ),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.DoesNotRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[
           single_change_without_trybots,
           another_change_without_trybots,
-      ]))
+      ]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "no-change-id", api.properties(good_properties),
+      "no-change-id",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response("identify key CLs",
                                                    [missing_change_id],
                                                    fetch_changes_responses),
@@ -415,12 +425,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[missing_change_id]))
+      **builder_args(gerrit_changes=[missing_change_id]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "multiple-trybots-cls", api.properties(good_properties),
+      "multiple-trybots-cls",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots, another_change_with_trybots],
@@ -431,11 +443,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[
           single_change_with_trybots, another_change_with_trybots
-      ]))
+      ]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
       "successful-run", api.properties(good_properties),
@@ -451,7 +464,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[single_change_with_trybots]))
 
@@ -469,7 +481,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[single_change_without_trybots]))
 
@@ -487,7 +498,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
       api.post_check(post_process.MustRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[
           single_change_without_trybots,
@@ -495,12 +505,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ]))
 
   yield api.build_menu.test(
-      "build_sdk_packages-failed", api.properties(good_properties),
+      "build_sdk_packages-failed",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "check properties"),
+      ),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "package SDK as tarball"),
@@ -508,20 +520,23 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return("build SDK packages",
                                           "SdkService/BuildPrebuilts",
                                           retcode=1),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[single_change_with_trybots]))
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "package_sdk-failed", api.properties(good_properties),
+      "package_sdk-failed",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "check properties"),
+      ),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
@@ -529,20 +544,23 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return("package SDK as tarball",
                                           "SdkService/BuildSdkTarball",
                                           retcode=1),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[single_change_with_trybots]))
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "upload_sdk_tarball-failed", api.properties(good_properties),
+      "upload_sdk_tarball-failed",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.MustRun, "check properties"),
+      ),
+      api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
@@ -550,37 +568,45 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusAnyFailure),
       api.step_data("upload SDK tarball.gsutil upload", retcode=1),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[single_change_with_trybots]))
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='INFRA_FAILURE',
+  )
 
   yield api.build_menu.test(
-      "upload_prebuilt_packages-failed", api.properties(good_properties),
+      "upload_prebuilt_packages-failed",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.DoesNotRun, "create binhost CLs"),
+      ),
+      api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
       api.build_menu.set_build_api_return(
           "upload prebuilt packages",
           "SdkService/UploadPrebuiltPackages",
           retcode=1,
-      ), api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[single_change_with_trybots]))
+      ),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )
 
   yield api.build_menu.test(
-      "create-binhost-cls-failed", api.properties(good_properties),
+      "create-binhost-cls-failed",
+      api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
           [single_change_with_trybots],
           fetch_changes_responses,
-      ), api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
-      api.post_check(post_process.StatusFailure),
+      ),
+      api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
       api.build_menu.set_build_api_return("create binhost CLs",
                                           "SdkService/CreateBinhostCLs",
                                           retcode=1),
       api.post_process(post_process.DropExpectation),
-      **builder_args(gerrit_changes=[single_change_with_trybots]))
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )

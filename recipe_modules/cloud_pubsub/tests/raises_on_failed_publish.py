@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 
 DEPS = [
@@ -33,10 +32,9 @@ def GenTests(api):
                           retcode=1)
     return sd
 
-  yield api.test('fails-critical-publish') + gimme_n_publish_failures(
-      3) + api.post_check(post_process.StatusException)
+  yield api.test('fails-critical-publish',
+                 status='INFRA_FAILURE') + gimme_n_publish_failures(3)
 
   # There won't be any exponential retries for a non critical publish.
   yield api.test('passes-non-critical-publish') + api.properties(
-      raise_on_failed_publish=False) + gimme_n_publish_failures(
-          0) + api.post_check(post_process.StatusSuccess)
+      raise_on_failed_publish=False) + gimme_n_publish_failures(0)

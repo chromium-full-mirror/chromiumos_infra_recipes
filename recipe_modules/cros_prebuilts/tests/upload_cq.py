@@ -4,8 +4,9 @@
 # found in the LICENSE file.
 
 from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.common import BuildTarget, Profile
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Profile
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
 
 DEPS = [
@@ -84,6 +85,7 @@ def GenTests(api):
           }),
       api.expect_exception('ValueError'),
       cq=True,
+      status='INFRA_FAILURE',
   )
 
   # Ensure CQ doesn't support committing prebuilts (on staging branch).
@@ -96,7 +98,5 @@ def GenTests(api):
                                           send_snapshot_prebuilts=True,
                                           enable_snapshot_prebuilts=True,
                                           commit_overlay_binhost=True)
-          }),
-      api.expect_exception('ValueError'),
-      cq=True,
-  )
+          }), api.expect_exception('ValueError'), cq=True,
+      status='INFRA_FAILURE')

@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
 from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 DEPS = [
@@ -28,7 +27,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.post_check(post_process.StatusSuccess),
       api.properties(
           **
           {'$chromeos/repo': RepoProperties(disable_source_cache_health=True)}),

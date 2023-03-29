@@ -2,12 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.test_platform import result_flow
-from PB.recipes.chromeos.test_platform.result_flow import \
-  ResultFlowProperties
-
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+
+from PB.recipes.chromeos.test_platform.result_flow import \
+  ResultFlowProperties
+from PB.test_platform import result_flow
 
 DEPS = [
     'recipe_engine/properties',
@@ -167,12 +167,18 @@ def GenTests(api):
   yield api.test(
       'ctp-result-flow-failed',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
-      _run_ctp_flow_with_state(result_flow.common.FAILED))
+      _run_ctp_flow_with_state(result_flow.common.FAILED),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'ctp-result-flow-timed-out',
       api.properties(ResultFlowProperties(ctp_flow=_canned_ctp_config())),
-      _run_ctp_flow_with_state(result_flow.common.TIMED_OUT))
+      _run_ctp_flow_with_state(result_flow.common.TIMED_OUT),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'test_runner-result-flow-success-without-deadline',

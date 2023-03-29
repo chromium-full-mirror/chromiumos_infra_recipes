@@ -50,7 +50,6 @@ def GenTests(api):
           'source cache.setup source cache disk.create disk with empty checkout.create empty disk',
           ['--image']),
       api.post_check(post_process.StepSuccess, 'source cache.chown the disk'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -66,7 +65,6 @@ def GenTests(api):
           retcode=3),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
       api.post_check(post_process.StepSuccess, 'source cache.chown the disk'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -85,7 +83,6 @@ def GenTests(api):
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=initial-chromiumos-source-snapshot']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -104,7 +101,6 @@ def GenTests(api):
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=initial-chromiumos-source-snapshot-fallback']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -124,7 +120,6 @@ def GenTests(api):
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=super-custom-snapshot']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -144,7 +139,6 @@ def GenTests(api):
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=super-custom-snapshot-fallback']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )
 
@@ -163,6 +157,5 @@ def GenTests(api):
           post_process.StepCommandContains,
           'source cache.setup source cache disk.create disk from snapshot image.create disk from image',
           ['--image=test-cache-snapshot-123']),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DropExpectation),
   )

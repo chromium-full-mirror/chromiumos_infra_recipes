@@ -60,4 +60,6 @@ def GenTests(api):
       api.step_data('get toolchain info.read sdk_version.conf',
                     api.file.read_text('')),
       api.post_check(post_process.StepFailure, 'get toolchain info'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

@@ -10,7 +10,6 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -59,7 +58,9 @@ def GenTests(api):
 
   yield api.test(
       'annealing-not-found',
-      api.post_check(post_process.StepFailure, 'postsubmit relevance check'))
+      api.post_check(post_process.StepFailure, 'postsubmit relevance check'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'force-postsubmit-relevant',

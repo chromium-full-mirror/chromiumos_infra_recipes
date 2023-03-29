@@ -47,14 +47,16 @@ def GenTests(api):
   manifest_branch = 'snapshot'
 
   yield api.cros_source.test(
-      'basic', manifest_branch,
+      'basic',
+      manifest_branch,
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.post_check(verify_manifest_url, internal_url,
                      'sync cached directory.ensure synced checkout.repo init'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.cros_source.test(
-      'internal', manifest_branch,
+      'internal',
+      manifest_branch,
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.properties(
           SyncCacheProperties(
@@ -62,10 +64,11 @@ def GenTests(api):
       api.post_check(verify_manifest_url, internal_url,
                      'sync cached directory.ensure synced checkout.repo init'),
       api.post_check(post_process.DoesNotRun, 'override manifest url'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.cros_source.test(
-      'custom', manifest_branch,
+      'custom',
+      manifest_branch,
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-lmno'),
       api.properties(
           SyncCacheProperties(manifest_url=api.src_state.external_manifest.url,
@@ -73,5 +76,6 @@ def GenTests(api):
       api.properties(
           **{'$chromeos/cros_source': {
               'use_external_source_cache': True,
-          }}), api.post_check(verify_manifest_url, external_url),
-      api.post_check(post_process.StatusSuccess))
+          }}),
+      api.post_check(verify_manifest_url, external_url),
+  )

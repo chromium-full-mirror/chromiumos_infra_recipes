@@ -11,13 +11,12 @@ This recipe should only be used for ToT firmware builds.
 
 from google.protobuf.json_format import MessageToDict
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
-
+import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest
 from PB.chromite.api.firmware import TestAllFirmwareRequest
-import PB.chromiumos.common as common_pb2
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/bcid_reporter',
@@ -223,10 +222,11 @@ def GenTests(api):
     }
 
   def test(name, *args, **kwargs):
+    status = kwargs.pop('status', 'SUCCESS')
     kwargs.setdefault('builder', 'fw-ec-postsubmit')
     kwargs.setdefault('input_properties', dict(firmware_location=1))
     build = api.test_util.test_child_build(None, **kwargs).build
-    return api.test(name, build, *args)
+    return api.test(name, build, *args, status=status)
 
   yield test('postsubmit',)
 
@@ -242,7 +242,6 @@ def GenTests(api):
       api.step_data(
           'read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/{}'
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       cq=True, builder='firmware-ti50-cq', input_properties=dict(
@@ -254,22 +253,27 @@ def GenTests(api):
       'upload-fail',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          retcode=1), api.post_check(post_process.StatusAnyFailure))
+          retcode=1),
+      status='INFRA_FAILURE',
+  )
 
   yield test(
       'working-upload-fail',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          retcode=1), api.post_check(post_process.StatusAnyFailure),
+          retcode=1),
       api.post_check(post_process.DoesNotRun, 'schedule signing build'),
-      input_properties=(dict(firmware_location=1)))
+      input_properties=(dict(firmware_location=1)),
+      status='INFRA_FAILURE',
+  )
 
   yield test(
       'fw-test-fail',
       api.step_data('test firmware.call build API script', retcode=1),
       api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
-      api.post_check(post_process.StatusAnyFailure),
-      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
+      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)),
+      status='FAILURE',
+  )
 
   yield test(
       'upload-test-results-fail',
@@ -281,11 +285,10 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepFailure,
                      'Upload EC Firmware test results.run'),
-      api.post_check(post_process.StatusSuccess),
       input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
 
   yield test(
-      'signing-invocation', api.post_check(post_process.StatusSuccess),
+      'signing-invocation',
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', input_properties=(dict(
           firmware_location=1,
@@ -294,7 +297,7 @@ def GenTests(api):
       )))
 
   yield test(
-      'staging-signing-invocation', api.post_check(post_process.StatusSuccess),
+      'staging-signing-invocation',
       api.post_check(post_process.MustRun, 'schedule signing build'),
       builder='fw-ec-postsubmit', bucket='staging', input_properties=(dict(
           firmware_location=1,
@@ -303,12 +306,12 @@ def GenTests(api):
               is_staging=True),
       )))
 
-  yield test('output-binary-sizes', api.post_check(post_process.StatusSuccess),
+  yield test('output-binary-sizes',
              api.post_check(post_process.MustRun, 'output binary sizes'),
              api.post_check(post_process.MustRun, 'output got_revision'))
 
   yield test(
-      'branched-manifest', api.post_check(post_process.StatusSuccess),
+      'branched-manifest',
       api.post_check(post_process.MustRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       api.post_process(
@@ -324,7 +327,7 @@ def GenTests(api):
                             manifest_branch="factory-firmware-ti50-B"))
 
   yield test(
-      'create test containers', api.post_check(post_process.StatusSuccess),
+      'create test containers',
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
@@ -344,7 +347,6 @@ def GenTests(api):
 
   yield test(
       'create test containers exception',
-      api.post_check(post_process.StatusSuccess),
       api.step_data('Create test containers.set target_versions', retcode=1),
       api.post_check(
           post_process.DoesNotRun,

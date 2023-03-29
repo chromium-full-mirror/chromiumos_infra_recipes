@@ -10,7 +10,6 @@ from typing import Generator
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -99,7 +98,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.git.diff_check(True),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(post_process.MustRun, 'rebase CL 1234.commit uprev'),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -112,8 +110,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           gerrit_fetch_changes_values_dict,
       ),
       api.git.diff_check(True),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   # We cannot rebase if the new uprev produces no diff.
@@ -125,12 +123,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           gerrit_fetch_changes_values_dict,
       ),
       api.git.diff_check(False),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
       'cl-has-no-pupr-uprev-metadata',
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

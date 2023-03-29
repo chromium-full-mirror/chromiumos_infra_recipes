@@ -27,17 +27,20 @@ For more details on the input properties, see cl_factory.proto.
 """
 
 import re
-from typing import Generator, List, Optional, Tuple
+from typing import Generator
+from typing import List
+from typing import Optional
+from typing import Tuple
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_test_api import RecipeTestApi
-from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.cl_factory import ClFactoryProperties
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 PROPERTIES = ClFactoryProperties
 
@@ -499,7 +502,6 @@ TEST=CQ
               message_template=message_template,
               manifest_branch='release-R12-34567.B',
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -514,7 +516,6 @@ TEST=CQ
               message_template=message_template,
               set_source_depends=True,
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -530,7 +531,6 @@ TEST=CQ
       no_git_diff_step_data('project-a'),
       no_git_diff_step_data('project-b'),
       no_git_diff_step_data('project-c'),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -550,7 +550,6 @@ TEST=CQ
                   )
               ],
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   # Users may want to only replace strings, with no gerrit changes inputs
@@ -572,7 +571,6 @@ TEST=CQ
                   )
               ],
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -586,7 +584,6 @@ TEST=CQ
               message_template=message_template,
               full_repo_sync=True,
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   # Here we replace the canned forall return to exercise the set logic
@@ -607,14 +604,12 @@ TEST=CQ
                                        forall_data('c', 'd')),
       api.repo.project_infos_step_data('find additional repos to sync',
                                        forall_data('c', 'e')),
-      api.post_check(post_process.StatusSuccess),
   )
 
   # Here we replace the canned forall return to simulate the user providing
   # a regex that didn't match anything.
   yield api.test(
-      'bad-regex',
-      build(),
+      'bad-regex', build(),
       api.properties(
           ClFactoryProperties(
               repo_regexes=['src/project/galaxy'],
@@ -627,8 +622,7 @@ TEST=CQ
       api.repo.project_infos_step_data('find regex matching CL repos', {}),
       api.expect_exception('ValueError'),
       api.post_process(post_process.ResultReasonRE, '.*No matching projects.*'),
-      api.post_process(post_process.DropExpectation),
-  )
+      api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')
 
   yield api.test(
       'invalid-message-template-interpolation',
@@ -640,7 +634,6 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
               message_template='No such {interpolation}.',
           )),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -656,6 +649,8 @@ TEST=CQ
       api.post_process(post_process.ResultReasonRE,
                        '.*Projects to operate on must be specified.*'),
       api.post_process(post_process.DropExpectation),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(
@@ -671,4 +666,6 @@ TEST=CQ
       api.post_process(post_process.ResultReasonRE,
                        '.*A message_template property must specify.*'),
       api.post_process(post_process.DropExpectation),
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
   )

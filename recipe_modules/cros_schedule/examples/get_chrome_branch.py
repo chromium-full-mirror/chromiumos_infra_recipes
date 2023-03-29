@@ -34,13 +34,13 @@ def GenTests(api):
   yield api.test(
       'not-jq-return',
       override_fetch('not json'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
       'bad-jq-return',
       override_fetch('{}'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

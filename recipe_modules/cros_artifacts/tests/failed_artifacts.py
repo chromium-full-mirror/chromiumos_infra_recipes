@@ -5,8 +5,8 @@
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 from PB.chromiumos.common import BuildTarget
+from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 from recipe_engine import post_process
 
 DEPS = [
@@ -81,10 +81,11 @@ def GenTests(api):
       api.post_check(post_process.StepTextEquals,
                      'upload artifacts.call artifacts service',
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReason,
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'some-failed-superceded',
@@ -93,11 +94,13 @@ def GenTests(api):
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           SOME_FAILED_RESPONSE),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
-      api.post_check(post_process.StatusException),
       api.post_check(
           post_process.ResultReason,
           'Infra Failure: Step(\'upload artifacts.gsutil rsync\') (retcode: 1)'
-      ), api.post_process(post_process.DropExpectation))
+      ),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
 
   ALL_FAILED_RESPONSE = """{
   "artifacts": {
@@ -124,10 +127,11 @@ def GenTests(api):
       api.post_check(post_process.StepTextEquals,
                      'upload artifacts.call artifacts service',
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReason,
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'some-failed-skip-publish',
@@ -140,7 +144,6 @@ def GenTests(api):
       api.post_check(post_process.StepTextEquals,
                      'upload artifacts.call artifacts service',
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.ResultReason,
                      'Failed to generate: SIMPLE_CHROME_SYSROOT'),
       api.properties(**{
@@ -149,4 +152,6 @@ def GenTests(api):
       }),
       api.post_check(post_process.MustRun,
                      'upload artifacts.skip publish artifacts'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

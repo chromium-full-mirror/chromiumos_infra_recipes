@@ -7,12 +7,12 @@
 
 from typing import Generator
 
+from PB.recipes.chromeos.dupit import DupitProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
-from PB.recipes.chromeos.dupit import DupitProperties
 
 DEPS = [
     'recipe_engine/properties',
@@ -135,7 +135,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
            'copy new distfiles to gs.gsutil upload additional regex files'
            ' to gs://chromeos-mirror-test/gentoo/distfiles/')),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -166,7 +165,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
            'rsync distfiles from rsync://mirror.sfo12.us.leaseweb.net/archlinux/'
           ),
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -188,7 +186,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
            'rsync distfiles from rsync://mirror.rackspace.com/gentoo/distfiles'
           ),
       ),
-      api.post_process(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -215,7 +212,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
            'rsync distfiles from rsync://mirror.rackspace.com/gentoo/distfiles'
           ),
       ),
-      api.post_process(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -228,8 +225,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
            'list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles'),
       ),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -242,6 +238,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           ('mirror from rsync://mirrors.rit.edu/gentoo/distfiles.'
            'list distfiles in rsync://mirrors.rit.edu/gentoo/distfiles'),
       ),
-      api.post_check(post_process.StatusAnyFailure),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )

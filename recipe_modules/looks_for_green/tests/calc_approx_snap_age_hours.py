@@ -5,8 +5,8 @@
 
 import datetime
 
-from recipe_engine.recipe_api import Property
 from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -42,7 +42,6 @@ def GenTests(api):
       api.properties(expected_approx_snap_age_hours=0,
                      test_start_str='2021-02-18T23:59:00'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -51,7 +50,6 @@ def GenTests(api):
       api.properties(expected_approx_snap_age_hours=1,
                      test_start_str='2021-02-18T23:00:00'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -60,7 +58,6 @@ def GenTests(api):
       api.properties(expected_approx_snap_age_hours=2,
                      test_start_str='2021-02-18T22:01:00'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -69,7 +66,6 @@ def GenTests(api):
       api.properties(expected_approx_snap_age_hours=7,
                      test_start_str='2021-02-18T17:29:00'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -78,6 +74,5 @@ def GenTests(api):
       api.properties(expected_approx_snap_age_hours=25,
                      test_start_str='2021-02-17T23:00:00'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

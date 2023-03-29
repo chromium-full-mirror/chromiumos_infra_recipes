@@ -28,5 +28,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   TODO(b/259445565): Once uprev_sdk() has been implemented, flesh this out.
   """
-  yield api.test('basic', api.post_check(post_process.StepException,
-                                         'uprev sdk'))
+  yield api.test(
+      'basic',
+      api.post_check(post_process.StepException, 'uprev sdk'),
+      status='INFRA_FAILURE',
+  )

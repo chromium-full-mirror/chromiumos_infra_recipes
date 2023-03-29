@@ -5,11 +5,11 @@
 
 """Verify that upload_new_patch_set() runs the expected process."""
 
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-
-from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -35,7 +35,6 @@ def RunSteps(api: recipe_api.RecipeApi):
 def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'basic',
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.StepSuccess,
                      'upload patch set for Change-Id 1234.git_cl upload'),
       api.post_process(post_process.DropExpectation),

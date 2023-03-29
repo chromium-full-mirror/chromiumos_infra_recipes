@@ -6,7 +6,6 @@
 import json
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/context',
@@ -82,7 +81,6 @@ def GenTests(api):
       api.step_data('ensure manifest cq-depend fulfilled (2).git merge-base',
                     retcode=0),
       api.post_check(verify_dep_fetched, 2, 12345),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -98,7 +96,6 @@ def GenTests(api):
                     retcode=0),
       api.post_check(verify_dep_fetched, 2, 12345),
       api.post_check(verify_dep_fetched, 2, 67890),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -114,8 +111,8 @@ def GenTests(api):
                     retcode=128),
       api.post_check(verify_dep_fetched, 2, 12345),
       api.post_check(verify_dep_fetched, 2, 67890),
-      api.post_check(post_process.StatusAnyFailure),
-  )
+      # TODO (b/275363240): audit this test.
+      status='FAILURE')
 
   yield api.test(
       'has-missing-dep-permitted',
@@ -134,7 +131,6 @@ def GenTests(api):
           **{"$chromeos/cros_cq_depends": {
               "allow_missing_depends": True
           }}),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.test(
@@ -152,5 +148,4 @@ def GenTests(api):
                                         '|refs/heads/another-branch')),
       api.post_check(verify_dep_fetched, 2, 12345),
       api.post_check(verify_dep_fetched, 2, 67890),
-      api.post_check(post_process.StatusSuccess),
   )

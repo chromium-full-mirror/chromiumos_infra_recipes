@@ -5,7 +5,6 @@
 import PB.chromiumos.common as common_pb2
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import TestPaygenProperties
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -54,7 +53,13 @@ def GenTests(api: RecipeTestApi):
       'basic-hit', good_json,
       api.properties(builder_name='amenia', expected_length=1,
                      delta_type='NO_DELTA'))
-  yield api.test('bad-json', bad_json,
-                 api.post_check(post_process.StatusFailure))
-  yield api.test('not-json', not_json,
-                 api.post_check(post_process.StatusFailure))
+  yield api.test(
+      'bad-json',
+      bad_json,
+      status='FAILURE',
+  )
+  yield api.test(
+      'not-json',
+      not_json,
+      status='FAILURE',
+  )

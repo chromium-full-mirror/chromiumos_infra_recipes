@@ -4,10 +4,8 @@
 
 import json
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.recipes.chromeos.paygen import PaygenProperties
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -55,7 +53,7 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel, minios | Full (100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ))
 
   yield api.test(
       'N2N-Unsigned-Minios',
@@ -80,4 +78,4 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='Unsigned IMAGE_TYPE_TEST canary-channel, minios | Delta-N2N (100.0.0-100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ))

@@ -3,12 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Any, Generator
+from typing import Any
+from typing import Generator
 
 from PB.recipe_modules.chromeos.workspace_util.examples.test import TestInputProperties
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
-
-from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -84,16 +83,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     return api.test(name, ret, *test_case_args)
 
   # The default Postsubmit build.
-  yield test('has-commit-and-no-changes',
-             api.post_check(post_process.StatusSuccess))
+  yield test('has-commit-and-no-changes',)
 
   # The default CQ build.
-  yield test('has-changes-and-no-commit',
-             api.post_check(post_process.StatusSuccess), cq=True)
+  yield test('has-changes-and-no-commit', cq=True)
 
-  yield test('has-no-commit-and-no-changes',
-             api.post_check(post_process.StatusSuccess), revision=None)
+  yield test('has-no-commit-and-no-changes', revision=None)
 
-  yield test('has-toolchain-changes',
-             api.post_check(post_process.StatusSuccess), cq=True,
-             toolchain_cls_applied=True)
+  yield test('has-toolchain-changes', cq=True, toolchain_cls_applied=True)

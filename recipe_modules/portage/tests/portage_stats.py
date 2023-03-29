@@ -6,7 +6,6 @@
 import json
 
 from PB.recipe_modules.chromeos.portage.tests.portage_stats_test import TestMetricsInputProperties
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -48,7 +47,7 @@ def GenTests(api):
               step_name='test',
               bapi_stdout=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES,
               expected=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED)),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'two-emerge-init-sdk',
@@ -59,7 +58,7 @@ def GenTests(api):
               expected=api.portage.EXAMPLE_DOUBLE_EMERGE_INIT_SDK_EXPECTED)),
       api.post_check(post_process.StepTextContains, 'adding emerge metrics',
                      ['Soft failure finding portage stats']),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'fatal-is-non-fatal',
@@ -70,7 +69,7 @@ def GenTests(api):
               expected=api.portage.EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED)),
       # Oh no bigquery just refused to write!
       api.step_data('adding emerge metrics.insert to bq', retcode=1),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'failure-install',
@@ -79,7 +78,7 @@ def GenTests(api):
               step_name='test',
               bapi_stdout=api.portage.EXAMPLE_FAILURE_INSTALL_PACKAGES,
               expected=api.portage.EXAMPLE_FAILURE_INSTALL_PACKAGES_EXPECTED)),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'broken-install',
@@ -88,7 +87,8 @@ def GenTests(api):
               step_name='test',
               bapi_stdout=api.portage.EXAMPLE_BROKEN_INSTALL_PACKAGES)),
       api.post_process(post_process.PropertyEquals, 'failed_portage_stats',
-                       True), api.post_check(post_process.StatusSuccess))
+                       True),
+  )
 
   yield api.test(
       'fooled-output',
@@ -96,7 +96,7 @@ def GenTests(api):
           TestMetricsInputProperties(step_name='test',
                                      bapi_stdout=_FOOLED_OUTPUT)),
       api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'empty-output',
@@ -104,14 +104,14 @@ def GenTests(api):
           TestMetricsInputProperties(step_name='test',
                                      bapi_stdout=_NO_EMERGE_OUTPUT)),
       api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'bad-type',
       api.properties(
           TestMetricsInputProperties(step_name='test', bapi_stdout=_BAD_TYPE)),
       api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'multiple-identical-packages',
@@ -119,4 +119,4 @@ def GenTests(api):
           TestMetricsInputProperties(step_name='test',
                                      bapi_stdout=_MULTIPLE_IDENTICAL)),
       api.post_process(post_process.PropertiesDoNotContain, 'portage_stats'),
-      api.post_check(post_process.StatusSuccess))
+  )

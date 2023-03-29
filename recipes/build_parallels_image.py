@@ -18,16 +18,16 @@ This recipe is invoked as part of uprev_parallels_pin.
 
 from collections import namedtuple
 from pathlib import Path
-from typing import Generator, Tuple
+from typing import Generator
+from typing import Tuple
 
 from PB.recipes.chromeos.build_parallels_image import BuildParallelsImageProperties
 from PB.test_platform.taskstate import TaskState
 from PB.testplans.generate_test_plan import BuildPayload
-
 from recipe_engine import post_process
 from recipe_engine.post_process import GetBuildProperties
-from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
@@ -264,7 +264,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -275,7 +275,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -286,7 +286,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -297,7 +297,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -308,7 +308,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(**props),
       api.phosphorus.properties(),
       api.post_check(post_process.DoesNotRun, 'provision DUT'),
-      api.post_check(post_process.StatusFailure),
+      status='FAILURE',
   )
 
   failureJson = api.json.loads('''[{
@@ -353,8 +353,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'invoke tast.process tast output.read streamed_results.jsonl',
           api.file.read_text(failureJsonl)),
-      api.post_check(post_process.StatusFailure),
       api.post_check(post_process.DoesNotRun, 'upload image'),
+      status='FAILURE',
   )
 
   successJson = api.json.loads('''[{
@@ -388,15 +388,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'tast-no-image',
       api.test_util.test_build(builder='build-parallels-image').build,
-      api.properties(**good_props), api.phosphorus.properties(),
+      api.properties(**good_props),
+      api.phosphorus.properties(),
       api.tast_exec.simulate_test_list_ret('pita.CreateFromIso.uprev'),
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.step_data(
           'invoke tast.process tast output.read streamed_results.jsonl',
           api.file.read_text(successJsonl)),
       api.step_data('invoke tast.rename VM image', retcode=1),
-      api.post_check(post_process.StatusFailure),
-      api.post_check(post_process.DoesNotRun, 'upload image'))
+      api.post_check(post_process.DoesNotRun, 'upload image'),
+      status='FAILURE',
+  )
 
   # Success
   yield api.test(
@@ -410,7 +412,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'provision DUT'),
       api.post_check(post_process.MustRun, 'upload image'),
       api.post_check(post_process.MustRun, 'compute image size and sha256'),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(lambda check, steps: check(
           GetBuildProperties(steps).get('image_name', '') ==
           'pre_pluginvm_image_1.2.3.4_20120514.zip')),
@@ -427,7 +428,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'testmode',
       api.test_util.test_build(builder='build-parallels-image').build,
       api.properties(**props), api.phosphorus.properties(),
-      api.post_check(post_process.StatusSuccess),
       api.post_check(lambda check, steps: check(
           GetBuildProperties(steps).get('image_name', '') == 'test_image.zip')),
       api.post_check(lambda check, steps: check(

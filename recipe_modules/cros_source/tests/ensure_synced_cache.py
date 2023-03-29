@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from PB.recipe_modules.chromeos.repo.repo import RepoProperties
-from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/context',
@@ -30,7 +29,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.cros_source.test(
-      'basic', 'snapshot', api.post_check(post_process.StatusSuccess),
+      'basic', 'snapshot',
       api.path.exists(api.path['start_dir'].join('chromiumos_workspace')),
       api.properties(
           **

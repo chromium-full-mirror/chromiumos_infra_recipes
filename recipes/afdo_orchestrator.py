@@ -8,13 +8,13 @@
 All builders run against the same source tree.
 """
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_test_api import RecipeTestApi
 from PB.chromiumos.common import ArtifactsByService
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.afdo_orchestrator import AfdoOrchestratorProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/properties',
@@ -89,21 +89,18 @@ def GenTests(api: RecipeTestApi):
               gs_bucket="chromeos-image-archive", gs_path="GS_PATH/DIR")))
 
   yield api.orch_menu.test('basic', data.ctp_normal,
-                           api.post_check(post_process.StatusSuccess),
                            with_history=True, collect_builds=data.builds)
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
       'join-if-inflight-orchs', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
       cq=True, with_history=True)
 
   yield api.orch_menu.test(
       'runs-if-no-inflight-orchs', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.post_check(post_process.MustRun, find_inflight_name),
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
@@ -111,13 +108,11 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test('dry-run',
                            api.post_check(post_process.DoesNotRun, 'run tests'),
-                           api.post_check(post_process.StatusSuccess), cq=True,
-                           dry_run=True, collect_builds=data.builds,
+                           cq=True, dry_run=True, collect_builds=data.builds,
                            with_history=True, git_footers=[])
 
   yield api.orch_menu.test(
       'orchestrator-with-process-child-and-followon', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=data.builds, process_child=data.process_child,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
@@ -131,7 +126,6 @@ def GenTests(api: RecipeTestApi):
       }, status='SUCCESS')
   yield api.orch_menu.test(
       'orchestrator-with-pointless-process-child', data.ctp_normal,
-      api.post_check(post_process.StatusSuccess),
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=[pointless_child_build], bucket='toolchain',
       builder='orderfile-generate-orchestrator', with_history=True,

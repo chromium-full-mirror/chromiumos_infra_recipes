@@ -3,11 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.cros_source.test_utils import GitStrategyEquals
 
 from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
-
-from RECIPE_MODULES.chromeos.cros_source.test_utils import GitStrategyEquals
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -33,14 +32,13 @@ def GenTests(api):
       manifest_branch,
       api.repo.fail_repo_sync(True),
       api.post_check(GitStrategyEquals, GitStrategy.MERGE),
-      api.post_check(post_process.StatusException),
+      status='INFRA_FAILURE',
   )
 
   yield api.cros_source.test(
       'apply-gerrit-changes-success',
       manifest_branch,
       api.post_check(GitStrategyEquals, GitStrategy.MERGE),
-      api.post_check(post_process.StatusSuccess),
   )
 
   yield api.cros_source.test(
@@ -55,7 +53,6 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'apply gerrit patch sets.git merge'),
       api.post_check(GitStrategyEquals, GitStrategy.CHERRY_PICK),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -71,7 +68,6 @@ def GenTests(api):
                      'apply gerrit patch sets.git cherry-pick --abort'),
       api.post_check(post_process.MustRun, 'apply gerrit patch sets.git merge'),
       api.post_check(GitStrategyEquals, GitStrategy.MERGE),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -89,6 +85,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'apply gerrit patch sets.git merge'),
       api.post_check(post_process.DoesNotRun,
                      'apply gerrit patch sets.set cros_source_git_strategy'),
-      api.post_check(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )

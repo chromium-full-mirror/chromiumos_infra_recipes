@@ -6,10 +6,9 @@
 import json
 
 from PB.chromiumos import common
-from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
-from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-
+from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
+from PB.recipe_modules.chromeos.sysroot_util.examples.full import FullTestProperties
 from recipe_engine import post_process
 
 DEPS = [
@@ -183,7 +182,9 @@ def GenTests(api):
   )
 
   yield api.test(
-      'fails-install-with-many-packages', test_build(cq=True),
+      'fails-install-with-many-packages',
+      test_build(cq=True),
+      test_build(cq=True),
       api.cros_build_api.set_api_return(
           'install packages', 'SysrootService/InstallPackages',
           json.dumps(
@@ -217,7 +218,10 @@ def GenTests(api):
                       "path": "/all/your/overlay/are/belong/to/us",
                       "location": 1,
                   },
-              }]), sort_keys=True)))
+              }]), sort_keys=True)),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'no-goma', test_build(),
@@ -246,8 +250,13 @@ def GenTests(api):
               use_remoteexec=True,
               builder_name='amd64-generic-postsubmit-remoteexec')))
 
-  yield api.test('failed-image-test', test_build(),
-                 api.properties(FullTestProperties(image_test_json='{}')))
+  yield api.test(
+      'failed-image-test',
+      test_build(),
+      api.properties(FullTestProperties(image_test_json='{}')),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
 
   yield api.test(
       'no-base-image', test_build(),

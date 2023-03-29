@@ -5,7 +5,6 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
-from recipe_engine import post_process
 from recipe_engine.recipe_api import InfraFailure
 
 DEPS = [
@@ -200,5 +199,4 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'test fetch_patch_sets_from_change missing', CHANGES,
           _get_values_dict(api)),
-      api.post_check(post_process.StatusSuccess),
   )

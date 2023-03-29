@@ -102,7 +102,9 @@ def GenTests(api: RecipeTestApi):
           'generate uprev commit', stdout=api.raw_io.output_text(
               'r=fqj@google.com,r=hidehiko@google.com,'
               'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
-      api.post_check(post_process.StepFailure, 'validate push options'))
+      api.post_check(post_process.StepFailure, 'validate push options'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'script-invalid-option',
@@ -110,7 +112,9 @@ def GenTests(api: RecipeTestApi):
           'generate uprev commit', stdout=api.raw_io.output_text(
               '%submit,r=fqj@google.com,r=hidehiko@google.com,'
               'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
-      api.post_check(post_process.StepFailure, 'validate push options'))
+      api.post_check(post_process.StepFailure, 'validate push options'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'script-invalid-label',
@@ -119,4 +123,6 @@ def GenTests(api: RecipeTestApi):
               '%r=fqj@google.com,r=hidehiko@google.com,'
               'topic=libchrome-automated-uprev,'
               'l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,')),
-      api.post_check(post_process.StepFailure, 'validate push options'))
+      api.post_check(post_process.StepFailure, 'validate push options'),
+      status='FAILURE',
+  )

@@ -7,13 +7,11 @@
 
 from typing import Generator
 
+from PB.recipe_engine import result as result_pb2
 from recipe_engine.post_process import PropertyEquals
-from recipe_engine.post_process import StatusFailure
-from recipe_engine.post_process import StatusSuccess
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
-from PB.recipe_engine import result as result_pb2
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -63,7 +61,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   test_branch = '{}.B'.format(test_base)
   test_builder = '{}-cq'.format(test_base)
 
-  def test(name, statuscheck, *args, **kwargs):
+  def test(name, *args, **kwargs):
+    status = kwargs.pop('status', 'SUCCESS')
     kwargs.setdefault('cq', True)
     kwargs.setdefault('critical', True)
     kwargs.setdefault('revision', None)
@@ -73,34 +72,36 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     changes = orch.message.input.gerrit_changes
 
     values = {x.change: {"branch": branch} for x in changes}
-    args += (orch.build, api.post_check(statuscheck),
+    args += (orch.build,
              api.gerrit.set_gerrit_fetch_changes_response(
                  'configure builder', changes, values))
-    return api.test(name, *args)
+    return api.test(name, *args, status=status)
 
-  yield test('cq', StatusSuccess,
-             api.post_check(PropertyEquals, 'manifest_branch', test_branch),
+  yield test('cq', api.post_check(PropertyEquals, 'manifest_branch',
+                                  test_branch),
              api.post_check(PropertyEquals, 'child_verifier', test_builder))
 
   yield test(
-      'staging-cq', StatusSuccess,
+      'staging-cq',
       api.post_check(PropertyEquals, 'manifest_branch', test_branch),
       api.post_check(PropertyEquals, 'child_verifier',
                      'staging-{}'.format(test_builder)),
       builder='staging-firmware-cq-orchestrator', bucket='staging')
 
   yield test(
-      'cq-tagged', StatusSuccess,
+      'cq-tagged',
       api.post_check(PropertyEquals, 'manifest_branch',
                      '{}'.format(test_branch)),
       api.post_check(PropertyEquals, 'child_verifier', test_builder),
       branch='{}-main'.format(test_branch))
 
   yield test(
-      'failed-child', StatusFailure,
+      'failed-child',
       api.buildbucket.simulated_collect_output([
           api.test_util.test_build(builder=test_builder, status='FAILURE',
                                    critical='YES').message
-      ], step_name='launch child.collect'))
+      ], step_name='launch child.collect'),
+      status='FAILURE',
+  )
 
-  yield test('no-child', StatusSuccess, branch='firmware-board-5556.B')
+  yield test('no-child', branch='firmware-board-5556.B')

@@ -5,17 +5,18 @@
 
 """Verify that find_open_uprev_cls() finds CLs as expected."""
 
-from typing import Generator, List
+from typing import Generator
+from typing import List
 
-from recipe_engine import post_process
-from recipe_engine import recipe_api
-from recipe_engine import recipe_test_api
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
 from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import HOSTS_REMOTES
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from recipe_engine import post_process
+from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
 
 DEPS = [
     'recipe_engine/assertions',
@@ -121,13 +122,11 @@ def GenTests(api: recipe_test_api.RecipeTestApi
           projects=[CHROMIUM_PROJECT, INTERNAL_PROJECT],
           expected_gerrit_changes_serialized=[
               CHROMIUM_GERRIT_CHANGE_SER, INTERNAL_GERRIT_CHANGE_SER
-          ]), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+          ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'no-changes', _set_query_changes_response(CHROMIUM_HOST, []),
       _set_query_changes_response(CHROME_INTERNAL_HOST, []),
       api.properties(projects=[CHROMIUM_PROJECT, INTERNAL_PROJECT],
                      expected_gerrit_changes_serialized=[]),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation))

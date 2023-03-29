@@ -104,12 +104,23 @@ def RunSteps(api: RecipeApi, properties: RoboCropProperties):
 
 
 def GenTests(api: RecipeTestApi):
-  yield api.test('basic', api.properties(commit_changes=True))
-  yield api.test('no-commit-changes', api.properties(commit_changes=False))
+  yield api.test(
+      'basic',
+      api.properties(commit_changes=True),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
+  yield api.test(
+      'no-commit-changes',
+      api.properties(commit_changes=False),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )
   yield api.test('basic-chrome',
                  api.properties(commit_changes=True, application='Chrome'))
   yield api.test(
-      'bot-fallbacks', api.properties(commit_changes=True),
+      'bot-fallbacks',
+      api.properties(commit_changes=True),
       api.override_step_data(
           'scale bot groups.get current swarming stats.get bot count query result',
           retcode=1),
@@ -118,4 +129,6 @@ def GenTests(api: RecipeTestApi):
           'scale bot groups.Warning: using bot_fallback configs',
           'scale bot groups.compute scaling actions',
           'scale bot groups.update GCE Provider configs',
-      ), api.post_check(post_process.StatusException))
+      ),
+      status='INFRA_FAILURE',
+  )

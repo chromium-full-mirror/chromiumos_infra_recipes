@@ -26,7 +26,6 @@ def GenTests(api):
   yield api.test(
       'repo-no-event-log-succeeds',
       api.step_data('ensure synced checkout.repo stats.event-log', retcode=1),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -34,6 +33,5 @@ def GenTests(api):
       'repo-bad-event-log-succeeds',
       api.step_data('ensure synced checkout.repo stats.event-log',
                     api.file.read_text('not json yo')),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

@@ -333,6 +333,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data((
           'source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)'
       ), retcode=3),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -648,7 +649,7 @@ def GenTests(api: RecipeTestApi):
           'source cache update.regenerate recovery image.create image from image (2)'
       ),
       api.post_check(post_process.SummaryMarkdown, 'regenerate recovery image'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'regenerate-recovery-image-modulo-true-and-full-sync',
@@ -715,7 +716,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.SummaryMarkdown,
                      'full sync + regenerate recovery image'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'regenerate-recovery-image-modulo-no-trigger',

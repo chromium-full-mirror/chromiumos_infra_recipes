@@ -3,14 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Callable, Dict
-
-from recipe_engine import post_process
-from recipe_engine.post_process_inputs import Step
-from recipe_engine.recipe_api import RecipeApi
+from typing import Callable
+from typing import Dict
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
+from recipe_engine.recipe_api import RecipeApi
 
 DEPS = [
     'recipe_engine/assertions',
@@ -82,8 +82,7 @@ def GenTests(api: RecipeApi):
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
-          }), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+          }), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'create-buildspec',
@@ -123,8 +122,7 @@ def GenTests(api: RecipeApi):
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED",
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SKIPPED",
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
-          }), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+          }), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'no-bbid',
@@ -136,10 +134,12 @@ def GenTests(api: RecipeApi):
                       'steps': [RetryStep.STAGE_ARTIFACTS]
                   },
               }
-          }), api.post_check(post_process.StepFailure, 'RUNNING IN RETRY MODE'),
+          }),
+      api.post_check(post_process.StepFailure, 'RUNNING IN RETRY MODE'),
       api.post_check(SummaryMarkdownEquals, 'no bbid specified'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'bad-build',
@@ -158,14 +158,14 @@ def GenTests(api: RecipeApi):
       api.post_check(post_process.StepFailure, 'RUNNING IN RETRY MODE'),
       api.post_check(SummaryMarkdownEquals,
                      'could not fetch build 8922054662172514001'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test('full-run',
                  api.properties(**{'$chromeos/checkpoint': {
                      'retry': False,
                  }}), api.post_check(post_process.MustRun, 'stage artifacts'),
-                 api.post_check(post_process.StatusSuccess),
                  api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -190,8 +190,7 @@ def GenTests(api: RecipeApi):
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED",
               RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS"
-          }), api.post_check(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation))
+          }), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'step-failure',
@@ -204,14 +203,16 @@ def GenTests(api: RecipeApi):
                       'steps': [RetryStep.STAGE_ARTIFACTS]
                   },
               }
-          }), api.step_data('stage artifacts', retcode=1),
+          }),
+      api.step_data('stage artifacts', retcode=1),
       api.buildbucket.simulated_get(
           original_build, step_name='RUNNING IN RETRY MODE.get original build'),
       api.post_check(post_process.MustRun, 'stage artifacts'),
       api.post_check(post_process.PropertyEquals, 'retry_summary',
                      {RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "FAILED"}),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   no_artifacts_link = build_pb2.Build(id=8922054662172514001, status='FAILURE')
   no_artifacts_link.input.properties['recipe'] = 'build_release'
@@ -233,8 +234,9 @@ def GenTests(api: RecipeApi):
       api.post_check(post_process.StepFailure,
                      'RUNNING IN RETRY MODE.verify previous build'),
       api.post_check(post_process.DoesNotRun, 'stage artifacts'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   no_signing_uris = build_pb2.Build(id=8922054662172514001, status='FAILURE')
   no_signing_uris.input.properties['recipe'] = 'build_release'
@@ -258,5 +260,6 @@ def GenTests(api: RecipeApi):
       api.post_check(post_process.StepFailure,
                      'RUNNING IN RETRY MODE.verify previous build'),
       api.post_check(post_process.DoesNotRun, 'stage artifacts'),
-      api.post_check(post_process.StatusFailure),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )

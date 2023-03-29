@@ -3,12 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_source.examples.configure_builder import ConfigureBuilderProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -71,18 +70,15 @@ def GenTests(api):
   yield api.cros_source.test(
       'basic', manifest_branch,
       props(ref='refs/heads/snapshot', cid='snapshot-HEAD-SHA'),
-      api.post_check(post_process.StatusSuccess), gerrit_changes=[change1],
-      revision=None)
+      gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-branch', manifest_branch, props(ref=ref, cid=revision),
-      api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-two-branches', manifest_branch, props(ref=ref, cid=revision),
-      api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
           556: dict(branch=branch + '-main')
@@ -90,7 +86,6 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'change-on-diff-branches', manifest_branch, props(ref=ref, cid=revision),
-      api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1, change2], values_dict={
           555: dict(branch=branch),
           556: dict(branch='firmware-other-999.B')
@@ -99,7 +94,6 @@ def GenTests(api):
   yield api.cros_source.test(
       'conf-change', manifest_branch,
       props(ref='refs/heads/snapshot', cid='snapshot-HEAD-SHA'),
-      api.post_check(post_process.StatusSuccess),
       api.cros_infra_config.override_builder_configs_test_data(
           BuilderConfigs(), ref='refs/changes/57/557/1', binaryproto=False,
           step_name='configure builder.cros_infra_config'),
@@ -109,22 +103,19 @@ def GenTests(api):
           'fetch refs/changes/57/557/1:generated/builder_configs.cfg'),
       gerrit_changes=[conf_change1], revision=None)
 
-  yield api.cros_source.test('two-conf-change',
-                             api.post_check(post_process.StatusFailure),
-                             gerrit_changes=[conf_change1,
-                                             conf_change2], revision=None)
+  yield api.cros_source.test('two-conf-change', None,
+                             gerrit_changes=[conf_change1, conf_change2],
+                             revision=None, status='FAILURE')
 
   yield api.cros_source.test(
       'change-on-release-branch', manifest_branch,
       props(ref=R90_ref, cid=R90_revision),
-      api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1], values_dict={555: dict(branch=R90_branch)}),
       gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-stabilize-branch', manifest_branch,
       props(ref=stabilize_ref, cid=stabilize_revision),
-      api.post_check(post_process.StatusSuccess),
       _gerrit_return([change1],
                      values_dict={555: dict(branch=stabilize_branch)}),
       gerrit_changes=[change1], revision=None)

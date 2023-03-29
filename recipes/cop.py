@@ -5,13 +5,16 @@
 
 """Recipe for CoP: A CL validator based on Google Cloud Build. go/cros-cop"""
 
-from typing import Dict, Generator, Optional
+from typing import Dict
+from typing import Generator
+from typing import Optional
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.cop import CopProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_test_api import (RecipeTestApi, TestData)
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/file',
@@ -209,7 +212,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepException, 'validate properties'),
       api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')
 
-  yield api.test('basic', api.post_check(post_process.StatusSuccess),
+  yield api.test('basic',
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 

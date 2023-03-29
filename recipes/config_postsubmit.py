@@ -15,14 +15,14 @@ Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 """
 
-from collections import namedtuple
 from collections import OrderedDict
+from collections import namedtuple
+
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
-from RECIPE_MODULES.chromeos.gerrit.api import Label
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
 
@@ -625,7 +625,6 @@ def GenTests(api):
               '.copy public config',
           retcode=1),
       api.post_process(post_process.DoesNotRunRE, 'git commit'),
-      api.post_process(post_process.StatusFailure),
       api.post_process(
           post_process.ResultReason,
           "1 step failed:\n\n\n- Infra Failure: "              \
@@ -634,6 +633,7 @@ def GenTests(api):
                    ".copy public config') (retcode: 1)\n"
       ),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   # flattening stage tests
@@ -816,6 +816,8 @@ def GenTests(api):
           '.aggregating configs'
           '.update ref.git transaction.merge '
           'ConfigBundles to config-internal', retcode=1),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -837,6 +839,8 @@ def GenTests(api):
               '.regenerating suite scheduler configs'           \
               '.diffing to find changes',
       ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )
 
   yield api.test(
@@ -858,4 +862,6 @@ def GenTests(api):
               '.regenerating test plans'          \
               '.diffing to find changes',
       ),
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
   )

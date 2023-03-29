@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-
 from PB.recipe_modules.chromeos.cros_source.examples.checkout_manifests import CheckoutManifestsProperties
 
 DEPS = [
@@ -62,16 +60,19 @@ def GenTests(api):
   # push manifest refs.
   yield api.cros_source.test(
       'basic-success', manifest_branch,
-      api.post_check(post_process.StatusSuccess),
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
       revision=None, cq=False, git_ref=None)
 
   yield api.cros_source.test(
-      'basic-failure', manifest_branch,
+      'basic-failure',
+      manifest_branch,
       api.properties(CheckoutManifestsProperties(checkout_external=True)),
       api.repo.fail_repo_sync(True),
-      api.post_check(post_process.StatusException), revision=None, cq=False,
-      git_ref=None)
+      revision=None,
+      cq=False,
+      git_ref=None,
+      status='INFRA_FAILURE',
+  )
 
   # Running on an unpinned branch.
   release_branch = 'release-R88-13597.B'
@@ -79,28 +80,28 @@ def GenTests(api):
       'branch', release_branch,
       api.properties(CheckoutManifestsProperties(branch_name=release_branch)),
       api.cros_source.snapshot_xml_exists(False),
-      api.post_check(post_process.StatusSuccess),
       git_ref='refs/heads/{}'.format(release_branch), cq=False)
 
   # Two footers
   yield api.cros_source.test(
-      'two-footers', manifest_branch,
+      'two-footers',
+      manifest_branch,
       api.properties(CheckoutManifestsProperties(branch_name=manifest_branch)),
-      api.post_check(post_process.StatusAnyFailure),
       api.step_data('read git footers',
                     stdout=api.raw_io.output('\n'.join(['1' * 40, '2' * 40]))),
-      cq=False)
+      cq=False,
+      status='FAILURE',
+  )
 
   yield api.cros_source.test(
       'only-external', manifest_branch,
-      api.post_check(post_process.StatusSuccess),
       api.properties(
           CheckoutManifestsProperties(only_external=True,
                                       checkout_external=True)), revision=None,
       cq=False, git_ref=None)
 
   yield api.cros_source.test(
-      'noop', manifest_branch, api.post_check(post_process.StatusSuccess),
+      'noop', manifest_branch,
       api.properties(
           CheckoutManifestsProperties(only_external=True,
                                       checkout_external=False)), revision=None,

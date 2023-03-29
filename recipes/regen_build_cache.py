@@ -79,4 +79,8 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      # TODO (b/275363240): audit this test.
+      status='FAILURE',
+  )

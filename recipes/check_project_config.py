@@ -5,12 +5,9 @@
 
 """Checks a project conforms to its program's constraints."""
 
+from PB.recipes.chromeos.check_project_config import CheckProjectConfigProperties
+from PB.recipes.chromeos.check_project_config import ConfigBundleCheckoutPath
 from recipe_engine import post_process
-
-from PB.recipes.chromeos.check_project_config import (
-    CheckProjectConfigProperties,
-    ConfigBundleCheckoutPath,
-)
 
 PROPERTIES = CheckProjectConfigProperties
 
@@ -276,7 +273,8 @@ def GenTests(api):
       api.post_process(post_process.ResultReasonRE,
                        ('.*local_manifests must be specified.*')),
       api.post_process(post_process.DropExpectation),
-  )
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   yield api.test(
       'local-manifest-and-manifest-branch-specified',
@@ -307,7 +305,8 @@ def GenTests(api):
           post_process.ResultReasonRE,
           ('.*All checkout_paths and config_paths must be specified.*')),
       api.post_process(post_process.DropExpectation),
-  )
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   yield api.test(
       'no-manifest-groups',
@@ -315,7 +314,8 @@ def GenTests(api):
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one manifest group must be specified.*'),
       api.post_process(post_process.DropExpectation),
-  )
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   yield api.test(
       'no-gerrit-changes',
@@ -324,15 +324,16 @@ def GenTests(api):
       api.post_process(post_process.ResultReasonRE,
                        '.*At least one gerrit_change must be specified.*'),
       api.post_process(post_process.DropExpectation),
-  )
+      # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE')
 
   yield api.test(
       'checker-failed',
       api.properties(**properties_dict()),
       project_config_cq_build(api),
       api.step_data('check constraints', retcode=1),
-      api.post_process(post_process.StatusFailure),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   yield api.test(
@@ -346,6 +347,5 @@ def GenTests(api):
           'cherry-pick gerrit changes.apply gerrit patch sets',
           'Discarded changes: chrome-internal:123456',
       ),
-      api.post_process(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

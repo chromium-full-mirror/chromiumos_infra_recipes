@@ -6,7 +6,10 @@
 """Success workflow tests for the signing recipe module."""
 
 import functools
-from typing import Any, Callable, Dict, List
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
 
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -177,6 +180,7 @@ def GenTests(api: RecipeTestApi):
                   'TIMED_OUT'
           }),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   # Failed test.
@@ -207,6 +211,7 @@ def GenTests(api: RecipeTestApi):
                   'FAILED'
           }),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   # Failed test with ImageAlreadyExistsError error.
@@ -241,7 +246,6 @@ def GenTests(api: RecipeTestApi):
               'gs://bucket/directory1/directory2/releases/file2.instructions':
                   'PREVIOUSLY_PASSED'
           }),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -262,6 +266,7 @@ def GenTests(api: RecipeTestApi):
                      [_PASSED_COMPLETE, None]),
       step_failed('verify results'),
       api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   api.signing.setup_mocks()

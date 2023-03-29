@@ -6,9 +6,6 @@ from copy import deepcopy
 
 from google.protobuf.json_format import MessageToDict
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.chromite.api.payload import Build
 from PB.chromite.api.payload import DLCImage
 from PB.chromite.api.payload import GenerationRequest
@@ -16,6 +13,8 @@ from PB.chromite.api.payload import SignedImage
 from PB.chromite.api.payload import UnsignedImage
 from PB.chromiumos.common import ImageType
 from PB.recipes.chromeos.paygen import PaygenProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -70,7 +69,7 @@ def GenTests(api):
   yield api.test(
       'No-payloads',
       api.properties(expected_url_title='123456 | No paygen requests'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'One-Full-Payload-Signed-Image',
@@ -91,7 +90,8 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel | Full (100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Delta-Payload-Signed-Image',
@@ -116,7 +116,8 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY dev-channel | Delta (99.0.0-100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Full-Payload-Unsigned-Image',
@@ -137,7 +138,8 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST canary-channel | Full (100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Delta-Payload-Unsigned-Image',
@@ -162,7 +164,8 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | Unsigned IMAGE_TYPE_TEST canary-channel | Delta (99.0.0-100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Full-Payload-DLC-Image',
@@ -181,7 +184,8 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | DLC (handwriting-zh) canary-channel | Full (100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Delta-Payload-DLC-Image',
@@ -202,7 +206,8 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | DLC (handwriting-zh) canary-channel | Delta (99.0.0-100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'Multiple-Full-DLC-Payloads-Same-Target-Version',
@@ -229,8 +234,9 @@ def GenTests(api):
                   full_update=True,
               ),
           ).SerializeToString(),
-      ]), api.properties(expected_url_title='123456 | 2x DLC | Full (100.0.0)'),
-      api.post_check(post_process.StatusSuccess))
+      ]),
+      api.properties(expected_url_title='123456 | 2x DLC | Full (100.0.0)'),
+  )
 
   yield api.test(
       'Multiple-Full-DLC-Payloads-Different-Target-Versions',
@@ -260,7 +266,7 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | 2x DLC | Full (various versions)'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'Multiple-Full-DLC-Payloads-Some-Full-Some-Delta',
@@ -293,7 +299,7 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | 2x DLC | Some full, some delta'),
-      api.post_check(post_process.StatusSuccess))
+  )
 
   yield api.test(
       'Multiple-Full-DLC-Payloads-Different-Image-Types',
@@ -321,7 +327,8 @@ def GenTests(api):
       ]),
       api.properties(
           expected_url_title='123456 | 2 payloads, various image types | Full (various versions)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Full-MiniOS-Payload',
@@ -343,7 +350,8 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel, minios | Full (100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'One-Full-One-N2N-MiniOS-Payload',
@@ -383,7 +391,8 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | 2x Signed IMAGE_TYPE_RECOVERY canary-channel, minios | Some full, some delta'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )
 
   yield api.test(
       'No-Target-Image',
@@ -393,7 +402,10 @@ def GenTests(api):
                   generation_request=GenerationRequest(full_update=True),
               ).SerializeToString(),
           ],
-      ), api.post_check(post_process.StepFailure, 'run'))
+      ),
+      api.post_check(post_process.StepFailure, 'run'),
+      status='FAILURE',
+  )
 
   yield api.test(
       'No-Source-Image',
@@ -412,4 +424,5 @@ def GenTests(api):
       ),
       api.properties(
           expected_url_title='123456 | Signed IMAGE_TYPE_RECOVERY canary-channel | No src image found (?-100.0.0)'
-      ), api.post_check(post_process.StatusSuccess))
+      ),
+  )

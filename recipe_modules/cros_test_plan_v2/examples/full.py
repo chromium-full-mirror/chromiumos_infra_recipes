@@ -2,12 +2,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import text_format, json_format
+from google.protobuf import json_format
+from google.protobuf import text_format
 
 from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
 from recipe_engine import post_process
 
 DEPS = [
@@ -141,6 +141,5 @@ def GenTests(api):
               '[CLEANUP]/test_plan_tmp_2',
           ],
       ),
-      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )
