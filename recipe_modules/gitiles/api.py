@@ -114,6 +114,7 @@ class GitilesApi(recipe_api.RecipeApi):
       try:
         decoded_data = base64.b64decode(data)
       except (TypeError, binascii.Error) as e:
+        pres.logs['raw data'] = data
         raise StepFailure('non base64 data returned from gitiles') from e
       pres.logs['data'] = decoded_data
       return decoded_data

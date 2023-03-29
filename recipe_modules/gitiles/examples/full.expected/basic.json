@@ -87,6 +87,8 @@
     "cmd": [],
     "name": "fetch gitiles file (2)",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw data@not base64 yo@@@",
+      "@@@STEP_LOG_END@raw data@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
