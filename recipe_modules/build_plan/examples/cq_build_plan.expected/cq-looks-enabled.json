@@ -1130,11 +1130,11 @@
       "-json",
       "-nopage",
       "-n",
-      "1",
+      "2",
       "-fields",
       "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}}"
     ],
     "infra_step": true,
     "luci_context": {

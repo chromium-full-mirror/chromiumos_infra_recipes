@@ -83,15 +83,12 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
         'end_time', 'status'
     })
-    # TODO(b/269180630): Remove ended_mask when build greenness is populated.
-    # We can check greenness of snapshot-orchestrators that are still
-    # in-progress as long as build greenness is populated.
     predicate = builds_service_pb2.BuildPredicate(
         create_time=common_pb2.TimeRange(
             start_time=timestamp_pb2.Timestamp(
                 seconds=self.m.buildbucket.build.create_time.ToSeconds() -
                 self._lookback_hours * 60 * 60,
-            )), status=common_pb2.ENDED_MASK)
+            )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = self._greenness_bucket
     predicate.builder.builder = self._greenness_builder
@@ -142,8 +139,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def get_latest_snapshot_greenness(self) -> int:
     '''Returns aggregate greenness of latest scored snapshot-orchestrator.
 
-    Use common_pb2.ENDED_MASK to identify completed builds and limits return to
-    1 build to get the latest scored build.
+    Limit return to 2 builds to get the latest scored build. If the latest
+    snapshot-orchestrator has just started, we won't have greenness yet, so
+    look back at the most recent snapshot-orchestrator that does have greenness
+    populated.
 
     Returns:
       aggregate greenness for latest scored snapshot-orchestrator, or -1 if
@@ -151,9 +150,20 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     with self.m.step.nest(
         'checking latest scored snapshot greenness') as presentation:
-      result = self._get_snapshots(limit=1)
+      result = self._get_snapshots(limit=2)
       if result:
-        snapshot_stats = self._parse_snapshot_result(result[0])
+        # If the latest (currently running) snapshot-orchestrator doesn't have
+        # greenness populated yet, use the previous snapshot-orchestrator run.
+        scored_snapshot = result[0]
+        if 'greenness' not in scored_snapshot.output.properties or \
+        'aggregateMetric' not in result[0].output.properties['greenness']:
+          try:
+            scored_snapshot = result[1]
+            presentation.logs[
+                'checking latest scored snapshot greenness'] = f'Latest snapshot go/bbid/{result[0].id} does not have greenness yet, using go/bbid/{scored_snapshot.id} snapshot.'
+          except IndexError:  # Tolerate only finding one snapshot.
+            scored_snapshot = result[0]
+        snapshot_stats = self._parse_snapshot_result(scored_snapshot)
         presentation.logs['latest scored snapshot greenness'] = (
             f'latest scored snapshot-orchestrator '
             f'go/bbid/{snapshot_stats.bbid} has aggregate greenness of {snapshot_stats.agg_green}. '

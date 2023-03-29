@@ -84,7 +84,7 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
+              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}}"
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -128,7 +128,7 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               "-predicate",
-              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}, \"status\": \"ENDED_MASK\"}"
+              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}}"
           ],
       ),
       api.post_process(post_process.DropExpectation),
