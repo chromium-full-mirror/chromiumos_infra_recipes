@@ -8099,7 +8099,8 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@container metadata@{}@@@",
       "@@@STEP_LOG_END@container metadata@@@",
-      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/4321@@@"
+      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/4321@@@",
+      "@@@SET_BUILD_PROPERTY@tast_first_class_tests@[]@@@"
     ]
   },
   {

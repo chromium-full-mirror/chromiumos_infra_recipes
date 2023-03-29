@@ -24,6 +24,8 @@ _DEFAULT_FAILED_RESPONSE = ExecuteResponse(
 
 _DIRECT_TAST_EXP = 'chromeos.skylab.direct_tast_testing'
 
+_TAST_FIRST_CLASS_TESTS_OUTPUT_PROP = 'tast_first_class_tests'
+
 
 class SkylabApi(recipe_api.RecipeApi):
   """Module for issuing commands to Skylab"""
@@ -208,6 +210,7 @@ class SkylabApi(recipe_api.RecipeApi):
     # Start of main body
     have_container_metadata = container_metadata is not None
     previous_results = previous_results or {}
+    tast_first_class_tests = []
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
@@ -256,6 +259,8 @@ class SkylabApi(recipe_api.RecipeApi):
                     uht.hw_test.tag_criteria)
                 if uht.hw_test.tag_criteria != TestSuite.TestCaseTagCriteria():
                   tast_first_class = True
+                  tast_first_class_tests.append(
+                      self.m.skylab_results.request_tag(uht.hw_test))
               configure_step.step_summary_text = "(Executing via CFT)"
 
               # Only pass the names of previously failed tests if the run is
@@ -289,6 +294,8 @@ class SkylabApi(recipe_api.RecipeApi):
                                          can_outlive_parent=async_suite_run,
                                          bb_tags=bb_tags,
                                          inherit_buildsets=False)
+      presentation.properties[
+          _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP] = tast_first_class_tests
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
       presentation.links['suite link'] = build_url
