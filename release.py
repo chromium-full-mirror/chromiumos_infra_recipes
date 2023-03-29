@@ -111,7 +111,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       '-i', '--instanceid', type=CipdInstance,
       help='Release up to the commit specified by the instanceid. '
       'Instanceids are found at:\n'
-      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+\n'
+      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
       'Click into an instance to see the commit attached to it.')
   parser.add_argument('-s', '--ignore-staging-failures', action='store_true',
                       help='Release even if staging failures are present.')
