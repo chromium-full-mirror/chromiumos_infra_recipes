@@ -146,6 +146,7 @@
   * [build_cq](#recipes-build_cq) (Python3 ✅) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_factory](#recipes-build_factory) (Python3 ✅) &mdash; Recipe for generating artifacts for Factory builders.
   * [build_firmware](#recipes-build_firmware) (Python3 ✅) &mdash; Recipe that builds and tests firmware.
+  * [build_incremental](#recipes-build_incremental) (Python3 ✅) &mdash; Recipe for building a BuildTarget incrementally.
   * [build_informational](#recipes-build_informational) (Python3 ✅) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_kabuto_shadercache](#recipes-build_kabuto_shadercache) (Python3 ✅) &mdash; Recipe for building Borealis shadercache using Kabuto.
   * [build_legacy_factory](#recipes-build_legacy_factory) (Python3 ✅) &mdash; Recipe that builds factory images/artifacts on a factory branch.
@@ -10063,6 +10064,17 @@ This recipe should only be used for ToT firmware builds.
 &mdash; **def [RunSteps](/recipes/build_firmware.py#88)(api, properties):**
 
 &mdash; **def [UploadTestResults](/recipes/build_firmware.py#45)(api, location, builder_name):**
+### *recipes* / [build\_incremental](/recipes/build_incremental.py)
+
+[DEPS](/recipes/build_incremental.py#19): [build\_menu](#recipe_modules-build_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for building a BuildTarget incrementally.
+
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#37)(api: RecipeApi, config: BuilderConfig):**
+
+&mdash; **def [RunSteps](/recipes/build_incremental.py#30)(api: RecipeApi):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#18): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
