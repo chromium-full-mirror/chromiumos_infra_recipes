@@ -6,6 +6,7 @@
 """Recipe that builds a ChromiumOS SDK and cross-compilers."""
 
 import os
+import re
 from typing import List, Optional
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
@@ -76,10 +77,14 @@ class BuildSDKRun:
       self._build_toolchain()
       self._create_sdk_tarball()
       self._create_sdk_manifest()
-      if not self.m.build_menu.is_staging:
-        self._upload_prebuilts()
-        self._upload_sdk_tarball_and_manifest()
-        self._update_gs_latest_file()
+      self._upload_prebuilts()
+      self._upload_sdk_tarball_and_manifest()
+      self._update_gs_latest_file()
+
+  @property
+  def _skip_uploads(self):
+    """Whether this builder should skip uploading to GS://."""
+    return self.m.build_menu.is_staging
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -147,17 +152,15 @@ class BuildSDKRun:
     where ${version} is the SDK version (declared elsewhere in this recipe).
 
     Raises:
-      AssertionError: If called from a staging environment.
       AssertionError: If toolchain tarballs have not been built yet.
     """
-    assert not self.m.build_menu.is_staging
     with self.m.step.nest('upload host prebuilts'):
       source_dir = os.path.join(self.m.cros_sdk.chroot.path, 'var', 'lib',
                                 'portage', 'pkgs')
       dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
                                f'chroot-{self._version}', 'packages')
       self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path, args=['-r'],
-                           multithreaded=True)
+                           multithreaded=True, dry_run=self._skip_uploads)
 
   def _upload_target_prebuilts(self) -> None:
     """Upload binaries for the amd64-host build target to GS://.
@@ -167,17 +170,15 @@ class BuildSDKRun:
     where ${version} is the SDK version (declared elsewhere in this recipe).
 
     Raises:
-      AssertionError: If called from a staging environment.
       AssertionError: If toolchain tarballs have not been built yet.
     """
-    assert not self.m.build_menu.is_staging
     with self.m.step.nest('upload target prebuilts'):
       source_dir = os.path.join(self.m.cros_sdk.chroot.path, 'build',
                                 SDK_BUILD_TARGET, 'packages')
       dest_path = os.path.join('board', SDK_BUILD_TARGET,
                                f'chroot-{self._version}', 'packages')
       self.m.gsutil.upload(source_dir, PREBUILTS_BUCKET, dest_path, args=['-r'],
-                           multithreaded=True)
+                           multithreaded=True, dry_run=self._skip_uploads)
 
   def _upload_packages_index(self) -> None:
     """Upload the packages index file to Google Storage.
@@ -187,11 +188,7 @@ class BuildSDKRun:
     where ${version} is the SDK version (declared elsewhere in this recipe).
 
     TODO(b/270142110): Implement this.
-
-    Raises:
-      AssertionError: If called from a staging environment.
     """
-    assert not self.m.build_menu.is_staging
 
   def _upload_toolchain_prebuilts(self) -> None:
     """Upload toolchain prebuilt tarballs to GS://.
@@ -202,17 +199,29 @@ class BuildSDKRun:
     For example, gs://chromiumos-sdk/1970/01/**.tar.xz
 
     Raises:
-      AssertionError: If called from a staging environment.
       AssertionError: If toolchain tarballs have not been built yet.
     """
-    assert not self.m.build_menu.is_staging
     with self.m.step.nest('upload sdk toolchain tarballs'):
       assert self._toolchain_tarball_paths is not None
       for source_path in self._toolchain_tarball_paths:
-        basename = os.path.basename(source_path)
-        dest_path = os.path.join(self.m.time.utcnow().strftime('%Y/%m'),
-                                 basename)
-        self.m.gsutil.upload(source_path, SDK_BUCKET, dest_path)
+        self._upload_one_toolchain_prebuilt(source_path)
+
+  def _upload_one_toolchain_prebuilt(self, source_path: str) -> None:
+    """Upload a single toolchain prebuilt tarball to GS://.
+
+    The destination folder typically looks like:
+      gs://chromiumos-sdk/YYYY/MM
+    where YYYY is the current year and MM is the current month.
+    For example, gs://chromiumos-sdk/1970/01/**.tar.xz
+
+    Args:
+      source_path: The local path to the toolchain file.
+    """
+    basename = os.path.basename(source_path)
+    with self.m.step.nest(f'upload {basename}'):
+      dest_path = os.path.join(self.m.time.utcnow().strftime('%Y/%m'), basename)
+      self.m.gsutil.upload(source_path, SDK_BUCKET, dest_path,
+                           dry_run=self._skip_uploads)
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
     """Upload the SDK tarball, and corresponding manifest, to GS://.
@@ -225,19 +234,19 @@ class BuildSDKRun:
     tarball's destination, but with `.Manifest` appended to the basename.
 
     Raises:
-      AssertionError: If called from a staging environment.
       AssertionError: If the SDK tarball or manifest has not been built yet.
     """
-    assert not self.m.build_menu.is_staging
     with self.m.step.nest('upload sdk tarball and manifest'):
-      assert self._sdk_tarball_path is not None
-      tarball_dest_path = f'cros-sdk-{self._version}.tar.xz'
-      self.m.gsutil.upload(self._sdk_tarball_path, SDK_BUCKET,
-                           tarball_dest_path)
-      assert self._sdk_manifest_path is not None
-      manifest_dest_path = f'{tarball_dest_path}.Manifest'
-      self.m.gsutil.upload(self._sdk_manifest_path, SDK_BUCKET,
-                           manifest_dest_path)
+      with self.m.step.nest('upload sdk tarball'):
+        assert self._sdk_tarball_path is not None
+        tarball_dest_path = f'cros-sdk-{self._version}.tar.xz'
+        self.m.gsutil.upload(self._sdk_tarball_path, SDK_BUCKET,
+                             tarball_dest_path, dry_run=self._skip_uploads)
+      with self.m.step.nest('upload sdk manifest'):
+        assert self._sdk_manifest_path is not None
+        manifest_dest_path = f'{tarball_dest_path}.Manifest'
+        self.m.gsutil.upload(self._sdk_manifest_path, SDK_BUCKET,
+                             manifest_dest_path, dry_run=self._skip_uploads)
 
   def _update_gs_latest_file(self) -> None:
     """Update the GS:// latest SDK file to point to the newly built SDK.
@@ -268,6 +277,11 @@ class BuildSDKRun:
 
 
 def GenTests(api: RecipeTestApi):
+  # RE_GSUTIL is a regex that looks for a path ending in 'gsutil.py'.
+  # This is useful for post_process.StepCommandContains, since we don't really
+  # care about the full path to gsutil.py.
+  RE_GSUTIL = re.compile(r'gsutil\.py$')
+
   yield api.test(
       'basic',
       api.post_check(post_process.StepSuccess,
@@ -278,6 +292,29 @@ def GenTests(api: RecipeTestApi):
                      'call chromite.api.SdkService/BuildSdkTarball'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/CreateManifestFromSdk'),
+      # Check that all upload steps actually perform gsutil commands.
+      api.post_check(post_process.StepCommandContains,
+                     'upload prebuilts.upload host prebuilts.gsutil upload',
+                     [RE_GSUTIL]),
+      api.post_check(post_process.StepCommandContains,
+                     'upload prebuilts.upload target prebuilts.gsutil upload',
+                     [RE_GSUTIL]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.gz.gsutil upload',
+          [RE_GSUTIL]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.gz.gsutil upload',
+          [RE_GSUTIL]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
+          [RE_GSUTIL]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload',
+          [RE_GSUTIL]),
       status='SUCCESS')
 
   yield api.test(
@@ -301,4 +338,40 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
+  )
+
+  def StepCommandEmpty(check, step_odict, step):
+    """Assert that a command has no arguments.
+
+    TODO(gredelston): After https://crrev.com/c/4386273 lands and gets rolled
+    into the ChromeOS .recipe_deps, replace with the upstream check.
+
+    Args:
+      step: The full name of the step to check.
+    """
+    check(step_odict[step].cmd == [])
+
+  yield api.build_menu.test(
+      'staging-does-not-upload',
+      api.post_check(StepCommandEmpty,
+                     'upload prebuilts.upload host prebuilts.gsutil upload'),
+      api.post_check(StepCommandEmpty,
+                     'upload prebuilts.upload target prebuilts.gsutil upload'),
+      api.post_check(
+          StepCommandEmpty,
+          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.gz.gsutil upload'
+      ),
+      api.post_check(
+          StepCommandEmpty,
+          'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.gz.gsutil upload'
+      ),
+      api.post_check(
+          StepCommandEmpty,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload'),
+      api.post_check(
+          StepCommandEmpty,
+          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload'),
+      builder='staging-chromiumos-sdk',
+      bucket='staging',
+      status='SUCCESS',
   )
