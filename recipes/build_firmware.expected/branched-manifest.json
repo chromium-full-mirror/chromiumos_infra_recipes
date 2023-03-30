@@ -2218,7 +2218,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "factory-firmware-ti50-B-HEAD-SHA",
       "--position-num"

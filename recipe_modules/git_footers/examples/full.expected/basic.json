@@ -1,7 +1,7 @@
 [
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--key",
@@ -12,7 +12,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "key"
@@ -23,7 +23,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"
@@ -138,7 +138,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py"
     ],
     "infra_step": true,
@@ -147,7 +147,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"
@@ -157,7 +157,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Change-Id"
@@ -168,7 +168,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Change-Id"

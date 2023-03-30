@@ -1221,7 +1221,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Add-Test-Suites"
@@ -1247,7 +1247,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Add-TS-Boards-BuildTarget"
@@ -1273,7 +1273,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Add-TS-Pool"

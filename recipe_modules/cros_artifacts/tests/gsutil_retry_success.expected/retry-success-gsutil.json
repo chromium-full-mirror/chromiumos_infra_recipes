@@ -528,7 +528,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "2d72510e447ab60a9728aeea2362d8be2cbd7789",
       "--position-num"

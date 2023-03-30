@@ -2806,7 +2806,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Reviewed-on"
@@ -2852,7 +2852,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "FETCH_HEAD",
       "--key",
@@ -2934,7 +2934,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"
@@ -3137,7 +3137,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "HEAD",
       "--position-num"

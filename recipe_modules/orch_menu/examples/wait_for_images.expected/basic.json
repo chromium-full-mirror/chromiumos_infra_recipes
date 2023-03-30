@@ -1847,7 +1847,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
       "--key",
@@ -2537,7 +2537,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Slim-Builds"
@@ -2570,7 +2570,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Slim-Builds"
@@ -2603,7 +2603,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Slim-Builds"
@@ -2639,7 +2639,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Force-Relevant-Builds"
@@ -2676,7 +2676,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -8188,7 +8188,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -8479,7 +8479,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -8850,7 +8850,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"
@@ -9665,7 +9665,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Cros-Experiments"

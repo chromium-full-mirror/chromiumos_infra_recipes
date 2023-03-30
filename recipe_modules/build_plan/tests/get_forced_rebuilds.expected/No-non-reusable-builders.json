@@ -118,7 +118,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Recycled-Builds"
@@ -201,7 +201,7 @@
   },
   {
     "cmd": [
-      "python",
+      "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "--key",
       "Disallow-Recycled-Builds"
