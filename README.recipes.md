@@ -2855,7 +2855,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#619)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#620)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -2886,7 +2886,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#516)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#517)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
 
 Configure the builder.
 
@@ -2912,7 +2912,7 @@ Returns:
 
 Get the builder group for the currently running builder.
 
-&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#504)(self, is_staging=None, config=None):**
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#505)(self, is_staging=None, config=None):**
 
 Configure the builder's knowledge of whether it's running in staging.
 
@@ -2928,7 +2928,7 @@ Return the list of experiments active for this build.
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#323)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#324)(self):**
 
 Force a reload of the config map from ToT.
 
@@ -2941,7 +2941,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#106)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#333)(self, application='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#334)(self, application='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -2949,7 +2949,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#581)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#582)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -2960,7 +2960,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#605)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#606)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -2971,7 +2971,7 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#273)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#274)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -2994,7 +2994,7 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#359)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#360)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
@@ -3005,7 +3005,7 @@ Returns:
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#348)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#349)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -3032,7 +3032,7 @@ Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#301)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#302)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -3046,7 +3046,7 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#633)(self, critical=None, override=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#634)(self, critical=None, override=False):**
 
 Set the buildbucket.build.critical value.
 
@@ -3056,9 +3056,9 @@ Args:
   override (bool): Whether to override the existing criticality value.
     Defaults to False.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#330)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#331)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#327)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#328)(self, run_spec):**
 
 &emsp; **@property**<br>&mdash; **def [target\_builder\_group](/recipe_modules/cros_infra_config/api.py#191)(self):**
 

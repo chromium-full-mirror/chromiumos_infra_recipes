@@ -242,6 +242,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                                   self.test_api.builder_configs_step_test_data,
                                   message=BuilderConfigs())
 
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def _get_name_to_builder_config(self, force_reload=False):
     """Helper method that returns the name to BuilderConfig map.
 
