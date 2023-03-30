@@ -130,6 +130,23 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/image-archive_tmp_1/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "name": "run tast tests.first tast iteration.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "name": "run tast tests.first tast iteration.count online CPUs",
@@ -168,7 +185,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-archive_tmp_1/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_1/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -378,6 +395,22 @@
       "[CLEANUP]/kvm-pid_tmp_1"
     ],
     "name": "run tast tests.first tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "infra_step": true,
+    "name": "run tast tests.first tast iteration.remove overlay image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

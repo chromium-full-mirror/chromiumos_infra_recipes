@@ -210,6 +210,35 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "luci_context": {
@@ -260,7 +289,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_1/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -634,6 +663,34 @@
       }
     },
     "name": "first tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.remove overlay image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1089,6 +1146,35 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "luci_context": {
@@ -1139,7 +1225,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_2/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -1513,6 +1599,34 @@
       }
     },
     "name": "second tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.remove overlay image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1961,6 +2075,32 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create qcow image overlay"
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "luci_context": {
@@ -2008,7 +2148,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_3/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -2354,6 +2494,31 @@
     "name": "kill vm"
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove overlay image"
+  },
+  {
     "cmd": [],
     "name": "qemu logs",
     "~followup_annotations": [
@@ -2425,6 +2590,32 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_4/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create qcow image overlay (2)"
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "luci_context": {
@@ -2472,7 +2663,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_4/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -2819,6 +3010,31 @@
     "name": "kill vm (2)"
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_4/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove overlay image (2)"
+  },
+  {
     "cmd": [],
     "name": "qemu logs (2)",
     "~followup_annotations": [
@@ -2894,6 +3110,35 @@
   },
   {
     "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_5/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "nproc"
     ],
     "luci_context": {
@@ -2944,7 +3189,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/temp_tmp_2/image/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_5/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -3054,6 +3299,34 @@
       }
     },
     "name": "run VM context.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_5/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.remove overlay image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

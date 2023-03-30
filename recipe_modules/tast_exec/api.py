@@ -442,24 +442,36 @@ class TastExecApi(RecipeApi):
       kvm_pid_file = self.m.path.mkstemp(prefix='kvm-pid')
       kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
       kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
+      overlay_dir = self.m.path.mkdtemp(prefix='image-overlay')
+      overlay_image_path = overlay_dir.join(QCOW_IMG_NAME)
 
-      self._launch_vm(qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                      kvm_monitor_serial_file, private_key_path,
-                      second_image_path)
+      self._launch_vm(qcow_image_path, overlay_image_path, kvm_pid_file,
+                      kvm_monitor_file, kvm_monitor_serial_file,
+                      private_key_path, second_image_path)
       try:
         yield TastExecApi.VmInfo(QEMU_VM_HOST, QEMU_VM_PORT, kvm_pid_file)
       finally:
         try:
           # Always kill QEMU.
-          self._kill_vm(kvm_pid_file)
+          self._kill_vm(kvm_pid_file, overlay_image_path)
         finally:
           self._record_qemu_logs(kvm_monitor_file, kvm_monitor_serial_file)
 
     return qemu_vm_context
 
   @exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))
-  def _launch_vm(self, qcow_image_path, kvm_pid_file, kvm_monitor_file,
-                 kvm_monitor_serial_file, private_key_path, second_image_path):
+  def _launch_vm(self, qcow_image_path, overlay_image_path, kvm_pid_file,
+                 kvm_monitor_file, kvm_monitor_serial_file, private_key_path,
+                 second_image_path):
+    self.m.step('create qcow image overlay', [
+        'qemu-img', \
+        'create', \
+        '-f', 'qcow2', \
+        '-F', 'qcow2', \
+        '-b', str(qcow_image_path), \
+        str(overlay_image_path) \
+    ])
+
     n_proc = self.m.easy.stdout_step(
         'count online CPUs', ['nproc'],
         test_stdout=' 8\n').decode('utf-8').strip()
@@ -482,7 +494,7 @@ class TastExecApi(RecipeApi):
         '-device', 'scsi-hd,drive=hd', \
         '-drive',
         'if=none,id=hd,file={},cache=unsafe,format=qcow2'.format(
-            qcow_image_path), \
+            overlay_image_path), \
         '-netdev', \
         'user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:{}-:22'.format(
             QEMU_VM_PORT), \
@@ -502,7 +514,7 @@ class TastExecApi(RecipeApi):
     try:
       self._test_ssh_conn(QEMU_VM_HOST, QEMU_VM_PORT, private_key_path)
     except StepFailure:  # pragma: nocover
-      self._kill_vm(kvm_pid_file)
+      self._kill_vm(kvm_pid_file, overlay_image_path)
       raise
 
   def is_vm_running(self, kvm_pid_file):
@@ -520,10 +532,11 @@ class TastExecApi(RecipeApi):
                          infra_step=True, ok_ret=(0, 1))
     return result.retcode == 0
 
-  def _kill_vm(self, kvm_pid_file):
+  def _kill_vm(self, kvm_pid_file, overlay_image_path):
     # Don't try to kill the VM if it has already exited.
     if self.is_vm_running(kvm_pid_file):
       self.m.step('kill vm', ['pkill', '-F', kvm_pid_file])
+    self.m.file.remove('remove overlay image', overlay_image_path)
 
   def _record_qemu_logs(self, kvm_monitor_file, kvm_monitor_serial_file):
     with self.m.step.nest('qemu logs') as presentation:
