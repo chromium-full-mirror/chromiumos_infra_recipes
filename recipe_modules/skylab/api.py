@@ -141,7 +141,8 @@ class SkylabApi(recipe_api.RecipeApi):
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
 
-    props = {'requests': tagged_requests}
+    props = self.m.cq.props_for_child_build
+    props.update({'requests': tagged_requests})
     if self._exclude_sub_invs:
       # If the CTP build we are scheduling is not going to become an included
       # invocation of the current build, it should mark itself for ResultDB

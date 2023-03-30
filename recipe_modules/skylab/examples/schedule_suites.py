@@ -13,6 +13,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_test_plan',
     'git_footers',
@@ -105,6 +106,9 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic',
                  api.buildbucket.ci_build(builder='release-main-orchestrator'))
+
+  yield api.test('basic-cq', api.cq(run_mode=api.cq.FULL_RUN),
+                 api.buildbucket.ci_build(builder='cq-orchestrator'))
 
   yield api.test(
       'exclude-sub-invs',

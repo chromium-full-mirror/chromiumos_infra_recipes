@@ -6,6 +6,7 @@ from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/json',
     'recipe_engine/step',
     'recipe_engine/swarming',
