@@ -87,7 +87,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create image from image"
+    "name": "create image from image",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [
@@ -117,7 +120,10 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "create image from image (2)"
+    "name": "create image from image (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "name": "$result"

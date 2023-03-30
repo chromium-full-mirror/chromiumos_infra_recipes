@@ -1,0 +1,32 @@
+[
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "images",
+      "create",
+      "chromeos",
+      "--source-disk=image-123",
+      "--source-disk-zone=us-central1-b"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "create image from disk",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set disk_already_exists_count",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@disk_already_exists_count@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

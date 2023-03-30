@@ -414,12 +414,13 @@
   * [gce_provider:examples/full](#recipes-gce_provider_examples_full) (Python3 ✅)
   * [gce_provider:tests/get_current_config](#recipes-gce_provider_tests_get_current_config) (Python3 ✅)
   * [gce_test](#recipes-gce_test) (Python3 ✅) &mdash; An experimental recipe for running GCE tests.
-  * [gcloud:examples/cache_properties](#recipes-gcloud_examples_cache_properties) (Python3 ✅)
-  * [gcloud:examples/full](#recipes-gcloud_examples_full) (Python3 ✅)
-  * [gcloud:examples/gcloud_disks](#recipes-gcloud_examples_gcloud_disks) (Python3 ✅)
-  * [gcloud:examples/lookup_device_id](#recipes-gcloud_examples_lookup_device_id) (Python3 ✅)
-  * [gcloud:examples/setup_cache_disk](#recipes-gcloud_examples_setup_cache_disk) (Python3 ✅)
-  * [gcloud:examples/transactionally_update_recovery_image](#recipes-gcloud_examples_transactionally_update_recovery_image) (Python3 ✅)
+  * [gcloud:tests/cache_properties](#recipes-gcloud_tests_cache_properties) (Python3 ✅)
+  * [gcloud:tests/create_image_from_disk](#recipes-gcloud_tests_create_image_from_disk) (Python3 ✅)
+  * [gcloud:tests/full](#recipes-gcloud_tests_full) (Python3 ✅)
+  * [gcloud:tests/gcloud_disks](#recipes-gcloud_tests_gcloud_disks) (Python3 ✅)
+  * [gcloud:tests/lookup_device_id](#recipes-gcloud_tests_lookup_device_id) (Python3 ✅)
+  * [gcloud:tests/setup_cache_disk](#recipes-gcloud_tests_setup_cache_disk) (Python3 ✅)
+  * [gcloud:tests/transactionally_update_recovery_image](#recipes-gcloud_tests_transactionally_update_recovery_image) (Python3 ✅)
   * [generator](#recipes-generator) (Python3 ✅) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change) (Python3 ✅)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment) (Python3 ✅)
@@ -5600,7 +5601,7 @@ Args:
 
 &emsp; **@cache_action.setter**<br>&mdash; **def [cache\_action](/recipe_modules/gcloud/api.py#85)(self, val):**
 
-&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#844)(self, mount_path):**
+&mdash; **def [check\_for\_disk\_mount](/recipe_modules/gcloud/api.py#845)(self, mount_path):**
 
 Check whether there is a disk mounted on given path.
 
@@ -5610,14 +5611,14 @@ Args:
 Returns:
   Bool indicating whether there is a disk mounted on the path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#1165)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_gce\_disks](/recipe_modules/gcloud/api.py#1166)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are handled.
 
 Upon exiting the context manager, each attached disk is then iterated
 through to unmount, detach, and delete the disk.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#1209)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_mounted\_disks](/recipe_modules/gcloud/api.py#1210)(self):**
 
 Wrap disk cleanup in a context handler to ensure they are unmounted.
 
@@ -5660,7 +5661,7 @@ Args:
     source is a tarball. See gcloud docs for detail.
   licenses (list[str], optional): List of image licenses to apply.
 
-&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#731)(self, disk, image_name, zone):**
+&mdash; **def [create\_image\_from\_disk](/recipe_modules/gcloud/api.py#732)(self, disk, image_name, zone):**
 
 Create an image from specified disk.
 
@@ -5669,7 +5670,7 @@ Args:
   image_name (str): The name to give the image.
   zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [create\_image\_from\_image](/recipe_modules/gcloud/api.py#743)(self, image_name: str, existing_image: str):**
+&mdash; **def [create\_image\_from\_image](/recipe_modules/gcloud/api.py#744)(self, image_name: str, existing_image: str):**
 
 Create an image from an existing image.
 
@@ -5705,7 +5706,7 @@ Args:
 
 &emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_image](/recipe_modules/gcloud/api.py#218)(self, image_name):**
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#787)(self, images):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [delete\_images](/recipe_modules/gcloud/api.py#788)(self, images):**
 
 Delete the list of provided images from GCE.
 
@@ -5733,7 +5734,7 @@ Args:
   disk (str): Google Cloud disk name.
   zone (str): GCE zone to create instance (e.g. us-central1-b).
 
-&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#800)(self, disks, instances):**
+&mdash; **def [determine\_disks\_to\_delete](/recipe_modules/gcloud/api.py#801)(self, disks, instances):**
 
 Determines the list of orphaned disks to delete.
 
@@ -5773,7 +5774,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gce\_name\_limit](/recipe_modules/gcloud/api.py#143)(self):**
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#753)(self, retention_days, prefixes, protected_images=None):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_expired\_images](/recipe_modules/gcloud/api.py#754)(self, retention_days, prefixes, protected_images=None):**
 
 Calculate the list of images that have expired.
 
@@ -5782,7 +5783,7 @@ Args:
   prefixes (list|str): List of prefixes to filter.
   protected_images (list|str): List of images to preserve.
 
-&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#1253)(self, instance, project, zone):**
+&mdash; **def [get\_instance\_serial\_output](/recipe_modules/gcloud/api.py#1254)(self, instance, project, zone):**
 
 &emsp; **@property**<br>&mdash; **def [host\_zone](/recipe_modules/gcloud/api.py#121)(self):**
 
@@ -5866,7 +5867,7 @@ Set the default project for gcloud command.
 Args:
   project (str): Google Cloud project name.
 
-&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#1074)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False, disallow_previously_mounted=False, mount_existing=False, recovery_snapshot=None):**
+&mdash; **def [setup\_cache\_disk](/recipe_modules/gcloud/api.py#1075)(self, cache_name, branch='main', disk_type='pd-standard', disk_size=None, recipe_mount=False, disallow_previously_mounted=False, mount_existing=False, recovery_snapshot=None):**
 
 Create disk from snapshot, reuse if still attached.
 
@@ -5916,7 +5917,7 @@ Force a local disk cache sync before snapshotting.
 Args:
   name (str): Disk name to use to lookup the mount location.
 
-&mdash; **def [transactionally\_update\_recovery\_image](/recipe_modules/gcloud/api.py#1263)(self, image: str, cache_name: str, recovery_image: Optional[str]):**
+&mdash; **def [transactionally\_update\_recovery\_image](/recipe_modules/gcloud/api.py#1264)(self, image: str, cache_name: str, recovery_image: Optional[str]):**
 
 Transactionally update the recovery image to the provided image.
 
@@ -12292,48 +12293,55 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 An experimental recipe for running GCE tests.
 
 &mdash; **def [RunSteps](/recipes/gce_test.py#39)(api: RecipeApi, properties: GceTestProperties):**
-### *recipes* / [gcloud:examples/cache\_properties](/recipe_modules/gcloud/examples/cache_properties.py)
+### *recipes* / [gcloud:tests/cache\_properties](/recipe_modules/gcloud/tests/cache_properties.py)
 
-[DEPS](/recipe_modules/gcloud/examples/cache_properties.py#8): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/cache_properties.py#28)(api, recovery_snapshot, mounted_snapshot):**
-### *recipes* / [gcloud:examples/full](/recipe_modules/gcloud/examples/full.py)
-
-[DEPS](/recipe_modules/gcloud/examples/full.py#10): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gcloud/tests/cache_properties.py#8): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/full.py#20)(api):**
-### *recipes* / [gcloud:examples/gcloud\_disks](/recipe_modules/gcloud/examples/gcloud_disks.py)
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/cache_properties.py#28)(api, recovery_snapshot, mounted_snapshot):**
+### *recipes* / [gcloud:tests/create\_image\_from\_disk](/recipe_modules/gcloud/tests/create_image_from_disk.py)
 
-[DEPS](/recipe_modules/gcloud/examples/gcloud_disks.py#6): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/gcloud_disks.py#17)(api):**
-### *recipes* / [gcloud:examples/lookup\_device\_id](/recipe_modules/gcloud/examples/lookup_device_id.py)
-
-[DEPS](/recipe_modules/gcloud/examples/lookup_device_id.py#7): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gcloud/tests/create_image_from_disk.py#12): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/lookup_device_id.py#18)(api):**
-### *recipes* / [gcloud:examples/setup\_cache\_disk](/recipe_modules/gcloud/examples/setup_cache_disk.py)
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/create_image_from_disk.py#22)(api: RecipeApi):**
+### *recipes* / [gcloud:tests/full](/recipe_modules/gcloud/tests/full.py)
 
-[DEPS](/recipe_modules/gcloud/examples/setup_cache_disk.py#11): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/setup_cache_disk.py#28)(api, properties):**
-### *recipes* / [gcloud:examples/transactionally\_update\_recovery\_image](/recipe_modules/gcloud/examples/transactionally_update_recovery_image.py)
-
-[DEPS](/recipe_modules/gcloud/examples/transactionally_update_recovery_image.py#13): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gcloud/tests/full.py#10): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gcloud/examples/transactionally_update_recovery_image.py#28)(api: RecipeApi, recovery_image: str, expected_return: str):**
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/full.py#20)(api):**
+### *recipes* / [gcloud:tests/gcloud\_disks](/recipe_modules/gcloud/tests/gcloud_disks.py)
+
+[DEPS](/recipe_modules/gcloud/tests/gcloud_disks.py#6): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/gcloud_disks.py#17)(api):**
+### *recipes* / [gcloud:tests/lookup\_device\_id](/recipe_modules/gcloud/tests/lookup_device_id.py)
+
+[DEPS](/recipe_modules/gcloud/tests/lookup_device_id.py#7): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/lookup_device_id.py#18)(api):**
+### *recipes* / [gcloud:tests/setup\_cache\_disk](/recipe_modules/gcloud/tests/setup_cache_disk.py)
+
+[DEPS](/recipe_modules/gcloud/tests/setup_cache_disk.py#11): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/setup_cache_disk.py#28)(api, properties):**
+### *recipes* / [gcloud:tests/transactionally\_update\_recovery\_image](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py)
+
+[DEPS](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py#13): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py#28)(api: RecipeApi, recovery_image: str, expected_return: str):**
 ### *recipes* / [generator](/recipes/generator.py)
 
 [DEPS](/recipes/generator.py#69): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_cl](#recipe_modules-git_cl), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr](#recipe_modules-pupr), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]

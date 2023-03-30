@@ -724,9 +724,10 @@ class GcloudApi(recipe_api.RecipeApi):
       step_name: Step name to use.
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self._wrap_in_disk_exists_swallow(lambda: self.m.step(
-          step_name, ['gcloud', 'compute', 'images', 'create', image_name] +
-          props, infra_step=True))
+      cmd = ['gcloud', 'compute', 'images', 'create', image_name] + props
+      self._wrap_in_disk_exists_swallow(lambda: self.m.easy.stdout_step(
+          step_name, cmd, infra_step=True, stderr=self.m.raw_io.output_text(
+              add_output_log=True)))
 
   def create_image_from_disk(self, disk, image_name, zone):
     """Create an image from specified disk.
