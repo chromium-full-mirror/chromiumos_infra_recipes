@@ -93,11 +93,17 @@ def RunSteps(api):
 
 def GenTests(api):
 
+  build = api.buildbucket.try_build_message(status='FAILURE')
+  build.output.properties['tast_first_class_tests'] = ['tast-first-class']
+
   yield api.test(
       'enabled',
-      api.buildbucket.ci_build(
+      api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
-      api.skylab.last_run_tast_first_class_tests(['tast-first-class']),
+      api.buildbucket.simulated_search_results(
+          [build], 'schedule skylab tests v2.'
+          'create test requests.configure test-builder.'
+          'find matching builds.buildbucket.search'),
       api.post_check(lambda check, steps: check('tast.test1' in steps[
           'schedule skylab tests v2.create test requests.configure test-builder'
       ].logs['request'])),
@@ -116,7 +122,6 @@ def GenTests(api):
 
   yield api.test(
       'not-enabled',
-      api.skylab.last_run_tast_first_class_tests(['tast-first-class']),
       api.post_check(lambda check, steps: check('tast.test1' not in steps[
           'schedule skylab tests v2.create test requests.configure test-builder'
       ].logs['request'])),

@@ -58,17 +58,11 @@ class SkylabApi(recipe_api.RecipeApi):
     if self._last_run_tast_first_class_tests is not None:
       return self._last_run_tast_first_class_tests
 
-    # Pass in any test data overrides if running unit tests.
-    test_data = self._test_data.get('last_run_tast_first_class_tests')
-    if test_data is not None:
-      self._last_run_tast_first_class_tests = test_data
-      return self._last_run_tast_first_class_tests
-
     # Get the output property from the last orchestrator.
     prev_orch = self.m.cros_history.get_matching_builds(
         self.m.buildbucket.build, statuses=TERMINAL_STATUSES, limit=1)
     build_output = json_format.MessageToDict(
-        prev_orch.output.properties) if prev_orch else {}
+        prev_orch[0].output.properties) if len(prev_orch) > 0 else {}
     self._last_run_tast_first_class_tests = build_output.get(
         _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP, [])
 
