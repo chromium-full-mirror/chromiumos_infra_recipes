@@ -298,7 +298,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
                     gitiles_commit=child_build_snapshot, builder=builder,
                     bucket=builder_config.id.bucket,
                     gerrit_changes=gerrit_changes, critical=False, tags=tags,
-                    properties=properties))
+                    properties=properties, experiments=child_exps))
             self._additional_chrome_pupr_builders.append(builder)
             chrome_log.append(
                 'Scheduled {} as non-critical builder'.format(builder))
