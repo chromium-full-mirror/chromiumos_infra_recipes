@@ -24,6 +24,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -33,6 +34,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'easy',
     'key_value_store',
     'src_state',
     'workspace_util',
@@ -71,6 +73,7 @@ class BuildSDKRun:
     self._toolchain_tarball_paths: Optional[List[Path]] = None
     self._version = properties.version or \
         self.m.buildbucket.build.start_time.ToDatetime().strftime('%Y.%m.%d.%H%M%S')
+    self.m.easy.set_properties_step(version=self._version)
 
   def run(self):
     """Run the main logic for this builder."""
@@ -252,21 +255,43 @@ class BuildSDKRun:
                             manifest_dest_path)
 
   def _update_gs_latest_file(self) -> None:
-    """Update the GS:// latest SDK file to point to the newly built SDK.
+    """Update the GS:// latest SDK file to point to the newly built SDK."""
+    with self.m.step.nest('update gs:// latest file') as presentation:
+      old_contents = self._read_existing_gs_latest_file()
+      new_contents = self.m.key_value_store.update_one_value(
+          old_contents, 'LATEST_SDK_UPREV_TARGET', self._version, True)
+      tempfile = self.m.path.mkstemp()
+      self.m.file.write_text('write local file to upload', tempfile,
+                             new_contents)
+      self._gsutil_upload(tempfile, SDK_BUCKET, 'cros-sdk-latest.conf')
+      presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self._version
 
-    TODO(b/270142110): Implement this more fully. For now, just parse the file.
+  def _read_existing_gs_latest_file(self) -> str:
+    """Read, log, and return the existing latest SDK file on GS://.
+
+    Returns:
+      The raw contents of the existing file.
     """
-    uri = f'gs://{SDK_BUCKET}/cros-sdk-latest'
-    contents = self.m.gsutil.cat(
-        uri, stdout=self.m.raw_io.output(),
-        step_test_data=lambda: self.m.raw_io.test_api.stream_output(
-            '# The most recent SDK that is tested and ready for use.\n'
-            'LATEST_SDK="2023.03.13.222421\n'
-            '\n'
-            '# The most recently built version. New uprev attempts should target this.\n'
-            '# Warning: This version may not be tested yet.\n'
-            'LATEST_SDK_UPREV_TARGET="2023.03.14.159265"')).stdout.decode()
-    self.m.key_value_store.parse_contents(contents, source='remote latest file')
+    with self.m.step.nest('read existing latest file') as presentation:
+      uri = f'gs://{SDK_BUCKET}/cros-sdk-latest.conf'
+      contents = self.m.gsutil.cat(
+          uri, stdout=self.m.raw_io.output(),
+          step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+              '# The most recent SDK that is tested and ready for use.\n'
+              'LATEST_SDK="2023.03.13.222421"\n'
+              '\n'
+              '# The most recently built version. New uprev attempts should target this.\n'
+              '# Warning: This version may not be tested yet.\n'
+              'LATEST_SDK_UPREV_TARGET="2023.03.14.159265"')).stdout.decode()
+      presentation.logs['existing file contents'] = contents
+      contents_dict = self.m.key_value_store.parse_contents(
+          contents, source='remote latest file')
+      presentation.properties['old_LATEST_SDK'] = contents_dict.get(
+          'LATEST_SDK', "None")
+      presentation.properties[
+          'old_LATEST_SDK_UPREV_TARGET'] = contents_dict.get(
+              'LATEST_SDK_UPREV_TARGET', "None")
+    return contents
 
   def _gsutil_upload(self, source_path: Path, dest_bucket: str,
                      dest_path: str) -> None:
@@ -352,9 +377,13 @@ def GenTests(api: RecipeTestApi):
       api.src_state.workspace_path.join('built-sdk.tar.xz.Manifest'),
   )
 
+  # DEFAULT_VERSION is a parsing of the buildbucket API's default start_time.
+  DEFAULT_VERSION = "1970.01.01.000000"
+
   yield api.test(
       'basic',
       api.path.exists(*EXPECTED_PATHS),
+      api.post_check(post_process.PropertyEquals, 'version', DEFAULT_VERSION),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildPrebuilts'),
       api.post_check(post_process.StepSuccess,
@@ -395,6 +424,22 @@ def GenTests(api: RecipeTestApi):
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
               'gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
+      # Check the processing of the upstream latest file.
+      api.post_check(
+          post_process.PropertyEquals,
+          "old_LATEST_SDK",
+          "2023.03.13.222421",
+      ),
+      api.post_check(
+          post_process.PropertyEquals,
+          "old_LATEST_SDK_UPREV_TARGET",
+          "2023.03.14.159265",
+      ),
+      api.post_check(
+          post_process.PropertyEquals,
+          "new_LATEST_SDK_UPREV_TARGET",
+          DEFAULT_VERSION,
+      ),
       status='SUCCESS')
 
   yield api.test(

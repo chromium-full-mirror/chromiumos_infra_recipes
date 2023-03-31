@@ -5,6 +5,13 @@
   },
   {
     "cmd": [],
+    "name": "set version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@version@\"1970.01.01.000000\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder"
   },
   {
