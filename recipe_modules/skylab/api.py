@@ -271,6 +271,7 @@ class SkylabApi(recipe_api.RecipeApi):
     have_container_metadata = container_metadata is not None
     previous_results = previous_results or {}
     tast_first_class_tests = []
+    count_direct_test_retry_tests = 0
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
@@ -332,6 +333,8 @@ class SkylabApi(recipe_api.RecipeApi):
                     ExecuteResponse())
                 test_cases = self._tests_to_retry(previous_result,
                                                   tast_first_class)
+                if test_cases:
+                  count_direct_test_retry_tests += 1
                 for t in test_cases or []:
                   test_case = request.test_plan.test.add()
                   test_case.autotest.name = t
@@ -356,6 +359,8 @@ class SkylabApi(recipe_api.RecipeApi):
                                          inherit_buildsets=False)
       presentation.properties[
           _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP] = tast_first_class_tests
+      presentation.properties[
+          'count_direct_test_retry_tests'] = count_direct_test_retry_tests
 
       build_url = self.m.buildbucket.build_url(build_id=build.id)
       presentation.links['suite link'] = build_url
