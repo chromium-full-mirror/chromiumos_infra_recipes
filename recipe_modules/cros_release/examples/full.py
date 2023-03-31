@@ -57,6 +57,7 @@ def RunSteps(api):
 
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                      "build_target")
+  api.cros_release.check_buildspec()
   api.cros_release.set_output_properties()
   api.cros_release.run_payload_generation()
 
@@ -76,6 +77,12 @@ def GenTests(api):
           **{
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
+              "$chromeos/cros_source": {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+                  }
+              },
           }),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
@@ -99,6 +106,12 @@ def GenTests(api):
                   'collect_configs': {
                       'paygen-orch': {},
                   },
+              },
+              "$chromeos/cros_source": {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+                  }
               },
           }),
       api.buildbucket.simulated_collect_output(
@@ -124,6 +137,12 @@ def GenTests(api):
               '$chromeos/cros_release':
                   CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
                                         src_paygen_bucket='chromeos-releases'),
+              "$chromeos/cros_source": {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+                  }
+              },
           }),
       api.post_check(
           post_process.LogContains,
@@ -151,6 +170,12 @@ def GenTests(api):
               '$chromeos/cros_release':
                   CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
                                         src_paygen_bucket='chromeos-releases'),
+              "$chromeos/cros_source": {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+                  }
+              },
           }),
       api.post_check(
           post_process.LogContains,

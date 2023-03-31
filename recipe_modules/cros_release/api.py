@@ -20,6 +20,8 @@ from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
                                   IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_GSC_FIRMWARE)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 
@@ -66,6 +68,43 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   @buildspec.setter
   def buildspec(self, buildspec: ManifestLocation):
     self._buildspec = buildspec
+
+  def check_buildspec(self, fatal: bool = False):
+    """Checks that the build was given a buildspec and that there doesn't
+      already exist a build for this buildspec (and this build is not a retry).
+
+    Args:
+      fatal: Whether or not to kill the build if the build already ran.
+    """
+    with self.m.step.nest('check buildspec') as presentation:
+      buildspec = self.m.cros_source.sync_to_manifest
+      if not buildspec:
+        raise StepFailure(
+            'build was not given a buildspec (via `$chromeos/cros_source.syncToManifest`).'
+        )
+
+      if not self.m.checkpoint.is_retry():
+        with self.m.step.nest('check for previous builds') as presentation:
+          predicate = builds_service_pb2.BuildPredicate(
+              builder=self.m.buildbucket.build.builder)
+          # Default limit is 1000 builds so shouldn't have to worry about pagination.
+          builds = self.m.buildbucket.search(predicate, limit=1000,
+                                             fields=['id', 'input.properties'],
+                                             timeout=300)
+          for build in builds:
+            bs = dict(
+                dict(
+                    dict(build.input.properties).get(
+                        '$chromeos/cros_source',
+                        {})).get('syncToManifest',
+                                 {})).get('manifestGsPath', None)
+            if bs == buildspec.manifest_gs_path:
+              err = 'build {} already exists for buildspec {}. see go/cros-try for instructions on retrying.'.format(
+                  build.id, bs)
+              presentation.step_text = err
+              presentation.status = self.m.step.FAILURE
+              if fatal:
+                raise StepFailure(err)
 
   def create_buildspec(self, specs_dir='buildspecs', branch='release',
                        step_name='create buildspec', dry_run=False,
