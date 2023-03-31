@@ -19,6 +19,7 @@ DEPS = [
     'conductor',
     'cros_artifacts',
     'cros_release_util',
+    'cros_source',
     'cros_test_plan',
     'cros_version',
     'easy',

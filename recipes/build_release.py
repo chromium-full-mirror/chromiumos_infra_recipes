@@ -64,6 +64,7 @@ def RunSteps(api, properties):
   api.easy.log_parent_step()
   api.cros_try.check_try_version()
   api.checkpoint.register()
+  api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
   api.cros_release.set_output_properties()
 
   if api.cros_infra_config.is_staging:
@@ -401,6 +402,15 @@ def GenTests(api):
   # Release build missing test config should exit early.
   yield api.build_menu.test(
       'no-test-config',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
       api.step_data(
           'check that test config exists.generate target test requirements.generate_test_config',
           retcode=1),
@@ -488,9 +498,61 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'release-build-staging',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
       build_target='staging-eve',
       builder='staging-eve-release-main',
       bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'release-build-no-buildspec',
+      api.post_check(post_process.StepFailure, 'check buildspec'),
+      api.post_process(post_process.DropExpectation), build_target='eve',
+      builder='eve-release-main', bucket='release', status="FAILURE")
+
+  def build_result(bbid, buildspec):
+    build = build_pb2.Build(id=bbid)
+    build.input.properties['$chromeos/cros_source'] = {
+        'syncToManifest': {
+            'manifestGsPath': buildspec,
+        }
+    }
+    return build
+
+  # non-fatal so should proceed despite the step failure.
+  yield api.build_menu.test(
+      'release-build-staging-check-buildspec',
+      api.properties(
+          **{
+              '$chromeos/cros_source': {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  },
+              },
+          }),
+      api.buildbucket.simulated_search_results([
+          build_result(
+              123,
+              'gs://chromeos-manifest-versions/buildspecs/114/15408.0.0.xml'),
+          build_result(
+              124,
+              'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml'),
+      ], step_name='check buildspec.check for previous builds.buildbucket.search'
+                                              ),
+      api.post_check(post_process.StepFailure, 'check buildspec'),
+      api.post_process(post_process.DropExpectation),
+      build_target='staging-eve',
+      builder='staging-eve-release-main',
+      bucket='staging',
   )
 
   # Release build with install-packages failure.
@@ -501,6 +563,12 @@ def GenTests(api):
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -524,6 +592,12 @@ def GenTests(api):
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -544,6 +618,12 @@ def GenTests(api):
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -563,6 +643,15 @@ def GenTests(api):
   # Release build with failure publishing image/package size data.
   yield api.build_menu.test(
       'publish-image-size-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
       api.signing.setup_mocks(),
       api.build_menu.set_build_api_return(
           'collect image size data.add data from images',
@@ -682,8 +771,18 @@ def GenTests(api):
       builder='kukui-release-main',
       bucket='release',
   )
+
   yield api.build_menu.test(
       'parent-cancelled',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
       api.runtime.global_shutdown_on_step(
           'configure builder.gitiles-fetch-ref'),
       api.post_check(
@@ -713,6 +812,12 @@ def GenTests(api):
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
           }),
       api.signing.setup_mocks(),
       api.buildbucket.simulated_collect_output(
