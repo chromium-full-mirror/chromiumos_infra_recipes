@@ -87,7 +87,7 @@ class BuildSDKRun:
   @property
   def _skip_uploads(self):
     """Whether this builder should skip uploading to GS://."""
-    return self.m.build_menu.is_staging
+    return self.m.build_menu.is_staging and not self.properties.upload_to_staging_dir
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -276,6 +276,9 @@ class BuildSDKRun:
 
     Always uploads directories with -r for recursive mode, and multithreaded.
 
+    If the upload_to_staging_dir property is True, then the destination dir
+    will have "staging/" prepended.
+
     Args:
       source_path: Local filepath to upload.
       dest_bucket: The Google Storage bucket to upload to (without "gs://").
@@ -295,6 +298,8 @@ class BuildSDKRun:
     else:
       args = []
       multithreaded = False
+    if self.properties.upload_to_staging_dir:
+      dest_path = os.path.join('staging', dest_path)
     self.m.gsutil.upload(
         str(source_path), dest_bucket, dest_path, args=args,
         multithreaded=multithreaded, dry_run=self._skip_uploads)
@@ -381,6 +386,15 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload',
           [RE_GSUTIL]),
+      # For at least one of the gsutil upload commands (don't need all of them),
+      # check that we're not uploading to a staging/ path.
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
+              RE_GSUTIL, '----', 'cp',
+              '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
+              'gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz'
+          ]),
       status='SUCCESS')
 
   yield api.test(
@@ -452,4 +466,33 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.StepException,
                      'upload sdk tarball and manifest.upload sdk manifest'),
       status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'upload-to-staging-dir',
+      api.properties(upload_to_staging_dir=True),
+      api.path.exists(*EXPECTED_PATHS),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
+              RE_GSUTIL, '----', 'cp',
+              "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
+              "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz"
+          ]),
+  )
+
+  yield api.build_menu.test(
+      'staging-upload-to-staging-dir',
+      api.properties(upload_to_staging_dir=True),
+      api.path.exists(*EXPECTED_PATHS),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
+              RE_GSUTIL, '----', 'cp',
+              '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
+              'gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz'
+          ]),
+      builder='staging-chromiumos-sdk',
+      bucket='staging',
+      status='SUCCESS',
   )
