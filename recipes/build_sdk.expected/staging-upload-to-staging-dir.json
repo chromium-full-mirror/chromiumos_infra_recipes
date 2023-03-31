@@ -3436,8 +3436,10 @@
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
       "----",
       "cp",
+      "-r",
       "[CACHE]/cros_chroot/chroot/var/lib/portage/pkgs",
       "gs://chromeos-prebuilt/staging/host/amd64/amd64-host/chroot-1970.01.01.000000/packages"
     ],
@@ -3458,7 +3460,7 @@
     "name": "upload prebuilts.upload host prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/staging/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/staging/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {
@@ -3475,8 +3477,10 @@
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
       "----",
       "cp",
+      "-r",
       "[CACHE]/cros_chroot/chroot/build/amd64-host/packages",
       "gs://chromeos-prebuilt/staging/board/amd64-host/chroot-1970.01.01.000000/packages"
     ],
@@ -3497,7 +3501,7 @@
     "name": "upload prebuilts.upload target prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/staging/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/staging/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {

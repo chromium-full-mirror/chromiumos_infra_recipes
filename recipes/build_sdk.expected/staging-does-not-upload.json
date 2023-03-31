@@ -3435,9 +3435,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CACHE]/cros_chroot/chroot/var/lib/portage/pkgs gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -r [CACHE]/cros_chroot/chroot/var/lib/portage/pkgs gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
       "@@@STEP_LOG_END@command@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {
@@ -3453,9 +3453,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CACHE]/cros_chroot/chroot/build/amd64-host/packages gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -r [CACHE]/cros_chroot/chroot/build/amd64-host/packages gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
       "@@@STEP_LOG_END@command@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {
