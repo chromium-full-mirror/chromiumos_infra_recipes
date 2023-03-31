@@ -70,7 +70,7 @@ def GenTests(api):
           **{
               '$chromeos/skylab':
                   SkylabProperties(direct_tast_testing_projects=[
-                      'chromiumos/chromite', 'chromiumos/infra'
+                      'chromiumos/chromite', 'chromiumos/infra/config'
                   ]),
               'expected':
                   True
@@ -89,6 +89,40 @@ def GenTests(api):
                   SkylabProperties(direct_tast_testing_projects=[
                       'chromiumos/chromite', 'chromiumos/infra'
                   ]),
+              'expected':
+                  False
+          }),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'blocklisted',
+      api.buildbucket.try_build(gerrit_changes=[gc1, gc2, gc3]),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(direct_tast_testing_blocklist_projects=[
+                      'chromiumos/something/else'
+                  ]),
+              'expected':
+                  False
+          }),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'blocklist-over-allowlist',
+      api.buildbucket.try_build(gerrit_changes=[gc1, gc2, gc3]),
+      api.properties(
+          **{
+              '$chromeos/skylab':
+                  SkylabProperties(
+                      direct_tast_testing_projects=[
+                          'chromiumos/chromite', 'chromiumos/infra/config',
+                          'chromiumos/something/else'
+                      ], direct_tast_testing_blocklist_projects=[
+                          'chromiumos/infra/config'
+                      ]),
               'expected':
                   False
           }),

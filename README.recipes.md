@@ -8858,17 +8858,17 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module for issuing commands to Skylab
 
-&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#83)(self):**
+&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#85)(self):**
 
-&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#71)(self, uht: UnitHwTest, tast_first_class: bool):**
+&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#73)(self, uht: UnitHwTest, tast_first_class: bool):**
 
 Returns whether the hw test is elegible for direct test retries.
 
-&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#55)(self):**
+&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#57)(self):**
 
 Returns the hw tests which ran as Tast first class in the last run.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#117)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#129)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -8885,7 +8885,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#170)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#182)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -8906,11 +8906,11 @@ Args:
 Returns:
   A list of SkylabTasks with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#51)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#53)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#439)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#451)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

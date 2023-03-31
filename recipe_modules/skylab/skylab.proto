@@ -24,6 +24,9 @@ message SkylabProperties {
   // build's ResultRB invocation).
   bool exclude_sub_invs = 10;
 
-  // Projects prefixes which have direct Tast testing enabled.
+  // Projects which have direct Tast testing enabled.
   repeated string direct_tast_testing_projects = 11;
+
+  // Projects which are blocklisted from direct Tast testing.
+  repeated string direct_tast_testing_blocklist_projects = 12;
 }

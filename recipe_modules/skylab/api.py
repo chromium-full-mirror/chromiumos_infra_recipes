@@ -39,6 +39,8 @@ class SkylabApi(recipe_api.RecipeApi):
     self._exclude_sub_invs = properties.exclude_sub_invs
     self._direct_tast_testing_enabled = None
     self._direct_tast_testing_projects = properties.direct_tast_testing_projects
+    self._direct_tast_testing_blocklist_projects = (
+        properties.direct_tast_testing_blocklist_projects)
     self._last_run_tast_first_class_tests = None
 
   # A Git footer that can be included in commit messages to tell the CQ run to
@@ -84,8 +86,11 @@ class SkylabApi(recipe_api.RecipeApi):
 
     def is_change_allowlisted(change):
       return any(
-          change.project.startswith(p)
-          for p in self._direct_tast_testing_projects)
+          change.project == p for p in self._direct_tast_testing_projects)
+
+    def is_change_blocklisted(change):
+      return any(change.project == p
+                 for p in self._direct_tast_testing_blocklist_projects)
 
     if self._direct_tast_testing_enabled is not None:
       return self._direct_tast_testing_enabled
@@ -102,16 +107,23 @@ class SkylabApi(recipe_api.RecipeApi):
       self._direct_tast_testing_enabled = True
       return self._direct_tast_testing_enabled
 
-    if len(self._direct_tast_testing_projects) == 0:
-      self._direct_tast_testing_enabled = False
-      return self._direct_tast_testing_enabled
-
     if len(self.m.src_state.gerrit_changes) == 0:
       self._direct_tast_testing_enabled = False
       return self._direct_tast_testing_enabled
 
-    self._direct_tast_testing_enabled = all(
-        is_change_allowlisted(gc) for gc in self.m.src_state.gerrit_changes)
+    # The blocklist takes priority if both the blocklist and allowlist are set.
+    # If neither are set, then direct tast testing is not enabled.
+    if len(self._direct_tast_testing_blocklist_projects) > 0:
+      self._direct_tast_testing_enabled = not any(
+          is_change_blocklisted(gc) for gc in self.m.src_state.gerrit_changes)
+      return self._direct_tast_testing_enabled
+
+    if len(self._direct_tast_testing_projects) > 0:
+      self._direct_tast_testing_enabled = all(
+          is_change_allowlisted(gc) for gc in self.m.src_state.gerrit_changes)
+      return self._direct_tast_testing_enabled
+
+    self._direct_tast_testing_enabled = False
     return self._direct_tast_testing_enabled
 
   def schedule_ctp_requests(self, tagged_requests, can_outlive_parent=True,
