@@ -2134,7 +2134,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"generated_files\": [{\"location\": 1, \"path\": \"/tmp/toolchain-pkgs/foo.tar.gz\"}, {\"location\": 1, \"path\": \"/tmp/toolchain-pkgs/bar.tar.gz\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"generated_files\": [{\"location\": 1, \"path\": \"/tmp/toolchain-pkgs/foo.tar.xz\"}, {\"location\": 1, \"path\": \"/tmp/toolchain-pkgs/bar.tar.xz\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2220,7 +2220,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"sdk_tarball_path\": {\"location\": 2, \"path\": \"/test/path/built-sdk.tar.xz\"}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"sdk_tarball_path\": {\"location\": 2, \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz\"}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2314,7 +2314,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"manifest_path\": {\"location\": 1, \"path\": \"/build/amd64-host/built-sdk.tar.gz.Manifest\"}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"manifest_path\": {\"location\": 2, \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest\"}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2408,10 +2408,8 @@
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
       "----",
       "cp",
-      "-r",
       "[CACHE]/cros_chroot/chroot/var/lib/portage/pkgs",
       "gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages"
     ],
@@ -2420,7 +2418,7 @@
     "name": "upload prebuilts.upload host prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {
@@ -2437,10 +2435,8 @@
       "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
       "--",
       "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
       "----",
       "cp",
-      "-r",
       "[CACHE]/cros_chroot/chroot/build/amd64-host/packages",
       "gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages"
     ],
@@ -2449,7 +2445,7 @@
     "name": "upload prebuilts.upload target prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
   },
   {
@@ -2461,7 +2457,7 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.gz",
+    "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2475,20 +2471,20 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.gz",
-      "gs://chromiumos-sdk/2012/05/foo.tar.gz"
+      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.xz",
+      "gs://chromiumos-sdk/2012/05/foo.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.gz.gsutil upload",
+    "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/foo.tar.gz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/foo.tar.xz@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.gz",
+    "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2502,15 +2498,15 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.gz",
-      "gs://chromiumos-sdk/2012/05/bar.tar.gz"
+      "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.xz",
+      "gs://chromiumos-sdk/2012/05/bar.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.gz.gsutil upload",
+    "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/bar.tar.gz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/bar.tar.xz@@@"
     ]
   },
   {
@@ -2533,7 +2529,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "/test/path/built-sdk.tar.xz",
+      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
       "gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2560,7 +2556,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CACHE]/cros_chroot/chroot/build/amd64-host/built-sdk.tar.gz.Manifest",
+      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest",
       "gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

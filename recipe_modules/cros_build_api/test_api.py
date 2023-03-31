@@ -470,13 +470,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['BuildPrebuilts'] = '{}'
     responses['BuildSdkTarball'] = jsonify(
         sdk_tarball_path={
-            'path': '/test/path/built-sdk.tar.xz',
+            'path': self.src_path('built-sdk.tar.xz'),
             'location': 2,  # chromiumos.Path.Location.OUTSIDE
         })
     responses['CreateManifestFromSdk'] = jsonify(
         manifest_path={
-            'path': '/build/amd64-host/built-sdk.tar.gz.Manifest',
-            'location': 1,  # chromium.Paht.Location.INSIDE
+            'path': self.src_path('built-sdk.tar.xz.Manifest'),
+            'location': 2,  # chromium.Path.Location.OUTSIDE
         })
     responses['CreateBinhostCLs'] = jsonify(cls=[
         'binhostcls:1',
@@ -485,11 +485,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['UploadPrebuiltPackages'] = '{}'
     responses['BuildSdkToolchain'] = jsonify(generated_files=[
         {
-            'path': '/tmp/toolchain-pkgs/foo.tar.gz',
+            'path': '/tmp/toolchain-pkgs/foo.tar.xz',
             'location': 1,  # chromiumos.Path.Location.INSIDE
         },
         {
-            'path': '/tmp/toolchain-pkgs/bar.tar.gz',
+            'path': '/tmp/toolchain-pkgs/bar.tar.xz',
             'location': 1,  # chromiumos.Path.Location.INSIDE
         }
     ])
