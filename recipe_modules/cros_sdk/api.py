@@ -69,6 +69,7 @@ class CrosSdkApi(RecipeApi):
     with self.m.step.nest('configure chroot path'):
       self._cache_path = chroot_parent_path.join('cros_chroot')
       self.chroot_path = self._cache_path.join('chroot')
+      self.out_path = self._cache_path.join('out')
       self._sdk_cache_state = None
       self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
       self._chrome_root = None
@@ -117,6 +118,7 @@ class CrosSdkApi(RecipeApi):
       env = common.Chroot.ChrootEnv(use_flags=self._use_flags)
     return common.Chroot(
         path=str(self.chroot_path),
+        out_path=str(self.out_path),
         chrome_dir=self.chrome_root,
         env=env,
     )
@@ -264,6 +266,8 @@ class CrosSdkApi(RecipeApi):
         self.cros_sdk_path,
         '--chroot',
         self.chroot_path,
+        '--out-dir',
+        self.out_path,
     ]
 
     cmd += args

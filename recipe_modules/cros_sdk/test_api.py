@@ -24,9 +24,10 @@ class CrosSdkApi(recipe_test_api.RecipeTestApi):
   def chroot(self, use_flags=(), chrome_root=None):
     """Return a chromiumos.common.Chroot."""
     env = common.Chroot.ChrootEnv(use_flags=use_flags) if use_flags else None
-    chroot_path = self.m.path['cache'].join('cros_chroot', 'chroot')
-    # TODO(crbug/1215263): The Chroot() initialization can use str(chroot_path)
-    # once the test_api supports str().
-    abs_path = '/'.join([str(chroot_path.base)] +
-                        list(chroot_path.pieces or []))
-    return common.Chroot(path=abs_path, chrome_dir=chrome_root, env=env)
+    path = self.m.path['cache'].join('cros_chroot')
+    # TODO(crbug/1215263): The Chroot() initialization can use str(path) once
+    # the test_api supports str().
+    abs_path = '/'.join([str(path.base)] + list(path.pieces or []))
+    return common.Chroot(path='/'.join([abs_path, 'chroot']),
+                         out_path='/'.join([abs_path, 'out']),
+                         chrome_dir=chrome_root, env=env)

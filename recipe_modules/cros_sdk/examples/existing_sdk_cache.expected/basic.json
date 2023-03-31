@@ -73,7 +73,8 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CLEANUP]/test/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CLEANUP]/test/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -89,7 +90,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot/chroot\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CLEANUP]/test/cros_chroot/chroot\",\n    \"outPath\": \"[CLEANUP]/test/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,

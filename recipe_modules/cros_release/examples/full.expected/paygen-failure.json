@@ -154,7 +154,8 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\",@@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
@@ -180,7 +181,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"destBucket\": \"gs://\",\n  \"channels\": [\n    2\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"destBucket\": \"gs://\",\n  \"channels\": [\n    2\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
