@@ -5,12 +5,13 @@
 
 from collections import namedtuple
 import datetime
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStats
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
@@ -47,6 +48,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self.use_complete_snapshot = properties.use_complete_snapshot
     self._stats = LooksForGreenStats()
     self._now = None
+    self._should_lfg = None
 
   @property
   def now_utc(self) -> datetime.datetime:
@@ -71,6 +73,23 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
+
+  def should_lfg(self, exps: Dict[str, bool],
+                 gerrit_changes: List[GerritChange]) -> bool:
+    '''Returns whether looks for green logic should be run.'''
+    if self._should_lfg is None:
+      with self.m.step.nest('check should look for green') as pres:
+        exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
+        lfg_enabled = self.m.looks_for_green.enable_looks_for_green
+        disallow = self.found_disallow_lfg_footer(gerrit_changes)
+        self._should_lfg = exp_enabled and lfg_enabled and not disallow
+        should_lfg_log = (
+            f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
+            f' {lfg_enabled}, Found disallow footer: {disallow}')
+        if not self._should_lfg:
+          should_lfg_log += '. Using original snapshot.'
+        pres.logs['should_lfg'] = should_lfg_log
+    return self._should_lfg
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
   def _get_snapshots(self,
@@ -260,7 +279,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           gerrit_changes, self.DISALLOW_LOOKS_FOR_GREEN_FOOTER)
       presentation.logs['check disallow looks for green'] = (
           f'Found {self.DISALLOW_LOOKS_FOR_GREEN_FOOTER} footers: '
-          f'{git_footers}')
+          f'{sorted(git_footers)}')
       for git_footer in git_footers:
         if git_footer.lower() != 'false':
           found_disallow = True

@@ -7,9 +7,11 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/step',
     'recipe_engine/time',
     'cros_infra_config',
+    'cros_source',
     'easy',
     'git_footers',
 ]

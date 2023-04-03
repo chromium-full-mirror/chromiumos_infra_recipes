@@ -2963,6 +2963,24 @@
   },
   {
     "cmd": [],
+    "name": "run builds.filter builds.check should look for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@should_lfg@Found CQ looks experiment: False, Found LFG enabled: False, Found disallow footer: False. Using original snapshot.@@@",
+      "@@@STEP_LOG_END@should_lfg@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.filter builds.check should look for green.check disallow looks for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: []@@@",
+      "@@@STEP_LOG_END@check disallow looks for green@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

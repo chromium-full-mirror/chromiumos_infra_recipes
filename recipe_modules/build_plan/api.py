@@ -137,14 +137,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      # Check if CQ looks experiment is enabled and choose a snapshot.
-      # TODO(b/211620738): Also use Gitiles footer to allow lookback-only or
-      # wait-only CQ looks behaviors.
-      cq_looks_enabled = (
-          (b"chromeos.cros_infra_config.cq_looks" in child_exps or
-           "chromeos.cros_infra_config.cq_looks" in child_exps) and
-          self.m.looks_for_green.enable_looks_for_green)
-      # TODO(b/211620738): Choose snapshot for external manifest.
+      cq_looks_enabled = self.m.looks_for_green.should_lfg(
+          child_exps, gerrit_changes)
       internal_snapshot, external_snapshot = self.choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
@@ -492,7 +486,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
             cq_looks_log.append(
                 f'Found footer to disable looks for green: {disallow}. Using original snapshot.'
             )
-          should_find_green_snapshot = not disallow and (
+          should_find_green_snapshot = (
               self.m.looks_for_green.use_complete_snapshot or
               not self.m.looks_for_green.is_snap_orch_green())
           if should_find_green_snapshot:

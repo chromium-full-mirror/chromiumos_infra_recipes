@@ -109,7 +109,9 @@ def GenTests(api):
           expected_internal_sha=MODIFIED_INTERNAL_SHA,
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -146,7 +148,9 @@ def GenTests(api):
               }
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -173,7 +177,7 @@ def GenTests(api):
               'use_complete_snapshot': True
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
           expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
-      api.git_footers.simulated_get_footers([], 'filter builds.looks for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers([], 'filter builds.check should look for green.check disallow looks for green'),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
@@ -205,7 +209,9 @@ def GenTests(api):
               'enable_looks_for_green': True
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -245,7 +251,9 @@ def GenTests(api):
               }
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -276,7 +284,9 @@ def GenTests(api):
               }
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -317,13 +327,15 @@ def GenTests(api):
                   'dry_run': True
               }
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.git_footers.simulated_get_footers(
-          ['True'],
-          'filter builds.looks for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers([
+          'True'
+      ], 'filter builds.check should look for green.check disallow looks for green'
+                                           ),
       api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.check disallow looks for green'),
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.post_check(
           post_process.DoesNotRun,
           'filter builds.looks for green.checking latest scored snapshot'),
@@ -342,7 +354,9 @@ def GenTests(api):
               'enable_looks_for_green': True
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers(
-          [], 'filter builds.looks for green.check disallow looks for green'),
+          [],
+          'filter builds.check should look for green.check disallow looks for green'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'

@@ -1,0 +1,17 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.looks_for_green.tests;
+
+message ShouldLfgProperties {
+
+  // Whether a test is expected to LFG.
+  bool expected_should_lfg = 1;
+
+  // Map of experiments to enablement.
+  map<string, bool> experiments = 2;
+
+}
