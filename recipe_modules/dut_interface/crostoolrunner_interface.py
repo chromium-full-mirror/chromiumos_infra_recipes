@@ -594,7 +594,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict,
           human_readable_summary=ctr_test_result.reason,
           start_time=timestamp_pb2.Timestamp(seconds=start_time),
-          end_time=timestamp_pb2.Timestamp(start_time + duration.seconds))
+          end_time=timestamp_pb2.Timestamp(
+              seconds=int(start_time + duration.seconds)))
     else:
       skylab_result = Skylab_Result.Autotest.TestCase(
           name=ctr_test_result.test_case_id.value, verdict=skylab_test_verdict,
