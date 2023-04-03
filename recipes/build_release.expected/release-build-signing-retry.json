@@ -109,10 +109,6 @@
   },
   {
     "cmd": [],
-    "name": "check buildspec"
-  },
-  {
-    "cmd": [],
     "name": "set release output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@channels@[]@@@"
