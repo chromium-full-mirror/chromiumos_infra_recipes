@@ -768,13 +768,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     return self._builds_status
 
-  def ps_relevant(self, tags: List[common_pb2.StringPair]) -> bool:
-    """Whether the postsubmit child build was relevant.
+  def ps_critical_relevant(self, build: build_pb2.Build) -> bool:
+    """Whether the postsubmit child build was critical and relevant.
 
     Args:
-      tags: Tags of the child build.
+      build: The child build.
     """
-    for tag in tags:
+    if not self.m.buildbucket.is_critical(build):
+      return False
+    for tag in build.tags:
       if tag.key == 'relevance':
         return tag.value == 'relevant'
 
@@ -805,12 +807,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
             child_builds_relevant=len(cq_relevant_builds))
 
       if self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
-        ps_relevant_builds = [
-            x.builder.builder for x in builds if self.ps_relevant(x.tags)
+        ps_relevant_critical_builds = [
+            x.builder.builder for x in builds if self.ps_critical_relevant(x)
         ]
-        self._relevant_child_builds = ps_relevant_builds
-        if not ps_relevant_builds:
-          self.m.easy.set_properties_step(all_builds_irrelevant=True)
+        self._relevant_child_builds = ps_relevant_critical_builds
+        if not ps_relevant_critical_builds:
+          self.m.easy.set_properties_step(all_critical_builds_irrelevant=True)
           self.m.easy.set_properties_step(sheriff_ignore_build=True)
 
       failures = self.m.failures.get_build_results(builds).failures

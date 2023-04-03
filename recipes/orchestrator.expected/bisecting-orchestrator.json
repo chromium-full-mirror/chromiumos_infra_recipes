@@ -1860,10 +1860,10 @@
   },
   {
     "cmd": [],
-    "name": "check build results.set all_builds_irrelevant",
+    "name": "check build results.set all_critical_builds_irrelevant",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@all_builds_irrelevant@true@@@"
+      "@@@SET_BUILD_PROPERTY@all_critical_builds_irrelevant@true@@@"
     ]
   },
   {
