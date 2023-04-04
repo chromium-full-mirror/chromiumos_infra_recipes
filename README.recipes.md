@@ -746,36 +746,36 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#57)(self):**
+&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#59)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#70)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#72)(self):**
 
 Set build cost after running.
 
 Returns:
   A context that sets build_cost on exit.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#82)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#84)(self):**
 
 Set cq cost after running.
 
 Returns:
   A context that sets cq_run_cost on exit.
 
-&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#50)(self):**
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#52)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#94)(self):**
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#96)(self):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
 Calculate the cost of creating the build and set it as a build output
 property.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#149)(self, child_builds: List[Build]=None):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#151)(self, child_builds: List[Build]=None):**
 
 Wrapper function to calculate and set the cost of the cq run.
 
@@ -9884,11 +9884,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#27)(api: RecipeApi):**
 ### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
 
-[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#12): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/bot_cost/tests/bot_size.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#22)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#23)(api: RecipeApi):**
 ### *recipes* / [bot\_scaling:examples/drop\_cpus](/recipe_modules/bot_scaling/examples/drop_cpus.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/drop_cpus.py#11): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

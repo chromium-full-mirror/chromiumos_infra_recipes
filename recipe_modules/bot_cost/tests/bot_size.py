@@ -6,6 +6,7 @@
 # pylint: disable=protected-access
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -20,22 +21,18 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):
-  api.assertions.assertEqual(api.bot_cost._bot_size, None)
-  api.assertions.assertRaises(ValueError, api.bot_cost.set_build_cost)
+  api.bot_cost.set_build_cost()
+  api.assertions.assertEqual(api.bot_cost._bot_size, 'unknown')
 
 
 def GenTests(api: RecipeTestApi):
 
-  def test(name: str, status: str, bot_size: str, test_status='SUCCESS'):
-    bld_msg = build_pb2.Build(id=123, status=status)
-    bld_msg.infra.swarming.bot_dimensions.extend(
-        api.cros_tags.tags(bot_size=bot_size))
-    return api.test(name, api.buildbucket.build(bld_msg), status=test_status)
+  bld_msg = build_pb2.Build(id=123, status='SUCCESS')
+  bld_msg.infra.swarming.bot_dimensions.extend(
+      api.cros_tags.tags(bot_size='n2d-standard-1234567'))
 
-  # TODO (b/275363240): audit this test.
-  yield test(
-      'bad-size',
-      status='STARTED',
-      bot_size='bad',
-      test_status='FAILURE',
+  yield api.test(
+      'no-fail-unknown-bot-size',
+      api.buildbucket.build(bld_msg),
+      api.post_process(post_process.PropertyEquals, 'build_cost', 0.0),
   )

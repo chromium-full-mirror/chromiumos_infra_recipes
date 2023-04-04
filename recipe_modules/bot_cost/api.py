@@ -12,11 +12,12 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from recipe_engine.post_process_inputs import Step
 from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_api import StepFailure
 
 # Cost values are hourly pulled from bot_policies_helper.
 # Cost is in USD per day, last updated on 05/05/2020.
 BOT_COST = {
+    # Will set cost to zero if we don't have a lookup.
+    'unknown': 0.0,
     'small': 0.01425,
     'smedium': 0.001675,
     'medium': 0.08042,
@@ -40,6 +41,7 @@ BOT_COST = {
     'n1-standard-16': 0.228,
     'n1-standard-32': 0.456,
     'n2-highcpu-64': 0.599,
+    'n2d-standard-16': 0.18832,
     'n2d-highcpu-64': 0.30106,
 }
 
@@ -61,9 +63,9 @@ class BotCostApi(RecipeApi):
       for dimension in swarming.bot_dimensions or swarming.task_dimensions:
         if dimension.key == 'bot_size':
           if dimension.value not in BOT_COST:
-            raise StepFailure('bot_size:{} not supported'.format(
-                dimension.value))
-          self._bot_size = dimension.value
+            self._bot_size = 'unknown'
+          else:
+            self._bot_size = dimension.value
           break
     return self._bot_size
 
