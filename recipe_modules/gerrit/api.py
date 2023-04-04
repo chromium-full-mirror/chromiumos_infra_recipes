@@ -297,7 +297,7 @@ class GerritApi(RecipeApi):
           request, gerrit_changes)
     return self.m.support.call('gerrit-fetch-changes', request,
                                test_output_data=test_output_data,
-                               timeout=10 * 60)
+                               timeout=36 * 60)
 
   def fetch_patch_sets(
       self, gerrit_changes: List[GerritChange], include_files: bool = False,

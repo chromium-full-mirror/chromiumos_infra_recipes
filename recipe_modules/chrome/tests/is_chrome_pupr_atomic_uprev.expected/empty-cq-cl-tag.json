@@ -66,7 +66,7 @@
     "infra_step": true,
     "name": "get CL 12345 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 12345, \"host\": \"gerrit.host.test\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

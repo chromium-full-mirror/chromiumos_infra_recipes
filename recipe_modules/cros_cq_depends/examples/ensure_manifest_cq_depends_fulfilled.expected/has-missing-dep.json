@@ -1186,7 +1186,7 @@
     "infra_step": true,
     "name": "ensure manifest cq-depend fulfilled (2).gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 12345, \"host\": \"chromium\", \"patch_set\": 0}, {\"change_number\": 67890, \"host\": \"chrome-internal\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

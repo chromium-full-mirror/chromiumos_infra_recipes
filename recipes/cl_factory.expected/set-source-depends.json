@@ -71,7 +71,7 @@
     },
     "name": "configure builder.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 1234, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2761,7 +2761,7 @@
     },
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 1234, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4268,7 +4268,7 @@
     },
     "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromiumos/config.get CL 1234 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4470,7 +4470,7 @@
     },
     "name": "generate project change lists.applying Cq-Depend to input projects.applying Cq-Depend to chromeos/program/galaxy.get CL 1234 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

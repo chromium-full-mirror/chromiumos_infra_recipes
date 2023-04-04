@@ -40,7 +40,7 @@
     "infra_step": true,
     "name": "gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
@@ -146,7 +146,7 @@
     "infra_step": true,
     "name": "gerrit-fetch-changes (2)",
     "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",

@@ -2158,7 +2158,7 @@
     "infra_step": true,
     "name": "identify outdated uprev commits.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 3, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 4, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 5, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}, {\"change_number\": 6, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

@@ -2166,7 +2166,7 @@
     },
     "name": "run builds.check force relevance.get CL 1394249 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1394249, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": -1}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 600,
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
