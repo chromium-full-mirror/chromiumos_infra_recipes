@@ -456,36 +456,25 @@ def GenTests(api: RecipeTestApi):
       status='INFRA_FAILURE',
   )
 
-  def StepCommandEmpty(check, step_odict, step):
-    """Assert that a command has no arguments.
-
-    TODO(gredelston): After https://crrev.com/c/4386273 lands and gets rolled
-    into the ChromeOS .recipe_deps, replace with the upstream check.
-
-    Args:
-      step: The full name of the step to check.
-    """
-    check(step_odict[step].cmd == [])
-
   yield api.build_menu.test(
       'staging-does-not-upload',
-      api.post_check(StepCommandEmpty,
+      api.post_check(post_process.StepCommandEmpty,
                      'upload prebuilts.upload host prebuilts.gsutil upload'),
-      api.post_check(StepCommandEmpty,
+      api.post_check(post_process.StepCommandEmpty,
                      'upload prebuilts.upload target prebuilts.gsutil upload'),
       api.post_check(
-          StepCommandEmpty,
+          post_process.StepCommandEmpty,
           'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload'
       ),
       api.post_check(
-          StepCommandEmpty,
+          post_process.StepCommandEmpty,
           'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload'
       ),
       api.post_check(
-          StepCommandEmpty,
+          post_process.StepCommandEmpty,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload'),
       api.post_check(
-          StepCommandEmpty,
+          post_process.StepCommandEmpty,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload'),
       builder='staging-chromiumos-sdk',
       bucket='staging',
