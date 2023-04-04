@@ -47,6 +47,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'cros_schedule',
+    'deferrals',
     'gerrit',
     'git',
     'git_cl',
@@ -248,22 +249,24 @@ PUBLIC_CONFIG = RepoProject('chromiumos/config', False, True)
 
 
 def RunSteps(api: RecipeApi, properties: StarDoctorProperties) -> None:
-  with api.step.nest('set up'):
-    _validate_properties(api, properties)
-    _clone_repos(api)
-  remote_config_files = _get_remote_config_files(properties)
+  with api.deferrals.raise_exceptions_at_end():
+    with api.step.nest('set up'):
+      _validate_properties(api, properties)
+      _clone_repos(api)
+    remote_config_files = _get_remote_config_files(properties)
 
-  with api.step.nest('generate binary config'):
-    _copy_remote_configs(api, remote_config_files)
-    _fetch_and_write_chromiumos_schedule(api)
-    _fetch_and_write_keyset_config(api)
-    _update_release_time(api)
-    _regenerate_configs(api)
-    _copy_ini_configs(api)
+    with api.step.nest('generate binary config'):
+      _copy_remote_configs(api, remote_config_files)
+      _fetch_and_write_chromiumos_schedule(api)
+      _fetch_and_write_keyset_config(api)
+      _update_release_time(api)
+      with api.deferrals.defer_exceptions():
+        _regenerate_configs(api)
+      _copy_ini_configs(api)
 
-  irrelevant_files = set()
-  irrelevant_files.add(TIMELINE_FILENAME)
-  _upload_all_changes(api, properties, irrelevant_files)
+    irrelevant_files = set()
+    irrelevant_files.add(TIMELINE_FILENAME)
+    _upload_all_changes(api, properties, irrelevant_files)
 
 
 def _clone_repos(api: RecipeApi) -> None:
@@ -572,6 +575,21 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.ResultReasonRE,
                        ('.*ge_bucket and branches cannot be set if'
                         ' remote_config_files is set..*')),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'defer-failure',
+      api.time.seed(1613694623.0),
+      api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
+                     branches=['R9000']),
+      api.step_data('generate binary config.regenerate configs', retcode=1),
+      _set_gerrit_query_changes_responses(),
+      api.post_check(post_process.StepSuccess,
+                     'generate binary config.deferring exception until later'),
+      api.post_check(post_process.StepSuccess,
+                     'generate binary config.copy INI configs'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
