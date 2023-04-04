@@ -49,7 +49,7 @@ class MetadataJsonApi(RecipeApi):
   def _safe_buildbucket_get_self(self, initial=False):
     if self.m.led.run_id:
       # If this is a led job, do not use the build_id of the cloned builder.
-      # This build_id is for an amd64-generic-cq run from 2020-04-17.
+      # 8784717183252430977 is for an amd64-generic-cq run from 2023-04-04.
       build_id = self.test_api.led_build_id
     elif initial:
       # If this is the initial call, and start_time is non-zero, use bb.build.
