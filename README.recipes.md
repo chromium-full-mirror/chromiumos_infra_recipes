@@ -10824,7 +10824,7 @@ action to copy these public configs to a public repo.
 Each action is a function that takes a list of config repos to operate on and
 returns a list of repos to make commits to.
 
-&mdash; **def [RunSteps](/recipes/config_postsubmit.py#464)(api, properties):**
+&mdash; **def [RunSteps](/recipes/config_postsubmit.py#474)(api, properties):**
 ### *recipes* / [cop](/recipes/cop.py)
 
 [DEPS](/recipes/cop.py#19): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]

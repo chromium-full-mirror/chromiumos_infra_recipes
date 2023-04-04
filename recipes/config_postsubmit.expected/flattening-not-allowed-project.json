@@ -2093,6 +2093,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
       "chromiumos.config.payload.ConfigBundle",
@@ -2133,6 +2135,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
       "chromiumos.config.payload.FlatConfigList",
@@ -2150,6 +2154,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/join_programs.py",
       "-l",
       "debug",
@@ -2221,6 +2227,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/aggregate_messages.py",
       "-m",
       "chromiumos.config.payload.ConfigBundle",
@@ -2325,6 +2333,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/config/.vpython",
       "[CLEANUP]/chromiumos_workspace/src/config/payload_utils/config_to_datastore.py",
       "--env",
       "prod"
