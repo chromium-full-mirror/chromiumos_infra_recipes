@@ -16,18 +16,19 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
-DEPS = [
-    'recipe_engine/file',
-    'recipe_engine/json',
-    'recipe_engine/path',
-    'recipe_engine/properties',
-    'recipe_engine/step',
-    'recipe_engine/tricium',
-    'src_state',
-    'gerrit',
-    'support',
-    'test_util',
-]
+DEPS = {
+    'depot_gerrit': 'depot_tools/gerrit',
+    'file': 'recipe_engine/file',
+    'json': 'recipe_engine/json',
+    'path': 'recipe_engine/path',
+    'properties': 'recipe_engine/properties',
+    'step': 'recipe_engine/step',
+    'tricium': 'recipe_engine/tricium',
+    'src_state': 'src_state',
+    'gerrit': 'gerrit',
+    'support': 'support',
+    'test_util': 'test_util',
+}
 
 PROPERTIES = CopProperties
 
@@ -178,6 +179,18 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       api.tricium.add_comment(name, step['log'], '/COMMIT_MSG')
     api.tricium.write_comments()
 
+  with api.step.nest('send Vote to Gerrit') as presentation:
+    vote = 0 if results['result']['status'] == "SUCCESS" else -1
+    body = {'labels': {"Verified": vote}}
+    # We allow status 400 for repositories that do not support the label
+    # Verified or for repositories where our user do not have permissions
+    # to vote. The important thing is the comment not the vote.
+    api.depot_gerrit.call_raw_api(
+        'https://' + patch_set.host, '/changes/%s/revisions/%s/review/' %
+        (patch_set.change_id, patch_set.current_revision), method='POST',
+        body=body, accept_statuses=[200, 400], name='raw_add_reviewer')
+    presentation.step_text = 'Voted V %d.' % vote
+
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
@@ -273,7 +286,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'log': 'Hello World'
       }]
   }
-  yield api.test('full-run', test_builder(gerrit_changes=change),
+  yield api.test('sucess-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'check committer', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
@@ -281,5 +294,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
+                 api.post_process(post_process.DropExpectation)) + \
+                 api.properties(CopProperties(project_name='name'))
+
+  token = {'token': {'access_token': "fabada"}}
+  cloud_build = {'id': 'acabad0'}
+  results = {
+      'result': {
+          'status': 'FAILURE',
+          'log': 'Soo good',
+      },
+      'steps': [{
+          'id': '1',
+          'name': 'run bye world',
+          'status': 'FAILURE',
+          'log': 'Hello World'
+      }]
+  }
+  yield api.test('failure-run', test_builder(gerrit_changes=change),
+                 api.gerrit.set_gerrit_fetch_changes_response(
+                    'check committer', change, gen_patch_sets()),
+                 api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
+                 api.step_data('obtain Oauth2 token.oauth2-get-token',stdout=api.json.output(token)),
+                 api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
+                 api.step_data('fetch results.fetch_results.py',api.json.output(results)),
+                 api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
