@@ -266,7 +266,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def setup_workspace_and_chroot(self, no_chroot_timeout: bool = False,
                                  cherry_pick_changes: bool = True,
                                  bootstrap_chroot: bool = False,
-                                 replace: bool = False) -> bool:
+                                 replace: bool = False,
+                                 update_chroot: bool = True) -> bool:
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -278,13 +279,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
           the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
+      update: Whether to update the chroot after creating it.
 
     Returns:
       Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
       yield self.setup_chroot(no_chroot_timeout, bootstrap=bootstrap_chroot,
-                              replace=replace)
+                              replace=replace, update=update_chroot)
 
   @contextlib.contextmanager
   def setup_workspace(self, cherry_pick_changes=True):
@@ -319,7 +321,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
-                   replace: bool = False) -> bool:
+                   replace: bool = False, update: bool = True) -> bool:
     """Setup the chroot for the builder.
 
     Args:
@@ -328,6 +330,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         for example, 2022.01.20.073008.
       bootstrap: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
+      update: Whether to update the chroot after creating it.
 
     Returns:
       Whether the build is relevant.
@@ -356,13 +359,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
           no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True
 
-      # Avoid passing empty BuildTarget message when we don't have one,
-      # e.g. chromite-cq.
-      tc_targets = [self.build_target] if self.build_target.name else None
-      tc_targets = None if self._force_empty_toolchain_targets else tc_targets
-      self.m.cros_sdk.update_chroot(
-          toolchain_targets=tc_targets,
-          build_source=config.build.sdk_update.compile_source)
+      if update:
+        # Avoid passing empty BuildTarget message when we don't have one,
+        # e.g. chromite-cq.
+        tc_targets = [self.build_target] if self.build_target.name else None
+        tc_targets = None if self._force_empty_toolchain_targets else tc_targets
+        self.m.cros_sdk.update_chroot(
+            toolchain_targets=tc_targets,
+            build_source=config.build.sdk_update.compile_source)
 
     return relevance != Relevance.POINTLESS
 

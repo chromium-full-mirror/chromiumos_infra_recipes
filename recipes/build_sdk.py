@@ -78,7 +78,9 @@ class BuildSDKRun:
   def run(self):
     """Run the main logic for this builder."""
     with self.m.build_menu.configure_builder(missing_ok=True), \
-        self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True, replace=True):
+        self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True,
+                                                     replace=True,
+                                                     update_chroot=False):
       self._build_sdk_packages()
       self._build_toolchain()
       self._create_sdk_tarball()
@@ -375,6 +377,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       api.post_check(post_process.PropertyEquals, 'version', DEFAULT_VERSION),
+      # Make sure we're not updating the chroot, since we need to ensure that
+      # all host packages can be built using the bootstrap SDK version.
+      api.post_check(post_process.DoesNotRun, 'update sdk'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildPrebuilts'),
       api.post_check(post_process.StepSuccess,
