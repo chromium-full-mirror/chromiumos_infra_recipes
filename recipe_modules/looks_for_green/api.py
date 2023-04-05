@@ -86,6 +86,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         should_lfg_log = (
             f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
             f' {lfg_enabled}, Found disallow footer: {disallow}')
+        # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
+        if self._should_lfg:
+          with self.m.step.nest('check if CL uses Cq-Depend'):
+            if self.m.git_footers.get_footer_values(gerrit_changes,
+                                                    'Cq-Depend'):
+              self._should_lfg = False
+              should_lfg_log += '. Found Cq-Depend footer'
+              pres.logs[
+                  'Cq-Depend footer'] = 'Found Cq-Depend footer. Skipping looks for green.'
         if not self._should_lfg:
           should_lfg_log += '. Using original snapshot.'
         pres.logs['should_lfg'] = should_lfg_log

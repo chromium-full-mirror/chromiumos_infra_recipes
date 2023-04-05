@@ -1874,7 +1874,7 @@
     "name": "run builds.filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment not enabled. Using original snapshot.@@@",
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },

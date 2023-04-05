@@ -493,6 +493,10 @@ def GenTests(api):
           [],
           'filter builds.check should look for green.check disallow looks for green'
       ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
+      ),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True,

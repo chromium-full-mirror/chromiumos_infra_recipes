@@ -533,7 +533,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
                     with self.m.context(cwd=internal_manifest.path):
                       self.m.git.checkout(chosen_internal.id, force=True)
         else:
-          cq_looks_log.append(
-              'CQ looks experiment not enabled. Using original snapshot.')
+          cq_looks_log.append('CQ looks not enabled. Using original snapshot.')
         presentation.logs['cq looks log'] = cq_looks_log
     return chosen_internal, chosen_external

@@ -112,6 +112,10 @@ def GenTests(api):
           [],
           'filter builds.check should look for green.check disallow looks for green'
       ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -151,6 +155,10 @@ def GenTests(api):
           [],
           'filter builds.check should look for green.check disallow looks for green'
       ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -178,6 +186,10 @@ def GenTests(api):
           }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
           expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers([], 'filter builds.check should look for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
@@ -211,6 +223,10 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -254,6 +270,10 @@ def GenTests(api):
           [],
           'filter builds.check should look for green.check disallow looks for green'
       ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
+      ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -286,6 +306,10 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -356,6 +380,10 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],

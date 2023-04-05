@@ -45,6 +45,8 @@ def GenTests(api):
           }),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers(
+          [], 'check should look for green.check if CL uses Cq-Depend'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -80,5 +82,21 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           ['True'],
           'check should look for green.check disallow looks for green'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # TODO(b/276363760): Remove when Cq-Depended changes are supported.
+  yield api.test(
+      'cq-depend',
+      api.properties(
+          expected_should_lfg=False, experiments=lfg_experiment, **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True
+              },
+          }),
+      api.git_footers.simulated_get_footers(
+          [], 'check should look for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers(
+          ['123456'], 'check should look for green.check if CL uses Cq-Depend'),
       api.post_process(post_process.DropExpectation),
   )
