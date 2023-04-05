@@ -75,10 +75,18 @@ def _insert_before_change_id(change: str, description: str, text: str) -> str:
 
 def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
   with api.step.nest("check properties"):
+    errors = []
+    gs_re = re.compile(r"^gs:", re.IGNORECASE)
     if not properties.archive_gs_bucket:
-      raise StepFailure("archive_gs_bucket must be set")
+      errors.append("archive_gs_bucket must be set")
+    elif gs_re.match(properties.archive_gs_bucket):
+      errors.append("archive_gs_bucket must not include \"gs:\" prefix")
     if not properties.prebuilts_gs_bucket:
-      raise StepFailure("prebuilts_gs_bucket must be set")
+      errors.append("prebuilts_gs_bucket must be set")
+    elif gs_re.match(properties.prebuilts_gs_bucket):
+      errors.append("prebuilts_gs_bucket must not include \"gs:\" prefix")
+    if errors:
+      raise StepFailure("\n".join(errors))
 
   # Unlike normal CrOS builds, the SDK has no concept of pinned CrOS manifest
   # or specific Chrome version.  Use a datestamp instead.
@@ -361,6 +369,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               prebuilts_gs_bucket="prebuilt-bucket-is-here")),
       api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(post_process.SummaryMarkdown,
+                     "archive_gs_bucket must be set"),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -371,6 +381,34 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           BuildToolchainProperties(archive_gs_bucket="archive-bucket-is-here")),
       api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(post_process.SummaryMarkdown,
+                     "prebuilts_gs_bucket must be set"),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.build_menu.test(
+      "missing-multiple-buckets",
+      api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          "archive_gs_bucket must be set\nprebuilts_gs_bucket must be set"),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.build_menu.test(
+      "buckets_include_gs",
+      api.properties(
+          BuildToolchainProperties(
+              archive_gs_bucket="gs://archive-bucket-is-here",
+              prebuilts_gs_bucket="gs://archive-bucket-is-here")),
+      api.post_check(post_process.MustRun, "check properties"),
+      api.post_check(post_process.DoesNotRun, "identify key CLs"),
+      api.post_check(post_process.SummaryMarkdown,
+                     ("archive_gs_bucket must not include \"gs:\" prefix\n" +
+                      "prebuilts_gs_bucket must not include \"gs:\" prefix")),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
