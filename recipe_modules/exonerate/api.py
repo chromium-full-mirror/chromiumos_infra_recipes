@@ -541,8 +541,10 @@ class ExonerateApi(recipe_api.RecipeApi):
             stat.test_id = failure_rate.test_id
             stat.build_target = self.m.rdb_util.get_build_target_from_variant(
                 failure_rate.variant)
+            # Manual exoneration's configs remove the tast prefix from test names.
+            tastless_name = self.get_tastless_name(stat.test_id)
             stat.manually_exonerated = self._is_test_name_exonerable(
-                str(stat.test_id), str(stat.build_target))
+                tastless_name, stat.build_target)
             stat.consistent_failure_count = self.get_consistent_failure_count_from_verdicts(
                 failure_rate.recent_verdicts)
             flaky_verdicts, stat.flaky_verdict_percent = (
