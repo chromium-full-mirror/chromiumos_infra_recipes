@@ -169,7 +169,7 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return test_case
 
-  def _exonerate_hw_test_cases(self, test_cases, build_target, board, suite):
+  def _exonerate_hw_test_cases(self, test_cases, build_target, board):
     """Exonerates [ExecuteResponse.TaskResult.TestCaseResult] based on configs.
 
     Args:
@@ -177,7 +177,6 @@ class ExonerateApi(recipe_api.RecipeApi):
         conditionally exonerated.
       build_target(str): build_target that was tested.
       board(str): board on which the test was executed.
-      suite(str): suite in which the test was executed.
 
     Returns: list of TestCaseResult changed based on the decision, new overall
       verdict of the tests.
@@ -202,7 +201,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           continue
         self._failed_tests.add(
             FailedTest(name=test_case.name, board=board,
-                       build_target=build_target, suite=suite, test_config=''))
+                       build_target=build_target, suite='', test_config=''))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -216,7 +215,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       new_verdict = TaskState.VERDICT_PASSED
     return new_test_cases, new_verdict
 
-  def _exonerate_child_results(self, results, build_target, board, suite):
+  def _exonerate_child_results(self, results, build_target, board):
     """Exonerates [WaitTaskResult.Task] based on configs.
 
     Args:
@@ -224,7 +223,6 @@ class ExonerateApi(recipe_api.RecipeApi):
         conditionally exonerated.
       build_target(str): build_target on which the test was executed.
       board(str): board on which the test was executed.
-      suite(str): suite in which the test was executed.
 
     Returns: list of WaitTaskResult.Task changed based on the decision, new
       overall status of the results.
@@ -239,7 +237,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       else:
         new_result = result
         new_test_cases, new_verdict = self._exonerate_hw_test_cases(
-            result.test_cases, build_target, board, suite)
+            result.test_cases, build_target, board)
         new_result.ClearField("test_cases")
         new_result.test_cases.extend(new_test_cases)
         new_result.state.verdict = new_verdict
@@ -292,9 +290,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           build_target = skylab_res.task.unit.common.build_target.name
           board = skylab_res.task.test.skylab_board
           display_name = str(skylab_res.task.test.common.display_name)
-          suite_name = display_name.split('.')[-1]
           new_child_results, new_status = self._exonerate_child_results(
-              skylab_res.child_results, build_target, board, suite_name)
+              skylab_res.child_results, build_target, board)
           new_skylab_res = SkylabResult(task=skylab_res.task, status=new_status,
                                         child_results=new_child_results)
           new_test_results.append(new_skylab_res)
