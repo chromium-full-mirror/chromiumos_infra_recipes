@@ -678,6 +678,9 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   # Fetches the following information from test_metadata.
   build_tag = ''
   if not cft_is_enabled:
+    # Optional tag to help us identify whether tests where run in CFT.
+    base_tags.append(('is_cft_run', 'False'))
+
     # The 'request.prejob.softwareDependencies.chromeosBuild' is from the input
     # properties which is actually used by provisioning and is guaranteed to be
     # present as a result. Example:
@@ -689,6 +692,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
           build_tag = dep.chromeos_build
           break
   else:
+    base_tags.append(('is_cft_run', 'True'))
+
     # CFT test request has 'autotest_keyvals' instead of
     # 'prejob.softwareDependencies.chromeosBuild'. CFT test request example:
     # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8802533370122261697/+/u/inputs/cft_test_request
