@@ -203,7 +203,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Test of "upload_prebuilts" flag.
   # CQ build on uprev CL, with uploading the prebuilts.
   yield api.build_menu.test(
-      'upload-prebuilts-experiment',
+      'upload-prebuilts-delete-incrementals-experiment',
       api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
       api.gerrit.simulated_topic(
           "chromeos-base/lacros-ash-atomic", GERRIT_HOST, CHANGE_NUM,
@@ -230,6 +230,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       experiments=[
           # Flag to enable to upload the prebuilts
           'chromeos.build_cq.upload_prebuilts',
+          # Why not test incrementals deletion too!
+          'chromeos.sysroot_util.clean_incrementals',
       ],
   )
 

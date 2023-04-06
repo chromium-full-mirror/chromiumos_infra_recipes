@@ -15,6 +15,7 @@ from PB.chromite.api.image import CreateImageResult
 from PB.chromite.api.image import CreateNetbootRequest
 from PB.chromite.api.image import Image
 from PB.chromite.api.image import TestImageRequest
+from PB.chromite.api.sdk import CleanRequest
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import InstallToolchainRequest
 from PB.chromite.api.sysroot import Profile as OldProfile
@@ -212,8 +213,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       with self.m.step.nest('check chrome source needed') as check_pres:
         # Block and wait for the chrome checkout of main.
         self.m.chrome.wait_for_sync_chrome_source_async()
-        if self.m.chrome.needs_chrome_source(_InstallPackagesRequest(),
-                                             dep_graph, check_pres):
+        ebuild_chrome = self.m.chrome.needs_chrome_source(
+            _InstallPackagesRequest(), dep_graph, check_pres)
+
+        if ebuild_chrome:
           # This will change the return from _InstallPackagesRequest().
           chrome_root = self.m.path['start_dir'].join('chrome')
           self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
@@ -254,6 +257,13 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           response_lambda=self.m.cros_build_api.failed_pkg_data_names,
           pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
           timeout=timeout_sec)
+
+      # Remove ~60-100GB of chrome incremental build artifacts.
+      if ('chromeos.sysroot_util.clean_incrementals'
+          in self.m.cros_infra_config.experiments):
+        if ebuild_chrome:
+          clean_request = CleanRequest(incrementals=True)
+          _ = self.m.cros_build_api.SdkService.Clean(clean_request)
 
       # Process goma response to upload logs, stats, and counterz.
       if self.m.cros_sdk.has_goma_config():

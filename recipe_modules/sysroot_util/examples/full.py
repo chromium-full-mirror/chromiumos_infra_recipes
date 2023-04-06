@@ -126,6 +126,14 @@ def GenTests(api):
   )
 
   yield api.test(
+      'clean-incrementals-experiment',
+      test_build(),
+      api.buildbucket.ci_build(
+          builder='atlas-cq',
+          experiments=['chromeos.sysroot_util.clean_incrementals']),
+  )
+
+  yield api.test(
       'chrome-cache-experiment-with-purge',
       test_build(),
       api.buildbucket.ci_build(
