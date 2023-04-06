@@ -731,6 +731,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           completed_builds = list(
               self._collect_builds([b.id for b in collect_now],
                                    collect_name='child builds'))
+          self.add_child_info_to_output_property()
         else:
           results_step_name = '(RETRY-MODE) check build results from previous builds'
           completed_builds = self.m.buildbucket.get_multi(
@@ -907,6 +908,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
               self.m.time.sleep(self._properties.stagger_children_seconds)
           for f in self.m.futures.iwait(futures):
             existing_builds += f.result()
+
+    self.add_child_info_to_output_property()
 
     collect_when_dict = defaultdict(list)
     child_specs_dict = {cs.name: cs for cs in child_specs}
