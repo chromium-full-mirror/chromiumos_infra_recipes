@@ -130,6 +130,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
 
     errors, total_retries = [], 0
+    failure_reasons = []
     for paygen_response in paygen_parallel_runner.wait_for_and_get_responses():
 
       response = paygen_response.resp
@@ -144,6 +145,20 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
         continue
 
       if response.failure_reason:
+        failure_reason_str = 'UNSPECIFIED'
+        # Try converting from enum to string.
+        try:
+          failure_reason_str = GenerationResponse.FailureReason.Name(
+              response.failure_reason)
+        except:  #pylint: disable=bare-except
+          pass
+        failure_reasons.append({
+            'payload':
+                api.naming.get_generation_request_title(
+                    MessageToDict(request).get('generationRequest', {})),
+            'failure_reason':
+                failure_reason_str
+        })
         # See go/rubik-must-paygen-minios for more info about minios skips.
         if response.failure_reason in [
             GenerationResponse.NOT_MINIOS_COMPATIBLE,
@@ -170,6 +185,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     api.easy.set_properties_step(
         payloads=[MessageToDict(payload) for payload in payloads])
     api.easy.set_properties_step(paygen_retries=total_retries)
+    api.easy.set_properties_step(failure_reasons=failure_reasons)
 
     if errors:
       raise StepFailure('paygen failed with errors: {}'.format('\n'.join([
@@ -514,10 +530,16 @@ def GenTests(api: RecipeTestApi):
               dict(generation_request=api.paygen_testing
                    .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
           ])),
+      # Our current set of failure reasons are all non-fatal minios exceptions,
+      # pass bogus non-zero failure_reason for coverage.
       generate_payload_response(api, is_success=False, retcode=2,
                                 failure_reason=3),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
+          "failure_reason": "UNSPECIFIED",
+          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+      }]),
       # api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -551,7 +573,11 @@ def GenTests(api: RecipeTestApi):
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      # api.post_process(post_process.DropExpectation),
+      api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
+          "failure_reason": "NOT_MINIOS_COMPATIBLE",
+          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+      }]),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -566,7 +592,11 @@ def GenTests(api: RecipeTestApi):
           failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      # api.post_process(post_process.DropExpectation),
+      api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
+          "failure_reason": "MINIOS_COUNT_MISMATCH",
+          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+      }]),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

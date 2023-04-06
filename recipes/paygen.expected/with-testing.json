@@ -2123,6 +2123,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "doing paygen.set failure_reasons",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failure_reasons@[]@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",

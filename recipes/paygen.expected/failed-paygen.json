@@ -1695,6 +1695,14 @@
   },
   {
     "cmd": [],
+    "name": "doing paygen.set failure_reasons",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failure_reasons@[{\"failure_reason\": \"UNSPECIFIED\", \"payload\": \"DLC (termina-dlc) stable-channel | Full (13425.90.0)\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set sdk_state",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
