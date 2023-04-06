@@ -212,6 +212,12 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           config_internal_path = self.m.src_state.workspace_path.join(
               CONFIG_INTERNAL_CHECKOUT)
           cmd.extend(['--target_test_requirements_repo', config_internal_path])
+          config = self.m.cros_infra_config.config
+          if config and config.orchestrator.gitiles_commit.ref:
+            cmd.extend([
+                '--target_test_requirements_branch',
+                config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
+            ])
       if self._properties.use_prod_config:
         cmd.append('--use_prod_config')
 
