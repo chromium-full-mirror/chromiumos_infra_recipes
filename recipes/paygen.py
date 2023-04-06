@@ -145,7 +145,10 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
 
       if response.failure_reason:
         # See go/rubik-must-paygen-minios for more info about minios skips.
-        if response.failure_reason == GenerationResponse.NOT_MINIOS_COMPATIBLE:
+        if response.failure_reason in [
+            GenerationResponse.NOT_MINIOS_COMPATIBLE,
+            GenerationResponse.MINIOS_COUNT_MISMATCH
+        ]:
           presentation.step_text = 'not compatible with miniOS, skipping'
           continue
         errors.append(
@@ -512,7 +515,7 @@ def GenTests(api: RecipeTestApi):
                    .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
           ])),
       generate_payload_response(api, is_success=False, retcode=2,
-                                failure_reason=2),
+                                failure_reason=3),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       # api.post_process(post_process.DropExpectation),
@@ -546,6 +549,21 @@ def GenTests(api: RecipeTestApi):
       generate_payload_response(
           api, is_success=False, retcode=2,
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      # api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'failed-minios-partition-mismatch',
+      api.properties(
+          PaygenProperties(requests=[
+              dict(generation_request=api.paygen_testing
+                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
+          ])),
+      generate_payload_response(
+          api, is_success=False, retcode=2,
+          failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       # api.post_process(post_process.DropExpectation),
