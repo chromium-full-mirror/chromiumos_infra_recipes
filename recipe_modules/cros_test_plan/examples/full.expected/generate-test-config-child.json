@@ -4601,9 +4601,7 @@
       "--target_test_requirements",
       "something/ttrp.binary_proto",
       "--target_test_requirements_repo",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal",
-      "--target_test_requirements_branch",
-      "main"
+      "[CLEANUP]/chromiumos_workspace/src/config-internal"
     ],
     "infra_step": true,
     "luci_context": {

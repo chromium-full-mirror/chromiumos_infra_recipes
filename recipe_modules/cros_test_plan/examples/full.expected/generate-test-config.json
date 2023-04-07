@@ -4602,8 +4602,6 @@
       "something/ttrp.binary_proto",
       "--target_test_requirements_repo",
       "[CLEANUP]/chromiumos_workspace/src/config-internal",
-      "--target_test_requirements_branch",
-      "main",
       "--use_prod_config"
     ],
     "infra_step": true,
