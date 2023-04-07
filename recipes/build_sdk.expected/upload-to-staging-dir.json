@@ -2260,6 +2260,8 @@
       "-m",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "-r",
       "[CACHE]/cros_chroot/chroot/var/lib/portage/pkgs",
       "gs://chromeos-prebuilt/staging/host/amd64/amd64-host/chroot-1970.01.01.000000/packages"
@@ -2289,6 +2291,8 @@
       "-m",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "-r",
       "[CACHE]/cros_chroot/chroot/build/amd64-host/packages",
       "gs://chromeos-prebuilt/staging/board/amd64-host/chroot-1970.01.01.000000/packages"
@@ -2324,6 +2328,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.xz",
       "gs://chromiumos-sdk/staging/2012/05/foo.tar.xz"
     ],
@@ -2351,6 +2357,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "[CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.xz",
       "gs://chromiumos-sdk/staging/2012/05/bar.tar.xz"
     ],
@@ -2382,6 +2390,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
       "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz"
     ],
@@ -2409,6 +2419,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest",
       "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz.Manifest"
     ],
@@ -2515,6 +2527,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-a",
+      "public-read",
       "[CLEANUP]/tmp_tmp_1",
       "gs://chromiumos-sdk/staging/cros-sdk-latest.conf"
     ],

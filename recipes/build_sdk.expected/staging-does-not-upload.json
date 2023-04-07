@@ -3218,7 +3218,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -r [CACHE]/cros_chroot/chroot/var/lib/portage/pkgs gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -a public-read -r [CACHE]/cros_chroot/chroot/var/lib/portage/pkgs gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
@@ -3236,7 +3236,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -r [CACHE]/cros_chroot/chroot/build/amd64-host/packages gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py -m ---- cp -a public-read -r [CACHE]/cros_chroot/chroot/build/amd64-host/packages gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
     ]
@@ -3261,7 +3261,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.xz gs://chromiumos-sdk/2012/05/foo.tar.xz@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp -a public-read [CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/foo.tar.xz gs://chromiumos-sdk/2012/05/foo.tar.xz@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/foo.tar.xz@@@"
     ]
@@ -3279,7 +3279,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.xz gs://chromiumos-sdk/2012/05/bar.tar.xz@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp -a public-read [CACHE]/cros_chroot/chroot/tmp/toolchain-pkgs/bar.tar.xz gs://chromiumos-sdk/2012/05/bar.tar.xz@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/2012/05/bar.tar.xz@@@"
     ]
@@ -3301,7 +3301,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CLEANUP]/chromiumos_workspace/built-sdk.tar.xz gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp -a public-read [CLEANUP]/chromiumos_workspace/built-sdk.tar.xz gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@"
     ]
@@ -3319,7 +3319,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp -a public-read [CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@"
     ]
@@ -3440,7 +3440,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Pretending to run gsutil command@@@",
-      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp [CLEANUP]/tmp_tmp_1 gs://chromiumos-sdk/cros-sdk-latest.conf@@@",
+      "@@@STEP_LOG_LINE@command@python3 -u RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py -- RECIPE_REPO[depot_tools]/gsutil.py ---- cp -a public-read [CLEANUP]/tmp_tmp_1 gs://chromiumos-sdk/cros-sdk-latest.conf@@@",
       "@@@STEP_LOG_END@command@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-latest.conf@@@"
     ]

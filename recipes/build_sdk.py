@@ -308,6 +308,9 @@ class BuildSDKRun:
 
     Always uploads directories with -r for recursive mode, and multithreaded.
 
+    Always uploads with the `public-read` canned ACL, since SDK artifacts can
+    be used by anybody.
+
     If the upload_to_staging_dir property is True, then the destination dir
     will have "staging/" prepended.
 
@@ -324,11 +327,11 @@ class BuildSDKRun:
     # to upload a path that doesn't exist.
     if not self.m.path.exists(source_path):  # pragma: nocover
       raise InfraFailure(f'Upload source "{source_path}" not found locally.')
+    args = ['-a', 'public-read']
     if self.m.path.isdir(source_path):
-      args = ['-r']
+      args.append('-r')
       multithreaded = True
     else:
-      args = []
       multithreaded = False
     if self.properties.upload_to_staging_dir:
       dest_path = os.path.join('staging', dest_path)
@@ -416,7 +419,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp',
+              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
               'gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
@@ -492,7 +495,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp',
+              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
               "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
               "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz"
           ]),
@@ -504,7 +507,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp',
+              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
               'gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
