@@ -199,6 +199,7 @@
   * [chromiumos_codesearch_initiator](#recipes-chromiumos_codesearch_initiator) (Python3 ✅) &mdash; Initialize ChromiumOS codesearch builders to create kzips.
   * [cipd_uprev](#recipes-cipd_uprev) (Python3 ✅)
   * [cl_factory](#recipes-cl_factory) (Python3 ✅) &mdash; Used to create sweeping changes by creating CLs in many repos.
+  * [clean_vm_images](#recipes-clean_vm_images) (Python3 ✅) &mdash; Recipe for cleaning up stale GCP VM images.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full) (Python3 ✅)
   * [cloud_pubsub:tests/raises_on_failed_publish](#recipes-cloud_pubsub_tests_raises_on_failed_publish) (Python3 ✅)
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov) (Python3 ✅)
@@ -9647,13 +9648,37 @@ A module to interact with Chrome OS VMLab.
 
 Initialize GcloudApi.
 
-&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#78)(self):**
+&mdash; **def [clean\_images](/recipe_modules/vmlab/api.py#74)(self, dry_run, rate=1):**
 
-&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#81)(self):**
+Clean up VM images in the GCP project.
 
-&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self):**
+Remove expired images, return error if there is any unknown image.
 
-&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#56)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
+Args:
+  dry_run: don't really delete images if true.
+  rate: maximum number of requests per second.
+
+Returns:
+  Object containing the result of the clean up. Includes total number of
+    images, deleted images, failed to import images, unknown images.
+
+&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#118)(self):**
+
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#121)(self):**
+
+&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, build_path, wait):**
+
+Import a VM image from GCS to GCE.
+
+Args:
+  build_path: build path of the image in GCS without bucket, for example
+              betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
+  wait: whether to wait for the image import to complete.
+
+Returns:
+  Object containing project, name, status, source of the imported image.
+
+&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#96)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
 
 Lease a VM.
 
@@ -10656,6 +10681,15 @@ TEST=None'   -p 'reviewers=["reviewer@google.com"]'   -p 'hashtags=["mondo-updat
 For more details on the input properties, see cl_factory.proto.
 
 &mdash; **def [RunSteps](/recipes/cl_factory.py#72)(api: RecipeApi, properties: ClFactoryProperties):**
+### *recipes* / [clean\_vm\_images](/recipes/clean_vm_images.py)
+
+[DEPS](/recipes/clean_vm_images.py#18): [build\_menu](#recipe_modules-build_menu), [vmlab](#recipe_modules-vmlab)
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for cleaning up stale GCP VM images.
+
+&mdash; **def [RunSteps](/recipes/clean_vm_images.py#26)(api: RecipeApi):**
 ### *recipes* / [cloud\_pubsub:examples/full](/recipe_modules/cloud_pubsub/examples/full.py)
 
 [DEPS](/recipe_modules/cloud_pubsub/examples/full.py#6): [cloud\_pubsub](#recipe_modules-cloud_pubsub)

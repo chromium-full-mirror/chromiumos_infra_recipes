@@ -50,8 +50,48 @@ class VmlabApi(recipe_api.RecipeApi):
       presentation.logs['vmlab CLI output'] = stdout
     return stdout
 
-  def import_image(self):
-    pass
+  def import_image(self, build_path, wait):
+    """Import a VM image from GCS to GCE.
+
+    Args:
+      build_path: build path of the image in GCS without bucket, for example
+                  betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
+      wait: whether to wait for the image import to complete.
+
+    Returns:
+      Object containing project, name, status, source of the imported image.
+    """
+    with self.m.step.nest("import VM image"):
+      args = ["-build-path", build_path, '-json']
+      if wait:
+        args.append('-wait')
+      result = self._run(
+          ["image"] + args,
+          test_data='{"project":"p", "name":"n", "status":"READY", "source":"s"}\n'
+      )
+      return json.loads(result.strip())
+
+  def clean_images(self, dry_run, rate=1):
+    """Clean up VM images in the GCP project.
+
+    Remove expired images, return error if there is any unknown image.
+
+    Args:
+      dry_run: don't really delete images if true.
+      rate: maximum number of requests per second.
+
+    Returns:
+      Object containing the result of the clean up. Includes total number of
+        images, deleted images, failed to import images, unknown images.
+    """
+    with self.m.step.nest("clean up images"):
+      args = ["-rate", str(rate), "-json"]
+      if dry_run:
+        args.append('-dry-run')
+      result = self._run(
+          ["clean-images"] + args,
+          test_data='{"Total":2,"Deleted":["d"],"Failed":[],"Unknown":[]}\n')
+      return json.loads(result.strip())
 
   def lease_vm(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT,
                swarming_bot_name=None):

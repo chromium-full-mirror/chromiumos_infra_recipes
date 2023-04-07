@@ -99,6 +99,112 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "import VM image"
+  },
+  {
+    "cmd": [],
+    "name": "import VM image.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "image",
+      "-build-path",
+      "build-path",
+      "-json",
+      "-wait"
+    ],
+    "name": "import VM image.call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "import VM image (2)"
+  },
+  {
+    "cmd": [],
+    "name": "import VM image (2).call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "image",
+      "-build-path",
+      "build-path",
+      "-json"
+    ],
+    "name": "import VM image (2).call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up images"
+  },
+  {
+    "cmd": [],
+    "name": "clean up images.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "clean-images",
+      "-rate",
+      "1",
+      "-json",
+      "-dry-run"
+    ],
+    "name": "clean up images.call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up images (2)"
+  },
+  {
+    "cmd": [],
+    "name": "clean up images (2).call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "clean-images",
+      "-rate",
+      "1",
+      "-json"
+    ],
+    "name": "clean up images (2).call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

@@ -1,0 +1,73 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "clean up images"
+  },
+  {
+    "cmd": [],
+    "name": "clean up images.ensure vmlab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/vmlab",
+      "-ensure-file",
+      "chromiumos/infra/vmlab/${platform} latest",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "clean up images.ensure vmlab.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/vmlab/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up images.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "clean-images",
+      "-rate",
+      "1",
+      "-json"
+    ],
+    "name": "clean up images.call `vmlab`.run cmd",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "summaryMarkdown": "{\"Total\": 2, \"Deleted\": [\"d\"], \"Failed\": [], \"Unknown\": []}"
+  }
+]
