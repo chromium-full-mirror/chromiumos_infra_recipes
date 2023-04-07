@@ -209,7 +209,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           new_test_cases.append(test_case)
 
     verdicts = [tc.verdict for tc in new_test_cases]
-    if TaskState.VERDICT_FAILED in verdicts:
+    if not verdicts or TaskState.VERDICT_FAILED in verdicts:
       new_verdict = TaskState.VERDICT_FAILED
     else:
       new_verdict = TaskState.VERDICT_PASSED
