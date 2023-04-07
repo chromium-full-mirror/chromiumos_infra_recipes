@@ -20,4 +20,7 @@ message TestInputProperties {
 
   // If Remoteexec properties should be checked.
   bool check_remoteexec = 4;
+
+  // Whether to expect long timeouts have been set.
+  bool expected_long_timeouts = 5;
 }

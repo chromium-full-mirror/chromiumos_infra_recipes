@@ -3,18 +3,25 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
+
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/properties',
     'cros_sdk',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = TestInputProperties
 
-def RunSteps(api):
-  api.assertions.assertFalse(api.cros_sdk.long_timeouts)
-  api.cros_sdk.long_timeouts = False
-  api.assertions.assertFalse(api.cros_sdk.long_timeouts)
+
+def RunSteps(api, properties):
+  api.assertions.assertEqual(properties.expected_long_timeouts,
+                             api.cros_sdk.long_timeouts)
+  # Testing boolean stickiness.
   api.cros_sdk.long_timeouts = True
   api.assertions.assertTrue(api.cros_sdk.long_timeouts)
   api.cros_sdk.long_timeouts = False
@@ -22,4 +29,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-force_long_timeouts',
+      api.properties(**{'$chromeos/cros_sdk': dict(force_long_timeouts=True)},
+                     expected_long_timeouts=True),
+      api.post_process(post_process.DropExpectation))

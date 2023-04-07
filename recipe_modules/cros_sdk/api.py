@@ -33,11 +33,11 @@ class CrosSdkApi(RecipeApi):
     super().__init__(*args, **kwargs)
     # TODO(b/169266654): Make this a git footer configurable value.
     self._force_off_toolchain_changed = props.force_off_toolchain_changed
+    self._long_timeouts = props.force_long_timeouts
     self._chroot_initialized = False
 
   def initialize(self):
     """Cache the chroot path."""
-    self._long_timeouts = False
     self.configure(self.m.path['cache'])
 
   @property

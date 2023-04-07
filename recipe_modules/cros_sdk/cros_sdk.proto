@@ -11,4 +11,8 @@ message CrosSdkProperties {
   // This is used to verify that the SDK is compatible with the toolchain CL
   // being landed.  See crbug.com/1130707.
   bool force_off_toolchain_changed = 1;
+
+  // Whether to force using long timeouts. Long timeouts are already used when
+  // we detect source compiles or toolchains changes.
+  bool force_long_timeouts = 2;
 }

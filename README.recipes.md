@@ -3804,7 +3804,7 @@ Returns:
 
 &mdash; **def [has\_remoteexec\_config](/recipe_modules/cros_sdk/api.py#223)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#38)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_sdk/api.py#39)(self):**
 
 Cache the chroot path.
 
@@ -11658,11 +11658,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/is_chroot_usable.py#29)(api, is_chroot_usable):**
 ### *recipes* / [cros\_sdk:tests/long\_timeouts](/recipe_modules/cros_sdk/tests/long_timeouts.py)
 
-[DEPS](/recipe_modules/cros_sdk/tests/long_timeouts.py#6): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_sdk/tests/long_timeouts.py#10): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/long_timeouts.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/long_timeouts.py#21)(api, properties):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#6): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
