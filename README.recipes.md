@@ -599,6 +599,7 @@
   * [star_doctor](#recipes-star_doctor) (Python3 ✅) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full) (Python3 ✅)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full) (Python3 ✅)
+  * [sync_key_value_store](#recipes-sync_key_value_store) (Python3 ✅) &mdash; Sync values from a source-controlled key-value store to a GS:// file.
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot) (Python3 ✅)
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full) (Python3 ✅)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build) (Python3 ✅)
@@ -13856,6 +13857,32 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#17)(api):**
+### *recipes* / [sync\_key\_value\_store](/recipes/sync_key_value_store.py)
+
+[DEPS](/recipes/sync_key_value_store.py#35): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Sync values from a source-controlled key-value store to a GS:// file.
+
+Key-value store (KVS) files are simple pairs of key="value", such as:
+  my_key="foo"
+  your_key="bar"
+For new config files, JSON is the preferred standard. However, ChromeOS deals
+with a handful of legacy KVSs. For more about the KVS format, see
+recipe_modules/key_value_store/ and chromite/utils/key_value_store.py.
+
+This recipe makes a few simplifying assumptions based on its original
+requirements:
+1.  The source file is always in the ChromeOS source tree.
+2.  The destination file is always in Google Cloud Storage.
+3.  There is always exactly one source file and exactly one destination file.
+4.  The source file should always be read from tip-of-tree: i.e., HEAD on the
+    main branch.
+It should not be too hard to remove any of these assumptions. If you need to
+extend the recipe with additional features, please go ahead!
+
+&mdash; **def [RunSteps](/recipes/sync_key_value_store.py#45)(api: RecipeApi, properties: SyncKeyValueStoreProperties):**
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
