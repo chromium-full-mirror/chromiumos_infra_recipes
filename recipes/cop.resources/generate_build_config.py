@@ -23,10 +23,12 @@ def securize_user_config(user_config):
   user_config['timeout'] = '1200s'
 
   #Check docker container
-  valid_containers = ('gcr.io/${PROJECT_ID}/', 'gcr.io/cloud-builders/git')
-  for s in user_config['steps']:
-    if not s['name'].startswith(valid_containers):
-      print(f"Container names must start with {valid_containers}")
+  valid_containers = ('gcr.io/${PROJECT_ID}/', 'gcr.io/cloud-builders/')
+  for i, step in enumerate(user_config['steps']):
+    name = step['name']
+    if not name.startswith(valid_containers):
+      print(f"Container names must start with {valid_containers}, "
+            f"got {name!r} for step {i}")
       sys.exit(-1)
 
   return user_config
@@ -39,7 +41,7 @@ def patch_yaml(base_yaml, user_yaml):
   - 'steps' fields is the concatenation of base and user 'steps' fields,
     in that order.
   - 'availableSecrets' field comes directly from base configuration.
-  - 'substititions' field is a merge of base and user configurations
+  - 'substitutions' field is a merge of base and user configurations
   - For other fields present in user and base configurations, base takes
     preference.
   - Fields only present in user or base are copied as-is.
