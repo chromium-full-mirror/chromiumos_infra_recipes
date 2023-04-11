@@ -1,11 +1,105 @@
 [
   {
+    "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
     "cmd": [
-      "echo",
-      "hello",
-      "world"
+      "docker",
+      "help"
     ],
-    "name": "Hello World"
+    "name": "check docker install"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/platform/borealis",
+      "borealis/"
+    ],
+    "infra_step": true,
+    "name": "git clone"
+  },
+  {
+    "cmd": [],
+    "name": "fetch kabuto payload"
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://kabuto_cache/test-recipe-payloads/kabuto_volteer.tar.gz",
+      "kabuto_payload.tar.gz"
+    ],
+    "infra_step": true,
+    "name": "fetch kabuto payload.gsutil download",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xvf",
+      "kabuto_payload.tar.gz",
+      "-C",
+      "borealis/tools/kabuto/in/"
+    ],
+    "name": "fetch kabuto payload.untar kabuto payload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./borealis/tools/kabuto/kabuto",
+      "--gcs",
+      "--no-interactive"
+    ],
+    "name": "run kabuto"
+  },
+  {
+    "cmd": [],
+    "name": "upload kabuto logs"
+  },
+  {
+    "cmd": [
+      "tar",
+      "cvf",
+      "kabuto_logs_2012-05-14-125321.tar",
+      "borealis/tools/kabuto/logs/"
+    ],
+    "name": "upload kabuto logs.bundle kabuto logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "kabuto_logs_2012-05-14-125321.tar",
+      "gs://kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125321.tar"
+    ],
+    "infra_step": true,
+    "name": "upload kabuto logs.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125321.tar@@@"
+    ]
   },
   {
     "name": "$result"

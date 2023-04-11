@@ -5,17 +5,121 @@
 
 """Recipe for building Borealis shadercache using Kabuto."""
 
+from PB.recipes.chromeos.build_kabuto_shadercache import (
+    BuildKabutoShadercacheProperties)
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
-DEPS = ['recipe_engine/step']
+DEPS = [
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'recipe_engine/time',
+    'depot_tools/gsutil',
+    'failures',
+    'git',
+]
+
+PROPERTIES = BuildKabutoShadercacheProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+GS_BUCKET = 'kabuto_cache'
+LOCAL_PAYLOAD_FILENAME = 'kabuto_payload.tar.gz'
 
-def RunSteps(api: RecipeApi) -> None:
-  api.step('Hello World', ['echo', 'hello', 'world'])
+
+def _upload_kabuto_logs(api: RecipeTestApi) -> None:
+  """Tars and uploads the contents of borealis/kabuto/logs/."""
+  time_now_utc = api.time.utcnow().strftime("%Y-%m-%d-%H%M%S")
+  kabuto_log_tarball = f'kabuto_logs_{time_now_utc}.tar'
+  kabuto_log_path = 'borealis/tools/kabuto/logs/'
+
+  api.step('bundle kabuto logs',
+           ['tar', 'cvf', kabuto_log_tarball, kabuto_log_path])
+
+  # Hardcoded for now to facilitate dev, this will be changed later.
+  upload_path = f'test-recipe-payloads/logs/{kabuto_log_tarball}'
+  api.gsutil.upload(kabuto_log_tarball, GS_BUCKET, upload_path)
+
+
+def _fetch_kabuto_payload(api: RecipeTestApi, payload_gs_bucket: str,
+                          payload_gs_path: str) -> None:
+  """Download the property-provided Kabuto payload (Mesa headers) from GS."""
+  api.gsutil.download(payload_gs_bucket, payload_gs_path,
+                      LOCAL_PAYLOAD_FILENAME)
+
+
+def RunSteps(api: RecipeApi,
+             properties: BuildKabutoShadercacheProperties) -> None:
+  # Validate that the inputs we minimally require were passed.
+  with api.step.nest('validate properties') as presentation:
+    if not properties.payload_gs_bucket:
+      raise StepFailure('must set payload_gs_bucket')
+    if not properties.payload_gs_path:
+      raise StepFailure('must set payload_gs_path')
+
+    presentation.step_text = 'all properties good'
+
+  return DoRunSteps(api, properties)
+
+
+def DoRunSteps(api: RecipeTestApi,
+               properties: BuildKabutoShadercacheProperties) -> None:
+  # This recipe should only run on bots with docker pre-installed.  Abort
+  # immediately if that is not the case.
+  # TODO(pobega): add a test case for when Docker is missing (here and in
+  # Borealis rootfs.)
+  api.step('check docker install', ['docker', 'help'])
+
+  # Clone Borealis, Kabuto is in borealis/tools/kabuto.
+  api.git.clone(
+      'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+      target_path='borealis/')
+
+  # Download Mesa headers for Kabuto to ingest.
+  with api.step.nest('fetch kabuto payload'):
+    _fetch_kabuto_payload(api, properties.payload_gs_bucket,
+                          properties.payload_gs_path)
+
+    # Untar Mesa headers into our Kabuto checkout
+    api.step('untar kabuto payload', [
+        'tar', 'xvf', LOCAL_PAYLOAD_FILENAME, '-C', 'borealis/tools/kabuto/in/'
+    ])
+
+  # Run Kabuto.
+  # TODO(pobega): For now we want to skip failures so that we can upload logs,
+  # this will be changed to using deferred for prod.
+  with api.failures.ignore_exceptions():
+    api.step('run kabuto',
+             ['./borealis/tools/kabuto/kabuto', '--gcs', '--no-interactive'])
+
+  # Upload Kabuto's logs to Google Storage.
+  with api.step.nest('upload kabuto logs'):
+    _upload_kabuto_logs(api)
 
 
 def GenTests(api: RecipeTestApi) -> None:
-  yield api.test('basic')
+  good_props = {
+      'payload_gs_bucket': 'kabuto_cache',
+      'payload_gs_path': 'test-recipe-payloads/kabuto_volteer.tar.gz'
+  }
+  yield api.test('basic', api.properties(**good_props))
+
+  props = good_props.copy()
+  del props['payload_gs_bucket']
+  yield api.test(
+      'missing-payload-GS-bucket',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
+      status='FAILURE',
+  )
+
+  props = good_props.copy()
+  del props['payload_gs_path']
+  yield api.test(
+      'missing-payload-GS-path',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
+      status='FAILURE',
+  )

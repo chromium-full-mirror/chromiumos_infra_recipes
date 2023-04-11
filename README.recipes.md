@@ -10434,13 +10434,15 @@ builder profiles.
 &mdash; **def [RunSteps](/recipes/build_informational.py#26)(api: RecipeApi):**
 ### *recipes* / [build\_kabuto\_shadercache](/recipes/build_kabuto_shadercache.py)
 
-[DEPS](/recipes/build_kabuto_shadercache.py#11): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_kabuto_shadercache.py#15): [failures](#recipe_modules-failures), [git](#recipe_modules-git), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building Borealis shadercache using Kabuto.
 
-&mdash; **def [RunSteps](/recipes/build_kabuto_shadercache.py#16)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/build_kabuto_shadercache.py#67)(api: RecipeTestApi, properties: BuildKabutoShadercacheProperties):**
+
+&mdash; **def [RunSteps](/recipes/build_kabuto_shadercache.py#53)(api: RecipeApi, properties: BuildKabutoShadercacheProperties):**
 ### *recipes* / [build\_legacy\_factory](/recipes/build_legacy_factory.py)
 
 [DEPS](/recipes/build_legacy_factory.py#13): [build\_menu](#recipe_modules-build_menu), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
