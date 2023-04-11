@@ -32,11 +32,14 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/path',
     'recipe_engine/step',
     'recipe_engine/tricium',
     'build_menu',
+    'chrome',
     'chromite',
     'cros_build_api',
+    'cros_sdk',
     'cros_source',
     'gerrit',
     'repo',
@@ -136,6 +139,23 @@ def _GetAffectedPackages(
     else:
       presentation.step_text = 'Found %d affected packages' % len(affected)
     return affected
+
+
+def _SyncChromeSources(api, config):
+  """Sync chrome sources and configure Goma.
+
+  Normally this would be handled by the install packages step for CQ, but this
+  recipe does not call that so we call the logic directly.
+  """
+  with api.step.nest('Sync Chrome sources'):
+    chrome_root = api.path['start_dir'].join('chrome')
+    api.chrome.cache_sync(cache_path=chrome_root, sync=False,
+                          step_name="populate chrome cache")
+    api.chrome.sync(chrome_root, api.cros_sdk.chroot,
+                    api.build_menu.sysroot.build_target, config.chrome.internal,
+                    cache_dir=chrome_root.join('chrome_cache'))
+    api.cros_sdk.set_chrome_root(chrome_root)
+    api.cros_sdk.configure_goma()
 
 
 def _GetLints(api: RecipeApi, linter: str,
@@ -261,6 +281,7 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
   try:
     all_linter_output = []
     packages_detected = False
+    chrome_synced = False
 
     api.build_menu.bootstrap_sysroot(config)
     for linter, patchsets in relevant_patchsets_by_linter.items():
@@ -275,6 +296,9 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
             projects=['chromiumos/chromite'],
             cache_path_override=api.src_state.workspace_path)
         packages_detected = True
+      if not chrome_synced:
+        _SyncChromeSources(api, config)
+        chrome_synced = True
       linter_output = _GetLints(api, linter, affected_packages)
       all_linter_output.extend(linter_output)
     if not packages_detected:
@@ -351,6 +375,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.DoesNotRun, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
@@ -363,6 +388,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.DoesNotRun, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
@@ -377,6 +403,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
       api.post_check(post_process.DoesNotRun, 'configure builder'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
@@ -399,6 +426,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               }
           })), **BuildTestArgs())
 
+
   # No affected packages relevant to target platform
   yield api.build_menu.test(
       'no-affected-packages',
@@ -408,6 +436,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'get affected packages for clippy'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
@@ -429,11 +458,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                           'DependencyService/List', data='{}'),
       **BuildTestArgs())
 
+
   # Normal build with relevant changes
   yield api.build_menu.test(
       'one-change',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
+      api.post_check(post_process.StepSuccess, 'Sync Chrome sources'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for clippy'),
       api.post_check(post_process.StepSuccess,
@@ -454,11 +485,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.repo.project_infos_step_data('get affected packages for golint',
                                        data=project_info), **BuildTestArgs())
 
+
   # Multiple change lists with relevant changes
   yield api.build_menu.test(
       'multiple-changes',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
+      api.post_check(post_process.StepSuccess, 'Sync Chrome sources'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for clippy'),
       api.post_check(post_process.StepSuccess,
@@ -500,6 +533,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'get affected packages for clippy'),
       api.post_check(post_process.DoesNotRun,
                      'get affected packages for golint'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
@@ -538,6 +572,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess, 'get relevant files'),
       api.post_check(post_process.StepFailure,
                      'get affected packages for clippy'),
+      api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
@@ -560,6 +595,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'get-clipy-lints-failure',
       api.post_check(post_process.StepSuccess, 'get relevant patches'),
       api.post_check(post_process.StepSuccess, 'get relevant files'),
+      api.post_check(post_process.StepSuccess, 'Sync Chrome sources'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for clippy'),
       api.post_check(post_process.DoesNotRun,

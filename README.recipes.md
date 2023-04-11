@@ -10189,15 +10189,15 @@ recipe.
 &mdash; **def [RunSteps](/recipes/build_legacy_fw.py#519)(api, properties):**
 ### *recipes* / [build\_linters](/recipes/build_linters.py)
 
-[DEPS](/recipes/build_linters.py#34): [build\_menu](#recipe_modules-build_menu), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+[DEPS](/recipes/build_linters.py#34): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for linting CLs.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#255)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#275)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
 
-&mdash; **def [RunSteps](/recipes/build_linters.py#238)(api: RecipeApi, properties: BuildLintersProperties):**
+&mdash; **def [RunSteps](/recipes/build_linters.py#258)(api: RecipeApi, properties: BuildLintersProperties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
