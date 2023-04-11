@@ -268,10 +268,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     name = BuilderConfig.Id.Type.Name(kind)
     try:
-      # TODO(b/271075149): Remove this hack after submitting crrev.com/c/4273070.
-      if name.upper() == "CQ":
-        return binhost_pb.BinhostKey.Value('POSTSUBMIT_BINHOST')
-
       return binhost_pb.BinhostKey.Value('%s_BINHOST' % name.upper())
     except ValueError as err:
       err.message = '%s builders may not upload prebuilts' % name.lower()

@@ -685,7 +685,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 60, in RunSteps",
       "    api.cros_prebuilts.upload_chrome_prebuilts(properties.build_target,",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 615, in upload_chrome_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 611, in upload_chrome_prebuilts",
       "    raise ValueError('A gs bucket was not specified for the upload.')",
       "ValueError('A gs bucket was not specified for the upload.')"
     ]
