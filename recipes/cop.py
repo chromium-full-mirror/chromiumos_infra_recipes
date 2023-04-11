@@ -188,7 +188,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     api.depot_gerrit.call_raw_api(
         'https://' + patch_set.host, '/changes/%s/revisions/%s/review/' %
         (patch_set.change_id, patch_set.current_revision), method='POST',
-        body=body, accept_statuses=[200, 400], name='raw_add_reviewer')
+        body=body, accept_statuses=[200, 400, 403], name='raw_add_reviewer')
     presentation.step_text = 'Voted V %d.' % vote
 
 
