@@ -3,16 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# TODO (b/217973414): Remove future aliases and reenable these pylint checks
-# when Py2 compatibility has been removed.
-# pylint: disable=wrong-import-order,wrong-import-position
-from future.standard_library import install_aliases
-install_aliases()
-
-from urllib.parse import urljoin
+from urllib import parse
 
 from recipe_engine import recipe_api
-
 
 
 KEY_PREFIX = 'chromeos.buildbucket:'
@@ -59,7 +52,8 @@ class CrosSomApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     som_url = str(
         properties.som_url) or 'https://sheriff-o-matic.appspot.com/chromeos'
-    self._annotations_url = urljoin(som_url, '/api/v1/annotations/chromeos')
+    self._annotations_url = parse.urljoin(som_url,
+                                          '/api/v1/annotations/chromeos')
     # A map from 'key' to `SomAnnotation`. Lazily loaded.
     self._key_to_annotation = {}
 

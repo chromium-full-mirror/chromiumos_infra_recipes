@@ -138,7 +138,7 @@
     ],
     "infra_step": true,
     "name": "process_goma_counterz_stats.bq-insert",
-    "stdin": "{\"compile_event\": {\"counterz_stats\": {}, \"stats\": {\"machine_info\": {\"goma_revision\": \"953240d2c4512d99191488cc98fc6f99@1586141662\", \"memory_size\": \"67242942464\", \"ncpus\": 32, \"os\": \"LINUX\"}, \"time_stats\": {\"uptime\": \"1234\"}}}, \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"verbose\": false, \"write_data\": true}",
+    "stdin": "{\"compile_event\": \"{\\n  \\\"stats\\\": {\\n    \\\"time_stats\\\": {\\n      \\\"uptime\\\": \\\"1234\\\"\\n    },\\n    \\\"machine_info\\\": {\\n      \\\"goma_revision\\\": \\\"953240d2c4512d99191488cc98fc6f99@1586141662\\\",\\n      \\\"os\\\": \\\"LINUX\\\",\\n      \\\"ncpus\\\": 32,\\n      \\\"memory_size\\\": \\\"67242942464\\\"\\n    }\\n  },\\n  \\\"counterz_stats\\\": {}\\n}\", \"dataset_id\": \"client_events\", \"project_id\": \"goma-logs\", \"table_name\": \"compile_events\", \"verbose\": false, \"write_data\": true}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",

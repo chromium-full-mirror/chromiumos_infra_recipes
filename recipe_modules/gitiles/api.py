@@ -5,15 +5,9 @@
 
 """APIs for dealing with Gitiles."""
 
-# TODO (b/217973414): Remove future aliases and reenable these pylint checks
-# when Py2 compatibility has been removed.
-# pylint: disable=wrong-import-order,wrong-import-position
-from future.standard_library import install_aliases
-install_aliases()
-
 import base64
 import binascii
-from urllib.parse import urlunparse  # pylint: disable=no-name-in-module
+from urllib import parse
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -105,15 +99,15 @@ class GitilesApi(recipe_api.RecipeApi):
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))
-    url = urlunparse(('https', host, file_url_part, '', 'format=TEXT', ''))
+    url = parse.urlunparse(
+        ('https', host, file_url_part, '', 'format=TEXT', ''))
     with self.m.step.nest('fetch gitiles file') as pres:
       data = self.m.easy.stdout_step('curl %s' % url,
                                      ['curl'] + cred_cache_cmd + [url],
                                      ok_ret={0}, test_stdout=test_output_data)
-      # TODO(b/217973414): No need to catch TypeError after we deprecate py2.
       try:
         decoded_data = base64.b64decode(data)
-      except (TypeError, binascii.Error) as e:
+      except binascii.Error as e:
         pres.logs['raw data'] = data
         raise StepFailure('non base64 data returned from gitiles') from e
       pres.logs['data'] = decoded_data

@@ -174,9 +174,7 @@ class GomaApi(recipe_api.RecipeApi):
           compile_event.counterz_stats.ParseFromString(counterz_bin)
         if stats_filename or counterz_filename:
           presentation.logs['compile_event'] = str(compile_event)
-          # TODO(b/217973414): Replace with MessageToJson once we don't need to
-          # fix the separator spacing between py2 and py3 MessageToJson.
-          json_message = json_format.MessageToDict(
+          json_message = json_format.MessageToJson(
               compile_event, preserving_proto_field_name=True)
           # Call bq-insert support tool.
           support_input = {

@@ -1,4 +1,4 @@
-# Copyright 2022 The Chromium Authors. All rights reserved.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -254,9 +254,12 @@ def GenTests(api):
                      codesearch_mirror_revision_timestamp='1531887759',
                      manifest_hash='d3adb33f'),
       api.post_process(
-          PropertyEquals, 'commit',
-          '{"host":"chromium.googlesource.com","id":"d3adb33f","project":"chromiumos/manifest","ref":"refs/heads/snapshot"}'
-      ),
+          PropertyEquals, 'commit', '''{
+  "host": "chromium.googlesource.com",
+  "project": "chromiumos/manifest",
+  "id": "d3adb33f",
+  "ref": "refs/heads/snapshot"
+}'''),
       api.post_process(DropExpectation),
       # TODO (b/275363240): audit this test.
       status='FAILURE',

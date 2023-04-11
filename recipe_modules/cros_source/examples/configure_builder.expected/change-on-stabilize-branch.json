@@ -187,7 +187,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\\"host\\\":\\\"chrome-internal.googlesource.com\\\",\\\"project\\\":\\\"chromeos/manifest-internal\\\"}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\"\\n}\"@@@"
     ]
   },
   {
@@ -209,7 +209,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@changes@[\"{\\\"change\\\":\\\"555\\\",\\\"host\\\":\\\"chromium.googlesource.com\\\",\\\"patchset\\\":\\\"7\\\",\\\"project\\\":\\\"project\\\"}\"]@@@"
+      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"project\\\",\\n  \\\"change\\\": \\\"555\\\",\\n  \\\"patchset\\\": \\\"7\\\"\\n}\"]@@@"
     ]
   },
   {
@@ -268,7 +268,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\\"host\\\":\\\"chrome-internal.googlesource.com\\\",\\\"id\\\":\\\"stabilize-13817.B-HEAD-SHA\\\",\\\"project\\\":\\\"chromeos/manifest-internal\\\",\\\"ref\\\":\\\"refs/heads/stabilize-13817.B\\\"}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"stabilize-13817.B-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/stabilize-13817.B\\\"\\n}\"@@@"
     ]
   },
   {

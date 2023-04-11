@@ -498,8 +498,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
                     name='write build_report.json to GS',
                     use_retry_wrapper=True)
 
-      # TODO(b/217973414): Replace with native removeprefix call when we
-      # don't have to support Python 2.
+      # TODO(b/277799110): Replace with str.removeprefix once we're on Py3.9+.
       def removeprefix(s, prefix):
         return s[len(prefix):] if s.startswith(prefix) else s
 

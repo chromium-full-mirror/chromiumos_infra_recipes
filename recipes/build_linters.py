@@ -262,13 +262,11 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
     all_linter_output = []
     packages_detected = False
 
-    # We need to iterate in sorted order to be deterministic in python2
     api.build_menu.bootstrap_sysroot(config)
-    for linter in sorted(relevant_patchsets_by_linter.keys()):
-      if not relevant_patchsets_by_linter[linter]:
+    for linter, patchsets in relevant_patchsets_by_linter.items():
+      if not patchsets:
         continue
-      affected_packages = _GetAffectedPackages(
-          api, linter, relevant_patchsets_by_linter[linter])
+      affected_packages = _GetAffectedPackages(api, linter, patchsets)
       if not affected_packages:
         continue
       if not packages_detected:

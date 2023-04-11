@@ -227,7 +227,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\\"host\\\":\\\"chrome-internal.googlesource.com\\\",\\\"project\\\":\\\"chromeos/manifest-internal\\\"}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\"\\n}\"@@@"
     ]
   },
   {
@@ -249,7 +249,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@changes@[\"{\\\"change\\\":\\\"1234\\\",\\\"host\\\":\\\"chromium-review.googlesource.com\\\",\\\"project\\\":\\\"chromiumos/config\\\"}\", \"{\\\"change\\\":\\\"1234\\\",\\\"host\\\":\\\"chrome-internal-review.googlesource.com\\\",\\\"project\\\":\\\"chromeos/program/galaxy\\\"}\"]@@@"
+      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/config\\\",\\n  \\\"change\\\": \\\"1234\\\"\\n}\", \"{\\n  \\\"host\\\": \\\"chrome-internal-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/program/galaxy\\\",\\n  \\\"change\\\": \\\"1234\\\"\\n}\"]@@@"
     ]
   },
   {
@@ -300,7 +300,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\\"host\\\":\\\"chrome-internal.googlesource.com\\\",\\\"id\\\":\\\"main-HEAD-SHA\\\",\\\"project\\\":\\\"chromeos/manifest-internal\\\",\\\"ref\\\":\\\"refs/heads/main\\\"}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
