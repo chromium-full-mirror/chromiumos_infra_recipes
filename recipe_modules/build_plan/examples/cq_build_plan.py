@@ -36,7 +36,7 @@ PROPERTIES = CqBuildPlanProperties
 
 def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
-      'cq-orchestrator').orchestrator.child_specs
+      api.buildbucket.build.builder.builder).orchestrator.child_specs
   completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
       child_specs, True, api.cros_infra_config.gerrit_changes,
       common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
