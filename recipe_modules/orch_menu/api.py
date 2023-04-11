@@ -809,7 +809,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       if self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
         ps_relevant_critical_builds = [
-            x.builder.builder for x in builds if self.ps_critical_relevant(x)
+            x.builder.builder
+            for x in self._builds_status.completed_builds
+            if self.ps_critical_relevant(x)
         ]
         self._relevant_child_builds = ps_relevant_critical_builds
         if not ps_relevant_critical_builds:
