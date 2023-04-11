@@ -35,7 +35,8 @@ PROPERTIES = CopProperties
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def _run_script(api: RecipeApi, script: str, data_input: Dict) -> Dict:
+def _run_script(api: RecipeApi, script: str, data_input: Dict,
+                add_json_log: bool = True) -> Dict:
   """Run a helper script from the resource folder."""
   result = api.step(
       api.path.basename(script),
@@ -45,7 +46,7 @@ def _run_script(api: RecipeApi, script: str, data_input: Dict) -> Dict:
           '-input-json',
           api.json.input(data_input),
           '-output-json',
-          api.json.output(),
+          api.json.output(add_json_log=add_json_log),
       ],
   )
   return result.json.output
@@ -59,7 +60,8 @@ def _gen_build_config(api: RecipeApi, user_yaml: str,
       'user_yaml': user_yaml,
       'substitutions': substitutions,
   }
-  return _run_script(api, "generate_build_config.py", data_in)
+  return _run_script(api, "generate_build_config.py", data_in,
+                     add_json_log=False)
 
 
 def _launch_build(api: RecipeApi, project: str, token: str,
@@ -148,7 +150,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       return
 
   with api.step.nest('obtain Oauth2 token') as presentation:
-    token = api.m.support.call('oauth2-get-token', None, add_json_log=True)
+    token = api.m.support.call('oauth2-get-token', None, add_json_log=False)
     auth_token = token['token']['access_token']
 
   with api.step.nest('generate build config') as presentation:
