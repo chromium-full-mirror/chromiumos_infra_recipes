@@ -232,7 +232,10 @@ class ExonerateApi(recipe_api.RecipeApi):
       return [], common_pb2.FAILURE
     filtered_results = []
     for result in results:
+      prejob_verdicts = [s.verdict for s in result.prejob_steps]
       if result.state.verdict == TaskState.VERDICT_PASSED:
+        filtered_results.append(result)
+      elif TaskState.VERDICT_FAILED in prejob_verdicts:
         filtered_results.append(result)
       else:
         new_result = result
