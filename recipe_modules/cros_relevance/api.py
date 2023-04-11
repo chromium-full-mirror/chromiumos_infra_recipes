@@ -455,7 +455,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('check force relevance') as pres:
       force_relevant_targets = self.m.git_footers.get_footer_values(
-          gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER)
+          gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER,
+          step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
           sorted(force_relevant_targets))
       # Handle forcing relevance via footer value.
