@@ -6,6 +6,7 @@
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_relevance.examples.forced_relevance import ForcedRelevanceTest
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,7 +21,7 @@ PROPERTIES = ForcedRelevanceTest
 
 
 def RunSteps(api, properties):
-  api.assertions.assertEqual(
+  api.assertions.assertCountEqual(
       api.cros_relevance.check_force_relevance_footer(properties.gerrit_changes,
                                                       properties.configs),
       properties.expected_forced_targets)
@@ -60,3 +61,51 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           ['example-target-2-cq,example-target-3-something'],
           parent_step_name='check force relevance'))
+
+  yield api.test(
+      'force-relevant-non-default',
+      api.properties(
+          ForcedRelevanceTest(gerrit_changes=gerrit_changes, configs=configs,
+                              expected_forced_targets=['eve-cq'])),
+      api.git_footers.simulated_get_footers(
+          ['eve-cq'], parent_step_name='check force relevance'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'force-relevant-invalid-non-default',
+      api.properties(
+          ForcedRelevanceTest(gerrit_changes=gerrit_changes, configs=configs,
+                              expected_forced_targets=[])),
+      api.git_footers.simulated_get_footers(
+          ['fake-cq'], parent_step_name='check force relevance'),
+      api.post_check(post_process.LogEquals, 'check force relevance',
+                     'invalid builders', 'fake-cq'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'force-relevant-invalid-non-cq-builder',
+      api.properties(
+          ForcedRelevanceTest(gerrit_changes=gerrit_changes, configs=configs,
+                              expected_forced_targets=[])),
+      api.git_footers.simulated_get_footers(
+          ['amd64-generic-postsubmit'],
+          parent_step_name='check force relevance'),
+      api.post_check(post_process.LogEquals, 'check force relevance',
+                     'invalid builders', 'amd64-generic-postsubmit'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'force-relevant-mixed',
+      api.properties(
+          ForcedRelevanceTest(gerrit_changes=gerrit_changes, configs=configs,
+                              expected_forced_targets=['eve-cq'] + targets)),
+      api.git_footers.simulated_get_footers(
+          ['fake-cq', 'all', 'eve-cq', 'example-target-1-cq'],
+          parent_step_name='check force relevance'),
+      api.post_check(post_process.LogEquals, 'check force relevance',
+                     'invalid builders', 'fake-cq'),
+      api.post_process(post_process.DropExpectation),
+  )

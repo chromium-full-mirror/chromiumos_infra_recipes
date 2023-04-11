@@ -143,13 +143,23 @@ class BuildPlanApi(recipe_api.RecipeApi):
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
 
-      for child_spec in child_specs:
+      # Create child specs for any non-default CQ targets that were forced
+      # relevant. This will allow us to use the existing filtering logic below.
+      child_spec_names = [c.name for c in child_specs]
+      forced_relevant_child_specs = []
+      for b in forced_relevant:
+        if b not in child_spec_names:
+          config = self.m.cros_infra_config.get_builder_config(b)
+          forced_relevant_child_specs.append(
+              BuilderConfig.Orchestrator.ChildSpec(name=b,
+                                                   bucket=config.id.bucket))
+
+      for child_spec in list(child_specs) + forced_relevant_child_specs:
         # Get the builder variant in the build plan.
         if child_spec.name in necessary_builders:
           child_builder_name = child_spec.name
         elif self.get_slim_builder_name(child_spec.name) in necessary_builders:
           child_builder_name = self.get_slim_builder_name(child_spec.name)
-          standard_builder_name = child_spec.name
         else:
           filter_log.append('{} build is not needed for changes'.format(
               child_spec.name))
@@ -187,11 +197,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
           continue
 
         # Do not retry slim builds if an equivalent standard build passed.
-        if child_builder_name.endswith(
-            'slim-cq') and standard_builder_name in completed_builders:
-          filter_log.append('{} already passed'.format(standard_builder_name))
-          count_skip_since_already_passed += 1
-          continue
+        if child_builder_name.endswith('slim-cq'):
+          standard_builder_name = standard_builder_name = child_spec.name.replace(
+              '-slim-cq', '-cq')
+          if standard_builder_name in completed_builders:
+            filter_log.append('{} already passed'.format(standard_builder_name))
+            count_skip_since_already_passed += 1
+            continue
 
         # We've already found an existing build, we'll just wait on it later.
         if child_builder_spec in snapshot_build_targets:

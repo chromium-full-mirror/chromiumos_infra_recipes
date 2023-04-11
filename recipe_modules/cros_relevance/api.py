@@ -14,6 +14,7 @@ from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from PB.chromite.api.depgraph import DepGraph
 from PB.chromite.api.depgraph import GetBuildDependencyGraphRequest
 from PB.chromite.api.depgraph import ListRequest
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ProtoBytes as common_proto_bytes
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanRequest
 from PB.chromiumos.generate_build_plan import GenerateBuildPlanResponse
@@ -454,18 +455,42 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       A list of target names, derived from `configs`, to be forced relevant.
     """
     with self.m.step.nest('check force relevance') as pres:
-      force_relevant_targets = self.m.git_footers.get_footer_values(
+      force_relevant_values = self.m.git_footers.get_footer_values(
           gerrit_changes, self.FORCE_RELEVANT_BUILDS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       pres.logs['found footer builders'] = 'found build(s): %s' % ','.join(
-          sorted(force_relevant_targets))
+          sorted(force_relevant_values))
+
       # Handle forcing relevance via footer value.
-      f_rel = [
+      force_relevant_builders = set(
+          t for t in force_relevant_values if t != 'all')
+      force_relevant_all = 'all' in force_relevant_values
+
+      f_rel = set(
           cfg.id.name
           for cfg in configs
-          if cfg.id.name in force_relevant_targets or
-          'all' in force_relevant_targets
-      ]
+          if cfg.id.name in force_relevant_builders or force_relevant_all)
+
+      # If any builders which were specified to be forced relevant were not
+      # already added to f_rel, then those builders are not a part of the
+      # orchestrator's child specs.
+      remaining_builders = force_relevant_builders - f_rel
+
+      # Add any non-default CQ builders added via the `Force-Relevant-Builds`
+      # footer if it corresponds to a valid builder CQ builder.
+      if remaining_builders:
+        builder_config_dict = self.m.cros_infra_config.safe_get_builder_configs(
+            list(remaining_builders))
+        for b, config in builder_config_dict.items():
+          if config.id.type == BuilderConfig.Id.Type.CQ:
+            f_rel.add(b)
+
+      # Log a message if any builders still remain.
+      remaining_builders = force_relevant_builders - f_rel
+      if remaining_builders:
+        pres.logs['invalid builders'] = sorted(remaining_builders)
+
+      f_rel = sorted(f_rel)
       pres.step_text = 'force relevant %s target(s)' % len(f_rel)
       if f_rel:
         pres.logs['forced targets'] = '\n'.join(f_rel)

@@ -11,6 +11,7 @@ from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
 from PB.recipe_modules.chromeos.build_plan.examples.cq_build_plan import (
     CqBuildPlanProperties)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from recipe_engine import post_process
 
 from google.protobuf import timestamp_pb2
 
@@ -200,6 +201,42 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
+  )
+
+  yield api.test(
+      'force-relevant-non-default',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(
+          builder='staging-cq-orchestrator'),
+      api.properties(
+          expected_build_requests=['atlas-cq', 'arm64-generic-cq', 'eve-cq'],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      # Neither fake-cq nor eve-cq are a part of staging-cq-orchestrator's
+      # child_specs. We expect eve-cq to get scheduled and fake-cq to get
+      # filtered out as it does not correspond to a valid builder.
+      api.git_footers.simulated_get_footers(['eve-cq', 'fake-cq'],
+                                            'check force relevance'),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'coral-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+      api.post_check(post_process.LogEquals, 'check force relevance',
+                     'invalid builders', 'fake-cq'),
   )
 
   yield api.test(
