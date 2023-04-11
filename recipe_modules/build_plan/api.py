@@ -149,6 +149,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       forced_relevant_child_specs = []
       for b in forced_relevant:
         if b not in child_spec_names:
+          # Builders returned from cros_relevance.check_force_relevance_footer
+          # are guarenteed to exist, so we should not worry about failing here.
           config = self.m.cros_infra_config.get_builder_config(b)
           forced_relevant_child_specs.append(
               BuilderConfig.Orchestrator.ChildSpec(name=b,
@@ -168,9 +170,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         child_builder_config = self.m.cros_infra_config.get_builder_config(
             child_builder_name)
-        critical = child_builder_config.general.critical.value
         force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
         force_relevant = child_builder_name in forced_relevant
+        critical = child_builder_config.general.critical.value or force_relevant
 
         # Public builders can only apply changes to the chromium host.
         # If all CLs are in chrome-internal then we know the build will not be
