@@ -167,7 +167,7 @@ class FailuresApi(RecipeApi):
       yield
     except Exception as e:  # pylint: disable=broad-except
       step = self.m.step('ignored exception', cmd=None)
-      step.presentation.logs['caught exception'] = [repr(e)]
+      step.presentation.logs['caught exception'] = repr(e)
 
   def _set_failed_packages(self, enclosing_step, packages, compile_failure):
     """If any failed packages, set presentation and raise failure.

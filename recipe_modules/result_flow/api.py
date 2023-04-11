@@ -40,7 +40,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `result_flow`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      presentation.logs['request'] = json_format.MessageToJson(request)
       self._ensure_result_flow()
       cmd = [
           self._cmd,
@@ -57,7 +57,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      presentation.logs['response'] = json_format.MessageToJson(response)
       return response
 
   def publish(self, project_id, topic_id, build_type,

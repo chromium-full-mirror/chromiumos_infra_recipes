@@ -277,10 +277,9 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
     diff_paths(dict): Dictionary containing paths to manifest changes
   """
   with api.step.nest('sync manifests') as presentation:
-    presentation.logs['prior versions'] = [
-        'internal {}: {}'.format(manifest_ref, prior_internal),
-        'external {}: {}'.format(manifest_ref, prior_external),
-    ]
+    presentation.logs['prior versions'] = 'internal {}: {}'.format(
+        manifest_ref, prior_internal) + '\nexternal {}: {}'.format(
+            manifest_ref, prior_external)
 
     m_files = api.cros_source.mirrored_manifest_files
     e_paths = []
@@ -299,9 +298,8 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
     for e_path in e_paths:
       if api.git.diff_check(e_path):
         diff_paths[repo].append(api.path.abspath(e_path))
-    presentation.logs['diffs'] = [
-        json.dumps(diff_paths, sort_keys=True, indent=2, separators=(',', ':'))
-    ]
+    presentation.logs['diffs'] = json.dumps(diff_paths, sort_keys=True,
+                                            indent=2, separators=(',', ':'))
     return diff_paths
 
 

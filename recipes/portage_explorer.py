@@ -66,7 +66,7 @@ def RunSpiders(api: RecipeApi):
     gs_path = api.path.join(
         today.strftime('%Y/%m/%d/'), builder_id, 'portage_explorer.json')
     api.gsutil.upload(output_path, 'portage_explorer', str(gs_path))
-    presentation.logs['response'] = [output_json]
+    presentation.logs['response'] = output_json
 
 
 def GenTests(api: RecipeTestApi):

@@ -160,9 +160,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
             merged_change_infos.sort(key=lambda ci: ci.submitted, reverse=True)
             if merged_change_infos:
               most_recent_uprev = merged_change_infos[0]
-              presentation.logs['most recent merged cl'] = [
-                  most_recent_uprev.display_id
-              ]
+              presentation.logs[
+                  'most recent merged cl'] = most_recent_uprev.display_id
           else:
             presentation.step_text = 'no merged CLs found'
             presentation.status = self.m.step.WARNING

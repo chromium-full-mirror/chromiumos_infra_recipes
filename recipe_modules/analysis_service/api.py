@@ -186,15 +186,13 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
           step_output, self._max_stdout_stderr_bytes)
       analysis_service_event.stdout = truncated_stdout
       if bytes_removed == 0:
-        step.presentation.logs['stdout_truncation'] = [
-            'Full step output is {} bytes, no truncation'.format(
+        step.presentation.logs[
+            'stdout_truncation'] = 'Full step output is {} bytes, no truncation'.format(
                 len(step_output))
-        ]
       else:
-        step.presentation.logs['stdout_truncation'] = [
-            'Full step output is {} bytes, truncated to {} bytes'.format(
+        step.presentation.logs[
+            'stdout_truncation'] = 'Full step output is {} bytes, truncated to {} bytes'.format(
                 len(step_output), self._max_stdout_stderr_bytes)
-        ]
 
   def can_publish_event(self, request: Any, response: Any) -> bool:
     """Return whether 'request' and 'response' can be published.
@@ -271,9 +269,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       analysis_service_event.request_time.CopyFrom(request_time)
       analysis_service_event.response_time.CopyFrom(response_time)
 
-      presentation.logs['published event'] = [
-          json_format.MessageToJson(analysis_service_event)
-      ]
+      presentation.logs['published event'] = json_format.MessageToJson(
+          analysis_service_event)
 
       # Data is passed to the publish-message support binary via JSON. The
       # serialized proto must be base64 encoded to prevent UnicodeDecodeErrors.

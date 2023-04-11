@@ -52,7 +52,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           }),
       )
       instructions = result.json.output.get('instructions')
-      step.logs['instructions'] = [str(instructions)]
+      step.logs['instructions'] = str(instructions)
 
       with self.m.step.nest('Upload prepared results') as step:
         for i, ins in enumerate(instructions):

@@ -522,7 +522,7 @@ class ChromeApi(recipe_api.RecipeApi):
                                      chroot=self.m.cros_sdk.chroot))
       except StepFailure as e:
         with self.m.step.nest('ignored exception') as pres:
-          pres.logs['caught exception'] = [repr(e)]
+          pres.logs['caught exception'] = repr(e)
         response = self._fallback_needs_chrome_source(request=request,
                                                       dep_graph=dep_graph,
                                                       patch_sets=patch_sets)

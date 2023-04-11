@@ -44,7 +44,7 @@ class RecipeAnalyzeApi(RecipeApi):
         ], step_test_data=lambda: self.m.json.test_api.output(
             {'recipes': ['recipeA', 'recipeB']}))
 
-    step_data.presentation.logs['input.json'] = [json.dumps(analyze_input)]
+    step_data.presentation.logs['input.json'] = json.dumps(analyze_input)
 
     output_pb = jsonpb.ParseDict(
         step_data.json.output,

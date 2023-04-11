@@ -445,8 +445,8 @@ class CrosBuildApiApi(RecipeApi):
       input_json = json_format.MessageToJson(input_proto,
                                              use_integers_for_enums=True)
       self.m.file.write_raw('write input file', input_path, input_json)
-      presentation.logs['request'] = [input_json]
-      presentation.logs['response'] = ['{}']
+      presentation.logs['request'] = input_json
+      presentation.logs['response'] = '{}'
 
       cmd = []
       if self._capture_stdout_stderr:
@@ -497,7 +497,8 @@ class CrosBuildApiApi(RecipeApi):
                                                    test_data=test_teelog_data)
               # Much of the build api calls emerge, collect stats!
               self.m.portage.publish_emerge_stats(
-                  endpoint, file_contents.decode('utf-8'),
+                  endpoint,
+                  file_contents.decode('utf-8', errors='backslashreplace'),
                   publish_to_bq=self._publish_emerge_stats_to_bq,
                   set_output_prop=self._publish_emerge_stats_to_prop)
               if file_contents:
@@ -519,7 +520,7 @@ class CrosBuildApiApi(RecipeApi):
           # have taken them as input (e.g. sheriff-o-matic), we then make a
           # 'response' step that we can have foreknowledge of what the name
           # _should_ be based on the call's results.
-          presentation.logs['response'] = [output_json]
+          presentation.logs['response'] = output_json
           resp_step_name = self.response_step_name(output_proto,
                                                    response_lambda)
 

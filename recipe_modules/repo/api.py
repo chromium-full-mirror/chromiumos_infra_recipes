@@ -637,7 +637,7 @@ class RepoApi(recipe_api.RecipeApi):
                                  test_data=test_data)
       if not all(re.match(r'[0-9a-fA-F]{40}$', x.rrev) for x in infos):
         manifest = self.manifest(pinned=True)
-        pres.logs['pinned-manifest.xml'] = [manifest]
+        pres.logs['pinned-manifest.xml'] = manifest
         return manifest
       return None
 

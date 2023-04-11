@@ -152,10 +152,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
             'skipping uprev for {}. no modified files'.format(cpv))
         if not self._allow_partial_uprev:
           return []
-        presentation.logs['partial_uprev'] = [
-            'no modified file for {}. continue because allow_partial_uprev=True'
-            .format(cpv)
-        ]
+        presentation.logs[
+            'partial_uprev'] = 'no modified file for {}. continue because allow_partial_uprev=True'.format(
+                cpv)
         return []
 
       presentation.logs['uprev versions'] = [

@@ -48,7 +48,7 @@ class CloudPubsubApi(recipe_api.RecipeApi):
           'endpoint': endpoint or "",
       }
 
-      presentation.logs['request'] = [pprint.pformat(publish_input)]
+      presentation.logs['request'] = pprint.pformat(publish_input)
 
       test_output_data = {'message_id': '12345'}
       try:

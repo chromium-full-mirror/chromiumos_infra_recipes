@@ -112,9 +112,8 @@ class GomaApi(recipe_api.RecipeApi):
     if (not install_pkg_response.HasField('goma_artifacts') or
         not goma_log_dir):
       with self.m.step.nest('process_goma_artifacts') as presentation:
-        presentation.logs['NoGomaArtifacts'] = [
-            str(install_pkg_response.goma_artifacts)
-        ]
+        presentation.logs['NoGomaArtifacts'] = str(
+            install_pkg_response.goma_artifacts)
       return None
 
     if self._upload_stats_counterz:
@@ -174,7 +173,7 @@ class GomaApi(recipe_api.RecipeApi):
               test_data=test_counterz_proto.SerializeToString())
           compile_event.counterz_stats.ParseFromString(counterz_bin)
         if stats_filename or counterz_filename:
-          presentation.logs['compile_event'] = [str(compile_event)]
+          presentation.logs['compile_event'] = str(compile_event)
           # TODO(b/217973414): Replace with MessageToJson once we don't need to
           # fix the separator spacing between py2 and py3 MessageToJson.
           json_message = json_format.MessageToDict(
@@ -190,9 +189,8 @@ class GomaApi(recipe_api.RecipeApi):
           }
           test_output_data = {}
           if self._bigquery_verbose:
-            presentation.logs['support_input'] = [
-                json.dumps(support_input, separators=(',', ':'), sort_keys=True)
-            ]
+            presentation.logs['support_input'] = json.dumps(
+                support_input, separators=(',', ':'), sort_keys=True)
             presentation.logs['compile_event_json'] = json.dumps(
                 json_message, separators=(',', ': '), sort_keys=True)
           # TODO(crbug.com/1041899): Replace this disable-in-staging with a

@@ -159,13 +159,13 @@ class BreakpadApi(RecipeApi):
                         'minidump_stackwalk',
                         [self._minidump_stackwalk_path, dmp_file, symbols_path])
 
-                    pres2.logs['minidump_stackwalk output'] = [stackwalk_output]
+                    pres2.logs['minidump_stackwalk output'] = stackwalk_output
 
                     stackwalk_output_path = self._write_stackwalk_output(
                         dmp_file, stackwalk_output)
                     stackwalk_output_paths.append(stackwalk_output_path)
                   except StepFailure as step_failure:
-                    pres2.logs['caught StepFailure'] = [str(step_failure)]
+                    pres2.logs['caught StepFailure'] = str(step_failure)
 
               # `test_result_local_path` will not contain the final path component
               # of the remote test result path , e.g. "swarming-1234". This final

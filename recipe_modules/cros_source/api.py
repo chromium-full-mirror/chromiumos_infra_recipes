@@ -1107,7 +1107,7 @@ class CrosSourceApi(RecipeApi):
       # 5. Log a pinned version of the patched manifest.
       final = self.m.repo.manifest(pinned=True)
       self._pinned_manifest = final
-      pres.logs['patched-manifest.xml'] = [final]
+      pres.logs['patched-manifest.xml'] = final
 
       self._sync_target = dict(call='_apply_manifest_patch_sets', branch=branch)
 

@@ -184,12 +184,10 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         'Set merger properties',
         merger_incremental_coverage=self._merger_input_incremental_coverage,
         merger_absolute_coverage=self._merger_input_absolute_coverage)
-    step.presentation.logs['merger_incremental_coverage'] = [
-        '{}'.format(self._merger_input_incremental_coverage)
-    ]
-    step.presentation.logs['merger_absolute_coverage'] = [
-        '{}'.format(self._merger_input_absolute_coverage)
-    ]
+    step.presentation.logs['merger_incremental_coverage'] = '{}'.format(
+        self._merger_input_incremental_coverage)
+    step.presentation.logs['merger_absolute_coverage'] = '{}'.format(
+        self._merger_input_absolute_coverage)
 
   def _merger_incremental(self, filtered_coverage_file: str,
                           change: GerritChange, gs_artifact_bucket: str,
@@ -326,7 +324,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           change_to_file_names[commit.change] = file_names
 
       # Write out the changed file names for debugging.
-      presentation.logs['output'] = [json.dumps(change_to_file_names, indent=4)]
+      presentation.logs['output'] = json.dumps(change_to_file_names, indent=4)
 
       # Rewrite the coverage llvm json file to only include the files from the cls.
       data_to_clean = self.m.file.read_json(
@@ -409,7 +407,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         chunks_file = self._chunk_coverage_file(absolute_coverage_file,
                                                 coverage_type)
 
-        presentation.logs['chunked_files'] = [str(chunks_file)]
+        presentation.logs['chunked_files'] = str(chunks_file)
 
         for chunk_file in chunks_file:
           self.m.step(

@@ -285,23 +285,19 @@ class CrosSdkApi(RecipeApi):
     Returns:
       Boolean indicating if the chroot can be reused.
     """
-    step_presentation.logs['sdk cache version'] = [
-        'Version in config: %d' % version,
-        'Version on disk: %d' % cache_state.version,
-    ]
-    step_presentation.logs['sdk manifest url'] = [
-        'Url in config: %s' % self.m.src_state.build_manifest.url,
-        'Url on disk: %s' % cache_state.manifest_url
-    ]
-    step_presentation.logs['sdk manifest branch'] = [
-        'Branch in config: %s' % self.m.cros_source.manifest_branch or
-        'snapshot',
-        'Branch on disk: %s' % cache_state.manifest_branch
-    ]
-    step_presentation.logs['sdk snapshot hash'] = [
-        'Snapshot hash in config: %s' % self.m.src_state.gitiles_commit.id,
-        'Snapshot hash on disk: %s' % cache_state.snapshot_hash
-    ]
+    step_presentation.logs[
+        'sdk cache version'] = 'Version in config: %d\nVersion on disk: %d' % (
+            version, cache_state.version)
+    step_presentation.logs[
+        'sdk manifest url'] = 'Url in config: %s\nUrl on disk: %s' % (
+            self.m.src_state.build_manifest.url, cache_state.manifest_url)
+    step_presentation.logs[
+        'sdk manifest branch'] = 'Branch in config: %s\nBranch on disk: %s' % (
+            self.m.cros_source.manifest_branch or
+            'snapshot', cache_state.manifest_branch)
+    step_presentation.logs[
+        'sdk snapshot hash'] = 'Snapshot hash in config: %s\nSnapshot hash on disk: %s' % (
+            self.m.src_state.gitiles_commit.id, cache_state.snapshot_hash)
 
     if self._test_data.enabled:
       reuse = self._test_data.get('is_chroot_usable', None)

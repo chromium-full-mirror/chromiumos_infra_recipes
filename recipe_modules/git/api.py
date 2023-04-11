@@ -444,7 +444,7 @@ class GitApi(recipe_api.RecipeApi):
     if step_data.retcode != 0:
       return None
     ret = step_data.stdout.strip()
-    self.m.step.active_result.presentation.logs['branch'] = [ret]
+    self.m.step.active_result.presentation.logs['branch'] = ret
     return ret
 
   def remote_head(self, remote='.', test_stdout=None):
@@ -478,7 +478,7 @@ class GitApi(recipe_api.RecipeApi):
     ret = self._step(['rev-parse', 'HEAD'], stdout=self.m.raw_io.output_text(),
                      test_stdout='%s\n' %
                      self.test_api.test_commit_id).stdout.strip()
-    self.m.step.active_result.presentation.logs['HEAD'] = [ret]
+    self.m.step.active_result.presentation.logs['HEAD'] = ret
     return ret
 
   @contextlib.contextmanager
@@ -534,7 +534,7 @@ class GitApi(recipe_api.RecipeApi):
         cmd, stdout=self.m.raw_io.output_text(),
         test_stdout='%s\x1Fmessage\x00' % self.test_api.test_commit_id)
     stdout = step_data.stdout.strip().rstrip('\x00')
-    self.m.step.active_result.presentation.logs['stdout'] = [step_data.stdout]
+    self.m.step.active_result.presentation.logs['stdout'] = step_data.stdout
 
     commits = []
     if stdout:

@@ -79,11 +79,10 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
 
         if len(test_suites) == 0:
           return
-        pres.logs['read_git_footer_result'] = [
-            ('footer data: test suites: %s \nboards_build_targets: %s\n'
-             'pool : %s\n') %
-            (','.join(test_suites), ','.join(test_boards_build_targets), pool)
-        ]
+        pres.logs[
+            'read_git_footer_result'] = 'footer data: test suites: %s \nboards_build_targets: %s\npool : %s\n' % (
+                ','.join(test_suites), ','.join(test_boards_build_targets),
+                pool)
 
         #check if footers are correctly provided
         if len(test_boards_build_targets) == 0:
@@ -105,7 +104,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
                                                      bt_tests_map, test_plan,
                                                      test_suites, pool)
 
-        pres.logs['updated_test_plan'] = [str(test_plan)]
+        pres.logs['updated_test_plan'] = str(test_plan)
         #check for errors in additional test suite processing.
         if self._not_runnable_addtnl_tests:
           not_run_for_build_targets_str = ', '.join({
@@ -114,7 +113,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
           })
           not_run_test_suites = ', '.join(
               {t.common.display_name for t in self._not_runnable_addtnl_tests})
-          pres.logs['not_runnable_addtnl_test_suites'] = [not_run_test_suites]
+          pres.logs['not_runnable_addtnl_test_suites'] = not_run_test_suites
           pres.step_text = (
               'Additional TestSuites cannot be run on build '
               'targets that are not built or failed building'

@@ -135,10 +135,8 @@ def _validate_container_metadata_url(api, requests):
   with api.step.nest('container metadata url') as step:
     for t, r in requests.items():
       if r.params.run_via_cft and not r.params.metadata.container_metadata_url:
-        step.presentation.logs[t] = [
-            'Error in container_metadata_url: %s' %
-            'container metadata url is required for CFT test request.'
-        ]
+        step.presentation.logs[
+            t] = 'Error in container_metadata_url: %s' % 'container metadata url is required for CFT test request.'
         validation_error = True
 
     if validation_error:
@@ -156,9 +154,9 @@ def _validate_software_dependencies(api, requests):
     for t, r in requests.items():
       errs = _invalid_software_dependencies(r.params.software_dependencies)
       if errs:
-        step.presentation.logs[t] = [
-            'Errors in software_dependencies: %s' % ', '.join(sorted(errs))
-        ]
+        step.presentation.logs[
+            t] = 'Errors in software_dependencies: %s' % ', '.join(
+                sorted(errs))
         validation_error = True
   return validation_error
 
@@ -192,10 +190,9 @@ def _validate_timeouts(api, requests):
 
       request_timeout_s = request_timeout.ToTimedelta().total_seconds()
       if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:
-        step.presentation.logs[t] = [
-            'Timeout (%s) is larger than maximum timeout (%s)' %
-            (request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
-        ]
+        step.presentation.logs[
+            t] = 'Timeout (%s) is larger than maximum timeout (%s)' % (
+                request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
         step.presentation.status = api.step.FAILURE
         validation_error = True
   return validation_error
@@ -212,7 +209,7 @@ def _validate_scheduling_params(api, requests):
       error = _get_scheduling_error(r)
       if error:
         validation_error = True
-        step.presentation.logs[t] = [error]
+        step.presentation.logs[t] = error
         step.presentation.status = api.step.FAILURE
   return validation_error
 
@@ -867,9 +864,9 @@ def add_container_metadata(api, requests, error_in_requests):
   url_to_metadata_map = {}
   url_to_error_map = {}
   with api.step.nest('retrieve container metadata') as step:
-    step.presentation.logs['unique container metadata urls in request'] = [
-        '/n'.join(unique_metadata_urls)
-    ]
+    step.presentation.logs[
+        'unique container metadata urls in request'] = '/n'.join(
+            unique_metadata_urls)
     for url in unique_metadata_urls:
       url_to_metadata_map[url] = _get_container_metadata(
           api, url, url_to_error_map)
@@ -889,9 +886,8 @@ def add_container_metadata(api, requests, error_in_requests):
           if metadata:
             if build_target in metadata.containers:
               r.params.execution_param.container_metadata.CopyFrom(metadata)
-              step.presentation.logs['container metadata'] = [
-                  json_format.MessageToJson(metadata)
-              ]
+              step.presentation.logs[
+                  'container metadata'] = json_format.MessageToJson(metadata)
             else:
               error = "No container information found in container metadata for request '{}', build target '{}', container metadata url '{}'.".format(
                   t, build_target, metadata_url)
@@ -1072,9 +1068,8 @@ def summarize(api, enumerations, responses, error_in_requests,
           request_classifications[_REQUEST_SUCCESS] += 1
         else:
           failures += 1
-          step.logs['overall verdict'] = [
-              TaskState.Verdict.Name(response.state.verdict)
-          ]
+          step.logs['overall verdict'] = TaskState.Verdict.Name(
+              response.state.verdict)
           classification = _classify_request_failure(
               response.consolidated_results)
           request_classifications[classification] += 1
@@ -1147,13 +1142,13 @@ def set_output_properties(api, responses):
 def _log_enumeration_errors(api, enum, tag):
   if enum.error_summary:
     with api.step.nest('enumeration error') as step:
-      step.logs['summary'] = ['{} : {}'.format(tag, enum.error_summary)]
+      step.logs['summary'] = '{} : {}'.format(tag, enum.error_summary)
       step.presentation.status = api.step.FAILURE
 
 
 def _log_error_in_request(api, tag, error):
   with api.step.nest('container metadata error') as step:
-    step.logs['summary'] = ['{} : {}'.format(tag, error)]
+    step.logs['summary'] = '{} : {}'.format(tag, error)
     step.presentation.status = api.step.FAILURE
 
 

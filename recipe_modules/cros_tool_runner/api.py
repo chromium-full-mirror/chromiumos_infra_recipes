@@ -68,7 +68,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `cros-tool-runner`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      presentation.logs['request'] = json_format.MessageToJson(request)
       self.ensure_cros_tool_runner()
       preserve_env = [
           # Container cache service info.
@@ -111,7 +111,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
                                                 stdin=stdin,
                                                 test_output=response_type(),
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      presentation.logs['response'] = json_format.MessageToJson(response)
       return response
 
   def provision(self, request):

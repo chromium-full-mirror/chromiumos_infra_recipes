@@ -170,9 +170,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
                           serialized_proto=Build.SerializeToString(
                               build, deterministic=True)) for build in builds
                   ])
-      presentation.logs['planner_input'] = [
-          json_format.MessageToJson(request_proto)
-      ]
+      presentation.logs['planner_input'] = json_format.MessageToJson(
+          request_proto)
 
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
@@ -229,7 +228,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
               deterministic=True))
       response_proto = GenerateTestPlanResponse.FromString(response_bin)
 
-      presentation.logs['planner_output'] = [str(response_proto)]
+      presentation.logs['planner_output'] = str(response_proto)
       return response_proto
 
   def _ensure_test_planner(self):

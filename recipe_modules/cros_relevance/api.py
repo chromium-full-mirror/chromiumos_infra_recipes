@@ -112,7 +112,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
       input_bin_file = messages_path.join('input.binaryproto')
       output_bin_file = messages_path.join('output.binaryproto')
-      presentation.logs['planner_input'] = [json_format.MessageToJson(request)]
+      presentation.logs['planner_input'] = json_format.MessageToJson(request)
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
 
@@ -143,7 +143,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           test_data=test_resp.SerializeToString())
       result = GenerateBuildPlanResponse.FromString(response_bin)
 
-      presentation.logs['planner_output'] = [str(result)]
+      presentation.logs['planner_output'] = str(result)
       presentation.step_text = (
           '{} relevant, {} irrelevant builder configs'.format(
               len(result.builds_to_run),
@@ -366,7 +366,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
     input_bin_file = messages_path.join('input.binaryproto')
     output_bin_file = messages_path.join('output.binaryproto')
-    step_presentation.logs['relevance_input'] = [str(check_request)]
+    step_presentation.logs['relevance_input'] = str(check_request)
     self.m.file.write_raw('write input binaryproto', input_bin_file,
                           check_request.SerializeToString())
 
@@ -393,7 +393,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     response_bin = self.m.file.read_raw('read output file', output_bin_file,
                                         test_data=test_data)
     check_result = PointlessBuildCheckResponse.FromString(response_bin)
-    step_presentation.logs['relevance_output'] = [str(check_result)]
+    step_presentation.logs['relevance_output'] = str(check_result)
 
     return check_result
 

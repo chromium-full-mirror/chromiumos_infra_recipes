@@ -275,9 +275,8 @@ class SkylabApi(recipe_api.RecipeApi):
 
     name = name or 'schedule skylab tests v2'
     with self.m.step.nest(name) as presentation:
-      presentation.logs['container metadata'] = [
-          json_format.MessageToJson(container_metadata)
-      ] if have_container_metadata else '{}'
+      presentation.logs['container metadata'] = json_format.MessageToJson(
+          container_metadata) if have_container_metadata else '{}'
 
       # str -> (Request dict)
       reqs = {}
@@ -339,9 +338,7 @@ class SkylabApi(recipe_api.RecipeApi):
                   test_case = request.test_plan.test.add()
                   test_case.autotest.name = t
 
-            configure_step.logs['request'] = [
-                json_format.MessageToJson(request)
-            ]
+            configure_step.logs['request'] = json_format.MessageToJson(request)
 
             key = self.m.skylab_results.request_tag(uht.hw_test)
             if key in reqs:

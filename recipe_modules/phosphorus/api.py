@@ -60,7 +60,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     with self.m.step.nest('call `phosphorus`') as presentation:
       if not isinstance(request, request_type):
         raise ValueError('request is not of type %s' % request_type)
-      presentation.logs['request'] = [json_format.MessageToJson(request)]
+      presentation.logs['request'] = json_format.MessageToJson(request)
       self._ensure_phosphorus()
       cmd = [
           self._cmd,
@@ -81,7 +81,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                                                 test_output=response_type(),
                                                 parse_before_str=b'\x00',
                                                 ok_ret=(0,))
-      presentation.logs['response'] = [json_format.MessageToJson(response)]
+      presentation.logs['response'] = json_format.MessageToJson(response)
       return response
 
   def prejob(self, request):
@@ -147,7 +147,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       ]
       result = self.m.easy.stdout_jsonpb_step('parse', cmd, Result,
                                               test_output=Result())
-      presentation.logs['response'] = [json_format.MessageToJson(result)]
+      presentation.logs['response'] = json_format.MessageToJson(result)
       return result
 
   def _ensure_phosphorus(self):

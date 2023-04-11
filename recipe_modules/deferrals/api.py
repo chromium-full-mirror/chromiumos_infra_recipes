@@ -87,7 +87,7 @@ class DeferralsApi(RecipeApi):
     except Exception as e:  # pylint: disable=broad-except
       if not exception_types or any(isinstance(e, x) for x in exception_types):
         step = self.m.step('deferring exception until later', cmd=None)
-        step.presentation.logs['caught exception'] = [repr(e)]
+        step.presentation.logs['caught exception'] = repr(e)
         self._deferred_exceptions.append(e)
       else:
         raise e
@@ -104,7 +104,7 @@ class DeferralsApi(RecipeApi):
       exception (Exception): the exception to raise later.
     """
     step = self.m.step('deferring exception until later', cmd=None)
-    step.presentation.logs['caught exception'] = [repr(exception)]
+    step.presentation.logs['caught exception'] = repr(exception)
     self._deferred_exceptions.append(exception)
 
   @contextlib.contextmanager

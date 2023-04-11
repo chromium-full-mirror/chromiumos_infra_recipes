@@ -687,7 +687,7 @@ class GerritApi(RecipeApi):
         value inferred from the gerrit_change.
     """
     with self.m.step.nest('comment on CL %d' % gerrit_change.change) as pres:
-      pres.logs['comment text'] = [comment]
+      pres.logs['comment text'] = comment
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
 
       cwd = project_path or self._get_project_path(gerrit_change)
@@ -719,7 +719,7 @@ class GerritApi(RecipeApi):
       # Make sure that there is a trailing newline.
       description = (
           description if description.endswith('\n') else description + '\n')
-      pres.logs['description text'] = [description]
+      pres.logs['description text'] = description
       if memoize:
         self._GET_CHANGE_DESCRIPTION_CACHE[gerrit_change.change] = description
       return description
@@ -745,7 +745,7 @@ class GerritApi(RecipeApi):
           description if description.endswith('\n') else description + '\n')
       gerrit_change_url = self.parse_gerrit_change_url(gerrit_change)
       pres.links['gerrit change'] = gerrit_change_url
-      pres.logs['description text'] = [description]
+      pres.logs['description text'] = description
 
       cwd = project_path or self._get_project_path(gerrit_change)
       with self.m.context(cwd=cwd):

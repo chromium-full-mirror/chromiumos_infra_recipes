@@ -477,7 +477,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             .SerializeToString(deterministic=True),
         )
         resp = GenerateTestPlanResponse.FromString(output)
-        pres.logs['v1-compatible response'] = [str(resp)]
+        pres.logs['v1-compatible response'] = str(resp)
         return resp
 
       # Read the output HWTestPlans, which are readable on the host because
