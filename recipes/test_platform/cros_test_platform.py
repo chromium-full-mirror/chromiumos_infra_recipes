@@ -704,7 +704,7 @@ def execute(api, properties, requests):
 
 
 def _execute_requests(api, requests, enumerations, config, error_in_requests):
-  """Create the request payload for execution.
+  """Create the request payload for execution.|
   Args:
     requests: {tag: test_platform.Request} dict.
     enumerations: {tag: EnumerationResponse} dict.
@@ -715,7 +715,7 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
     ExecutionRequests payload.
   """
   _ensure_all_requests_enumerated(requests, enumerations, error_in_requests)
-  _ensure_non_critical_dont_retry(api, requests)
+  _limit_tests_retry(api, requests)
   return ExecuteRequests(
       tagged_requests={
           t: ExecuteRequest(request_params=r.params,
@@ -728,17 +728,34 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
   )
 
 
-def _ensure_non_critical_dont_retry(api, requests):
-  """Determines the number of max retries for an autotest test
+def _limit_tests_retry(api, requests):
+  """Limits the number of test retries:
+    - Requests triggered by Suite scheduler are exempted
+    - Requests triggered by crosfleet that have only one request name "default
+      and the test suite name is "tast.lacros" are exempted
+    - Requests marked as Critical are exempted
+    - All other test have their retries disabled
 
   Args:
     * request: ExecutionRequests payload.
   """
-  if "suite_scheduler" not in api.cros_tags.get_values('user_agent'):
-    for _, request in requests.items():
-      if request.params.test_execution_behavior != Request.Params.TestExecutionBehavior.CRITICAL:
-        request.params.retry.max = 0
-        request.params.retry.allow = False
+  requests_user_agents = api.cros_tags.get_values('user_agent')
+  # Suite scheduler are not limited
+  if "suite_scheduler" in requests_user_agents:
+    return
+
+  # Exception for tast.lacross tests scheduled via crosfleet as they are
+  # critical but can't currently be marked as critical via the cros CLI
+  if "crosfleet" in requests_user_agents:
+    if (len(requests) == 1 and "default" in requests.keys() and
+        len(requests["default"].test_plan.test) == 1 and
+        requests["default"].test_plan.test[0].autotest.name == "tast.lacros"):
+      return
+
+  for _, request in requests.items():
+    if request.params.test_execution_behavior != Request.Params.TestExecutionBehavior.CRITICAL:
+      request.params.retry.max = 0
+      request.params.retry.allow = False
 
 
 def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
@@ -1331,7 +1348,7 @@ def _software_dependencies_with_milestone_before_108():
 # pylint: disable=dangerous-default-value
 def _test_request(request_name_tag, build_target="foo-build-target",
                   scheduling=_test_scheduling(), individual_test=False,
-                  tag_criteria=None, seed=None,
+                  individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
@@ -1353,11 +1370,12 @@ def _test_request(request_name_tag, build_target="foo-build-target",
       ),
   )
   if individual_test:
+    if individual_test_name is None:
+      individual_test_name = '%s-test' % request_name_tag
     return Request(
         params=params, test_plan=Request.TestPlan(test=[
             Request.Test(
-                autotest=Request.Test.Autotest(name='%s-test' %
-                                               request_name_tag))
+                autotest=Request.Test.Autotest(name=individual_test_name))
         ]))
   return Request(
       params=params, test_plan=Request.TestPlan(
@@ -1367,11 +1385,13 @@ def _test_request(request_name_tag, build_target="foo-build-target",
 
 # pylint: disable=dangerous-default-value
 def _cft_test_request(request_name, build_target="foo-build-target",
-                      individual_test=False, tag_criteria=None, seed=None,
+                      individual_test=False, individual_test_name=None,
+                      tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(),
                       retries=0):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
+                           individual_test_name=individual_test_name,
                            tag_criteria=tag_criteria, seed=seed,
                            software_deps=software_deps, retries=retries)
   test_req.params.run_via_cft = True
@@ -2761,6 +2781,41 @@ def GenTests(api):
               requests={
                   'default': _cft_test_request_without_container_metadata('foo')
               }, config=_test_config('foo'))),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'suite-scheduler-lacross-retries',
+      _set_build(bid=42, tags={'user_agent': 'crosfleet'}),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', individual_test=True,
+                          individual_test_name="tast.lacros",
+                          tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]),
+                          retries=1)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _empty_cft_enumerate_response(api),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'))
+              }),
+      ),
       status='FAILURE',
   )
 
