@@ -262,15 +262,17 @@
   },
   {
     "cmd": [],
-    "name": "cleanup vm (2)"
+    "name": "cleanup vm (2)",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
     "name": "cleanup vm (2).call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
-      "@@@STEP_LOG_END@vmlab CLI output@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -286,69 +288,15 @@
     ],
     "name": "cleanup vm (2).call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "cleanup vm (3)"
-  },
-  {
-    "cmd": [],
-    "name": "cleanup vm (3).call `vmlab`",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
-      "@@@STEP_LOG_END@vmlab CLI output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/vmlab/vmlab",
-      "cleanup-instances",
-      "--config",
-      "vmlab-config",
-      "--swarming-bot-name",
-      "bot-name",
-      "-rate",
-      "1"
-    ],
-    "name": "cleanup vm (3).call `vmlab`.run cmd",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "cleanup vm (4)"
-  },
-  {
-    "cmd": [],
-    "name": "cleanup vm (4).call `vmlab`",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
-      "@@@STEP_LOG_END@vmlab CLI output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/vmlab/vmlab",
-      "cleanup-instances",
-      "--config",
-      "vmlab-config",
-      "--swarming-bot-name",
-      "bot-name",
-      "-rate",
-      "1",
-      "-dry-run"
-    ],
-    "name": "cleanup vm (4).call `vmlab`.run cmd",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('cleanup vm (2).call `vmlab`.run cmd') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]

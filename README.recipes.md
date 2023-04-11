@@ -9664,9 +9664,24 @@ Returns:
   Object containing the result of the clean up. Includes total number of
     images, deleted images, failed to import images, unknown images.
 
-&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#118)(self):**
+&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#120)(self, config, swarming_bot_name, dry_run=False, rate=1, allow_failure=False):**
 
-&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#121)(self):**
+Cleanup orphan VM instances.
+
+Args:
+  config: config name preconfigured in vmlab CLI.
+  swarming_bot_name: only cleanup instances created by given swarming bot.
+  dry_run: dry run mode. only list, but not delete any instance.
+  rate: rate limit for deleting instance requests.
+  allow_failure: if set to True, step will not raise if CLI returns non-zero result.
+
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#148)(self, config, name):**
+
+Deletes a given VM instance.
+
+Args:
+  config: config name presentation in vmlab CLI.
+  name: name of the instnace returned by lease_vm.
 
 &mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, build_path, wait):**
 
@@ -14120,7 +14135,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#24)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#45): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [labpack](#recipe_modules-labpack), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#44): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [labpack](#recipe_modules-labpack), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [vmlab](#recipe_modules-vmlab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 

@@ -5,7 +5,6 @@
 
 """Recipe for the ChromeOS Skylab Test Runner."""
 import datetime
-import json
 import os
 import time
 
@@ -69,6 +68,7 @@ DEPS = [
     'labpack',
     'phosphorus',
     'result_flow',
+    'vmlab',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -4117,21 +4117,15 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_run_test_step_for_ctr())
 
   yield api.test(
-      'success-with-ctr-gce', _set_build(bid=42),
+      'success-with-ctr-gce',
+      _set_build(bid=42),
       _misc_properties(cft_is_enabled=True),
       _crossystem_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),
       _successful_run_test_step_for_ctr(),
-      api.step_data(
-          'execution steps.Prototype GCE provision.clean up orphan instances.get a list of all instances',
-          stdout=api.raw_io.output_text(
-              json.dumps([{
-                  'name': 'ctstest-crossk-dummy-r105-1'
-              }, {
-                  'name': 'ctstest-crossk-other-r105-1'
-              }]))))
+  )
 
   yield api.test(
       'within-deadline-ctr', api.time.seed(2369692800),

@@ -183,12 +183,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     self._vm_provisioned = {}
 
     with self._api.step.nest('clean up orphan instances'):
-      for orphance_instance in self._api.gcloud.list_all_instances():
-        if orphance_instance.startswith('ctstest-{}-'.format(bot_name)):
-          # recipe_modules/gcloud uses the same name for instances and images.
-          self._api.gcloud.delete_instance(orphance_instance, project,
-                                           'us-west2-a')
-          self._api.gcloud.delete_image(orphance_instance)
+      self._api.vmlab.cleanup_vm('cts-prototype', swarming_bot_name=bot_name,
+                                 allow_failure=True)
 
     self._api.gcloud.create_image(
         gce_image, source_uri=source_uri, licenses=[
@@ -196,18 +192,19 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         ])
     self._vm_provisioned['image_name'] = gce_image
 
-    instance_name, _, extip = self._api.gcloud.create_instance(
-        gce_image, project, 'n2-standard-4', 'us-west2-a', 'default', 'default',
-        external_ip=True)
+    instance_created = self._api.vmlab.lease_vm('cts-prototype', gce_image,
+                                                swarming_bot_name=bot_name)
+    instance_name, ssh = instance_created['name'], instance_created['ssh']
     self._vm_provisioned['instance_name'] = instance_name
 
     self._api.step('wait for betty boots', [
         '/usr/bin/ssh', '-o', 'StrictHostKeyChecking=no', '-o',
-        'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', 'root@' + extip,
-        'true'
+        'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes',
+        'root@' + ssh['address'], 'true'
     ])
 
-    metadata.primary_dut.chromeos.ssh.address = extip
+    metadata.primary_dut.chromeos.ssh.address = ssh['address']
+    metadata.primary_dut.chromeos.ssh.port = ssh['port']
 
     return PrejobResponsesTuple([], False, '')
 
@@ -217,11 +214,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     if not self._vm_provisioned:
       return
 
-    project = 'betty-cloud-prototype'
-
     if 'instance_name' in self._vm_provisioned:
-      self._api.gcloud.delete_instance(self._vm_provisioned['instance_name'],
-                                       project, 'us-west2-a')
+      self._api.vmlab.delete_vm('cts-prototype',
+                                self._vm_provisioned['instance_name'])
 
     if 'image_name' in self._vm_provisioned:
       self._api.gcloud.delete_image(self._vm_provisioned['image_name'])

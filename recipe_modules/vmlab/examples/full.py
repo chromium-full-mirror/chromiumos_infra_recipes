@@ -22,9 +22,22 @@ def RunSteps(api):
   api.vmlab.clean_images(False, 1)
 
   # Stub
-  api.vmlab.delete_vm()
-  api.vmlab.cleanup_vm()
+  api.vmlab.delete_vm('vmlab-config', 'instance-name')
+  api.vmlab.cleanup_vm('vmlab-config', swarming_bot_name='bot-name')
+  api.vmlab.cleanup_vm('vmlab-config', swarming_bot_name='bot-name',
+                       allow_failure=False)
+  api.vmlab.cleanup_vm('vmlab-config', swarming_bot_name='bot-name',
+                       allow_failure=True)
+  api.vmlab.cleanup_vm('vmlab-config', swarming_bot_name='bot-name',
+                       dry_run=True)
 
 
 def GenTests(api):
   yield api.test('basic')
+  yield api.test(
+      'cleanup failure ignored',
+      api.step_data('cleanup vm (3).call `vmlab`.run cmd', retcode=1))
+  yield api.test(
+      'cleanup failure raise',
+      api.step_data('cleanup vm (2).call `vmlab`.run cmd', retcode=1),
+      status='FAILURE')

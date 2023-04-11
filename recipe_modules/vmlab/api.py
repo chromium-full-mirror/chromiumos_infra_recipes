@@ -111,12 +111,47 @@ class VmlabApi(recipe_api.RecipeApi):
       ]
       if swarming_bot_name:
         args.extend(["--swarming-bot-name", swarming_bot_name])
-      # TODO(fqj): provide correct test data.
-      result = self._run(["lease"] + args, test_data='{}\n')
+      result = self._run(
+          ["lease"] + args,
+          test_data='{"name":"prefix-b310d29ece80d77ab4f4ffac8", "ssh":{"address":"8.8.8.8", "port":22}}\n'
+      )
       return json.loads(result.strip())
 
-  def cleanup_vm(self):
-    pass
+  def cleanup_vm(self, config, swarming_bot_name, dry_run=False, rate=1,
+                 allow_failure=False):
+    """Cleanup orphan VM instances.
 
-  def delete_vm(self):
-    pass
+    Args:
+      config: config name preconfigured in vmlab CLI.
+      swarming_bot_name: only cleanup instances created by given swarming bot.
+      dry_run: dry run mode. only list, but not delete any instance.
+      rate: rate limit for deleting instance requests.
+      allow_failure: if set to True, step will not raise if CLI returns non-zero result.
+    """
+    with self.m.step.nest('cleanup vm') as presentation:
+      args = []
+      assert len(swarming_bot_name) > 0, 'swarming_bot_name must be set'
+      args.extend(['--swarming-bot-name', swarming_bot_name])
+      args.extend(['-rate', str(rate)])
+      if dry_run:
+        args.append('-dry-run')
+      try:
+        result = self._run(['cleanup-instances', '--config', config] + args,
+                           test_data='{}\n')
+      except recipe_api.StepFailure as e:
+        if allow_failure:
+          presentation.status = self.m.step.FAILURE
+          return {}
+        raise e
+    return json.loads(result.strip())
+
+  def delete_vm(self, config, name):
+    """Deletes a given VM instance.
+
+    Args:
+      config: config name presentation in vmlab CLI.
+      name: name of the instnace returned by lease_vm.
+    """
+    with self.m.step.nest('delete vm'):
+      args = ["--config", config, "--instance-name", name]
+      self._run(["release"] + args, test_data='')

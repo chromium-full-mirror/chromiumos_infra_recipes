@@ -369,13 +369,31 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.ensure vmlab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "list",
-      "--format",
-      "json(name)"
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/vmlab",
+      "-ensure-file",
+      "chromiumos/infra/vmlab/${platform} latest",
+      "-max-threads",
+      "1",
+      "-json-output",
+      "/path/to/tmp/json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -390,65 +408,42 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.get a list of all instances",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.ensure vmlab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"ctstest-crossk-dummy-r105-1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }, @@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"ctstest-crossk-other-r105-1\"@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/vmlab/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "delete",
-      "ctstest-crossk-dummy-r105-1",
-      "--quiet",
-      "--zone=us-west2-a",
-      "--project=betty-cloud-prototype"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.delete instance",
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.call `vmlab`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
     ]
   },
   {
     "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "delete",
-      "ctstest-crossk-dummy-r105-1",
-      "--quiet"
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "cleanup-instances",
+      "--config",
+      "cts-prototype",
+      "--swarming-bot-name",
+      "crossk-dummy",
+      "-rate",
+      "1"
     ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:test_runner"
@@ -461,9 +456,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.delete image",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -505,25 +500,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.lease vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.lease vm.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"name\":\"prefix-b310d29ece80d77ab4f4ffac8\", \"ssh\":{\"address\":\"8.8.8.8\", \"port\":22}}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "create",
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "lease",
+      "--config",
+      "cts-prototype",
+      "--gce-image-name",
       "ctstest-crossk-dummy-r102-14637-42",
-      "--image=ctstest-crossk-dummy-r102-14637-42",
-      "--project=betty-cloud-prototype",
-      "--machine-type=n2-standard-4",
-      "--no-scopes",
-      "--zone=us-west2-a",
-      "--format=json",
-      "--network=default",
-      "--subnet=default"
+      "--gce-image-project",
+      "betty-cloud-prototype",
+      "--json",
+      "--swarming-bot-name",
+      "crossk-dummy"
     ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:test_runner"
@@ -536,78 +541,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.create instance",
+    "name": "execution steps.Prototype GCE provision.lease vm.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        ], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ], @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"accessConfigs\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"kind\": \"compute#accessConfig\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"name\": \"external-nat\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"natIP\": \"8.8.8.8\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"networkTier\": \"PREMIUM\", @@@",
-      "@@@STEP_LOG_LINE@json.output@            \"type\": \"ONE_TO_ONE_NAT\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        ], @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ], @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
-      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
-      "@@@STEP_LOG_LINE@json.output@    }, @@@",
-      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -931,20 +867,30 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE shutdown.delete vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE shutdown.delete vm.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
     "cmd": [
-      "gcloud",
-      "compute",
-      "instances",
-      "delete",
-      "betty-arc-r-3447702",
-      "--quiet",
-      "--zone=us-west2-a",
-      "--project=betty-cloud-prototype"
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "release",
+      "--config",
+      "cts-prototype",
+      "--instance-name",
+      "prefix-b310d29ece80d77ab4f4ffac8"
     ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:test_runner"
@@ -957,9 +903,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE shutdown.delete instance",
+    "name": "execution steps.Prototype GCE shutdown.delete vm.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
