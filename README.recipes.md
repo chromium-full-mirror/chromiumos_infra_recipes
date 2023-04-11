@@ -13867,7 +13867,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#17)(api):**
 ### *recipes* / [sync\_key\_value\_store](/recipes/sync_key_value_store.py)
 
-[DEPS](/recipes/sync_key_value_store.py#35): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/sync_key_value_store.py#42): [gitiles](#recipe_modules-gitiles), [key\_value\_store](#recipe_modules-key_value_store), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -13890,7 +13890,16 @@ requirements:
 It should not be too hard to remove any of these assumptions. If you need to
 extend the recipe with additional features, please go ahead!
 
-&mdash; **def [RunSteps](/recipes/sync_key_value_store.py#45)(api: RecipeApi, properties: SyncKeyValueStoreProperties):**
+&mdash; **def [RunSteps](/recipes/sync_key_value_store.py#74)(api: RecipeApi, properties: SyncKeyValueStoreProperties):**
+
+Main recipe logic.
+
+In short, this recipe will:
+1.  Validate arguments to see if we should exit before doing real work.
+2.  Read the original source file and destination file.
+3.  Prepare updated contents for the destination file.
+4.  Quit early if there are no updates to be made.
+5.  Upload the updated contents to the destination URI.
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

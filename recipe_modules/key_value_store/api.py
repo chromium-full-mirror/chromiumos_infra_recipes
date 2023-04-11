@@ -205,7 +205,8 @@ class KeyValueStoreApi(RecipeApi):
               f'Found multiline value for {key} in key-value store:\n{original_contents}'
           )
         if append_if_missing:
-          new_lines.append('')
+          if new_lines and new_lines[-1]:
+            new_lines.append('')
           new_lines.append(new_value_line)
         else:
           raise StepFailure(

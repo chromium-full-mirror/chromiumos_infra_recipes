@@ -49,5 +49,9 @@ message SyncKeyValueStoreProperties {
   repeated KeyPair key_pairs = 3;
 
   // If True, then the remote file will not actually be pushed.
-  bool dryrun = 4;
+  bool dry_run = 4;
+
+  // Canned ACL to set when uploading the updated dest file to GS://.
+  // For full documentation, see `gsutil.py help acls`.
+  string canned_acl_for_upload = 5;
 }
