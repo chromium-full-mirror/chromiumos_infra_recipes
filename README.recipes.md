@@ -9650,7 +9650,7 @@ A module to interact with Chrome OS VMLab.
 
 Initialize GcloudApi.
 
-&mdash; **def [clean\_images](/recipe_modules/vmlab/api.py#74)(self, dry_run, rate=1):**
+&mdash; **def [clean\_images](/recipe_modules/vmlab/api.py#78)(self, dry_run, rate=1):**
 
 Clean up VM images in the GCP project.
 
@@ -9664,7 +9664,7 @@ Returns:
   Object containing the result of the clean up. Includes total number of
     images, deleted images, failed to import images, unknown images.
 
-&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#120)(self, config, swarming_bot_name, dry_run=False, rate=1, allow_failure=False):**
+&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#124)(self, config, swarming_bot_name, dry_run=False, rate=1, allow_failure=False):**
 
 Cleanup orphan VM instances.
 
@@ -9675,7 +9675,7 @@ Args:
   rate: rate limit for deleting instance requests.
   allow_failure: if set to True, step will not raise if CLI returns non-zero result.
 
-&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#148)(self, config, name):**
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#152)(self, config, name):**
 
 Deletes a given VM instance.
 
@@ -9683,7 +9683,7 @@ Args:
   config: config name presentation in vmlab CLI.
   name: name of the instnace returned by lease_vm.
 
-&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, build_path, wait):**
+&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, build_path, wait, assert_ready=False):**
 
 Import a VM image from GCS to GCE.
 
@@ -9691,11 +9691,12 @@ Args:
   build_path: build path of the image in GCS without bucket, for example
               betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
   wait: whether to wait for the image import to complete.
+  assert_ready: raise StepFailure if image is not in READY state.
 
 Returns:
   Object containing project, name, status, source of the imported image.
 
-&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#96)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
+&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#100)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
 
 Lease a VM.
 
@@ -14526,11 +14527,11 @@ files in projects touched by the input CLs.
 &mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
 ### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
 
-[DEPS](/recipe_modules/vmlab/examples/full.py#6): [vmlab](#recipe_modules-vmlab)
+[DEPS](/recipe_modules/vmlab/examples/full.py#8): [vmlab](#recipe_modules-vmlab), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/vmlab/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/vmlab/examples/full.py#14)(api):**
 ### *recipes* / [workspace\_util:examples/full](/recipe_modules/workspace_util/examples/full.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/full.py#15): [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

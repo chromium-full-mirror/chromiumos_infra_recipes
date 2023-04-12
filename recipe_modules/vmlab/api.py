@@ -50,13 +50,14 @@ class VmlabApi(recipe_api.RecipeApi):
       presentation.logs['vmlab CLI output'] = stdout
     return stdout
 
-  def import_image(self, build_path, wait):
+  def import_image(self, build_path, wait, assert_ready=False):
     """Import a VM image from GCS to GCE.
 
     Args:
       build_path: build path of the image in GCS without bucket, for example
                   betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
       wait: whether to wait for the image import to complete.
+      assert_ready: raise StepFailure if image is not in READY state.
 
     Returns:
       Object containing project, name, status, source of the imported image.
@@ -69,7 +70,10 @@ class VmlabApi(recipe_api.RecipeApi):
           ["image"] + args,
           test_data='{"project":"p", "name":"n", "status":"READY", "source":"s"}\n'
       )
-      return json.loads(result.strip())
+      result_json = json.loads(result.strip())
+      if assert_ready and result_json['status'] != 'READY':
+        raise recipe_api.StepFailure("Image is not ready.")
+      return result_json
 
   def clean_images(self, dry_run, rate=1):
     """Clean up VM images in the GCP project.

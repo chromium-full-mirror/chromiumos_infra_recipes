@@ -153,10 +153,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Raises:
       * api.test.StepFailure if prejob fails.
     """
-    project = 'betty-cloud-prototype'
-    self._api.gcloud.set_gce_project(project=project)
-    self._api.gcloud.auth_list()
-
     suffix = self._api.buildbucket.build.id
     if suffix == 0:
       # LED runs have buildbucket id=0. Use a random number.
@@ -168,17 +164,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     # than setting up env_vars/metadata for crostoolrunner_interface
     # TODO(b/250615010): clean ups.
     bot_name = self._api.cros_tool_runner.bot_id
-    gce_image = 'ctstest-{}-{}-{}'.format(
-        # bot name
-        bot_name,
-        # Drop betty-arc-r-release/ to save some length since image name length
-        # is capped at 63 characters.
-        '-'.join(build.split('/')[1:]).lower()[0:10],
-        # buildbucket id
-        suffix)
-
-    source_uri = 'https://storage.googleapis.com/chromeos-image-archive/{}/chromiumos_test_image_gce.tar.gz'.format(
-        build)
 
     self._vm_provisioned = {}
 
@@ -186,14 +171,12 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       self._api.vmlab.cleanup_vm('cts-prototype', swarming_bot_name=bot_name,
                                  allow_failure=True)
 
-    self._api.gcloud.create_image(
-        gce_image, source_uri=source_uri, licenses=[
-            'https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx',
-        ])
-    self._vm_provisioned['image_name'] = gce_image
+    image_info = self._api.vmlab.import_image(build, wait=True,
+                                              assert_ready=True)
 
-    instance_created = self._api.vmlab.lease_vm('cts-prototype', gce_image,
-                                                swarming_bot_name=bot_name)
+    instance_created = self._api.vmlab.lease_vm(
+        'cts-prototype', image_info['name'],
+        image_project=image_info['project'], swarming_bot_name=bot_name)
     instance_name, ssh = instance_created['name'], instance_created['ssh']
     self._vm_provisioned['instance_name'] = instance_name
 
@@ -217,9 +200,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     if 'instance_name' in self._vm_provisioned:
       self._api.vmlab.delete_vm('cts-prototype',
                                 self._vm_provisioned['instance_name'])
-
-    if 'image_name' in self._vm_provisioned:
-      self._api.gcloud.delete_image(self._vm_provisioned['image_name'])
 
   def submit_post_job(self):
     """Submits a Postjob for VM"""

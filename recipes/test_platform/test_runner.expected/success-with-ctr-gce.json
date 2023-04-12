@@ -308,60 +308,6 @@
     ]
   },
   {
-    "cmd": [
-      "gcloud",
-      "config",
-      "set",
-      "project",
-      "betty-cloud-prototype"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.Prototype GCE provision.set gcloud project",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "auth",
-      "list"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.Prototype GCE provision.gcloud auth",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "execution steps.Prototype GCE provision.clean up orphan instances",
     "~followup_annotations": [
@@ -463,25 +409,29 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.create image",
+    "name": "execution steps.Prototype GCE provision.import VM image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.Prototype GCE provision.import VM image.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
+      "@@@STEP_LOG_END@vmlab CLI output@@@"
+    ]
+  },
+  {
     "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "create",
-      "ctstest-crossk-dummy-r102-14637-42",
-      "--source-uri=https://storage.googleapis.com/chromeos-image-archive/betty-arc-r-release/R102-14637.0.0/chromiumos_test_image_gce.tar.gz",
-      "--licenses=https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+      "[START_DIR]/cipd/vmlab/vmlab",
+      "image",
+      "-build-path",
+      "betty-arc-r-release/R102-14637.0.0",
+      "-json",
+      "-wait"
     ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:test_runner"
@@ -494,9 +444,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.create image.gce create image",
+    "name": "execution steps.Prototype GCE provision.import VM image.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -522,9 +472,9 @@
       "--config",
       "cts-prototype",
       "--gce-image-name",
-      "ctstest-crossk-dummy-r102-14637-42",
+      "n",
       "--gce-image-project",
-      "betty-cloud-prototype",
+      "p",
       "--json",
       "--swarming-bot-name",
       "crossk-dummy"
@@ -906,36 +856,6 @@
     "name": "execution steps.Prototype GCE shutdown.delete vm.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "gcloud",
-      "compute",
-      "images",
-      "delete",
-      "ctstest-crossk-dummy-r102-14637-42",
-      "--quiet"
-    ],
-    "env": {
-      "VIRTUAL_ENV": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.Prototype GCE shutdown.delete image",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
