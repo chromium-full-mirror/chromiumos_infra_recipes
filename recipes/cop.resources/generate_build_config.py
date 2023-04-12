@@ -40,11 +40,9 @@ def patch_yaml(base_yaml, user_yaml):
   Merge two configurations (base and user) following the following rues
   - 'steps' fields is the concatenation of base and user 'steps' fields,
     in that order.
-  - 'availableSecrets' field comes directly from base configuration.
-  - 'substitutions' field is a merge of base and user configurations
-  - For other fields present in user and base configurations, base takes
-    preference.
-  - Fields only present in user or base are copied as-is.
+  - 'substitutions' field is a merge of base and user configurations.
+  - All the fields from the base configuration are copied as-is.
+  - If the user specifies a specific machineType, it will be used.
 
   Args:
     base_yaml:
@@ -72,14 +70,13 @@ def patch_yaml(base_yaml, user_yaml):
           **base_yaml['substitutions'],
           **user_yaml['substitutions'],
       }
-    if key == 'availableSecrets':
-      patched_yaml['availableSecrets'] = base_yaml['availableSecrets']
-  for key in user_yaml.keys():
-    if key == 'availableSecrets':
-      continue
-    if key in base_yaml.keys():
-      continue
-    patched_yaml[key] = user_yaml[key]
+
+  if 'options' in user_yaml.keys():
+    if 'machineType' in user_yaml['options']:
+      patched_yaml['options'] = {
+          'machineType': user_yaml['options']['machineType']
+      }
+
   return patched_yaml
 
 
