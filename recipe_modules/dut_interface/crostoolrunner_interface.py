@@ -125,7 +125,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     # TODO(b/243367000): Check self.cft_test_request.test_suites[0].name
     # instead.
-    check_suite = 'cheets_CTS_R' in self.cft_test_request.test_suites[
+    check_suite = 'cheets_CTS_' in self.cft_test_request.test_suites[
         0].test_case_ids.test_case_ids[0].value
     is_betty = self.cft_test_request.autotest_keyvals['build'].startswith(
         'betty')
