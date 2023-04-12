@@ -14,11 +14,6 @@ import yaml
 def securize_user_config(user_config):
   """Validate that the user configuration is minimally safe to run."""
 
-  #Check if user tries to access the token
-  if '${_TOKEN}' in str(user_config):
-    print('User yaml, must not use the token')
-    sys.exit(-1)
-
   #Check docker container
   valid_containers = ('gcr.io/${PROJECT_ID}/', 'gcr.io/cloud-builders/')
   for i, step in enumerate(user_config['steps']):

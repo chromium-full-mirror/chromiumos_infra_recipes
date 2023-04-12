@@ -60,39 +60,33 @@ def _gen_build_config(api: RecipeApi, user_yaml: str,
       'user_yaml': user_yaml,
       'substitutions': substitutions,
   }
-  return _run_script(api, "generate_build_config.py", data_in,
-                     add_json_log=False)
+  return _run_script(api, "generate_build_config.py", data_in)
 
 
-def _launch_build(api: RecipeApi, project: str, token: str,
-                  build_config: Dict) -> str:
+def _launch_build(api: RecipeApi, project: str, build_config: Dict) -> str:
   """Launch a Google Cloud Build with the given configuration."""
   data_in = {
       'build_config': build_config,
       'project': project,
-      'token': token,
   }
   return _run_script(api, "launch_build.py", data_in)['id']
 
 
-def _wait_for_build_completion(api: RecipeApi, project: str, token: str,
+def _wait_for_build_completion(api: RecipeApi, project: str,
                                build_id: str) -> None:
   """Wait for a Google Cloud Build to finish."""
   data_in = {
       'build_id': build_id,
       'project': project,
-      'token': token,
   }
   _run_script(api, "monitor_build.py", data_in)
 
 
-def _fetch_results(api: RecipeApi, project: str, token: str,
-                   build_id: str) -> Dict:
+def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
   """Fetch the logs from a completed Google Cloud Build."""
   data_in = {
       'build_id': build_id,
       'project': project,
-      'token': token,
   }
   return _run_script(api, "fetch_results.py", data_in)
 
@@ -149,10 +143,6 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       presentation.step_text = 'No cop file: Exiting'
       return
 
-  with api.step.nest('obtain Oauth2 token') as presentation:
-    token = api.m.support.call('oauth2-get-token', None, add_json_log=False)
-    auth_token = token['token']['access_token']
-
   with api.step.nest('generate build config') as presentation:
     subs = {
         '_REF': patch_set.current_revision,
@@ -161,15 +151,13 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     build_config = _gen_build_config(api, user_yaml, subs)
 
   with api.step.nest('launch build') as presentation:
-    build_id = _launch_build(api, properties.project_name, auth_token,
-                             build_config)
+    build_id = _launch_build(api, properties.project_name, build_config)
 
   with api.step.nest('wait build competion') as presentation:
-    _wait_for_build_completion(api, properties.project_name, auth_token,
-                               build_id)
+    _wait_for_build_completion(api, properties.project_name, build_id)
 
   with api.step.nest('fetch results') as presentation:
-    results = _fetch_results(api, properties.project_name, auth_token, build_id)
+    results = _fetch_results(api, properties.project_name, build_id)
 
   with api.step.nest('send Tricium comments') as presentation:
     api.tricium.add_comment(f"CoP Result: {results['result']['status']}",
@@ -268,11 +256,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                     'check committer', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',api.json.output(gitiles_file), retcode=1),
                  api.post_check(post_process.StepSuccess, 'check committer'),
-                 api.post_check(post_process.DoesNotRun, 'obtain Oauth2 token'),
+                 api.post_check(post_process.DoesNotRun, 'generate build config'),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
-  token = {'token': {'access_token': "fabada"}}
   cloud_build = {'id': 'acabad0'}
   results = {
       'result': {
@@ -290,14 +277,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'check committer', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
-                 api.step_data('obtain Oauth2 token.oauth2-get-token',stdout=api.json.output(token)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
-  token = {'token': {'access_token': "fabada"}}
   cloud_build = {'id': 'acabad0'}
   results = {
       'result': {
@@ -315,7 +300,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'check committer', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
-                 api.step_data('obtain Oauth2 token.oauth2-get-token',stdout=api.json.output(token)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),

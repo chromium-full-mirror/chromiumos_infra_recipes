@@ -8,6 +8,7 @@
 import argparse
 import sys
 import json
+import luci_auth
 
 from google.cloud.devtools import cloudbuild_v1
 from google.protobuf import json_format
@@ -33,7 +34,7 @@ def main(args):
 
   input_json = json.load(args.input_json)
 
-  build = run_build(input_json['token'], input_json['project'],
+  build = run_build(luci_auth.get_token(), input_json['project'],
                     input_json['build_config'])
 
   out = {'id': build.metadata.build.id}

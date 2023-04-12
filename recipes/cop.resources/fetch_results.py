@@ -8,6 +8,7 @@
 import argparse
 import sys
 import json
+import luci_auth
 
 from google.cloud import storage
 from google.cloud.devtools import cloudbuild_v1
@@ -68,7 +69,7 @@ def main(args):
 
   input_json = json.load(args.input_json)
 
-  credentials = google.oauth2.credentials.Credentials(input_json['token'])
+  credentials = google.oauth2.credentials.Credentials(luci_auth.get_token())
   build = get_build_info(credentials, input_json['project'],
                          input_json['build_id'])
   storage_client = storage.Client(credentials=credentials)
