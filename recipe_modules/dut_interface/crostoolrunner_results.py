@@ -55,7 +55,7 @@ class CrosToolRunnerPrejobDUTResponse(dut_results.DUTPrejobResponse
     """
     state = self.data.WhichOneof('outcome')
     if state:
-      return state
+      return state.lower()
     raise InvalidPrejobResponseStateException(
         "No outcome found in provision response.")
 
@@ -99,7 +99,7 @@ class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
     """
     state = self.data.WhichOneof('verdict')
     if state:
-      return state
+      return state.lower()
     raise InvalidTestResponseStateException(
         "No verdict found in test case result.")
 
