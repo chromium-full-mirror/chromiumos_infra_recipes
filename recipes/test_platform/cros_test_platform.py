@@ -558,6 +558,15 @@ def _bucket_by_dependencies(test_cases):
   """
   bucket = {}
   for test_case in test_cases:
+    # TODO (b/277945083): Hard code to group tast.security tests together.
+    # Remove once long term solution is implemented.
+    if "tast.security" in test_case.id.value:  # pragma: no cover
+      security_bucket = "__SECURITY__"
+      if security_bucket not in bucket:
+        bucket[security_bucket] = []
+      bucket[security_bucket].append(test_case)
+      continue
+
     deps = frozenset(list(dep.value for dep in test_case.dependencies))
     if deps in bucket:
       bucket[deps].append(test_case)
