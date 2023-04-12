@@ -19,9 +19,6 @@ def securize_user_config(user_config):
     print('User yaml, must not use the token')
     sys.exit(-1)
 
-  #Limit timeout
-  user_config['timeout'] = '1200s'
-
   #Check docker container
   valid_containers = ('gcr.io/${PROJECT_ID}/', 'gcr.io/cloud-builders/')
   for i, step in enumerate(user_config['steps']):
@@ -60,16 +57,15 @@ def patch_yaml(base_yaml, user_yaml):
   """
   patched_yaml = dict()
   for key in base_yaml.keys():
-    if key not in user_yaml.keys():
-      patched_yaml[key] = base_yaml[key]
-      continue
     if key == 'steps':
       patched_yaml['steps'] = base_yaml['steps'] + user_yaml['steps']
-    if key == 'substitutions':
+    elif key == 'substitutions' and 'substitutions' in user_yaml.keys():
       patched_yaml['substitutions'] = {
           **base_yaml['substitutions'],
           **user_yaml['substitutions'],
       }
+    else:
+      patched_yaml[key] = base_yaml[key]
 
   if 'options' in user_yaml.keys():
     if 'machineType' in user_yaml['options']:
