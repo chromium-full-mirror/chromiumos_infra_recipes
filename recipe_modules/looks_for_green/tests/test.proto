@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.looks_for_green.tests;
 
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
 message ShouldLfgProperties {
 
   // Whether a test is expected to LFG.
@@ -13,5 +15,8 @@ message ShouldLfgProperties {
 
   // Map of experiments to enablement.
   map<string, bool> experiments = 2;
+
+  // Whether to test with multiple changes..
+  bool enable_test_on_multiple_changes = 3;
 
 }

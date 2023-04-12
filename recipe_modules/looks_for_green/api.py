@@ -74,6 +74,23 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
 
+  def _has_merge_commit(self, gerrit_changes: List[GerritChange]) -> bool:
+    '''Returns whether gerrit_changes contains one or more merge commit.'''
+    with self.m.context(cwd=self.m.cros_source.workspace_path):
+      patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes)
+      for patch in patch_sets:
+        project_paths = self.m.cros_source.find_project_paths(
+            patch.project, patch.branch)
+        for project_path in project_paths:
+          with self.m.context(
+              cwd=self.m.cros_source.workspace_path.join(project_path)):
+            commit = self.m.git.fetch_ref(patch.git_fetch_url,
+                                          patch.git_fetch_ref)
+            # One merge commit in a group of CLs is enough to stop LFG.
+            if self.m.git.is_merge_commit(commit):
+              return True
+      return False
+
   def should_lfg(self, exps: Dict[str, bool],
                  gerrit_changes: List[GerritChange]) -> bool:
     '''Returns whether looks for green logic should be run.'''
@@ -82,10 +99,12 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
         lfg_enabled = self.m.looks_for_green.enable_looks_for_green
         disallow = self.found_disallow_lfg_footer(gerrit_changes)
-        self._should_lfg = exp_enabled and lfg_enabled and not disallow
+        has_merge_commit = self._has_merge_commit(gerrit_changes)
+        self._should_lfg = exp_enabled and lfg_enabled and not disallow and not has_merge_commit
         should_lfg_log = (
             f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
-            f' {lfg_enabled}, Found disallow footer: {disallow}')
+            f' {lfg_enabled}, Found disallow footer: {disallow}, Found has merge commit {has_merge_commit}'
+        )
         # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
         if self._should_lfg:
           with self.m.step.nest('check if CL uses Cq-Depend'):
