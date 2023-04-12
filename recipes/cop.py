@@ -157,8 +157,6 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     subs = {
         '_REF': patch_set.current_revision,
         '_URL': patch_set.git_fetch_url,
-        '_HOSTNAME': patch_set.host,
-        '_TOKEN': auth_token
     }
     build_config = _gen_build_config(api, user_yaml, subs)
 

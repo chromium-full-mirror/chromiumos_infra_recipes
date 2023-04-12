@@ -5,19 +5,12 @@ steps:
   args:
   - '-c'
   - |
-        set -e
-        printf "${_HOSTNAME}\tFALSE\t/\tTRUE\t2147483647\to\tgit-user=${_TOKEN}\n" > /tmp/cookiefile
-        set -v
+        set -ev
         git init
-        git config http.cookiefile /tmp/cookiefile
         git remote add origin ${_URL}
         git fetch --depth ${_FETCH_DEPTH} ${_URL} ${_REF}
         git checkout FETCH_HEAD
-        rm /tmp/cookiefile
 substitutions:
-  _HOSTNAME: chromium.googlesource.com
   _URL: https://chromium.googlesource.com/chromiumos/third_party/kernel
   _REF: beef0fabada
   _FETCH_DEPTH: '2'
-  _TOKEN: yX29.a.....
-  
