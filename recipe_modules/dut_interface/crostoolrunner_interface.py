@@ -167,15 +167,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     self._vm_provisioned = {}
 
-    with self._api.step.nest('clean up orphan instances'):
-      self._api.vmlab.cleanup_vm('cts-prototype', swarming_bot_name=bot_name,
-                                 allow_failure=True)
+    self._api.vmlab.cleanup_vm('clean up orphan instances', 'cts-prototype',
+                               swarming_bot_name=bot_name, allow_failure=True)
 
-    image_info = self._api.vmlab.import_image(build, wait=True,
+    image_info = self._api.vmlab.import_image('create image', build, wait=True,
                                               assert_ready=True)
 
     instance_created = self._api.vmlab.lease_vm(
-        'cts-prototype', image_info['name'],
+        'create instance', 'cts-prototype', image_info['name'],
         image_project=image_info['project'], swarming_bot_name=bot_name)
     instance_name, ssh = instance_created['name'], instance_created['ssh']
     self._vm_provisioned['instance_name'] = instance_name
@@ -198,7 +197,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       return
 
     if 'instance_name' in self._vm_provisioned:
-      self._api.vmlab.delete_vm('cts-prototype',
+      self._api.vmlab.delete_vm('delete instance', 'cts-prototype',
                                 self._vm_provisioned['instance_name'])
 
   def submit_post_job(self):

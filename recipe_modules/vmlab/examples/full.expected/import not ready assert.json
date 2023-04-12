@@ -68,11 +68,11 @@
   },
   {
     "cmd": [],
-    "name": "lease vm (2)"
+    "name": "lease vm with bot name"
   },
   {
     "cmd": [],
-    "name": "lease vm (2).call `vmlab`",
+    "name": "lease vm with bot name.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"name\":\"prefix-b310d29ece80d77ab4f4ffac8\", \"ssh\":{\"address\":\"8.8.8.8\", \"port\":22}}@@@",
@@ -93,18 +93,18 @@
       "--swarming-bot-name",
       "bot-name"
     ],
-    "name": "lease vm (2).call `vmlab`.run cmd",
+    "name": "lease vm with bot name.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image"
+    "name": "import image and wait"
   },
   {
     "cmd": [],
-    "name": "import VM image.call `vmlab`",
+    "name": "import image and wait.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -120,18 +120,18 @@
       "-json",
       "-wait"
     ],
-    "name": "import VM image.call `vmlab`.run cmd",
+    "name": "import image and wait.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image (2)"
+    "name": "import image no wait"
   },
   {
     "cmd": [],
-    "name": "import VM image (2).call `vmlab`",
+    "name": "import image no wait.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -146,21 +146,21 @@
       "build-path",
       "-json"
     ],
-    "name": "import VM image (2).call `vmlab`.run cmd",
+    "name": "import image no wait.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image (3)",
+    "name": "import image assert ready",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image (3).call `vmlab`",
+    "name": "import image assert ready.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"status\": \"PENDING\"}@@@",
@@ -176,7 +176,7 @@
       "-json",
       "-wait"
     ],
-    "name": "import VM image (3).call `vmlab`.run cmd",
+    "name": "import image assert ready.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

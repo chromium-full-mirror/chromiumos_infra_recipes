@@ -316,16 +316,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.ensure vmlab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.ensure vmlab",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -354,9 +347,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.ensure vmlab.ensure_installed",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.ensure vmlab.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -372,9 +365,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.call `vmlab`",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.call `vmlab`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
       "@@@STEP_LOG_END@vmlab CLI output@@@"
     ]
@@ -402,21 +395,21 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.clean up orphan instances.cleanup vm.call `vmlab`.run cmd",
+    "name": "execution steps.Prototype GCE provision.clean up orphan instances.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.import VM image",
+    "name": "execution steps.Prototype GCE provision.create image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.import VM image.call `vmlab`",
+    "name": "execution steps.Prototype GCE provision.create image.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -444,21 +437,21 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.import VM image.call `vmlab`.run cmd",
+    "name": "execution steps.Prototype GCE provision.create image.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.lease vm",
+    "name": "execution steps.Prototype GCE provision.create instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE provision.lease vm.call `vmlab`",
+    "name": "execution steps.Prototype GCE provision.create instance.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"name\":\"prefix-b310d29ece80d77ab4f4ffac8\", \"ssh\":{\"address\":\"8.8.8.8\", \"port\":22}}@@@",
@@ -491,7 +484,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE provision.lease vm.call `vmlab`.run cmd",
+    "name": "execution steps.Prototype GCE provision.create instance.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -818,14 +811,14 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE shutdown.delete vm",
+    "name": "execution steps.Prototype GCE shutdown.delete instance",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE shutdown.delete vm.call `vmlab`",
+    "name": "execution steps.Prototype GCE shutdown.delete instance.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@@@@",
@@ -853,7 +846,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE shutdown.delete vm.call `vmlab`.run cmd",
+    "name": "execution steps.Prototype GCE shutdown.delete instance.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]

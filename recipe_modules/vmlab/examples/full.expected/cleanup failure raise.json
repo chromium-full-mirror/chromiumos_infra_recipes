@@ -68,11 +68,11 @@
   },
   {
     "cmd": [],
-    "name": "lease vm (2)"
+    "name": "lease vm with bot name"
   },
   {
     "cmd": [],
-    "name": "lease vm (2).call `vmlab`",
+    "name": "lease vm with bot name.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"name\":\"prefix-b310d29ece80d77ab4f4ffac8\", \"ssh\":{\"address\":\"8.8.8.8\", \"port\":22}}@@@",
@@ -93,18 +93,18 @@
       "--swarming-bot-name",
       "bot-name"
     ],
-    "name": "lease vm (2).call `vmlab`.run cmd",
+    "name": "lease vm with bot name.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image"
+    "name": "import image and wait"
   },
   {
     "cmd": [],
-    "name": "import VM image.call `vmlab`",
+    "name": "import image and wait.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -120,18 +120,18 @@
       "-json",
       "-wait"
     ],
-    "name": "import VM image.call `vmlab`.run cmd",
+    "name": "import image and wait.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image (2)"
+    "name": "import image no wait"
   },
   {
     "cmd": [],
-    "name": "import VM image (2).call `vmlab`",
+    "name": "import image no wait.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -146,18 +146,18 @@
       "build-path",
       "-json"
     ],
-    "name": "import VM image (2).call `vmlab`.run cmd",
+    "name": "import image no wait.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "import VM image (3)"
+    "name": "import image assert ready"
   },
   {
     "cmd": [],
-    "name": "import VM image (3).call `vmlab`",
+    "name": "import image assert ready.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"project\":\"p\", \"name\":\"n\", \"status\":\"READY\", \"source\":\"s\"}@@@",
@@ -173,18 +173,18 @@
       "-json",
       "-wait"
     ],
-    "name": "import VM image (3).call `vmlab`.run cmd",
+    "name": "import image assert ready.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "clean up images"
+    "name": "clean images dryrun"
   },
   {
     "cmd": [],
-    "name": "clean up images.call `vmlab`",
+    "name": "clean images dryrun.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
@@ -200,18 +200,18 @@
       "-json",
       "-dry-run"
     ],
-    "name": "clean up images.call `vmlab`.run cmd",
+    "name": "clean images dryrun.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "clean up images (2)"
+    "name": "clean images"
   },
   {
     "cmd": [],
-    "name": "clean up images (2).call `vmlab`",
+    "name": "clean images.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
@@ -226,7 +226,7 @@
       "1",
       "-json"
     ],
-    "name": "clean up images (2).call `vmlab`.run cmd",
+    "name": "clean images.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -260,11 +260,11 @@
   },
   {
     "cmd": [],
-    "name": "cleanup vm"
+    "name": "cleanup vm by bot name"
   },
   {
     "cmd": [],
-    "name": "cleanup vm.call `vmlab`",
+    "name": "cleanup vm by bot name.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{}@@@",
@@ -282,21 +282,21 @@
       "-rate",
       "1"
     ],
-    "name": "cleanup vm.call `vmlab`.run cmd",
+    "name": "cleanup vm by bot name.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "cleanup vm (2)",
+    "name": "cleanup vm by bot name raise failure",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "cleanup vm (2).call `vmlab`",
+    "name": "cleanup vm by bot name raise failure.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
@@ -313,7 +313,7 @@
       "-rate",
       "1"
     ],
-    "name": "cleanup vm (2).call `vmlab`.run cmd",
+    "name": "cleanup vm by bot name raise failure.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"
@@ -322,7 +322,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('cleanup vm (2).call `vmlab`.run cmd') (retcode: 1)"
+      "humanReason": "Step('cleanup vm by bot name raise failure.call `vmlab`.run cmd') (retcode: 1)"
     },
     "name": "$result"
   }

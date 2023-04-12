@@ -24,7 +24,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
-  result = api.vmlab.clean_images(api.build_menu.is_staging, 1)
+  result = api.vmlab.clean_images('cleanup outdated images',
+                                  api.build_menu.is_staging, 1)
   return RawResult(status=common.SUCCESS, summary_markdown=json.dumps(result))
 
 

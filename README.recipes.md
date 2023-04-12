@@ -9650,13 +9650,14 @@ A module to interact with Chrome OS VMLab.
 
 Initialize GcloudApi.
 
-&mdash; **def [clean\_images](/recipe_modules/vmlab/api.py#78)(self, dry_run, rate=1):**
+&mdash; **def [clean\_images](/recipe_modules/vmlab/api.py#79)(self, name, dry_run, rate=1):**
 
 Clean up VM images in the GCP project.
 
 Remove expired images, return error if there is any unknown image.
 
 Args:
+  name: name of the step.
   dry_run: don't really delete images if true.
   rate: maximum number of requests per second.
 
@@ -9664,30 +9665,33 @@ Returns:
   Object containing the result of the clean up. Includes total number of
     images, deleted images, failed to import images, unknown images.
 
-&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#124)(self, config, swarming_bot_name, dry_run=False, rate=1, allow_failure=False):**
+&mdash; **def [cleanup\_vm](/recipe_modules/vmlab/api.py#127)(self, name, config, swarming_bot_name, dry_run=False, rate=1, allow_failure=False):**
 
 Cleanup orphan VM instances.
 
 Args:
+  name: name of the step.
   config: config name preconfigured in vmlab CLI.
   swarming_bot_name: only cleanup instances created by given swarming bot.
   dry_run: dry run mode. only list, but not delete any instance.
   rate: rate limit for deleting instance requests.
   allow_failure: if set to True, step will not raise if CLI returns non-zero result.
 
-&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#152)(self, config, name):**
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#156)(self, name, config, instance_name):**
 
 Deletes a given VM instance.
 
 Args:
+  name: name of the step.
   config: config name presentation in vmlab CLI.
-  name: name of the instnace returned by lease_vm.
+  instance_name: name of the instnace returned by lease_vm.
 
-&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, build_path, wait, assert_ready=False):**
+&mdash; **def [import\_image](/recipe_modules/vmlab/api.py#53)(self, name, build_path, wait, assert_ready=False):**
 
 Import a VM image from GCS to GCE.
 
 Args:
+  name: name of the step.
   build_path: build path of the image in GCS without bucket, for example
               betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
   wait: whether to wait for the image import to complete.
@@ -9696,11 +9700,12 @@ Args:
 Returns:
   Object containing project, name, status, source of the imported image.
 
-&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#100)(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
+&mdash; **def [lease\_vm](/recipe_modules/vmlab/api.py#102)(self, name, config, image_name, image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):**
 
 Lease a VM.
 
 Args:
+  name: name of the step.
   config: config name preconfigured in vmlab CLI.
   image_name: name of the image to use.
   image_project: GCP project where the image is stored.

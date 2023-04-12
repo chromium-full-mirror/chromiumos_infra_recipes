@@ -5,11 +5,11 @@
   },
   {
     "cmd": [],
-    "name": "clean up images"
+    "name": "cleanup outdated images"
   },
   {
     "cmd": [],
-    "name": "clean up images.ensure vmlab",
+    "name": "cleanup outdated images.ensure vmlab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -28,7 +28,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "clean up images.ensure vmlab.ensure_installed",
+    "name": "cleanup outdated images.ensure vmlab.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -46,7 +46,7 @@
   },
   {
     "cmd": [],
-    "name": "clean up images.call `vmlab`",
+    "name": "cleanup outdated images.call `vmlab`",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@{\"Total\":2,\"Deleted\":[\"d\"],\"Failed\":[],\"Unknown\":[]}@@@",
@@ -61,7 +61,7 @@
       "1",
       "-json"
     ],
-    "name": "clean up images.call `vmlab`.run cmd",
+    "name": "cleanup outdated images.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

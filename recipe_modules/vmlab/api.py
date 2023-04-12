@@ -50,10 +50,11 @@ class VmlabApi(recipe_api.RecipeApi):
       presentation.logs['vmlab CLI output'] = stdout
     return stdout
 
-  def import_image(self, build_path, wait, assert_ready=False):
+  def import_image(self, name, build_path, wait, assert_ready=False):
     """Import a VM image from GCS to GCE.
 
     Args:
+      name: name of the step.
       build_path: build path of the image in GCS without bucket, for example
                   betty-arc-r-cq/R108-15164.0.0-71927-8801111609984657185
       wait: whether to wait for the image import to complete.
@@ -62,7 +63,7 @@ class VmlabApi(recipe_api.RecipeApi):
     Returns:
       Object containing project, name, status, source of the imported image.
     """
-    with self.m.step.nest("import VM image"):
+    with self.m.step.nest(name):
       args = ["-build-path", build_path, '-json']
       if wait:
         args.append('-wait')
@@ -75,12 +76,13 @@ class VmlabApi(recipe_api.RecipeApi):
         raise recipe_api.StepFailure("Image is not ready.")
       return result_json
 
-  def clean_images(self, dry_run, rate=1):
+  def clean_images(self, name, dry_run, rate=1):
     """Clean up VM images in the GCP project.
 
     Remove expired images, return error if there is any unknown image.
 
     Args:
+      name: name of the step.
       dry_run: don't really delete images if true.
       rate: maximum number of requests per second.
 
@@ -88,7 +90,7 @@ class VmlabApi(recipe_api.RecipeApi):
       Object containing the result of the clean up. Includes total number of
         images, deleted images, failed to import images, unknown images.
     """
-    with self.m.step.nest("clean up images"):
+    with self.m.step.nest(name):
       args = ["-rate", str(rate), "-json"]
       if dry_run:
         args.append('-dry-run')
@@ -97,18 +99,19 @@ class VmlabApi(recipe_api.RecipeApi):
           test_data='{"Total":2,"Deleted":["d"],"Failed":[],"Unknown":[]}\n')
       return json.loads(result.strip())
 
-  def lease_vm(self, config, image_name, image_project=DEFAULT_IMAGE_PROJECT,
-               swarming_bot_name=None):
+  def lease_vm(self, name, config, image_name,
+               image_project=DEFAULT_IMAGE_PROJECT, swarming_bot_name=None):
     """Lease a VM.
 
     Args:
+      name: name of the step.
       config: config name preconfigured in vmlab CLI.
       image_name: name of the image to use.
       image_project: GCP project where the image is stored.
       swarming_bot_name: name of the sarming bot. cleanup_vm may not work well
     if empty swarming_bot_name is provided at some backend.
     """
-    with self.m.step.nest("lease vm"):
+    with self.m.step.nest(name):
       args = [
           "--config", config, "--gce-image-name", image_name,
           "--gce-image-project", image_project, '--json'
@@ -121,18 +124,19 @@ class VmlabApi(recipe_api.RecipeApi):
       )
       return json.loads(result.strip())
 
-  def cleanup_vm(self, config, swarming_bot_name, dry_run=False, rate=1,
+  def cleanup_vm(self, name, config, swarming_bot_name, dry_run=False, rate=1,
                  allow_failure=False):
     """Cleanup orphan VM instances.
 
     Args:
+      name: name of the step.
       config: config name preconfigured in vmlab CLI.
       swarming_bot_name: only cleanup instances created by given swarming bot.
       dry_run: dry run mode. only list, but not delete any instance.
       rate: rate limit for deleting instance requests.
       allow_failure: if set to True, step will not raise if CLI returns non-zero result.
     """
-    with self.m.step.nest('cleanup vm') as presentation:
+    with self.m.step.nest(name) as presentation:
       args = []
       assert len(swarming_bot_name) > 0, 'swarming_bot_name must be set'
       args.extend(['--swarming-bot-name', swarming_bot_name])
@@ -149,13 +153,14 @@ class VmlabApi(recipe_api.RecipeApi):
         raise e
     return json.loads(result.strip())
 
-  def delete_vm(self, config, name):
+  def delete_vm(self, name, config, instance_name):
     """Deletes a given VM instance.
 
     Args:
+      name: name of the step.
       config: config name presentation in vmlab CLI.
-      name: name of the instnace returned by lease_vm.
+      instance_name: name of the instnace returned by lease_vm.
     """
-    with self.m.step.nest('delete vm'):
-      args = ["--config", config, "--instance-name", name]
+    with self.m.step.nest(name):
+      args = ["--config", config, "--instance-name", instance_name]
       self._run(["release"] + args, test_data='')
