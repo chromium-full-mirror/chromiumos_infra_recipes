@@ -553,13 +553,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "print results",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@all tests passed!@@@"
-    ]
-  },
-  {
     "name": "$result"
   }
 ]

@@ -642,7 +642,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Lost SSH connection to DUT@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results/tests/pita.CreateFromIso.uprev@@@",
+      "@@@STEP_LINK@logs@https://ci.chromium.org/b/8945511751514863184/test-results?q=ID%3Apita.CreateFromIso.uprev@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

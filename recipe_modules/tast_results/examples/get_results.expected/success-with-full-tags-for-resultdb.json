@@ -288,7 +288,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Lost SSH connection to VM@@@",
-      "@@@STEP_LINK@logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results/tests/arc.Boot@@@",
+      "@@@STEP_LINK@logs@https://ci.chromium.org/b/42/test-results?q=ID%3Aarc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

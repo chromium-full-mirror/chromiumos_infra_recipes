@@ -52,13 +52,11 @@ def RunSteps(api: RecipeApi, properties: TastVmProperties):
     shard_args.extend(['-shardmethod={}'.format(properties.shard_method)])
 
   with api.step.nest('run tast tests'):
-    results, empty_result = api.tast_exec.run_vm(
+    results, _ = api.tast_exec.run_vm(
         properties.name, vm_context,
         api.tast_exec.TastInputs(properties.expressions, test_artifacts_dir,
                                  properties.build_payload, private_key_path,
                                  shard_args=shard_args))
-
-  api.tast_results.print_results(results.failures, empty_result)
 
   return api.failures.aggregate_failures(results)
 

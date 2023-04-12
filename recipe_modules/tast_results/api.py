@@ -20,6 +20,7 @@ GS_URI_PREFIX = 'gs://'
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 STAINLESS_LOG_PREFIX = 'https://stainless.corp.google.com/browse/'
 TESTHAUS_LOG_PREFIX = 'https://tests.chromeos.goog/p/chromeos/logs/browse/'
+MILO_PREFIX = 'https://ci.chromium.org/b/'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 
 
@@ -203,6 +204,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     kind = 'vm test'
     results = self.m.failures.Results(failures=[], successes={kind: 0})
     failed_test_cases = []
+    build = self.m.buildbucket.build
 
     exclude_tests = exclude_tests or []
     for test_case in task_result.test_cases:
@@ -214,8 +216,8 @@ class TastResultsApi(recipe_api.RecipeApi):
                   title=test_case.name,
                   link_map={
                       test_case.human_readable_summary[:50]:
-                          ('%s/tests/%s' % (task_result.log_url, test_case.name)
-                          )
+                          ('%s%d/test-results?q=ID%%3A%s' %
+                           (MILO_PREFIX, build.id, test_case.name))
                   },
                   fatal=True,
                   id=None,
