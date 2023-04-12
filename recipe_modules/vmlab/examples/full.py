@@ -40,10 +40,13 @@ def GenTests(api):
   yield api.test('basic')
   yield api.test(
       'cleanup failure ignored',
-      api.step_data('cleanup vm (3).call `vmlab`.run cmd', retcode=1))
+      api.step_data('cleanup vm (3).call `vmlab`.run cmd', retcode=1),
+      api.post_check(post_process.StepFailure, 'cleanup vm (3)'),
+      status='SUCCESS')
   yield api.test(
       'cleanup failure raise',
       api.step_data('cleanup vm (2).call `vmlab`.run cmd', retcode=1),
+      api.post_check(post_process.StepFailure, 'cleanup vm (2)'),
       status='FAILURE')
   yield api.test(
       'import not ready',
