@@ -17,6 +17,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = {
+    'buildbucket': 'recipe_engine/buildbucket',
     'depot_gerrit': 'depot_tools/gerrit',
     'file': 'recipe_engine/file',
     'json': 'recipe_engine/json',
@@ -28,6 +29,7 @@ DEPS = {
     'gerrit': 'gerrit',
     'support': 'support',
     'test_util': 'test_util',
+    'cros_infra_config': 'cros_infra_config',
 }
 
 PROPERTIES = CopProperties
@@ -105,7 +107,7 @@ def _fetch_cop_file(api: RecipeApi, host: str, project: str,
   }
 
   try:
-    gitiles_output = api.m.support.call('gitiles-fetch-file', gitiles_input)
+    gitiles_output = api.support.call('gitiles-fetch-file', gitiles_input)
   # File not present is returned as InfraFailure
   except api.step.InfraFailure:
     return None
@@ -120,18 +122,33 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
 
   with api.step.nest('validate inputs') as presentation:
     gerrit_changes = api.src_state.gerrit_changes
-    # If there are no gerrit_changes, we're done.
-    if len(gerrit_changes) == 0:
+    if len(gerrit_changes) > 1:
+      raise api.step.StepFailure('More than one change given.')
+    if not gerrit_changes and not api.cros_infra_config.is_staging:
       presentation.step_text = 'No changes given: Build is POINTLESS.'
       return
-    # If there is more than one gerrit_change, this recipe was invoked
-    # incorrectly.
-    if len(gerrit_changes) != 1:
-      raise api.step.StepFailure('More than one change given.')
+    if len(gerrit_changes) == 1:
+      presentation.step_text = 'One change from Tricium'
+    else:
+      presentation.step_text = 'Running from stagging builder with default CLs'
+
+  with api.step.nest('get change') as presentation:
+    if not gerrit_changes:
+      # Based on 'validate inputs' logic, gerrit_changes should
+      # only ever be empty during staging builds.
+      # For staging builds with no gerrit_changes, assign a test change.
+      assert api.cros_infra_config.is_staging
+      change = GerritChange(change=4420967, project='infra/cop',
+                            host='chromium-review.googlesource.com', patchset=1)
+      presentation.properties['change_type'] = 'fixed_change'
+    else:
+      presentation.properties['change_type'] = 'tricium'
+      change = gerrit_changes[0]
+
+    patch_set = api.gerrit.fetch_patch_set_from_change(change,
+                                                       include_commit_info=True)
 
   with api.step.nest('check committer') as presentation:
-    patch_set = api.m.gerrit.fetch_patch_set_from_change(
-        gerrit_changes[0], include_commit_info=True)
     committer = patch_set.commit_info['committer']['email']
     if not committer.endswith(('.google.com', '@chromium.org', '@google.com')):
       presentation.step_text = 'Committer must be related to Google'
@@ -169,6 +186,10 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       name = f"CoP Step {step['id']} ({step['name']}): {step['status']}"
       api.tricium.add_comment(name, step['log'], '/COMMIT_MSG')
     api.tricium.write_comments()
+
+  # Do not vote with the staging builder
+  if api.cros_infra_config.is_staging:
+    return
 
   with api.step.nest('send Vote to Gerrit') as presentation:
     vote = 0 if results['result']['status'] == "SUCCESS" else -1
@@ -246,7 +267,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test('unknown-committer', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
-                    'check committer', change, gen_patch_sets(committer='joe@hotmail.com')),
+                    'get change', change, gen_patch_sets(committer='joe@hotmail.com')),
                  api.post_check(post_process.StepSuccess, 'check committer'),
                  api.post_check(post_process.DoesNotRun, 'check CoP'),
                  api.post_process(post_process.DropExpectation)) + \
@@ -256,7 +277,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test('missing-user-yaml', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
-                    'check committer', change, gen_patch_sets()),
+                    'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',api.json.output(gitiles_file), retcode=1),
                  api.post_check(post_process.StepSuccess, 'check committer'),
                  api.post_check(post_process.DoesNotRun, 'generate build config'),
@@ -278,11 +299,25 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   }
   yield api.test('success-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
-                    'check committer', change, gen_patch_sets()),
+                    'get change', change, gen_patch_sets()),
+                 api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
+                 api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
+                 api.step_data('fetch results.fetch_results.py',api.json.output(results)),
+                 api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
+                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_process(post_process.DropExpectation)) + \
+                 api.properties(CopProperties(project_name='name'))
+
+  yield api.test('staging-run', test_builder(gerrit_changes=[]),
+                 api.gerrit.set_gerrit_fetch_changes_response(
+                    'get change', change, gen_patch_sets()),
+                 api.buildbucket.generic_build(bucket='staging'),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
+                 api.post_check(post_process.DoesNotRun, 'send Vote to Gerrit'),
+                 api.post_check(post_process.PropertyEquals,"change_type","fixed_change"),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
@@ -300,10 +335,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   }
   yield api.test('failure-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
-                    'check committer', change, gen_patch_sets()),
+                    'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
+                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
