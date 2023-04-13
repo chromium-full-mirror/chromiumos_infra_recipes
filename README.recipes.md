@@ -477,6 +477,7 @@
   * [key_value_store:tests/parse](#recipes-key_value_store_tests_parse) (Python3 ✅)
   * [key_value_store:tests/update_one_value](#recipes-key_value_store_tests_update_one_value) (Python3 ✅)
   * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) (Python3 ✅) &mdash; test_ensure_labpack.
+  * [labpack:tests/test_run_labpack](#recipes-labpack_tests_test_run_labpack) (Python3 ✅) &mdash; test_run_labpack.
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
@@ -7202,7 +7203,7 @@ Raises:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
 
@@ -7210,7 +7211,7 @@ Labpack has the following public attributes:
 - cipd_label
 - cipd_package
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#43)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#44)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -7222,11 +7223,11 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#27)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#28)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#31)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#32)(self):**
 
 Get the path of the cipd package.
 
@@ -7236,6 +7237,8 @@ cleaned between runs.
 See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
+
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#103)(self, labpack_input: LabpackInput):**
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12832,6 +12835,17 @@ success on the ensure_labpack step when the fake file .../labpack/labpack
 exists.
 
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_ensure_labpack.py#24)(api):**
+
+RunSteps runs ensure_labpack
+### *recipes* / [labpack:tests/test\_run\_labpack](/recipe_modules/labpack/tests/test_run_labpack.py)
+
+[DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+test_run_labpack.py is a smoke test for the run_labpack function.
+
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#21)(api):**
 
 RunSteps runs ensure_labpack
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)

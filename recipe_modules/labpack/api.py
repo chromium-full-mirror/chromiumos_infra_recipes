@@ -5,6 +5,7 @@
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map, add_assertion_to_map
 from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path
+from PB.lab.labpack import LabpackInput
 
 DEFAULT_CIPD_LABEL = 'prod'
 DEFAULT_CIPD_PACKAGE = 'chromiumos/infra/labpack/${platform}'
@@ -98,3 +99,6 @@ class LabpackCommand(recipe_api.RecipeApi):
       add_assertion_to_map(
           out, tally, "labpack exists at exaclty one path in {}".format(paths))
     return out
+
+  def run_labpack(self, labpack_input: LabpackInput):
+    raise NotImplementedError()

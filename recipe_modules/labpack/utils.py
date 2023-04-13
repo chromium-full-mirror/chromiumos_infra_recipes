@@ -16,3 +16,21 @@ def extract_executable_name_from_cipd_path(cipd_path):
   Returns str containing just the name of the executable.
   """
   return cipd_path.split('/')[-2]
+
+
+def catch(f, *args, **kwargs):
+  """call f with *args and *kwargs as arguments, catching exceptions.
+
+  Args:
+    f: a callable.
+    args: positional arguments.
+    kwargs: keyword arguments.
+
+  Returns:
+    A tuple consisting of the result and the exception that was raised.
+    At least one of the elements in the tuple will be None.
+  """
+  try:
+    return (f(*args, **kwargs), None)
+  except Exception as e:  # pylint: disable=broad-except
+    return (None, e)
