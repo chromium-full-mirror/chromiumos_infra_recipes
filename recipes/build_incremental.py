@@ -18,13 +18,18 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/random',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
+    'git',
+    'repo',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+REPO_SYNC_JOBS = 16
 
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
@@ -34,17 +39,61 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
     return DoRunSteps(api, config)
 
 
+# Tests reliability of incremental build by performing two builds:
+#   1. Revert the checkout back in time, build_packages for that old state,
+#      generating local artifacts.
+#   2. Move the checkout back to ToT. Build from that.
 def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
+  snapshot_branch_name = "snapshot"
+  snapshot_delta = "7.days.ago"
+
+  manifest_internal_tempdir = api.path.mkdtemp()
+  manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
+  api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir,
+                depth=1)
+
+  # Get old snapshot hash.
+  delta_hash_result = api.step(f"Get {snapshot_delta} manifest snapshot", [
+      "git", "-C", manifest_internal_tempdir, "rev-list", "-1", "--before",
+      snapshot_delta, snapshot_branch_name
+  ], stdout=api.raw_io.output_text())
+  delta_hash = delta_hash_result.stdout.strip()
+
+  # Rewind the source to old snapshot.
+  api.step(f"Revert manifest to {snapshot_delta} snapshot",
+           ["git", "-C", manifest_internal_tempdir, delta_hash])
+  api.step(
+      f"Apply {snapshot_delta} manifest snapshot",
+      [
+          "repo", "init", "--standalone-manifest",
+          f"file://{manifest_internal_tempdir}/snapshot.xml"
+      ],
+  )
+  api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
+                retry_fetches=3, force_remove_dirty=True)
+
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
   failing_build_exception = None
 
-  #TODO(b/275751047): We should rewind the source to some point here.
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
-      #TODO(b/275751047): We should fast forward the source here.
+      # Fast forward the source to latest snapshot.
+      api.step("Revert manifest to the latest snapshot",
+               ["git", "-C", manifest_internal_tempdir, snapshot_branch_name])
+
+      api.step(
+          "Apply latest manifest snapshot",
+          [
+              "repo", "init", "--standalone-manifest",
+              f"file://{manifest_internal_tempdir}/snapshot.xml"
+          ],
+      )
+      api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
+                    retry_fetches=3, force_remove_dirty=True)
+
       if api.build_menu.install_packages(config, packages):
         # Only want to build and test the image once (after the ff/rebuild).
         api.build_menu.build_and_test_images(config)
@@ -77,12 +126,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Normal Build.
   yield api.build_menu.test(
       'inc-build',
-      api.post_check(post_process.MustRun, 'build images'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'install packages (2)'),
+      api.post_check(post_process.DoesNotRun, 'install packages (3)'),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
@@ -96,8 +150,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}),
-      api.post_check(post_process.DoesNotRun, 'build images'),
+          }}), api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -106,10 +159,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'install packages', endpoint='SysrootService/InstallPackages',
           retcode=2,
           data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
-      ),
-      build_target='amd64-generic',
-      status='FAILURE',
-  )
+      ), build_target='amd64-generic', status='FAILURE')
 
   # Build with artifact bundling failure.
   yield api.build_menu.test(
