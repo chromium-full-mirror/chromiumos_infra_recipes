@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import os
 from recipe_engine import post_process
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 
@@ -73,6 +74,31 @@ def GenTests(api):
               'build': 'board-cq/R11-123.45'
           })),
       api.properties(rdb_config=rdb_config_json),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'basic-tast-with-metadata',
+      api.buildbucket.ci_build(
+          tags=api.cros_tags.tags(**{
+              'label-board': 'board',
+              'build': 'board-cq/R11-123.45'
+          })),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format':
+                  'tast',
+              'base_tags': [('test_suite', 'fake-suite')],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'board',
+                  'build': 'board-cq/R11-123.45',
+              },
+              'test_metadata_file':
+                  os.path.join('/base/dir', 'test_metadata.json'),
+          })),
       api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
       api.post_process(post_process.MustRun,
                        'upload test results to rdb.run rdb'),

@@ -5,6 +5,7 @@
 
 from collections import namedtuple
 from collections import defaultdict
+from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
@@ -12,6 +13,7 @@ from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToo
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadataList
 from PB.chromiumos.test.lab import api as lab_api
 from PB.test_platform import phosphorus
 from PB.test_platform.skylab_local_state.load import Dut as LoadDut
@@ -77,6 +79,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   TAST_MISSING_TEST_KEY = 'tast_missing_test'
   RESULTS_DIR_NAME = 'results'
   ARTIFACT_DIR_NAME = 'artifact'
+  TEST_METADATA_JSON = 'test_metadata.json'
   TEST_RUNNER_RESULT_JSON = 'test_runner_result.json'
   STREAMED_RESULTS_JSON = 'streamed_results.jsonl'
 
@@ -472,7 +475,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     skylab_test_results = []
     missing_test_names = []
     tast_test_exists = False
-    with self._api.step.nest('CrosToolRunner: upload to rdb'):
+    with self._api.step.nest('CrosToolRunner: upload to rdb') as presentation:
+      test_case_metadata_list = TestCaseMetadataList()
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
       # Retrieve ctr_test_response(TestCaseResult type).
       for test_dut_response in run_test_response:
@@ -481,6 +485,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             'test_harness_type')
         results_dir = ctr_test_response.result_dir_path.path
         test_case_id = ctr_test_response.test_case_id.value
+        test_case_metadata = ctr_test_response.test_case_metadata
+        if test_case_metadata:
+          test_case_metadata_list.values.append(test_case_metadata)
+
         with self._api.step.nest(test_case_id):
           if test_harness_type == self.TEST_HARNESS_TAST:
             if not tast_test_exists:
@@ -514,23 +522,32 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                   self._convert_ctr_test_result_to_skylab_test_result(
                       ctr_test_response))
 
+      # Serialize TestCaseMetadataList to JSON in order to pass it to the RDB adapter.
+      test_case_metadata_json = json_format.MessageToJson(
+          test_case_metadata_list)
+      presentation.logs['test_case_metadata_list'] = test_case_metadata_json
+
       # Process tauto tests
       if skylab_test_results:
         skylab_test_runner_result = Skylab_Result(
             autotest_result=Skylab_Result.Autotest(
                 test_cases=skylab_test_results))
+        temp_dir = self._api.path.mkdtemp()
         autotest_rdb_config = self._autotest_results_rdb_config(
             skylab_test_runner_result,
-            (self._api.path.mkdtemp()).join(self.TEST_RUNNER_RESULT_JSON),
+            temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
+            test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
             metadata, force_current_realm)
         self._api.cros_resultdb.upload(autotest_rdb_config,
                                        str(metadata.stainless_logs_url),
                                        str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
       for tast_result_dir in tast_results_dirs:
-        tast_rdb_config = self._tast_results_rdb_config(tast_result_dir,
-                                                        metadata,
-                                                        force_current_realm)
+        temp_dir = self._api.path.mkdtemp()
+        tast_rdb_config = self._tast_results_rdb_config(
+            tast_result_dir, test_case_metadata_json,
+            temp_dir.join(self.TEST_METADATA_JSON), metadata,
+            force_current_realm)
         self._api.cros_resultdb.upload(tast_rdb_config,
                                        str(metadata.stainless_logs_url),
                                        str(metadata.testhaus_logs_url))
@@ -577,12 +594,16 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     return skylab_result
 
-  def _tast_results_rdb_config(self, tast_results_dir, metadata,
+  def _tast_results_rdb_config(self, tast_results_dir,
+                               test_metadata_file_content,
+                               test_metadata_file_path, metadata,
                                force_current_realm=False):
     """Build rdb config for tast test results.
 
     Args:
       tast_results_dir (str): path to test results dir.
+      test_metadata_file_content (str): CFT test metadata file contents.
+      test_metadata_file_path (str): path to the CFT test metadata file.
       metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
 
     Returns: Tast config dict.
@@ -604,16 +625,27 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'force_current_realm':
             force_current_realm
     }
+
+    if test_metadata_file_content:
+      self._api.file.write_text('write tast CFT test metadata',
+                                test_metadata_file_path,
+                                test_metadata_file_content)
+      config['test_metadata_file'] = test_metadata_file_path
+
     return config
 
   def _autotest_results_rdb_config(self, test_runner_result,
-                                   test_runner_result_file_path, metadata,
+                                   test_runner_result_file_path,
+                                   test_metadata_file_content,
+                                   test_metadata_file_path, metadata,
                                    force_current_realm=False):
     """Build rdb config for tauto test results.
 
     Args:
       test_runner_result (Skylab_Result): skylab test runner results.
       test_runner_result_file_path (str): path to test runner results file.
+      test_metadata_file_content (str): CFT test metadata file contents.
+      test_metadata_file_path (str): path to the CFT test metadata file.
       metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
 
     Returns: Tauto config dict.
@@ -629,6 +661,13 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'artifact_directory': None,
         'force_current_realm': force_current_realm
     }
+
+    if test_metadata_file_content:
+      self._api.file.write_text('write skylab_test_runner CFT test metadata',
+                                test_metadata_file_path,
+                                test_metadata_file_content)
+      config['test_metadata_file'] = test_metadata_file_path
+
     return config
 
   def _get_missing_tast_tests_from_keyval(self, base_dir):

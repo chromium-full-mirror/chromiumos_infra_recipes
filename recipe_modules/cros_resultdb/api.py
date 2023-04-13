@@ -292,6 +292,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
           '-artifact-directory',
           config.get('artifact_directory')
       ]
+    if config.get('test_metadata_file'):
+      result_adapter += [
+          '-test-metadata-file',
+          config.get('test_metadata_file')
+      ]
     if stainless_url or testhaus_url:
       pairs = []
       if stainless_url:

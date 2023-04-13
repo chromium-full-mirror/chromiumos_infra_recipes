@@ -754,7 +754,13 @@
     "cmd": [],
     "name": "execution steps.CrosToolRunner: upload to rdb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@test_case_metadata_list@{@@@",
+      "@@@STEP_LOG_LINE@test_case_metadata_list@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@test_case_metadata_list@    {}@@@",
+      "@@@STEP_LOG_LINE@test_case_metadata_list@  ]@@@",
+      "@@@STEP_LOG_LINE@test_case_metadata_list@}@@@",
+      "@@@STEP_LOG_END@test_case_metadata_list@@@"
     ]
   },
   {
