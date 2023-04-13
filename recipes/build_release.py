@@ -10,6 +10,7 @@ from RECIPE_MODULES.chromeos.checkpoint.api import STATUS_SUCCESS
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -52,6 +53,7 @@ DEPS = [
     'easy',
     'failures',
     'src_state',
+    'vmlab',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -192,6 +194,18 @@ def DoRunSteps(api, config, properties):
 
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('upload-complete')
+
+  # Trigger async image import for VM images. Exceptions are ignored as test
+  # runners will also attempt to import.
+  with api.failures.ignore_exceptions():
+    if BuilderConfig.Artifacts.GCE_TARBALL in [
+        t
+        for artifacts in config.artifacts.artifacts_info.legacy.output_artifacts
+        for t in artifacts.artifact_types
+    ]:
+      api.vmlab.import_image(name='import VM image',
+                             build_path=api.build_menu.artifacts_gs_path(),
+                             wait=False)
 
   with api.step.nest("publish toolchain metadata"):
     toolchain_info = api.cros_sdk.get_toolchain_info(
@@ -396,6 +410,49 @@ def GenTests(api):
           }),
       build_target='kukui',
       builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Normal release build with VM board.
+  yield api.build_menu.test(
+      'release-build-vm',
+      api.properties(
+          **{
+              'latest_files_gs_bucket':
+                  'chromeos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-release',
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'betty-arc-r',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
+              '$chromeos/checkpoint': {
+                  'force_retry_summary': True,
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5))
+          }),
+      api.signing.setup_mocks(),
+      api.post_check(post_process.MustRun, 'import VM image'),
+      build_target='betty-arc-r',
+      builder='betty-arc-r-release-main',
       bucket='release',
   )
 
