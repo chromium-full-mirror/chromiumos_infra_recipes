@@ -9,6 +9,7 @@ from PB.chromiumos.test.api.coverage_rule import CoverageRule
 from PB.chromiumos.test.api.v1.plan import HWTestPlan
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
 
 DEPS = [
     'recipe_engine/assertions',
@@ -53,8 +54,8 @@ def RunSteps(api):
   )
 
   hw_test_plans = api.cros_test_plan_v2.generate_hw_test_plans([
-      api.cros_test_plan_v2.StarlarkPackage(root='root1', main='example1.star'),
-      api.cros_test_plan_v2.StarlarkPackage(root='root2', main="example2.star"),
+      StarlarkPackage(root='root1', main='example1.star'),
+      StarlarkPackage(root='root2', main="example2.star"),
   ])
   api.assertions.assertEqual(
       hw_test_plans,

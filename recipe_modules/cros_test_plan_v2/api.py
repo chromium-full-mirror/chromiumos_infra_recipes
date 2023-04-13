@@ -5,6 +5,7 @@
 import base64
 import re
 from collections import namedtuple, defaultdict
+from typing import List
 
 from google.protobuf import json_format
 from google.protobuf import text_format
@@ -13,6 +14,7 @@ from google.protobuf import message
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from recipe_engine.config_types import Path
 from recipe_engine import recipe_api
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -37,6 +39,13 @@ FALLBACK_DEFAULT_SOURCE_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
             path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
         )
     ])
+
+# Defines a collection of Starlark files under the same root. All load
+# statements must use paths under 'root', and 'main' is the main file that is
+# executed. Note that 'main' does not need to be in the top-level dir of 'root';
+# this allows the common case where 'root' is the root of a repo and 'main' is a
+# file within the repo (and all the load paths are included in the repo).
+StarlarkPackage = namedtuple('StarlarkPackage', ['root', 'main'])
 
 
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
@@ -276,9 +285,9 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       self,
       repository_url: str,
       file_path: str,
-      output_dir: str,
+      output_dir: Path,
       test_output_message: message.Message,
-  ):
+  ) -> Path:
     """Fetch a protobuf from Gitiles and write to a local temp file.
 
     Args:
@@ -306,6 +315,46 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
     return output
 
+  def _download_build_metadata(self, output_dir: Path) -> Path:
+    return self._download_config_pb(
+        'https://chrome-internal.googlesource.com/chromeos/config-internal',
+        'build/generated/build_metadata.jsonproto',
+        output_dir,
+        test_output_message=self.test_api.build_metadata_list(),
+    )
+
+  def _download_dut_attributes(self, output_dir: Path) -> Path:
+    return self._download_config_pb(
+        'https://chromium.googlesource.com/chromiumos/config',
+        'generated/dut_attributes.jsonproto',
+        output_dir,
+        test_output_message=self.test_api.dut_attribute_list(),
+    )
+
+  def _download_build_configs(self, output_dir: Path) -> Path:
+    return self._download_config_pb(
+        'https://chrome-internal.googlesource.com/chromeos/infra/config',
+        'generated/builder_configs.binaryproto',
+        output_dir,
+        test_output_message=self.test_api.builder_configs(),
+    )
+
+  def _download_config_bundle_list(self, output_dir: Path) -> Path:
+    return self._download_config_pb(
+        'https://chrome-internal.googlesource.com/chromeos/config-internal',
+        'hw_design/generated/configs.jsonproto',
+        output_dir,
+        test_output_message=self.test_api.config_bundle_list(),
+    )
+
+  def _download_board_priority_list(self, output_dir: Path) -> Path:
+    return self._download_config_pb(
+        'https://chrome-internal.googlesource.com/chromeos/config-internal',
+        'board_config/generated/board_priority.cfg',
+        output_dir,
+        test_output_message=self.test_api.board_priority_list(),
+    )
+
   def _ensure_docker_image(self):
     """Logs in and pulls the testplan docker image."""
     with self.m.step.nest('ensure docker image') as presentation:
@@ -319,13 +368,47 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                           project='cros-registry/test-services')
       self.m.docker.pull(self._docker_image)
 
-  # Defines a collection of Starlark files under the same root. All load
-  # statements must use paths relative to 'root', and 'main' is the main file
-  # that is executed. Note that 'main' does not need to be in the top-level dir
-  # of 'root'; this allows the common case where 'root' is the root of a repo
-  # and 'main' is a file within the repo (and all the load paths are included
-  # in the repo).
-  StarlarkPackage = namedtuple('StarlarkPackage', ['root', 'main'])
+  def _copy_test_plans(self, host_dir: Path, container_path: str,
+                       starlark_pkgs: List[StarlarkPackage]) -> List[str]:
+    """Copy starlark_pkgs to host_dir, return paths relative to container_path.
+
+    This function is a helper to get Starlark files ready to be mounted to the
+    container. The Starlark files are copied to a dir on the host, and paths to
+    the files on the container are returned, so that the returned paths can be
+    used as arguments when the host dir is mounted.
+
+    Args:
+      host_dir: Path on the host to copy Starlark files to.
+      container_path: Path on the container that host_dir will
+        be mounted to.
+      starlark_pkgs: StarlarkPackage to copy to host_dir.
+
+    Returns:
+      A list of paths on the container pointing to starlark_pkgs.
+    """
+
+    plan_paths = []
+
+    # Starlark packages may share the same root, because they are in the same
+    # repo. Keep track of which roots have been visited, and don't copy them
+    # twice.
+    visited_roots = set()
+    # Note that starlark_pkgs may contain duplicates, in this case each
+    # unique package is only added to the args once.
+    for package in sorted(list(set(starlark_pkgs))):
+      basename = self.m.path.basename(package.root)
+
+      if package.root not in visited_roots:
+        dest = self.m.path.join(host_dir, basename)
+        # Some repos contain symlinks to parent directories, leave symlinks as
+        # symlinks instead of following them, to avoid infinite recursion.
+        self.m.file.copytree('copy ' + basename, package.root, dest,
+                             symlinks=True)
+        visited_roots.add(package.root)
+
+      plan_paths.append('{}/{}/{}'.format(container_path, basename,
+                                          package.main))
+    return plan_paths
 
   def generate_hw_test_plans(
       self,
@@ -364,26 +447,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       with self.m.step.nest('write input files'):
         # TODO(b/182898188): Read BuildMetadataList specific to the build when
         # available. For now, just read the global one from config-internal.
-        build_metadata_list_path = self._download_config_pb(
-            'https://chrome-internal.googlesource.com/chromeos/config-internal',
-            'build/generated/build_metadata.jsonproto',
-            host_input_path,
-            test_output_message=self.test_api.build_metadata_list(),
-        )
-
-        config_bundle_list_path = self._download_config_pb(
-            'https://chrome-internal.googlesource.com/chromeos/config-internal',
-            'hw_design/generated/configs.jsonproto',
-            host_input_path,
-            test_output_message=self.test_api.config_bundle_list(),
-        )
-
-        dut_attribute_list_path = self._download_config_pb(
-            'https://chromium.googlesource.com/chromiumos/config',
-            'generated/dut_attributes.jsonproto',
-            host_input_path,
-            test_output_message=self.test_api.dut_attribute_list(),
-        )
+        build_metadata_list_path = self._download_build_metadata(
+            host_input_path)
+        config_bundle_list_path = self._download_config_bundle_list(
+            host_input_path)
+        dut_attribute_list_path = self._download_dut_attributes(host_input_path)
 
       out_path = (
           self.m.path.join(host_input_path, "generatetestplanresp.binaryproto")
@@ -406,20 +474,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       args = ['generate', '-alsologtostderr', '-v', '2']
 
       if self.generate_ctpv1_format:
-        board_priority_list_path = self._download_config_pb(
-            'https://chrome-internal.googlesource.com/chromeos/config-internal',
-            'board_config/generated/board_priority.cfg',
-            host_input_path,
-            test_output_message=self.test_api.board_priority_list(),
-        )
+        board_priority_list_path = self._download_board_priority_list(
+            host_input_path)
         arg_to_host_path['-boardprioritylist'] = board_priority_list_path
 
-        builder_configs_path = self._download_config_pb(
-            'https://chrome-internal.googlesource.com/chromeos/infra/config',
-            'generated/builder_configs.binaryproto',
-            host_input_path,
-            test_output_message=self.test_api.builder_configs(),
-        )
+        builder_configs_path = self._download_build_configs(host_input_path)
         arg_to_host_path['-builderconfigs'] = builder_configs_path
 
         req_path = host_input_path.join('generatetestplanreq.binaryproto')
@@ -435,31 +494,10 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                 self.m.path.basename(host_path))
         ])
 
-      # Copy each Starlark package to the host input dir, and a '-plan' flag
-      # pointing to the main file.
-      #
-      # Note that starlark_packages may contain duplicates, in this case each
-      # unique package is only added to the args once.
-      #
-      # Starlark packages may share the same root, because they are in the same
-      # repo. Keep track of which roots have been visited, and don't copy them
-      # twice.
-      visited_roots = set()
-      for package in sorted(list(set(starlark_packages))):
-        basename = self.m.path.basename(package.root)
-
-        if package.root not in visited_roots:
-          dest = self.m.path.join(host_input_path, basename)
-          # Some repos contain symlinks to parent directories, leave symlinks as
-          # symlinks instead of following them, to avoid infinite recursion.
-          self.m.file.copytree('copy ' + basename, package.root, dest,
-                               symlinks=True)
-          visited_roots.add(package.root)
-
-        args.extend([
-            '-plan', '{}/{}/{}'.format(container_input_path, basename,
-                                       package.main)
-        ])
+      plan_paths = self._copy_test_plans(host_input_path, container_input_path,
+                                         starlark_packages)
+      for plan in plan_paths:
+        args.extend(['-plan', plan])
 
       # Run the docker image. The directory with the input files is mounted to
       # the container.

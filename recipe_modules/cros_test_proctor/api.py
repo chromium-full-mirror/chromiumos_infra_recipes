@@ -8,6 +8,7 @@ from collections import defaultdict
 from collections import OrderedDict
 from typing import Dict
 
+from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 from google.protobuf import duration_pb2
@@ -121,7 +122,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           host_project_to_output_dir[key] = target_path
 
         starlark_packages.append(
-            self.m.cros_test_plan_v2.StarlarkPackage(
+            StarlarkPackage(
                 root=target_path,
                 main=starlark_file.path,
             ),
