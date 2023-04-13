@@ -9677,7 +9677,7 @@ Args:
   rate: rate limit for deleting instance requests.
   allow_failure: if set to True, step will not raise if CLI returns non-zero result.
 
-&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#156)(self, name, config, instance_name):**
+&mdash; **def [delete\_vm](/recipe_modules/vmlab/api.py#157)(self, name, config, instance_name):**
 
 Deletes a given VM instance.
 

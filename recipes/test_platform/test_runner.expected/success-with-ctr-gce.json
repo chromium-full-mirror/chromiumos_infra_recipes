@@ -381,7 +381,8 @@
       "--swarming-bot-name",
       "crossk-dummy",
       "-rate",
-      "1"
+      "1",
+      "--json"
     ],
     "luci_context": {
       "realm": {

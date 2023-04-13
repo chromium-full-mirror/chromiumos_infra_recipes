@@ -280,7 +280,8 @@
       "--swarming-bot-name",
       "bot-name",
       "-rate",
-      "1"
+      "1",
+      "--json"
     ],
     "name": "cleanup vm by bot name.call `vmlab`.run cmd",
     "~followup_annotations": [
@@ -311,7 +312,8 @@
       "--swarming-bot-name",
       "bot-name",
       "-rate",
-      "1"
+      "1",
+      "--json"
     ],
     "name": "cleanup vm by bot name raise failure.call `vmlab`.run cmd",
     "~followup_annotations": [

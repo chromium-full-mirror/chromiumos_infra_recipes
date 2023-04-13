@@ -141,6 +141,7 @@ class VmlabApi(recipe_api.RecipeApi):
       assert len(swarming_bot_name) > 0, 'swarming_bot_name must be set'
       args.extend(['--swarming-bot-name', swarming_bot_name])
       args.extend(['-rate', str(rate)])
+      args.append('--json')
       if dry_run:
         args.append('-dry-run')
       try:
