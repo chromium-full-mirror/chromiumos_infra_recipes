@@ -37,7 +37,7 @@ def main(args):
   build = run_build(luci_auth.get_token(), input_json['project'],
                     input_json['build_config'])
 
-  out = {'id': build.metadata.build.id}
+  out = {'id': build.metadata.build.id, 'log_url': build.metadata.build.log_url}
   json.dump(out, args.output_json)
 
   return 0

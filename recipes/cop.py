@@ -69,7 +69,8 @@ def _launch_build(api: RecipeApi, project: str, build_config: Dict) -> str:
       'build_config': build_config,
       'project': project,
   }
-  return _run_script(api, "launch_build.py", data_in)['id']
+  data_out = _run_script(api, "launch_build.py", data_in)
+  return data_out['id'], data_out['log_url']
 
 
 def _wait_for_build_completion(api: RecipeApi, project: str,
@@ -151,7 +152,9 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     build_config = _gen_build_config(api, user_yaml, subs)
 
   with api.step.nest('launch build') as presentation:
-    build_id = _launch_build(api, properties.project_name, build_config)
+    build_id, log_url = _launch_build(api, properties.project_name,
+                                      build_config)
+    presentation.links['build'] = log_url
 
   with api.step.nest('wait build competion') as presentation:
     _wait_for_build_completion(api, properties.project_name, build_id)
@@ -260,7 +263,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
-  cloud_build = {'id': 'acabad0'}
+  cloud_build = {'id': 'acabad0', 'log_url': 'http://google.com'}
   results = {
       'result': {
           'status': 'SUCCESS',
@@ -273,7 +276,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'log': 'Hello World'
       }]
   }
-  yield api.test('sucess-run', test_builder(gerrit_changes=change),
+  yield api.test('success-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'check committer', change, gen_patch_sets()),
                  api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
@@ -283,7 +286,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
-  cloud_build = {'id': 'acabad0'}
   results = {
       'result': {
           'status': 'FAILURE',
