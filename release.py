@@ -6,6 +6,7 @@
 """Release a CrOS infra recipe bundle to prod."""
 
 import argparse
+from functools import lru_cache
 import json
 import os
 import re
@@ -23,22 +24,41 @@ RECIPE_BUNDLE = os.path.join('infra', 'recipe_bundles',
                              'chromium.googlesource.com', 'chromiumos', 'infra',
                              'recipes')
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
-STAGING_CHECKS = (
-    "LegacyNoopSuccess",
-    "staging-amd64-generic-direct-tast-vm",
-    "staging-amd64-generic-postsubmit",
-    "staging-Annealing",
-    "staging-backfiller",
-    "staging-chrome-pupr-generator",
-    "staging-cq-orchestrator",
-    "staging-DutTracker",
-    "staging-firmware-ti50-postsubmit",
-    "staging-manifest-doctor",
-    "staging-release-main-orchestrator",
-    "staging-release-triggerer",
-    "staging-RoboCrop",
-    "staging_SourceCacheBuilder",
-    "staging-StarDoctor",
+
+
+# A tuple containing the project, builder and regex used to search.
+class StagingReCheck(typing.NamedTuple):
+  project: str
+  bucket: str
+  regex: str
+
+
+STAGING_CHECKS_RE = (
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-release-R\d+-\d+\.B-orchestrator'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-octopus-release-R\d+-\d+\.B'),
+    StagingReCheck('chromeos', 'staging', r'staging-zork-release-R\d+-\d+\.B'),
+    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
+    # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-amd64-generic-direct-tast-vm'),
+    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit'),
+    StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
+    StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
+    StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
+    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
+    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
+    StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-triggerer'),
+    StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
+    StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
+    StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
 )
 
 # CipdInstances are instance IDs, as found on the CIPD UI under "Instances".
@@ -244,10 +264,11 @@ def check_staging_builders(ignore_failures: bool = False):
   print(
       'Looking for 5 consecutive successes in staging, showing only failures...'
   )
-  for name in STAGING_CHECKS:
-    builder = f'chromeos/staging/{name}'
-    if has_builder_had_non_success(builder):
-      baddies.append(name)
+  for re_check in STAGING_CHECKS_RE:
+    for builder in return_builders_for_regex(*re_check):
+      if has_builder_had_non_success(builder):
+        baddies.append(builder)
+
   if baddies:
     if ignore_failures:
       print('Ignoring failures, as requested.')
@@ -271,10 +292,35 @@ def has_builder_had_non_success(builder: str) -> bool:
       continue
     if status not in unique_statuses:
       unique_statuses.append(status)
+  if not unique_statuses:
+    print(f'No runs recorded for: {builder}')
+    return True
   if unique_statuses != ['SUCCESS']:
     print(f'Non-success: {builder} --> {", ".join(unique_statuses)}')
     return True
   return False
+
+
+def return_builders_for_regex(project: str, bucket: str,
+                              regex: str) -> List[str]:
+  """Return the list of builders matching a certain regex."""
+
+  @lru_cache(maxsize=None)
+  def _call_bb_builders(cmd):
+    return subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+  r = re.compile(regex)
+  cmd = ('bb', 'builders', '/'.join((project, bucket)))
+  p = _call_bb_builders(cmd)
+
+  ret = []
+  for line in p.stdout.split('\n'):
+    if not line:
+      continue
+    builder = line.strip().split('/')[-1]
+    if r.fullmatch(builder):
+      ret.append(line.strip())
+  return ret
 
 
 def quit_early_if_no_pending_changes(pending_changes: List[Commit]):
