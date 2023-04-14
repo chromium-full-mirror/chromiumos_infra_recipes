@@ -11,6 +11,7 @@ from google.protobuf import json_format
 from google.protobuf import text_format
 from google.protobuf import message
 
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -186,6 +187,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     self.m.step('test_plan validate {}'.format(directory),
                 [self._test_plan_path, 'validate', directory])
 
+  # TODO(b/277909893): This is called at least twice in a build, determine a
+  # caching strategy.
   def relevant_plans(self, gerrit_changes):
     """Call test_plan relevant-plans.
 
@@ -533,3 +536,63 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       pres.logs['hw test plans'] = '\n'.join(str(p) for p in hw_test_plans)
 
       return hw_test_plans
+
+  def get_testable_builders(self, starlark_packages: List[StarlarkPackage],
+                            builds: List[Build]) -> List[str]:
+    """Runs the testplan Docker image to get a list of testable builders.
+
+    Args:
+      starlark_packages: Paths to Starlark files to evaluate to get testable
+          builders. Note that StarlarkPackages must be used instead of single
+          files because the Starlark files can import each other. If there are
+          duplicate StarlarkPackages (same root and main file) each unique
+          package will only be added once.
+      builds: The list of builds considered for this CQ run.
+
+    Returns:
+      A list of the names of the testable builders.
+    """
+    with self.m.step.nest('get testable builders') as pres:
+      self._ensure_docker_image()
+
+      # The testplan executable requires files for some input args. Write the
+      # files under a tempdir on the host, and then mount this dir to the
+      # container so testplan can read them.
+      host_input_path = self.m.path.mkdtemp()
+      container_input_path = '/input'
+
+      args = ['get-testable']
+      plan_paths = self._copy_test_plans(host_input_path, container_input_path,
+                                         starlark_packages)
+      for plan in plan_paths:
+        args.extend(['-plan', plan])
+
+      for b in builds:
+        if 'build_target' in b.input.properties:
+          args.extend(['-build', json_format.MessageToJson(b)])
+
+      arg_to_host_path = {
+          '-dutattributes':
+              self._download_dut_attributes(host_input_path),
+          '-buildmetadata':
+              self._download_build_metadata(host_input_path),
+          '-configbundlelist':
+              self._download_config_bundle_list(host_input_path),
+          '-builderconfigs':
+              self._download_build_configs(host_input_path),
+      }
+      for arg, host_path in sorted(arg_to_host_path.items()):
+        args.extend([
+            arg, '{}/{}'.format(container_input_path,
+                                self.m.path.basename(host_path))
+        ])
+
+      self.m.docker.run(
+          self._docker_image, cmd_args=args, dir_mapping=[
+              (host_input_path, container_input_path)
+          ], stdout=self.m.raw_io.output_text(add_output_log=True),
+          step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+              ' '.join([b.builder.builder for b in builds])))
+      testable_builders = sorted(self.m.step.active_result.stdout.split(' '))
+      pres.logs['testable_builders'] = testable_builders
+      return testable_builders

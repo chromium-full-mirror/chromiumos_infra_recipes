@@ -352,10 +352,12 @@
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes) (Python3 ✅)
   * [cros_test_plan_v2:examples/fallback_to_default](#recipes-cros_test_plan_v2_examples_fallback_to_default) (Python3 ✅)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full) (Python3 ✅)
+  * [cros_test_plan_v2:examples/get_testable_builders](#recipes-cros_test_plan_v2_examples_get_testable_builders) (Python3 ✅)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full) (Python3 ✅)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full) (Python3 ✅)
   * [cros_test_proctor:examples/ctp2](#recipes-cros_test_proctor_examples_ctp2) (Python3 ✅)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full) (Python3 ✅)
+  * [cros_test_proctor:examples/get_testable_builders](#recipes-cros_test_proctor_examples_get_testable_builders) (Python3 ✅)
   * [cros_test_proctor:tests/builders_tested_in_this_run](#recipes-cros_test_proctor_tests_builders_tested_in_this_run) (Python3 ✅)
   * [cros_test_proctor:tests/previous_test_results](#recipes-cros_test_proctor_tests_previous_test_results) (Python3 ✅)
   * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests) (Python3 ✅)
@@ -4476,24 +4478,24 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#40)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#51)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#92)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#93)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#77)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#78)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#413)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#416)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4510,9 +4512,24 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#58)(self):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#540)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#189)(self, gerrit_changes):**
+Runs the testplan Docker image to get a list of testable builders.
+
+Args:
+  starlark_packages: Paths to Starlark files to evaluate to get testable
+      builders. Note that StarlarkPackages must be used instead of single
+      files because the Starlark files can import each other. If there are
+      duplicate StarlarkPackages (same root and main file) each unique
+      package will only be added once.
+  builds: The list of builds considered for this CQ run.
+
+Returns:
+  A list of the names of the testable builders.
+
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#59)(self):**
+
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#192)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -4523,7 +4540,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#175)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#176)(self, directory: str):**
 
 Call test_plan validate on directory.
 
@@ -4604,11 +4621,11 @@ Returns:
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#38)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#57)(self):**
+&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#63)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#535)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#564)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4617,7 +4634,22 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#157)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_proctor/api.py#85)(self, gerrit_changes: List[GerritChange], builds: List[Build]):**
+
+Returns the names of the builders whose images may be tested in this run.
+
+Uses the builds being considered by this CQ run and the relevant test plans
+based on the Gerrit Changes applied in order to determine which builders
+produce images that could be tested in this run.
+
+Args:
+  gerrit_changes: Changes being tested in this CQ run.
+  builds: The list of builds considered for this CQ run.
+
+Returns:
+  The names of the builder whose images may be tested in this CQ run.
+
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#186)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -4645,14 +4677,14 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#133)(self, gerrit_changes):**
+&mdash; **def [run\_proctor\_v2](/recipe_modules/cros_test_proctor/api.py#162)(self, gerrit_changes):**
 
 Runs the test platform v2 for a set of GerritChanges.
 
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#411)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#440)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -4679,7 +4711,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#69)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#75)(self, test_summary):**
 
 Set the test_summary for this build.
 
@@ -11913,6 +11945,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#26)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/get\_testable\_builders](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#11): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#19)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#14): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11941,6 +11980,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/full.py#50)(api, need_tests_builds_serialized, run_async, use_test_plan_v2):**
+### *recipes* / [cros\_test\_proctor:examples/get\_testable\_builders](/recipe_modules/cros_test_proctor/examples/get_testable_builders.py)
+
+[DEPS](/recipe_modules/cros_test_proctor/examples/get_testable_builders.py#12): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_proctor/examples/get_testable_builders.py#22)(api):**
 ### *recipes* / [cros\_test\_proctor:tests/builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/tests/builders_tested_in_this_run.py)
 
 [DEPS](/recipe_modules/cros_test_proctor/tests/builders_tested_in_this_run.py#11): [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

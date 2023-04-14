@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 from collections import OrderedDict
-from typing import Dict
+from typing import Dict, List
 
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
@@ -14,7 +14,9 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.gce_test import GceTestProperties
 from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.common import ProtoBytes
@@ -50,6 +52,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._not_runnable_addtnl_tests = []
     self._dry_run_exonerate_retried_suites = properties.dry_run_exonerate_retried_suites
 
+    # Map from (host, project) combo to the local dir the repo was cloned to.
+    # This is used to cache the results of _fetch_starlark_files().
+    self._host_project_to_output_dir = {}
+
     # This is used to track the builders whose images are getting end-to-end
     # tested in this CQ run.
     self._builders_tested_in_this_run = set()
@@ -76,6 +82,33 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = test_summary
     self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: self._test_summary})
 
+  def get_testable_builders(self, gerrit_changes: List[GerritChange],
+                            builds: List[Build]) -> List[str]:
+    """Returns the names of the builders whose images may be tested in this run.
+
+    Uses the builds being considered by this CQ run and the relevant test plans
+    based on the Gerrit Changes applied in order to determine which builders
+    produce images that could be tested in this run.
+
+    Args:
+      gerrit_changes: Changes being tested in this CQ run.
+      builds: The list of builds considered for this CQ run.
+
+    Returns:
+      The names of the builder whose images may be tested in this CQ run.
+    """
+    # The `testplan get-testable` command cannot be called with builds that are
+    # missing build targets (e.g. chromite-cq).
+    filtered_builds = [
+        b for b in builds if 'build_target' in b.input.properties
+    ]
+    if not filtered_builds:
+      return []
+    relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
+    starlark_files = self._fetch_starlark_files(relevant_plans)
+    return self.m.cros_test_plan_v2.get_testable_builders(
+        starlark_files, filtered_builds)
+
   def _fetch_starlark_files(self, source_test_plans):
     """Fetches a list of TestPlanStarlarkFiles to a local temp directory.
 
@@ -94,10 +127,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     starlark_packages = []
 
-    # Map from (host, project) combo to the local dir the repo was cloned to.
-    # This is used to prevent cloning the same repo twice.
-    host_project_to_output_dir = {}
-
     for plan in source_test_plans:
       for starlark_file in plan.test_plan_starlark_files:
         key = (starlark_file.host, starlark_file.project)
@@ -105,8 +134,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # If the (host, project) combo has already been cloned, reuse the local
         # path it was cloned to. Otherwise, clone the repo and insert the local
         # path into the map.
-        if key in host_project_to_output_dir:
-          target_path = host_project_to_output_dir[key]
+        if key in self._host_project_to_output_dir:
+          target_path = self._host_project_to_output_dir[key]
         else:
           output_dir = self.m.path.mkdtemp()
           target_path = self.m.path.join(output_dir, starlark_file.project)
@@ -119,7 +148,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               progress=True,
           )
 
-          host_project_to_output_dir[key] = target_path
+          self._host_project_to_output_dir[key] = target_path
 
         starlark_packages.append(
             StarlarkPackage(

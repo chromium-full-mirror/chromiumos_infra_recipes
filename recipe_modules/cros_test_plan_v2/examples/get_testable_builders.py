@@ -1,0 +1,71 @@
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from google.protobuf import json_format
+
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
+
+DEPS = [
+    'recipe_engine/assertions',
+    'cros_test_plan_v2',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+
+def RunSteps(api):
+  starlark_packages = [
+      StarlarkPackage(root='root1', main='example1.star'),
+      StarlarkPackage(root='root2', main="example2.star"),
+  ]
+
+  build_1 = build_pb2.Build()
+  build_1.builder.builder = 'target1-cq'
+  build_1.input.properties['build_target'] = {'name': 'target1'}
+  build_2 = build_pb2.Build()
+  build_2.builder.builder = 'target2-cq'
+  build_2.input.properties['build_target'] = {'name': 'target2'}
+
+  api.assertions.assertCountEqual(
+      api.cros_test_plan_v2.get_testable_builders(starlark_packages,
+                                                  [build_1, build_2]),
+      ['target1-cq', 'target2-cq'])
+
+
+def GenTests(api):
+  build_1 = build_pb2.Build()
+  build_1.builder.builder = 'target1-cq'
+  build_1.input.properties['build_target'] = {'name': 'target1'}
+  build_2 = build_pb2.Build()
+  build_2.builder.builder = 'target2-cq'
+  build_2.input.properties['build_target'] = {'name': 'target2'}
+  yield api.test(
+      'basic',
+      api.post_process(
+          post_process.StepCommandContains,
+          'get testable builders.docker run',
+          [
+              "get-testable",
+              "-plan",
+              "/input/root1/example1.star",
+              "-plan",
+              "/input/root2/example2.star",
+              "-build",
+              json_format.MessageToJson(build_1),
+              "-build",
+              json_format.MessageToJson(build_2),
+              "-builderconfigs",
+              "/input/builder_configs.binaryproto",
+              "-buildmetadata",
+              "/input/build_metadata.jsonproto",
+              "-configbundlelist",
+              "/input/configs.jsonproto",
+              "-dutattributes",
+              "/input/dut_attributes.jsonproto",
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
