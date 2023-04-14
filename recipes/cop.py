@@ -194,14 +194,17 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
   with api.step.nest('send Vote to Gerrit') as presentation:
     vote = 0 if results['result']['status'] == "SUCCESS" else -1
     body = {'labels': {"Verified": vote}}
-    # We allow status 400 for repositories that do not support the label
-    # Verified or for repositories where our user do not have permissions
-    # to vote. The important thing is the comment not the vote.
-    api.depot_gerrit.call_raw_api(
-        'https://' + patch_set.host, '/changes/%s/revisions/%s/review/' %
-        (patch_set.change_id, patch_set.current_revision), method='POST',
-        body=body, accept_statuses=[200, 400, 403], name='raw_add_reviewer')
-    presentation.step_text = 'Voted V %d.' % vote
+    # If we can't vote we let the user know, so they can change
+    # Gerrit's permissions. The important things are the tricium
+    # comments, not the vote.
+    try:
+      api.depot_gerrit.call_raw_api(
+          'https://' + patch_set.host, '/changes/%s/revisions/%s/review/' %
+          (patch_set.change_id, patch_set.current_revision), method='POST',
+          body=body, accept_statuses=[200], name='raw_add_reviewer')
+      presentation.step_text = 'Voted V %d.' % vote
+    except api.step.InfraFailure:  #pragma: no cover
+      presentation.step_text = 'Unable to Vote V %d: Check repo pemissions.' % vote
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
