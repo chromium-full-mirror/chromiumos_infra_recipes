@@ -202,6 +202,45 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "select policy"
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "release-R79-*.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "select policy.git ls-remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "ls-remote",
+      ".",
+      "release-R79-*.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "select policy.git ls-remote (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set policy",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
+    ]
+  },
+  {
     "cmd": [
       "gcloud",
       "config",
@@ -1179,45 +1218,6 @@
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "select policy"
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      ".",
-      "release-R79-*.B"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "select policy.git ls-remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      ".",
-      "release-R79-*.B"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "select policy.git ls-remote (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set policy",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
     ]
   },
   {
