@@ -20,7 +20,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
-    'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
@@ -45,12 +44,11 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 #   2. Move the checkout back to ToT. Build from that.
 def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   snapshot_branch_name = "snapshot"
-  snapshot_delta = "7.days.ago"
+  snapshot_delta = "7.days.ago"  # TODO(sfrolov): make an input property
 
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
-  api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir,
-                depth=1)
+  api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
 
   # Get old snapshot hash.
   delta_hash_result = api.step(f"Get {snapshot_delta} manifest snapshot", [

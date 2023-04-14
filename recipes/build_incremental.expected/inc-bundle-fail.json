@@ -3038,8 +3038,6 @@
     "cmd": [
       "git",
       "clone",
-      "--depth",
-      "1",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "[CLEANUP]/tmp_tmp_1"
     ],
