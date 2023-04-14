@@ -13,7 +13,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange as Luc
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
-from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
 from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
 from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
@@ -43,7 +42,6 @@ PROPERTIES = {
     'no_existing_cls_policy': Property(),
     'retry_cl_policy': Property(),
     'outdated_cls_policy': Property(),
-    'expected': Property(default=True),
     'retry_only': Property(default=False),
     'rebase_before_retry': Property(default=False),
     'changes': Property(default=1),
@@ -57,7 +55,7 @@ PACKAGES = [PACKAGE_CHROME]
 
 def RunSteps(api: recipe_api.RecipeApi, existing_cls_policy: any,
              no_existing_cls_policy: any, retry_cl_policy: any,
-             outdated_cls_policy: any, expected: bool, retry_only: bool,
+             outdated_cls_policy: any, retry_only: bool,
              rebase_before_retry: bool, changes: int):
   api.pupr_gerrit_interface.set_generator_attributes(rebase_before_retry)
 
@@ -67,26 +65,26 @@ def RunSteps(api: recipe_api.RecipeApi, existing_cls_policy: any,
       build_targets=BUILD_TARGETS,
   )
 
-  api.assertions.assertEqual(
-      expected,
-      api.pupr_gerrit_interface.handle_open_changes(
-          [
-              GerritChange(host='chromium-review.googlesource.com',
-                           change=1234 + i) for i in range(0, changes)
-          ], {
-              'cros': [
-                  ProjectInfo(name='galaxy', path='project', remote='cros',
-                              branch=f'{api.src_state.workspace_path}',
-                              rrev=api.src_state.workspace_path)
-              ]
-          },
-          BranchPolicy(pattern='.*', repl='',
-                       reviewers=[Reviewer(email='a@example.com')],
-                       no_existing_cls_policy=no_existing_cls_policy,
-                       existing_cls_policy=existing_cls_policy,
-                       retry_cl_policy=retry_cl_policy,
-                       outdated_cls_policy=outdated_cls_policy), 'topic',
-          retry_only))
+  mrm = api.pupr_gerrit_interface.find_most_recently_merged_uprev(
+      {
+          'cros': [
+              ProjectInfo(name='galaxy', path='project', remote='cros',
+                          branch=f'{api.src_state.workspace_path}',
+                          rrev=api.src_state.workspace_path)
+          ],
+      }, 'topic') if changes > 0 else None
+  api.pupr_gerrit_interface.apply_retry_policy(
+      [
+          GerritChange(host='chromium-review.googlesource.com', change=1234 + i)
+          for i in range(0, changes)
+      ], mrm,
+      BranchPolicy(pattern='.*', repl='',
+                   reviewers=[Reviewer(email='a@example.com')
+                             ], no_existing_cls_policy=no_existing_cls_policy,
+                   existing_cls_policy=existing_cls_policy,
+                   retry_cl_policy=retry_cl_policy,
+                   outdated_cls_policy=outdated_cls_policy), 'topic',
+      retry_only)
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
@@ -104,15 +102,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
-      api.post_check(post_process.MustRun, 'outdated CLs'),
-      api.post_check(
-          post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 1234'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.abandon CL 1234'
-      ),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_process(post_process.DropExpectation))
@@ -192,7 +181,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
-      api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234'
@@ -244,7 +232,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
-      api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(post_process.DoesNotRunRE, r'.*\.rebase CL 1234.*'),
       api.post_check(post_process.DoesNotRunRE,
                      r'.*\.upload patch set for Change-Id 1234'),
@@ -291,7 +278,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
-      api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(post_process.DoesNotRunRE, r'.*\.rebase CL 1234.*'),
       api.post_check(post_process.DoesNotRunRE,
                      r'.*\.upload patch set for Change-Id 1234'),
@@ -368,7 +354,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
-      api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(post_process.MustRunRE, r'.*\.rebase CL 1234.*'),
       api.post_check(
           post_process.MustRunRE,
@@ -461,7 +446,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               LuciGerritChange(host='chromium-review.googlesource.com',
                                change=1234)
           ], created_by='user:lamontjones@chromium.org').build,
-      api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,
           'apply retry policy RETRY_LATEST_PINNED.upload patch set for Change-Id 1234'
@@ -496,7 +480,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                   'created': "2023-01-09 13:11:20.000000000",
               },
           },
-      ), api.post_check(post_process.MustRun, 'outdated CLs'),
+      ),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_process(post_process.DropExpectation))
@@ -506,49 +490,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(existing_cls_policy=SUBMIT,
                      no_existing_cls_policy=FULL_RUN, retry_cl_policy=NO_RETRY,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
-      api.post_check(post_process.MustRun, 'outdated CLs'),
-      api.post_check(
-          post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 1234'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.abandon CL 1234'
-      ), api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
-      api.post_process(post_process.DropExpectation))
-
-  yield api.test(
-      'no-rebase',
-      api.properties(existing_cls_policy=SUBMIT,
-                     no_existing_cls_policy=FULL_RUN, retry_cl_policy=NO_RETRY,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
-      api.post_check(post_process.MustRun, 'outdated CLs'),
-      api.post_check(
-          post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 1234'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.abandon CL 1234'
-      ), api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
-      api.post_process(post_process.DropExpectation))
-
-  yield api.test(
-      'outdated-abandon',
-      api.properties(existing_cls_policy=SUBMIT,
-                     no_existing_cls_policy=FULL_RUN,
-                     retry_cl_policy=RETRY_LATEST_PINNED,
-                     outdated_cls_policy=OUTDATED_ABANDON, expected=False),
-      api.post_check(post_process.MustRun, 'outdated CLs'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'act on outdated CLs with policy: OUTDATED_ABANDON.comment on CL 1234'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'act on outdated CLs with policy: OUTDATED_ABANDON.abandon CL 1234'),
-      api.post_check(post_process.StepSuccess,
-                     'apply retry policy RETRY_LATEST_PINNED'),
+      api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -556,9 +498,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(existing_cls_policy=SUBMIT,
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, expected=False,
-                     changes=0, rebase_before_retry=True),
-      api.post_check(post_process.DoesNotRun, 'outdated CLs'),
+                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=0,
+                     rebase_before_retry=True),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_process(post_process.DropExpectation))
