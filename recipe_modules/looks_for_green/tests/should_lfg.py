@@ -81,16 +81,22 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'check should look for green.check disallow looks for green'),
+      api.post_check(post_process.DoesNotRun,
+                     'check should look for green.gerrit-fetch-changes'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'lfg-disabled',
       api.properties(experiments=lfg_experiment, expected_should_lfg=False),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'check should look for green.check disallow looks for green'),
+      api.post_check(post_process.DoesNotRun,
+                     'check should look for green.gerrit-fetch-changes'),
       api.post_process(post_process.DropExpectation),
   )
 

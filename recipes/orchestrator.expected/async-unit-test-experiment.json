@@ -1835,47 +1835,7 @@
     "cmd": [],
     "name": "run builds.filter builds.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@should_lfg@Found CQ looks experiment: False, Found LFG enabled: False, Found disallow footer: False, Found has merge commit False. Using original snapshot.@@@",
-      "@@@STEP_LOG_END@should_lfg@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run builds.filter builds.check should look for green.check disallow looks for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: []@@@",
-      "@@@STEP_LOG_END@check disallow looks for green@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd-support/gerrit-fetch-changes"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run builds.filter builds.check should look for green.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
-    "timeout": 2160,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"changes\": []@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

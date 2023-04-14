@@ -98,6 +98,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       with self.m.step.nest('check should look for green') as pres:
         exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
         lfg_enabled = self.m.looks_for_green.enable_looks_for_green
+        # Don't perform extra checks if we don't meet these preconditions.
+        if not exp_enabled or not lfg_enabled:
+          self._should_lfg = False
+          return self._should_lfg
         disallow = self.found_disallow_lfg_footer(gerrit_changes)
         has_merge_commit = self._has_merge_commit(gerrit_changes)
         self._should_lfg = exp_enabled and lfg_enabled and not disallow and not has_merge_commit
