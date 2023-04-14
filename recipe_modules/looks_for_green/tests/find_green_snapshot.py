@@ -55,6 +55,10 @@ red_build = build_pb2.Build(id=123, output=output, input=build_input,
                             start_time=TEST_START_TIMESTAMP,
                             end_time=TEST_END_TIMESTAMP)
 
+unscored_build = build_pb2.Build(id=123, input=build_input,
+                                 start_time=TEST_START_TIMESTAMP,
+                                 end_time=TEST_END_TIMESTAMP)
+
 
 def RunSteps(api, expect_result, expected_bbid, expected_greenness,
              expected_commit_sha):
@@ -94,7 +98,7 @@ def GenTests(api):
       'no-greens',
       api.properties(expect_result=False),
       api.buildbucket.simulated_search_results(
-          builds=[red_build],
+          builds=[red_build, unscored_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
       api.post_process(post_process.DropExpectation),

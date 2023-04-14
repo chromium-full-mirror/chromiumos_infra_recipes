@@ -43,6 +43,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     super().__init__(**kwargs)
     self.enable_looks_for_green = properties.enable_looks_for_green
     self.dry_run = properties.dry_run
+    self._max_concurrent_snapshot_runs = properties.max_concurrent_snapshot_runs or 25
     self._lookback_hours = properties.lookback_hours or 10
     self._greenness_threshold = properties.greenness_threshold or 80
     self.use_complete_snapshot = properties.use_complete_snapshot
@@ -104,11 +105,13 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           return self._should_lfg
         disallow = self.found_disallow_lfg_footer(gerrit_changes)
         has_merge_commit = self._has_merge_commit(gerrit_changes)
-        self._should_lfg = exp_enabled and lfg_enabled and not disallow and not has_merge_commit
+        self._should_lfg = (
+            exp_enabled and lfg_enabled and not disallow and
+            not has_merge_commit)
         should_lfg_log = (
             f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
-            f' {lfg_enabled}, Found disallow footer: {disallow}, Found has merge commit {has_merge_commit}'
-        )
+            f' {lfg_enabled}, Found disallow footer: {disallow}, Found has'
+            f' merge commit {has_merge_commit}')
         # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
         if self._should_lfg:
           with self.m.step.nest('check if CL uses Cq-Depend'):
@@ -116,8 +119,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                                                     'Cq-Depend'):
               self._should_lfg = False
               should_lfg_log += '. Found Cq-Depend footer'
-              pres.logs[
-                  'Cq-Depend footer'] = 'Found Cq-Depend footer. Skipping looks for green.'
+              pres.logs['Cq-Depend footer'] = (
+                  'Found Cq-Depend footer. Skipping'
+                  ' looks for green.')
         if not self._should_lfg:
           should_lfg_log += '. Using original snapshot.'
         pres.logs['should_lfg'] = should_lfg_log
@@ -187,13 +191,24 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     stats.snap_orch_bbid = snapshot_stats.bbid
     stats.snap_commit_sha = snapshot_stats.commit_sha
 
+  def _get_latest_scored_snapshot(
+      self, build_results: List[build_pb2.Build]) -> Optional[build_pb2.Build]:
+    '''Find the latest snapshot with a greenness score.'''
+    for build in build_results:
+      if 'greenness' in build.output.properties and \
+      'aggregateMetric' in build.output.properties['greenness']:
+        return build
+    return None
+
   def get_latest_snapshot_greenness(self) -> int:
     '''Returns aggregate greenness of latest scored snapshot-orchestrator.
 
-    Limit return to 2 builds to get the latest scored build. If the latest
-    snapshot-orchestrator has just started, we won't have greenness yet, so
-    look back at the most recent snapshot-orchestrator that does have greenness
-    populated.
+    Or -1 if no latest scored snapshot is found.
+
+    If the latest snapshot-orchestrator has just started, we won't have
+    greenness yet, so look back at the most recent snapshot-orchestrator (of
+    the self._max_concurrent_snapshot_runs most recent runs) that does have
+    greenness populated.
 
     Returns:
       aggregate greenness for latest scored snapshot-orchestrator, or -1 if
@@ -201,30 +216,21 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     with self.m.step.nest(
         'checking latest scored snapshot greenness') as presentation:
-      result = self._get_snapshots(limit=2)
-      if result:
-        # If the latest (currently running) snapshot-orchestrator doesn't have
-        # greenness populated yet, use the previous snapshot-orchestrator run.
-        scored_snapshot = result[0]
-        if 'greenness' not in scored_snapshot.output.properties or \
-        'aggregateMetric' not in result[0].output.properties['greenness']:
-          try:
-            scored_snapshot = result[1]
-            presentation.logs[
-                'checking latest scored snapshot greenness'] = f'Latest snapshot go/bbid/{result[0].id} does not have greenness yet, using go/bbid/{scored_snapshot.id} snapshot.'
-          except IndexError:  # Tolerate only finding one snapshot.
-            scored_snapshot = result[0]
-        snapshot_stats = self._parse_snapshot_result(scored_snapshot)
+      results = self._get_snapshots(limit=self._max_concurrent_snapshot_runs)
+      scored_snapshot = self._get_latest_scored_snapshot(results)
+      if not scored_snapshot:
         presentation.logs['latest scored snapshot greenness'] = (
-            f'latest scored snapshot-orchestrator '
-            f'go/bbid/{snapshot_stats.bbid} has aggregate greenness of {snapshot_stats.agg_green}. '
-            f'Start time: {snapshot_stats.start_time} End time: {snapshot_stats.end_time}'
-            f'. The current time is {self.now_utc}')
-        self._set_snapshot_stats(snapshot_stats)
-      else:
-        presentation.logs[
-            'latest scored snapshot greenness'] = 'found no builds'
+            'found no scored snapshot in the latest '
+            f'{self._max_concurrent_snapshot_runs} builds')
         return -1
+      snapshot_stats = self._parse_snapshot_result(scored_snapshot)
+      presentation.logs['latest scored snapshot greenness'] = (
+          'latest scored snapshot-orchestrator '
+          f'go/bbid/{snapshot_stats.bbid} has aggregate greenness of '
+          f'{snapshot_stats.agg_green}. Start time: {snapshot_stats.start_time}'
+          f' End time: {snapshot_stats.end_time}. The current time is '
+          f'{self.now_utc}')
+      self._set_snapshot_stats(snapshot_stats)
       return snapshot_stats.agg_green
 
   def calc_approx_snap_age_hours(self,
@@ -265,14 +271,18 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         parsed_results.append(self._parse_snapshot_result(result))
       green = self._get_latest_green_snapshot(parsed_results)
       if green:
-        presentation.logs[
-            'latest green'] = f'Found green snapshot: {green.commit_sha} with greenness {green.agg_green} and {green.approx_snap_age_hours} hours old.'
+        presentation.logs['latest green'] = (
+            f'Found green snapshot: {green.commit_sha} with '
+            f'greenness {green.agg_green} and {green.approx_snap_age_hours} '
+            'hours old.')
         self._set_snapshot_stats(green, suggested=True)
         self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
         self.m.easy.set_properties_step(looks_for_green=self._stats)
       else:
-        presentation.logs[
-            'latest green'] = f'Found no snapshot of at least {self._greenness_threshold} greenness within the last {self._lookback_hours} hours.'
+        presentation.logs['latest green'] = (
+            'Found no snapshot of at least '
+            f'{self._greenness_threshold} greenness within the last '
+            f'{self._lookback_hours} hours.')
         self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
         self.m.easy.set_properties_step(looks_for_green=self._stats)
       return green
@@ -317,6 +327,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           found_disallow = True
           presentation.step_text = (
               f'Found {self.DISALLOW_LOOKS_FOR_GREEN_FOOTER}. Disabling looks '
-              f'for green behavior.')
+              'for green behavior.')
 
       return found_disallow

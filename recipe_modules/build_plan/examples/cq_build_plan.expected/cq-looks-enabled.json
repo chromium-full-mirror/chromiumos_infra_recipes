@@ -1395,7 +1395,7 @@
       "-json",
       "-nopage",
       "-n",
-      "2",
+      "25",
       "-fields",
       "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
       "-predicate",
