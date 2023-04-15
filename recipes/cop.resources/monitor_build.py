@@ -37,7 +37,7 @@ def main(args):
   input_json = json.load(args.input_json)
 
   credential = google.oauth2.credentials.Credentials(
-      luci_auth.get_token(minutes=30))
+      luci_auth.get_token(minutes=25))
   client = cloudbuild_v1.services.cloud_build.CloudBuildClient(
       credentials=credential)
 
