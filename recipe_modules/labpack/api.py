@@ -3,8 +3,9 @@
 # found in the LICENSE file.
 
 from recipe_engine import recipe_api
+from recipe_engine.step_data import StepData
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map, add_assertion_to_map
-from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path
+from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path, jsonify_labpack_input
 from PB.lab.labpack import LabpackInput
 
 DEFAULT_CIPD_LABEL = 'prod'
@@ -100,5 +101,20 @@ class LabpackCommand(recipe_api.RecipeApi):
           out, tally, "labpack exists at exaclty one path in {}".format(paths))
     return out
 
-  def run_labpack(self, labpack_input: LabpackInput):
-    raise NotImplementedError()
+  def run_labpack(self, labpack_input: LabpackInput) -> StepData:
+    """Run labpack command.
+
+    Args:
+      labpack_input: a LabpackInput instance
+
+    Returns:
+      see step.__call__
+    """
+    out = self.m.easy.step(
+        name="labpack invocation",
+        cmd=[self.get_cipd_path()],
+        stdin_data=jsonify_labpack_input(labpack_input),
+    )
+    assert isinstance(out, StepData), "out unexpectedly has type {}".format(
+        type(out))
+    return out

@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
+from PB.lab.labpack import LabpackInput
+
 
 def extract_executable_name_from_cipd_path(cipd_path):
   """extract_executable_name_from_cipd_path extracts the name of the executable from a CIPD package path.
@@ -32,5 +35,15 @@ def catch(f, *args, **kwargs):
   """
   try:
     return (f(*args, **kwargs), None)
-  except Exception as e:  # pylint: disable=broad-except
-    return (None, e)
+  except Exception as e:  # pylint: disable=broad-except # pragma: nocover
+    return (None, e)  # pragma: nocover
+
+
+def jsonify_labpack_input(labpack_input: LabpackInput) -> bytes:
+  assert isinstance(
+      labpack_input,
+      LabpackInput), "labpack_input unexpectedly has type {}".format(
+          type(labpack_input))
+  out = json_format.MessageToJson(labpack_input)
+  out = out.encode("utf-8")
+  return out

@@ -14,6 +14,7 @@ from RECIPE_MODULES.chromeos.labpack.utils import catch
 
 DEPS = [
     'recipe_engine/step',
+    'easy',
     'labpack',
 ]
 
@@ -25,7 +26,7 @@ def RunSteps(api):
   with api.step.nest('run labpack test suite') as test_suite:
     with api.step.nest('run_labpack fails with not_implemented error'):
       _, exn = catch(api.labpack.run_labpack, LabpackInput())
-      assert isinstance(exn, NotImplementedError)
+      assert exn is None, str(exn)
     test_suite.step_text = 'SUCCESS'
 
 
@@ -35,7 +36,6 @@ def GenTests(api):
       repr(type(api)))
   yield api.test(
       'basic',
-      api.post_check(post_process.StepTextEquals, 'run labpack test suite',
-                     'SUCCESS'),
+      api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),
   )

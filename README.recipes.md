@@ -7232,11 +7232,11 @@ Raises:
     multiline support!
 ### *recipe_modules* / [labpack](/recipe_modules/labpack)
 
-[DEPS](/recipe_modules/labpack/__init__.py#7): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/labpack/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
 
@@ -7244,7 +7244,7 @@ Labpack has the following public attributes:
 - cipd_label
 - cipd_package
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#44)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#45)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -7256,11 +7256,11 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#28)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#29)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#32)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#33)(self):**
 
 Get the path of the cipd package.
 
@@ -7271,7 +7271,15 @@ See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#103)(self, labpack_input: LabpackInput):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#104)(self, labpack_input: LabpackInput):**
+
+Run labpack command.
+
+Args:
+  labpack_input: a LabpackInput instance
+
+Returns:
+  see step.__call__
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12900,13 +12908,13 @@ exists.
 RunSteps runs ensure_labpack
 ### *recipes* / [labpack:tests/test\_run\_labpack](/recipe_modules/labpack/tests/test_run_labpack.py)
 
-[DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 test_run_labpack.py is a smoke test for the run_labpack function.
 
-&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#22)(api):**
 
 RunSteps runs ensure_labpack
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)
