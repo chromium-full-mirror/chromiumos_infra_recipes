@@ -539,10 +539,10 @@
   * [project_buildspec](#recipes-project_buildspec) (Python3 ✅) &mdash; Recipe for invoking the per project buildspec tool.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry) (Python3 ✅)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen) (Python3 ✅)
+  * [pupr_gerrit_interface:tests/apply_retry_policy](#recipes-pupr_gerrit_interface_tests_apply_retry_policy) (Python3 ✅) &mdash; Verify that apply_retry_policy() runs the expected process.
   * [pupr_gerrit_interface:tests/create_uprev_cls](#recipes-pupr_gerrit_interface_tests_create_uprev_cls) (Python3 ✅) &mdash; Verify that create_uprev_cls() runs the expected process.
   * [pupr_gerrit_interface:tests/find_open_uprev_cls](#recipes-pupr_gerrit_interface_tests_find_open_uprev_cls) (Python3 ✅) &mdash; Verify that find_open_uprev_cls() finds CLs as expected.
   * [pupr_gerrit_interface:tests/handle_outdated_changes](#recipes-pupr_gerrit_interface_tests_handle_outdated_changes) (Python3 ✅) &mdash; Verify that handle_open_changes() runs the expected process.
-  * [pupr_gerrit_interface:tests/handle_retries](#recipes-pupr_gerrit_interface_tests_handle_retries) (Python3 ✅) &mdash; Verify that handle_open_changes() runs the expected process.
   * [pupr_gerrit_interface:tests/upload_new_patch_set](#recipes-pupr_gerrit_interface_tests_upload_new_patch_set) (Python3 ✅) &mdash; Verify that upload_new_patch_set() runs the expected process.
   * [pupr_local_uprev:tests/rebase_cl](#recipes-pupr_local_uprev_tests_rebase_cl) (Python3 ✅) &mdash; Verify that rebase_cl() locally rebases existing commits as expected.
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) (Python3 ✅) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
@@ -13457,6 +13457,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/pupr/examples/retries_frozen.py#20)(api):**
+### *recipes* / [pupr\_gerrit\_interface:tests/apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/tests/apply_retry_policy.py)
+
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/apply_retry_policy.py#28): [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Verify that apply_retry_policy() runs the expected process.
+
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/apply_retry_policy.py#56)(api: recipe_api.RecipeApi, existing_cls_policy: any, no_existing_cls_policy: any, retry_cl_policy: any, outdated_cls_policy: any, retry_only: bool, rebase_before_retry: bool, changes: int):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py)
 
 [DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#25): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13486,15 +13495,6 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Verify that handle_open_changes() runs the expected process.
 
 &mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/handle_outdated_changes.py#52)(api: recipe_api.RecipeApi, outdated_cls_policy: any, expected: bool, retry_only: bool, changes: int):**
-### *recipes* / [pupr\_gerrit\_interface:tests/handle\_retries](/recipe_modules/pupr_gerrit_interface/tests/handle_retries.py)
-
-[DEPS](/recipe_modules/pupr_gerrit_interface/tests/handle_retries.py#28): [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-PYTHON_VERSION_COMPATIBILITY: PY3
-
-Verify that handle_open_changes() runs the expected process.
-
-&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/handle_retries.py#56)(api: recipe_api.RecipeApi, existing_cls_policy: any, no_existing_cls_policy: any, retry_cl_policy: any, outdated_cls_policy: any, retry_only: bool, rebase_before_retry: bool, changes: int):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py)
 
 [DEPS](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py#16): [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface)

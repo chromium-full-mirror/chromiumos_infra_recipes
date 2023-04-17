@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Verify that handle_open_changes() runs the expected process."""
+"""Verify that apply_retry_policy() runs the expected process."""
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 
 from PB.chromiumos.common import BuildTarget
