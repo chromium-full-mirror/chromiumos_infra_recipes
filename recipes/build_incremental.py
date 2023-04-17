@@ -43,7 +43,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 #      generating local artifacts.
 #   2. Move the checkout back to ToT. Build from that.
 def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
-  snapshot_branch_name = "snapshot"
+  snapshot_branch_name = "origin/snapshot"
   snapshot_delta = "7.days.ago"  # TODO(sfrolov): make an input property
 
   manifest_internal_tempdir = api.path.mkdtemp()
@@ -59,7 +59,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
 
   # Rewind the source to old snapshot.
   api.step(f"Revert manifest to {snapshot_delta} snapshot",
-           ["git", "-C", manifest_internal_tempdir, delta_hash])
+           ["git", "-C", manifest_internal_tempdir, "checkout", delta_hash])
   api.step(
       f"Apply {snapshot_delta} manifest snapshot",
       [
@@ -79,8 +79,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       # Fast forward the source to latest snapshot.
-      api.step("Revert manifest to the latest snapshot",
-               ["git", "-C", manifest_internal_tempdir, snapshot_branch_name])
+      api.step("Revert manifest to the latest snapshot", [
+          "git", "-C", manifest_internal_tempdir, "checkout",
+          snapshot_branch_name
+      ])
 
       api.step(
           "Apply latest manifest snapshot",

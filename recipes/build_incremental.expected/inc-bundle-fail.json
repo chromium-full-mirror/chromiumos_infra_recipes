@@ -3066,7 +3066,7 @@
       "-1",
       "--before",
       "7.days.ago",
-      "snapshot"
+      "origin/snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -3088,6 +3088,7 @@
       "git",
       "-C",
       "[CLEANUP]/tmp_tmp_1",
+      "checkout",
       ""
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5268,7 +5269,8 @@
       "git",
       "-C",
       "[CLEANUP]/tmp_tmp_1",
-      "snapshot"
+      "checkout",
+      "origin/snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
