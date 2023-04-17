@@ -1,0 +1,19 @@
+#!/bin/bash
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This script takes no arguments and runs only the tests that are relevant
+# to the labpack recipe module.
+
+die() { 1>&2 printf '%s\n' "$@"; exit 1; }
+
+test -f "$(which dirname)" || die 'no program named dirname'
+test -f "$(which vpython3)" || die 'no program named vpython3'
+
+cd -P -- "$(dirname "$0")" || die 'cannot find own dir'
+cd -P -- .. || die 'cannot chdir to parent dir'
+cd -P -- .. || die 'cannot chdir to parent dir'
+
+# Run the tests in the labpack directory
+vpython3 ./recipes.py test run --filter='labpack' || die 'labpack tests failed'
