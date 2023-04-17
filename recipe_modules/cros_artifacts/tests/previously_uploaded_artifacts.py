@@ -48,14 +48,15 @@ def RunSteps(api):
   # uploaded, so should not be re-uploaded. Note that ArtifactsByService.Legacy. will be
   # re-uploaded, even though it was previously uploaded.
   previously_uploaded_artifacts = api.cros_artifacts.UploadedArtifacts(
-      gs_bucket='test_bucket', gs_path='test_path', files_by_artifact={
-          'EBUILD_LOGS': ['ebuild_logs.tar.xz'],
+      gs_bucket='test_bucket', gs_path='builder/R99-1234.56.0-101-',
+      files_by_artifact={
+          'EBUILD_LOGS': ['../../[START_DIR]/tmp/artifact.tar.gz'],
           'UNVERIFIED_CHROME_LLVM_ORDERFILE': ['testorderfile'],
-          'FIRMWARE_TARBALL': ['testfirmwaretarball'],
+          'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
       })
 
   api.cros_artifacts.upload_artifacts(
-      'builder', BuilderConfig.Id.CQ, 'test_gs_bucket',
+      'builder', BuilderConfig.Id.CQ, 'test_bucket',
       artifacts_info=artifacts_info,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
@@ -124,6 +125,20 @@ def GenTests(api):
           post_process.MustRun,
           'upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs',
       ),
+      # The artifacts property should contain previously uploaded artifact types
+      # (UNVERIFIED_CHROME_LLVM_ORDERFILE in this case).
+      api.post_process(
+          post_process.PropertyEquals, 'artifacts', {
+              'files_by_artifact': {
+                  'EBUILD_LOGS': ['../../[START_DIR]/tmp/artifact.tar.gz'],
+                  'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
+                  'FIRMWARE_TARBALL_INFO':
+                      ['../../[START_DIR]/fw_metadata.json'],
+                  'UNVERIFIED_CHROME_LLVM_ORDERFILE': ['testorderfile']
+              },
+              'gs_bucket': 'test_bucket',
+              'gs_path': 'builder/R99-1234.56.0-101-'
+          }),
       api.post_process(post_process.DoesNotRunRE,
                        'upload artifacts.call chromite.api.ToolchainService.*'),
   )

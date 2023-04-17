@@ -7484,7 +7484,7 @@
     "name": "final upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"coral-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"coral-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {

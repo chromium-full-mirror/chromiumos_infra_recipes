@@ -5,6 +5,8 @@
 
 """API for uploading CrOS build artifacts to Google Storage."""
 
+from typing import List
+
 import collections
 import time
 
@@ -25,7 +27,6 @@ from recipe_engine.recipe_api import StepFailure
 BASE_IMAGE_TAR = 'chromiumos_base_image.tar.xz'
 # The recovery image tar filename, used for generating provenance.
 RECOVERY_IMAGE_TAR = 'recovery_image.tar.xz'
-
 
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
 # the appropriate services.
@@ -60,12 +61,29 @@ class UploadedArtifacts(
   __slots__ = ()
 
   def union(self, other):
-    assert self.gs_bucket == other.gs_bucket
-    assert self.gs_path == other.gs_path
+    """Union the files_by_artifact in other into self.
+
+    gs_bucket and gs_path must be the same.
+
+    Keys (i.e. artifact types) in files_by_artifacts are unioned. If both self
+    and other have the same key, the values (i.e. files) are unioned.
+
+    Args:
+      other: Another UploadedArtifacts.
+
+    Returns:
+      A unioned UploadedArtifacts.
+    """
+    assert self.gs_bucket == other.gs_bucket, f'{self.gs_bucket} != {other.gs_bucket}'
+    assert self.gs_path == other.gs_path, f'{self.gs_path} != {other.gs_path}'
     value = lambda inst, key: inst.files_by_artifact.get(key, [])
     keys = set(self.files_by_artifact.keys()) | set(
         other.files_by_artifact.keys())
-    result = {k: (value(self, k) + value(other, k)) for k in sorted(keys)}
+
+    result = {
+        k: sorted(set(value(self, k) + value(other, k))) for k in sorted(keys)
+    }
+
     return UploadedArtifacts(self.gs_bucket, self.gs_path, result)
 
 
@@ -689,10 +707,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             for art_type in art_info.artifact_types:
               type_name = BuilderConfig.Artifacts.ArtifactTypes.Name(art_type)
               # EBUILD_LOGS type is always included.
-              if (type_name not in
-                  previously_uploaded_artifacts.files_by_artifact or
-                  art_type == BuilderConfig.Artifacts.ArtifactTypes.EBUILD_LOGS
-                 ):
+              if (type_name
+                  not in previously_uploaded_artifacts.files_by_artifact or
+                  art_type
+                  == BuilderConfig.Artifacts.ArtifactTypes.EBUILD_LOGS):
                 filtered_artifact_types.append(art_type)
 
             # Set artifact_types to the new filtered list.
@@ -836,7 +854,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       uploaded_artifacts = UploadedArtifacts(gs_bucket, gs_path,
                                              files_by_artifact)
-      self._set_artifacts_property(uploaded_artifacts)
+
+      # If there were previously uploaded artifacts, we want to include them in
+      # the artifacts output property.
+      if previously_uploaded_artifacts:
+        self.merge_artifacts_properties(
+            [uploaded_artifacts, previously_uploaded_artifacts])
+      else:
+        self._set_artifacts_property(uploaded_artifacts)
 
       # We upload artifacts whether the build passed or failed (see
       # crbug/1086630).
@@ -931,7 +956,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       return gs_path
 
-  def merge_artifacts_properties(self, properties):
+  def merge_artifacts_properties(self, properties: List[UploadedArtifacts]):
     """Combine uploaded artifacts to produce a final value.
 
     Args:

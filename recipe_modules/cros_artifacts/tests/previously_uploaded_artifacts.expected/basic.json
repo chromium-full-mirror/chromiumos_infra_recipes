@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test_gs_bucket/builder/R99-1234.56.0-101-@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/test_bucket/builder/R99-1234.56.0-101-@@@"
     ]
   },
   {
@@ -518,7 +518,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://test_gs_bucket/builder/R99-1234.56.0-101-\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://test_bucket/builder/R99-1234.56.0-101-\"@@@"
     ]
   },
   {
@@ -535,7 +535,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://test_gs_bucket/builder/R99-1234.56.0-101-"
+      "gs://test_bucket/builder/R99-1234.56.0-101-"
     ],
     "infra_step": true,
     "name": "upload artifacts.gsutil rsync",
@@ -549,7 +549,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"]}, \"gs_bucket\": \"test_gs_bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"testorderfile\"]}, \"gs_bucket\": \"test_bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\"}@@@"
     ]
   },
   {
