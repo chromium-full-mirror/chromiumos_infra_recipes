@@ -42,7 +42,7 @@
       }
     },
     "name": "get non-skipped builders.gerrit fetch current CL info",
-    "timeout": 360,
+    "timeout": 480,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
@@ -98,7 +98,7 @@
       }
     },
     "name": "get non-skipped builders.gerrit changes",
-    "timeout": 360,
+    "timeout": 480,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@[@@@",
