@@ -1744,21 +1744,22 @@ Note: in general, ChromeOS builders check out the source code at a specific
 version. That version is obtained by hitting the BuildAPI to read an overlay,
 which requires a sysroot. This module includes some code to support speeding
 up those chrome checkouts by doing the following:
-  - checkout the chrome source on ToT asynchronously (with all refs and tags)
-    (sync_main_async).
+  - checkout the chrome source to the latest commit in the cache asynchronously
+    with all refs and tags (sync_chrome_async).
   - wait for the async main sync (wait_for_sync_chrome_source_async).
-  - delete the checkout of main (delete_main_checkout) for cases where it is
+  - delete the checkout of main (delete_chrome_checkout) for cases where it is
     unused.
 
 This supports the general workflow on all builders of:
-  1.  As early as possible, kick off an async chrome checkout on ToT.
+  1.  As early as possible, kick off an async chrome checkout to the latest
+        commit in the cache.
   2.  Whenever chrome source is definitely going to be needed, block and wait
         for that async checkout to complete.
   3a. If the chrome source code isn't needed, delete the checkout.
   3b. If the chrome source code is needed, check out the specific version
         needed (much faster with the repo already checked out).
 
-&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#123)(self, cache_path: Path, sync: bool=True, step_name: str='sync chrome'):**
+&mdash; **def [cache\_sync](/recipe_modules/chrome/api.py#124)(self, cache_path: Path, sync: bool=True, step_name: str='sync chrome'):**
 
 Sync Chrome cache using existing cached repositories.
 
@@ -1767,14 +1768,14 @@ Args:
   sync: whether or not to call sync after setting up the cache. Defaults to true.
   step_name: the name to use for the surrounding step. Defaults to "sync chrome".
 
-&mdash; **def [delete\_main\_checkout](/recipe_modules/chrome/api.py#202)(self):**
+&mdash; **def [delete\_chrome\_checkout](/recipe_modules/chrome/api.py#220)(self):**
 
 Delete unnecessary chrome checkout.
 
-Allows to delete the chrome source synced in sync_main_async() function when it
+Allows to delete the chrome source synced in sync_chrome_async() function when it
 turns out to be unnecessary for the build.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#306)(self, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#329)(self, patch_sets: Optional[List[PatchSet]]=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -1787,7 +1788,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#388)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#411)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1802,13 +1803,13 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#99)(self):**
+&emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#100)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#359)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#382)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#333)(self, gerrit_change: GerritChange):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#356)(self, gerrit_change: GerritChange):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#426)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#449)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1820,7 +1821,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#368)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#391)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1836,7 +1837,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#499)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#522)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
 
 Checks whether chrome source is needed.
 
@@ -1849,7 +1850,7 @@ Args:
 Returns:
   bool: Whether Chrome source is needed.
 
-&mdash; **def [sync](/recipe_modules/chrome/api.py#211)(self, chrome_root: Path, chroot: Chroot, build_target: BuildTarget, internal: bool, cache_dir: str, omit_version: bool=False):**
+&mdash; **def [sync](/recipe_modules/chrome/api.py#229)(self, chrome_root: Path, chroot: Chroot, build_target: BuildTarget, internal: bool, cache_dir: str, override_version: Optional[str]=None, omit_version: bool=False):**
 
 Sync Chrome source code.
 
@@ -1861,9 +1862,10 @@ Args:
   build_target: Build target of the build.
   internal: True for internal checkout.
   cache_dir: Path of the chrome cache.
+  override_version: Specific git ref/hash to sync to.
   omit_version: Omit the version from the sync command. Defaults to False.
 
-&mdash; **def [sync\_main\_async](/recipe_modules/chrome/api.py#170)(self, config: BuilderConfig, build_target: BuildTarget):**
+&mdash; **def [sync\_chrome\_async](/recipe_modules/chrome/api.py#171)(self, config: BuilderConfig, build_target: BuildTarget):**
 
 Sync chrome source async.
 
@@ -1875,7 +1877,7 @@ Args:
   config: The Builder Config for the build.
   build_target: Build target of the build.
 
-&mdash; **def [wait\_for\_sync\_chrome\_source\_async](/recipe_modules/chrome/api.py#197)(self):**
+&mdash; **def [wait\_for\_sync\_chrome\_source\_async](/recipe_modules/chrome/api.py#215)(self):**
 
 Wait for async chrome source sync.
 ### *recipe_modules* / [chromite](/recipe_modules/chromite)
@@ -10698,10 +10700,10 @@ Checks a project conforms to its program's constraints.
 &mdash; **def [RunSteps](/recipe_modules/chrome/examples/cache_sync.py#16)(api):**
 ### *recipes* / [chrome:examples/chrome\_sync](/recipe_modules/chrome/examples/chrome_sync.py)
 
-[DEPS](/recipe_modules/chrome/examples/chrome_sync.py#11): [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/chrome/examples/chrome_sync.py#11): [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/chrome/examples/chrome_sync.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/chrome/examples/chrome_sync.py#23)(api):**
 ### *recipes* / [chrome:examples/full](/recipe_modules/chrome/examples/full.py)
 
 [DEPS](/recipe_modules/chrome/examples/full.py#22): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

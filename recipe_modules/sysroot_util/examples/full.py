@@ -49,7 +49,7 @@ def RunSteps(api, properties):
 
   dep_graph = api.cros_relevance.get_dependency_graph(sysroot, common.Chroot())
   if properties.checkout_chrome:
-    api.chrome.sync_main_async(config, target)
+    api.chrome.sync_chrome_async(config, target)
   api.sysroot_util.install_packages(config, dep_graph,
                                     artifact_build=properties.artifact_build)
 
@@ -175,10 +175,9 @@ def GenTests(api):
       'no-chrome-source-experiment-enabled',
       test_build(cq=True),
       api.properties(FullTestProperties(checkout_chrome=True)),
-      api.buildbucket.ci_build(
-          builder='atlas-cq', experiments=[
-              'chromeos.build_menu.chrome_main_sync',
-          ]),
+      api.buildbucket.ci_build(builder='atlas-cq', experiments=[
+          'chromeos.build_menu.chrome_sync',
+      ]),
       api.cros_build_api.set_api_return(
           'install packages.check chrome source needed',
           'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'),

@@ -10,6 +10,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
     'chrome',
@@ -20,7 +21,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  with api.step.nest('sync chrome'):
+  with api.step.nest('chrome sync check'):
     cache_path = api.path['cleanup'].join('snapshot_chrome')
 
     # Manufacture the minimal builder config.
@@ -37,10 +38,10 @@ def RunSteps(api):
                 ]),
             )))
     with api.context(cwd=cache_path.join('src')):
-      api.chrome.sync_main_async(config,
-                                 build_target=BuildTarget(name='target'))
+      api.chrome.sync_chrome_async(config,
+                                   build_target=BuildTarget(name='target'))
       api.chrome.wait_for_sync_chrome_source_async()
-      api.chrome.delete_main_checkout()
+      api.chrome.delete_chrome_checkout()
 
 
 def GenTests(api):
@@ -49,8 +50,25 @@ def GenTests(api):
       'basic',
       api.post_check(
           post_process.MustRun,
-          'sync chrome.sync chrome source async.sync chrome.gclient sync'),
+          'chrome sync check.sync chrome source async.sync chrome.gclient sync'
+      ),
       api.post_check(post_process.MustRun,
-                     'sync chrome.deleting chrome checkout'),
+                     'chrome sync check.deleting chrome checkout'),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'basic-override-version',
+      api.step_data(
+          'chrome sync check.sync chrome source async.find chrome cache head.read HEAD ref',
+          api.file.read_text("ref: refs/heads/main")),
+      api.step_data(
+          'chrome sync check.sync chrome source async.find chrome cache head.read HEAD hash',
+          api.file.read_text("deadbeef\n")),
+      api.post_check(
+          post_process.StepCommandContains,
+          'chrome sync check.sync chrome source async.sync chrome.gclient sync',
+          ['--revision', 'src@deadbeef']),
+      api.post_check(post_process.DoesNotRun,
+                     'chromite.api.PackageService/GetChromeVersion'),
   )

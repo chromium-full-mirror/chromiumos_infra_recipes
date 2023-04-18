@@ -81,14 +81,15 @@ class ChromeApi(recipe_api.RecipeApi):
   version. That version is obtained by hitting the BuildAPI to read an overlay,
   which requires a sysroot. This module includes some code to support speeding
   up those chrome checkouts by doing the following:
-    - checkout the chrome source on ToT asynchronously (with all refs and tags)
-      (sync_main_async).
+    - checkout the chrome source to the latest commit in the cache asynchronously
+      with all refs and tags (sync_chrome_async).
     - wait for the async main sync (wait_for_sync_chrome_source_async).
-    - delete the checkout of main (delete_main_checkout) for cases where it is
+    - delete the checkout of main (delete_chrome_checkout) for cases where it is
       unused.
 
   This supports the general workflow on all builders of:
-    1.  As early as possible, kick off an async chrome checkout on ToT.
+    1.  As early as possible, kick off an async chrome checkout to the latest
+          commit in the cache.
     2.  Whenever chrome source is definitely going to be needed, block and wait
           for that async checkout to complete.
     3a. If the chrome source code isn't needed, delete the checkout.
@@ -167,8 +168,8 @@ class ChromeApi(recipe_api.RecipeApi):
           self.m.gclient('sync', gclient_sync_cmd, infra_step=True,
                          timeout=self.gclient_sync_timeout_seconds)
 
-  def sync_main_async(self, config: BuilderConfig,
-                      build_target: BuildTarget) -> None:
+  def sync_chrome_async(self, config: BuilderConfig,
+                        build_target: BuildTarget) -> None:
     """Sync chrome source async.
 
     Intentionally checking out the chrome source on main instead of the
@@ -180,14 +181,31 @@ class ChromeApi(recipe_api.RecipeApi):
       build_target: Build target of the build.
     """
 
+    def _get_cache_head() -> Optional[str]:
+      src_dir = self._chrome_root.join('chrome_cache').join(
+          'chromium.googlesource.com-chromium-src')
+      head_file = src_dir.join('HEAD')
+      regex = re.search(r'(?<=ref:\s)\S+',
+                        self.m.file.read_text('read HEAD ref', head_file))
+      if regex:
+        head_ref = regex.group(0)
+      else:
+        return None
+      return self.m.file.read_text('read HEAD hash',
+                                   src_dir.join(head_ref)).replace('\n', '')
+
     def _sync_chrome_source(builder_config: BuilderConfig) -> None:
       with self.m.step.nest('sync chrome source async'):
         chrome_root = self._chrome_root
         self.cache_sync(cache_path=chrome_root, sync=False,
                         step_name="populate chrome cache")
+        with self.m.step.nest('find chrome cache head'):
+          cache_head = _get_cache_head()
+        self.m.easy.set_properties_step(chrome_cache_head=cache_head)
         self.sync(chrome_root, self.m.cros_sdk.chroot, build_target,
                   builder_config.chrome.internal,
-                  cache_dir=chrome_root.join('chrome_cache'), omit_version=True)
+                  cache_dir=chrome_root.join('chrome_cache'),
+                  override_version=cache_head, omit_version=not cache_head)
 
     self._chrome_root = self.m.path['start_dir'].join('chrome')
     self._parallel_runner = self.m.future_utils.create_parallel_runner()
@@ -199,17 +217,19 @@ class ChromeApi(recipe_api.RecipeApi):
     if self._parallel_runner:
       self._parallel_runner.wait_for_and_throw()
 
-  def delete_main_checkout(self) -> None:
+  def delete_chrome_checkout(self) -> None:
     """Delete unnecessary chrome checkout.
 
-    Allows to delete the chrome source synced in sync_main_async() function when it
+    Allows to delete the chrome source synced in sync_chrome_async() function when it
     turns out to be unnecessary for the build.
     """
     if self._chrome_root:
       self.m.file.rmtree('deleting chrome checkout', self._chrome_root)
 
   def sync(self, chrome_root: Path, chroot: Chroot, build_target: BuildTarget,
-           internal: bool, cache_dir: str, omit_version: bool = False) -> None:
+           internal: bool, cache_dir: str,
+           override_version: Optional[str] = None,
+           omit_version: bool = False) -> None:
     """Sync Chrome source code.
 
     Must be run with cwd inside a chromiumos source root.
@@ -220,10 +240,13 @@ class ChromeApi(recipe_api.RecipeApi):
       build_target: Build target of the build.
       internal: True for internal checkout.
       cache_dir: Path of the chrome cache.
+      override_version: Specific git ref/hash to sync to.
       omit_version: Omit the version from the sync command. Defaults to False.
     """
     with self.m.step.nest('sync chrome') as pres:
-      if omit_version:
+      if override_version:
+        version = override_version
+      elif omit_version:
         version = None
       else:
         if self._version or self._deps_cas:

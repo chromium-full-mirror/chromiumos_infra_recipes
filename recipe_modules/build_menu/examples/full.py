@@ -263,13 +263,11 @@ def GenTests(api):
       }))
 
   yield api.build_menu.test(
-      'chrome-main-experiment-on',
+      'chrome-sync-experiment-on',
       api.properties(FullProperties(no_sysroot=True)),
-      api.buildbucket.ci_build(
-          builder='atlas-cq', experiments=[
-              'chromeos.build_menu.chrome_main_sync',
-          ]),
-      api.post_check(post_process.StepSuccess, 'sync chrome source async'),
+      api.buildbucket.ci_build(builder='atlas-cq', experiments=[
+          'chromeos.build_menu.chrome_sync',
+      ]), api.post_check(post_process.StepSuccess, 'sync chrome source async'),
       api.post_process(post_process.DropExpectation), input_properties=({
           '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
       }))
