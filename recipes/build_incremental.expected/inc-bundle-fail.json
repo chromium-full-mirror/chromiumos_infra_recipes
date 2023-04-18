@@ -3108,12 +3108,20 @@
   },
   {
     "cmd": [
-      "repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
       "file://[CLEANUP]/tmp_tmp_1/snapshot.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -5289,12 +5297,20 @@
   },
   {
     "cmd": [
-      "repo",
+      "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
       "file://[CLEANUP]/tmp_tmp_1/snapshot.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"

@@ -48,6 +48,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
 
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
+  repo_path = str(api.repo.repo_path)
+
   api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
 
   # Get old snapshot hash.
@@ -60,13 +62,14 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   # Rewind the source to old snapshot.
   api.step(f"Revert manifest to {snapshot_delta} snapshot",
            ["git", "-C", manifest_internal_tempdir, "checkout", delta_hash])
-  api.step(
-      f"Apply {snapshot_delta} manifest snapshot",
-      [
-          "repo", "init", "--standalone-manifest",
-          f"file://{manifest_internal_tempdir}/snapshot.xml"
-      ],
-  )
+  with api.repo.m.depot_tools.on_path():
+    api.step(
+        f"Apply {snapshot_delta} manifest snapshot",
+        [
+            repo_path, "init", "--standalone-manifest",
+            f"file://{manifest_internal_tempdir}/snapshot.xml"
+        ],
+    )
   api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                 retry_fetches=3, force_remove_dirty=True)
 
@@ -83,14 +86,14 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
           "git", "-C", manifest_internal_tempdir, "checkout",
           snapshot_branch_name
       ])
-
-      api.step(
-          "Apply latest manifest snapshot",
-          [
-              "repo", "init", "--standalone-manifest",
-              f"file://{manifest_internal_tempdir}/snapshot.xml"
-          ],
-      )
+      with api.repo.m.depot_tools.on_path():
+        api.step(
+            "Apply latest manifest snapshot",
+            [
+                repo_path, "init", "--standalone-manifest",
+                f"file://{manifest_internal_tempdir}/snapshot.xml"
+            ],
+        )
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                     retry_fetches=3, force_remove_dirty=True)
 
