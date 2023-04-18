@@ -7,8 +7,10 @@ from PB.recipe_modules.chromeos.dlc_utils.dlc_utils import (DlcUtilsProperties)
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/raw_io',
+    'recipe_engine/step',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

@@ -2123,7 +2123,7 @@ Returns:
 Initializes the module.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
-[DEPS](/recipe_modules/cros_artifacts/__init__.py#9): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_artifacts/__init__.py#9): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -2152,7 +2152,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#982)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#992)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -2167,7 +2167,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1016)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1026)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -2196,14 +2196,14 @@ Args:
 Returns:
   (bool) whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#959)(self, properties: List[UploadedArtifacts]):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#969)(self, properties: List[UploadedArtifacts]):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1036)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1046)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -2224,7 +2224,7 @@ Returns:
   is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1205)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1215)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -2237,7 +2237,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1173)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1183)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2304,7 +2304,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#913)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#923)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -5101,23 +5101,24 @@ Args:
 A context wrapper for track().
 ### *recipe_modules* / [dlc\_utils](/recipe_modules/dlc_utils)
 
-[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [DlcUtilsApi](/recipe_modules/dlc_utils/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [DlcUtilsApi](/recipe_modules/dlc_utils/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module handle special operations around DLCs.
 
-&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#23)(self, gs_image_dir):**
+&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#53)(self, path: str, use_local_path: Optional[bool]=False):**
 
-Retrieves a list of DLCs in the provided path.
+Retrieves a list of DLCs in the provided local or GS path.
 
 Args:
-  gs_image_dir: the GS location to search inside.
+  path: Location to search for DLCs.
+  use_local_path: Whether the path is local (vs. GS).
 
 Returns:
-  List[str] of fully qualified GS paths of DLCs within the path.
+  List of fully qualified paths of DLCs within the path.
 ### *recipe_modules* / [dut\_interface](/recipe_modules/dut_interface)
 
 PYTHON_VERSION_COMPATIBILITY: PY3
@@ -11302,11 +11303,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#20)(api):**
 ### *recipes* / [cros\_artifacts:tests/upload\_attestations](/recipe_modules/cros_artifacts/tests/upload_attestations.py)
 
-[DEPS](/recipe_modules/cros_artifacts/tests/upload_attestations.py#22): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_artifacts/tests/upload_attestations.py#22): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_attestations.py#32)(api, exclude_image_archives):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_attestations.py#33)(api, exclude_image_archives):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
 [DEPS](/recipe_modules/cros_branch/examples/full.py#9): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12398,17 +12399,17 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/disk_usage/examples/full.py#14)(api):**
 ### *recipes* / [dlc\_utils:tests/get\_dlcs\_in\_path](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py)
 
-[DEPS](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#11): [dlc\_utils](#recipe_modules-dlc_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#11): [dlc\_utils](#recipe_modules-dlc_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Tests to verify dlc_utils.get_dlcs_in_path.
 
-&mdash; **def [RunSteps](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#25)(api, expected_locations):**
+&mdash; **def [RunSteps](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#26)(api, properties):**
 
-&mdash; **def [mock\_dlc](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#90)(api):**
+&mdash; **def [mock\_dlc](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#122)(api):**
 
-&mdash; **def [mock\_dlc\_scaling](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#108)(api, failed=False):**
+&mdash; **def [mock\_dlc\_scaling](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#140)(api, failed=False):**
 ### *recipes* / [dupit](/recipes/dupit.py)
 
 [DEPS](/recipes/dupit.py#17): [cros\_dupit](#recipe_modules-cros_dupit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -687,6 +687,38 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.Find DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/artifacts_tmp_1/dlc",
+      "--recursive"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.Find DLCs.list local DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -697,9 +729,9 @@
       "[CLEANUP]/artifacts_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "infra_step": true,
-    "name": "upload artifacts.Compute file hash",
+    "name": "upload artifacts.generate provenance.Compute file hash",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
     ]
   },
@@ -716,9 +748,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "name": "upload artifacts.ensure_installed",
+    "name": "upload artifacts.generate provenance.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -741,9 +773,9 @@
       "-gcs-uri",
       "gs://test-bucket/builder/R99-1234.56.0-101-/chromiumos_base_image.tar.xz"
     ],
-    "name": "upload artifacts.snoop: report_gcs",
+    "name": "upload artifacts.generate provenance.snoop: report_gcs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

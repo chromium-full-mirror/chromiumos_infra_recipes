@@ -9620,6 +9620,13 @@
     "name": "publish DLCs to pubsub"
   },
   {
+    "cmd": [],
+    "name": "publish DLCs to pubsub.Find DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
@@ -9647,10 +9654,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "publish DLCs to pubsub.gsutil ls dlc",
+    "name": "publish DLCs to pubsub.Find DLCs.gsutil ls dlc",
     "timeout": 300,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text[gsutil ls results]@@@"
     ]
   },

@@ -1,0 +1,19 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.dlc_utils.tests;
+
+message DlcUtilsTestProperties {
+
+  // Paths to DLC locations expected for test case.
+  repeated string expected_locations = 1;
+
+  // DLC path to pull DLCs from.
+  string dlc_path = 2;
+
+  // Whether dlc_path is a local path (vs. a GS path).
+  bool use_local_path = 3;
+}

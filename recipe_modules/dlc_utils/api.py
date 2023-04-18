@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import List, Optional
+
 from recipe_engine import recipe_api
 
 # Number of seconds to wait on gsutil ops.
@@ -20,32 +22,60 @@ class DlcUtilsApi(recipe_api.RecipeApi):
     self._dlc_directories = properties.dlc_directories or DEFAULT_DLC_DIRECTORIES
     self._dlc_file_names = properties.dlc_file_names or DEFAULT_DLC_FILE_NAMES
 
-  def get_dlcs_in_path(self, gs_image_dir):
-    """Retrieves a list of DLCs in the provided path.
+  def _get_gs_recursive_uri(self, gs_image_dir: str, dlc_dir: str) -> str:
+    """Returns GS path to use for listing DLCs."""
+    return self.m.path.join(gs_image_dir, dlc_dir, '**')
+
+  def _get_local_path(self, local_artifact_path: str, dlc_dir: str) -> str:
+    """Returns local path to use for listing DLCs."""
+    return self.m.path.join(local_artifact_path, dlc_dir)
+
+  def _list_gs_dlcs(self, recursive_uri: str, dlc_dir: str) -> List[str]:
+    """Returns list of DLCs from provided GS path."""
+    gsutil_ls_stdout = self.m.raw_io.output_text(name='gsutil ls results',
+                                                 add_output_log=True)
+    listing = self.m.gsutil.list(
+        recursive_uri,
+        name="ls {}".format(dlc_dir),
+        timeout=GSUTIL_TIMEOUT_SECONDS,
+        stdout=gsutil_ls_stdout,
+        # Be ok with empty/missing directories.
+        ok_ret=(0, 1))
+    return listing.stdout.split()
+
+  def _list_local_dlcs(self, full_dlc_dir: str) -> List[str]:
+    """Returns list of DLCs from provided local path."""
+    full_dlc_dir = self.m.path.abs_to_path(full_dlc_dir)
+    listed_files = self.m.file.listdir('list local DLCs', full_dlc_dir,
+                                       recursive=True)
+    return [str(file) for file in listed_files]
+
+  def get_dlcs_in_path(self, path: str,
+                       use_local_path: Optional[bool] = False) -> List[str]:
+    """Retrieves a list of DLCs in the provided local or GS path.
 
     Args:
-      gs_image_dir: the GS location to search inside.
+      path: Location to search for DLCs.
+      use_local_path: Whether the path is local (vs. GS).
 
     Returns:
-      List[str] of fully qualified GS paths of DLCs within the path.
+      List of fully qualified paths of DLCs within the path.
     """
-    dlcs = []
-    # Loop through each directory.
-    for dlc_dir in self._dlc_directories:
-      recursive_uri = self.m.path.join(gs_image_dir, dlc_dir, '**')
-      gsutil_ls_stdout = self.m.raw_io.output_text(name='gsutil ls results',
-                                                   add_output_log=True)
-      listing = self.m.gsutil.list(
-          recursive_uri,
-          name="ls {}".format(dlc_dir),
-          timeout=GSUTIL_TIMEOUT_SECONDS,
-          stdout=gsutil_ls_stdout,
-          # Be ok with empty/missing directories.
-          ok_ret=(0, 1))
+    with self.m.step.nest("Find DLCs"):
+      dlc_paths = []
+      # Loop through each directory.
+      for dlc_dir in self._dlc_directories:
+        if use_local_path:
+          list_path = self._get_local_path(path, dlc_dir)
+          listed_files = self._list_local_dlcs(list_path)
+        else:
+          list_path = self._get_gs_recursive_uri(path, dlc_dir)
+          listed_files = self._list_gs_dlcs(list_path, dlc_dir)
 
-      for uri in listing.stdout.split():
-        for filename in self._dlc_file_names:
-          if uri.endswith(filename):
-            dlcs.append(uri)
+        # Only return files that are DLCs.
+        for uri in listed_files:
+          for filename in self._dlc_file_names:
+            if uri.endswith(filename):
+              dlc_paths.append(uri)
 
-    return dlcs
+      return dlc_paths

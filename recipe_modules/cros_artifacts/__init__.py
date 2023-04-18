@@ -23,6 +23,7 @@ DEPS = [
     'cros_source',
     'cros_version',
     'disk_usage',
+    'dlc_utils',
     'easy',
     'failures',
     'metadata',

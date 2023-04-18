@@ -836,10 +836,20 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
             if i in artifacts_to_report
         }
 
-        for abspath, basepath in paths_to_hash.items():
-          file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
-          self.m.bcid_reporter.report_gcs(
-              file_hash, '{uri}/{item}'.format(uri=upload_uri, item=basepath))
+        # Also generate provenance for all DLCs placed locally by BAPI.
+        # TODO(b/277931195): Remove ignore exceptions when stable.
+        with self.m.failures.ignore_exceptions():
+          dlc_paths = self.m.dlc_utils.get_dlcs_in_path(outpath,
+                                                        use_local_path=True)
+          for dlc in dlc_paths:
+            _, dlc_basename = self.m.path.split(dlc)
+            paths_to_hash[dlc] = dlc_basename
+
+        with self.m.step.nest("generate provenance"):
+          for abspath, basepath in paths_to_hash.items():
+            file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
+            self.m.bcid_reporter.report_gcs(
+                file_hash, '{uri}/{item}'.format(uri=upload_uri, item=basepath))
 
       for retries in range(3):
         try:

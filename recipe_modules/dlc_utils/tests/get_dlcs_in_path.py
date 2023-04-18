@@ -6,11 +6,12 @@
 """Tests to verify dlc_utils.get_dlcs_in_path."""
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
+from PB.recipe_modules.chromeos.dlc_utils.tests.test import DlcUtilsTestProperties
 
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -19,24 +20,27 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {'expected_locations': Property(default=[])}
+PROPERTIES = DlcUtilsTestProperties
 
 
-def RunSteps(api, expected_locations):
+def RunSteps(api, properties):
   api.assertions.assertEqual(
-      expected_locations,
-      api.dlc_utils.get_dlcs_in_path(
-          'gs://chromeos-image-archive/brya-release/R108-15132.0.0/'))
+      properties.expected_locations,
+      api.dlc_utils.get_dlcs_in_path(properties.dlc_path,
+                                     use_local_path=properties.use_local_path))
 
 
 def GenTests(api):
 
   yield api.test(
       'pulls-from-default-directory',
-      api.properties(expected_locations=[
-          'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
-          'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img',
-      ]), mock_dlc(api), api.post_process(post_process.DropExpectation))
+      api.properties(
+          expected_locations=[
+              'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
+              'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img',
+          ],
+          dlc_path='gs://chromeos-image-archive/brya-release/R108-15132.0.0/'),
+      mock_dlc(api), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'pulls-from-additional-directories',
@@ -46,7 +50,9 @@ def GenTests(api):
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img',
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/dlc.img',
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/dlc.img',
-          ], **{
+          ],
+          dlc_path='gs://chromeos-image-archive/brya-release/R108-15132.0.0/',
+          **{
               '$chromeos/dlc_utils': {
                   'dlc_directories': ['dlc', 'dlc-scaling']
               }
@@ -59,7 +65,9 @@ def GenTests(api):
           expected_locations=[
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img',
-          ], **{
+          ],
+          dlc_path='gs://chromeos-image-archive/brya-release/R108-15132.0.0/',
+          **{
               '$chromeos/dlc_utils': {
                   'dlc_directories': ['dlc', 'dlc-scaling']
               }
@@ -78,7 +86,9 @@ def GenTests(api):
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/meta/imageloader.json',
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/dlc.img',
               'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/meta/imageloader.json',
-          ], **{
+          ],
+          dlc_path='gs://chromeos-image-archive/brya-release/R108-15132.0.0/',
+          **{
               '$chromeos/dlc_utils': {
                   'dlc_directories': ['dlc', 'dlc-scaling'],
                   'dlc_file_names': ['dlc.img', 'imageloader.json']
@@ -86,10 +96,32 @@ def GenTests(api):
           }), mock_dlc(api), mock_dlc_scaling(api),
       api.post_process(post_process.DropExpectation))
 
+  yield api.test(
+      'local-dlcs',
+      api.properties(
+          expected_locations=[
+              '[CLEANUP]/artifacts/dlc/fake/dlc.img',
+              '[CLEANUP]/artifacts/dlc/fake2/dlc.img',
+          ], dlc_path='[CLEANUP]/artifacts', use_local_path=True),
+      api.step_data(
+          'Find DLCs.list local DLCs',
+          api.file.listdir(['fake/dlc.img', 'fake2/dlc.img']),
+      ), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'no-local-dlcs',
+      api.properties(expected_locations=[], dlc_path='[CLEANUP]/artifacts',
+                     use_local_path=True),
+      api.step_data(
+          'Find DLCs.list local DLCs',
+          api.file.listdir([]),
+      ), api.post_check(post_process.MustRun, 'Find DLCs.list local DLCs'),
+      api.post_process(post_process.DropExpectation))
+
 
 def mock_dlc(api):
   return api.step_data(
-      'gsutil ls dlc', stdout=api.raw_io.output_text("""
+      'Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text("""
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/meta/imageloader.json
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/meta/table
@@ -107,10 +139,10 @@ gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/packa
 
 def mock_dlc_scaling(api, failed=False):
   if failed:
-    return api.step_data('gsutil ls dlc-scaling',
+    return api.step_data('Find DLCs.gsutil ls dlc-scaling',
                          stdout=api.raw_io.output_text(""), retcode=1)
   return api.step_data(
-      'gsutil ls dlc-scaling', stdout=api.raw_io.output_text("""
+      'Find DLCs.gsutil ls dlc-scaling', stdout=api.raw_io.output_text("""
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/meta/imageloader.json
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/meta/table

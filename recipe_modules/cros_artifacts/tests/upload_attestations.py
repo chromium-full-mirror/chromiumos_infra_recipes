@@ -21,6 +21,7 @@ PROPERTIES = {
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
@@ -83,16 +84,38 @@ def GenTests(api):
                   'path': 'chromiumos_base_image.tar.xz',
               }],
           }, sort_keys=True)),
-      api.post_process(post_process.MustRun,
-                       'upload artifacts.snoop: report_gcs'),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
   )
 
   yield api.test(
       'image-archives-does-not-exist',
       api.properties(exclude_image_archives=True),
-      api.post_process(post_process.DoesNotRun,
-                       'upload artifacts.snoop: report_gcs'),
+      api.post_process(
+          post_process.DoesNotRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
       api.post_process(post_process.LogEquals, 'upload artifacts',
                        'report_to_spike',
                        'IMAGE_ARCHIVES not in files_by_artifact'),
   )
+
+  yield api.test(
+      'local-dlcs',
+      api.step_data(
+          'upload artifacts.Find DLCs.list local DLCs',
+          api.file.listdir(['fake/dlc.img', 'fake2/dlc.img']),
+      ),
+      api.post_check(post_process.MustRun,
+                     'upload artifacts.Find DLCs.list local DLCs'),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)'),
+      # Exactly 2 artifacts to report.
+      api.post_process(
+          post_process.DoesNotRun,
+          'upload artifacts.generate provenance.snoop: report_gcs (3)'),
+      api.post_process(post_process.DropExpectation))
