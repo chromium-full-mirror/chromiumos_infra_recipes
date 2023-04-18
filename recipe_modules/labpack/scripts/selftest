@@ -14,6 +14,7 @@ test -f "$(which vpython3)" || die 'no program named vpython3'
 cd -P -- "$(dirname "$0")" || die 'cannot find own dir'
 cd -P -- .. || die 'cannot chdir to parent dir'
 cd -P -- .. || die 'cannot chdir to parent dir'
+cd -P -- .. || die 'cannot chdir to parent dir'
 
 # Run the tests in the labpack directory
 vpython3 ./recipes.py test run --filter='labpack' || die 'labpack tests failed'
