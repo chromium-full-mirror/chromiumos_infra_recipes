@@ -461,7 +461,9 @@
       "-artifact-directory",
       "[CLEANUP]/tast-results_tmp_1",
       "-invocation-link-artifacts",
-      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results,testhaus_logs=https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results",
       "--",
       "echo"
     ],

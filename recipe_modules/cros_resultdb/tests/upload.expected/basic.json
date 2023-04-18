@@ -72,7 +72,9 @@
       "-result-file",
       "./path/to/results.json",
       "-invocation-link-artifacts",
-      "stainless_logs=http://localhost/stainless/url,testhaus_logs=http://localhost/testhaus/url",
+      "stainless_logs=http://localhost/stainless/url",
+      "-testhaus-base-url",
+      "http://localhost/testhaus/url",
       "--",
       "echo"
     ],

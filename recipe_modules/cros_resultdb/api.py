@@ -297,19 +297,27 @@ class ResultDBCommand(recipe_api.RecipeApi):
           '-test-metadata-file',
           config.get('test_metadata_file')
       ]
-    if stainless_url or testhaus_url:
+    if stainless_url or (testhaus_url and
+                         config.get('result_format') != 'tast'):
       pairs = []
       if stainless_url:
         stainless_url_str = bytes.decode(stainless_url) if isinstance(
             stainless_url, bytes) else stainless_url
         pairs.append('stainless_logs=' + stainless_url_str)
-      if testhaus_url:
+      if testhaus_url and config.get('result_format') != 'tast':
         testhaus_url_str = bytes.decode(testhaus_url) if isinstance(
             testhaus_url, bytes) else testhaus_url
         pairs.append('testhaus_logs=' + testhaus_url_str)
       result_adapter += [
           '-invocation-link-artifacts',
           ','.join(pairs),
+      ]
+    if testhaus_url and config.get('result_format') == 'tast':
+      testhaus_url_str = bytes.decode(testhaus_url) if isinstance(
+          testhaus_url, bytes) else testhaus_url
+      result_adapter += [
+          '-testhaus-base-url',
+          testhaus_url,
       ]
 
     # Skylab tests are running in a SSP container, hence the artifact
