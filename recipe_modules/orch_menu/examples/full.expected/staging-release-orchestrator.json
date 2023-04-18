@@ -3956,6 +3956,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run builds.categorize builds by collect handling",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "ls",

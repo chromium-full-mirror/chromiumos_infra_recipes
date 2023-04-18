@@ -3931,6 +3931,22 @@
   },
   {
     "cmd": [],
+    "name": "run builds.categorize builds by collect handling",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@COLLECT@amd64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT@arm64-generic-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT@atlas-cq@@@",
+      "@@@STEP_LOG_END@COLLECT@@@",
+      "@@@STEP_LOG_LINE@COLLECT_AFTER_HW_TEST@cave-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT_AFTER_HW_TEST@coral-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT_AFTER_HW_TEST@eve-cq@@@",
+      "@@@STEP_LOG_END@COLLECT_AFTER_HW_TEST@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

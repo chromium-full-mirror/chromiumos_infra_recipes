@@ -108,9 +108,43 @@ def GenTests(api):
               'expected_collect_after_builders': ['target1-env'],
               'expected_no_collect_builders': ['target2-env'],
           }),
-      api.step_data('get testable builders.docker run',
-                    stdout=api.raw_io.output_text('target3-env')),
-      api.post_check(post_process.MustRun, 'get testable builders'),
+      api.step_data(
+          'categorize builds by collect handling.get testable builders.docker run',
+          stdout=api.raw_io.output_text('target3-env')),
+      api.post_check(
+          post_process.MustRun,
+          'categorize builds by collect handling.get testable builders'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Failure to categorize via CoverageRules default to collecting all
+  # non-critical builds before end-to-end testing.
+  yield api.test(
+      'cq-get-testable-failure',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.try_build(builder='cq-orchestrator',
+                                experiments=[GET_TESTABLE_EXPERIMENT]),
+      api.properties(
+          **{
+              '$chromeos/cros_test_plan_v2':
+                  CrosTestPlanV2Properties(migration_configs=[
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host='chromium-review.googlesource.com',
+                          project='.*',
+                          file_allowlist_regexps=['.*'],
+                          branch_allowlist_regexps=['.*'],
+                      ),
+                  ]),
+              'expected_collect_builders': ['target1-env', 'target3-env'],
+              'expected_collect_after_builders': [],
+              'expected_no_collect_builders': ['target2-env'],
+          }),
+      api.step_data(
+          'categorize builds by collect handling.get testable builders.docker run',
+          retcode=1),
+      api.post_check(
+          post_process.MustRun,
+          'categorize builds by collect handling.get testable builders'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -120,7 +154,9 @@ def GenTests(api):
       'cq-without-experiment',
       api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
-      api.post_check(post_process.DoesNotRun, 'get testable builders'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'categorize builds by collect handling.get testable builders'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -129,13 +165,17 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator',
                                 experiments=[GET_TESTABLE_EXPERIMENT]),
-      api.post_check(post_process.DoesNotRun, 'get testable builders'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'categorize builds by collect handling.get testable builders'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'non-cq',
       api.buildbucket.try_build(builder='postsubmit-orchestrator'),
-      api.post_check(post_process.DoesNotRun, 'get testable builders'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'categorize builds by collect handling.get testable builders'),
       api.post_process(post_process.DropExpectation),
   )

@@ -1400,22 +1400,26 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
-    if (self.m.cq.active and self._use_get_testable_collect_strategy and
-        self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
-      collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
-          builds)
-    else:
-      collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
-          child_specs, builds)
+    with self.m.step.nest('categorize builds by collect handling') as pres:
+      if (self.m.cq.active and self._use_get_testable_collect_strategy and
+          self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
+        collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
+            builds)
+      else:
+        collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
+            child_specs, builds)
 
-    for collect_value, _builds in collect_when_dict.items():
-      for b in _builds:
-        self._builder_to_collect_value[
-            b.builder.
-            builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
-                collect_value)
+      for collect_value, _builds in collect_when_dict.items():
+        for b in _builds:
+          self._builder_to_collect_value[
+              b.builder.
+              builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
+                  collect_value)
 
-    return collect_when_dict
+        pres.logs[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
+            collect_value)] = sorted([b.builder.builder for b in _builds])
+
+      return collect_when_dict
 
   def _categorize_builds_by_collect_handling_using_child_specs(
       self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
@@ -1463,9 +1467,17 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
-    testable_builders = set(
-        self.m.cros_test_proctor.get_testable_builders(self.gerrit_changes,
-                                                       builds))
+    try:
+      testable_builders = set(
+          self.m.cros_test_proctor.get_testable_builders(
+              self.gerrit_changes, builds))
+    except StepFailure:
+      # If there is a failure in calling testplan, default to collecting all
+      # critical child builds. As of now, all non-critical CQ child builds are
+      # special non-image builders which should not need end-to-end testing.
+      testable_builders = [
+          b.builder.builder for b in builds if self.m.buildbucket.is_critical(b)
+      ]
 
     collect_when_dict = defaultdict(list)
     for b in builds:

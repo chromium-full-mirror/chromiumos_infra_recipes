@@ -4394,6 +4394,16 @@
   },
   {
     "cmd": [],
+    "name": "run builds.categorize builds by collect handling",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@COLLECT@eve-release-main@@@",
+      "@@@STEP_LOG_LINE@COLLECT@kukui-release-main@@@",
+      "@@@STEP_LOG_END@COLLECT@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
