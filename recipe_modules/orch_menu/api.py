@@ -39,6 +39,9 @@ _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
 
+GET_TESTABLE_EXPERIMENT = 'chromeos.orch_menu.get_testable_collect_strategy'
+
+
 class BuildsStatus():
   """The running status of the builds.
 
@@ -155,6 +158,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
+    # Identify testable builders using coverage rules.
+    self._use_get_testable_collect_strategy = (
+        GET_TESTABLE_EXPERIMENT in self.m.cros_infra_config.experiments)
 
     self._build_poller_cipd_package = (
         self._properties.build_poller_cipd_package.encode('utf-8') or
@@ -913,17 +919,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     self.add_child_info_to_output_property()
 
-    collect_when_dict = defaultdict(list)
-    child_specs_dict = {cs.name: cs for cs in child_specs}
-    child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
-    for b in existing_builds:
-      collect_value = self._collect_value(b, child_specs_dict,
-                                          child_targets_dict)
-      collect_when_dict[collect_value].append(b)
-      self._builder_to_collect_value[
-          b.builder
-          .builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
-              collect_value)
+    collect_when_dict = self.categorize_builds_by_collect_handling(
+        child_specs, existing_builds)
 
     return (completed_builds +
             collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
@@ -1387,3 +1384,99 @@ class OrchMenuApi(recipe_api.RecipeApi):
       self.m.easy.set_properties_step(
           child_build_info=sorted(child_build_info,
                                   key=lambda b: b['builder']['builder']))
+
+  def categorize_builds_by_collect_handling(
+      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
+      builds: List[build_pb2.Build]
+  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
+            List[build_pb2.Build]]:
+    """Group builds by CollectHandling value.
+
+    Args:
+      child_specs: The list of ChildSpecs used for build planning.
+      builds: The list of builds spawned by this CQ run.
+
+    Returns:
+      A dict mapping CollectHandling to the list of builds which fall into that
+          category.
+    """
+    if (self.m.cq.active and self._use_get_testable_collect_strategy and
+        self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
+      collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
+          builds)
+    else:
+      collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
+          child_specs, builds)
+
+    for collect_value, _builds in collect_when_dict.items():
+      for b in _builds:
+        self._builder_to_collect_value[
+            b.builder.
+            builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
+                collect_value)
+
+    return collect_when_dict
+
+  def _categorize_builds_by_collect_handling_using_child_specs(
+      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
+      builds: List[build_pb2.Build]
+  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
+            List[build_pb2.Build]]:
+    """Group builds by CollectHandling using the value in their ChildSpec.
+
+    Args:
+      child_specs: The list of ChildSpecs used for build planning.
+      builds: The list of builds spawned by this CQ run.
+
+    Returns:
+      A dict mapping CollectHandling to the list of builds which fall into that
+          category.
+    """
+    collect_when_dict = defaultdict(list)
+    child_specs_dict = {cs.name: cs for cs in child_specs}
+    child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
+    for b in builds:
+      collect_value = self._collect_value(b, child_specs_dict,
+                                          child_targets_dict)
+      collect_when_dict[collect_value].append(b)
+    return collect_when_dict
+
+  def _categorize_builds_by_collect_handling_using_coverage_rules(
+      self, builds: List[build_pb2.Build]
+  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
+            List[build_pb2.Build]]:
+    """Group builds by CollectHandling using CoverageRules.
+
+    Use the relevant CoverageRules for the Gerrit Changes applied to the CQ
+    run and the criticality of the builders to group builds based on when they
+    should be collected.
+
+    Groupings:
+      * COLLECT: Build is testable in this run.
+      * COLLECT_AFTER_HW_TESTS: Build is critical but not testable.
+      * NO_COLLECT: Build is neither critical nor testable.
+
+    Args:
+      builds: The list of builds spawned by this CQ run.
+
+    Returns:
+      A dict mapping CollectHandling to the list of builds which fall into that
+          category.
+    """
+    testable_builders = set(
+        self.m.cros_test_proctor.get_testable_builders(self.gerrit_changes,
+                                                       builds))
+
+    collect_when_dict = defaultdict(list)
+    for b in builds:
+      if b.builder.builder in testable_builders:
+        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT].append(
+            b)
+      elif self.m.buildbucket.is_critical(b):
+        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec
+                          .COLLECT_AFTER_HW_TEST].append(b)
+      else:
+        collect_when_dict[
+            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT].append(b)
+
+    return collect_when_dict
