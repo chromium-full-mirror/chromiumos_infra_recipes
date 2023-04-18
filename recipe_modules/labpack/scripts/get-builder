@@ -1,0 +1,28 @@
+#!/bin/bash
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Sample Usage:
+#   ./get-builder b22222222222222
+
+# This script gets the JSON defining a build with the scheduling deadline
+# removed.
+
+die() { 1>&2 printf '%s\n' "$@"; exit 1; }
+
+test -n "$1" || die 'must provide build'
+
+led get-build "$1" | python3 -m json.tool | awk '
+/"deadline"/ && c == 0 {
+  c++;
+  printf("%s\n", "\"deadline\": null,");
+  next;
+}
+/"deadline"/ {
+  printf("%s\n", "script ../labpack/scripts/getbuild is broken! multiple deadline fields!") >> /dev/stderr;
+}
+1 {
+  printf("%s\n", $0);
+}
+'

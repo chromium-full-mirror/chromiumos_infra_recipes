@@ -1,0 +1,43 @@
+#!/bin/bash
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Sample Usage:
+#   ./run-build-with-current-recipes b22222222222222
+
+# This script pulls down a build via get-build,
+# writes it to a temporary file,
+# drops the user into an editor so that they can make changes to the build
+# and then launches the build again.
+
+# The build can be aborted by making the file invalid JSON or making it empty.
+
+die() { 1>&2 printf '%s\n' "$@"; exit 1; }
+
+test -n "$1" || die 'must provide build'
+
+td="$(mktemp -d)" || die 'failed to make temporary directory'
+
+./get-builder "$1" > "$td"/job.json || die 'failed to create file'
+test -f "$td"/job.json || die 'file does not exist'
+
+edit_file() {
+  ${VISUAL-vim} "$td"/job.json
+  if test -z "$(cat <"$td"/job.json)"; then
+    return 0
+  fi
+  if python3 -m json.tool "$td"/job.json >/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
+edit_file || die 'failed to edit file'
+
+if test -z "$(cat <"$td"/job.json)"; then
+  1>&2 printf '%s\n' "file empty: launch aborted"
+  exit 0
+fi
+
+cat "$td"/job.json | led edit-recipe-bundle | led launch
