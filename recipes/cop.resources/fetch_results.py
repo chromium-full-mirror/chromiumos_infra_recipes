@@ -8,11 +8,9 @@
 import argparse
 import sys
 import json
-import luci_auth
 
 from google.cloud import storage
 from google.cloud.devtools import cloudbuild_v1
-import google.oauth2.credentials
 
 MAX_COMMENT_SIZE = 16000
 
@@ -53,10 +51,9 @@ def get_step_logs(storage_client, build, step_id, result):
   return log
 
 
-def get_build_info(credentials, project, build_id):
+def get_build_info(project, build_id):
   """Return information about a Google Cloud Build."""
-  client = cloudbuild_v1.services.cloud_build.CloudBuildClient(
-      credentials=credentials)
+  client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
   return client.get_build(project_id=project, id=build_id)
 
 
@@ -69,10 +66,8 @@ def main(args):
 
   input_json = json.load(args.input_json)
 
-  credentials = google.oauth2.credentials.Credentials(luci_auth.get_token())
-  build = get_build_info(credentials, input_json['project'],
-                         input_json['build_id'])
-  storage_client = storage.Client(credentials=credentials)
+  build = get_build_info(input_json['project'], input_json['build_id'])
+  storage_client = storage.Client()
 
   result_logs = get_result_logs(storage_client, build)
 

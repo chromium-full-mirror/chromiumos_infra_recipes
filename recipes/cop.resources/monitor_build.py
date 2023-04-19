@@ -9,22 +9,23 @@ import argparse
 import sys
 import json
 import time
-import luci_auth
 
 from google.cloud.devtools import cloudbuild_v1
-import google.oauth2.credentials
+
+POLL_RATE_PERIOD_SEC = 10
 
 
-def monitor_status(client, project, build_id):
+def monitor_status(project, build_id):
   """Poll Google Cloud Build for an id until a Build is completed."""
 
+  client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
   while True:
     build = client.get_build(project_id=project, id=build_id)
     status = build.Status(build.status).name
-
     if status not in ('WORKING', 'QUEUED'):
       return status
-    time.sleep(10)
+
+    time.sleep(POLL_RATE_PERIOD_SEC)
 
 
 def main(args):
@@ -36,12 +37,7 @@ def main(args):
 
   input_json = json.load(args.input_json)
 
-  credential = google.oauth2.credentials.Credentials(
-      luci_auth.get_token(minutes=25))
-  client = cloudbuild_v1.services.cloud_build.CloudBuildClient(
-      credentials=credential)
-
-  status = monitor_status(client, input_json['project'], input_json['build_id'])
+  status = monitor_status(input_json['project'], input_json['build_id'])
 
   out = {'status': status}
   json.dump(out, args.output_json)
