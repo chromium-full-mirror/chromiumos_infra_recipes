@@ -110,7 +110,7 @@ def GenTests(api):
           }),
       api.step_data(
           'categorize builds by collect handling.get testable builders.docker run',
-          stdout=api.raw_io.output_text('target3-env')),
+          stdout=api.raw_io.output_text('target3-env target2-env')),
       api.post_check(
           post_process.MustRun,
           'categorize builds by collect handling.get testable builders'),

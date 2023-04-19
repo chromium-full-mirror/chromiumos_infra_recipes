@@ -1456,9 +1456,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
     should be collected.
 
     Groupings:
+      * NO_COLLECT: Build is non-critical.
       * COLLECT: Build is testable in this run.
       * COLLECT_AFTER_HW_TESTS: Build is critical but not testable.
-      * NO_COLLECT: Build is neither critical nor testable.
 
     Args:
       builds: The list of builds spawned by this CQ run.
@@ -1481,14 +1481,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     collect_when_dict = defaultdict(list)
     for b in builds:
-      if b.builder.builder in testable_builders:
-        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT].append(
-            b)
-      elif self.m.buildbucket.is_critical(b):
-        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec
-                          .COLLECT_AFTER_HW_TEST].append(b)
-      else:
+      if not self.m.buildbucket.is_critical(b):
         collect_when_dict[
             BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT].append(b)
+      elif b.builder.builder in testable_builders:
+        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT].append(
+            b)
+      else:
+        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec
+                          .COLLECT_AFTER_HW_TEST].append(b)
 
     return collect_when_dict
