@@ -734,7 +734,7 @@ def _ensure_non_critical_dont_retry(api, requests):
   Args:
     * request: ExecutionRequests payload.
   """
-  if api.cros_tags.get_values('user_agent') != "suite_scheduler":
+  if "suite_scheduler" not in api.cros_tags.get_values('user_agent'):
     for _, request in requests.items():
       if request.params.test_execution_behavior != Request.Params.TestExecutionBehavior.CRITICAL:
         request.params.retry.max = 0
@@ -1332,7 +1332,7 @@ def _software_dependencies_with_milestone_before_108():
 def _test_request(request_name_tag, build_target="foo-build-target",
                   scheduling=_test_scheduling(), individual_test=False,
                   tag_criteria=None, seed=None,
-                  software_deps=_default_software_dependencies()):
+                  software_deps=_default_software_dependencies(), retries=0):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1347,6 +1347,10 @@ def _test_request(request_name_tag, build_target="foo-build-target",
           request_name_tag),
       scheduling=scheduling,
       software_dependencies=software_deps,
+      retry=Request.Params.Retry(
+          max=retries,
+          allow=retries > 0,
+      ),
   )
   if individual_test:
     return Request(
@@ -1364,11 +1368,12 @@ def _test_request(request_name_tag, build_target="foo-build-target",
 # pylint: disable=dangerous-default-value
 def _cft_test_request(request_name, build_target="foo-build-target",
                       individual_test=False, tag_criteria=None, seed=None,
-                      software_deps=_default_software_dependencies()):
+                      software_deps=_default_software_dependencies(),
+                      retries=0):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
                            tag_criteria=tag_criteria, seed=seed,
-                           software_deps=software_deps)
+                           software_deps=software_deps, retries=retries)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -2756,6 +2761,72 @@ def GenTests(api):
               requests={
                   'default': _cft_test_request_without_container_metadata('foo')
               }, config=_test_config('foo'))),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'suite-scheduler-user-agents-retain-non-critical-retries',
+      _set_build(bid=42, tags={'user_agent': 'suite_scheduler'}),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]),
+                          retries=1)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _empty_cft_enumerate_response(api),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'))
+              }),
+      ),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'non-suite-scheduler-user-agents-does-not-retain-non-critical-retries',
+      _set_build(bid=42, tags={'user_agent': 'example_agent'}),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]),
+                          retries=1)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _empty_cft_enumerate_response(api),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'execute',
+          ExecuteResponses(
+              tagged_responses={
+                  'default':
+                      ExecuteResponse(
+                          state=TaskState(life_cycle='LIFE_CYCLE_COMPLETED',
+                                          verdict='VERDICT_FAILED'))
+              }),
+      ),
       status='FAILURE',
   )
 
