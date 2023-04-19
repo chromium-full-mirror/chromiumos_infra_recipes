@@ -42,6 +42,19 @@ def RunSteps(api):
       api.urls.get_skylab_result_link_map(skylab_result),
       {'suite page': 'skylab.whatever'})
 
+  # Case when the task is never scheduled so the result does not have a url.
+  response = ExecuteResponse()
+  child_result1 = response.task_results.add()
+  child_result1.state.verdict = TaskState.VERDICT_FAILED
+  child_result1.state.life_cycle = TaskState.LIFE_CYCLE_REJECTED
+  child_result1.name = 'first test'
+  skylab_result = api.skylab_results.test_api.skylab_result(
+      task=skylab_task, child_results=response.task_results,
+      status=common_pb2.FAILURE)
+  api.assertions.assertEqual(
+      api.urls.get_skylab_result_link_map(skylab_result),
+      {'first test (never ran, due to no DUT capacity)': 'skylab.whatever'})
+
   response = ExecuteResponse()
   child_result1 = response.task_results.add()
   child_result1.state.verdict = TaskState.VERDICT_FAILED

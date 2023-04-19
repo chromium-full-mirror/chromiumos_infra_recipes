@@ -83,11 +83,11 @@ class UrlsApi(recipe_api.RecipeApi):
       Dict of {title: URL} for the Skylab swarming task parge if the suite
       succeeded, or entries of just the failed tests.
     """
+    ctp_url = self.get_skylab_task_url(skylab_result.task)
     failure_verdicts = (TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED)
     if (skylab_result.status == common_pb2.SUCCESS or
         not skylab_result.child_results):
-      link_url = self.get_skylab_task_url(skylab_result.task)
-      return {'suite page': link_url}
+      return {'suite page': ctp_url}
 
     passed_at_least_once = {
         tr.name
@@ -129,11 +129,18 @@ class UrlsApi(recipe_api.RecipeApi):
             if case_name == 'tast' and tc.human_readable_summary:
               case_name += ': ' + tc.human_readable_summary
             link_map[case_name] = task_result.task_url
-      else:
+      # If per-test case results are not available, return shard-level results.
+      elif task_result.task_url:
         # When per-test results are not available.
         task_name = (
             task_result.name + self.get_state_suffix(task_result.state))
         link_map[task_name] = task_result.task_url
+      # If the task is never scheduled there will be no task url (e.g. rejected
+      # dimensions). In this case, link to the CTP page.
+      else:
+        task_name = (
+            task_result.name + self.get_state_suffix(task_result.state))
+        link_map[task_name] = ctp_url
 
     return link_map
 

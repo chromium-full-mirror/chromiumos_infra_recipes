@@ -9921,7 +9921,7 @@ Args:
 Returns:
   Dict of {title: URL} pointing to the build's MILO page.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_bucket\_url](/recipe_modules/urls/api.py#177)(gs_bucket: str, gs_path: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_bucket\_url](/recipe_modules/urls/api.py#184)(gs_bucket: str, gs_path: str):**
 
 Returns the Cloud Storage Browser URL given a bucket and path.
 
@@ -9932,7 +9932,7 @@ Args:
 Returns:
   URL pointing to the Cloud Storage Browser page matching the input.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#162)(gs_uri):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#169)(gs_uri):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
@@ -9942,7 +9942,7 @@ Args:
 Returns:
   URL pointing to the Cloud Storage Browser page for the object.
 
-&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#193)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
+&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#200)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
 
 Returns the LogDog URL for a step's log.
 
@@ -9986,7 +9986,7 @@ Args:
 Returns:
   URL pointing to the Swarming task page for the Skylab task.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#140)(task_state: TaskState):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#147)(task_state: TaskState):**
 
 Returns a string suffix to supply info about the task.
 
