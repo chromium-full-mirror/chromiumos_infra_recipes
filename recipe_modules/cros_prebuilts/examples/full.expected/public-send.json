@@ -2179,7 +2179,8 @@
     },
     "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123.git_cl land",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

@@ -786,13 +786,24 @@ class GerritApi(RecipeApi):
         self.m.git_cl('issue', [gerrit_change.change])
         # If retries are requested, attempt `git cl land` until it lands or we
         # run out of tries.
+        # TODO(b/278083716): Replace with exponential_retries decorator.
         for attempt in range(retries + 1):
-          try:
-            self.m.git_cl('land', ['-f', gerrit_change.change])
+          cmd = self.m.git_cl(
+              'land', ['-f', gerrit_change.change],
+              stderr=self.m.raw_io.output_text(add_output_log=True),
+              ok_ret='any')
+          # Manually check the retcode so that we can capture stderr and filter
+          # out select errors.
+          if cmd.retcode == 0:
             return
-          except StepFailure as ex:
-            if attempt == retries:
-              raise ex
+          # If the change is already merged we've accomplished what we set out
+          # to and don't need to raise an error.
+          if 'change is merged' in cmd.stderr:
+            pres.step_text = 'change is already merged'
+            return
+          if attempt == retries:
+            raise StepFailure('Failed to land change (retcode: %d)' %
+                              cmd.retcode)
 
   def query_changes(self, host: str, query_params: List[Tuple[str, str]],
                     label_constraints: Optional[List[LabelConstraint]] = None

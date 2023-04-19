@@ -6135,7 +6135,7 @@ Args:
 Returns:
   The change description.
 
-&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#831)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#842)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -6147,7 +6147,7 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&mdash; **def [get\_change\_topic](/recipe_modules/gerrit/api.py#863)(self, change_num: int, gerrit_host: str, test_data: Optional[str]=None):**
+&mdash; **def [get\_change\_topic](/recipe_modules/gerrit/api.py#874)(self, change_num: int, gerrit_host: str, test_data: Optional[str]=None):**
 
 Get the topic of the given Gerrit change.
 
@@ -6181,7 +6181,7 @@ Return a Gerrit change URL, parsed from a GerritChange proto.
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#797)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#808)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -12666,11 +12666,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/set_change_labels.py#19)(api):**
 ### *recipes* / [gerrit:examples/submit\_change](/recipe_modules/gerrit/examples/submit_change.py)
 
-[DEPS](/recipe_modules/gerrit/examples/submit_change.py#9): [gerrit](#recipe_modules-gerrit)
+[DEPS](/recipe_modules/gerrit/examples/submit_change.py#9): [gerrit](#recipe_modules-gerrit), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#31)(api):**
 ### *recipes* / [git:examples/bad\_ref](/recipe_modules/git/examples/bad_ref.py)
 
 [DEPS](/recipe_modules/git/examples/bad_ref.py#5): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

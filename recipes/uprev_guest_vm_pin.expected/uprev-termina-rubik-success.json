@@ -2830,7 +2830,8 @@
     },
     "name": "upreving pin for branch main.generate CL.submit CL 1.git_cl land",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -3595,7 +3596,8 @@
     },
     "name": "upreving pin for branch release-R108-15183.B.generate CL.submit CL 1.git_cl land",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

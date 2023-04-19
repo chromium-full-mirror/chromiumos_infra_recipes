@@ -192,7 +192,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 }
                 self.m.gerrit.set_change_labels_remote(change, labels)
                 self.m.gerrit.submit_change(
-                    change, project_path=manifest_versions_checkout)
+                    change, project_path=manifest_versions_checkout, retries=3)
 
         manifest_gs_path = ''
         if gs_location:
