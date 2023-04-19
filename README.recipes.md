@@ -8399,7 +8399,7 @@ A module to create local uprevs for PUpr.
 
 Initialize the module's attributes.
 
-&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#268)(self, open_changes: List[GerritChange], topic: str, change_num: int):**
+&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#311)(self, open_changes: List[GerritChange], topic: str, change_num: int):**
 
 Create a new uprev patch (locally) for change_id.
 
@@ -8429,13 +8429,13 @@ Args:
 TODO(b/262302698): All of these attributes should be moved from
 generator.proto to pupr_local_uprev.proto.
 
-&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#77)(self, versions: List[UprevVersionedPackageRequest.GitRef], topic: str, change_id: Optional[str]=None):**
+&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#77)(self, versions: List[UprevVersionedPackageRequest.GitRef], topic: str, change_id: str=''):**
 
 Try to uprev the specified packages. If successful, commit the uprev.
 
 Args:
   versions: The versions to consider for an update.
-  change_id: If not None, set Change-Id to the commit message, so that the
+  change_id: If given, set Change-Id to the commit message, so that the
     commit is uploaded as a new patch set of an existing Change. When this
     is set, the uprev should not span multiple repositories.
   topic: A short string with which to tag all generated commits.
@@ -8446,7 +8446,7 @@ Returns:
   If not all packages are uprevved and allow_partial_uprev==False, return
     None. This signifies that the PUpr run should terminate immediately.
 
-&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#257)(self):**
+&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#300)(self):**
 
 Uprev the SDK on the local filesystem, and commit the uprev.
 
