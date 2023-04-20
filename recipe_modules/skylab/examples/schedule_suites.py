@@ -3,17 +3,21 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from typing import Callable, Dict
+
 from google.protobuf import duration_pb2
 
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.lab import license as license_pb2
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
+from recipe_engine.post_process_inputs import Step
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'cros_test_plan',
     'git_footers',
@@ -58,9 +62,6 @@ def RunSteps(api):
   unit_hw_test_with_license = UnitHwTest(unit=hw_test_unit_with_license,
                                          hw_test=hw_test_with_license)
 
-  qs_account = api.properties.get('qs_account') or 'a_new_quota_account'
-  api.skylab.set_qs_account(qs_account)
-
   # HW Test Unit opted-in to running via container
   hw_test_unit_container = api.cros_test_plan.test_api.hw_test_unit
   hw_test_unit_container.common.builder_name = builder_name
@@ -77,6 +78,10 @@ def RunSteps(api):
       unit=hw_test_unit_container,
       hw_test=hw_test_container,
   )
+
+  api.skylab.set_qs_account('a_new_quota_account')
+  api.skylab.apply_qs_account_overrides(
+      api.buildbucket.build.input.gerrit_changes)
 
   tasks = api.skylab.schedule_suites(
       [
@@ -125,5 +130,18 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(['chromeos.c.d', 'chromeos.e.f'],
                                             'schedule skylab tests v2'))
 
-  yield api.test('unmanaged_qs_account',
-                 api.properties(qs_account='p0_cq_unmanaged'))
+  def verify_qs_account_unmanaged(check: Callable[[bool],
+                                                  bool], steps: Dict[str, Step],
+                                  qs_account: str) -> bool:
+    data = api.json.loads(
+        steps['schedule skylab tests v2.buildbucket.schedule'].stdin)
+    return check('label-quota-account:{}'.format(qs_account) in data['requests']
+                 [0]['scheduleBuild']['properties']['requests']
+                 ['my_first_little_hwtest']['params']['decorations']['tags'])
+
+  yield api.test(
+      'unmanaged_qs_account',
+      api.buildbucket.try_build('cq-orchestrator'),
+      api.git_footers.simulated_get_footers(['p0_cq_unmanaged b/123456789']),
+      api.post_check(verify_qs_account_unmanaged, 'p0_cq_unmanaged'),
+  )

@@ -586,6 +586,7 @@
   * [skylab:examples/schedule_suites_direct_tast_testing](#recipes-skylab_examples_schedule_suites_direct_tast_testing) (Python3 ✅)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites) (Python3 ✅)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg) (Python3 ✅)
+  * [skylab:tests/appy_qs_account_overrides](#recipes-skylab_tests_appy_qs_account_overrides) (Python3 ✅)
   * [skylab:tests/direct_tast_testing_enabled](#recipes-skylab_tests_direct_tast_testing_enabled) (Python3 ✅)
   * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target) (Python3 ✅)
   * [skylab:tests/tests_to_retry](#recipes-skylab_tests_tests_to_retry) (Python3 ✅)
@@ -7670,18 +7671,18 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API providing a menu for orchestrator steps
 
-#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#129)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#128)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1350)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1325)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1194)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1169)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7694,9 +7695,9 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#195)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#193)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1389)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1364)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -7708,13 +7709,13 @@ Returns:
   A dict mapping CollectHandling to the list of builds which fall into that
       category.
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#227)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#225)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#219)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#217)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#173)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#367)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#365)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -7727,27 +7728,27 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#183)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#181)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#187)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#185)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#179)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#177)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#158)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#156)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#199)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#197)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#191)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#189)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#207)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#205)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#215)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#213)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#211)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#209)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#203)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#201)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#700)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#698)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -7761,7 +7762,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1065)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1063)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False, no_nest_final_build_collect: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7782,7 +7783,7 @@ Args:
 Returns:
   The current status of the builds.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#660)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#658)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -7794,18 +7795,18 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#778)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#776)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#993)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#991)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#999)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#997)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -7822,7 +7823,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#251)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#249)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -7837,7 +7838,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#223)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#221)(self):**
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8981,21 +8982,32 @@ Returns
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing commands to Skylab
 
-&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#85)(self):**
+&mdash; **def [apply\_qs\_account\_overrides](/recipe_modules/skylab/api.py#60)(self, gerrit_changes: List[GerritChange]):**
 
-&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#73)(self, uht: UnitHwTest, tast_first_class: bool):**
+Apply any QS account overrides the build is elegible for.
+
+Currently supports overriding the account if any of the Gerrit Changes have
+the 'Testing-Override' footer or if the current build is testing Chrome
+PUpr CL.
+
+Args:
+  gerrit_changes: The gerrit changes applied to the build.
+
+&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#122)(self):**
+
+&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#110)(self, uht: UnitHwTest, tast_first_class: bool):**
 
 Returns whether the hw test is elegible for direct test retries.
 
-&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#57)(self):**
+&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#94)(self):**
 
 Returns the hw tests which ran as Tast first class in the last run.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#129)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#166)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -9012,7 +9024,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#182)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#219)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -9033,11 +9045,11 @@ Args:
 Returns:
   A list of SkylabTasks with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#53)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#56)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#453)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#490)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -13221,11 +13233,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/aggregate_metadata.py#27)(api, properties):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/full.py#21): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/examples/full.py#18): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#44)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#41)(api, properties):**
 ### *recipes* / [orch\_menu:examples/wait\_for\_images](/recipe_modules/orch_menu/examples/wait_for_images.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#10): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -13893,11 +13905,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/direct_test_retry.py#25)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites](/recipe_modules/skylab/examples/schedule_suites.py)
 
-[DEPS](/recipe_modules/skylab/examples/schedule_suites.py#13): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/skylab/examples/schedule_suites.py#16): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#27)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#31)(api):**
 ### *recipes* / [skylab:examples/schedule\_suites\_direct\_tast\_testing](/recipe_modules/skylab/examples/schedule_suites_direct_tast_testing.py)
 
 [DEPS](/recipe_modules/skylab/examples/schedule_suites_direct_tast_testing.py#11): [cros\_test\_plan](#recipe_modules-cros_test_plan), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13919,6 +13931,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#17)(api):**
+### *recipes* / [skylab:tests/appy\_qs\_account\_overrides](/recipe_modules/skylab/tests/appy_qs_account_overrides.py)
+
+[DEPS](/recipe_modules/skylab/tests/appy_qs_account_overrides.py#10): [cros\_tags](#recipe_modules-cros_tags), [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/tests/appy_qs_account_overrides.py#22)(api):**
 ### *recipes* / [skylab:tests/direct\_tast\_testing\_enabled](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py)
 
 [DEPS](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#11): [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

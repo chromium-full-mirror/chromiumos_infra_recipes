@@ -14,6 +14,7 @@ from google.protobuf import json_format
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.test.api.test_suite import TestSuite
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -27,6 +28,8 @@ _DEFAULT_FAILED_RESPONSE = ExecuteResponse(
 _DIRECT_TAST_EXP = 'chromeos.skylab.direct_tast_testing'
 
 _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP = 'tast_first_class_tests'
+
+TESTING_OVERRIDE_FOOTER = 'Testing-Override'
 
 
 class SkylabApi(recipe_api.RecipeApi):
@@ -53,6 +56,40 @@ class SkylabApi(recipe_api.RecipeApi):
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account
+
+  def apply_qs_account_overrides(self, gerrit_changes: List[GerritChange]):
+    """Apply any QS account overrides the build is elegible for.
+
+    Currently supports overriding the account if any of the Gerrit Changes have
+    the 'Testing-Override' footer or if the current build is testing Chrome
+    PUpr CL.
+
+    Args:
+      gerrit_changes: The gerrit changes applied to the build.
+    """
+    testing_override_values = self.m.git_footers.get_footer_values(
+        gerrit_changes, TESTING_OVERRIDE_FOOTER)
+
+    # Buganizer id must be at least 9 digits long.
+    regex = re.compile('^(?P<qs_account>' + self.QS_UNMANAGED_PATTERN +
+                       r')\s+b/\d{9,}\s*$')
+
+    # Pick up only values matching the pattern.
+    qs_accounts = []
+    for testing_override_value in testing_override_values:
+      for match in [regex.search(testing_override_value)]:
+        if match:
+          qs_accounts.append(match.group('qs_account'))
+
+    if qs_accounts:
+      qs_account = sorted(qs_accounts, reverse=True).pop()
+      self.set_qs_account(qs_account)
+    else:
+      # Is the build tagged as overriding the PCQ quota scheduler account?
+      if self.m.cros_tags.has_entry('cq_cl_tag',
+                                    'pupr:chromeos-base/lacros-ash-atomic',
+                                    self.m.buildbucket.build.tags):
+        self.set_qs_account('pupr')
 
   @property
   def last_run_tast_first_class_tests(self) -> List[str]:
