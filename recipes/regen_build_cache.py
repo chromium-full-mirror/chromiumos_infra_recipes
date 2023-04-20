@@ -23,6 +23,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/raw_io',
     'recipe_engine/step',
@@ -43,7 +44,9 @@ def RunSteps(api: RecipeApi):
 
   def _add_and_commit():
     api.git.add(['.'])
-    api.git.commit('Update Metadata Cache')
+    commit_lines = ('Update Metadata Cache', '',
+                    f'Cr-Build-Url: {api.buildbucket.build_url()}')
+    api.git.commit('\n'.join(commit_lines))
 
   def _commit_and_push_metadata(
       overlays: List[RegenBuildCacheResponse.Overlay]) -> None:
