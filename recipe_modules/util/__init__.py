@@ -4,3 +4,7 @@
 # found in the LICENSE file.
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+# The utils module intentionally doesn't depend on any other ChromeOS modules.
+# That way, any module can import it.
+DEPS = ['recipe_engine/path']

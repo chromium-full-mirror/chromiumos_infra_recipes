@@ -37,6 +37,7 @@ DEPS = [
     'easy',
     'key_value_store',
     'src_state',
+    'util',
     'workspace_util',
 ]
 
@@ -111,7 +112,8 @@ class BuildSDKRun:
     response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
     self._toolchain_tarball_paths = []
     for generated_file in response.generated_files:
-      path = self._proto_path_to_recipes_path(generated_file)
+      path = self.m.util.proto_path_to_recipes_path(generated_file,
+                                                    self.m.cros_sdk.chroot_path)
       self._toolchain_tarball_paths.append(path)
       self.m.path.mock_add_file(path)
 
@@ -123,8 +125,8 @@ class BuildSDKRun:
     """
     request = BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
     response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
-    self._sdk_tarball_path = self._proto_path_to_recipes_path(
-        response.sdk_tarball_path)
+    self._sdk_tarball_path = self.m.util.proto_path_to_recipes_path(
+        response.sdk_tarball_path, self.m.cros_sdk.chroot_path)
     self.m.path.mock_add_file(self._sdk_tarball_path)
 
   def _create_sdk_manifest(self) -> None:
@@ -146,8 +148,8 @@ class BuildSDKRun:
         ),
     )
     response = self.m.cros_build_api.SdkService.CreateManifestFromSdk(request)
-    self._sdk_manifest_path = self._proto_path_to_recipes_path(
-        response.manifest_path)
+    self._sdk_manifest_path = self.m.util.proto_path_to_recipes_path(
+        response.manifest_path, self.m.cros_sdk.chroot_path)
     self.m.path.mock_add_file(self._sdk_manifest_path)
 
   def _upload_prebuilts(self) -> None:
@@ -339,34 +341,6 @@ class BuildSDKRun:
         str(source_path), dest_bucket, dest_path, args=args,
         multithreaded=multithreaded, dry_run=self._skip_uploads)
 
-  def _proto_path_to_recipes_path(self, pb2_path: common_pb2.Path) -> Path:
-    """Return a config_types.Path equivalent to the common_pb2.Path.
-
-    Args:
-      pb2_path: A Path, as might be returned by the build API. Must be absolute,
-        and location must be specified as either INSIDE or OUTSIDE.
-
-    Raises:
-      ValueError: If pb2_path.location is OUTSIDE, but pb2_path.path is not
-        relative to one of the recipe anchor points. See
-        recipe_deps/recipe_engine/recipe_modules/path/api.py for more info about
-        those anchor points.
-      AssertionError: If pb2_path.location is INSIDE, and pb2_path.path is not
-        relative to '/'.
-      InfraFailure: If pb2_path.location is not specified as either INSIDE or
-        OUTSIDE.
-    """
-    if pb2_path.location == common_pb2.Path.Location.OUTSIDE:
-      return self.m.path.abs_to_path(pb2_path.path)
-    if pb2_path.location == common_pb2.Path.Location.INSIDE:
-      assert pb2_path.path.startswith('/'), \
-        f'Cannot convert inside path not relative to "/": {pb2_path}'
-      relative_to_chroot = pb2_path.path.lstrip('/')
-      path_parts = relative_to_chroot.split('/')
-      return self.m.cros_sdk.chroot_path.join(*path_parts)
-    raise InfraFailure(
-        f'Cannot process path with unspecified location: {pb2_path}')
-
 
 def GenTests(api: RecipeTestApi):
   # RE_GSUTIL is a regex that looks for a path ending in 'gsutil.py'.
@@ -451,17 +425,6 @@ def GenTests(api: RecipeTestApi):
                      'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
       api.post_process(post_process.DropExpectation),
       status='SUCCESS',
-  )
-
-  yield api.test(
-      'fail-if-unspecified-location',
-      api.cros_build_api.set_api_return(
-          '',
-          'SdkService/BuildSdkTarball',
-          '{"sdk_tarball_path": {"path": "/path/to/sdk.tar.xz"}}',
-      ),
-      api.post_process(post_process.DropExpectation),
-      status='INFRA_FAILURE',
   )
 
   yield api.build_menu.test(

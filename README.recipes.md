@@ -640,7 +640,7 @@
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) (Python3 ✅) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) (Python3 ✅) &mdash; Basic tests for the urls recipe module.
-  * [util:tests/util](#recipes-util_tests_util) (Python3 ✅)
+  * [util:tests/proto_path_to_recipes_path](#recipes-util_tests_proto_path_to_recipes_path) (Python3 ✅)
   * [validate_dirmd](#recipes-validate_dirmd) (Python3 ✅) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
   * [vmlab:examples/full](#recipes-vmlab_examples_full) (Python3 ✅)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full) (Python3 ✅)
@@ -9733,13 +9733,40 @@ Returns:
     For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [util](/recipe_modules/util)
 
+[DEPS](/recipe_modules/util/__init__.py#10): [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module providing importable utilities.
 
-#### **class [UtilApi](/recipe_modules/util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [UtilApi](/recipe_modules/util/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Includable utilities.
+
+&mdash; **def [proto\_path\_to\_recipes\_path](/recipe_modules/util/api.py#20)(self, proto_path: common_pb2.Path, chroot_path: Optional[config_types.Path]=None):**
+
+Return a config_types.Path equivalent to the common_pb2.Path.
+
+Args:
+  proto_path: A Path proto message, as might be returned by the build API.
+    Must be absolute, and location must be specified as either INSIDE or
+    OUTSIDE.
+  chroot_path: The path to the SDK checked out on this builder. Only
+    required when converting an INSIDE path. Normally this path is accessed
+    via self.m.cros_sdk.chroot_path. However, the `util` module
+    intentionally doesn't depend on any ChromeOS modules, so we can't fetch
+    it here.
+
+Raises:
+  ValueError: If proto_path.location is OUTSIDE and proto_path.path is not
+    relative to any recipe anchor point. See the path API for more info
+    info about those anchor points. This exception is raised during
+    self.m.path.abs_to_path().
+  ValueError: If proto_path.location is INSIDE and chroot_path is not given.
+  ValueError: If proto_path.location is INSIDE and proto_path.path is not
+    relative to '/'.
+  ValueError: If proto_path.location is not specified as either INSIDE or
+    OUTSIDE.
 ### *recipe_modules* / [vmlab](/recipe_modules/vmlab)
 
 [DEPS](/recipe_modules/vmlab/__init__.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10472,13 +10499,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_to_gs.py#18)(api):**
 ### *recipes* / [build\_sdk](/recipes/build_sdk.py)
 
-[DEPS](/recipes/build_sdk.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [key\_value\_store](#recipe_modules-key_value_store), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_sdk.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [key\_value\_store](#recipe_modules-key_value_store), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe that builds a ChromiumOS SDK and cross-compilers.
 
-&mdash; **def [RunSteps](/recipes/build_sdk.py#60)(api: RecipeApi, properties: BuildSDKProperties):**
+&mdash; **def [RunSteps](/recipes/build_sdk.py#61)(api: RecipeApi, properties: BuildSDKProperties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#22): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14671,13 +14698,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Basic tests for the urls recipe module.
 
 &mdash; **def [RunSteps](/recipe_modules/urls/examples/get_vm_test_link_map.py#24)(api):**
-### *recipes* / [util:tests/util](/recipe_modules/util/tests/util.py)
+### *recipes* / [util:tests/proto\_path\_to\_recipes\_path](/recipe_modules/util/tests/proto_path_to_recipes_path.py)
 
-[DEPS](/recipe_modules/util/tests/util.py#7): [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/util/tests/proto_path_to_recipes_path.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/recipe_modules/util/tests/util.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/util/tests/proto_path_to_recipes_path.py#33)(api: recipe_api.RecipeApi, input_path: str, input_location: common_pb2.Path.Location, use_sdk_path: bool):**
 ### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
 
 [DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
