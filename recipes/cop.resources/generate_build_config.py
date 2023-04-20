@@ -15,7 +15,11 @@ def securize_user_config(user_config):
   """Validate that the user configuration is minimally safe to run."""
 
   #Check docker container
-  valid_containers = ('gcr.io/${PROJECT_ID}/', 'gcr.io/cloud-builders/')
+  valid_containers = (
+      'gcr.io/${PROJECT_ID}/',
+      'gcr.io/cloud-builders/',
+      'gcr.io/google.com/cloudsdktool/',
+  )
   for i, step in enumerate(user_config['steps']):
     name = step['name']
     if not name.startswith(valid_containers):
