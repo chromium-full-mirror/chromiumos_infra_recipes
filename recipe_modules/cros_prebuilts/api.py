@@ -6,10 +6,12 @@
 """API for uploading CrOS prebuilts to Google Storage."""
 
 import os
+from typing import List, Tuple
 
 from google.protobuf import json_format
 
 from PB.chromite.api import binhost as binhost_pb
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageIndexInfo
@@ -367,6 +369,28 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
+  def _prepare_chrome_binhost_uploads(self, sysroot: Sysroot,
+                                      uri: str) -> Tuple[Path, List[str]]:
+    """Get the Chrome prebuilts that should be uploaded to the binhost.
+
+    Args:
+      sysroot: The sysroot whose prebuilts are being uploaded.
+      uri: URI where the prebuilts will be uploaded.
+
+    Returns:
+      (Path to the directory containing uploads,
+          a list of uploadable string paths relative to that directory)
+    """
+    with self.m.step.nest('prepare chrome binhost uploads'):
+      upload_root = self.m.path.mkdtemp(prefix='binhosts')
+      request = binhost_pb.PrepareChromeBinhostUploadsRequest(
+          sysroot=sysroot, uploads_dir=self.m.path.abspath(upload_root),
+          uri=uri)
+      response = self.m.cros_build_api.BinhostService.PrepareChromeBinhostUploads(
+          request, infra_step=True)
+      upload_paths = [target.path for target in response.upload_targets]
+      return upload_root, upload_paths
+
   def set_binhost(self, target, private, key, uri, push_retries):
     """Set the target's Portage binhost to point to the given URI.
 
@@ -569,4 +593,40 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           sysroot, upload_uri)
 
       # Finally, upload the prebuilts in the path up to gs.
+      self._upload(upload_root, upload_paths, upload_uri, acls)
+
+  def upload_chrome_prebuilts(self, target: BuildTarget, sysroot: Sysroot,
+                              kind: BuilderConfig.Id.Type, gs_bucket: str,
+                              private: bool) -> None:
+    """Upload Chrome binary prebuilts for the build target to Google Storage.
+
+    Args:
+      target: The build target to upload prebuilts for.
+      sysroot: The sysroot whose prebuilts are being uploaded.
+      kind: Kind of prebuilts to upload.
+      gs_bucket: Google storage bucket to upload prebuilts to.
+      private: Whether or not the target prebuilts are private.
+
+    Raises:
+      ValueError: If a gs bucket was not specified.
+    """
+    with self.m.step.nest('upload chrome prebuilts'):
+      if not gs_bucket:
+        raise ValueError('A gs bucket was not specified for the upload.')
+
+      # Set up the ACLs.
+      # TODO(b/277222525): Refactor ACLs logic into a separate function.
+      if private:
+        acls = self.m.cros_build_api.BinhostService.GetPrivatePrebuiltAclArgs(
+            binhost_pb.AclArgsRequest(build_target=target), infra_step=True,
+            name='read gs acls').args
+      else:
+        acls = [binhost_pb.AclArgsResponse.AclArg(arg='-u', value='AllUsers:R')]
+
+      # Get the upload targets from the build API.
+      upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
+      upload_root, upload_paths = self._prepare_chrome_binhost_uploads(
+          sysroot, upload_uri)
+
+      # Upload the prebuilts in the path to gs.
       self._upload(upload_root, upload_paths, upload_uri, acls)

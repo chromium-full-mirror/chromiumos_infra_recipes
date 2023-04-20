@@ -871,6 +871,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.build_target, self.sysroot,
         artifacts.devinstall_prebuilts_gs_bucket)
 
+  def upload_chrome_prebuilts(self) -> None:
+    """Upload Chrome prebuilts from the build."""
+    artifacts = self.config.artifacts
+    prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
+    if prebuilt_target in self.UPLOADABLE_PREBUILTS:
+      self.m.cros_prebuilts.upload_chrome_prebuilts(
+          self.build_target, self.sysroot, self.config.id.type,
+          artifacts.prebuilts_gs_bucket,
+          private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
   def publish_latest_files(self, gs_bucket, gs_path):
     """Write LATEST-... files to GS.
 

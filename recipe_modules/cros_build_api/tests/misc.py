@@ -101,6 +101,8 @@ def RunSteps(api):
               binhost.PrepareBinhostUploadsResponse,
           'PrepareDevInstallBinhostUploads':
               binhost.PrepareDevInstallBinhostUploadsResponse,
+          'PrepareChromeBinhostUploads':
+              binhost.PrepareChromeBinhostUploadsResponse,
           'SetBinhost':
               binhost.SetBinhostResponse,
           'Get':

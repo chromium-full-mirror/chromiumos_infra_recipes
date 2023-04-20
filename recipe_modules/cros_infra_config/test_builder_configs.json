@@ -239,6 +239,7 @@
       "artifacts": {
         "artifactsGsBucket": "chromeos-throwaway",
         "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [

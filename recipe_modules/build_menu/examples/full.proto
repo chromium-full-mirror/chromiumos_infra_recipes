@@ -42,4 +42,7 @@ message FullProperties {
 
   // Whether to publish image size data.
   bool publish_image_sizes = 11;
+
+  // Whether to call upload_chrome_prebuilts.
+  bool upload_chrome_prebuilts = 12;
 }

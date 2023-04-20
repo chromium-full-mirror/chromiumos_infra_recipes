@@ -139,6 +139,7 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
+      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"prebuilts_gs_bucket\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-throwaway\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    legacy {@@@",

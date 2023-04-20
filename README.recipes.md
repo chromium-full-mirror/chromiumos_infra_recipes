@@ -1158,7 +1158,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#144)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#894)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#904)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1168,7 +1168,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#874)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#884)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1286,6 +1286,10 @@ Args:
 Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
+
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#874)(self):**
+
+Upload Chrome prebuilts from the build.
 
 &mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#861)(self, config=None):**
 
@@ -3151,11 +3155,11 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 API for uploading CrOS prebuilts to Google Storage.
 
-#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#159)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#161)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
 
 Return the PackageIndexInfo for this build.
 
@@ -3172,7 +3176,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#370)(self, target, private, key, uri, push_retries):**
+&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#394)(self, target, private, key, uri, push_retries):**
 
 Set the target's Portage binhost to point to the given URI.
 
@@ -3186,7 +3190,21 @@ Args:
   uri (str): The new binhost URI.
   push_retries (int): Number of times to retry pushing the changes.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#546)(self, target, sysroot, gs_bucket):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#598)(self, target: BuildTarget, sysroot: Sysroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+
+Upload Chrome binary prebuilts for the build target to Google Storage.
+
+Args:
+  target: The build target to upload prebuilts for.
+  sysroot: The sysroot whose prebuilts are being uploaded.
+  kind: Kind of prebuilts to upload.
+  gs_bucket: Google storage bucket to upload prebuilts to.
+  private: Whether or not the target prebuilts are private.
+
+Raises:
+  ValueError: If a gs bucket was not specified.
+
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#570)(self, target, sysroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3195,7 +3213,7 @@ Args:
   sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#485)(self, target, sysroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#509)(self, target, sysroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 

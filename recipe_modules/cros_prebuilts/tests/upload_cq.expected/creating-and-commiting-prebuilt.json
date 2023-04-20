@@ -143,6 +143,7 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
+      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"prebuilts_gs_bucket\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-throwaway\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    legacy {@@@",
@@ -2195,7 +2196,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 32, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(target,",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 537, in upload_target_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 561, in upload_target_prebuilts",
       "    raise ValueError('CQ should not set the binhost.')",
       "ValueError('CQ should not set the binhost.')"
     ]

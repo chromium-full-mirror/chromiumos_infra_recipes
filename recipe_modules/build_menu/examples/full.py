@@ -58,10 +58,13 @@ def DoRunSteps(api, config, properties):
       api.build_menu.build_and_test_images(config)
       api.build_menu.build_and_test_images(include_version=True)
       api.build_menu.get_cl_affected_sysroot_packages()
+      # TODO(b/277222525): Separate uploads into a separate test case.
       if properties.upload_prebuilts:
         api.build_menu.upload_prebuilts()
       if properties.upload_devinstall_prebuilts:
         api.build_menu.upload_devinstall_prebuilts()
+      if properties.upload_chrome_prebuilts:
+        api.build_menu.upload_chrome_prebuilts()
       _ = api.build_menu.artifacts_gs_path()
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
@@ -207,6 +210,15 @@ def GenTests(api):
       input_properties={
           '$chromeos/build_menu':
               dict(override_prebuilts_config=BuilderConfig.Artifacts.NONE),
+      }, cq=True)
+
+  yield api.build_menu.test(
+      'uploads-chrome-prebuilts',
+      api.properties(FullProperties(upload_chrome_prebuilts=True)),
+      api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
+      input_properties={
+          '$chromeos/build_menu':
+              dict(override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
       }, cq=True)
 
   yield api.build_menu.test(

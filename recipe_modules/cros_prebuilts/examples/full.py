@@ -42,6 +42,7 @@ def RunSteps(api, properties):
     builder_config = properties.overridden_builder_config
   else:
     builder_config = BuilderConfig.Id.POSTSUBMIT
+  # TODO(b/277222525): Separate uploads into a separate test case.
   api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
                                              properties.sysroot,
                                              properties.profile, builder_config,
@@ -55,6 +56,11 @@ def RunSteps(api, properties):
 
   api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
                                                  properties.sysroot, None)
+
+  api.cros_prebuilts.upload_chrome_prebuilts(properties.build_target,
+                                             properties.sysroot, builder_config,
+                                             properties.gs_bucket,
+                                             properties.private)
 
 
 def GenTests(api):
@@ -134,6 +140,8 @@ def GenTests(api):
     ret += api.post_check(
         MustRun if private and not dirty_source else DoesNotRun,
         'upload prebuilts.read gs acls')
+    ret += api.post_check(MustRun if private else DoesNotRun,
+                          'upload chrome prebuilts.read gs acls')
     check = (
         MustRun if upload_metadata and enable_snapshot_prebuilts and
         not dirty_source else DoesNotRun)
@@ -174,6 +182,7 @@ def GenTests(api):
               api.post_process(StepTextEquals,
                                'upload devinstall prebuilts (2)',
                                'no bucket specified, skipping'))
+
   yield api.test(
       'update-retry-exhaustion',
       test_data(upload_metadata=False),
@@ -194,6 +203,9 @@ def GenTests(api):
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
+
+  yield api.test('upload-chrome-prebuilts-no-gs-bucket',
+                 api.expect_exception('ValueError'), status='INFRA_FAILURE')
 
   yield api.test(
       'update-retry-not-called', test_data(),
