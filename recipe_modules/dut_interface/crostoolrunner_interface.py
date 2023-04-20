@@ -77,6 +77,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   TEST_HARNESS_TAST = 'tast'
   AUTOTEST_PACKAGE_PATH = '/usr/local/autotest'
   TAST_MISSING_TEST_KEY = 'tast_missing_test'
+  TAST_TEST_NAME_PREFIX = 'tast.'
   RESULTS_DIR_NAME = 'results'
   ARTIFACT_DIR_NAME = 'artifact'
   TEST_METADATA_JSON = 'test_metadata.json'
@@ -689,7 +690,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     missing_tests = []
     for line in content:
       if line.startswith(self.TAST_MISSING_TEST_KEY):
-        test = line.split('=')[-1]
+        test = self.TAST_TEST_NAME_PREFIX + line.split('=')[-1]
         missing_tests.append(test)
 
     return missing_tests
