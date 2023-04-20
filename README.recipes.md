@@ -502,6 +502,7 @@
   * [libchrome_uprev](#recipes-libchrome_uprev) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) &mdash; Recipe for updating libchrome-version.
+  * [lint_dashboard](#recipes-lint_dashboard) &mdash; Recipe for uploading linting data for use in the Code Health Dashboard.
   * [local_manifest_presubmit](#recipes-local_manifest_presubmit) &mdash; Runs the presubmit for a project with checkout per local manifest.
   * [looks_for_green:tests/calc_approx_snap_age_hours](#recipes-looks_for_green_tests_calc_approx_snap_age_hours)
   * [looks_for_green:tests/disallow_footer](#recipes-looks_for_green_tests_disallow_footer)
@@ -12910,6 +12911,16 @@ Recipe for updating libchrome-version.eclass
 &mdash; **def [get\_latest\_version](/recipes/libchrome_version_update.py#28)(api: RecipeApi, project_dir: Path, pkg_group: str, pkg_name: str):**
 
 &mdash; **def [update\_eclass](/recipes/libchrome_version_update.py#51)(api: RecipeApi, project_dir: Path, pkg_group: str, pkg_name: str):**
+### *recipes* / [lint\_dashboard](/recipes/lint_dashboard.py)
+
+[DEPS](/recipes/lint_dashboard.py#27): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for uploading linting data for use in the Code Health Dashboard.
+
+&mdash; **def [DoRunSteps](/recipes/lint_dashboard.py#54)(api: RecipeApi, config: BuilderConfig):**
+
+&mdash; **def [RunSteps](/recipes/lint_dashboard.py#48)(api: RecipeApi):**
 ### *recipes* / [local\_manifest\_presubmit](/recipes/local_manifest_presubmit.py)
 
 [DEPS](/recipes/local_manifest_presubmit.py#22): [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [gs\_step\_logging](#recipe_modules-gs_step_logging), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
