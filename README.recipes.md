@@ -297,6 +297,7 @@
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full) (Python3 ✅)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info) (Python3 ✅)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq) (Python3 ✅)
+  * [cros_prebuilts:tests/upload_prebuilts](#recipes-cros_prebuilts_tests_upload_prebuilts) (Python3 ✅)
   * [cros_release:examples/buildspec](#recipes-cros_release_examples_buildspec) (Python3 ✅)
   * [cros_release:examples/full](#recipes-cros_release_examples_full) (Python3 ✅)
   * [cros_release:tests/check_buildspec](#recipes-cros_release_tests_check_buildspec) (Python3 ✅)
@@ -11666,6 +11667,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#25)(api):**
+### *recipes* / [cros\_prebuilts:tests/upload\_prebuilts](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py)
+
+[DEPS](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#14): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#41)(api: recipe_api.RecipeApi, upload_target_prebuilts: bool, upload_devinstall_prebuilts: bool, upload_chrome_prebuilts: bool, private: bool, gs_bucket: str):**
 ### *recipes* / [cros\_release:examples/buildspec](/recipe_modules/cros_release/examples/buildspec.py)
 
 [DEPS](/recipe_modules/cros_release/examples/buildspec.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

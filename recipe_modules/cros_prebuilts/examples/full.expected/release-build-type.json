@@ -850,7 +850,7 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 46, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 45, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(properties.build_target,",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 520, in upload_target_prebuilts",
       "    binhost_key = self._binhost_key(kind)",

@@ -42,41 +42,14 @@ def RunSteps(api, properties):
     builder_config = properties.overridden_builder_config
   else:
     builder_config = BuilderConfig.Id.POSTSUBMIT
-  # TODO(b/277222525): Separate uploads into a separate test case.
   api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
                                              properties.sysroot,
                                              properties.profile, builder_config,
                                              properties.gs_bucket,
                                              properties.private)
 
-  api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
-                                                 properties.sysroot,
-                                                 properties.gs_bucket)
-
-
-  api.cros_prebuilts.upload_devinstall_prebuilts(properties.build_target,
-                                                 properties.sysroot, None)
-
-  api.cros_prebuilts.upload_chrome_prebuilts(properties.build_target,
-                                             properties.sysroot, builder_config,
-                                             properties.gs_bucket,
-                                             properties.private)
-
 
 def GenTests(api):
-
-  def StepTextEquals(check, step_odict, step, expected):
-    """Check that the step's text equals given value.
-
-    Args:
-      step (str) - The step to check the step text of.
-      expected (str) - The expected text of the step.
-
-    Usage:
-      yield TEST + \
-          api.post_process(StepTextEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_text == expected)
 
   def make_package_indexes(gs_bucket, target, profile=None, count=4):
     profile = profile or Profile()
@@ -137,11 +110,6 @@ def GenTests(api):
 
     ret += api.properties(**props)
 
-    ret += api.post_check(
-        MustRun if private and not dirty_source else DoesNotRun,
-        'upload prebuilts.read gs acls')
-    ret += api.post_check(MustRun if private else DoesNotRun,
-                          'upload chrome prebuilts.read gs acls')
     check = (
         MustRun if upload_metadata and enable_snapshot_prebuilts and
         not dirty_source else DoesNotRun)
@@ -178,10 +146,7 @@ def GenTests(api):
                    '.gerrit transaction.git push'),
                   stderr=api.raw_io.output_text(
                       ('remote:   https://chromium-review.googlesource'
-                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
-              api.post_process(StepTextEquals,
-                               'upload devinstall prebuilts (2)',
-                               'no bucket specified, skipping'))
+                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
 
   yield api.test(
       'update-retry-exhaustion',
@@ -203,9 +168,6 @@ def GenTests(api):
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
-
-  yield api.test('upload-chrome-prebuilts-no-gs-bucket',
-                 api.expect_exception('ValueError'), status='INFRA_FAILURE')
 
   yield api.test(
       'update-retry-not-called', test_data(),
