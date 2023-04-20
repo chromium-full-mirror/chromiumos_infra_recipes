@@ -10747,13 +10747,7 @@ Recipe for enabling cross-references in code search for ChromiumOS.
 Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 
-&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#116)(api, codesearch_mirror_revision, codesearch_mirror_revision_timestamp, manifest_hash):**
-
-&mdash; **def [gclient\_config](/recipes/chromiumos_codesearch.py#103)(api):**
-
-Generate a gclient configuration to check out infra/infra.
-
-Return: (config) A gclient recipe module configuration.
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#103)(api, codesearch_mirror_revision, codesearch_mirror_revision_timestamp, manifest_hash):**
 ### *recipes* / [chromiumos\_codesearch\_initiator](/recipes/chromiumos_codesearch_initiator.py)
 
 [DEPS](/recipes/chromiumos_codesearch_initiator.py#13): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]

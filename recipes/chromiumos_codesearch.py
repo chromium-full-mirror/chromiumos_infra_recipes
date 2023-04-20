@@ -100,19 +100,6 @@ PROPERTIES = {
 }
 
 
-def gclient_config(api):
-  """Generate a gclient configuration to check out infra/infra.
-
-  Return: (config) A gclient recipe module configuration.
-  """
-  cfg = api.gclient.make_config()
-  soln = cfg.solutions.add()
-  soln.name = 'infra'
-  soln.url = 'https://chromium.googlesource.com/infra/infra'
-  soln.revision = 'HEAD'
-  return cfg
-
-
 def RunSteps(api, codesearch_mirror_revision,
              codesearch_mirror_revision_timestamp, manifest_hash):
   builder = api.buildbucket.build.builder.builder
@@ -128,9 +115,9 @@ def RunSteps(api, codesearch_mirror_revision,
 
   # Get infra/infra.
   cache_dir = api.path['cache'].join('builder')
+  api.gclient.set_config('infra_superproject')
   with api.context(cwd=cache_dir):
-    api.bot_update.ensure_checkout(
-        gclient_config=gclient_config(api), set_output_commit=False)
+    api.bot_update.ensure_checkout(set_output_commit=False)
 
   commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
                          ref='refs/heads/snapshot',
