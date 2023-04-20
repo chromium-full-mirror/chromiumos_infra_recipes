@@ -298,72 +298,6 @@ def _populate_additional_info_for_autotest_result(test_metadata,
   return autotest_result
 
 
-def _get_unexpected_skip_reason_for_autotest(result):
-  """Return all the unexpected skip reasons if the Autotest test never ran and
-  got skipped unexpectedly.
-
-  Note: this check is mainly for Autotest results. In general, there is only
-  one Autotest test result for each test case.
-
-  Context: b/245017288
-
-  Args:
-  * result (DUTResult): The result for all tests run in this run.
-
-  Returns:
-  * unexpected_skip_reason (string): The unexpected skip reason. Return empty
-        if the unexpected skip condition doesn't meet.
-  """
-  unexpected_skip_reasons = []
-
-  if result.prejob_failed():
-    # Checks if the prejob state succeeded.
-    unexpected_skip_reasons.append('Failed prejob')
-  elif result.get_prejob_steps():
-    # Checks if the first prejob was a failed provision.
-    first_prejob = result.get_prejob_steps()[0]
-    if first_prejob.name == 'provision' \
-        and first_prejob.verdict != Result.Prejob.Step.VERDICT_PASS:
-      failure_reason = first_prejob.human_readable_summary if first_prejob.human_readable_summary else 'N/A'
-      unexpected_skip_reasons.append('Failed provision: ' + failure_reason)
-
-  # Checks if the test run was incomplete.
-  if result.is_test_incomplete():
-    unexpected_skip_reasons.append('Incomplete test run')
-
-  return '[UNEXPECTED SKIP] Incomplete result caused by: ' + ' | '.join(
-      unexpected_skip_reasons) if unexpected_skip_reasons else ''
-
-
-def _process_incomplete_test(test_metadata, result, autotest_result):
-  """Constructs a placeholder test case manually for incomplete test.
-
-  Context: b/244263157, crbug.com/964028
-
-  Args:
-  * test_metadata (DUTTestMetadata): All metadata needed for the interface
-      to access a test.
-  * result (DUTResult): The result for all tests run in this run.
-  * autotest_result (AutotestProto): The Autotest result proto for all tests run
-      in this run.
-
-  Returns:
-  * autotest_result (AutotestProto): The Autotest result proto for all tests
-      run. Append the input Autotest result with a new test case for incomplete
-      result.
-  """
-  # Construct a placeholder test case manually.
-  test_case = Result.Autotest.TestCase(
-      name=test_metadata.test.autotest.name,
-      # This summary indicates the Autotest adapter in ResultAdapter to set
-      # unexpected SKIP status in ResultDB result.
-      human_readable_summary=_get_unexpected_skip_reason_for_autotest(result),
-      verdict=Result.Autotest.TestCase.VERDICT_NO_VERDICT)
-
-  autotest_result.autotest_result.test_cases.append(test_case)
-  return autotest_result
-
-
 def _read_autotest_keyval_file(api, base_dir):
   """Reads the contents of autotest keyval file.
 
@@ -877,71 +811,6 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
     api.step.active_result.presentation.status = api.step.FAILURE
 
 
-def _upload_incomplete_test_to_resultdb(api, test_metadata, result,
-                                        autotest_keyval_file, base_variant,
-                                        base_tags):
-  """Uploads the incomplete test. When a test run is incomplete, the upstream
-  test execution won't generate any test case by default, so we need to
-  construct a placeholder test case manually to capture the NOT_RUN result which
-  was skipped unexpectedly.
-
-  In addition, generate ResultDB variants and tags based on the autotest keyvals
-  in the initial test request. The test case is constructed in the Autotest
-  format so it will be parsed by Autotest adapter in ResultSink.
-
-  This method works for both Tauto and Tast results. For Tast, the additional
-  result can be regarded as a Autotest wrapper result with an overall Autotest
-  wrapper test name, e.g. "tast.informational-crostini-shard-0".
-
-  Context: b/245017288
-
-  Args:
-  * api (RecipeScriptApi): Ubiquitous recipe api.
-  * test_metadata (DUTTestMetadata): All metadata needed for the interface
-      to access a test.
-  * result (DUTResult): The results of the test.
-  * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
-  * base_variant (dict): The base variant for the resultdb upload.
-  * base_tags (dict): The base tags for the resultdb upload.
-  """
-  try:
-    if not result.data.autotest_result.incomplete:
-      return
-
-    # Constructs a placeholder test case manually.
-    autotest_result = Result(autotest_result=result.data.autotest_result,
-                             log_data=result.data.log_data,
-                             prejob=result.data.prejob,
-                             state_update=result.data.state_update)
-    autotest_result = _process_incomplete_test(test_metadata, result,
-                                               autotest_result)
-    autotest_result = _populate_additional_info_for_autotest_result(
-        test_metadata, autotest_result, autotest_keyval_file)
-
-    # Writes the result to a file which can be parsed by result_adapter.
-    temp_dir = api.path.mkdtemp()
-    incomplete_test_result_file = temp_dir.join('incomplete_test_result.json')
-    api.file.write_proto('write incomplete test result',
-                         incomplete_test_result_file, autotest_result, 'JSONPB')
-
-    # Uploads test results to ResultDB only when the test result file exists.
-    result_file_content = _read_test_result_file(api,
-                                                 incomplete_test_result_file)
-    if result_file_content:
-      config = {
-          'result_format': 'skylab-test-runner',
-          'base_variant': base_variant,
-          'base_tags': base_tags,
-          'result_file': incomplete_test_result_file,
-          'artifact_directory': None,
-      }
-      api.cros_resultdb.upload(config, autotest_result.log_data.stainless_url,
-                               autotest_result.log_data.testhaus_url)
-  except api.step.StepFailure:
-    # Marks the step status as Failure only and bypass the exception.
-    api.step.active_result.presentation.status = api.step.FAILURE
-
-
 def _upload_to_resultdb(api, result, properties, interface, test_metadata):
   """Upload test results to ResultDB.
 
@@ -993,11 +862,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       # Upload to rdb using extracted configs.
       api.cros_resultdb.upload(config,
                                step_name='upload chromium test results to rdb')
-      # Uploads incomplete test result for browser tests running with Tauto and Tast
-      _upload_incomplete_test_to_resultdb(api, test_metadata, result,
-                                          autotest_keyval_file,
-                                          config.get('base_variant'),
-                                          config.get('base_tag'))
+      # Uploads missing test result for browser tests running with Tauto and
+      # Tast
       _upload_missing_tast_results(api, config.get('base_variant'),
                                    config.get('base_tag'), autotest_keyval_file)
       return
@@ -1094,10 +960,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                                autotest_keyval_file,
                                                base_variant, base_tags)
 
-    # Uploads incomplete test result for both Tauto and Tast.
-    _upload_incomplete_test_to_resultdb(api, test_metadata, result,
-                                        autotest_keyval_file, base_variant,
-                                        base_tags)
     _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file)
     api.cros_resultdb.apply_exonerations(
@@ -1617,10 +1479,6 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
           # crostoolrunner_interface.py and could be similar to the
           # `_post_process_tauto_result()` method above.
 
-          # TODO(b/245017288): Upload incomplete Tauto and Tast result to ResultDB
-          # for CFT MVP. The logic would be added to crostoolrunner_interface.py and
-          # could be similar to the `_upload_incomplete_test_to_resultdb()` method
-          # above.
           # If this builder is configured to be private-partner, we don't want to
           # publish to the board-model realm
           interface.upload_to_rdb(test_metadata,
@@ -2110,40 +1968,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       {
         "name": "tast.critical-system-shard-2",
         "verdict": "VERDICT_PASS"
-      }
-    ]
-  },
-  "log_data": {
-    "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
-  },
-  "prejob": {
-    "step": [
-      {
-        "name": "provision",
-        "verdict": "VERDICT_PASS"
-      }
-    ]
-  },
-  "state_update": {
-    "dut_state": "ready"
-  }
-}
-    """))
-
-  def _incomplete_test_result_file_step_data():
-    return api.step_data(
-        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
-        '.read test results from incomplete_test_result.json',
-        api.file.read_text("""
-{
-  "autotest_result": {
-    "test_cases": [
-      {
-        "name": "login_LoginSuccess",
-        "verdict": "VERDICT_NO_VERDICT",
-        "human_readable_summary": "Incomplete result caused by: Failed provision | Incomplete test run"
       }
     ]
   },
@@ -3434,10 +3258,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                               verdict=Result.Prejob.Step.VERDICT_FAIL)
                       ]))))),
       _autotest_keyval_file_step_data(),
-      # Enables the ResultDB upload.
-      _incomplete_test_result_file_step_data(),
-      # Uploads a placeholder test case manually for the incomplete test.
-      _successful_resultdb_upload_step(),
+      # Skips the ResultDB upload for incomplete tests.
+      api.post_process(
+          post_process.DoesNotRun, 'execution steps.original_test.' +
+          RESULTDB_UPLOAD_STEP + '.upload test results to rdb.run rdb'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -3482,10 +3306,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                               verdict=Result.Prejob.Step.VERDICT_FAIL)
                       ]))))),
       _autotest_keyval_file_step_data(),
-      # Enables the ResultDB upload.
-      _incomplete_test_result_file_step_data(),
-      # Uploads a placeholder test case manually for the incomplete test.
-      _successful_resultdb_upload_step(),
+      # Skips the ResultDB upload for incomplete tests.
+      api.post_process(
+          post_process.DoesNotRun, 'execution steps.original_test.' +
+          RESULTDB_UPLOAD_STEP + '.upload test results to rdb.run rdb'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -3518,11 +3342,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               json_format.MessageToJson(
                   Result(autotest_result=Result.Autotest(incomplete=True))))),
       _autotest_keyval_file_step_data(),
-      # Enables the ResultDB upload.
-      _incomplete_test_result_file_step_data(),
-      # Uploads a placeholder test case manually for the failed prejob though
-      # the test execution step is skipped.
-      _successful_resultdb_upload_step(),
+      # Skips the ResultDB upload for incomplete tests due to the failed prejob.
+      api.post_process(
+          post_process.DoesNotRun, 'execution steps.original_test.' +
+          RESULTDB_UPLOAD_STEP + '.upload test results to rdb.run rdb'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -3615,42 +3438,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.post_process(
           post_process.MustRun,
           'execution steps.Phosphorus: remove autotest results dir'),
-  )
-
-  yield api.test(
-      'upload-incomplete-result-to-resultdb-crash',
-      _set_build(bid=42),
-      _misc_properties(),
-      _request_properties(),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-      _successful_fetch_crashes_step(),
-      _successful_logs_archive_step(),
-      # Returns incomplete test.
-      api.step_data(
-          'execution steps.original_test.Phosphorus: get test results.'
-          'call `phosphorus`.parse', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  Result(
-                      autotest_result=Result.Autotest(incomplete=True),
-                      prejob=Result.Prejob(step=[
-                          Result.Prejob.Step(
-                              name='provision',
-                              human_readable_summary='failed prejob',
-                              verdict=Result.Prejob.Step.VERDICT_FAIL)
-                      ]))))),
-      _autotest_keyval_file_step_data(),
-      api.step_data(
-          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
-          '.read test results from incomplete_test_result.json', retcode=1),
-      # The incomplete result rdb upload failure above won't block the
-      # following steps.
-      api.post_process(
-          post_process.MustRun,
-          'execution steps.Phosphorus: remove autotest results dir'),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
   )
 
   yield api.test(
