@@ -52,7 +52,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       process_child_timeout (bool): Whether the process child times out.
       follow_on_orch (Build): The Build message for a follow-on orchestrator, or
         None.
-      follow_on_timeout (bool): Whether the follow-on orchestrator times out.
       *args (list): Arguments to pass to test_api.test.
       **kwargs (dict): Arguments to pass to test_util.test_build.
 
@@ -74,7 +73,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     process_child = kwargs.pop('process_child', None)
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
-    follow_on_timeout = kwargs.pop('follow_on_timeout', False)
 
     cq = kwargs.get('cq')
     default_props = {
@@ -167,18 +165,12 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       args.append(
           self.m.buildbucket.simulated_schedule_output(
               BatchResponse(responses=[dict(schedule_build=follow_on_orch)]),
-              'run follow on orchestrator.buildbucket.schedule'))
-      if follow_on_timeout:
-        args.extend([
-            self.step_data('run follow on orchestrator.collect.wait',
-                           retcode=1),
-            self.m.buildbucket.simulated_get_multi(
-                [follow_on_orch], 'run follow on orchestrator.get')
-        ])
-      else:
-        args.append(
-            self.m.buildbucket.simulated_collect_output(
-                [follow_on_orch], 'run follow on orchestrator.collect'))
+              'run follow on orchestrator.buildbucket.schedule')
+      )  # pragma: nocover
+      args.append(
+          self.m.buildbucket.simulated_collect_output(
+              [follow_on_orch],
+              'run follow on orchestrator.collect'))  # pragma: nocover
 
     # Call recipe_test_api.test().
     return super().test(name, ret, *args, status=status)

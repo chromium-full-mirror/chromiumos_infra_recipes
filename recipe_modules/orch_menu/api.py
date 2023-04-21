@@ -991,7 +991,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """Run the follow_on_orchestrator, if any.  Wait if necessary."""
     follower = self.config.orchestrator.follow_on_orchestrator
     if not self.builds_status.fatal_failures and follower.name:
-      self.schedule_wait_build(follower.name, follower.await_completion)
+      self.schedule_wait_build(follower.name, follower.await_completion,
+                               step_name='run follow on orchestrator')
 
   def schedule_wait_build(self, builder, await_completion=False,
                           properties=None, check_failures=False, step_name=None,
@@ -1001,7 +1002,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Args:
       builder (str): The name of the builder: one of project/bucket/builder,
         bucket/builder, or builder.
-      await_completion (bool): Wether to await completion.
+      await_completion (bool): Whether to await completion.
       properties (dict): Dictionary of input properties for the builder.
       check_failures (bool): Whether or not failures accumulate in
         builds_status.  This is only used if await_completion is True.
@@ -1012,7 +1013,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
       (Build): The build that was scheduled, and possibly waited for.
     """
     timeout_sec = timeout_sec or 60 * 60 * 36
-    with self.m.step.nest(step_name or 'run follow on orchestrator') as pres:
+    step_name = step_name or 'run %s' % builder
+    with self.m.step.nest(step_name) as pres:
       # Separate out any project/bucket in the builder name.
       parts = builder.split('/', 2)
       project = self.m.buildbucket.INHERIT if len(parts) < 3 else parts[-3]
@@ -1034,30 +1036,31 @@ class OrchMenuApi(recipe_api.RecipeApi):
           experiments=exps, properties=props, tags=tags,
           inherit_buildsets=False)
       title_fn = self.m.naming.get_build_title
-      [build] = self.m.buildbucket.schedule([req], url_title_fn=title_fn)
-      url = self.m.buildbucket.build_url(build_id=build.id)
+      build = self.m.buildbucket.schedule([req], url_title_fn=title_fn)[0]
+      build_id = build.id
+      url = self.m.buildbucket.build_url(build_id=build_id)
       pres.presentation.links[title_fn(build)] = url
 
       # Are we supposed to wait?
       if await_completion:
         fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
         try:
-          builds = list(
-              self.m.buildbucket.collect_builds([build.id], timeout=timeout_sec,
+          build = list(
+              self.m.buildbucket.collect_builds([build_id], timeout=timeout_sec,
                                                 step_name='collect',
                                                 url_title_fn=title_fn,
-                                                fields=fields).values())
+                                                fields=fields).values())[0]
         except StepFailure:
-          builds = list(
-              self.m.buildbucket.get_multi([build.id], step_name='get',
+          build = list(
+              self.m.buildbucket.get_multi([build_id], step_name='get',
                                            url_title_fn=title_fn,
-                                           fields=fields).values())
+                                           fields=fields).values())[0]
 
         failures = (
-            self.m.failures.get_build_results(builds).failures
+            self.m.failures.get_build_results([build]).failures
             if check_failures else [])
-        self._builds_status.update(builds, failures)
-      return builds[0]
+        self._builds_status.update([build], failures)
+      return build
 
   def plan_and_run_tests(
       self,

@@ -107,8 +107,6 @@ def RunSteps(api, properties):
           properties.process_child, await_completion=True, check_failures=True,
           step_name='run %s' % properties.process_child)
 
-    api.orch_menu.run_follow_on_orchestrator()
-
     if properties.expected_completed_builds:
       for actual, expected in zip(api.orch_menu.builds_status.completed_builds,
                                   properties.expected_completed_builds):
@@ -601,8 +599,7 @@ def GenTests(api):
                   summary_markdown=one_non_crit_fail_summary),
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
-      process_child=data.process_child,
-      follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
+      process_child=data.process_child, bucket='toolchain',
       builder='orderfile-generate-orchestrator')
 
   # Process-child times out.
@@ -617,33 +614,6 @@ def GenTests(api):
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child, process_child_timeout=True,
-      follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
-      builder='orderfile-generate-orchestrator')
-
-  # Follow-on orchestrator.
-  yield api.orch_menu.test(
-      'with-follow-on', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=data.builds +
-              [data.follow_on_orchestrator], expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      collect_builds=data.builds, history_builds=data.history_builds,
-      follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
-      builder='orderfile-generate-orchestrator')
-
-  # Follow-on orchestrator times out.
-  yield api.orch_menu.test(
-      'with-follow-on-timeout', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=data.builds +
-              [data.follow_on_orchestrator], expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      collect_builds=data.builds, history_builds=data.history_builds,
-      follow_on_orch=data.follow_on_orchestrator, follow_on_timeout=True,
       bucket='toolchain', builder='orderfile-generate-orchestrator')
 
   builds = data.mixed_build_results
