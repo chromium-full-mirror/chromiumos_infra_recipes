@@ -97,30 +97,37 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                                              ('status', 'open')]))
     return open_changes
 
-  def handle_outdated_changes(self, open_changes: List[GerritChange],
-                              most_recent_uprev: PatchSet, policy: BranchPolicy,
-                              retry_only_run: bool) -> bool:
-    """Abandon already-open and outdated uprev CLs.
+  def handle_open_changes(self, open_changes: List[GerritChange],
+                          projects_by_remote: ProjectsByRemote,
+                          policy: BranchPolicy, topic: str,
+                          retry_only_run: bool) -> bool:
+    """Abandon or retry already-open uprev CLs.
 
     Args:
       open_changes: A list of currently open, relevant PUpr CLs.
-      most_recent_uprev: The most recently merged uprev CL.
+      projects_by_remote: A mapping from Git remotes to repo projects on
+        that remote that are relevant to this PUpr.
       policy: The policy selected by this PUpr run.
+      topic: A short string with which to tag all generated uprev commits.
       retry_only_run: this weirdly named property only causes a run in
         `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
 
     Returns:
       A bool stating whether any open CLs remain after abandoning.
     """
+    most_recent_uprev = self._find_most_recently_merged_uprev(
+        projects_by_remote, topic) if open_changes else None
     outdated_cls = self._get_outdated_cls(open_changes, most_recent_uprev)
     abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev,
                                       policy.outdated_cls_policy,
                                       retry_only_run)
+    self.apply_retry_policy(open_changes, most_recent_uprev, policy, topic,
+                            retry_only_run)
     return len(abandoned_cls) < len(open_changes)
 
-  def find_most_recently_merged_uprev(self,
-                                      projects_by_remote: ProjectsByRemote,
-                                      topic: str) -> PatchSet:
+  def _find_most_recently_merged_uprev(self,
+                                       projects_by_remote: ProjectsByRemote,
+                                       topic: str) -> PatchSet:
     """Return the most recently merged relevant uprev.
 
     Args:
@@ -361,19 +368,10 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           self.m.gerrit.set_change_labels_remote(gerrit_change, labels)
 
   def apply_retry_policy(self, open_changes: List[GerritChange],
-                         most_recent_uprev: Optional[PatchSet],
+                         most_recent_uprev: List[PatchSet],
                          policy: BranchPolicy, topic: str,
                          retry_only_run: bool):
-    """Retry any open uprev CLs based on the retry policy.
-
-    Args:
-      open_changes: A list of currently open, relevant PUpr CLs.
-      most_recent_uprev: The most recently merged uprev CL.
-      policy: The policy selected by this PUpr run.
-      topic: A short string with which to tag all generated uprev commits.
-      retry_only_run: this weirdly named property only causes a run in
-        `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
-    """
+    """Retry any open uprev CLs based on the retry policy."""
     if policy.retry_cl_policy == NO_RETRY:
       return
     with self.m.step.nest('apply retry policy {}'.format(
