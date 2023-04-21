@@ -4196,14 +4196,6 @@
   },
   {
     "cmd": [],
-    "name": "check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -4234,6 +4226,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check build results.set child_builds_relevant",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@3@@@"
     ]
   },
   {
@@ -4421,14 +4421,6 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.set child_builds_relevant",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@6@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "final build collect.check build results.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -4457,6 +4449,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.set child_builds_relevant",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@6@@@"
     ]
   },
   {

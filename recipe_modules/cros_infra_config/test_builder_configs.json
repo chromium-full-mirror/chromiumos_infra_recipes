@@ -1701,6 +1701,33 @@
     },
     {
       "id": {
+        "name": "snapshot-orchestrator",
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "name": "amd64-generic-postsubmit",
+            "collectHandling": "COLLECT_AFTER_HW_TEST"
+          },
+          {
+            "name": "arm-generic-postsubmit",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "grunt-postsubmit",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
         "name": "release-main-orchestrator",
         "type": "RELEASE",
         "bucket": "release"

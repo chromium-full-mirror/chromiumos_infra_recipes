@@ -147,7 +147,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._is_postsubmit_orchestrator = False
     self._is_snapshot_orchestrator = False
     self._chromium_src_ref_cl_tag = None
-    self._relevant_child_builds = []
+    self._relevant_child_builder_names = []
 
     self._builder_to_collect_value = defaultdict(
         lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
@@ -775,14 +775,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     return self._builds_status
 
-  def ps_critical_relevant(self, build: build_pb2.Build) -> bool:
+  def ps_relevant(self, build: build_pb2.Build) -> bool:
     """Whether the postsubmit child build was critical and relevant.
 
     Args:
       build: The child build.
     """
-    if not self.m.buildbucket.is_critical(build):
-      return False
     for tag in build.tags:
       if tag.key == 'relevance':
         return tag.value == 'relevant'
@@ -792,40 +790,43 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
-    # Assume relevant if the child doesn't have the relevant_build prop.
-    cq_relevant = lambda build: ('relevant_build' not in build.output.properties
-                                 or build.output.properties['relevant_build'])
     with self.m.step.nest(results_step_name or 'check build results') as pres:
+      # Add the newly completed builds to build_status.
+      failures = self.m.failures.get_build_results(builds).failures
+      self.builds_status.update(completed=builds, failures=failures)
+
+      # Output information about child build relevancy.
+      # Assume relevant if the child doesn't have the relevant_build prop.
+      cq_relevant = lambda build: ('relevant_build' not in build.output.
+                                   properties or build.output.properties[
+                                       'relevant_build'])
+
       if self.config.id.type == BuilderConfig.Id.CQ:
         cq_relevant_builds = [
             x.builder.builder
             for x in self._builds_status.completed_builds
             if cq_relevant(x)
         ]
-        for build in builds:
-          if build.status in (common_pb2.STARTED, common_pb2.SCHEDULED):
-            pres.text = 'some builds are running/pending'
-          if cq_relevant(build):
-            cq_relevant_builds.append(build.builder.builder)
         pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
                                                  ['no relevant builds'])
-        self._relevant_child_builds = cq_relevant_builds
+        self._relevant_child_builder_names = cq_relevant_builds
         self.m.easy.set_properties_step(
             child_builds_relevant=len(cq_relevant_builds))
 
-      if self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
+      elif self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
+        self._relevant_child_builder_names = [
+            x.builder.builder
+            for x in self._builds_status.completed_builds
+            if self.ps_relevant(x)
+        ]
         ps_relevant_critical_builds = [
             x.builder.builder
             for x in self._builds_status.completed_builds
-            if self.ps_critical_relevant(x)
+            if self.ps_relevant(x) and self.m.buildbucket.is_critical(x)
         ]
-        self._relevant_child_builds = ps_relevant_critical_builds
         if not ps_relevant_critical_builds:
           self.m.easy.set_properties_step(all_critical_builds_irrelevant=True)
           self.m.easy.set_properties_step(sheriff_ignore_build=True)
-
-      failures = self.m.failures.get_build_results(builds).failures
-      self.builds_status.update(completed=builds, failures=failures)
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
     # non-critical.
@@ -1366,7 +1367,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # This is only applicable to CQ and Snapshot.
       if self.is_cq_orchestrator or self._is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
-            b.builder.builder in self._relevant_child_builds)
+            b.builder.builder in self._relevant_child_builder_names)
       # If running unit tests async, add the time the child build was elegible
       # for collection.
       if 'image_artifacts_uploaded_time' in b.output.properties:
