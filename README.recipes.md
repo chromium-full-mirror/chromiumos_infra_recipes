@@ -620,6 +620,7 @@
   * [tast_vm](#recipes-tast_vm) (Python3 ✅) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_chromite](#recipes-test_chromite) (Python3 ✅) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) (Python3 ✅) &mdash; Verifies a repo manifest.
+  * [test_new_sdk](#recipes-test_new_sdk) (Python3 ✅) &mdash; Recipe that tests a newly built SDK.
   * [test_plan_filtering](#recipes-test_plan_filtering) (Python3 ✅) &mdash; Updates test plan rules to reflect new risk-based rules.
   * [test_platform/cros_test_platform](#recipes-test_platform_cros_test_platform) (Python3 ✅) &mdash; Recipe for the ChromeOS Test Frontend.
   * [test_platform/cros_test_postprocess](#recipes-test_platform_cros_test_postprocess) (Python3 ✅)
@@ -14187,6 +14188,22 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Verifies a repo manifest.
 
 &mdash; **def [RunSteps](/recipes/test_manifest.py#36)(api: RecipeApi, properties: TestManifestProperties):**
+### *recipes* / [test\_new\_sdk](/recipes/test_new_sdk.py)
+
+[DEPS](/recipes/test_new_sdk.py#25): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe that tests a newly built SDK.
+
+This recipe is intended to be run with a newly built SDK, to verify that it is
+ready to be uprevved as the "latest SDK".
+
+TODO(b/264564728): Add the rest of the logic.
+
+&mdash; **def [RunSteps](/recipes/test_new_sdk.py#30)(api: RecipeApi, properties: TestNewSdkProperties):**
+
+Main recipe logic.
 ### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)
 
 [DEPS](/recipes/test_plan_filtering.py#42): [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

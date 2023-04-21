@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe that tests a newly built SDK.
+
+This recipe is intended to be run with a newly built SDK, to verify that it is
+ready to be uprevved as the "latest SDK".
+
+TODO(b/264564728): Add the rest of the logic.
+"""
+
+from typing import Generator
+
+from PB.recipes.chromeos.test_new_sdk import TestNewSdkProperties
+from recipe_engine import post_process
+from recipe_engine.recipe_api import InfraFailure
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+DEPS = ['recipe_engine/properties', 'recipe_engine/step']
+
+PROPERTIES = TestNewSdkProperties
+
+
+def RunSteps(api: RecipeApi, properties: TestNewSdkProperties) -> None:
+  """Main recipe logic."""
+  with api.step.nest('validate inputs'):
+    if not properties.sdk_version:
+      raise InfraFailure('No SDK version provided')
+
+
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
+  """Define test cases."""
+  yield api.test('basic', api.properties(sdk_version='2023.03.14.159265'))
+
+  yield api.test(
+      'no-version',
+      api.post_check(post_process.StepException, 'validate inputs'),
+      api.post_check(post_process.SummaryMarkdown, 'No SDK version provided'),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
