@@ -24,6 +24,8 @@ from typing import NamedTuple
 from typing import Optional
 from urllib import parse
 
+from RECIPE_MODULES.chromeos.cros_sdk.api import LATEST_UPREV_TARGET_KEY
+from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
 from RECIPE_MODULES.chromeos.git.api import Reference
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
@@ -87,6 +89,7 @@ DEPS = [
     'git_cl',
     'git_footers',
     'gitiles',
+    'key_value_store',
     'naming',
     'pupr',
     'pupr_gerrit_interface',
@@ -295,8 +298,23 @@ class GeneratorRun:
       return self.m.pupr_local_uprev.uprev_packages(
           self.target_package_versions, self.topic)
     if self._is_sdk_uprevver:
-      return self.m.pupr_local_uprev.uprev_sdk()
+      target_sdk_version = self._get_target_sdk_version()
+      return self.m.pupr_local_uprev.uprev_sdk(target_sdk_version)
     raise InfraFailure('Not sure how to uprev.')  # pragma: nocover
+
+  def _get_target_sdk_version(self) -> str:
+    """Determine a target SDK version by reading the remote SDK version file.
+
+    Returns:
+      An SDK version, such as '2023.03.14.159265'.
+    """
+    with self.m.step.nest('determine target sdk version') as presentation:
+      contents = self.m.cros_sdk.read_remote_latest_sdk_file()
+      parsed = self.m.key_value_store.parse_contents(
+          contents, source=REMOTE_LATEST_SDK_URI)
+      target_version = parsed[LATEST_UPREV_TARGET_KEY]
+      presentation.properties['target_sdk_version'] = target_version
+    return target_version
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -1217,6 +1235,9 @@ def GenTests(api: RecipeTestApi):
       'sdk-uprev',
       _props(uprev_target_kind=UprevTargetKind.SDK),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.post_check(post_process.StepSuccess, 'determine target sdk version'),
       api.post_check(post_process.StepException, 'uprev sdk'),
+      api.post_check(post_process.PropertyEquals, 'target_sdk_version',
+                     '2023.03.14.159265'),
       status='INFRA_FAILURE',
   )

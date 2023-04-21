@@ -20,7 +20,7 @@ DEPS = [
 
 def RunSteps(api: RecipeApi):
   """Main test case logic."""
-  api.pupr_local_uprev.uprev_sdk()
+  api.pupr_local_uprev.uprev_sdk('2023.03.14.159265')
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

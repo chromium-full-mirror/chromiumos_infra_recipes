@@ -297,7 +297,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       commit_lines.append('Change-Id: ' + change_id)
     return '\n'.join(commit_lines) + '\n'
 
-  def uprev_sdk(self) -> List[ProjectInfo]:
+  def uprev_sdk(self, target_version: str) -> List[ProjectInfo]:
     """Uprev the SDK on the local filesystem, and commit the uprev.
 
     TODO(b/259445565): Implement this.
@@ -305,6 +305,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     Returns:
       A list of repo projects with modified code.
     """
+    del target_version
     with self.m.step.nest('uprev sdk'):
       raise InfraFailure('Not implemented yet!')
 

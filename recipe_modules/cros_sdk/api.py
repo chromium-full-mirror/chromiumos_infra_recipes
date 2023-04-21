@@ -22,8 +22,23 @@ from PB.chromite.api.sdk import DeleteRequest as DeleteSdkRequest
 # Default value for the sdk cache version
 _DEFAULT_SDK_CACHE_VERSION = 1
 
+# Info for the source-controlled SDK verison file.
 _SDK_VERSION_PROJECT_PATH = 'src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf'
 _SDK_VERSION_CONF_TEST_DATA = 'SDK_LATEST_VERSION="foo"\nTC_PATH="bar"\n'
+
+# Info for the remote "latest SDK" bucket in Google Cloud Storage.
+_CHROMIUMOS_SDK_BUCKET = 'chromiumos-sdk'
+_REMOTE_LATEST_SDK_PATH = 'cros-sdk-latest.conf'
+REMOTE_LATEST_SDK_URI = f'gs://{_CHROMIUMOS_SDK_BUCKET}/{_REMOTE_LATEST_SDK_PATH}'
+_REMOTE_LATEST_SDK_TEST_DATA = (
+    '# The most recent SDK that is tested and ready for use.\n'
+    'LATEST_SDK="2023.03.13.222421"\n'
+    '\n'
+    '# The most recently built version. New uprev attempts should target this.\n'
+    '# Warning: This version may not be tested yet.\n'
+    'LATEST_SDK_UPREV_TARGET="2023.03.14.159265"')
+LATEST_SDK_KEY = 'LATEST_SDK'
+LATEST_UPREV_TARGET_KEY = 'LATEST_SDK_UPREV_TARGET'
 
 
 class CrosSdkApi(RecipeApi):
@@ -672,3 +687,14 @@ class CrosSdkApi(RecipeApi):
           list(resp.default_toolchains) + list(resp.nondefault_toolchains))
 
       return self.ToolchainInfo(sdk_version, toolchain_url, toolchains)
+
+  def read_remote_latest_sdk_file(self) -> str:
+    """Read the remote latest SDK file from Google Cloud Storage.
+
+    Returns:
+      The contents of the remote file.
+    """
+    return self.m.gsutil.cat(
+        REMOTE_LATEST_SDK_URI, stdout=self.m.raw_io.output_text(),
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+            _REMOTE_LATEST_SDK_TEST_DATA)).stdout

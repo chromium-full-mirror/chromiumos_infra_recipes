@@ -15,6 +15,7 @@ from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromiumos import common as common_pb2
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
+from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
 
 from recipe_engine import post_process
 from recipe_engine.config_types import Path
@@ -279,22 +280,13 @@ class BuildSDKRun:
     """Read, log, and return the existing latest SDK file on GS://.
 
     Returns:
-      The raw contents of the existing file.
+      The raw contents of the remote file.
     """
     with self.m.step.nest('read existing latest file') as presentation:
-      uri = f'gs://{SDK_BUCKET}/cros-sdk-latest.conf'
-      contents = self.m.gsutil.cat(
-          uri, stdout=self.m.raw_io.output(),
-          step_test_data=lambda: self.m.raw_io.test_api.stream_output(
-              '# The most recent SDK that is tested and ready for use.\n'
-              'LATEST_SDK="2023.03.13.222421"\n'
-              '\n'
-              '# The most recently built version. New uprev attempts should target this.\n'
-              '# Warning: This version may not be tested yet.\n'
-              'LATEST_SDK_UPREV_TARGET="2023.03.14.159265"')).stdout.decode()
+      contents = self.m.cros_sdk.read_remote_latest_sdk_file()
       presentation.logs['existing file contents'] = contents
       contents_dict = self.m.key_value_store.parse_contents(
-          contents, source='remote latest file')
+          contents, source=REMOTE_LATEST_SDK_URI)
       presentation.properties['old_LATEST_SDK'] = contents_dict.get(
           'LATEST_SDK', "None")
       presentation.properties[
