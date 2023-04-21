@@ -25,6 +25,7 @@ RECIPE_BUNDLE = os.path.join('infra', 'recipe_bundles',
                              'recipes')
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
 
+MIN_BRANCH_MILESTONE = 113
 
 # A tuple containing the project, builder and regex used to search.
 class StagingReCheck(typing.NamedTuple):
@@ -35,10 +36,11 @@ class StagingReCheck(typing.NamedTuple):
 
 STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R\d+-\d+\.B-orchestrator'),
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
     StagingReCheck('chromeos', 'staging',
-                   r'staging-octopus-release-R\d+-\d+\.B'),
-    StagingReCheck('chromeos', 'staging', r'staging-zork-release-R\d+-\d+\.B'),
+                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B'),
     # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
@@ -318,7 +320,11 @@ def return_builders_for_regex(project: str, bucket: str,
     if not line:
       continue
     builder = line.strip().split('/')[-1]
-    if r.fullmatch(builder):
+    s = r.fullmatch(builder)
+    if s:
+      gd = s.groupdict()
+      if 'milestone' in gd and int(gd['milestone']) < MIN_BRANCH_MILESTONE:
+        continue
       ret.append(line.strip())
   return ret
 
