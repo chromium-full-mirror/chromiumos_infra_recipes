@@ -194,17 +194,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "select policy"
-  },
-  {
-    "cmd": [],
-    "name": "set policy",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"pattern\": \".*\", \"reviewers\": [{\"email\": \"a@example.com\"}]}@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "config",
@@ -1182,6 +1171,17 @@
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "select policy"
+  },
+  {
+    "cmd": [],
+    "name": "set policy",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@policy@{\"pattern\": \".*\", \"reviewers\": [{\"email\": \"a@example.com\"}]}@@@"
     ]
   },
   {
