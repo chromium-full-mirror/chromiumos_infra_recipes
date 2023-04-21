@@ -472,6 +472,26 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Delete'] = '{}'
     responses['Unmount'] = '{}'
     responses['Update'] = jsonify(version={'version': 123})
+    responses['Uprev'] = jsonify(
+        modified_files=[
+            {
+                'path':
+                    self.src_path(
+                        'src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf'
+                    ),
+                'location':
+                    2,  # chromiumos.Path.Location.OUTSIDE
+            },
+            {
+                'path':
+                    self.src_path(
+                        'src/overlays/overlay-amd64-host/prebuilt.conf'),
+                'location':
+                    2,  # chromiumos.Path.Location.OUTSIDE
+            },
+        ],
+        version='2023.02.12.144623',
+    )
     responses['BuildPrebuilts'] = '{}'
     responses['BuildSdkTarball'] = jsonify(
         sdk_tarball_path={
