@@ -58,8 +58,7 @@ def GenTests(api):
 
   yield api.test(
       'annealing-not-found',
-      api.post_check(post_process.StepFailure, 'postsubmit relevance check'),
-      status='FAILURE',
+      api.post_check(post_process.MustRun, 'postsubmit relevance check'),
   )
 
   yield api.test(

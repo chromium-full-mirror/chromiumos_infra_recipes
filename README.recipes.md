@@ -3379,7 +3379,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [call\_pointless\_build\_checker](/recipe_modules/cros_relevance/api.py#349)(self, check_request, step_presentation, is_pointless_test_value=False):**
+&mdash; **def [call\_pointless\_build\_checker](/recipe_modules/cros_relevance/api.py#350)(self, check_request, step_presentation, is_pointless_test_value=False):**
 
 Returns the result of calling the Pointless Build Checker.
 
@@ -3395,7 +3395,7 @@ Returns:
   check_result (PointlessBuildCheckResponse): The response from calling the
       Pointless Build Checker
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#447)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#448)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -3406,7 +3406,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#514)(self, patch_sets):**
+&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#515)(self, patch_sets):**
 
 Returns the union of all paths in the list of patchsets.
 
@@ -3417,7 +3417,7 @@ Args:
 Returns:
   List[str]: The union of all paths in the patchsets.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#425)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#426)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -3433,7 +3433,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#535)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#536)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -3473,7 +3473,7 @@ Args:
 Returns:
   bool: Whether the changes are relevant to the CQ run.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#400)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#401)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -14553,7 +14553,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 &mdash; **def [RunSteps](/recipes/test_rules_cros.py#25)(api: RecipeApi):**
 ### *recipes* / [test\_sdk](/recipes/test_sdk.py)
 
-[DEPS](/recipes/test_sdk.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_sdk.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -14561,7 +14561,7 @@ Recipe that runs SDK package unit tests.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_sdk.py#36)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/test_sdk.py#37)(api: RecipeApi):**
 ### *recipes* / [test\_uefi\_shim](/recipes/test_uefi_shim.py)
 
 [DEPS](/recipes/test_uefi_shim.py#17): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

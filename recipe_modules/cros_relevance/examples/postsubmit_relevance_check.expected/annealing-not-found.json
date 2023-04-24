@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "postsubmit relevance check",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@relevant because annealing build was not found@@@"
     ]
   },
   {
@@ -29,10 +29,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Did not find the one annealing build."
-    },
     "name": "$result"
   }
 ]

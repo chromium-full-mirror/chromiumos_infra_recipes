@@ -3199,7 +3199,25 @@
     "cmd": [],
     "name": "postsubmit relevance check",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_TEXT@build is not relevant@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages upreved by Annealing:@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-apu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-vpu-firmware, 0.0.1-r1429)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-tests, 0.0.1-r1815)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-libs, 0.0.1-r4377)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, actions, 0.0.1-r5146)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-wireless, 0.0.1-r4645)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-https-server, 0.0.1-r309)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-infra, 0.0.1-r4187)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-net, 0.0.1-r4118)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-security, 0.0.1-r4415)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-daemons, 0.0.3-r7022)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(sys-boot, depthcharge, 0.0.1-r3403)@@@",
+      "@@@STEP_LOG_LINE@relevance log@(dev-util, hdctools, 0.0.1-r1446)@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages target depends on:@@@",
+      "@@@STEP_LOG_LINE@relevance log@Packages that are relevant:@@@",
+      "@@@STEP_LOG_END@relevance log@@@"
     ]
   },
   {
@@ -3234,19 +3252,14 @@
     "name": "postsubmit relevance check.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"Annealing\"}, \"id\": \"123\", \"output\": {\"properties\": {\"compressed_uprev_response\": \"\\neJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\\n\\nTGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\\n\\nGFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\\n\\n8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\\n\\nUnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\\n\\nwftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\\n\\nOK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\\n\\nKZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\\n\\nq10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\\n\\n3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\\n\\nVtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\\n\\neQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\\n\\n\"}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@Annealing@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
   },
   {
     "cmd": [],
     "name": "finalize metadata"
-  },
-  {
-    "cmd": [],
-    "name": "set sdk_state",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
-    ]
   },
   {
     "cmd": [],
@@ -3380,28 +3393,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -3409,8 +3400,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"snapshot_hash\": \"snapshot-HEAD-SHA\",\n  \"version\": 1\n}",
+      "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -3425,85 +3416,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
+    "name": "clean up SDK chroot.write sdk cache state file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Delete"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@{@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
+      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
   },
   {
@@ -3682,10 +3604,7 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Did not find the one annealing build."
-    },
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "build was pointless."
   }
 ]

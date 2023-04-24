@@ -25,6 +25,7 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
+    'cros_history',
     'cros_relevance',
     'cros_sdk',
     'failures',
@@ -80,8 +81,11 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'not-relevant-postsubmit',
       api.buildbucket.ci_build(builder='host-packages-cq'),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response()],
+          step_name='postsubmit relevance check.buildbucket.search',
+      ),
       api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
-      status='FAILURE',
   )
 
   yield api.test(
