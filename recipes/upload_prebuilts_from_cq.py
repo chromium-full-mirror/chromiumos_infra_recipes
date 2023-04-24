@@ -163,8 +163,9 @@ def RunSteps(api: RecipeApi):
 
         sorted_builds = sorted(builds, key=lambda b: b.start_time.ToSeconds())
         for build in reversed(sorted_builds):
-          # Ignore the prod builders on staging, or the staging builders on prod.
-          if build.builder.bucket != bucket:
+          # On prod, use only prebuilts from prod (ignoring staging prebuilts).
+          # On staging, use prebuilts from both prod and staging.
+          if not is_staging and build.builder.bucket != 'cq':
             continue
 
           # Ignore failed builds.
