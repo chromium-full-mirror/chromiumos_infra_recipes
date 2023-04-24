@@ -785,6 +785,7 @@
       "git",
       "clone",
       "--bare",
+      "--shared",
       ".",
       "[CLEANUP]/repo-overwrite-_tmp_1"
     ],

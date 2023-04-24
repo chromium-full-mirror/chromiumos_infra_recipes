@@ -1054,7 +1054,8 @@ class CrosSourceApi(RecipeApi):
 
         # Create the clone.
         new_dir = self.m.path.mkdtemp('repo-overwrite-')
-        self.m.step('clone', ['git', 'clone', '--bare', '.', new_dir])
+        self.m.step('clone',
+                    ['git', 'clone', '--bare', '--shared', '.', new_dir])
 
         # Determine the correct name for the remote.
         step_test_data = lambda: self.m.raw_io.test_api.output_text(
