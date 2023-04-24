@@ -276,15 +276,24 @@ class GeneratorRun:
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self._projects_by_remote, self.topic)
-      do_open_cls_remain = self.m.pupr_gerrit_interface.handle_open_changes(
-          open_changes, self._projects_by_remote, self.policy, self.topic,
-          self.retry_only_run)
+      most_recent_uprev = self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
+          self._projects_by_remote, self.topic) if open_changes else None
+      do_open_cls_remain = self.m.pupr_gerrit_interface.handle_outdated_changes(
+          open_changes, most_recent_uprev, self.policy, self.retry_only_run)
 
       if not self.retry_only_run:
-        return self.m.pupr_gerrit_interface.create_uprev_cls(
+        summary = self.m.pupr_gerrit_interface.create_uprev_cls(
             self._repo_projects, open_changes, do_open_cls_remain, self.policy,
             self.topic)
-      return self.make_summary('success')
+      else:
+        summary = self.make_summary('success')
+
+      self.m.pupr_gerrit_interface.apply_retry_policy(open_changes,
+                                                      most_recent_uprev,
+                                                      self.policy, self.topic,
+                                                      self.retry_only_run)
+
+    return summary
 
   def create_local_uprev(self) -> Optional[List[ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.
