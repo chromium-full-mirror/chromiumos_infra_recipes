@@ -1756,6 +1756,34 @@
     },
     {
       "id": {
+        "name": "release-stabilize-15185.B-orchestrator",
+        "type": "RELEASE",
+        "bucket": "release"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/stabilize-15185.B"
+        },
+        "child_specs": [
+          {
+            "name": "eve-release-main",
+            "collectHandling": "COLLECT"
+          },
+          {
+            "name": "kukui-release-main",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
         "name": "eve-release-main",
         "type": "RELEASE",
         "bucket": "release"

@@ -35,6 +35,12 @@ SUPPORTED_SIGN_TYPES = set([
     IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE, IMAGE_TYPE_GSC_FIRMWARE
 ])
 
+# GS URI to the Release Schedule.
+RC_SCHEDULE_URI = 'gs://chromeos-release-schedule/schedule.json'
+RELEASE_HIGH_PRIO_QS_ACCOUNT = 'release_high_prio'
+RELEASE_MED_PRIO_QS_ACCOUNT = 'release_med_prio'
+RELEASE_LOW_PRIO_QS_ACCOUNT = 'release_low_prio'
+
 
 class CrosReleaseApi(recipe_api.RecipeApi):
   MANIFEST_VERSIONS_URL = \
@@ -414,3 +420,62 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             self.m.cros_release_util.channel_strip_prefix(c)
             for c in self._channels
         ])
+
+  def get_release_qs_account(self):
+    """Fetches the RC schedule and determines which QS account to use.
+
+    If the schedule cannot be fetched or is malformatted, reasonable defaults
+    will be used. See go/dynamic-rc-prio for more context.
+    """
+    # TODO(b/278885352): Update docstring to point to g3docs.
+
+    with self.m.step.nest('determine release testing priority'):
+
+      def fetch_schedule():
+        with self.m.step.nest('fetch schedule.json') as presentation:
+          result = self.m.gsutil.cat(RC_SCHEDULE_URI,
+                                     stdout=self.m.raw_io.output(),
+                                     ok_ret='any')
+
+          if result.retcode != 0:
+            presentation.step_text = 'could not fetch schedule.json, falling back to defaults'
+            return None
+
+          try:
+            schedule_data = json.loads(result.stdout)
+          except json.decoder.JSONDecodeError:
+            presentation.step_text = 'could not parse schedule.json, falling back to defaults'
+            return None
+
+          # Want a string of the format "YYYY-MM-DD". Regularly scheduled builds
+          # span two calendar days, scheduling tests in the early morning. This
+          # is the day we want to match up with schedule.json.
+          # For LTS this doesn't matter as LTS always gets `release_high_prio`.
+          today = self.m.time.utcnow().date().isoformat()
+          if today not in schedule_data:
+            presentation.step_text = 'could not find {} in schedule.json, falling back to defaults'.format(
+                today)
+            return None
+
+          return schedule_data[today]
+
+      schedule_data = fetch_schedule()
+      if not schedule_data:
+        # Apply defaults.
+        if Channel.CHANNEL_STABLE in self._channels:
+          return RELEASE_HIGH_PRIO_QS_ACCOUNT
+        if Channel.CHANNEL_BETA in self._channels:
+          return RELEASE_MED_PRIO_QS_ACCOUNT
+        return RELEASE_LOW_PRIO_QS_ACCOUNT
+
+      config = self.m.cros_infra_config.config
+      # Stabilize branches should get low priority.
+      if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
+        return RELEASE_LOW_PRIO_QS_ACCOUNT
+
+      milestone = str(self.m.cros_version.version.milestone)
+      if schedule_data['primary'] == milestone:
+        return RELEASE_HIGH_PRIO_QS_ACCOUNT
+      if schedule_data['secondary'] == milestone:
+        return RELEASE_MED_PRIO_QS_ACCOUNT
+      return RELEASE_LOW_PRIO_QS_ACCOUNT
