@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'easy',
+    'exoneration_util',
     'naming',
     'rdb_util',
     'urls',

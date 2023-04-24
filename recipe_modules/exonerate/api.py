@@ -27,9 +27,6 @@ CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 FailedTest = namedtuple(
     'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
-CONSISTENT_FAILURES_THRESHOLD = 6
-FLAKY_PERCENT_THRESHOLD = 1
-FLAKY_VERDICT_THRESHOLD = 3
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -48,6 +45,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._failed_tests = set()
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
+    self._consistent_failure_threshold = properties.consistent_failure_threshold or 6
+    self._flaky_percent_threshold = properties.flaky_percent_threshold or 1.0
+    self._flaky_verdict_threshold = properties.flaky_verdict_threshold or 3
 
   @property
   def is_enabled(self):
@@ -535,8 +535,8 @@ class ExonerateApi(recipe_api.RecipeApi):
                                            suite=test.suite))
           # TODO(b/272052840): See if we need to skip auto exoneration.
 
-          failure_rates = self.m.luci_analysis.query_failure_rate(
-              test_variant_list, project='chromeos')
+          failure_rates = self.m.exoneration_util.query_failure_rate(
+              test_variant_list)
           pres.logs['failure_rate'] = str(failure_rates)
           all_stats = []
           for failure_rate in failure_rates:
@@ -554,10 +554,10 @@ class ExonerateApi(recipe_api.RecipeApi):
                 self.get_flake_percent_from_interval_stats(
                     failure_rate.interval_stats))
             # This is Browser's current algorithm. Starting with this. Might change later.
-            consistently_failing = stat.consistent_failure_count >= CONSISTENT_FAILURES_THRESHOLD
+            consistently_failing = stat.consistent_failure_count >= self._consistent_failure_threshold
             was_flaky = (
-                flaky_verdicts >= FLAKY_VERDICT_THRESHOLD and
-                stat.flaky_verdict_percent >= FLAKY_PERCENT_THRESHOLD)
+                flaky_verdicts >= self._flaky_verdict_threshold and
+                stat.flaky_verdict_percent >= self._flaky_percent_threshold)
             stat.automatically_exonerated = consistently_failing or was_flaky
             all_stats.append(stat)
 

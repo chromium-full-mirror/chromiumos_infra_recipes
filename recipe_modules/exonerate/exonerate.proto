@@ -14,6 +14,16 @@ message ExonerateProperties {
   // Whether to run in dry_run mode. Exoneration logic will be
   // executed but results won't be changed.
   bool dry_run = 2;
+
+  // Number of consistent failure(s) in the 10 last results to merit exoneration.
+  int32 consistent_failure_threshold = 3;
+
+  // Percent of flaky results in the last 24 hour period to merit exoneration.
+  // In conjunction with the flaky_verdict_threshold below.
+  float flaky_percent_threshold = 4;
+
+  // The number of flaky verdict(s) needed to check for flaky percent.
+  int32 flaky_verdict_threshold = 5;
 }
 
 message ExonerateStats {

@@ -61,6 +61,7 @@
   * [dut_interface](#recipe_modules-dut_interface) (Python3 ✅)
   * [easy](#recipe_modules-easy) (Python3 ✅) &mdash; APIs for easy steps.
   * [exonerate](#recipe_modules-exonerate) (Python3 ✅)
+  * [exoneration_util](#recipe_modules-exoneration_util) (Python3 ✅)
   * [failures](#recipe_modules-failures) (Python3 ✅) &mdash; API for raising failures and presenting them in cute ways.
   * [future_utils](#recipe_modules-future_utils) (Python3 ✅)
   * [gce_provider](#recipe_modules-gce_provider) (Python3 ✅)
@@ -397,6 +398,7 @@
   * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests) (Python3 ✅)
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results) (Python3 ✅)
+  * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate) (Python3 ✅)
   * [failures:examples/additional_test_not_run_critical_cq](#recipes-failures_examples_additional_test_not_run_critical_cq) (Python3 ✅)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures) (Python3 ✅)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures) (Python3 ✅)
@@ -5203,11 +5205,11 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [exoneration\_util](#recipe_modules-exoneration_util), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 &mdash; **def [auto\_exoneration\_dry\_run](/recipe_modules/exonerate/api.py#519)(self):**
 
@@ -5350,6 +5352,25 @@ Load configs from binary/json files.
 &mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#126)(self):**
 
 Write exoneration stats to output properties.
+### *recipe_modules* / [exoneration\_util](/recipe_modules/exoneration_util)
+
+[DEPS](/recipe_modules/exoneration_util/__init__.py#6): [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+#### **class [ExonerationUtilApi](/recipe_modules/exoneration_util/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for util functions associated with exoneration.
+
+&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#19)(self, test_variant_list: List[dict]):**
+
+Query failure rate from luci_analysis.
+
+Args:
+  test_variant_list: A list of dicts with test name and variant def to query on.
+
+Returns:
+  List of TestVariantFailureRateAnalysis for each input.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12341,6 +12362,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_missing_results.py#25)(api):**
+### *recipes* / [exoneration\_util:examples/query\_failure\_rate](/recipe_modules/exoneration_util/examples/query_failure_rate.py)
+
+[DEPS](/recipe_modules/exoneration_util/examples/query_failure_rate.py#8): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/query_failure_rate.py#16)(api):**
 ### *recipes* / [failures:examples/additional\_test\_not\_run\_critical\_cq](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py)
 
 [DEPS](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py#9): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
