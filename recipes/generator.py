@@ -248,15 +248,16 @@ class GeneratorRun:
     )
     self.m.pupr_gerrit_interface.rebase_before_retry = self.properties.rebase_before_retry
 
+    policy_info = self.select_policy()
+    self.set_policy(policy_info.policy)
+    if self.policy.ignore:
+      self.m.step.empty('policy set to ignore')
+      return self.make_summary('ignore by policy')
+
     with self.m.cros_source.checkout_overlays_context(), \
         self.m.cros_sdk.cleanup_context():
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
-      policy_info = self.select_policy()
-      self.set_policy(policy_info.policy)
-      if self.policy.ignore:
-        self.m.step.empty('policy set to ignore')
-        return self.make_summary('ignore by policy')
       self.checkout_branch(policy_info)
 
       if self.m.cq.active or self.m.src_state.gerrit_changes:
