@@ -6,7 +6,12 @@ syntax = "proto3";
 
 package recipes.chromeos.test_new_sdk;
 
+import "chromiumos/common.proto";
+
 message TestNewSdkProperties {
   // Required. Specific SDK version to test, such as 2022.01.20.073008.
   string sdk_version = 1;
+
+  // Required. The build target to try building an image for.
+  chromiumos.BuildTarget build_target = 2;
 }

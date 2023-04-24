@@ -32,16 +32,32 @@ def RunSteps(api: RecipeApi, properties: TestNewSdkProperties) -> None:
   with api.step.nest('validate inputs'):
     if not properties.sdk_version:
       raise InfraFailure('No SDK version provided')
+    if not properties.build_target.name:
+      raise InfraFailure('No build target provided')
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   """Define test cases."""
-  yield api.test('basic', api.properties(sdk_version='2023.03.14.159265'))
+  yield api.test(
+      'basic',
+      api.properties(sdk_version='2023.03.14.159265',
+                     build_target={'name': 'amd64-generic'}),
+  )
 
   yield api.test(
       'no-version',
+      api.properties(build_target={'name': 'amd64-generic'}),
       api.post_check(post_process.StepException, 'validate inputs'),
       api.post_check(post_process.SummaryMarkdown, 'No SDK version provided'),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'no-build-target',
+      api.properties(sdk_version='2023.03.14.159265'),
+      api.post_check(post_process.StepException, 'validate inputs'),
+      api.post_check(post_process.SummaryMarkdown, 'No build target provided'),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
