@@ -14276,7 +14276,7 @@ Verifies a repo manifest.
 &mdash; **def [RunSteps](/recipes/test_manifest.py#36)(api: RecipeApi, properties: TestManifestProperties):**
 ### *recipes* / [test\_new\_sdk](/recipes/test_new_sdk.py)
 
-[DEPS](/recipes/test_new_sdk.py#25): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_new_sdk.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -14287,7 +14287,7 @@ ready to be uprevved as the "latest SDK".
 
 TODO(b/264564728): Add the rest of the logic.
 
-&mdash; **def [RunSteps](/recipes/test_new_sdk.py#30)(api: RecipeApi, properties: TestNewSdkProperties):**
+&mdash; **def [RunSteps](/recipes/test_new_sdk.py#32)(api: RecipeApi, properties: TestNewSdkProperties):**
 
 Main recipe logic.
 ### *recipes* / [test\_plan\_filtering](/recipes/test_plan_filtering.py)

@@ -22,7 +22,9 @@ from recipe_engine.recipe_test_api import TestData
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-DEPS = ['recipe_engine/properties', 'recipe_engine/step']
+DEPS = [
+    'recipe_engine/properties', 'recipe_engine/step', 'build_menu', 'cros_sdk'
+]
 
 PROPERTIES = TestNewSdkProperties
 
@@ -34,6 +36,11 @@ def RunSteps(api: RecipeApi, properties: TestNewSdkProperties) -> None:
       raise InfraFailure('No SDK version provided')
     if not properties.build_target.name:
       raise InfraFailure('No build target provided')
+
+  with api.build_menu.configure_builder(missing_ok=True):
+    with api.build_menu.setup_workspace_and_chroot(replace=True,
+                                                   update_chroot=False):
+      api.cros_sdk('run command in chroot', ['true'])
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
