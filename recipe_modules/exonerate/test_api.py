@@ -18,20 +18,26 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
     """Returns fake configs for unittesting."""
     betty_criteria = TestDisablement.FilterCriterion(key="build_target",
                                                      values=["betty"])
-    bt_criteria = TestDisablement.FilterCriterion(key="build_target",
-                                                  values=["build_target_name"])
+    build_target_name_criteria = TestDisablement.FilterCriterion(
+        key="build_target", values=["build_target_name"])
+
+    target_criteria = TestDisablement.FilterCriterion(key="build_target",
+                                                      values=["target"])
     exonerations = [
         TestDisablement(name="test1", bug_ids=["123456"]),
         TestDisablement(name="test2", bug_ids=["123456"]),
-        TestDisablement(name="test3", dut_criteria=[bt_criteria],
+        TestDisablement(name="test3", dut_criteria=[build_target_name_criteria],
                         bug_ids=["123456"]),
-        TestDisablement(name="test4", dut_criteria=[bt_criteria],
+        TestDisablement(name="test4", dut_criteria=[build_target_name_criteria],
                         bug_ids=["123456"]),
         TestDisablement(name="test6", dut_criteria=[betty_criteria],
                         bug_ids=["123456"]),
         TestDisablement(name="arc.Boot", dut_criteria=[betty_criteria],
                         bug_ids=["123456"]),
+        TestDisablement(name="camera.TakesGreatPhotos", bug_ids=["123456"],
+                        dut_criteria=[target_criteria]),
     ]
+
     return TestDisablementCfg(disablements=exonerations)
 
   def fake_config_file_contents(self):

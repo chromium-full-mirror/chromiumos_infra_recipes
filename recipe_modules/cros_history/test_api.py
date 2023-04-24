@@ -5,8 +5,6 @@
 
 from typing import List
 from recipe_engine import recipe_test_api
-from PB.chromiumos.test_disablement import TestDisablement
-from PB.chromiumos.test_disablement import TestDisablementCfg
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -137,14 +135,13 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  def build_with_test_build_ids_properties(self, hw_names, vm_names,
-                                           build_id=12345,
+  def build_with_test_build_ids_properties(self, hw_ids, vm_ids, build_id=12345,
                                            create_time=1562475240):
     """Generate a test build with build_ids of test builds tests in the output.
 
     Args:
-      hw_names (list[str]): List of hw builder ids.
-      vm_names (list[str]): List of vm builder ids.
+      hw_ids (list[int]): List of hw builder ids.
+      vm_ids (list[int]): List of vm builder ids.
       build_id (int): The id for the build.
       create_time (int): The create_time for the build in seconds.
 
@@ -161,24 +158,12 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         status=common_pb2.SUCCESS)
     build.output.properties.update({
         'test_tasks': {
-            'skylab_builder_ids': hw_names,
-            'tast_vm_tests_builder_ids': vm_names
+            'skylab_builder_ids': hw_ids,
+            'tast_vm_tests_builder_ids': vm_ids
         }
     })
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
-
-  def mocked_exoneration_config(self):
-    """Returns fake configs for unittesting."""
-    target_criteria = TestDisablement.FilterCriterion(key="build_target",
-                                                      values=["target"])
-    exonerations = [
-        TestDisablement(name="camera.TakesGreatPhotos", bug_ids=["123456"],
-                        dut_criteria=[target_criteria]),
-    ]
-    TestDisablementCfg(disablements=exonerations)
-    return self.m.gitiles.make_encoded_file_from_bytes(
-        TestDisablementCfg(disablements=exonerations).SerializeToString())
 
   def create_vm_builds(self, num_success: int, num_failure: int,
                        start_id: int = 1) -> List[build_pb2.Build]:

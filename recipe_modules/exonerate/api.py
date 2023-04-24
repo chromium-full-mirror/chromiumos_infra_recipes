@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 from collections import namedtuple
-from typing import List
+from typing import List, Tuple
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
@@ -18,6 +18,7 @@ from PB.chromiumos.test_disablement import TestDisablementCfg
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
@@ -656,3 +657,82 @@ class ExonerateApi(recipe_api.RecipeApi):
               test_case['name'], build_target):
         return False
     return True
+
+  def get_prev_failed_now_exonerable_test_results(
+      self, test_plan: GenerateTestPlanResponse,
+      dry_run=False) -> Tuple[List[build_pb2.Build], List[SkylabResult]]:
+    """Get the tests from the previous failed runs that are now exonerable.
+
+    Args:
+      test_plan: The test plan which contains the tests for which to retrieve
+      the results from previous runs.
+
+    Returns:
+      A tuple containing the list of exonerable VM test builds and the list
+      of exonerable HW test results.
+    """
+
+    def _get_step_text(ex_vms, ex_hws):
+      return 'found %d vm suite%s and %d hw suite%s' % (
+          len(ex_vms), 's' if len(ex_vms) > 1 else '', len(ex_hws),
+          's' if len(ex_hws) > 1 else '')
+
+    def _log_results(ex_vms, ex_hws):
+      vm_suites_names = sorted(
+          {self.m.naming.get_vm_test_title(build) for build in ex_vms})
+      hw_suites_names = sorted({
+          str(skylab_res.task.test.common.display_name) for skylab_res in ex_hws
+      })
+      presentation.logs['exonerable tests'] = (
+          'Test Suites that previously failed '
+          'but now exonerable \n') + 'VM test suites:\n ' + '\n '.join(
+              vm_suites_names) + '\n\nHW test suites:\n ' + '\n '.join(
+                  hw_suites_names)
+
+    with self.m.step.nest(
+        'get previous failed and now exonerable suites') as presentation:
+
+      vm_test_results, hw_test_results = self.m.cros_history.get_previous_test_results(
+          test_plan)
+
+      exonerable_vms = self.get_failed_now_exonerable_vm_test_builds(
+          vm_test_results)
+      exonerable_hw_res = self.get_failed_now_exonerable_hw_tests_results(
+          hw_test_results)
+      presentation.step_text = _get_step_text(exonerable_vms, exonerable_hw_res)
+      _log_results(exonerable_vms, exonerable_hw_res)
+      if dry_run:
+        return [], []
+      return exonerable_vms, exonerable_hw_res
+
+  def get_failed_now_exonerable_vm_test_builds(
+      self, vm_test_builds: List[build_pb2.Build]) -> List[build_pb2.Build]:
+    """Get the results from the previous failed VM test builds that can now be exonerated.
+
+    Args:
+      vm_test_builds: The previous VM test builds to try to exonerate.
+
+    Returns:
+      A list of the exonerable VM test builds.
+    """
+    exonerable_vm_results = [
+        build for build in vm_test_builds
+        if self.is_vm_test_build_exonerable(build)
+    ]
+    return exonerable_vm_results
+
+  def get_failed_now_exonerable_hw_tests_results(
+      self, hw_test_results: List[SkylabResult]) -> List[SkylabResult]:
+    """Get the results from the previous failed hardware tests that can now be exonerated.
+
+    Args:
+      hw_test_results: The previous VM test builds to try to exonerate.
+
+    Returns:
+      A list of the exonerable hardware test results.
+    """
+    exonerable_hw_results = [
+        result for result in hw_test_results
+        if self.is_hw_result_exonerable(result)
+    ]
+    return exonerable_hw_results

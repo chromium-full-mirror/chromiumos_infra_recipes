@@ -14,7 +14,6 @@ DEPS = [
     'recipe_engine/time',
     'cros_tags',
     'easy',
-    'exonerate',
     'naming',
     'skylab_results',
 ]

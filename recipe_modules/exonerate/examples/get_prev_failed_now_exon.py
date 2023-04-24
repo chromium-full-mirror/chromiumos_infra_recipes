@@ -28,33 +28,20 @@ PROPERTIES = {'dry_run_exonerate_retried_suites': Property(default=False)}
 
 def RunSteps(api, dry_run_exonerate_retried_suites):
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
-  api.exonerate.load_configs(
-      api.cros_history.test_api.mocked_exoneration_config)
-  result = api.cros_history.get_prev_failed_now_exonerable_test_results(
+  api.exonerate.load_configs()
+  result = api.exonerate.get_prev_failed_now_exonerable_test_results(
       test_plan, dry_run_exonerate_retried_suites)
 
   # Just for dry_run_exonerate_retried_suites
   if dry_run_exonerate_retried_suites:
     api.assertions.assertEqual(result, ([], []))
 
-  hw_res = api.cros_history.get_failed_now_exonerable_hw_tests_results([])
+  hw_res = api.exonerate.get_failed_now_exonerable_hw_tests_results([])
   api.assertions.assertEqual(hw_res, [])
+
 
 def GenTests(api):
 
-  yield api.test(
-      'empty',
-      api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
-      api.buildbucket.simulated_search_results(
-          [], step_name=('get previous failed and now exonerable suites'
-                         '.get previous test results'
-                         '.find matching builds.buildbucket.search')),
-      api.post_process(post_process.StepTextEquals,
-                       'get previous failed and now exonerable suites',
-                       'found 0 vm suite and 0 hw suite'))
   yield api.test(
       'no_hist',
       api.buildbucket.simulated_search_results(

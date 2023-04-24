@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/luci_analysis',
     'recipe_engine/step',
+    'cros_history',
     'cros_infra_config',
     'easy',
     'exoneration_util',

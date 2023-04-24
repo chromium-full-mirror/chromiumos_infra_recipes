@@ -34,6 +34,7 @@
     "name": "exonerate hw tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
       "@@@STEP_LOG_LINE@configs@test1: []@@@",
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
@@ -55,6 +56,7 @@
     "name": "exonerate hw tests (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
       "@@@STEP_LOG_LINE@configs@test1: []@@@",
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
@@ -70,6 +72,7 @@
     "name": "exonerate hw tests (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
       "@@@STEP_LOG_LINE@configs@test1: []@@@",
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
@@ -85,6 +88,7 @@
     "name": "exonerate hw tests (4)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
       "@@@STEP_LOG_LINE@configs@test1: []@@@",
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
@@ -100,6 +104,7 @@
     "name": "exonerate hw tests (5)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
       "@@@STEP_LOG_LINE@configs@test1: []@@@",
       "@@@STEP_LOG_LINE@configs@test2: []@@@",
       "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
