@@ -7,6 +7,11 @@ from google.protobuf import json_format
 
 from recipe_engine import post_process
 
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
+    BatchResponse)
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -20,25 +25,48 @@ def RunSteps(api):
     # There should be no running builds after setup.
     api.assertions.assertEqual(
         len(api.orch_menu.builds_status.running_builds), 0)
+
     testable_builds = api.orch_menu.plan_and_wait_for_images()
-    api.assertions.assertEqual(
+    expected_testable_builders = [
+        'arm-generic-cq',
+        'arm64-generic-cq',
+        'atlas-cq',
+        'amd64-generic-cq',
+    ]
+    api.assertions.assertCountEqual(
         [b.builder.builder for b in testable_builds],
-        ['arm-generic-cq', 'arm64-generic-cq', 'atlas-cq', 'amd64-generic-cq'])
+        expected_testable_builders)
 
     # plan_and_wait_for_images should add all builds to
     # build_status.running builds.
-    api.assertions.assertEqual(
+    all_expected_builders = [
+        'amd64-generic-cq',
+        'arm-generic-cq',
+        'arm64-generic-cq',
+        'atlas-cq',
+        'cave-cq',
+        'coral-cq',
+        'eve-cq',
+    ]
+    api.assertions.assertCountEqual(
         [b.builder.builder for b in api.orch_menu.builds_status.running_builds],
-        [
-            'amd64-generic-cq', 'arm-generic-cq', 'arm64-generic-cq',
-            'atlas-cq', 'cave-cq', 'coral-cq', 'eve-cq'
-        ])
+        all_expected_builders)
 
-    builds_status = api.orch_menu.plan_and_run_tests(
-        testable_builds=testable_builds)
+    # All builders should still be in "running" state after plan_and_run_tests.
+    api.orch_menu.plan_and_run_tests(testable_builds=testable_builds)
+    api.assertions.assertCountEqual(
+        [b.builder.builder for b in api.orch_menu.builds_status.running_builds],
+        all_expected_builders)
+    api.assertions.assertEqual(
+        len(api.orch_menu.builds_status.completed_builds), 0)
 
-    # plan_and_run_tests should collect all the running builds.
-    api.assertions.assertEqual(len(builds_status.running_builds), 0)
+    # All builders should be in "completed" state after the final build collect.
+    api.orch_menu.create_recipe_result()
+    api.assertions.assertCountEqual([
+        b.builder.builder for b in api.orch_menu.builds_status.completed_builds
+    ], all_expected_builders)
+    api.assertions.assertEqual(
+        len(api.orch_menu.builds_status.running_builds), 0)
 
 
 def GenTests(api):
@@ -74,8 +102,58 @@ def GenTests(api):
       status='FAILURE',
   )
 
+  # The rest of these builds have COLLECT_AFTER_HW_TEST set.
+  cave = api.buildbucket.ci_build_message(
+      build_id=8922054662172514004,
+      builder='cave-cq',
+      status='SUCCESS',
+  )
+  coral = api.buildbucket.ci_build_message(
+      build_id=8922054662172514005,
+      builder='coral-cq',
+      status='SUCCESS',
+  )
+  eve = api.buildbucket.ci_build_message(
+      build_id=8922054662172514006,
+      builder='eve-cq',
+      status='SUCCESS',
+  )
+
+  builds = [
+      build_with_published_image,
+      other_build_with_published_image,
+      successful_build,
+      failed_build,
+      cave,
+      coral,
+      eve,
+  ]
+
+  completed_builds = []
+  for b in builds:
+    new_b = Build()
+    new_b.CopyFrom(b)
+    if new_b.status == common_pb2.STARTED:
+      new_b.status = common_pb2.SUCCESS
+    completed_builds.append(new_b)
+
+  def schedule_output(api):
+    test_data = None
+    for b in builds:
+      build_test_data = api.buildbucket.simulated_schedule_output(
+          BatchResponse(responses=[dict(schedule_build=b)]),
+          'run builds.schedule new builds.%s' % b.builder.builder)
+      if not test_data:
+        test_data = build_test_data
+      else:
+        test_data += build_test_data
+    return test_data
+
   yield api.orch_menu.test(
       'basic',
+      schedule_output(api),
+      api.buildbucket.simulated_collect_output(completed_builds,
+                                               'final build collect.collect'),
       # Expect to schedule 7 child builds. 4 should have COLLECT behavior, so
       # are included in the call build_poller.
       api.post_check(post_process.MustRun,
@@ -137,6 +215,9 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'times-out',
+      schedule_output(api),
+      api.buildbucket.simulated_collect_output(builds,
+                                               'final build collect.collect'),
       # If the build_poller command times out, a get_multi should run after.
       api.step_data('run builds.collect', times_out_after=60 * 60 * 40),
       api.buildbucket.simulated_get_multi([

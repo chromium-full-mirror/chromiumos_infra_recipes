@@ -129,10 +129,6 @@ def DoRunSteps(api: RecipeApi):
             container_metadata=metadata,
             testable_builds=testable_builds,
             ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
-            # If async unit tests are enabled, don't create the nested 'final
-            # build collect' step, so that the 'check build results' step is
-            # a top-level step.
-            no_nest_final_build_collect=async_unit_tests_enabled,
         )
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:

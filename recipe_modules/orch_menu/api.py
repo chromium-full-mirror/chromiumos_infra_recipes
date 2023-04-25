@@ -376,7 +376,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
     """
     # If there are any remaining children to collect, collect them now.
-    self._collect_remaining_children()
+    #
+    # If async unit tests are enabled, don't create the nested 'final build
+    # collect' step, so that the 'check build results' step is a top-level step.
+    no_nest = ('chromeos.build_cq.async_unit_tests'
+               in self.m.cros_infra_config.experiments)
+    self._collect_remaining_children(no_nest=no_nest)
+
+    if not self.builds_status.fatal_failures:
+      self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
     with self.m.step.nest('clean up orchestrator'):
       # Recheck the BuilderConfigs at HEAD, one last time, to see if any
@@ -1067,12 +1075,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
       testable_builds: Optional[List[build_pb2.Build]] = None,
       container_metadata: Optional[ContainerMetadata] = None,
       ignore_gerrit_changes: bool = False,
-      no_nest_final_build_collect: bool = False,
   ) -> BuildsStatus:
     """Plan, schedule, and run tests.
 
-    Run tests on the testable_builds identified by plan_and_run_children. Also
-    do a final collect and results check for builds that are still running.
+    Run tests on the testable_builds identified by plan_and_run_children.
 
     Args:
       testable_builds: The list of builds to consider or None to use the
@@ -1082,11 +1088,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
       ignore_gerrit_changes: Whether to drop gerrit changes from the test plan
         request, primarily used for tryjobs (which are release builds and thus
         shouldn't test based on any patches applied).
-      no_nest_final_build_collect: If true, no nested step will be created for
-        the final build collect.
 
     Returns:
-      The current status of the builds.
+      BuildsStatus updated with any test failures.
     """
     self.m.skylab.apply_qs_account_overrides(self.gerrit_changes)
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
@@ -1118,10 +1122,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           container_metadata=container_metadata,
       )
     self._builds_status.update([], test_failures)
-
-    if not self._collect_remaining_children(
-        no_nest=no_nest_final_build_collect).fatal_failures:
-      self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
     return self._builds_status
 
