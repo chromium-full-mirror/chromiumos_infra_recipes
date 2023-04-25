@@ -192,7 +192,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     return
 
   with api.step.nest('send Vote to Gerrit') as presentation:
-    vote = 0 if results['result']['status'] == "SUCCESS" else -1
+    vote = 1 if results['result']['status'] == "SUCCESS" else -1
     body = {'labels': {"Verified": vote}}
     # If we can't vote we let the user know, so they can change
     # Gerrit's permissions. The important things are the tricium
