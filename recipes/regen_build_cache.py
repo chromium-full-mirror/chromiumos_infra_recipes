@@ -5,9 +5,8 @@
 
 """Recipe for the Chrome OS Build Metadata Cache Regnerator.
 
-NB: We don't bother updating the SDK as the latest prebuilt suffices. The only
-thing we're doing is updating metadata caches, and those are a pretty stable
-format across portage releases -- they haven't changed in many many years.
+If we fail to generate metadata for one repo project, don't fail immediately.
+Instead, try to process the other projects, and THEN fail.
 """
 
 from typing import List
@@ -67,6 +66,7 @@ def RunSteps(api: RecipeApi):
       if not overlays:
         presentation.step_text = 'no modified overlays to push'
         return
+
       overlay_dirs = [overlay.path for overlay in overlays]
       projects = api.repo.project_infos(projects=overlay_dirs)
       with api.deferrals.raise_exceptions_at_end():
@@ -84,6 +84,10 @@ def RunSteps(api: RecipeApi):
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
     api.cros_sdk.create_chroot(version=None, timeout_sec=None)
+    # NB: We don't bother updating the SDK as the latest prebuilt suffices. The
+    # only thing we're doing is updating metadata caches, and those are a pretty
+    # stable format across portage releases -- they haven't changed in many many
+    # years.
 
     with api.step.nest('update metadata'), api.context(
         cwd=api.cros_source.workspace_path):
@@ -137,12 +141,12 @@ def GenTests(api: RecipeTestApi):
       mock_update_ref_failure(FIRST_OVERLAY),
       api.post_check(
           post_process.StepFailure,
-          f'update metadata.commit and push metadata.update ref: {FIRST_OVERLAY}'
-      ),
+          'update metadata.commit and push metadata.update ref: %s' %
+          FIRST_OVERLAY),
       api.post_check(
           post_process.StepSuccess,
-          f'update metadata.commit and push metadata.update ref: {SECOND_OVERLAY}'
-      ),
+          'update metadata.commit and push metadata.update ref: %s' %
+          SECOND_OVERLAY),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
