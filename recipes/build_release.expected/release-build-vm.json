@@ -10426,7 +10426,7 @@
       "[START_DIR]/cipd/vmlab/vmlab",
       "image",
       "-build-path",
-      "gs://chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101",
+      "betty-arc-r-release/R99-1234.56.0-101",
       "-json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

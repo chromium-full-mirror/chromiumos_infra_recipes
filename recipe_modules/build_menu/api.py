@@ -720,6 +720,20 @@ class BuildMenuApi(recipe_api.RecipeApi):
           previously_uploaded_artifacts=previously_uploaded_artifacts)
     return uploaded
 
+  def artifacts_build_path(self):
+    """Get the standard artifacts build path for the builder (without bucket).
+
+    For example betty-arc-r-release/R114-15436.0.0
+
+    This method will only work if the checkout has already been initialized,
+    as we rely on the CrOS version (and thus the version file).
+    """
+    config = self.config_or_default
+    gs_path = self.m.cros_artifacts.artifacts_gs_path(
+        config.id.name, self._build_target, config.id.type,
+        template=self.m.cros_artifacts.gs_upload_path)
+    return gs_path
+
   def artifacts_gs_path(self):
     """Get the standard artifacts GS path for the builder (including bucket).
 
@@ -728,9 +742,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     config = self.config_or_default
     gs_bucket = config.artifacts.artifacts_gs_bucket
-    gs_path = self.m.cros_artifacts.artifacts_gs_path(
-        config.id.name, self._build_target, config.id.type,
-        template=self.m.cros_artifacts.gs_upload_path)
+    gs_path = self.artifacts_build_path()
     return 'gs://{gs_bucket}/{gs_path}'.format(gs_bucket=gs_bucket,
                                                gs_path=gs_path)
 

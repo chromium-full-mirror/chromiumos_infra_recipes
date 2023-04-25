@@ -204,7 +204,7 @@ def DoRunSteps(api, config, properties):
         for t in artifacts.artifact_types
     ]:
       api.vmlab.import_image(name='import VM image',
-                             build_path=api.build_menu.artifacts_gs_path(),
+                             build_path=api.build_menu.artifacts_build_path(),
                              wait=False)
 
   with api.step.nest("publish toolchain metadata"):
