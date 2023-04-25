@@ -34,4 +34,7 @@ message CrosReleaseProperties {
 
   // Whether the build supports minios.
   bool minios_unsupported = 8;
+
+  // Whether to dynamically compute the QS account to use for release.
+  bool dynamic_qs_account = 9;
 }

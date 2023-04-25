@@ -9,4 +9,6 @@ package recipe_modules.chromeos.cros_release.examples;
 message TestProperties {
     // Expected QuotaScheduler account.
     string expected_qs_account = 1;
+
+    bool dryrun = 2;
 }

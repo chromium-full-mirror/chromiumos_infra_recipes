@@ -80,6 +80,7 @@ def RunSteps(api):
   )
 
   api.skylab.set_qs_account('a_new_quota_account')
+  api.assertions.assertEqual(api.skylab.qs_account, 'a_new_quota_account')
   api.skylab.apply_qs_account_overrides(
       api.buildbucket.build.input.gerrit_changes)
 

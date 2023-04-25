@@ -53,6 +53,11 @@ class SkylabApi(recipe_api.RecipeApi):
   # A 'Testing-Override' git footer value pattern.
   QS_UNMANAGED_PATTERN = 'p[0-3]_cq_unmanaged'
 
+  @property
+  def qs_account(self):
+    """Get the quota scheduler account the module is configured to use."""
+    return self._qs_account
+
   def set_qs_account(self, qs_account):
     """Override the quota scheduler account at runtime."""
     self._qs_account = qs_account

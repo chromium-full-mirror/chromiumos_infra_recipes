@@ -112,6 +112,9 @@ def DoRunSteps(api: RecipeApi):
     metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
     testable_builds = builds_status.testable_builds
 
+  if api.orch_menu.is_release_orchestrator:
+    api.cros_release.set_release_qs_account()
+
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:
     with api.checkpoint.retry(RetryStep.LAUNCH_TESTS) as run_step:

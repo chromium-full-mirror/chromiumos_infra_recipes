@@ -8,7 +8,7 @@ import json
 from recipe_engine import post_process
 
 from PB.chromiumos.common import Channel
-from PB.recipe_modules.chromeos.cros_release.examples.get_release_qs_account import TestProperties
+from PB.recipe_modules.chromeos.cros_release.examples.set_release_qs_account import TestProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -21,6 +21,7 @@ DEPS = [
     'cros_source',
     'cros_version',
     'orch_menu',
+    'skylab',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -33,8 +34,15 @@ def RunSteps(api, properties):
   branch_name = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
   api.cros_source.test_api.manifest_branch = branch_name
 
-  qs_account = api.cros_release.get_release_qs_account()
+  qs_account = api.cros_release.set_release_qs_account()
   api.assertions.assertEqual(qs_account, properties.expected_qs_account)
+
+  if not properties.dryrun:
+    api.assertions.assertEqual(api.skylab.qs_account,
+                               properties.expected_qs_account)
+  else:
+    api.assertions.assertNotEqual(api.skylab.qs_account,
+                                  properties.expected_qs_account)
 
 
 def GenTests(api):
@@ -47,6 +55,7 @@ def GenTests(api):
                 'expected_qs_account': expected_qs_account,
                 '$chromeos/cros_release': {
                     'channels': channels,
+                    'dynamic_qs_account': True,
                 }
             }),
         api.step_data(
@@ -73,6 +82,7 @@ def GenTests(api):
               'expected_qs_account': 'release_low_prio',
               '$chromeos/cros_release': {
                   'channels': [Channel.CHANNEL_DEV],
+                  'dynamic_qs_account': True,
               }
           }),
       api.step_data(
@@ -103,6 +113,7 @@ def GenTests(api):
               '$chromeos/cros_release': {
                   # Should fall back to high prio based on the stable channel.
                   'channels': [Channel.CHANNEL_STABLE],
+                  'dynamic_qs_account': True,
               }
           }),
       api.time.seed(SEED_TIME),
@@ -136,6 +147,7 @@ def GenTests(api):
                     # the stable channel, but that will get overridden based
                     # on the value of `version`.
                     'channels': [Channel.CHANNEL_STABLE],
+                    'dynamic_qs_account': True,
                 }
             }),
         api.time.seed(SEED_TIME),
@@ -153,6 +165,33 @@ def GenTests(api):
   yield schedule_test('non-prio', 'R114-12345.0.0', 'release_low_prio')
 
   yield api.orch_menu.test(
+      'dryrun',
+      api.properties(
+          **{
+              'dryrun': True,
+              'expected_qs_account': 'release_med_prio',
+              '$chromeos/cros_release': {
+                  # Default behavior will fall back to high prio based on
+                  # the stable channel, but that will get overridden based
+                  # on the value of `version`.
+                  'channels': [Channel.CHANNEL_STABLE],
+                  'dynamic_qs_account': False,
+              },
+              '$chromeos/skylab': {
+                  'skylab_qs_account': 'release_direct_sched',
+              },
+          }),
+      api.time.seed(SEED_TIME),
+      api.cros_version.workspace_version('R112-12345.0.0'),
+      api.step_data(
+          'determine release testing priority.fetch schedule.json.gsutil cat',
+          stdout=api.raw_io.output(test_data)),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_med_prio'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-main-orchestrator')
+
+  yield api.orch_menu.test(
       'stabilize-branch',
       api.properties(
           **{
@@ -163,6 +202,7 @@ def GenTests(api):
                   # stable channel, but this behavior should get overridden by
                   # the fact that we're a stabilize branch..
                   'channels': [Channel.CHANNEL_STABLE],
+                  'dynamic_qs_account': True,
               }
           }),
       api.time.seed(SEED_TIME),

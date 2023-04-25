@@ -66,6 +66,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._buildspec = None
     self._dont_upload_to_manifest_versions = properties.dont_upload_to_manifest_versions
     self._minios_unsupported = properties.minios_unsupported
+    self._dynamic_qs_account = properties.dynamic_qs_account
 
   @property
   def buildspec(self):
@@ -421,7 +422,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             for c in self._channels
         ])
 
-  def get_release_qs_account(self):
+  def set_release_qs_account(self):
     """Fetches the RC schedule and determines which QS account to use.
 
     If the schedule cannot be fetched or is malformatted, reasonable defaults
@@ -470,6 +471,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             return RELEASE_MED_PRIO_QS_ACCOUNT
           return RELEASE_LOW_PRIO_QS_ACCOUNT
 
+        # TODO(b/278885352): Handle LTS.
+
         config = self.m.cros_infra_config.config
         # Stabilize branches should get low priority.
         if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
@@ -484,5 +487,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
       qs_account = get_qs_account()
       self.m.easy.set_properties_step(dynamic_qs_account=qs_account)
-      presentation.step_text = 'using qs_account "{}"'.format(qs_account)
+      step_text = 'using qs_account "{}"'.format(qs_account)
+
+      if not self._dynamic_qs_account:
+        step_text = '(dryrun) ' + step_text
+      else:
+        self.m.skylab.set_qs_account(qs_account)
+
+      presentation.step_text = step_text
+
       return qs_account
