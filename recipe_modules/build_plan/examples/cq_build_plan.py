@@ -573,3 +573,46 @@ def GenTests(api):
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
   )
+
+  yield api.test(
+      'basic-with-project-outside-manifest',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.step_data(
+          'check for projects outside manifest.check if project non-existent-project exists.repo info',
+          stderr=api.raw_io.output_text(
+              'project non-existent-project not found')),
+      cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
+          common_pb2.GerritChange(
+              host='chrome-internal-review.googlesource.com',
+              project='non-existent-project', change=1235),
+      ]),
+      api.post_check(post_process.StepFailure,
+                     'check for projects outside manifest'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'basic-with-project-inside-manifest',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.step_data(
+          'check for projects outside manifest.check if project existent-project exists.repo info',
+          stderr=api.raw_io.output_text('')),
+      cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
+          common_pb2.GerritChange(
+              host='chrome-internal-review.googlesource.com',
+              project='existent-project', change=1235),
+      ]),
+      api.properties(
+          expected_build_requests=[
+              'atlas-cq',
+              'cave-cq',
+              'coral-cq',
+              'eve-cq',
+          ],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      api.post_check(post_process.StepSuccess,
+                     'check for projects outside manifest'),
+  )

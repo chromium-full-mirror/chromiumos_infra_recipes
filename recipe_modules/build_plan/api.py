@@ -41,6 +41,33 @@ class BuildPlanApi(recipe_api.RecipeApi):
   def additional_chrome_pupr_builders(self):
     return self._additional_chrome_pupr_builders
 
+  def _check_project_outside_manifest(self, gerrit_changes):
+    """Check if gerrit_changes contains any project outside the manifest.
+
+    Args:
+      gerrit_changes list(GerritChange): List of patches in the order that they
+        can be cherry-picked.
+
+    Raise:
+          StepFailure if any of the gerrit_changes contains a project outside
+          manifest.
+    """
+    excluded_project = ['chromeos/manifest', 'chromeos/manifest-internal']
+    if gerrit_changes:
+      with self.m.step.nest('check for projects outside manifest'):
+        with self.m.context(cwd=self.m.src_state.workspace_path):
+          not_in_manifest = [
+              gc.project
+              for gc in gerrit_changes
+              if not self.m.repo.project_exists(gc.project) and
+              not gc.project in excluded_project
+          ]
+          if not_in_manifest:
+            raise recipe_api.StepFailure(
+                'Detected at least one project that is not in the manifest! '
+                'Please add following projects {} to manifest file and retry.'
+                .format(not_in_manifest))
+
   def get_build_plan(self, child_specs, enable_history, gerrit_changes,
                      internal_snapshot, external_snapshot):
     """Return a three-tuple of builds, completed, existing, and needed.
@@ -73,6 +100,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     skipped_builders = []
+    self._check_project_outside_manifest(gerrit_changes)
     if gerrit_changes and not self._properties.disable_build_plan_pruning:
       builders_tuple = self.m.cros_relevance.run_build_planner(
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[

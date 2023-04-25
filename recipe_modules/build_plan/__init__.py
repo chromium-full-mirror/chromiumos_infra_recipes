@@ -23,6 +23,7 @@ DEPS = [
     'gerrit',
     'git',
     'git_footers',
+    'repo',
     'src_state',
     'test_util',
 ]
