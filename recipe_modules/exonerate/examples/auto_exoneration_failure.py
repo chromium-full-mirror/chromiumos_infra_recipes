@@ -34,7 +34,7 @@ def RunSteps(api):
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
   _ = api.exonerate.exonerate_vmtests(vm_builds)
-  api.exonerate.auto_exoneration_dry_run()
+  api.exonerate.auto_exoneration_analysis()
 
 
 def GenTests(api):
@@ -46,7 +46,7 @@ def GenTests(api):
                   ExonerateProperties(enable_exoneration=True, dry_run=True)
           }),
       api.step_data(
-          'Automated Exoneration Dry-run.query LUCI Analysis for failure rates.rpc call',
+          'Automated Exoneration Analysis.query LUCI Analysis for failure rates.rpc call',
           retcode=1),
       api.post_process(post_process.StepSuccess,
-                       'Automated Exoneration Dry-run'))
+                       'Automated Exoneration Analysis'))

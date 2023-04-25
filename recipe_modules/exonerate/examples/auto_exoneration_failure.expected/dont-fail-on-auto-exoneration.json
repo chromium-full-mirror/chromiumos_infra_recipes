@@ -29,7 +29,7 @@
   },
   {
     "cmd": [],
-    "name": "Automated Exoneration Dry-run",
+    "name": "Automated Exoneration Analysis",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test1', board='betty', build_target='betty', suite='', test_config='')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@"
@@ -37,7 +37,7 @@
   },
   {
     "cmd": [],
-    "name": "Automated Exoneration Dry-run.query LUCI Analysis for failure rates",
+    "name": "Automated Exoneration Analysis.query LUCI Analysis for failure rates",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
@@ -50,7 +50,7 @@
       "luci-analysis.appspot.com",
       "luci.analysis.v1.TestVariants.QueryFailureRate"
     ],
-    "name": "Automated Exoneration Dry-run.query LUCI Analysis for failure rates.rpc call",
+    "name": "Automated Exoneration Analysis.query LUCI Analysis for failure rates.rpc call",
     "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"testId\": \"tast.test1\", \"variant\": {\"def\": {\"board\": \"betty\", \"build_target\": \"betty\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

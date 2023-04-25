@@ -21,7 +21,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   # Test auto_exoneration without any failed tests.
-  api.exonerate.auto_exoneration_dry_run()
+  api.exonerate.auto_exoneration_analysis()
 
   build = api.exonerate.test_api.fake_vm_build()
   failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
@@ -36,7 +36,7 @@ def RunSteps(api):
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
   _ = api.exonerate.exonerate_vmtests(vm_builds)
-  api.exonerate.auto_exoneration_dry_run()
+  api.exonerate.auto_exoneration_analysis()
   # To unittest the final return statement.
   api.assertions.assertEqual(
       api.exonerate.get_flake_percent_from_interval_stats([]), (0, 0))

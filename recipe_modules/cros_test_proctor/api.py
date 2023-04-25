@@ -290,6 +290,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       exonerated_vm_results, exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
           test_results.tast_vm)
       passed_test_names += exonerated_vm_tests
+      self.m.exonerate.auto_exoneration_analysis()
 
       old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
           previously_failed_now_exonerable_hw_results)
