@@ -1120,8 +1120,10 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
       "@@@STEP_LOG_LINE@config@        \"build_target\": \"target\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/test_runner_result.json\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]

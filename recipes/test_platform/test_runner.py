@@ -740,7 +740,8 @@ def _upload_missing_tast_results(api, base_variant, base_tags,
 
 def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                              autotest_keyval_file, base_variant,
-                                             base_tags):
+                                             base_tags, force_current_realm,
+                                             skip_board_model_check):
   """Upload the Autotest wrapper result for Tast test with base variants and
   base tags. The Autotest wrapper result is captured in the first test case
   after the test execution.
@@ -755,6 +756,9 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
   * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
   * base_variant (Dict): The dict of base variants for ResultDB results.
   * base_tags (Dict): The dict of base tags for ResultDB results.
+  * force_current_realm (Bool): If enabled, publish to realm test is running in
+  * skip_board_model_check (Bool): If enabled, don't verify board-model realm
+      actually exists
   """
   try:
     # Skips if it's not a Tast test.
@@ -803,6 +807,8 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'base_tags': base_tags,
           'result_file': test_result_file,
           'artifact_directory': None,
+          'force_current_realm': force_current_realm,
+          'skip_board_model_check': skip_board_model_check
       }
       api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
                                str(result.get_testhaus_log_url()))
@@ -940,12 +946,18 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                              autotest_keyval_file,
                                              crossystem_keyvals, kernel_version,
                                              cft_is_enabled=False)
+
+    force_current_realm = properties.common_config.partner_private
+    skip_board_model_check = properties.common_config.skip_board_model_realm_check
+
     config = {
         'result_format': result_format,
         'base_variant': base_variant,
         'base_tags': base_tags,
         'result_file': result_file,
         'artifact_directory': artifact_directory,
+        'force_current_realm': force_current_realm,
+        'skip_board_model_check': skip_board_model_check
     }
 
     # Uploads test results to ResultDB only when the test result file exists.
@@ -958,7 +970,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     if is_tast_result:
       _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                                autotest_keyval_file,
-                                               base_variant, base_tags)
+                                               base_variant, base_tags,
+                                               force_current_realm,
+                                               skip_board_model_check)
 
     _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file)
@@ -1481,9 +1495,10 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
 
           # If this builder is configured to be private-partner, we don't want to
           # publish to the board-model realm
-          interface.upload_to_rdb(test_metadata,
-                                  result_for_uploading.test_responses,
-                                  properties.common_config.partner_private)
+          interface.upload_to_rdb(
+              test_metadata, result_for_uploading.test_responses,
+              properties.common_config.partner_private,
+              properties.common_config.skip_board_model_realm_check)
           interface.upload_to_tko(test_metadata,
                                   result_for_uploading.test_responses)
       finally:

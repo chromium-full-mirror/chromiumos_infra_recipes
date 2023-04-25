@@ -3573,7 +3573,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#469)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#474)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -3581,7 +3581,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#379)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#384)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3679,7 +3679,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#523)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#528)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -14609,7 +14609,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1727)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1742)(api, properties):**
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#166)(api, interface, test_metadata, result):**
 
@@ -14625,7 +14625,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1534)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1549)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -14637,7 +14637,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1273)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1287)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -14653,7 +14653,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1187)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1201)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -14669,7 +14669,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1158)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1172)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -14706,7 +14706,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1606)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1621)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

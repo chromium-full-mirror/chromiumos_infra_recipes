@@ -212,13 +212,15 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return False
     return True
 
-  def _get_board_model_realm(self, base_tags):
+  def _get_board_model_realm(self, base_tags, skip_board_model_check):
     """Gets the board-model realm for this test result.
 
     Returns '' if no appropriate board-model realm was found.
 
     Args:
       base_tags (list): A list of tags for the build.
+      skip_board_model_check (bool): Whether the board-model realm should be
+        verified against an internal realms list.
     """
     board = ''
     model = ''
@@ -249,13 +251,15 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if multiduts == 'True':
       return ''
 
-    available_realms = self.m.cros_infra_config.get_realms_list()
     realm = '{}-{}'.format(board, model)
 
-    if realm in available_realms:
-      return 'chromeos:' + realm
+    if not skip_board_model_check:
+      available_realms = self.m.cros_infra_config.get_realms_list()
 
-    return ''
+      if not realm in available_realms:
+        return ''
+
+    return 'chromeos:' + realm
 
   def _upload(self, config, stainless_url=None, testhaus_url=None):
     """Call the ResultDB module to upload test result
@@ -341,7 +345,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # so that partners working on that model can see it.
     realm = ''
     if not config.get('force_current_realm'):
-      realm = self._get_board_model_realm(base_tags)
+      skip_board_model_check = config.get('skip_board_model_check')
+      realm = self._get_board_model_realm(base_tags, skip_board_model_check)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(

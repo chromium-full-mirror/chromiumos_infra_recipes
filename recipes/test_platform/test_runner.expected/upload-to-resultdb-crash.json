@@ -1026,8 +1026,10 @@
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ], @@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {}, @@@",
+      "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@",
       "@@@STEP_FAILURE@@@"

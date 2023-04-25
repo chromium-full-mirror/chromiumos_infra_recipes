@@ -1127,8 +1127,10 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
       "@@@STEP_LOG_LINE@config@        \"build_target\": \"target\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1496,8 +1498,10 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
       "@@@STEP_LOG_LINE@config@        \"build_target\": \"target\"@@@",
       "@@@STEP_LOG_LINE@config@    }, @@@",
+      "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/autotest_wrapper_tast_result.json\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
