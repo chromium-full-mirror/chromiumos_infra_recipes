@@ -178,25 +178,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             MessageToDict(msg, preserving_proto_field_name=True)
     }
 
-  @property
-  def current_builder_group(self):
-    """Get the builder group for the currently running builder."""
-    return self.m.properties.get('builder_group')
-
-  @property
-  def parent_builder_group(self):
-    """Get the builder group for the parent builder."""
-    return self.m.properties.get('parent_builder_group')
-
-  @property
-  def target_builder_group(self):
-    """Get the builder group for the target builder.
-
-    This is used by findit, which has a single builder that performs
-    bisection using the configuration of another builder.
-    """
-    return self.m.properties.get('target_builder_group')
-
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
   def download_binproto(self, filename, step_test_data, timeout=None,

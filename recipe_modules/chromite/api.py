@@ -180,17 +180,9 @@ class ChromiteApi(recipe_api.RecipeApi):
     self.cros_sdk('build packages', ['./build_packages', '--board', board],
                   args, **kwargs)
 
-  def configure(self, **KWARGS):
-    """Loads configuration from build properties into this recipe config.
-
-    Args:
-      KWARGS: Additional keyword arguments to forward to the configuration.
-    """
-    builder_group = self.m.cros_infra_config.current_builder_group
-
-    if builder_group is None:
-      self.set_config('main_swarming', **KWARGS)
-      return
+  def configure(self, **kwargs) -> None:
+    """Loads configuration from build properties into this recipe config."""
+    self.set_config('main_swarming', **kwargs)
 
   def checkout_chromite(self):
     """Checks out the configured Chromite branch.

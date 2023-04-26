@@ -120,19 +120,3 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(
         step_name,
         self.m.depot_gitiles.make_encoded_file(jsonpb.MessageToJson(message)))
-
-  def current_builder_group(self, group):
-    """Set the builder group for the currently running builder."""
-    return self.m.properties(builder_group=group)
-
-  def parent_builder_group(self, group):
-    """Set the builder group for the parent builder."""
-    return self.m.properties(parent_builder_group=group)
-
-  def target_builder_group(self, group):
-    """Set the builder group for the target builder.
-
-    This is used by findit, which has a single builder that performs
-    bisection using the configuration of another builder.
-    """
-    return self.m.properties(target_builder_group=group)
