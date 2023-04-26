@@ -150,8 +150,9 @@ class CrosInfraConfigTestApi(RecipeTestApi):
     Args:
       custom_builder_config: The BuilderConfig for this test case.
       kwargs: Additional kwargs to pass into override_builder_configs_test_data.
-        Hint: For many builders, configs are loaded during the "configure
-        builder" step. You'll probably want to use the `step_name` kwarg.
+        Hint: For many builders, configs are loaded during a step named either
+        "configure builder" or "configure builder.cros_infra_config". You'll
+        probably want to use the `step_name` kwarg.
     """
     builder_configs = BuilderConfigs()
     builder_config = builder_configs.builder_configs.add()

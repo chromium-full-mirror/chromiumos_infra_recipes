@@ -267,7 +267,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                  cherry_pick_changes: bool = True,
                                  bootstrap_chroot: bool = False,
                                  replace: bool = False,
-                                 update_chroot: bool = True) -> bool:
+                                 update_chroot: Optional[bool] = None) -> bool:
     """Setup the workspace and chroot for the builder.
 
     This context manager sets up the workspace path.
@@ -279,7 +279,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
-      update: Whether to update the chroot after creating it.
+      update: Whether to update the chroot after creating it (overriding the
+          builder config). See setup_chroot() docstring for details.
 
     Returns:
       Whether the build is relevant.
@@ -321,7 +322,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
-                   replace: bool = False, update: bool = True) -> bool:
+                   replace: bool = False,
+                   update: Optional[bool] = None) -> bool:
     """Setup the chroot for the builder.
 
     Args:
@@ -330,7 +332,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         for example, 2022.01.20.073008.
       bootstrap: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
-      update: Whether to update the chroot after creating it.
+      update: Whether to update the chroot after creating it (overriding the
+          builder config). If not given, defer to the builder config. If the
+          builder config also does not specify, default to True.
 
     Returns:
       Whether the build is relevant.
@@ -359,6 +363,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
           no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True
 
+      # If update is not specified in kwargs, defer to the builder config.
+      # If the builder config does not specify, default to True.
+      if update is None:
+        run_spec = config.update_chroot.run_spec
+        update = run_spec != BuilderConfig.RunSpec.NO_RUN
       if update:
         # Avoid passing empty BuildTarget message when we don't have one,
         # e.g. chromite-cq.
