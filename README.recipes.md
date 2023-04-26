@@ -488,6 +488,7 @@
   * [key_value_store:tests/update_one_value](#recipes-key_value_store_tests_update_one_value) (Python3 ✅)
   * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) (Python3 ✅) &mdash; test_ensure_labpack.
   * [labpack:tests/test_run_labpack](#recipes-labpack_tests_test_run_labpack) (Python3 ✅) &mdash; test_run_labpack.
+  * [labpack:tests/test_timeout](#recipes-labpack_tests_test_timeout) (Python3 ✅) &mdash; test_timeout.
   * [libchrome_uprev](#recipes-libchrome_uprev) (Python3 ✅) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) (Python3 ✅) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) (Python3 ✅) &mdash; Recipe for updating libchrome-version.
@@ -7409,12 +7410,16 @@ See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#104)(self, labpack_input: LabpackInput):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#104)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 
+The kwargs are sent along without modification to `easy.step.__call__`.
+Note that the most important miscellaneous arg is "timeout".
+
 Args:
   labpack_input: a LabpackInput instance
+  kwargs: a dictionary of the rest of the output to be handed to easy.step.
 
 Returns:
   see step.__call__
@@ -13148,6 +13153,18 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 test_run_labpack.py is a smoke test for the run_labpack function.
 
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#22)(api):**
+
+RunSteps runs ensure_labpack
+### *recipes* / [labpack:tests/test\_timeout](/recipe_modules/labpack/tests/test_timeout.py)
+
+[DEPS](/recipe_modules/labpack/tests/test_timeout.py#17): [labpack](#recipe_modules-labpack), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+test_timeout.py tests that the labpack recipe module runs labpack
+correctly with a timeout.
+
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_timeout.py#23)(api):**
 
 RunSteps runs ensure_labpack
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)

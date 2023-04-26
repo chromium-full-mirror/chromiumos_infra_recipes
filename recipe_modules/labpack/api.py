@@ -101,19 +101,28 @@ class LabpackCommand(recipe_api.RecipeApi):
           out, tally, "labpack exists at exaclty one path in {}".format(paths))
     return out
 
-  def run_labpack(self, labpack_input: LabpackInput) -> StepData:
+  def run_labpack(self, labpack_input: LabpackInput, **kwargs) -> StepData:
     """Run labpack command.
+
+    The kwargs are sent along without modification to `easy.step.__call__`.
+    Note that the most important miscellaneous arg is "timeout".
 
     Args:
       labpack_input: a LabpackInput instance
+      kwargs: a dictionary of the rest of the output to be handed to easy.step.
 
     Returns:
       see step.__call__
     """
+
+    assert "cmd" not in kwargs, r'keyword argument "cmd" cannot be specified'
+    assert "stdin_data" not in kwargs, r'keyword argument "stdin_data" cannot be specified'
+
     out = self.m.easy.step(
-        name="labpack invocation",
+        name=kwargs.get("name", "labpack invocation"),
         cmd=[self.get_cipd_path()],
         stdin_data=jsonify_labpack_input(labpack_input),
+        **kwargs,
     )
     assert isinstance(out, StepData), "out unexpectedly has type {}".format(
         type(out))
