@@ -67,4 +67,8 @@ message PaygenOrchestratorProperties {
 
   // Whether to generate minios payloads.
   bool minios = 14;
+
+  // QS Account to use instead of whatever is configured. Passed to individual
+  // paygen builds.
+  string override_qs_account = 15;
 }

@@ -28,4 +28,7 @@ message BuildReleaseProperties {
 
   // Whether to skip paygen. Used by tryjobs.
   bool skip_paygen = 4;
+
+  // QS Account to use instead of whatever is configured. Passed to paygen.
+  string override_qs_account = 5;
 }

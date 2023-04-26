@@ -3830,6 +3830,58 @@
   },
   {
     "cmd": [],
+    "name": "determine release testing priority",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@(dryrun) using qs_account \"release_low_prio\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine release testing priority.fetch schedule.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@could not parse schedule.json, falling back to defaults@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-release-schedule/schedule.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "determine release testing priority.fetch schedule.json.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "determine release testing priority.set dynamic_qs_account",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@dynamic_qs_account@\"release_low_prio\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@2 new, 0 recycled@@@"
@@ -3921,7 +3973,7 @@
       }
     },
     "name": "run builds.schedule new builds.eve-release-main",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"release\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"release\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3969,7 +4021,8 @@
       "@@@STEP_LOG_LINE@request@              \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", @@@",
       "@@@STEP_LOG_LINE@request@              \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"override_qs_account\": \"pcq\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
@@ -4026,7 +4079,7 @@
       }
     },
     "name": "run builds.schedule new builds.kukui-release-main",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"kukui-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"release\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"kukui-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"release\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4074,7 +4127,8 @@
       "@@@STEP_LOG_LINE@request@              \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", @@@",
       "@@@STEP_LOG_LINE@request@              \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          \"override_qs_account\": \"pcq\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", @@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
@@ -4552,58 +4606,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/release-main-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "determine release testing priority",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@(dryrun) using qs_account \"release_low_prio\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "determine release testing priority.fetch schedule.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@could not parse schedule.json, falling back to defaults@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://chromeos-release-schedule/schedule.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "determine release testing priority.fetch schedule.json.gsutil cat",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "determine release testing priority.set dynamic_qs_account",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@dynamic_qs_account@\"release_low_prio\"@@@"
     ]
   },
   {

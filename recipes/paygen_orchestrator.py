@@ -172,7 +172,8 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
                                        autoupdate_test_configs=au_test_configs))
 
   # Schedule child builders, and wait for them to finish.
-  res = api.paygen_orchestration.run_paygen_builders(paygen_reqs)
+  res = api.paygen_orchestration.run_paygen_builders(
+      paygen_reqs, override_qs_account=properties.override_qs_account)
 
   # Present results.
   with api.step.nest('results') as pres:
@@ -232,17 +233,22 @@ def _summarize_failed_builds(failures: List[Build]) -> str:
 
 def GenTests(api: RecipeTestApi):
 
-  def get_props(delta_types: List[str] = None, builder_name: str = 'coral',
-                target_chromeos_version: str = '13505.15.0',
-                channels: List[str] = None, pubsub: bool = False,
-                bbid: int = None
-               ) -> Callable[[PaygenOrchestratorProperties], TestData]:
+  def get_props(
+      delta_types: List[str] = None,
+      builder_name: str = 'coral',
+      target_chromeos_version: str = '13505.15.0',
+      channels: List[str] = None,
+      pubsub: bool = False,
+      bbid: int = None,
+      override_qs_account: str = None,
+  ) -> Callable[[PaygenOrchestratorProperties], TestData]:
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
     return api.properties(delta_types=delta_types, builder_name=builder_name,
                           target_chromeos_version=target_chromeos_version,
                           channels=channels, publish_to_pubsub=pubsub,
-                          rerun_buildbucket_id=bbid)
+                          rerun_buildbucket_id=bbid,
+                          override_qs_account=override_qs_account)
 
   good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
@@ -496,6 +502,27 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(23)],
           'running children.collect'),
+  )
+
+  yield api.test(
+      'override-qs-account',
+      get_props(override_qs_account='custom_qs_account'),
+      good_paygen_cfg,
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(23)],
+          'running children.collect'),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request', ['"override_qs_account": "custom_qs_account"']),
   )
 
   yield api.test(

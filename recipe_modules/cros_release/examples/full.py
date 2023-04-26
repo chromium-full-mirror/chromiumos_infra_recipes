@@ -59,7 +59,8 @@ def RunSteps(api):
                                      "build_target")
   api.cros_release.check_buildspec()
   api.cros_release.set_output_properties()
-  api.cros_release.run_payload_generation()
+  api.cros_release.run_payload_generation(
+      override_qs_account='custom_qs_account')
 
 
 def GenTests(api):
@@ -91,6 +92,9 @@ def GenTests(api):
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
           ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"override_qs_account": "custom_qs_account"']),
       api.post_check(post_process.DoesNotRun,
                      'generate payloads.inspect failure'),
       api.test_util.test_child_build('amd64-generic').build)

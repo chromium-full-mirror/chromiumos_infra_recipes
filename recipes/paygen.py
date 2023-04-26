@@ -83,6 +83,9 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
   # Set up holder objects.
   paygen_test_configs, payloads = [], []
 
+  if properties.override_qs_account:
+    api.paygen_testing.override_qs_account(properties.override_qs_account)
+
   with api.step.nest('doing paygen') as presentation:
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('compile')
@@ -170,6 +173,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             api.future_utils.create_custom_response(
                 request, StepFailure(response.failure_reason),
                 paygen_response.call_count))
+
       artifacts = get_paygen_response_artifacts(response)
       for artifact in artifacts:
         report_payload = api.paygen_testing.create_paygen_build_report_payload(
@@ -619,24 +623,26 @@ def GenTests(api: RecipeTestApi):
       api.gitiles.get_file(
           api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.properties(
-          PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
-                      AutoupdateTestConfig(src_version='123',
-                                           src_channel='canary-channel',
-                                           delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax']),
-                      AutoupdateTestConfig(src_version='123',
-                                           src_channel='canary-channel',
-                                           delta_type=common_pb2.FSI,
-                                           applicable_models=['woomax']),
-                      AutoupdateTestConfig(src_version='123',
-                                           src_channel='canary-channel',
-                                           delta_type=common_pb2.OMAHA,
-                                           applicable_models=['other']),
-                  ])
-          ])),
+          PaygenProperties(
+              override_qs_account='custom_qs_account', requests=[
+                  dict(
+                      generation_request=api.paygen_testing
+                      .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                      autoupdate_test_configs=[
+                          AutoupdateTestConfig(src_version='123',
+                                               src_channel='canary-channel',
+                                               delta_type=common_pb2.OMAHA,
+                                               applicable_models=['woomax']),
+                          AutoupdateTestConfig(src_version='123',
+                                               src_channel='canary-channel',
+                                               delta_type=common_pb2.FSI,
+                                               applicable_models=['woomax']),
+                          AutoupdateTestConfig(src_version='123',
+                                               src_channel='canary-channel',
+                                               delta_type=common_pb2.OMAHA,
+                                               applicable_models=['other']),
+                      ])
+              ])),
       api.cros_storage.test_listing(
           'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
           full_payload_uri,
@@ -660,6 +666,14 @@ def GenTests(api: RecipeTestApi):
       # since there are two woomax test requests.
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule (3)'),
+      api.post_check(
+          post_process.LogContains, 'testing paygen.buildbucket.schedule',
+          'request',
+          ['"key": "quota_account",', '"value": "custom_qs_account"']),
+      api.post_check(
+          post_process.LogContains, 'testing paygen.buildbucket.schedule (2)',
+          'request',
+          ['"key": "quota_account",', '"value": "custom_qs_account"']),
       api.post_check(post_process.LogContains,
                      'testing paygen.buildbucket.schedule', 'request',
                      ['"key": "label-model",', '"value": "other"']),

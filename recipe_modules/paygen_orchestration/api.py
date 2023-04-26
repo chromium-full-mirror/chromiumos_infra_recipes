@@ -11,7 +11,7 @@ import collections
 import json
 import math
 from copy import deepcopy
-from typing import Any, Dict, List, NewType
+from typing import Any, Dict, List, NewType, Optional
 
 from google.protobuf.json_format import MessageToDict
 
@@ -355,13 +355,16 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                                                        au_fsi_testing_models,
                                                        force_tests=force_tests)
 
-  def run_paygen_builders(self,
-                          paygen_reqs: List[PaygenProperties.PaygenRequest]
-                         ) -> List[Build]:
+  def run_paygen_builders(
+      self,
+      paygen_reqs: List[PaygenProperties.PaygenRequest],
+      override_qs_account: Optional[str] = None,
+  ) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
       paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
+      override_qs_account: QS Account to use instead of whatever is configured.
 
     Returns:
       A list of completed builds.
@@ -373,7 +376,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     ]
     batches = self._batch_paygen_request_dicts(paygen_request_dicts)
     schedule_requests = [
-        self._create_bb_schedule_request(batch) for batch in batches
+        self._create_bb_schedule_request(
+            batch, override_qs_account=override_qs_account) for batch in batches
     ]
 
     # Define a function to split requests into chunks.
@@ -663,12 +667,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return batches
 
   def _create_bb_schedule_request(
-      self, paygen_requests: List[PaygenProperties.PaygenRequest]
+      self,
+      paygen_requests: List[PaygenProperties.PaygenRequest],
+      override_qs_account: Optional[str] = None,
   ) -> ScheduleBuildRequest:
     """Create a ScheduleBuildRequest for list of paygen requests.
 
     Args:
       paygen_requests: Requests to generate the desired payload.
+      override_qs_account: QS Account to use instead of whatever is configured.
 
     Returns:
       A ScheduleBuildRequest for a Paygen builder.
@@ -676,10 +683,13 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     is_staging = self.m.cros_infra_config.is_staging
     bucket = 'staging' if is_staging else 'release'
     builder = 'staging-paygen' if is_staging else 'paygen'
+    props = {'requests': paygen_requests}
+    if override_qs_account:
+      props['override_qs_account'] = override_qs_account
     return self.m.buildbucket.schedule_request(
         bucket=bucket,
         builder=builder,
-        properties={'requests': paygen_requests},
+        properties=props,
         can_outlive_parent=False,
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(self.m.buildbucket.build.id)),

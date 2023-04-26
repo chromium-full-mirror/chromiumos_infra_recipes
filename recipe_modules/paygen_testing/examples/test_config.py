@@ -28,6 +28,9 @@ PROPERTIES = TestPaygenProperties
 
 
 def RunSteps(api: RecipeApi, properties: TestPaygenProperties):
+  if properties.override_qs_account:
+    api.paygen_testing.override_qs_account(properties.override_qs_account)
+
   test_artifact_root = api.cros_storage.ArtifactRoot('test-bucket',
                                                      'canary-channel',
                                                      properties.builder_name,
@@ -93,6 +96,9 @@ def RunSteps(api: RecipeApi, properties: TestPaygenProperties):
   api.assertions.assertEqual(
       full_test_config.get_test_runner_tags()['quota_account'],
       properties.expected_quota_scheduler_account or 'legacypool-bvt')
+  api.assertions.assertEqual(
+      api.paygen_testing.qs_account,
+      properties.expected_quota_scheduler_account or 'legacypool-bvt')
 
 
 def GenTests(api: RecipeTestApi):
@@ -131,6 +137,34 @@ def GenTests(api: RecipeTestApi):
           'discover gs artifacts (2).gsutil list',
           test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
       ),
+  )
+
+  yield api.test(
+      'test-quota-scheduler-config-override',
+      api.properties(
+          builder_name='zork', expected_test_build_target='zork',
+          expected_quota_scheduler_account='baz',
+          expected_quota_scheduler_label_pool='bar', override_qs_account='baz',
+          **{
+              '$chromeos/paygen_testing': {
+                  'quota_scheduler_config': {
+                      'account': 'foo',
+                      'label_pool': 'bar',
+                  },
+              },
+          }),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.cros_storage.test_listing(
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.cros_storage.test_listing(
+          'discover gs artifacts (2).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      # Identical to `test-quota-scheduler-config` above so we don't need
+      # another expectation file.
+      api.post_process(post_process.DropExpectation),
   )
 
   generate_test_config_output = """{

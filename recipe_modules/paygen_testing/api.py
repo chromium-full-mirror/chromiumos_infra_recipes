@@ -327,6 +327,15 @@ class PaygenTestingApi(recipe_api.RecipeApi):
           properties.quota_scheduler_config.label_pool or \
           self._quota_scheduler_label_pool
 
+  @property
+  def qs_account(self):
+    """Returns the configured QS account."""
+    return self._quota_scheduler_account
+
+  def override_qs_account(self, qs_account):
+    """Overrides whatever QS account was set via properties"""
+    self._quota_scheduler_account = qs_account
+
   def _get_channel_from_paygen_request(self, gen_req: GenerationRequest
                                       ) -> Optional["common_pb2.Channel"]:
     """Get the target channel from a paygen request input properties.

@@ -51,4 +51,7 @@ message PaygenProperties {
 
   // Time to wait between SDK initialization retries. Defaults to 300.
   uint32 sdk_retry_delay = 4;
+
+  // QS Account to use instead of whatever is configured.
+  string override_qs_account = 5;
 }

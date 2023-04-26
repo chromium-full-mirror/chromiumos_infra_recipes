@@ -16,6 +16,7 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 from PB.chromiumos.checkpoint import RetryStep
+from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -40,6 +41,7 @@ DEPS = [
     'exonerate',
     'orch_menu',
     'signing',
+    'skylab',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -99,6 +101,10 @@ def DoRunSteps(api: RecipeApi):
         'ignore_already_exists_errors': True,
     }
 
+  if api.orch_menu.is_release_orchestrator:
+    api.cros_release.set_release_qs_account()
+    extra_child_props['override_qs_account'] = api.skylab.qs_account
+
   async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
   if api.orch_menu.is_cq_orchestrator and async_unit_tests_enabled:
     testable_builds = api.orch_menu.plan_and_wait_for_images()
@@ -111,9 +117,6 @@ def DoRunSteps(api: RecipeApi):
     # Aggregate any metadata produced by the child builds into our own GS bucket
     metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
     testable_builds = builds_status.testable_builds
-
-  if api.orch_menu.is_release_orchestrator:
-    api.cros_release.set_release_qs_account()
 
   # Run any HW tests.
   if not api.orch_menu.is_public_orchestrator:
@@ -178,7 +181,11 @@ def GenTests(api: RecipeTestApi):
                                      schedule_public_build=True),
               '$chromeos/signing': {
                   'ignore_already_exists_errors': True,
-              }
+              },
+              '$chromeos/cros_release': {
+                  'channels': [Channel.CHANNEL_STABLE],
+                  'dynamic_qs_account': True,
+              },
           }),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),

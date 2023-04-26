@@ -31,6 +31,10 @@ message TestPaygenProperties {
 
   // The expected quota scheduler label pool paygen should be using.
   string expected_quota_scheduler_label_pool = 7;
+
+  // If set, will override the quota scheduler account using
+  // api.paygen_testing.override_qs_account.
+  string override_qs_account = 8;
 }
 
 message GetRequestTestInputProperties {

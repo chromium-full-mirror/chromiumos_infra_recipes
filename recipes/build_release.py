@@ -308,7 +308,8 @@ def DoRunSteps(api, config, properties):
         # signed images generated). We _do_ want this in staging.
         if not properties.skip_paygen and (instructions or
                                            api.signing.local_signing):
-          api.cros_release.run_payload_generation()
+          api.cros_release.run_payload_generation(
+              override_qs_account=properties.override_qs_account)
         else:
           with api.step.nest('skipping payloads') as pres:
             if properties.skip_paygen:
@@ -362,6 +363,8 @@ def GenTests(api):
                   'chromeos-image-archive',
               'latest_files_gs_path':
                   '{target}-release',
+              'override_qs_account':
+                  'release_high_prio',
               '$chromeos/build_menu': {
                   'build_target': {
                       'name': 'kukui',
@@ -399,6 +402,9 @@ def GenTests(api):
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"override_qs_account": "release_high_prio"']),
       api.post_check(
           post_process.MustRun,
           'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'

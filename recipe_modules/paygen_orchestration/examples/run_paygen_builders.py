@@ -29,7 +29,8 @@ def RunSteps(api: RecipeApi):
       PaygenProperties.PaygenRequest(generation_request=gen_request)
       for gen_request in gen_requests
   ]
-  api.paygen_orchestration.run_paygen_builders(paygen_requests)
+  api.paygen_orchestration.run_paygen_builders(
+      paygen_requests, override_qs_account='custom_qs_account')
 
 
 test_bbids = [str(8922054662172514000 + i) for i in range(805)]
@@ -37,7 +38,11 @@ test_bbids = [str(8922054662172514000 + i) for i in range(805)]
 
 def GenTests(api: RecipeTestApi):
 
-  yield api.test('basic', api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'basic',
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request', ['"override_qs_account": "custom_qs_account"']),
+      api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'conductor',
