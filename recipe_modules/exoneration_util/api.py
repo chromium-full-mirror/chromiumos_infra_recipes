@@ -4,11 +4,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import List
+from collections import defaultdict
+from typing import List, Tuple
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
     TestVariantFailureRateAnalysis
+from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
+from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 
 RPC_BATCH_SIZE = 100
 
@@ -35,3 +38,68 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
               test_variant_list[i:i + RPC_BATCH_SIZE], project='chromeos'))
 
     return failure_rates
+
+  def override_calculation(
+      self, test_stats: List[FailedTestStats], overall_limit: int,
+      per_target_limit: int) -> OverallTestStats.OverrideInfo:
+    """Populate and return OverrideInfo based on stats of auto exoneration.
+
+    Args:
+      test_stats: List of failed tests stats.
+      overall_limit: Number of auto exonerations should not exceed this limit.
+      per_target_limit: Number of auto exonerations per target should not exceed this limit.
+
+    Returns: OverrideInfo based on auto exoneration statistics.
+    """
+    overall_limit_exceeded = self.check_overall_limit(
+        test_stats=test_stats, overall_limit=overall_limit)
+    per_target_limit_exceeded, bad_target = self.check_per_target_limit(
+        test_stats=test_stats, per_target_limit=per_target_limit)
+    override_info = OverallTestStats.OverrideInfo()
+    if overall_limit_exceeded:
+      override_info.override_reason = OverallTestStats.TOO_MANY_TESTS_EXONERATED_TOTAL
+    elif per_target_limit_exceeded:
+      override_info.override_reason = OverallTestStats.TOO_MANY_TESTS_EXONERATED_PER_TARGET
+      override_info.build_target = bad_target
+
+    return override_info
+
+  def check_per_target_limit(self, test_stats: List[FailedTestStats],
+                             per_target_limit: int) -> Tuple[bool, str]:
+    """Check if automated exoneration exceeded per target limit.
+
+    Args:
+      test_stats: List of failed tests stats.
+      per_target_limit: Number of auto exonerations per target should not exceed this limit.
+
+    Returns:
+      Tuple of boolean indicating if per-target exonerations have exceeded per_target_limit
+      and offending build_target. If multiple targets have exceeded, return any one.
+    """
+    per_target_count = defaultdict(int)
+    for failed_test in test_stats:
+      per_target_count[
+          failed_test.build_target] += failed_test.automatically_exonerated
+
+    for target, count in per_target_count.items():
+      if count > per_target_limit:
+        return True, target
+
+    return False, ''
+
+  def check_overall_limit(self, test_stats: List[FailedTestStats],
+                          overall_limit: int) -> bool:
+    """Check if automated exoneration exceeded overall limit.
+
+    Args:
+      test_stats: List of failed tests stats.
+      overall_limit: Number of auto exonerations should not exceed this limit.
+
+    Returns:
+      Boolean indicating if number of exonerations has exceeded overall_limit.
+    """
+    overall_count = 0
+    for failed_test in test_stats:
+      overall_count += failed_test.automatically_exonerated
+
+    return overall_count > overall_limit

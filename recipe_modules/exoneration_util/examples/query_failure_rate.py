@@ -26,4 +26,5 @@ def GenTests(api):
       'basic',
       # Check that LUCI Analysis gets called thrice on 220 input size.
       api.post_check(post_process.MustRun,
-                     'query LUCI Analysis for failure rates (3).rpc call'))
+                     'query LUCI Analysis for failure rates (3).rpc call'),
+      api.post_process(post_process.DropExpectation))

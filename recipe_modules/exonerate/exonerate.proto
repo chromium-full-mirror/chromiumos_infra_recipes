@@ -24,6 +24,12 @@ message ExonerateProperties {
 
   // The number of flaky verdict(s) needed to check for flaky percent.
   int32 flaky_verdict_threshold = 5;
+
+  // The number of auto exonerations should never exceed this limit.
+  int32 overall_autoex_limit = 6;
+
+  // The number of auto exonerations per target should never exceed this limit.
+  int32 per_target_autoex_limit = 7;
 }
 
 message ExonerateStats {
@@ -73,12 +79,25 @@ message FailedTestStats {
 message OverallTestStats{
   enum OverrideReason {
     UNSPECIFIED = 0;
-    TOO_MANY_FAILED_TESTS_TOTAL = 1;
-    TOO_MANY_FAILED_TESTS_PER_TARGET = 2;
+    TOO_MANY_TESTS_EXONERATED_TOTAL = 1;
+    TOO_MANY_TESTS_EXONERATED_PER_TARGET = 2;
   }
 
-  // Record why we skipped auto exoneration.
-  OverrideReason override_reason = 1;
+  message OverrideInfo{
+    // Record why we skipped auto exoneration.
+    OverrideReason override_reason = 1;
+
+    // Record which target exceeded the limit. Empty if target limits were not exceeded.
+    string build_target = 2;
+  }
   // All failed test stats.
   repeated FailedTestStats failed_tests = 2;
+
+  // Record whether exoneration was skipped and why.
+  OverrideInfo override_info = 3;
+
+  // Whether auto exoneration was actually applied.
+  bool dry_run = 4;
+
+  reserved 1;
 }

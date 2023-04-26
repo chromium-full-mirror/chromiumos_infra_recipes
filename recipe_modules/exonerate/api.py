@@ -28,6 +28,11 @@ CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 FailedTest = namedtuple(
     'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
+DEFAULT_OVERALL_AUTOEX_LIMIT = 100
+DEFAULT_PER_TARGET_AUTOEX_LIMIT = 20
+DEFAULT_CONSISTENT_FAILURE_THRESHOLD = 6
+DEFAULT_FLAKY_PERCENT_THRESHOLD = 1.0
+DEFAULT_FLAKY_VERDICT_THRESHOLD = 3
 
 
 class ExonerateApi(recipe_api.RecipeApi):
@@ -46,9 +51,11 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._failed_tests = set()
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
-    self._consistent_failure_threshold = properties.consistent_failure_threshold or 6
-    self._flaky_percent_threshold = properties.flaky_percent_threshold or 1.0
-    self._flaky_verdict_threshold = properties.flaky_verdict_threshold or 3
+    self._consistent_failure_threshold = properties.consistent_failure_threshold or DEFAULT_CONSISTENT_FAILURE_THRESHOLD
+    self._flaky_percent_threshold = properties.flaky_percent_threshold or DEFAULT_FLAKY_PERCENT_THRESHOLD
+    self._flaky_verdict_threshold = properties.flaky_verdict_threshold or DEFAULT_FLAKY_VERDICT_THRESHOLD
+    self._overall_autoex_limit = properties.overall_autoex_limit or DEFAULT_OVERALL_AUTOEX_LIMIT
+    self._per_target_autoex_limit = properties.per_target_autoex_limit or DEFAULT_PER_TARGET_AUTOEX_LIMIT
 
   @property
   def is_enabled(self):
@@ -563,8 +570,12 @@ class ExonerateApi(recipe_api.RecipeApi):
           stat.automatically_exonerated = consistently_failing or was_flaky
           all_stats.append(stat)
 
+        override_info = self.m.exoneration_util.override_calculation(
+            all_stats, self._overall_autoex_limit,
+            self._per_target_autoex_limit)
         overall_stats = OverallTestStats(
-            failed_tests=sorted(all_stats, key=lambda x: x.test_id))
+            failed_tests=sorted(all_stats, key=lambda x: x.test_id),
+            override_info=override_info)
         pres.logs['all_stats'] = str(overall_stats)
         self.m.easy.set_properties_step(failed_test_stats=overall_stats)
       except self.m.step.StepFailure:

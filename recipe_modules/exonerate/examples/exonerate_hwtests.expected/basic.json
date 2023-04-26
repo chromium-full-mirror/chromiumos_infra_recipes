@@ -356,6 +356,8 @@
       "@@@STEP_LOG_LINE@all_stats@failed_tests {@@@",
       "@@@STEP_LOG_LINE@all_stats@  test_id: \"test6\"@@@",
       "@@@STEP_LOG_LINE@all_stats@}@@@",
+      "@@@STEP_LOG_LINE@all_stats@override_info {@@@",
+      "@@@STEP_LOG_LINE@all_stats@}@@@",
       "@@@STEP_LOG_END@all_stats@@@"
     ]
   },
@@ -772,7 +774,7 @@
     "name": "Automated Exoneration Analysis.set failed_test_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@failed_test_stats@{\"failedTests\": [{\"testId\": \"tast.test4\"}, {\"manuallyExonerated\": true, \"testId\": \"test2\"}, {\"testId\": \"test3\"}, {\"testId\": \"test5\"}, {\"testId\": \"test6\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@failed_test_stats@{\"failedTests\": [{\"testId\": \"tast.test4\"}, {\"manuallyExonerated\": true, \"testId\": \"test2\"}, {\"testId\": \"test3\"}, {\"testId\": \"test5\"}, {\"testId\": \"test6\"}], \"overrideInfo\": {}}@@@"
     ]
   },
   {
