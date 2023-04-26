@@ -429,53 +429,60 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     # TODO(b/278885352): Update docstring to point to g3docs.
 
-    with self.m.step.nest('determine release testing priority'):
+    with self.m.step.nest('determine release testing priority') as presentation:
 
-      def fetch_schedule():
-        with self.m.step.nest('fetch schedule.json') as presentation:
-          result = self.m.gsutil.cat(RC_SCHEDULE_URI,
-                                     stdout=self.m.raw_io.output(),
-                                     ok_ret='any')
+      def get_qs_account():
 
-          if result.retcode != 0:
-            presentation.step_text = 'could not fetch schedule.json, falling back to defaults'
-            return None
+        def fetch_schedule():
+          with self.m.step.nest('fetch schedule.json') as presentation:
+            result = self.m.gsutil.cat(RC_SCHEDULE_URI,
+                                       stdout=self.m.raw_io.output(),
+                                       ok_ret='any')
 
-          try:
-            schedule_data = json.loads(result.stdout)
-          except json.decoder.JSONDecodeError:
-            presentation.step_text = 'could not parse schedule.json, falling back to defaults'
-            return None
+            if result.retcode != 0:
+              presentation.step_text = 'could not fetch schedule.json, falling back to defaults'
+              return None
 
-          # Want a string of the format "YYYY-MM-DD". Regularly scheduled builds
-          # span two calendar days, scheduling tests in the early morning. This
-          # is the day we want to match up with schedule.json.
-          # For LTS this doesn't matter as LTS always gets `release_high_prio`.
-          today = self.m.time.utcnow().date().isoformat()
-          if today not in schedule_data:
-            presentation.step_text = 'could not find {} in schedule.json, falling back to defaults'.format(
-                today)
-            return None
+            try:
+              schedule_data = json.loads(result.stdout)
+            except json.decoder.JSONDecodeError:
+              presentation.step_text = 'could not parse schedule.json, falling back to defaults'
+              return None
 
-          return schedule_data[today]
+            # Want a string of the format "YYYY-MM-DD". Regularly scheduled builds
+            # span two calendar days, scheduling tests in the early morning. This
+            # is the day we want to match up with schedule.json.
+            # For LTS this doesn't matter as LTS always gets `release_high_prio`.
+            today = self.m.time.utcnow().date().isoformat()
+            if today not in schedule_data:
+              presentation.step_text = 'could not find {} in schedule.json, falling back to defaults'.format(
+                  today)
+              return None
 
-      schedule_data = fetch_schedule()
-      if not schedule_data:
-        # Apply defaults.
-        if Channel.CHANNEL_STABLE in self._channels:
+            return schedule_data[today]
+
+        schedule_data = fetch_schedule()
+        if not schedule_data:
+          # Apply defaults.
+          if Channel.CHANNEL_STABLE in self._channels:
+            return RELEASE_HIGH_PRIO_QS_ACCOUNT
+          if Channel.CHANNEL_BETA in self._channels:
+            return RELEASE_MED_PRIO_QS_ACCOUNT
+          return RELEASE_LOW_PRIO_QS_ACCOUNT
+
+        config = self.m.cros_infra_config.config
+        # Stabilize branches should get low priority.
+        if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
+          return RELEASE_LOW_PRIO_QS_ACCOUNT
+
+        milestone = str(self.m.cros_version.version.milestone)
+        if schedule_data['primary'] == milestone:
           return RELEASE_HIGH_PRIO_QS_ACCOUNT
-        if Channel.CHANNEL_BETA in self._channels:
+        if schedule_data['secondary'] == milestone:
           return RELEASE_MED_PRIO_QS_ACCOUNT
         return RELEASE_LOW_PRIO_QS_ACCOUNT
 
-      config = self.m.cros_infra_config.config
-      # Stabilize branches should get low priority.
-      if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
-        return RELEASE_LOW_PRIO_QS_ACCOUNT
-
-      milestone = str(self.m.cros_version.version.milestone)
-      if schedule_data['primary'] == milestone:
-        return RELEASE_HIGH_PRIO_QS_ACCOUNT
-      if schedule_data['secondary'] == milestone:
-        return RELEASE_MED_PRIO_QS_ACCOUNT
-      return RELEASE_LOW_PRIO_QS_ACCOUNT
+      qs_account = get_qs_account()
+      self.m.easy.set_properties_step(dynamic_qs_account=qs_account)
+      presentation.step_text = 'using qs_account "{}"'.format(qs_account)
+      return qs_account

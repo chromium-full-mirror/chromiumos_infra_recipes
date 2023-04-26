@@ -51,7 +51,10 @@ def GenTests(api):
             }),
         api.step_data(
             'determine release testing priority.fetch schedule.json.gsutil cat',
-            retcode=1), api.post_process(post_process.DropExpectation),
+            retcode=1),
+        api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                         expected_qs_account),
+        api.post_process(post_process.DropExpectation),
         builder='release-main-orchestrator')
 
   yield no_schedule('no-schedule-stable',
@@ -75,6 +78,8 @@ def GenTests(api):
       api.step_data(
           'determine release testing priority.fetch schedule.json.gsutil cat',
           stdout=api.raw_io.output('{bad-json')),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_low_prio'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator')
 
@@ -105,6 +110,8 @@ def GenTests(api):
       api.step_data(
           'determine release testing priority.fetch schedule.json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_high_prio'),
       api.post_process(post_process.DropExpectation),
       builder='release-main-orchestrator')
 
@@ -136,6 +143,8 @@ def GenTests(api):
         api.step_data(
             'determine release testing priority.fetch schedule.json.gsutil cat',
             stdout=api.raw_io.output(test_data)),
+        api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                         expected_qs_account),
         api.post_process(post_process.DropExpectation),
         builder='release-main-orchestrator')
 
@@ -162,5 +171,7 @@ def GenTests(api):
       api.step_data(
           'determine release testing priority.fetch schedule.json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_low_prio'),
       api.post_process(post_process.DropExpectation),
       builder='release-stabilize-15185.B-orchestrator')
