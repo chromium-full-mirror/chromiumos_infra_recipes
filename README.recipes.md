@@ -280,6 +280,7 @@
   * [cros_infra_config:examples/get_vm_retry_config](#recipes-cros_infra_config_examples_get_vm_retry_config) (Python3 ✅)
   * [cros_infra_config:examples/no_builder_config](#recipes-cros_infra_config_examples_no_builder_config) (Python3 ✅)
   * [cros_infra_config:examples/specify_branch](#recipes-cros_infra_config_examples_specify_branch) (Python3 ✅)
+  * [cros_infra_config:examples/use_custom_builder_config](#recipes-cros_infra_config_examples_use_custom_builder_config) (Python3 ✅) &mdash; Example of how to define a test cases with a custom builder config.
   * [cros_infra_config:tests/configure_builder](#recipes-cros_infra_config_tests_configure_builder) (Python3 ✅)
   * [cros_infra_config:tests/determine_if_staging](#recipes-cros_infra_config_tests_determine_if_staging) (Python3 ✅)
   * [cros_infra_config:tests/experiments](#recipes-cros_infra_config_tests_experiments) (Python3 ✅)
@@ -11621,6 +11622,20 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/specify_branch.py#21)(api):**
+### *recipes* / [cros\_infra\_config:examples/use\_custom\_builder\_config](/recipe_modules/cros_infra_config/examples/use_custom_builder_config.py)
+
+[DEPS](/recipe_modules/cros_infra_config/examples/use_custom_builder_config.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Example of how to define a test cases with a custom builder config.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/use_custom_builder_config.py#25)(api: RecipeApi):**
+
+Configure the builder, and then log some properties.
+
+The test cases are expected to make assertions on the properties via
+post_process checks.
 ### *recipes* / [cros\_infra\_config:tests/configure\_builder](/recipe_modules/cros_infra_config/tests/configure_builder.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/configure_builder.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
