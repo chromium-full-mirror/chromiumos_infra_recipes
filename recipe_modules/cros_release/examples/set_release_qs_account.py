@@ -164,6 +164,53 @@ def GenTests(api):
   yield schedule_test('secondary', 'R112-12345.0.0', 'release_med_prio')
   yield schedule_test('non-prio', 'R114-12345.0.0', 'release_low_prio')
 
+  # TODO(b/278885352): Remove special casing for 108 once channels are
+  # actually populated with LTS/LTC (this work is targeting 114).
+  yield api.orch_menu.test(
+      'lts-hardcode',
+      api.properties(
+          **{
+              'expected_qs_account': 'release_high_prio',
+              '$chromeos/cros_release': {
+                  'channels': [Channel.CHANNEL_BETA],
+                  'dynamic_qs_account': True,
+              }
+          }), api.time.seed(SEED_TIME),
+      api.step_data(
+          'determine release testing priority.fetch schedule.json.gsutil cat',
+          stdout=api.raw_io.output(test_data)),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_high_prio'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-R108-15183.B-orchestrator')
+
+  def lts_test(name, channels):
+    return api.orch_menu.test(
+        name,
+        api.properties(
+            **{
+                'expected_qs_account': 'release_high_prio',
+                '$chromeos/cros_release': {
+                    'channels': channels,
+                    'dynamic_qs_account': True,
+                }
+            }),
+        api.time.seed(SEED_TIME),
+        # Should not be prioritized due to the version but will be overridden
+        # by the fact that we're LTS.
+        api.cros_version.workspace_version('R114-12345.0.0'),
+        api.step_data(
+            'determine release testing priority.fetch schedule.json.gsutil cat',
+            stdout=api.raw_io.output(test_data)),
+        api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                         'release_high_prio'),
+        api.post_process(post_process.DropExpectation),
+        builder='release-main-orchestrator')
+
+  yield lts_test('lts', [Channel.CHANNEL_LTS])
+  yield lts_test('ltc', [Channel.CHANNEL_LTC])
+  yield lts_test('lts-ltc', [Channel.CHANNEL_LTS, Channel.CHANNEL_LTC])
+
   yield api.orch_menu.test(
       'dryrun',
       api.properties(

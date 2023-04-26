@@ -1784,6 +1784,24 @@
     },
     {
       "id": {
+        "name": "release-R108-15183.B-orchestrator",
+        "type": "RELEASE",
+        "bucket": "release"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R108-15183.B"
+        }
+      }
+    },
+    {
+      "id": {
         "name": "eve-release-main",
         "type": "RELEASE",
         "bucket": "release"
