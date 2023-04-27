@@ -20,6 +20,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/led',
     'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/runtime',
@@ -51,7 +52,7 @@ EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
 
-  if api.cros_infra_config.is_staging:
+  if api.cros_infra_config.is_staging and not api.led.run_id:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   try:

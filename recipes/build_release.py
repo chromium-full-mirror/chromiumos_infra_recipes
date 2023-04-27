@@ -30,6 +30,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/futures',
+    'recipe_engine/led',
     'recipe_engine/properties',
     'recipe_engine/runtime',
     'recipe_engine/step',
@@ -69,7 +70,7 @@ def RunSteps(api, properties):
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
   api.cros_release.set_output_properties()
 
-  if api.cros_infra_config.is_staging:
+  if api.cros_infra_config.is_staging and not api.led.run_id:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   try:
