@@ -10,12 +10,15 @@ consistent.
 """
 
 from collections import namedtuple
+from typing import List, Tuple
 
 from recipe_engine import recipe_test_api
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
+from PB.chromiumos.builder_config import BuilderConfig
 
 
 class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
@@ -396,3 +399,51 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     values.extend([ctp_normal, ctp_failure])
     return _ret(*values)
+
+  # TODO(b/279016710): This function could be generalized and allow overriding
+  # of child build data.
+  def cq_child_builds(self) -> Tuple[List[Build], List[Build]]:
+    """Return a list of child builds that cq-orchestrator could run.
+
+    Returns:
+      Tuple containing:
+        * List of Builds which have COLLECT or NO_COLLECT handling
+        * List of Builds which have COLLECT_AFTER_HW_TEST handing
+    """
+
+    def _child_build_msg(build_target_name, **kwargs):
+      """Return the Build message for a child build."""
+      kwargs.setdefault('status', 'SUCCESS')
+      return self.m.test_util.test_child_build(build_target_name,
+                                               **kwargs).message
+
+    orch_config = None
+    for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
+      if config.id.name == 'cq-orchestrator':
+        orch_config = config
+        break
+    if not orch_config:
+      return [], []  # pragma: no cover
+
+    start_build_id = 8922054662172514000
+    collect_builds = []
+    collect_after_builds = []
+
+    # TODO(b/279016710): Group NO_COLLECT builds with COLLECT for now. We will
+    # need to update the orch_menu.test() function with a new option that adds
+    # test_data for scheduling the NO_COLLECT builds but not collecting them.
+    for c in orch_config.orchestrator.child_specs:
+      target = c.name.split('-cq')[0]
+      if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
+        collect_after_builds.append(
+            _child_build_msg(target, cq=True, build_id=start_build_id,
+                             critical='YES',
+                             output_properties=dict(build_cost=10.0)))
+      else:
+        collect_builds.append(
+            _child_build_msg(target, cq=True, build_id=start_build_id,
+                             critical='YES',
+                             output_properties=dict(build_cost=10.0)))
+      start_build_id += 1
+
+    return collect_builds, collect_after_builds

@@ -1144,6 +1144,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
         completed_builds = self._collect_builds(
             [b.id for b in self._builds_status.running_builds])
         self._collect_and_check_build_results(completed_builds)
+        if self._test_data.enabled:
+          assert len(self._builds_status.running_builds) == 0
         self.m.greenness.update_build_info(completed_builds)
         self.m.greenness.print_step()
 

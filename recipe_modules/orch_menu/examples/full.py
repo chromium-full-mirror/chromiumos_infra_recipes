@@ -533,6 +533,7 @@ def GenTests(api):
       history_builds=data.history_builds, with_history=True,
       with_manifest_refs=True)
 
+  collect, collect_after = api.orch_menu.cq_child_builds()
   # Joins an inflight orchestrator run.
   yield api.orch_menu.test(
       'inflight-orchestrator', data.ctp_normal,
@@ -542,13 +543,13 @@ def GenTests(api):
           'find inflight orchestrator.waiting for existing runs.wait'),
       api.properties(
           FullProperties(
-              expected_completed_builds=data.builds + data.after_builds,
+              expected_completed_builds=collect + collect_after,
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True)), cq=True,
-      collect_builds=data.builds, history_builds=data.history_builds,
-      collect_after_builds=data.after_builds, with_history=True, git_footers=[],
+              expected_enable_history=True)), cq=True, collect_builds=collect,
+      history_builds=data.history_builds, collect_after_builds=collect_after,
+      with_history=True, git_footers=[],
       inflight_orch=[data.inflight_orchestrator])
 
   # Runs when there is no inflight orchestrator.
@@ -556,14 +557,13 @@ def GenTests(api):
       'no-inflight-orchestrator', data.ctp_normal,
       api.properties(
           FullProperties(
-              expected_completed_builds=data.builds + data.after_builds,
+              expected_completed_builds=collect + collect_after,
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True)), cq=True,
-      collect_builds=data.builds, history_builds=data.history_builds,
-      collect_after_builds=data.after_builds, with_history=True, git_footers=[],
-      inflight_orch=[])
+              expected_enable_history=True)), cq=True, collect_builds=collect,
+      history_builds=data.history_builds, collect_after_builds=collect_after,
+      with_history=True, git_footers=[], inflight_orch=[])
 
   # Collect times out
   yield api.orch_menu.test(
