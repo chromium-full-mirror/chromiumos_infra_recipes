@@ -46,13 +46,13 @@ DEPS = [
     'cros_sdk',
     'cros_test_plan',
     'cros_try',
-    'signing',
     'cros_source',
     'cros_tags',
     'debug_symbols',
     'dlc_utils',
     'easy',
     'failures',
+    'signing',
     'src_state',
     'vmlab',
 ]
@@ -218,15 +218,32 @@ def DoRunSteps(api, config, properties):
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
+  # Eventually, signing will have its own checkpoint step, but for now
+  # do it here. We do it before `PUSH_IMAGES` below because that is tightly
+  # coupled with `COLLECT_SIGNING` below it as far as checkpoints is concerned.
+  if api.signing.local_signing:
+    api.signing.sign_artifacts()
+    # TODO Publish any signed build metadata we have on the pubsub.
+    # api.build_reporting.publish_signed_build_metadata()
+
   gs_image_dir = None
   instructions = None
   with api.checkpoint.retry(RetryStep.PUSH_IMAGES) as run_step:
-    if run_step:
-      gs_image_dir, instructions = api.cros_release.push_and_sign_images(
-          config, api.build_menu.sysroot)
+    if not api.signing.local_signing:
+      if run_step:
+        gs_image_dir, instructions = api.cros_release.push_and_sign_images(
+            config, api.build_menu.sysroot)
+      else:
+        gs_image_dir = api.checkpoint.artifact_link
+        instructions = api.checkpoint.signing_instructions_uris
     else:
-      gs_image_dir = api.checkpoint.artifact_link
-      instructions = api.checkpoint.signing_instructions_uris
+      with api.step.nest('set up bucket metadata') as step:
+        gs_image_dir = api.cros_release.get_image_dir(config,
+                                                      api.build_menu.sysroot,
+                                                      step)
+        api.cros_release.emit_release_buckets(
+            api.build_menu.sysroot.build_target.name, step)
+        instructions = []
 
   with api.checkpoint.retry(RetryStep.DEBUG_SYMBOLS) as run_step:
     if run_step:
@@ -258,7 +275,7 @@ def DoRunSteps(api, config, properties):
   exp = None
   try:
     with api.checkpoint.retry(RetryStep.COLLECT_SIGNING) as run_step:
-      if run_step:
+      if (not api.signing.local_signing) and run_step:
         # Signing does not work in staging, so we shouldn't wait for it in that case.
         # We also can't sign anything if push_and_sign_images returned 0 instructions.
         # Otherwise, wait for signing to complete.
@@ -289,7 +306,8 @@ def DoRunSteps(api, config, properties):
       if run_step:
         # With signing complete, we can start payload generation (only if there were
         # signed images generated). We _do_ want this in staging.
-        if not properties.skip_paygen and instructions:
+        if not properties.skip_paygen and (instructions or
+                                           api.signing.local_signing):
           api.cros_release.run_payload_generation()
         else:
           with api.step.nest('skipping payloads') as pres:
@@ -400,6 +418,86 @@ def GenTests(api):
       api.post_process(
           post_process.PropertyEquals, 'artifact_link',
           'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
+      api.post_check(
+          post_process.PropertyEquals, 'retry_summary', {
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
+              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
+              RetryStep.Name(RetryStep.EBUILD_TESTS): "SUCCESS",
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
+              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+          }),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Normal release build with local signing.
+  yield api.build_menu.test(
+      'release-build-local-signing',
+      api.properties(
+          **{
+              'latest_files_gs_bucket':
+                  'chromeos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-release',
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-release.{cros-version}",
+              },
+              '$chromeos/checkpoint': {
+                  'force_retry_summary': True,
+              },
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/debug_symbols': {
+                  'worker_count': 200,
+                  'retry_quota': 1000,
+                  'dryrun': False
+              },
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(local_signing=True))
+          }),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun,
+                     'determine build and model metadata'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-main'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload build report to GS.gsutil write build_report.json to GS',
+          [
+              'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json'
+          ],
+      ),
+      api.post_process(post_process.PropertyEquals, 'critical', '1'),
+      api.post_process(
+          post_process.PropertyEquals, 'artifact_link',
+          'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
+      api.post_check(post_process.DoesNotRun, 'push images'),
+      api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
               RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",

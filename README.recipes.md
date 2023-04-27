@@ -588,6 +588,7 @@
   * [signing:tests/get_failure](#recipes-signing_tests_get_failure) (Python3 ✅) &mdash; Verify that method get_failure has error handling.
   * [signing:tests/invalid_file_format](#recipes-signing_tests_invalid_file_format) (Python3 ✅) &mdash; Verify that instructions files are in the appropriate format.
   * [signing:tests/sequence_error](#recipes-signing_tests_sequence_error) (Python3 ✅) &mdash; Verify that wait_for_signing is required before retrieving signed build metadata.
+  * [signing:tests/sign_artifacts](#recipes-signing_tests_sign_artifacts) (Python3 ✅) &mdash; Tests for sign_artifacts.
   * [skylab:examples/direct_test_retry](#recipes-skylab_examples_direct_test_retry) (Python3 ✅)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites) (Python3 ✅)
   * [skylab:examples/schedule_suites_direct_tast_testing](#recipes-skylab_examples_schedule_suites_direct_tast_testing) (Python3 ✅)
@@ -3245,6 +3246,16 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#382)(self, build_target, step):**
+
+Emit the release buckets for the configured channels in step logs.
+
+Also creates the "BUILT_BY_RUBIK" sentinel file.
+
+Args:
+  build_target (str): build target to include in the path.
+  step (StepPresentation): step to log into.
+
 &mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#308)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
@@ -3258,7 +3269,19 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#346)(self, config, sysroot):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#346)(self, config, sysroot, step):**
+
+Determine the image directory unsigned artifacts are uploaded in.
+
+Args:
+  config (BuilderConfig): The Builder Config for the build.
+  sysroot (Sysroot): sysroot to use.
+  step (StepPresentation): the step to log into.
+
+Returns:
+  GS image directory as a gs:// uri.
+
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#402)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3285,11 +3308,11 @@ This is blocking: it will launch the paygen orchestrator, and wait for it to
 finish. This function assumes that it is run after a new release image has
 been built.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#417)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#442)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#425)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#450)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
@@ -8957,11 +8980,11 @@ Validate the caller's service version if they sent one.
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [SigningApi](/recipe_modules/signing/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SigningApi](/recipe_modules/signing/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module to encapsulate communication with the signing fleet.
+A module to encapsulate signing operations.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#220)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#237)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the failure of signing.
 
@@ -8971,7 +8994,7 @@ Args:
 Returns:
   The failure of the signing, or None if not available.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#121)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#138)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
 
 Get the metadata of the signed build.
 
@@ -8984,7 +9007,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#204)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#221)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -8994,7 +9017,13 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#192)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@property**<br>&mdash; **def [local\_signing](/recipe_modules/signing/api.py#45)(self):**
+
+&mdash; **def [sign\_artifacts](/recipe_modules/signing/api.py#49)(self):**
+
+Stub implementation for local signing flow.
+
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#209)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a failed signing operation.
 
@@ -9004,7 +9033,7 @@ Args:
 Returns:
   True/False whether the signing failed.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#180)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#197)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a successful signing operation.
 
@@ -9014,11 +9043,11 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#145)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#162)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#39)(self, instructions_list: List[str]):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#58)(self, instructions_list: List[str]):**
 
 Wait for signing to complete for a set of instructions files.
 
@@ -14010,6 +14039,15 @@ Verify that wait_for_signing is required before retrieving signed build
 metadata.
 
 &mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
+### *recipes* / [signing:tests/sign\_artifacts](/recipe_modules/signing/tests/sign_artifacts.py)
+
+[DEPS](/recipe_modules/signing/tests/sign_artifacts.py#15): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Tests for sign_artifacts.
+
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/sign_artifacts.py#24)(api: RecipeApi):**
 ### *recipes* / [skylab:examples/direct\_test\_retry](/recipe_modules/skylab/examples/direct_test_retry.py)
 
 [DEPS](/recipe_modules/skylab/examples/direct_test_retry.py#13): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

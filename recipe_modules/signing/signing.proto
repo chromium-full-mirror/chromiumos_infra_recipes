@@ -18,4 +18,8 @@ message SigningProperties {
   // Primarily used when we want to reinitiate signing (because of failed
   // artifacts) without failing on the originally-successful artifacts.
   bool ignore_already_exists_errors = 3;
+
+  // Whether to use the local signing flow instead of sending out instructions
+  // files to the legacy signing fleet. Defaults to false.
+  bool local_signing = 4;
 }

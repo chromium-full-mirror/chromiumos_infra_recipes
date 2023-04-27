@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 import json
 import re
+from json import JSONDecodeError
 from typing import Any, Dict, List, NewType, Optional
 
 from PB.chromiumos.build_report import BuildReport
@@ -28,13 +29,31 @@ InstructionsMetadata = NewType('InstructionsMetadata', Any)
 
 
 class SigningApi(recipe_api.RecipeApi):
-  """A module to encapsulate communication with the signing fleet."""
+  """A module to encapsulate signing operations."""
 
   def __init__(self, properties: SigningProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    # Props for the legacy signing fleet.
     self._timeout: int = properties.timeout or 4 * 60 * 60
     self._sleep_duration: int = properties.sleep_duration or 5 * 60
     self.ignore_already_exists_errors: bool = properties.ignore_already_exists_errors
+    # Props for the new local signing flow.
+    self._local_signing = properties.local_signing or False
+
+  # Methods to support the new local signing flow.
+
+  @property
+  def local_signing(self) -> bool:
+    return self._local_signing
+
+  def sign_artifacts(self) -> None:
+    """Stub implementation for local signing flow."""
+    if not self.local_signing:
+      raise Exception(
+          'Cannot sign artifacts when local signing is not configured')
+    # noop
+
+  # Methods to support the legacy signing fleet flow.
 
   def wait_for_signing(self, instructions_list: List[str]
                       ) -> Dict[str, InstructionsMetadata]:
@@ -93,9 +112,7 @@ class SigningApi(recipe_api.RecipeApi):
           try:
             instructions_info: InstructionsMetadata = json.loads(
                 metadata.stdout.strip())
-          # TODO(b/217973271) - this needs to be updated to JSONDecodeError as
-          # part of py3 migration.
-          except ValueError:
+          except JSONDecodeError:
             # If the json is malformed, treat it like a missing file.
             continue
 
