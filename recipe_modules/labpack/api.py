@@ -19,12 +19,15 @@ class LabpackCommand(recipe_api.RecipeApi):
   - cipd_label
   - cipd_package
 
+  - has_downloaded_package: bool
+
   """
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
     self.cipd_label = properties.version.cipd_label or DEFAULT_CIPD_LABEL
     self.cipd_package = properties.version.cipd_package or DEFAULT_CIPD_PACKAGE
+    self.has_downloaded_package = False
 
   def get_cipd_executable_name(self):
     """get_cipd_executable_name gets the executable name from the CIPD path"""
@@ -54,6 +57,10 @@ class LabpackCommand(recipe_api.RecipeApi):
     Returns: Dictionary
     """
     out = new_result_map()
+
+    if self.has_downloaded_package:
+      return new_result_map()  # pragma: nocover
+
     # Add labpack to the current cipd package.
     with self.m.step.nest('ensure labpack'):
       pkgs = self.m.cipd.EnsureFile()
@@ -99,6 +106,9 @@ class LabpackCommand(recipe_api.RecipeApi):
                            "labpack does not exist at paths {}".format(paths))
       add_assertion_to_map(
           out, tally, "labpack exists at exaclty one path in {}".format(paths))
+    # The very last thing we do is record success, after everything that
+    # could have failed.
+    self.has_downloaded_package = True
     return out
 
   def run_labpack(self, labpack_input: LabpackInput, **kwargs) -> StepData:
