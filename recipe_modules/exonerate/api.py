@@ -526,6 +526,8 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def auto_exoneration_analysis(self) -> None:
     """Analyze failed tests to see if they can be exonerated."""
+    if not self._enable_exoneration:
+      return
     with self.m.step.nest('Automated Exoneration Analysis') as pres:
       pres.logs['failed_tests'] = str(
           sorted(self._failed_tests, key=lambda x: x.name + x.build_target))
@@ -557,13 +559,16 @@ class ExonerateApi(recipe_api.RecipeApi):
           tastless_name = self.get_tastless_name(stat.test_id)
           stat.manually_exonerated = self._is_test_name_exonerable(
               tastless_name, stat.build_target)
-          stat.consistent_failure_count = self.get_consistent_failure_count_from_verdicts(
-              failure_rate.recent_verdicts)
+          stat.consistent_failure_count = (
+              self.get_consistent_failure_count_from_verdicts(
+                  failure_rate.recent_verdicts))
           flaky_verdicts, stat.flaky_verdict_percent = (
               self.get_flake_percent_from_interval_stats(
                   failure_rate.interval_stats))
           # This is Browser's current algorithm. Starting with this. Might change later.
-          consistently_failing = stat.consistent_failure_count >= self._consistent_failure_threshold
+          consistently_failing = (
+              stat.consistent_failure_count >=
+              self._consistent_failure_threshold)
           was_flaky = (
               flaky_verdicts >= self._flaky_verdict_threshold and
               stat.flaky_verdict_percent >= self._flaky_percent_threshold)
@@ -578,6 +583,12 @@ class ExonerateApi(recipe_api.RecipeApi):
             override_info=override_info)
         pres.logs['all_stats'] = str(overall_stats)
         self.m.easy.set_properties_step(failed_test_stats=overall_stats)
+        if (not self._dry_run and
+            override_info.override_reason == OverallTestStats.UNSPECIFIED):
+          pres.step_text = 'updating configs with automated exoneration'
+          self._exoneration_configs = self.m.exoneration_util.get_updated_configs(
+              all_stats, self._exoneration_configs)
+          pres.logs['configs'] = self._get_printable_configs()
       except self.m.step.StepFailure:
         # Any exception in auto exoneration should not stop the orchestrator.
         pres.status = self.m.step.SUCCESS

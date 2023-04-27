@@ -12837,16 +12837,6 @@
   },
   {
     "cmd": [],
-    "name": "check test results.Automated Exoneration Analysis",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no failed tests@@@",
-      "@@@STEP_LOG_LINE@failed_tests@[]@@@",
-      "@@@STEP_LOG_END@failed_tests@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -61,6 +61,7 @@ def RunSteps(api):
   if not api.exonerate.is_enabled:
     api.assertions.assertEqual(
         api.exonerate.is_hw_result_exonerable(hw_test_failures[0]), False)
+    api.exonerate.auto_exoneration_analysis()
 
 
 def GenTests(api):

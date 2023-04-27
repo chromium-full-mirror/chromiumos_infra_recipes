@@ -126,6 +126,7 @@
     "cmd": [],
     "name": "Automated Exoneration Analysis",
     "~followup_annotations": [
+      "@@@STEP_TEXT@updating configs with automated exoneration@@@",
       "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test4', board='target', build_target='build_target_name', suite='', test_config=''), FailedTest(name='test2', board='target', build_target='build_target_name', suite='', test_config=''), FailedTest(name='test3', board='target', build_target='build_target_name', suite='', test_config=''), FailedTest(name='test5', board='target', build_target='build_target_name', suite='', test_config=''), FailedTest(name='test6', board='target', build_target='build_target_name', suite='', test_config='')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@",
       "@@@STEP_LOG_LINE@failure_rate@[test_id: \"tast.test4\"@@@",
@@ -358,7 +359,15 @@
       "@@@STEP_LOG_LINE@all_stats@}@@@",
       "@@@STEP_LOG_LINE@all_stats@override_info {@@@",
       "@@@STEP_LOG_LINE@all_stats@}@@@",
-      "@@@STEP_LOG_END@all_stats@@@"
+      "@@@STEP_LOG_END@all_stats@@@",
+      "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
+      "@@@STEP_LOG_LINE@configs@test1: []@@@",
+      "@@@STEP_LOG_LINE@configs@test2: []@@@",
+      "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
+      "@@@STEP_LOG_END@configs@@@"
     ]
   },
   {

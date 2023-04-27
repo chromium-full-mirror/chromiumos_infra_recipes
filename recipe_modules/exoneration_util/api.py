@@ -103,3 +103,24 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
       overall_count += failed_test.automatically_exonerated
 
     return overall_count > overall_limit
+
+  def get_updated_configs(self, test_stats: List[FailedTestStats],
+                          manual_configs: dict) -> dict:
+    """Update exoneration configs dict based on autoex analysis.
+
+    Args:
+      test_stats: List of failed tests stats.
+      manual_configs: Configs for manual exoneration in the format of test_name -> [list of build_targets]
+
+    Returns:
+      A map of the same format as manual_configs but is updated to include autoex tests.
+    """
+    updated_configs = manual_configs
+    for failed_test in test_stats:
+      if failed_test.automatically_exonerated and not failed_test.manually_exonerated:
+        if failed_test.test_id in updated_configs:
+          updated_configs[failed_test.test_id].append(failed_test.build_target)
+        else:
+          updated_configs[failed_test.test_id] = [failed_test.build_target]
+
+    return updated_configs

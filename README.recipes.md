@@ -404,6 +404,7 @@
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate) (Python3 ✅)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results) (Python3 ✅)
   * [exoneration_util:examples/check_overall_limit](#recipes-exoneration_util_examples_check_overall_limit) (Python3 ✅)
+  * [exoneration_util:examples/get_updated_configs](#recipes-exoneration_util_examples_get_updated_configs) (Python3 ✅)
   * [exoneration_util:examples/override_calculation](#recipes-exoneration_util_examples_override_calculation) (Python3 ✅)
   * [exoneration_util:examples/per_target_limit](#recipes-exoneration_util_examples_per_target_limit) (Python3 ✅)
   * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate) (Python3 ✅)
@@ -5306,7 +5307,7 @@ Return markdown style info about suites that were exonerated.
 
 Returns: str in markdown style.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#737)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#748)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5316,7 +5317,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#721)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#732)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5336,7 +5337,7 @@ Args:
 Returns: Number of flaky verdict and percent of verdict with flaky
   result in the last 24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#674)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#685)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5377,7 +5378,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#604)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#615)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5388,7 +5389,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#642)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#653)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5438,6 +5439,17 @@ Args:
 Returns:
   Tuple of boolean indicating if per-target exonerations have exceeded per_target_limit
   and offending build_target. If multiple targets have exceeded, return any one.
+
+&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#107)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
+
+Update exoneration configs dict based on autoex analysis.
+
+Args:
+  test_stats: List of failed tests stats.
+  manual_configs: Configs for manual exoneration in the format of test_name -> [list of build_targets]
+
+Returns:
+  A map of the same format as manual_configs but is updated to include autoex tests.
 
 &mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#42)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
 
@@ -12532,6 +12544,13 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 &mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/check_overall_limit.py#17)(api):**
+### *recipes* / [exoneration\_util:examples/get\_updated\_configs](/recipe_modules/exoneration_util/examples/get_updated_configs.py)
+
+[DEPS](/recipe_modules/exoneration_util/examples/get_updated_configs.py#9): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/get_updated_configs.py#17)(api):**
 ### *recipes* / [exoneration\_util:examples/override\_calculation](/recipe_modules/exoneration_util/examples/override_calculation.py)
 
 [DEPS](/recipe_modules/exoneration_util/examples/override_calculation.py#10): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
