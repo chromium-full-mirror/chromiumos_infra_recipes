@@ -626,3 +626,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
       # Upload the prebuilts in the path to gs.
       self._upload(upload_root, upload_paths, upload_uri, acls)
+
+      step = self.m.step('set properties', cmd=None)
+      step.presentation.properties['prebuilts_private'] = private
+      step.presentation.properties['prebuilts_uri'] = upload_uri

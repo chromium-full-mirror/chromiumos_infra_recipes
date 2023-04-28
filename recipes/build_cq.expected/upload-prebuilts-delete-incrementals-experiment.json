@@ -6707,6 +6707,15 @@
   },
   {
     "cmd": [],
+    "name": "upload prebuilts.do upload.upload chrome prebuilts.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@prebuilts_private@false@@@",
+      "@@@SET_BUILD_PROPERTY@prebuilts_uri@\"gs://prebuilts_gs_bucket/board/amd64-generic/cq-R99-1234.56.0-101-8945511751514863184/packages\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run ebuild tests"
   },
   {
