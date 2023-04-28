@@ -587,12 +587,14 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                 self.m.path.basename(host_path))
         ])
 
+      test_return = ' '.join([b.builder.builder for b in builds])
+      test_return += '\n'
       self.m.docker.run(
           self._docker_image, cmd_args=args, dir_mapping=[
               (host_input_path, container_input_path)
           ], stdout=self.m.raw_io.output_text(add_output_log=True),
           step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
-              ' '.join([b.builder.builder for b in builds])))
-      testable_builders = sorted(self.m.step.active_result.stdout.split(' '))
+              test_return))
+      testable_builders = sorted(self.m.step.active_result.stdout.split())
       pres.logs['testable_builders'] = testable_builders
       return testable_builders
