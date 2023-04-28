@@ -466,9 +466,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
         def fetch_schedule():
           with self.m.step.nest('fetch schedule.json') as presentation:
-            result = self.m.gsutil.cat(RC_SCHEDULE_URI,
-                                       stdout=self.m.raw_io.output(),
-                                       ok_ret='any')
+            result = self.m.gsutil.cat(
+                RC_SCHEDULE_URI,
+                stdout=self.m.raw_io.output(add_output_log=True), ok_ret='any')
 
             if result.retcode != 0:
               presentation.step_text = 'could not fetch schedule.json, falling back to defaults'
