@@ -463,7 +463,7 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
   """
   with api.step.nest("Shard test cases") as step:
     seed = request.test_plan.seed
-    max_in_shard = 100
+    max_in_shard = 70
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
     if suite_name.__contains__("tast-tags-test-suite"):  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
