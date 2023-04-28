@@ -151,7 +151,9 @@ def RunSteps(api: RecipeApi):
             patchset=patchset,
         )
 
-        bucket = 'staging' if is_staging else 'cq'
+        # On prod, check only the prod builders
+        # On staging, check both prod and staging builders.
+        bucket = None if is_staging else 'cq'
         builder = builder_common_pb2.BuilderID(project='chromeos',
                                                bucket=bucket)
         builds = api.buildbucket.search(

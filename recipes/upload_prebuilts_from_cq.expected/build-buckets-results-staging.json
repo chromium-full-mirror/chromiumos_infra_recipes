@@ -194,7 +194,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"staging\", \"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"2\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"includeExperimental\": true}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"2\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}], \"includeExperimental\": true}"
     ],
     "infra_step": true,
     "luci_context": {
