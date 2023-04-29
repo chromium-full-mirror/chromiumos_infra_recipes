@@ -116,8 +116,7 @@ class BuildsStatus():
     unchanged_failures = [
         f for f in self.failures if f.id not in failure_update_ids
     ]
-    failure_updates += unchanged_failures
-    self.failures = failure_updates
+    self.failures = failure_updates + unchanged_failures
 
   def _is_testable(self, build):
     """Whether the build is testable."""

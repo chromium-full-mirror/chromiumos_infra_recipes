@@ -616,33 +616,48 @@ def GenTests(api):
       process_child=data.process_child, process_child_timeout=True,
       bucket='toolchain', builder='orderfile-generate-orchestrator')
 
-  builds = data.mixed_build_results
-  summary = (
-      '1 out of 2 builds failed\n\n- amd64-generic-postsubmit: [build page](https://'
-      'cr-buildbucket.appspot.com/build/8922054662172514000)')
+  collect, collect_after = api.orch_menu.cq_child_builds()
+  # Mark one critical child build as failed in each of the collect steps.
+  # TODO(b/279016710): Get clarification on how we should treat unset
+  # criticality (apparently cave-cq is not actually critical).
+  for b in collect:
+    if b.builder.builder == 'atlas-cq':
+      b.status = common_pb2.FAILURE
+  for b in collect_after:
+    if b.builder.builder == 'cave-cq':
+      b.status = common_pb2.FAILURE
+  summary = ('1 out of 8 builds failed\n\n- atlas-cq: [build page](https://'
+             'cr-buildbucket.appspot.com/build/8922054662172514004)')
   yield api.orch_menu.test(
       'critical-child-builder-fails',
       api.properties(
           FullProperties(
-              expected_completed_builds=builds,
+              expected_completed_builds=collect + collect_after,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      collect_builds=builds,
-      history_builds=data.history_builds,
+      collect_builds=collect,
+      collect_after_builds=collect_after,
       with_manifest_refs=True,
-      with_history=True,
       status='FAILURE',
+      cq=True,
+      builder='cq-orchestrator',
   )
 
+  collect, collect_after = api.orch_menu.cq_child_builds()
+  # Mark one of the non-critical child builds as a failure.
+  for b in collect_after:
+    if b.builder.builder == 'coral-cq':
+      b.status = common_pb2.FAILURE
   yield api.orch_menu.test(
       'non-critical-child-builder-fails',
       data.ctp_normal,
       api.properties(
-          FullProperties(expected_completed_builds=data.non_crit_fail)),
-      collect_builds=data.non_crit_fail,
-      history_builds=data.history_builds,
+          FullProperties(expected_completed_builds=collect + collect_after)),
+      collect_builds=collect,
+      collect_after_builds=collect_after,
       with_manifest_refs=True,
-      with_history=True,
+      builder='cq-orchestrator',
+      cq=True,
   )
 
   yield api.orch_menu.test(

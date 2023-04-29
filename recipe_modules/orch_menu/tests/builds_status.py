@@ -27,17 +27,26 @@ def RunSteps(api):
                            fatal=True, id='2'),
   ]
 
+  new_completed = [
+      build_pb2.Build(id=111),
+      build_pb2.Build(id=222),
+  ]
+  new_failures = [
+      api.failures.Failure(kind='test', title='update_failure', link_map={},
+                           fatal=False, id='2'),
+      api.failures.Failure(kind='build', title='new_failure', link_map={},
+                           fatal=True, id='3'),
+  ]
+  new_failures_copy = new_failures.copy()
+  new_completed_copy = new_completed.copy()
+
   # Call the update function.
-  api.orch_menu.builds_status.update(
-      completed=[
-          build_pb2.Build(id=111),
-          build_pb2.Build(id=222),
-      ], failures=[
-          api.failures.Failure(kind='test', title='update_failure', link_map={},
-                               fatal=False, id='2'),
-          api.failures.Failure(kind='build', title='new_failure', link_map={},
-                               fatal=True, id='3'),
-      ])
+  api.orch_menu.builds_status.update(completed=new_completed,
+                                     failures=new_failures)
+
+  # Ensure inputs to update are not mutated.
+  api.assertions.assertCountEqual(new_failures, new_failures_copy)
+  api.assertions.assertCountEqual(new_completed, new_completed_copy)
 
   # Completed builds are deduped.
   api.assertions.assertCountEqual(api.orch_menu.builds_status.completed_builds,
