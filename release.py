@@ -107,18 +107,40 @@ class Commit:
     self.hash = git_hash
     self.username = username
     self.message = message
+    self.cipd_instance = None
+
+  @property
+  def short_hash(self):
+    return self.hash[:9]
+
+  def get_cipd_instance(self) -> str:
+    """Find the recipe bundle instance that contains up to this commit."""
+    tag = f'git_revision:{self.hash}'
+    cmd = ['cipd', 'search', RECIPE_BUNDLE, '-tag', tag]
+    p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+    for line in [line.strip() for line in p.stdout.split('\n')]:
+      if line.startswith(RECIPE_BUNDLE):
+        return line.split(':')[1]
+    return '---------COULD_NOT_FIND_INSTANCE--------'
+
+  def set_cipd_instance(self, instanceid: CipdInstance):
+    self.cipd_instance = instanceid
 
   def color_str(self) -> str:
     """Return a colorified string for printing to stdout."""
     BOLDBLUE = '\033[1;34m'
     BOLDGREEN = '\033[1;32m'
     RESET = '\033[0m'
-    return f'{BOLDBLUE}{self.hash} {BOLDGREEN}[{self.username}] {RESET}{self.message}'
+    return (f'({self.get_cipd_instance()}) '
+            f'{BOLDBLUE}{self.short_hash} '
+            f'{BOLDGREEN}[{self.username}] '
+            f'{RESET}{self.message}')
 
   def plain_str(self, with_bullet: bool = False) -> str:
     """Return a colorless string for printing to email."""
     prefix = '* ' if with_bullet else ''
-    return f'{prefix}{self.hash} [{self.username}] {self.message}'
+    return f'{prefix}{self.short_hash} [{self.username}] {self.message}'
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -135,6 +157,10 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       'Instanceids are found at:\n'
       'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
       'Click into an instance to see the commit attached to it.')
+  parser.add_argument(
+      '--show-instances', action='store_true',
+      help='Show the CIPD instance IDs built from each commit. '
+      'Intended to inform -i/--instance-id usage.')
   parser.add_argument('-s', '--ignore-staging-failures', action='store_true',
                       help='Release even if staging failures are present.')
   parser.add_argument(
@@ -229,17 +255,13 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash,
   print('Here are the changes from the provided (or default main) environment:')
   if verbose:
     print(' - Verbose specified, printing all changes')
-  fmt = '%h %al %s'  # %h=commit, %al=user, %s=summary
+  fmt = '%H %al %s'  # %H=commit, %al=user, %s=summary
   cmd = [
       'git', 'log', '--graph', f'--pretty=format:{fmt}',
       f'{from_hash}..{to_hash}'
   ]
   p = subprocess.run(cmd, capture_output=True, text=True, cwd=RECIPES_DIR,
                      check=True)
-  if p.stderr:
-    print(f'Error running cmd: {cmd}')
-    print(p.stderr)
-    sys.exit(1)
   lines = [line.strip().lstrip('* ') for line in p.stdout.split('\n')]
   changes = []
   for line in lines:
