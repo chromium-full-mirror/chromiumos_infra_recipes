@@ -290,6 +290,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       exonerated_vm_results, exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
           test_results.tast_vm)
       passed_test_names += exonerated_vm_tests
+      exonerated_gce_results, exonerated_gce_tests = self.m.exonerate.exonerate_vmtests(
+          test_results.tast_gce)
+      passed_test_names += exonerated_gce_tests
       self.m.exonerate.auto_exoneration_analysis()
 
       old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
@@ -305,6 +308,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       test_results = test_results._replace(tast_vm=exonerated_vm_results +
                                            old_exonerated_vm_results)
+
+      test_results = test_results._replace(tast_gce=exonerated_gce_results)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
