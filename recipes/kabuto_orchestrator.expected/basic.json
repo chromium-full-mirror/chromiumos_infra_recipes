@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [
+      "echo",
+      "hello",
+      "world"
+    ],
+    "name": "Hello World"
+  },
+  {
+    "name": "$result"
+  }
+]
