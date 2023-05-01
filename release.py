@@ -14,6 +14,7 @@ import string
 import subprocess
 import sys
 import typing
+from typing import Callable
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -32,15 +33,39 @@ class StagingReCheck(typing.NamedTuple):
   project: str
   bucket: str
   regex: str
+  # exemptions can turn failures into successes.
+  # The input is a JSON encoded string of the `bb ls` output, e.g.
+  # {"id":"8782723488170713857","builder":{"project":"chromeos", ...
+  # The output should be True if the failure can be ignored.
+  exemptions: List[Callable[[str], bool]] = []
+
+
+def release_exemption(build: str) -> bool:
+  """Exemption function for release builds."""
+  build = json.loads(build)
+  # INFRA_FAILUREs should never be ignored.
+  if build['status'] == 'INFRA_FAILURE':
+    return False
+  ignorable_summary_markdown_re = [
+      re.compile(r'^failed unit tests for'),
+      re.compile(r'\d+ out of \d+ builds failed'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
 
 
 STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator',
+                   [release_exemption]),
     StagingReCheck('chromeos', 'staging',
-                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B'),
+                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
+                   [release_exemption]),
     StagingReCheck('chromeos', 'staging',
-                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B'),
+                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
+                   [release_exemption]),
     # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
@@ -289,8 +314,9 @@ def check_staging_builders(ignore_failures: bool = False):
       'Looking for 5 consecutive successes in staging, showing only failures...'
   )
   for re_check in STAGING_CHECKS_RE:
-    for builder in return_builders_for_regex(*re_check):
-      if has_builder_had_non_success(builder):
+    for builder in return_builders_for_regex(re_check.project, re_check.bucket,
+                                             re_check.regex):
+      if check_recent_build_statuses(builder, re_check.exemptions):
         baddies.append(builder)
 
   if baddies:
@@ -303,24 +329,30 @@ def check_staging_builders(ignore_failures: bool = False):
   print()
 
 
-def has_builder_had_non_success(builder: str) -> bool:
+def check_recent_build_statuses(
+    builder: str, exemptions: List[Callable[[str], bool]]) -> bool:
   """Check whether a single builder has had any recent non-successes."""
   cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', builder]
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
-  unique_statuses = []
+  found_statuses = set()
   for line in p.stdout.split('\n'):
     if not line:
       continue
     status = json.loads(line)['status']
+    # Shouldn't be necessary because of `-status ended`, but better safe than
+    # sorry.
     if status in ('STARTED', 'SCHEDULED'):
       continue
-    if status not in unique_statuses:
-      unique_statuses.append(status)
-  if not unique_statuses:
+    for exemption in exemptions:
+      if exemption(line):
+        status = "OK_FAILURE"
+    found_statuses.add(status)
+  if not found_statuses:
     print(f'No runs recorded for: {builder}')
     return True
-  if unique_statuses != ['SUCCESS']:
-    print(f'Non-success: {builder} --> {", ".join(unique_statuses)}')
+  if not found_statuses.issubset({'SUCCESS', 'OK_FAILURE'}):
+    print(
+        f'Non-success: {builder} --> {", ".join(sorted(list(found_statuses)))}')
     return True
   return False
 
