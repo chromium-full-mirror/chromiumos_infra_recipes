@@ -9,6 +9,7 @@ from typing import Generator
 from typing import Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipes.chromeos.build_incremental import IncrementalProperties
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -30,22 +31,27 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_SYNC_JOBS = 16
 
+PROPERTIES = IncrementalProperties
 
-def RunSteps(api: RecipeApi) -> Optional[RawResult]:
+
+def RunSteps(api: RecipeApi,
+             properties: IncrementalProperties) -> Optional[RawResult]:
   with api.build_menu.configure_builder() as config, \
     api.build_menu.setup_workspace_and_chroot():
 
-    return DoRunSteps(api, config)
+    return DoRunSteps(api, config, properties)
 
 
 # Tests reliability of incremental build by performing two builds:
 #   1. Revert the checkout back in time, build_packages for that old state,
 #      generating local artifacts.
 #   2. Move the checkout back to ToT. Build from that.
-def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               extra_properties: IncrementalProperties) -> Optional[RawResult]:
   snapshot_branch_name = "origin/snapshot"
-  snapshot_delta = "7.days.ago"  # TODO(sfrolov): make an input property
-
+  build_time_delta = extra_properties.build_time_delta
+  if not build_time_delta:
+    raise StepFailure("build_time_delta input property is empty")
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
   repo_path = str(api.repo.repo_path)
@@ -53,18 +59,18 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
 
   # Get old snapshot hash.
-  delta_hash_result = api.step(f"Get {snapshot_delta} manifest snapshot", [
+  delta_hash_result = api.step(f"Get {build_time_delta} manifest snapshot", [
       "git", "-C", manifest_internal_tempdir, "rev-list", "-1", "--before",
-      snapshot_delta, snapshot_branch_name
+      build_time_delta, snapshot_branch_name
   ], stdout=api.raw_io.output_text())
   delta_hash = delta_hash_result.stdout.strip()
 
   # Rewind the source to old snapshot.
-  api.step(f"Revert manifest to {snapshot_delta} snapshot",
+  api.step(f"Revert manifest to {build_time_delta} snapshot",
            ["git", "-C", manifest_internal_tempdir, "checkout", delta_hash])
   with api.repo.m.depot_tools.on_path():
     api.step(
-        f"Apply {snapshot_delta} manifest snapshot",
+        f"Apply {build_time_delta} manifest snapshot",
         [
             repo_path, "init", "--standalone-manifest",
             f"file://{manifest_internal_tempdir}/snapshot.xml"
@@ -133,6 +139,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
@@ -153,7 +161,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
-          }}), api.post_check(post_process.DoesNotRun, 'build images'),
+          }}),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -171,6 +182,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.build_menu.set_build_api_return(
@@ -178,4 +191,20 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           retcode=1),
       build_target='amd64-generic',
       status='INFRA_FAILURE',
+  )
+
+  # Build without build_time_delta
+  yield api.build_menu.test(
+      'inc-no-build-time-delta-failure',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'install packages'),
+      #   api.build_menu.set_build_api_return(
+      #       'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+      #       retcode=1),
+      build_target='amd64-generic',
+      status='FAILURE',
   )
