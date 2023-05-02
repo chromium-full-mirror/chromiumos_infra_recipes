@@ -32,6 +32,10 @@ message CrosReleaseProperties {
   // The buildspec still may be uploaded to GS, depending on the situation.
   bool dont_upload_to_manifest_versions = 7;
 
+  // Whether to upload the buildspec to the corresponding -snapshot branch.
+  // See go/upload-chromeos-test-source-information-proposal for context.
+  bool commit_buildspec_as_snapshot = 10;
+
   // Whether the build supports minios.
   bool minios_unsupported = 8;
 

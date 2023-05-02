@@ -45,6 +45,8 @@ RELEASE_LOW_PRIO_QS_ACCOUNT = 'release_low_prio'
 class CrosReleaseApi(recipe_api.RecipeApi):
   MANIFEST_VERSIONS_URL = \
       'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
+  MANIFEST_INTERNAL_URL = \
+      'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
 
   def validate_sign_types(self, sign_types):
     """Checks whether an array of IMAGE_TYPE enums is valid for signing.
@@ -65,6 +67,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._paygen_dryrun = properties.paygen_dryrun
     self._buildspec = None
     self._dont_upload_to_manifest_versions = properties.dont_upload_to_manifest_versions
+    self._commit_buildspec_as_snapshot = properties.commit_buildspec_as_snapshot
     self._minios_unsupported = properties.minios_unsupported
     self._dynamic_qs_account = properties.dynamic_qs_account
 
@@ -117,7 +120,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               if fatal:
                 raise StepFailure(err)
 
-  def create_buildspec(self, specs_dir='buildspecs', branch='release',
+  def create_buildspec(self, specs_dir='buildspecs',
                        step_name='create buildspec', dry_run=False,
                        gs_location=None):
     """Create a pinned manifest and upload to manifest-versions and/or GS.
@@ -134,27 +137,51 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       dry_run (bool): Whether the git push is --dry-run.
       gs_location (string): If set, will also upload the pinned manifest to GS.
     """
+    MANIFEST_VERSIONS_DRYRUN_BRANCH = 'release'
+    MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH = 'staging-buildspec-snapshot'
+
+    def commit_to_remote(project, checkout, filename, commit_message, branch):
+      self.m.git.add([filename])
+      self.m.git.commit(commit_message)
+      change = self.m.gerrit.create_change(
+          project, ref=self.m.git.get_branch_ref(branch), project_path=checkout)
+      labels = {
+          Label.BOT_COMMIT: 1,
+          Label.VERIFIED: 1,
+      }
+      self.m.gerrit.set_change_labels_remote(change, labels)
+      self.m.gerrit.submit_change(change, project_path=checkout, retries=3)
+
     with self.m.step.nest(step_name):
       with self.m.context(cwd=self.m.src_state.workspace_path):
         manifest_data = self.m.repo.manifest(step_name='create pinned manifest',
                                              pinned=True)
 
+      version = self.m.cros_version.version
+      buildspec_filename = version.buildspec_filename
+      # If the build is a staging build, suffix the buildspec with the BBID to avoid
+      # clobbering. See b/250670854 for context.
+      # Production builds can't be rerun / never create the same buildspec
+      # twice so this isn't a concern.
+      if self.m.build_menu.is_staging:
+        buildspec_filename = buildspec_filename.replace(
+            '.xml', '-{}.xml'.format(self.m.buildbucket.build.id))
+
       manifest_versions_checkout = self.m.path.mkdtemp(
           prefix='manifest-versions')
       with self.m.context(cwd=manifest_versions_checkout):
+        # Default manifest-versions branch is 'master'.
+        branch = 'master'
+        if dry_run or self.m.build_menu.is_staging:
+          # Staging is only allowed to use the staging branch.
+          branch = MANIFEST_VERSIONS_DRYRUN_BRANCH
+
         # Clone manifest-versions repo to current path.
         with self.m.step.nest('clone manifest-versions'):
           self.m.git.clone(self.MANIFEST_VERSIONS_URL, branch=branch,
                            single_branch=True, depth=1)
           branch = branch or self.m.git.current_branch()
 
-        version = self.m.cros_version.version
-        buildspec_filename = version.buildspec_filename
-        # If the build is a staging build, suffix the buildspec with the BBID to avoid
-        # clobbering. See b/250670854 for context.
-        if self.m.build_menu.is_staging:
-          buildspec_filename = buildspec_filename.replace(
-              '.xml', '-{}.xml'.format(self.m.buildbucket.build.id))
         manifest_file = self.m.path.join(specs_dir, buildspec_filename)
         manifest_path = self.m.path.join(manifest_versions_checkout,
                                          manifest_file)
@@ -171,7 +198,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           # buildspec. In this case, `git add` and `git commit` will pass on
           # the second builder without actually doing anything, but `git push`
           # will fail with a 'no new changes' message.
-          if not self.m.git.diff_check(manifest_path):
+          if self.m.build_menu.is_staging and not self.m.git.diff_check(
+              manifest_path):
             presentation.step_text = 'no change since last commit'
           elif not self._dont_upload_to_manifest_versions:
             commit_lines = [
@@ -186,20 +214,48 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             commit_message = '\n'.join(commit_lines) + '\n'
             with self.m.step.nest('commit {} to {}'.format(
                 manifest_file, branch)):
-              self.m.git.add([manifest_file])
-              self.m.git.commit(commit_message)
-              if not dry_run:
-                change = self.m.gerrit.create_change(
-                    'chromeos/manifest-versions',
-                    ref=self.m.git.get_branch_ref(branch),
-                    project_path=manifest_versions_checkout)
-                labels = {
-                    Label.BOT_COMMIT: 1,
-                    Label.VERIFIED: 1,
-                }
-                self.m.gerrit.set_change_labels_remote(change, labels)
-                self.m.gerrit.submit_change(
-                    change, project_path=manifest_versions_checkout, retries=3)
+              commit_to_remote('chromeos/manifest-versions',
+                               manifest_versions_checkout, manifest_file,
+                               commit_message, branch)
+
+        if self._commit_buildspec_as_snapshot:
+          with self.m.step.nest('commit buildspec as snapshot') as presentation:
+            config = self.m.cros_infra_config.config
+            orch_branch = config.orchestrator.gitiles_commit.ref[
+                len('refs/heads/'):]
+            snapshot_branch = MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH
+            # Staging is only allowed to use the staging branch.
+            if not dry_run and not self.m.build_menu.is_staging:
+              snapshot_branch = '{}-snapshot'.format(
+                  orch_branch if orch_branch != 'main' else 'main-release')
+
+            manifest_internal_checkout = self.m.path.mkdtemp(
+                prefix='manifest-internal-snapshot')
+            with self.m.context(cwd=manifest_internal_checkout):
+              # Clone manifest-versions repo to current path.
+              with self.m.step.nest('clone manifest-internal'):
+                self.m.git.clone(self.MANIFEST_INTERNAL_URL,
+                                 branch=snapshot_branch, single_branch=True,
+                                 depth=1)
+
+              manifest_path = self.m.path.join(manifest_internal_checkout,
+                                               'snapshot.xml')
+              self.m.file.write_raw('write snapshot.xml', manifest_path,
+                                    manifest_data)
+
+              commit_lines = [
+                  'Update snapshot.xml to {}'.format(buildspec_filename),
+                  '',
+                  'Generated by Rubik.',
+                  '',
+                  'Cr-Build-Url: {}'.format(self.m.buildbucket.build_url()),
+                  'Cr-Automation-Id: cros_release/create_buildspec',
+              ]
+              commit_message = '\n'.join(commit_lines) + '\n'
+              with self.m.step.nest('commit to {}'.format(snapshot_branch)):
+                commit_to_remote('chromeos/manifest-internal',
+                                 manifest_internal_checkout, 'snapshot.xml',
+                                 commit_message, snapshot_branch)
 
         manifest_gs_path = ''
         if gs_location:

@@ -44,44 +44,6 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec.clone manifest-versions",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "--branch",
-      "release",
-      "--single-branch",
-      "--depth",
-      "1",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
-      "."
-    ],
-    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec.clone manifest-versions.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "create buildspec.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -99,7 +61,6 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -203,6 +164,44 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec.clone manifest-versions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "master",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
+      "."
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.clone manifest-versions.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -272,14 +271,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -304,7 +296,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git add",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -334,7 +326,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.write commit message",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Add buildspecs/99/1234.56.0.xml@@@",
@@ -367,14 +359,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git commit",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -399,7 +391,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -423,7 +415,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -432,8 +424,8 @@
     "cmd": [
       "git",
       "branch",
-      "release",
-      "/release"
+      "master",
+      "/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -449,7 +441,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -463,7 +455,7 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/release"
+      "refs/heads/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "env_suffixes": {
@@ -486,7 +478,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -519,7 +511,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -554,14 +546,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
@@ -591,7 +583,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -621,7 +613,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -653,14 +645,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
@@ -694,7 +686,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl issue",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -728,7 +720,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl land",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -793,7 +785,7 @@
       "git",
       "clone",
       "--branch",
-      "release",
+      "master",
       "--single-branch",
       "--depth",
       "1",
@@ -889,14 +881,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -921,7 +906,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git add",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -951,7 +936,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.write commit message",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Add buildspecs/99/1234.56.0.xml@@@",
@@ -984,14 +969,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git commit",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -1016,7 +1001,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1040,7 +1025,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1049,8 +1034,8 @@
     "cmd": [
       "git",
       "branch",
-      "release",
-      "/release"
+      "master",
+      "/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -1066,7 +1051,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1080,7 +1065,7 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/release"
+      "refs/heads/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "env_suffixes": {
@@ -1103,7 +1088,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1136,7 +1121,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1171,14 +1156,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
@@ -1208,7 +1193,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1238,7 +1223,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1270,14 +1255,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
@@ -1311,7 +1296,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl issue",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1345,7 +1330,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl land",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -1525,7 +1510,7 @@
       "git",
       "clone",
       "--branch",
-      "release",
+      "master",
       "--single-branch",
       "--depth",
       "1",
@@ -1621,14 +1606,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1653,7 +1631,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git add",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1683,7 +1661,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.write commit message",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_3@Add buildspecs/99/1234.56.0.xml@@@",
@@ -1716,14 +1694,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git commit",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -1748,7 +1726,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1772,7 +1750,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1781,8 +1759,8 @@
     "cmd": [
       "git",
       "branch",
-      "release",
-      "/release"
+      "master",
+      "/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -1798,7 +1776,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1812,7 +1790,7 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/release"
+      "refs/heads/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "env_suffixes": {
@@ -1835,7 +1813,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1868,7 +1846,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1903,14 +1881,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
@@ -1940,7 +1918,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1970,7 +1948,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2002,14 +1980,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
@@ -2043,7 +2021,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl issue",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2077,7 +2055,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl land",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -2207,7 +2185,7 @@
       "git",
       "clone",
       "--branch",
-      "release",
+      "master",
       "--single-branch",
       "--depth",
       "1",
@@ -2303,14 +2281,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2335,7 +2306,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git add",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2365,7 +2336,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.write commit message",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_4@Add buildspecs/99/1234.56.0.xml@@@",
@@ -2398,14 +2369,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.git commit",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2430,7 +2401,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2454,7 +2425,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2463,8 +2434,8 @@
     "cmd": [
       "git",
       "branch",
-      "release",
-      "/release"
+      "master",
+      "/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -2480,7 +2451,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2494,7 +2465,7 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/release"
+      "refs/heads/master"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "env_suffixes": {
@@ -2517,7 +2488,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2550,7 +2521,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2585,14 +2556,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
@@ -2622,7 +2593,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2652,7 +2623,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2684,14 +2655,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
@@ -2725,7 +2696,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl issue",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2759,7 +2730,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to release.submit CL 1.git_cl land",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"

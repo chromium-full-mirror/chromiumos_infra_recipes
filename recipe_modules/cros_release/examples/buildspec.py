@@ -3,16 +3,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from recipe_engine import post_process
+
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'build_menu',
     'build_reporting',
     'cros_release',
     'git',
+    'orch_menu',
     'test_util',
 ]
 
@@ -37,9 +39,71 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.build_menu.test(
+  yield api.orch_menu.test(
       'basic', api.git.diff_check(True),
-      api.test_util.test_child_build('amd64-generic').build)
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master'
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     'create buildspec.commit buildspec as snapshot'),
+      builder='release-main-orchestrator')
 
-  yield api.build_menu.test('staging-build', api.git.diff_check(False),
-                            api.test_util.test_child_build('staging-eve').build)
+  yield api.orch_menu.test(
+      'staging-build', api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release'
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     'create buildspec.commit buildspec as snapshot'),
+      builder='staging-release-main-orchestrator')
+
+  yield api.orch_menu.test(
+      'staging-build-no-diff', api.git.diff_check(False),
+      api.post_check(
+          post_process.DoesNotRun,
+          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to release'
+      ),
+      api.post_check(post_process.StepTextEquals,
+                     'create buildspec.commit buildspec',
+                     'no change since last commit'),
+      api.post_check(post_process.DoesNotRun,
+                     'create buildspec.commit buildspec as snapshot'),
+      builder='staging-release-main-orchestrator')
+
+  yield api.orch_menu.test(
+      'commit-as-snapshot-tot',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }), api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot'
+      ), builder='release-main-orchestrator')
+
+  yield api.orch_menu.test(
+      'commit-as-snapshot-branch',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }), api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot'
+      ), builder='release-R108-15183.B-orchestrator')
+
+  yield api.orch_menu.test(
+      'commit-as-snapshot-staging',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }), api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec as snapshot.commit to staging-buildspec-snapshot'
+      ), builder='staging-release-main-orchestrator')

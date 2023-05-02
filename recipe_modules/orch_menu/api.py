@@ -301,12 +301,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
                   use_local_diff = self.is_release_orchestrator
                   self.m.cros_version.bump_version(
                       dry_run=not bump_version, use_local_diff=use_local_diff)
-                  kwargs = {}
-                  if self._properties.manifest_versions_branch:
-                    kwargs['branch'] = self._properties.manifest_versions_branch
                   self.m.cros_release.create_buildspec(
                       dry_run=is_staging,
-                      gs_location=self._properties.buildspec_gs_path, **kwargs)
+                      gs_location=self._properties.buildspec_gs_path)
                 if self._properties.schedule_public_build:
                   with self.m.checkpoint.retry(
                       RetryStep.PUBLIC_BUILD_LKGM) as run_step:
@@ -321,12 +318,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             bump_version = self._properties.bump_version and not is_staging
             self.m.cros_version.bump_version(dry_run=not bump_version)
-            kwargs = {}
-            if self._properties.manifest_versions_branch:
-              kwargs['branch'] = self._properties.manifest_versions_branch
             self.m.cros_release.create_buildspec(
                 dry_run=is_staging,
-                gs_location=self._properties.buildspec_gs_path, **kwargs)
+                gs_location=self._properties.buildspec_gs_path)
 
         if config and config.id.type == BuilderConfig.Id.PUBLIC:
           self._is_public_orchestrator = True

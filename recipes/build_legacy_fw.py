@@ -193,10 +193,7 @@ class FirmwareBuilder():
       with self.m.step.nest('CQ run: not pushing buildspec'):
         return
 
-    # manifest-versions has not migrated to main yet, so we pass
-    # create_buildspec branch=None to use the default branch, whatever it is.
-    self.m.cros_release.create_buildspec(branch=None,
-                                         step_name='create buildspec',
+    self.m.cros_release.create_buildspec(step_name='create buildspec',
                                          dry_run=dry_run,
                                          gs_location=buildspec_gs_path)
     # Only these builds are valid for suite_scheduling to find.
