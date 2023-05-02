@@ -20,10 +20,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sleep 122"
-  },
-  {
     "cmd": [
       "gcloud",
       "compute",

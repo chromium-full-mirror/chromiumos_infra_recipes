@@ -352,13 +352,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "source cache.sleep 122",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "gcloud",
       "compute",

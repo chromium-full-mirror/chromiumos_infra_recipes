@@ -22,10 +22,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "sleep 122"
-  },
-  {
     "cmd": [
       "bb",
       "ls",
@@ -46,10 +42,6 @@
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "sleep 139"
   },
   {
     "cmd": [

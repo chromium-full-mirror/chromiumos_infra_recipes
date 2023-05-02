@@ -589,7 +589,7 @@
   },
   {
     "cmd": [],
-    "name": "checkout fails retry.sync chrome.sleep 488",
+    "name": "checkout fails retry.sync chrome.sleep 136",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

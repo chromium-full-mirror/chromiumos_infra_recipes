@@ -117,10 +117,6 @@
   },
   {
     "cmd": [],
-    "name": "sleep 122"
-  },
-  {
-    "cmd": [],
     "name": "look up device name to device id map (9)"
   },
   {
@@ -144,10 +140,6 @@
   {
     "cmd": [],
     "name": "look up device name to device id map (10)"
-  },
-  {
-    "cmd": [],
-    "name": "sleep 139"
   },
   {
     "cmd": [],

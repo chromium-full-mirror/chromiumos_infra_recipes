@@ -187,7 +187,7 @@
   },
   {
     "cmd": [],
-    "name": "install packages step.publish event.sleep 488",
+    "name": "install packages step.publish event.sleep 136",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -229,7 +229,7 @@
   },
   {
     "cmd": [],
-    "name": "install packages step.publish event.sleep 556",
+    "name": "install packages step.publish event.sleep 235",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
