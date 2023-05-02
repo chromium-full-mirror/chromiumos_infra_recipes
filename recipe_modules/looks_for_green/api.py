@@ -96,35 +96,38 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                  gerrit_changes: List[GerritChange]) -> bool:
     '''Returns whether looks for green logic should be run.'''
     if self._should_lfg is None:
-      with self.m.step.nest('check should look for green') as pres:
-        exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
-        lfg_enabled = self.m.looks_for_green.enable_looks_for_green
-        # Don't perform extra checks if we don't meet these preconditions.
-        if not exp_enabled or not lfg_enabled:
-          self._should_lfg = False
-          return self._should_lfg
-        disallow = self.found_disallow_lfg_footer(gerrit_changes)
-        has_merge_commit = self._has_merge_commit(gerrit_changes)
-        self._should_lfg = (
-            exp_enabled and lfg_enabled and not disallow and
-            not has_merge_commit)
-        should_lfg_log = (
-            f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
-            f' {lfg_enabled}, Found disallow footer: {disallow}, Found has'
-            f' merge commit {has_merge_commit}')
-        # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
-        if self._should_lfg:
-          with self.m.step.nest('check if CL uses Cq-Depend'):
-            if self.m.git_footers.get_footer_values(gerrit_changes,
-                                                    'Cq-Depend'):
-              self._should_lfg = False
-              should_lfg_log += '. Found Cq-Depend footer'
-              pres.logs['Cq-Depend footer'] = (
-                  'Found Cq-Depend footer. Skipping'
-                  ' looks for green.')
-        if not self._should_lfg:
-          should_lfg_log += '. Using original snapshot.'
-        pres.logs['should_lfg'] = should_lfg_log
+      # This check shouldn't be fatal to a build.
+      self._should_lfg = False
+      with self.m.failures.ignore_exceptions():
+        with self.m.step.nest('check should look for green') as pres:
+          exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
+          lfg_enabled = self.m.looks_for_green.enable_looks_for_green
+          # Don't perform extra checks if we don't meet these preconditions.
+          if not exp_enabled or not lfg_enabled:
+            self._should_lfg = False
+            return self._should_lfg
+          disallow = self.found_disallow_lfg_footer(gerrit_changes)
+          has_merge_commit = self._has_merge_commit(gerrit_changes)
+          self._should_lfg = (
+              exp_enabled and lfg_enabled and not disallow and
+              not has_merge_commit)
+          should_lfg_log = (
+              f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
+              f' {lfg_enabled}, Found disallow footer: {disallow}, Found has'
+              f' merge commit {has_merge_commit}')
+          # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
+          if self._should_lfg:
+            with self.m.step.nest('check if CL uses Cq-Depend'):
+              if self.m.git_footers.get_footer_values(gerrit_changes,
+                                                      'Cq-Depend'):
+                self._should_lfg = False
+                should_lfg_log += '. Found Cq-Depend footer'
+                pres.logs['Cq-Depend footer'] = (
+                    'Found Cq-Depend footer. Skipping'
+                    ' looks for green.')
+          if not self._should_lfg:
+            should_lfg_log += '. Using original snapshot.'
+          pres.logs['should_lfg'] = should_lfg_log
     return self._should_lfg
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
