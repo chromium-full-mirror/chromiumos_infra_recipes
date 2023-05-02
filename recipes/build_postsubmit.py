@@ -55,13 +55,12 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
       api.build_menu.upload_prebuilts(config)
       api.build_menu.create_containers(config)
       api.build_menu.build_and_test_images(config)
+      api.build_menu.publish_image_size_data(config)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of
     # build failure for debug purposes).
     failing_build_exception = sf
-
-  api.build_menu.publish_image_size_data(config)
 
   try:
     api.build_menu.upload_artifacts(config)

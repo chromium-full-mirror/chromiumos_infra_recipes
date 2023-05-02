@@ -4970,13 +4970,6 @@
   },
   {
     "cmd": [],
-    "name": "collect image size data",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Skipped: Image size publishing disabled.@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184@@@"
