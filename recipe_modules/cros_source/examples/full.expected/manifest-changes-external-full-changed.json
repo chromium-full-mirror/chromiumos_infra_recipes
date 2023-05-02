@@ -3405,7 +3405,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Changes must be made in manifest-internal: DIR_METADATA, README.md, _kernel_upstream.xml, _remotes.xml, codesearch-chromiumos.xml, full.xml"
+      "humanReason": "Changes must be made in manifest-internal: DIR_METADATA, README.md, _kernel_upstream.xml, _remotes.xml, _toolchain.xml, codesearch-chromiumos.xml, full.xml"
     },
     "name": "$result"
   }

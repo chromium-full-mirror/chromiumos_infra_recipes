@@ -1883,6 +1883,36 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "[CLEANUP]/chromiumos_workspace/manifest-internal/_toolchain.xml",
+      "[CLEANUP]/chromiumos_workspace/manifest/_toolchain.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.copy _toolchain.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/DIR_METADATA",
       "[CLEANUP]/chromiumos_workspace/manifest/DIR_METADATA"
     ],
