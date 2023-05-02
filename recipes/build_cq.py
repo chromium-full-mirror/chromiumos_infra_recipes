@@ -20,6 +20,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/led',
     'recipe_engine/random',
     'recipe_engine/raw_io',
@@ -143,6 +144,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
         # We have no steps following build_and_test_images, so we don't need to
         # check the return value.
         api.build_menu.build_and_test_images(config)
+
+      # Publish image and package sizes.
+      # This method, as written, is expected to never raise exceptions.
+      api.build_menu.publish_image_size_data(config)
 
       # Pause and throw if test containers failed to upload.
       test_containers_runner.wait_for_and_throw()
@@ -348,3 +353,50 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       cq=True,
       build_target='staging-amd64-generic',
       pointless=False)
+
+  yield api.build_menu.test(
+      'publish-image-size-fails',
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'collect image size data'),
+      api.build_menu.set_build_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData', retcode=1),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.call build API script',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.read output file',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      cq=True,
+      builder='amd64-generic-cq-img-pkg-sizes',
+      build_target='amd64-generic',
+      status='SUCCESS',
+  )
+
+  yield api.build_menu.test(
+      'publish-image-size-succeeds',
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'collect image size data'),
+      api.post_check(post_process.MustRun,
+                     'collect image size data.add metadata from builder'),
+      api.post_check(
+          post_process.MustRun,
+          'collect image size data.publish image size data.publish message'),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.call build API script',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      api.step_data(
+          'call chromite.api.PackageService/GetTargetVersions.read output file',
+          api.m.file.read_raw(
+              content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
+          )),
+      cq=True,
+      builder='amd64-generic-cq-img-pkg-sizes',
+      build_target='amd64-generic',
+  )

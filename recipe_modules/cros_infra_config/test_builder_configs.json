@@ -1868,6 +1868,66 @@
     },
     {
       "id": {
+        "name": "amd64-generic-cq-img-pkg-sizes",
+        "type": "CQ",
+        "bucket": "cq"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC",
+        "publish_image_sizes": true
+      },
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        }
+      },
+      "unitTests": {
+        "packageBlocklist": [
+          {
+            "packageName": "chromite",
+            "category": "chromeos-base",
+            "version": ""
+          }
+        ],
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "kukui-release-main",
         "type": "RELEASE",
         "bucket": "release"
