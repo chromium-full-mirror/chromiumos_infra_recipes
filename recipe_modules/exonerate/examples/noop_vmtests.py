@@ -42,8 +42,7 @@ def RunSteps(api):
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(exonerated_vm_builds[0].status, common_pb2.SUCCESS)
-  noop_markdown = api.exonerate.get_exoneration_markdown()
-  api.assertions.assertEqual(noop_markdown, "")
+  api.exonerate.populate_exoneration_markdown()
 
 
 def GenTests(api):

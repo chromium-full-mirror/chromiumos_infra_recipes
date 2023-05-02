@@ -98,6 +98,7 @@ def RunSteps(api):
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
   api.assertions.assertIn('1 out of 1 hw test failed\n\n...',
                           final_result.summary_markdown)
+  api.failures.set_exoneration_markdown(markdown_txt='some suites exonerated')
 
 
 def GenTests(api):

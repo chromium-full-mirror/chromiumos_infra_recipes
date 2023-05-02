@@ -310,6 +310,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                            old_exonerated_vm_results)
 
       test_results = test_results._replace(tast_gce=exonerated_gce_results)
+      self.m.exonerate.populate_exoneration_markdown()
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)

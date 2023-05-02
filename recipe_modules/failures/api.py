@@ -40,6 +40,10 @@ class FailuresApi(RecipeApi):
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
 
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
+    self._exoneration_markdown = None
+
   @dataclass
   class Results():
     """A class for keeping aggregated results from executions."""
@@ -155,6 +159,14 @@ class FailuresApi(RecipeApi):
       results_pres.status = status
       results_pres.step_text = step_text
       return results
+
+  def set_exoneration_markdown(self, markdown_txt: str):
+    """Store string containing exoneration info for summary.
+
+    Args:
+      markdown_txt: String containing summary of exonerations.
+    """
+    self._exoneration_markdown = markdown_txt
 
   @contextlib.contextmanager
   def ignore_exceptions(self):
@@ -295,7 +307,7 @@ class FailuresApi(RecipeApi):
     non_fatal_failures = [
         failure.kind for failure in results.failures if not failure.fatal
     ]
-    exoneration_summary = self.m.exonerate.get_exoneration_markdown()
+    exoneration_summary = self._exoneration_markdown
 
     non_fatal_failures_count_by_kind = collections.Counter(non_fatal_failures)
     failures_by_kind = collections.defaultdict(list)
