@@ -189,34 +189,34 @@ def DoRunSteps(api, config, properties):
         # surface *that* exception for accuracy in reporting the build (and it's
         # likely that upload artifacts failed as a result of those previous issues).
         raise failing_build_exception or sf
+
+      with api.failures.ignore_exceptions():
+        api.bcid_reporter.report_stage('upload-complete')
+
+      # Trigger async image import for VM images. Exceptions are ignored as test
+      # runners will also attempt to import.
+      with api.failures.ignore_exceptions():
+        if BuilderConfig.Artifacts.GCE_TARBALL in [
+            t for artifacts in
+            config.artifacts.artifacts_info.legacy.output_artifacts
+            for t in artifacts.artifact_types
+        ]:
+          api.vmlab.import_image(
+              name='import VM image',
+              build_path=api.build_menu.artifacts_build_path(), wait=False)
+
+      with api.step.nest("publish toolchain metadata"):
+        toolchain_info = api.cros_sdk.get_toolchain_info(
+            api.build_menu.build_target.name)
+        api.build_reporting.publish_toolchain_info(toolchain_info)
+
+      # Finally, if there was an exception caught above in building the image, but
+      # the upload succeeded, raise that exception.
+      if failing_build_exception:
+        raise failing_build_exception  # pylint: disable=raising-bad-type
     else:
       api.easy.set_properties_step('set artifact_link property',
                                    artifact_link=api.checkpoint.artifact_link)
-
-  with api.failures.ignore_exceptions():
-    api.bcid_reporter.report_stage('upload-complete')
-
-  # Trigger async image import for VM images. Exceptions are ignored as test
-  # runners will also attempt to import.
-  with api.failures.ignore_exceptions():
-    if BuilderConfig.Artifacts.GCE_TARBALL in [
-        t
-        for artifacts in config.artifacts.artifacts_info.legacy.output_artifacts
-        for t in artifacts.artifact_types
-    ]:
-      api.vmlab.import_image(name='import VM image',
-                             build_path=api.build_menu.artifacts_build_path(),
-                             wait=False)
-
-  with api.step.nest("publish toolchain metadata"):
-    toolchain_info = api.cros_sdk.get_toolchain_info(
-        api.build_menu.build_target.name)
-    api.build_reporting.publish_toolchain_info(toolchain_info)
-
-  # Finally, if there was an exception caught above in building the image, but
-  # the upload succeeded, raise that exception.
-  if failing_build_exception:
-    raise failing_build_exception  # pylint: disable=raising-bad-type
 
   # Eventually, signing will have its own checkpoint step, but for now
   # do it here. We do it before `PUSH_IMAGES` below because that is tightly

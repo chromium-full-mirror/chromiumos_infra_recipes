@@ -10074,13 +10074,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "update retry summary (2)",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@retry_summary@{\"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",
@@ -10423,6 +10416,13 @@
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update retry summary (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@retry_summary@{\"PUSH_IMAGES\": \"STARTED\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
   },
   {
