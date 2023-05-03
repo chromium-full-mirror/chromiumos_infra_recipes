@@ -59,8 +59,11 @@ def GenTests(api):
                 }
             }),
         api.step_data(
-            'determine release testing priority.fetch schedule.json.gsutil cat',
+            'determine release testing priority.fetch schedule json.gsutil cat',
             retcode=1),
+        api.post_process(
+            post_process.StepFailure,
+            'determine release testing priority.fetch schedule json'),
         api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                          expected_qs_account),
         api.post_process(post_process.DropExpectation),
@@ -86,8 +89,11 @@ def GenTests(api):
               }
           }),
       api.step_data(
-          'determine release testing priority.fetch schedule.json.gsutil cat',
+          'determine release testing priority.fetch schedule json.gsutil cat',
           stdout=api.raw_io.output('{bad-json')),
+      api.post_process(
+          post_process.StepFailure,
+          'determine release testing priority.fetch schedule json'),
       api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                        'release_low_prio'),
       api.post_process(post_process.DropExpectation),
@@ -119,8 +125,11 @@ def GenTests(api):
       api.time.seed(SEED_TIME),
       api.cros_version.workspace_version('R112-12345.0.0'),
       api.step_data(
-          'determine release testing priority.fetch schedule.json.gsutil cat',
+          'determine release testing priority.fetch schedule json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
+      api.post_process(
+          post_process.StepFailure,
+          'determine release testing priority.fetch schedule json'),
       api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                        'release_high_prio'),
       api.post_process(post_process.DropExpectation),
@@ -153,7 +162,7 @@ def GenTests(api):
         api.time.seed(SEED_TIME),
         api.cros_version.workspace_version(version),
         api.step_data(
-            'determine release testing priority.fetch schedule.json.gsutil cat',
+            'determine release testing priority.fetch schedule json.gsutil cat',
             stdout=api.raw_io.output(test_data)),
         api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                          expected_qs_account),
@@ -177,7 +186,7 @@ def GenTests(api):
               }
           }), api.time.seed(SEED_TIME),
       api.step_data(
-          'determine release testing priority.fetch schedule.json.gsutil cat',
+          'determine release testing priority.fetch schedule json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
       api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                        'release_high_prio'),
@@ -200,7 +209,7 @@ def GenTests(api):
         # by the fact that we're LTS.
         api.cros_version.workspace_version('R114-12345.0.0'),
         api.step_data(
-            'determine release testing priority.fetch schedule.json.gsutil cat',
+            'determine release testing priority.fetch schedule json.gsutil cat',
             stdout=api.raw_io.output(test_data)),
         api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                          'release_high_prio'),
@@ -231,7 +240,7 @@ def GenTests(api):
       api.time.seed(SEED_TIME),
       api.cros_version.workspace_version('R112-12345.0.0'),
       api.step_data(
-          'determine release testing priority.fetch schedule.json.gsutil cat',
+          'determine release testing priority.fetch schedule json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
       api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                        'release_med_prio'),
@@ -256,7 +265,7 @@ def GenTests(api):
       # Should get "primary" based on the milestone.
       api.cros_version.workspace_version('R113-12345.0.0'),
       api.step_data(
-          'determine release testing priority.fetch schedule.json.gsutil cat',
+          'determine release testing priority.fetch schedule json.gsutil cat',
           stdout=api.raw_io.output(test_data)),
       api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
                        'release_low_prio'),

@@ -465,19 +465,21 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       def get_qs_account():
 
         def fetch_schedule():
-          with self.m.step.nest('fetch schedule.json') as presentation:
+          with self.m.step.nest('fetch schedule json') as presentation:
             result = self.m.gsutil.cat(
                 RC_SCHEDULE_URI,
                 stdout=self.m.raw_io.output(add_output_log=True), ok_ret='any')
 
             if result.retcode != 0:
               presentation.step_text = 'could not fetch schedule.json, falling back to defaults'
+              presentation.status = self.m.step.FAILURE
               return None
 
             try:
               schedule_data = json.loads(result.stdout)
             except json.decoder.JSONDecodeError:
               presentation.step_text = 'could not parse schedule.json, falling back to defaults'
+              presentation.status = self.m.step.FAILURE
               return None
 
             # Want a string of the format "YYYY-MM-DD". Regularly scheduled builds
@@ -488,6 +490,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             if today not in schedule_data:
               presentation.step_text = 'could not find {} in schedule.json, falling back to defaults'.format(
                   today)
+              presentation.status = self.m.step.FAILURE
               return None
 
             return schedule_data[today]

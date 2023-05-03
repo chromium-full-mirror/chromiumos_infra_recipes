@@ -3809,15 +3809,17 @@
     "cmd": [],
     "name": "determine release testing priority",
     "~followup_annotations": [
-      "@@@STEP_TEXT@(dryrun) using qs_account \"release_low_prio\"@@@"
+      "@@@STEP_TEXT@(dryrun) using qs_account \"release_low_prio\"@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "determine release testing priority.fetch schedule.json",
+    "name": "determine release testing priority.fetch schedule json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@could not parse schedule.json, falling back to defaults@@@"
+      "@@@STEP_TEXT@could not parse schedule.json, falling back to defaults@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3844,7 +3846,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "determine release testing priority.fetch schedule.json.gsutil cat",
+    "name": "determine release testing priority.fetch schedule json.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
