@@ -13,6 +13,8 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
@@ -33,7 +35,7 @@ def _upload_kabuto_logs(api: RecipeTestApi) -> None:
   """Tars and uploads the contents of borealis/kabuto/logs/."""
   time_now_utc = api.time.utcnow().strftime("%Y-%m-%d-%H%M%S")
   kabuto_log_tarball = f'kabuto_logs_{time_now_utc}.tar'
-  kabuto_log_path = 'borealis/tools/kabuto/logs/'
+  kabuto_log_path = 'tools/kabuto/logs/'
 
   api.step('bundle kabuto logs',
            ['tar', 'cvf', kabuto_log_tarball, kabuto_log_path])
@@ -72,31 +74,35 @@ def DoRunSteps(api: RecipeTestApi,
   # Borealis rootfs.)
   api.step('check docker install', ['docker', 'help'])
 
-  # Clone Borealis, Kabuto is in borealis/tools/kabuto.
-  api.git.clone(
-      'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
-      target_path='borealis/')
+  borealis_checkout = api.path.mkdtemp('borealis')
+  with api.context(cwd=borealis_checkout):
+    with api.step.nest('clone kabuto'):
+      # Clone Borealis, Kabuto is in borealis/tools/kabuto.
+      api.git.clone(
+          'https://chrome-internal.googlesource.com/chromeos/platform/borealis')
+      # Check out a specific Kabuto ref if supplied as a property (for dev use).
+      if properties.kabuto_ref:
+        api.git.checkout(properties.kabuto_ref, force=True)
 
-  # Download Mesa headers for Kabuto to ingest.
-  with api.step.nest('fetch kabuto payload'):
-    _fetch_kabuto_payload(api, properties.payload_gs_bucket,
-                          properties.payload_gs_path)
+    # Download Mesa headers for Kabuto to ingest.
+    with api.step.nest('fetch kabuto payload'):
+      _fetch_kabuto_payload(api, properties.payload_gs_bucket,
+                            properties.payload_gs_path)
 
-    # Untar Mesa headers into our Kabuto checkout
-    api.step('untar kabuto payload', [
-        'tar', 'xvf', LOCAL_PAYLOAD_FILENAME, '-C', 'borealis/tools/kabuto/in/'
-    ])
+      # Untar Mesa headers into our Kabuto checkout
+      api.step('untar kabuto payload',
+               ['tar', 'xvf', LOCAL_PAYLOAD_FILENAME, '-C', 'tools/kabuto/in/'])
 
-  # Run Kabuto.
-  # TODO(pobega): For now we want to skip failures so that we can upload logs,
-  # this will be changed to using deferred for prod.
-  with api.failures.ignore_exceptions():
-    api.step('run kabuto',
-             ['./borealis/tools/kabuto/kabuto', '--gcs', '--no-interactive'])
+    # Run Kabuto.
+    # TODO(pobega): For now we want to skip failures so that we can upload logs,
+    # this will be changed to using deferred for prod.
+    with api.failures.ignore_exceptions():
+      api.step('run kabuto',
+               ['./tools/kabuto/kabuto', '--gcs', '--no-interactive'])
 
-  # Upload Kabuto's logs to Google Storage.
-  with api.step.nest('upload kabuto logs'):
-    _upload_kabuto_logs(api)
+    # Upload Kabuto's logs to Google Storage.
+    with api.step.nest('upload kabuto logs'):
+      _upload_kabuto_logs(api)
 
 
 def GenTests(api: RecipeTestApi) -> None:
@@ -122,4 +128,11 @@ def GenTests(api: RecipeTestApi) -> None:
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
       status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['kabuto_ref'] = 'abc123'
+  yield api.test(
+      'kabuto_commit_ref',
+      api.properties(**props),
   )

@@ -13,4 +13,8 @@ message BuildKabutoShadercacheProperties {
   // Required
   string payload_gs_bucket = 1;
   string payload_gs_path = 2;
+
+  // Commit hash to checkout Kabuto repository.
+  // Optional
+  string kabuto_ref = 3;
 }

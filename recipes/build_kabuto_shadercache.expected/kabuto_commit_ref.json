@@ -32,6 +32,20 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force",
+      "abc123"
+    ],
+    "cwd": "[CLEANUP]/borealis_tmp_1",
+    "infra_step": true,
+    "name": "clone kabuto.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "fetch kabuto payload"
   },
