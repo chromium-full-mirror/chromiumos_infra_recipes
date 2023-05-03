@@ -862,11 +862,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           )
 
           presentation.links['container metadata (gs)'] = (
-              self.m.path.join(
-                  'https://console.cloud.google.com/storage/browser/_details',
-                  gs_bucket,
-                  gs_path,
-              ))
+              self.m.urls.get_gs_bucket_url(gs_bucket, gs_path))
 
           presentation.logs[
               'container metadata (log)'] = json_format.MessageToJson(
@@ -875,6 +871,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
           if failed:
             raise recipe_api.StepFailure(
                 'One or more test service containers failed to build.')
+
+          # Upload test metadata to the same gs bucket.
+          test_metadata = self.m.metadata.fetch_test_metadata(
+              chroot=self.chroot, sysroot=self.sysroot)
+          if test_metadata:
+            gs_path = self.m.cros_artifacts.upload_metadata(
+                'test_metadata',
+                builder_config.id.name,
+                self.build_target,
+                builder_config.artifacts.artifacts_gs_bucket,
+                'test_metadata.jsonpb',
+                test_metadata,
+                template=self.m.cros_artifacts.gs_upload_path,
+            )
+            presentation.links['test metadata (gs)'] = (
+                self.m.urls.get_gs_bucket_url(gs_bucket, gs_path))
 
   def upload_sources(self,
                      config: BuilderConfig) -> Optional[invocation_pb2.Sources]:

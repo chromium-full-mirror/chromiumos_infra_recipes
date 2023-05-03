@@ -128,6 +128,11 @@ def RunSteps(api):
       'https://storage.cloud.google.com/gs-test/a/b')
   api.assertions.assertRaises(ValueError, api.urls.get_gs_path_url, 'a/b/c')
 
+  api.assertions.assertEqual(
+      api.urls.get_gs_bucket_url('bucket-name', 'path/to/file'),
+      'https://console.cloud.google.com/storage/browser/_details/' +
+      'bucket-name/path/to/file')
+
   task_state = TaskState(life_cycle=TaskState.LIFE_CYCLE_ABORTED,
                          verdict=TaskState.VERDICT_FAILED)
   api.assertions.assertEqual(

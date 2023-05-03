@@ -32,6 +32,7 @@ DEPS = [
     'src_state',
     'sysroot_util',
     'test_util',
+    'urls',
     'workspace_util',
 ]
 

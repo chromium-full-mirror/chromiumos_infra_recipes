@@ -174,6 +174,22 @@ class UrlsApi(recipe_api.RecipeApi):
       raise ValueError('gs_uri argument must start with "gs://"')
     return 'https://storage.cloud.google.com/' + gs_uri[len('gs://'):]
 
+  @staticmethod
+  def get_gs_bucket_url(gs_bucket: str, gs_path: str) -> str:
+    """Returns the Cloud Storage Browser URL given a bucket and path.
+
+    Args:
+      gs_bucket: A string of the gs bucket name to use
+      gs_path: A string matching a path within that bucket
+
+    Returns:
+      URL pointing to the Cloud Storage Browser page matching the input.
+    """
+    return '/'.join([
+        'https://console.cloud.google.com/storage/browser/_details', gs_bucket,
+        gs_path
+    ])
+
   def get_logdog_url(self, step: step_data.StepData, log_name: str,
                      use_top_level_step: bool = True) -> str:
     """Returns the LogDog URL for a step's log.

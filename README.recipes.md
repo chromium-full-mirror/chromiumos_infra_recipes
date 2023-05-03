@@ -523,7 +523,8 @@
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full)
-  * [metadata:examples/full](#recipes-metadata_examples_full)
+  * [metadata:examples/fetch_test_metadata](#recipes-metadata_examples_fetch_test_metadata)
+  * [metadata:examples/gspath](#recipes-metadata_examples_gspath)
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
   * [metadata_json:examples/default_entries](#recipes-metadata_json_examples_default_entries)
@@ -1020,7 +1021,7 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/build_menu/__init__.py#8): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API providing a menu for build steps
@@ -1190,7 +1191,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#146)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1014)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1026)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1200,7 +1201,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#994)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1006)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1326,18 +1327,18 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#984)(self):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#996)(self):**
 
 Upload Chrome prebuilts from the build.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#971)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#983)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#951)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#963)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1346,7 +1347,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#879)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#891)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
@@ -7641,12 +7642,12 @@ Args:
 Initializes the module.
 ### *recipe_modules* / [metadata](/recipe_modules/metadata)
 
-[DEPS](/recipe_modules/metadata/__init__.py#9): [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/metadata/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [util](#recipe_modules-util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 
 API to support metadata generation and wrangling.
 
-#### **class [MetadataApi](/recipe_modules/metadata/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [MetadataApi](/recipe_modules/metadata/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with config and support methods for metadata.
 
@@ -7657,7 +7658,22 @@ as part of a build, including, but not necessarily limited to:
   * hardware metadata
   * test metadata
 
-&mdash; **def [gspath](/recipe_modules/metadata/api.py#55)(self, metadata_info, gs_bucket=None, gs_path=None):**
+&mdash; **def [fetch\_test\_metadata](/recipe_modules/metadata/api.py#96)(self, chroot: Chroot, sysroot: Sysroot, mock_metadata_file: bool=True):**
+
+Fetch and return test case metadata.
+
+Args:
+  chroot: proto representing the chroot
+  sysroot: proto representing the sysroot
+  mock_metadata_file: boolean which should always be true unless
+    testing the case when a metadata file is not found
+
+Returns:
+  A TestCaseMetadataList containing the metadata of all tests, or None
+  if the ArtifactsService/FetchMetadata endpoint is unavailable or
+  if any of the expected metadata files are not found.
+
+&mdash; **def [gspath](/recipe_modules/metadata/api.py#66)(self, metadata_info, gs_bucket=None, gs_path=None):**
 
 Return full or relative path to a metadata payload
 depending on if bucket info is provided or not.
@@ -9897,6 +9913,17 @@ Args:
 Returns:
   Dict of {title: URL} pointing to the build's MILO page.
 
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_bucket\_url](/recipe_modules/urls/api.py#177)(gs_bucket: str, gs_path: str):**
+
+Returns the Cloud Storage Browser URL given a bucket and path.
+
+Args:
+  gs_bucket: A string of the gs bucket name to use
+  gs_path: A string matching a path within that bucket
+
+Returns:
+  URL pointing to the Cloud Storage Browser page matching the input.
+
 &emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#162)(gs_uri):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
@@ -9907,7 +9934,7 @@ Args:
 Returns:
   URL pointing to the Cloud Storage Browser page for the object.
 
-&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#177)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
+&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#193)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
 
 Returns the LogDog URL for a step's log.
 
@@ -13182,12 +13209,18 @@ Recipe for performing various manipulations on ChromeOS manifests.
 
 
 &mdash; **def [RunSteps](/recipe_modules/manifest_doctor/examples/full.py#16)(api):**
-### *recipes* / [metadata:examples/full](/recipe_modules/metadata/examples/full.py)
+### *recipes* / [metadata:examples/fetch\_test\_metadata](/recipe_modules/metadata/examples/fetch_test_metadata.py)
 
-[DEPS](/recipe_modules/metadata/examples/full.py#7): [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/metadata/examples/fetch_test_metadata.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/metadata/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/metadata/examples/fetch_test_metadata.py#32)(api: RecipeApi, valid_return: bool, file_exists: bool):**
+### *recipes* / [metadata:examples/gspath](/recipe_modules/metadata/examples/gspath.py)
+
+[DEPS](/recipe_modules/metadata/examples/gspath.py#7): [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/metadata/examples/gspath.py#15)(api):**
 ### *recipes* / [metadata\_json:examples/add\_stage\_results](/recipe_modules/metadata_json/examples/add_stage_results.py)
 
 [DEPS](/recipe_modules/metadata_json/examples/add_stage_results.py#7): [metadata\_json](#recipe_modules-metadata_json), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

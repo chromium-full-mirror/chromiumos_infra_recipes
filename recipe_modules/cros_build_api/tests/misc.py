@@ -81,6 +81,7 @@ def RunSteps(api):
           'CompileProto': meta_api.CompileProtoResponse,
       },
       'ArtifactsService': {
+          'FetchMetadata': artifacts.FetchMetadataResponse,
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
           'BuildSetup': artifacts.BuildSetupResponse,
           'Get': artifacts.GetResponse,

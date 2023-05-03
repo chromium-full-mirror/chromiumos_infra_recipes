@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from typing import Generator
+
+from recipe_engine.recipe_api import Property
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.common import Chroot
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/properties',
+    'cros_build_api',
+    'metadata',
+]
+
+PROPERTIES = {
+    'valid_return': Property(kind=bool, default=True),
+    'file_exists': Property(kind=bool, default=True),
+}
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+
+def RunSteps(api: RecipeApi, valid_return: bool, file_exists: bool) -> None:
+  output = api.metadata.fetch_test_metadata(chroot=Chroot(), sysroot=Sysroot(),
+                                            mock_metadata_file=file_exists)
+
+  if valid_return:
+    api.assertions.assertEqual(output, api.metadata.EXAMPLE_TEST_METADATA_LIST)
+  else:
+    api.assertions.assertIsNone(output)
+
+
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
+  yield api.test('fetch-test-metadata-valid')
+  yield api.test(
+      'fetch-test-metadata-no-endpoint',
+      api.cros_build_api.remove_endpoints(['ArtifactsService/FetchMetadata']),
+      api.properties(valid_return=False),
+  )
+  yield api.test(
+      'fetch-test-metadata-bad-file',
+      api.properties(valid_return=False, file_exists=False),
+  )

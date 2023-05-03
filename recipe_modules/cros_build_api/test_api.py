@@ -98,6 +98,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     _uploaded_path = lambda name: dict(path=self.path(name), location=2)
 
     ret = {
+        'FetchMetadata':
+            jsonify(filepaths=[{
+                'path': {
+                    'path': '[CACHE]/example.pb',
+                    'location': 2
+                }
+            }]),
         'FetchPinnedGuestImageUris':
             jsonify(pinned_images=[
                 dict(filename='filename', uri='https://example.com/filename')
