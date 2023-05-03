@@ -486,6 +486,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs) (Python3 ✅)
   * [iterutils:examples/full](#recipes-iterutils_examples_full) (Python3 ✅)
   * [kabuto_orchestrator](#recipes-kabuto_orchestrator) (Python3 ✅) &mdash; Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
+  * [kabuto_shadercache_uprev](#recipes-kabuto_shadercache_uprev) (Python3 ✅) &mdash; Recipe for uprev'ing shadercache DLC ebuilds.
   * [kernel_checkconfig](#recipes-kernel_checkconfig) (Python3 ✅) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) (Python3 ✅) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
   * [key_value_store:tests/parse](#recipes-key_value_store_tests_parse) (Python3 ✅)
@@ -13178,6 +13179,15 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
 
 &mdash; **def [RunSteps](/recipes/kabuto_orchestrator.py#16)(api: RecipeApi):**
+### *recipes* / [kabuto\_shadercache\_uprev](/recipes/kabuto_shadercache_uprev.py)
+
+[DEPS](/recipes/kabuto_shadercache_uprev.py#11): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe for uprev'ing shadercache DLC ebuilds
+
+&mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#16)(api: RecipeApi):**
 ### *recipes* / [kernel\_checkconfig](/recipes/kernel_checkconfig.py)
 
 [DEPS](/recipes/kernel_checkconfig.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
