@@ -521,16 +521,26 @@ class ExonerateApi(recipe_api.RecipeApi):
     # analysis response is bad. 0 is the fallback in that case.
     return 0, 0
 
-  def auto_exoneration_analysis(self) -> None:
-    """Analyze failed tests to see if they can be exonerated."""
+  def auto_exoneration_analysis(self, fake_data: bool = False) -> bool:
+    """Analyze failed tests to see if they can be exonerated.
+
+    Args:
+      fake_data: If true, return true immediately.
+        Should only be used for unittesting.
+
+    Returns: A boolean indicating if auto exoneration was enabled without dry_run
+    and did not exceed any of the limits.
+    """
+    if fake_data:
+      return True
     if not self._enable_exoneration:
-      return
+      return False
     with self.m.step.nest('Automated Exoneration Analysis') as pres:
       pres.logs['failed_tests'] = str(
           sorted(self._failed_tests, key=lambda x: x.name + x.build_target))
       if not self._failed_tests:
         pres.step_text = 'no failed tests'
-        return
+        return False
       try:
         # Convert failed tests into the format LUCI Analysis wants.
         test_variant_list = []
@@ -586,9 +596,12 @@ class ExonerateApi(recipe_api.RecipeApi):
           self._exoneration_configs = self.m.exoneration_util.get_updated_configs(
               all_stats, self._exoneration_configs)
           pres.logs['configs'] = self._get_printable_configs()
+          return True
       except self.m.step.StepFailure:
         # Any exception in auto exoneration should not stop the orchestrator.
         pres.status = self.m.step.SUCCESS
+
+      return False
 
   def _is_test_name_exonerable(self, test_name, build_target):
     """Checks to see if test is exonerable.

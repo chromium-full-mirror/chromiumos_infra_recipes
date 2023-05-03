@@ -284,32 +284,57 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         pres.properties['no_tests_needed'] = True
 
     with self.m.step.nest('check test results'):
-      exonerated_hw_results, exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
-          test_results.skylab)
-      passed_test_names += exonerated_hw_tests
-      exonerated_vm_results, exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
-          test_results.tast_vm)
-      passed_test_names += exonerated_vm_tests
-      exonerated_gce_results, exonerated_gce_tests = self.m.exonerate.exonerate_vmtests(
-          test_results.tast_gce)
-      passed_test_names += exonerated_gce_tests
-      self.m.exonerate.auto_exoneration_analysis()
+      with self.m.step.nest('pre-exoneration'):
+        old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
+            previously_failed_now_exonerable_hw_results)
+        passed_test_names += old_exonerated_hw_tests
 
-      old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
-          previously_failed_now_exonerable_hw_results)
-      passed_test_names += old_exonerated_hw_tests
+        old_exonerated_vm_results, old_exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
+            previously_failed_now_exonerable_vm_builds)
+        passed_test_names += old_exonerated_vm_tests
 
-      old_exonerated_vm_results, old_exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
-          previously_failed_now_exonerable_vm_builds)
-      passed_test_names += old_exonerated_vm_tests
+      with self.m.step.nest('manual exoneration'):
+        manually_exonerated_hw_results, manually_exonerated_hw_tests = (
+            self.m.exonerate.exonerate_hwtests(test_results.skylab))
+        passed_test_names += manually_exonerated_hw_tests
+        manually_exonerated_vm_results, manually_exonerated_vm_tests = (
+            self.m.exonerate.exonerate_vmtests(test_results.tast_vm))
+        passed_test_names += manually_exonerated_vm_tests
+        manually_exonerated_gce_results, manually_exonerated_gce_tests = (
+            self.m.exonerate.exonerate_vmtests(test_results.tast_gce))
+        passed_test_names += manually_exonerated_gce_tests
 
-      test_results = test_results._replace(skylab=exonerated_hw_results +
+      with self.m.step.nest('automated exoneration') as pres:
+        autoex_running = self.m.exonerate.auto_exoneration_analysis(
+            fake_data=self._test_data.enabled)
+        if autoex_running:
+          auto_exonerated_hw_results, auto_exonerated_hw_tests = (
+              self.m.exonerate.exonerate_hwtests(manually_exonerated_hw_results)
+          )
+          passed_test_names += auto_exonerated_hw_tests
+          auto_exonerated_vm_results, auto_exonerated_vm_tests = (
+              self.m.exonerate.exonerate_vmtests(manually_exonerated_vm_results)
+          )
+          passed_test_names += auto_exonerated_vm_tests
+          auto_exonerated_gce_results, auto_exonerated_gce_tests = (
+              self.m.exonerate.exonerate_vmtests(
+                  manually_exonerated_gce_results))
+          passed_test_names += auto_exonerated_gce_tests
+
+      final_hw_results = (
+          auto_exonerated_hw_results
+          if autoex_running else manually_exonerated_hw_results)
+      test_results = test_results._replace(skylab=final_hw_results +
                                            old_exonerated_hw_results)
-
-      test_results = test_results._replace(tast_vm=exonerated_vm_results +
+      final_vm_results = (
+          auto_exonerated_vm_results
+          if autoex_running else manually_exonerated_vm_results)
+      test_results = test_results._replace(tast_vm=final_vm_results +
                                            old_exonerated_vm_results)
-
-      test_results = test_results._replace(tast_gce=exonerated_gce_results)
+      final_gce_results = (
+          auto_exonerated_gce_results
+          if autoex_running else manually_exonerated_gce_results)
+      test_results = test_results._replace(tast_gce=final_gce_results)
       self.m.exonerate.populate_exoneration_markdown()
 
       self.m.cros_history.set_passed_tests(passed_test_names)

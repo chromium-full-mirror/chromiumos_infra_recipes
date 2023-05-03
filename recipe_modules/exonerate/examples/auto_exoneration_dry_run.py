@@ -22,6 +22,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   # Test auto_exoneration without any failed tests.
   api.exonerate.auto_exoneration_analysis()
+  # Test auto_exoneration with fake data.
+  api.exonerate.auto_exoneration_analysis(fake_data=True)
 
   build = api.exonerate.test_api.fake_vm_build()
   failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
