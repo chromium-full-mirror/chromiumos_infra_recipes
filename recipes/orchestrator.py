@@ -43,6 +43,7 @@ DEPS = [
     'signing',
     'skylab',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
 ]
@@ -122,14 +123,17 @@ def DoRunSteps(api: RecipeApi):
   if not api.orch_menu.is_public_orchestrator:
     with api.checkpoint.retry(RetryStep.LAUNCH_TESTS) as run_step:
       if run_step:
-        # Don't want to run tests on the public orchestrator, and unlike other
-        # orchestrators without testing we can't run the test plan generator because
-        # it requires access to internal repos.
-        api.orch_menu.plan_and_run_tests(
-            container_metadata=metadata,
-            testable_builds=testable_builds,
-            ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
-        )
+        # If we're a release orchestrator AND cq-active then we shouldn't run
+        # tests, the release orch is being used as a CQ verifier.
+        if not (api.orch_menu.is_release_orchestrator and api.cq.active):
+          # Don't want to run tests on the public orchestrator, and unlike other
+          # orchestrators without testing we can't run the test plan generator because
+          # it requires access to internal repos.
+          api.orch_menu.plan_and_run_tests(
+              container_metadata=metadata,
+              testable_builds=testable_builds,
+              ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
+          )
 
   if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
     api.cros_lkgm.collect_public_build()
@@ -194,6 +198,7 @@ def GenTests(api: RecipeTestApi):
                      'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
+      api.post_check(post_process.MustRun, 'run tests'),
       builder='release-main-orchestrator',
       with_history=True,
       collect_builds=data.builds,
@@ -232,6 +237,12 @@ def GenTests(api: RecipeTestApi):
       with_manifest_refs=True,
       bot_size='medium',
       experiments=['chromeos.cros_infra_config.release_tot_builds_snapshot'])
+
+  yield api.orch_menu.test('release-orchestrator-cq',
+                           api.post_check(post_process.DoesNotRun, 'run_tests'),
+                           api.cq(run_mode=api.cq.FULL_RUN),
+                           api.post_process(post_process.DropExpectation),
+                           builder='release-main-orchestrator')
 
   yield api.orch_menu.test(
       'public-orchestrator',
