@@ -77,12 +77,17 @@ def DoRunSteps(api: RecipeTestApi,
   borealis_checkout = api.path.mkdtemp('borealis')
   with api.context(cwd=borealis_checkout):
     with api.step.nest('clone kabuto'):
+      remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
       # Clone Borealis, Kabuto is in borealis/tools/kabuto.
-      api.git.clone(
-          'https://chrome-internal.googlesource.com/chromeos/platform/borealis')
-      # Check out a specific Kabuto ref if supplied as a property (for dev use).
-      if properties.kabuto_ref:
-        api.git.checkout(properties.kabuto_ref, force=True)
+      api.git.clone(remote)
+      # Check out a specific Kabuto commit ref from the tree
+      if properties.kabuto_commit_ref:
+        api.git.checkout(properties.kabuto_commit_ref, force=True)
+      # Check out a specific Kabuto CL ref from Gerrit
+      if properties.kabuto_cl_ref:
+        api.git.fetch(remote)
+        api.git.fetch_ref(remote, properties.kabuto_cl_ref)
+        api.git.checkout('FETCH_HEAD', force=True)
 
     # Download Mesa headers for Kabuto to ingest.
     with api.step.nest('fetch kabuto payload'):
@@ -131,8 +136,15 @@ def GenTests(api: RecipeTestApi) -> None:
   )
 
   props = good_props.copy()
-  props['kabuto_ref'] = 'abc123'
+  props['kabuto_commit_ref'] = '17e956ddabe4cba4c247dd39ebfd3e29eca5ff89'
   yield api.test(
       'kabuto_commit_ref',
+      api.properties(**props),
+  )
+
+  props = good_props.copy()
+  props['kabuto_cl_ref'] = 'refs/changes/75/5888475/2'
+  yield api.test(
+      'kabuto_cl_ref',
       api.properties(**props),
   )

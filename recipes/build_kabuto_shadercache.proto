@@ -16,5 +16,9 @@ message BuildKabutoShadercacheProperties {
 
   // Commit hash to checkout Kabuto repository.
   // Optional
-  string kabuto_ref = 3;
+  string kabuto_commit_ref = 3;
+
+  // CL ref to checkout Kabuto repository.
+  // Optional
+  string kabuto_cl_ref = 4;
 }
