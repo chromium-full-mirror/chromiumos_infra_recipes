@@ -10432,7 +10432,7 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#49)(api: RecipeApi, config: BuilderConfig, extra_properties: IncrementalProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#48)(api: RecipeApi, config: BuilderConfig, extra_properties: IncrementalProperties):**
 
 &mdash; **def [RunSteps](/recipes/build_incremental.py#37)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)

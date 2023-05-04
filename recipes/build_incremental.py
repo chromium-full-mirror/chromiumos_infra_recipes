@@ -37,8 +37,7 @@ PROPERTIES = IncrementalProperties
 def RunSteps(api: RecipeApi,
              properties: IncrementalProperties) -> Optional[RawResult]:
   with api.build_menu.configure_builder() as config, \
-    api.build_menu.setup_workspace_and_chroot():
-
+    api.build_menu.setup_workspace_and_chroot(update_chroot=False):
     return DoRunSteps(api, config, properties)
 
 
@@ -79,6 +78,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                 retry_fetches=3, force_remove_dirty=True)
 
+  api.build_menu.setup_chroot(update=True)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
@@ -103,6 +103,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                     retry_fetches=3, force_remove_dirty=True)
 
+      api.build_menu.setup_chroot(update=True)
       if api.build_menu.install_packages(config, packages):
         # Only want to build and test the image once (after the ff/rebuild).
         api.build_menu.build_and_test_images(config)
@@ -143,7 +144,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'update sdk'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
+      api.post_check(post_process.MustRun, 'update sdk (2)'),
+      api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'install packages (3)'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
