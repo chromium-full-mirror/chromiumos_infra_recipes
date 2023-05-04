@@ -26,7 +26,44 @@ DEPS = {
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it and add cros-kernel-upstream-debt-review@google.com as reviewer. A member of the review committee will review the CL. Thank you.'
+TAG_MISSING_MSG = 'The subject of this patch does not include a valid tag. Please check: https://chromium.googlesource.com/chromiumos/docs/+/HEAD/kernel_development.md. If you\'d like to silence this warning for a work-in-progress change, prefix your subject with "WIP:" or "DO-NOT-SUBMIT:"'
+BAD_TAG_MSG = 'Bad subject tag for patch touching ChromeOS specific files. Please check: https://chromium.googlesource.com/chromiumos/docs/+/HEAD/kernel_development.md'
+
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
+
+TECH_DEBT_TAGS = ('FROMGIT:', 'FROMLIST', 'BACKPORT: FROM', 'CHROMIUM:')
+UPSTREAM_TAGS = ('FROMLIST:', 'UPSTREAM:', 'FROMGIT:', 'BACKPORT:')
+OTHER_TAGS = (
+    'CHROMIUM:',
+    'WIP:',
+    'TEST:',
+    'TEST-ONLY:',
+    'Revert',
+    'Reland',
+    'FIXUP:',
+    'DO-NOT-SUBMIT',
+)
+CHROMEOS_FILES = (
+    'chromeos/',
+    'OWNERS',
+    'PRESUBMIT.cfg',
+    'unblocked_terms.txt',
+    '.cop/',
+)
+
+
+def _chromeos_change(file_infos):
+  for f in file_infos:
+    if f.startswith(CHROMEOS_FILES):
+      return True
+  return False
+
+
+def _chromeos_only_change(file_infos):
+  for f in file_infos:
+    if not f.startswith(CHROMEOS_FILES):
+      return False
+  return True
 
 
 def RunSteps(api: RecipeApi):
@@ -59,18 +96,25 @@ def RunSteps(api: RecipeApi):
       presentation.step_text = 'Branch not reviewed'
       return
 
-  with api.step.nest('check if tech debt') as presentation:
+  with api.step.nest('missing tag') as presentation:
     subject = patch_set.subject
-    if subject.startswith(
-        ('UPSTREAM:', 'FROMGIT:', 'WIP:', 'TEST:', 'TEST-ONLY:', 'BACKPORT:',
-         'Revert')) and not subject.startswith('BACKPORT: FROMLIST'):
+    if not subject.startswith(UPSTREAM_TAGS + OTHER_TAGS):
+      api.tricium.add_comment('Tag Checker', TAG_MISSING_MSG, '/COMMIT_MSG')
+      api.tricium.write_comments()
+      return
+
+  with api.step.nest('invalid tag') as presentation:
+    if subject.startswith(UPSTREAM_TAGS) and _chromeos_change(
+        patch_set.file_infos):
+      api.tricium.add_comment('Tag Checker', BAD_TAG_MSG, '/COMMIT_MSG')
+      api.tricium.write_comments()
+      return
+
+  with api.step.nest('check if tech debt') as presentation:
+    if not subject.startswith(TECH_DEBT_TAGS):
       presentation.step_text = 'Patch set does not show a technical debt.'
       return
-    for f in patch_set.file_infos:
-      if not f.startswith(
-          ('chromeos/', 'OWNERS', 'PRESUBMIT.cfg', 'unblocked_terms.txt')):
-        break
-    else:
+    if _chromeos_only_change(patch_set.file_infos):
       presentation.step_text = 'Chrome-only patch, no technical debt.'
       return
 
@@ -82,12 +126,9 @@ def RunSteps(api: RecipeApi):
       api.tricium.add_comment('Technical debt', TECH_DEBT_MSG_TAG,
                               '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
+      api.tricium.write_comments()
     else:
       presentation.step_text = 'Tag already added.'
-      return
-
-  with api.step.nest('write comments') as presentation:
-    api.tricium.write_comments()
 
 
 def GenTests(api: RecipeTestApi):
@@ -159,6 +200,24 @@ def GenTests(api: RecipeTestApi):
           'fetch patch set', changes,
           gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile', branch='kcam')),
       api.post_check(post_process.StepSuccess, 'check branch'),
+      api.post_check(post_process.DoesNotRun, 'missing tag'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'unknown tag', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets('BIGPARTY: Land Kcam', 'Makefile')),
+      api.post_check(post_process.StepSuccess, 'missing tag'),
+      api.post_check(post_process.DoesNotRun, 'invalid tag'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'invalid tag', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets('UPSTREAM: Land Kcam', '.cop/build.yaml')),
+      api.post_check(post_process.StepSuccess, 'invalid tag'),
       api.post_check(post_process.DoesNotRun, 'check if tech debt'),
       api.post_process(post_process.DropExpectation))
 
@@ -185,7 +244,7 @@ def GenTests(api: RecipeTestApi):
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
           gen_patch_sets('CHROMIUM: IPU6 non Kcam', 'Makefile')),
-      api.post_check(post_process.StepSuccess, 'write comments'),
+      api.post_check(post_process.StepSuccess, 'check tag'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -195,7 +254,7 @@ def GenTests(api: RecipeTestApi):
           'fetch patch set', changes,
           gen_patch_sets('CHROMIUM: IPU6 non Kcam\n\nUPSTREAM-TASK=b:1234567\n',
                          'Makefile')),
-      api.post_check(post_process.DoesNotRun, 'write comments'),
+      api.post_check(post_process.StepSuccess, 'check tag'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
