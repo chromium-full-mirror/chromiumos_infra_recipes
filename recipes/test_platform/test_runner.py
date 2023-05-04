@@ -1079,7 +1079,12 @@ def _get_context_deadline(api, limit_seconds, step):
   deadline.soft_deadline = current_time + limit_seconds
   deadline.grace_period = 30.0
 
-  # Add deadline information to the step logs.
+  # Grab the builder deadline
+  builder_deadline = api.context.deadline.soft_deadline
+
+  # Set deadline to which ever value is sooner
+  deadline.soft_deadline = builder_deadline if builder_deadline < deadline.soft_deadline else deadline.soft_deadline
+
   step.presentation.logs[
       'result upload deadline info'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (
           _format_time(current_time), _format_time(

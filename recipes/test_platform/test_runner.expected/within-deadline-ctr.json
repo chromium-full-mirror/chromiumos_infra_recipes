@@ -347,7 +347,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@deadline information@start: Fri Feb  3 00:00:04 2045@@@",
-      "@@@STEP_LOG_LINE@deadline information@end: Fri Feb  3 00:45:04 2045@@@",
+      "@@@STEP_LOG_LINE@deadline information@end: Thu Jan  1 00:00:00 1970@@@",
       "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",
       "@@@STEP_LOG_END@deadline information@@@"
     ]
@@ -420,12 +420,6 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 2369695504.5
-      }
-    },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -459,12 +453,6 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 2369695504.5
-      }
-    },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
     "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"id\": {\n          \"value\": \"fake_host\"\n        },\n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          },\n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\",\n            \"modelName\": \"fake_model\"\n          }\n        },\n        \"cacheServer\": {\n          \"address\": {\n            \"address\": \"0.0.0.0\",\n            \"port\": 123\n          }\n        }\n      },\n      \"provisionState\": {},\n      \"containerMetadataKey\": \"kevin\"\n    }\n  ]\n}",
     "~followup_annotations": [

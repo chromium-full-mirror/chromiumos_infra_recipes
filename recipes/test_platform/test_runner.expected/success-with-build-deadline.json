@@ -371,7 +371,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@deadline information@start: Fri Feb  3 00:00:04 2045@@@",
-      "@@@STEP_LOG_LINE@deadline information@end: Fri Feb  3 00:45:04 2045@@@",
+      "@@@STEP_LOG_LINE@deadline information@end: Thu Jan  1 00:00:00 1970@@@",
       "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",
       "@@@STEP_LOG_END@deadline information@@@"
     ]
@@ -423,10 +423,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 2369695504.5
-      },
       "realm": {
         "name": ":"
       },

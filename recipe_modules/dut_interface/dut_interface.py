@@ -327,6 +327,13 @@ class DUTInterface():  # pragma: no cover
     deadline.soft_deadline = current_time + limit_seconds
     deadline.grace_period = 30.0
 
+    # Grab the builder deadline
+    builder_deadline = self._api.context.deadline.soft_deadline
+
+    # Set deadline to which ever value is sooner
+    deadline.soft_deadline = builder_deadline if builder_deadline < deadline.soft_deadline else deadline.soft_deadline
+
+
     # Add deadline information to the step logs.
     step.presentation.logs[
         'deadline information'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (

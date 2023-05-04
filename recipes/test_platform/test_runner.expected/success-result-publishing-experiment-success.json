@@ -181,7 +181,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@result upload deadline info@start: Mon May 14 12:53:32 2012@@@",
-      "@@@STEP_LOG_LINE@result upload deadline info@end: Mon May 14 14:53:32 2012@@@",
+      "@@@STEP_LOG_LINE@result upload deadline info@end: Thu Jan  1 00:00:00 1970@@@",
       "@@@STEP_LOG_LINE@result upload deadline info@total_seconds: 7200@@@",
       "@@@STEP_LOG_END@result upload deadline info@@@"
     ]
@@ -379,7 +379,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@deadline information@start: Mon May 14 12:53:23 2012@@@",
-      "@@@STEP_LOG_LINE@deadline information@end: Mon May 14 13:38:23 2012@@@",
+      "@@@STEP_LOG_LINE@deadline information@end: Thu Jan  1 00:00:00 1970@@@",
       "@@@STEP_LOG_LINE@deadline information@total_seconds: 2700@@@",
       "@@@STEP_LOG_END@deadline information@@@"
     ]
@@ -431,10 +431,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337002703.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -699,10 +695,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -742,10 +734,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -796,10 +784,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -836,10 +820,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -870,10 +850,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -914,10 +890,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -948,10 +920,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -982,10 +950,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -1123,10 +1087,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -1197,10 +1157,6 @@
       "echo"
     ],
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -1262,10 +1218,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -1319,10 +1271,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
@@ -1377,10 +1325,6 @@
     ],
     "infra_step": true,
     "luci_context": {
-      "deadline": {
-        "grace_period": 30.0,
-        "soft_deadline": 1337007212.0
-      },
       "realm": {
         "name": "chromeos:test_runner"
       },
