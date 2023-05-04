@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.metadata_json.metadata_json import MetadataJsonP
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/led',
     'recipe_engine/path',
@@ -16,6 +17,7 @@ DEPS = [
     'cros_artifacts',
     'cros_infra_config',
     'cros_source',
+    'git_footers',
     'src_state',
     'test_util',
     'urls',

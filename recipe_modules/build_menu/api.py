@@ -318,6 +318,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       self.m.easy.set_properties_step(chromeos_version=str(version))
 
+      # SouceSpec can be added to metadata.json once the workspace is synced.
+      self.m.metadata_json.add_source_spec(config)
+
       yield
 
   def setup_chroot(self, no_chroot_timeout: bool = False,

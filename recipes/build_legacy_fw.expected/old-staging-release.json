@@ -2256,6 +2256,29 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "firmware-board-9999.B-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read git footers"
+  },
+  {
     "cmd": [],
     "name": "uprev packages",
     "~followup_annotations": [
@@ -3335,7 +3358,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"staging\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R39-6301.202.4\", \n        \"milestone\": 39, \n        \"platform\": \"6301.202.4\", \n        \"with_snapshot\": \"R39-6301.202.4-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"staging\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"source_spec\": {\n        \"sources\": {\n            \"gitilesCommit\": {\n                \"commitHash\": \"firmware-board-9999.B-HEAD-SHA\", \n                \"host\": \"chrome-internal.googlesource.com\", \n                \"position\": \"999\", \n                \"project\": \"chromeos/manifest-internal\", \n                \"ref\": \"refs/heads/firmware-board-9999.B\"\n            }\n        }\n    }, \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R39-6301.202.4\", \n        \"milestone\": 39, \n        \"platform\": \"6301.202.4\", \n        \"with_snapshot\": \"R39-6301.202.4-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3372,6 +3395,17 @@
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"master_build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"metadata-version\": \"2\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"source_spec\": {@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        \"sources\": {@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@            \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@                \"commitHash\": \"firmware-board-9999.B-HEAD-SHA\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@                \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@                \"position\": \"999\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@                \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@                \"ref\": \"refs/heads/firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@            }@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@        }@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"time\": {@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    }, @@@",
@@ -4472,7 +4506,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"staging\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R39-6301.202.4\", \n        \"milestone\": 39, \n        \"platform\": \"6301.202.4\", \n        \"with_snapshot\": \"R39-6301.202.4-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"staging\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"source_spec\": {\n        \"sources\": {\n            \"gitilesCommit\": {\n                \"commitHash\": \"firmware-board-9999.B-HEAD-SHA\", \n                \"host\": \"chrome-internal.googlesource.com\", \n                \"position\": \"999\", \n                \"project\": \"chromeos/manifest-internal\", \n                \"ref\": \"refs/heads/firmware-board-9999.B\"\n            }\n        }\n    }, \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R39-6301.202.4\", \n        \"milestone\": 39, \n        \"platform\": \"6301.202.4\", \n        \"with_snapshot\": \"R39-6301.202.4-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -4528,6 +4562,17 @@
       "@@@STEP_LOG_LINE@metadata.json@            \"summary\": \"stage was successful\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@        }@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"source_spec\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"sources\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@            \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@metadata.json@                \"commitHash\": \"firmware-board-9999.B-HEAD-SHA\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@                \"host\": \"chrome-internal.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@                \"position\": \"999\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@                \"project\": \"chromeos/manifest-internal\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@                \"ref\": \"refs/heads/firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@metadata.json@            }@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        }@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    }, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"status\": {@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"current-time\": null, @@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"status\": \"pass\", @@@",
