@@ -812,6 +812,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(
             child_builds_relevant=len(cq_relevant_builds))
 
+        # Rollup testing_toolchain: true if true from any child builds output
+        cq_toolchain_outputs = [
+            build.output.properties['testing_toolchain']
+            for build in self._builds_status.completed_builds
+            if 'testing_toolchain' in build.output.properties
+        ]
+        self.m.easy.set_properties_step(
+            testing_toolchain=any(cq_toolchain_outputs))
       elif self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
         self._relevant_child_builder_names = [
             x.builder.builder

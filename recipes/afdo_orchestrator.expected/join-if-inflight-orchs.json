@@ -4412,6 +4412,14 @@
   },
   {
     "cmd": [],
+    "name": "check build results.set testing_toolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "non-critical build check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@new non-critical builders@arm-generic-cq@@@",
@@ -14249,6 +14257,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@child_builds_relevant@6@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.set testing_toolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },
   {

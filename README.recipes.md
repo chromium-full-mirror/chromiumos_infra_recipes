@@ -7718,11 +7718,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1327)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1335)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1167)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1175)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7737,7 +7737,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#192)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1366)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1374)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -7802,7 +7802,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1067)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1075)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7839,11 +7839,11 @@ Whether the postsubmit child build was critical and relevant.
 Args:
   build: The child build.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#992)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1000)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#999)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1007)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
