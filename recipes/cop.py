@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """Recipe for CoP: A CL validator based on Google Cloud Build. go/cros-cop"""
+import datetime
 
 from typing import Dict
 from typing import Generator
@@ -15,6 +16,8 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
@@ -29,6 +32,7 @@ DEPS = {
     'gerrit': 'gerrit',
     'support': 'support',
     'test_util': 'test_util',
+    'time': 'recipe_engine/time',
     'cros_infra_config': 'cros_infra_config',
 }
 
@@ -94,6 +98,8 @@ def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
   return _run_script(api, "fetch_results.py", data_in)
 
 
+@exponential_retry(retries=10, delay=datetime.timedelta(seconds=10),
+                   condition=lambda e: e is None)
 def _fetch_cop_file(api: RecipeApi, host: str, project: str,
                     ref: str) -> Optional[str]:
   """Download a user build configuration from gitiles."""
