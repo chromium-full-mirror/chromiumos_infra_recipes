@@ -359,13 +359,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     for test_case in all_test_cases:
       test_name = test_case['name']
       self._failed_tests.add(
-          FailedTest(
-              name='tast.{}'.format(test_case['name']),
-              # board == build_target for VM tests.
-              board=build_target,
-              build_target=build_target,
-              suite='',
-              test_config=''))
+          FailedTest(name='tast.{}'.format(test_case['name']), board='',
+                     build_target=build_target, suite='', test_config=''))
       if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:

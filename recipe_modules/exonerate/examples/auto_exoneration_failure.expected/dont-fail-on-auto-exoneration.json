@@ -31,7 +31,7 @@
     "cmd": [],
     "name": "Automated Exoneration Analysis",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test1', board='betty', build_target='betty', suite='', test_config='')]@@@",
+      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test1', board='', build_target='betty', suite='', test_config='')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@"
     ]
   },
@@ -51,7 +51,7 @@
       "luci.analysis.v1.TestVariants.QueryFailureRate"
     ],
     "name": "Automated Exoneration Analysis.query LUCI Analysis for failure rates.rpc call",
-    "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"testId\": \"tast.test1\", \"variant\": {\"def\": {\"board\": \"betty\", \"build_target\": \"betty\"}}}]}",
+    "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"testId\": \"tast.test1\", \"variant\": {\"def\": {\"build_target\": \"betty\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
