@@ -18,6 +18,7 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromite.api.packages import UprevVersionedPackageResponse
 from PB.chromite.api.packages import UprevPackagesResponse
+from PB.chromite.api.sdk import UprevRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -37,9 +38,10 @@ class Ebuild(NamedTuple):
 class PuprLocalUprevApi(recipe_api.RecipeApi):
   """A module to create local uprevs for PUpr."""
 
-  def __init__(self, *args: Any, **kwargs: Any):
+  def __init__(self, properties, *args: Any, **kwargs: Any):
     """Initialize the module's attributes."""
     super().__init__(*args, **kwargs)
+    self.properties = properties
     self._additional_commit_message = ''
     self._allow_partial_uprev = False
     self.packages: List[PackageInfo] = []
@@ -297,17 +299,31 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       commit_lines.append('Change-Id: ' + change_id)
     return '\n'.join(commit_lines) + '\n'
 
-  def uprev_sdk(self, target_version: str) -> List[ProjectInfo]:
+  def uprev_sdk(self) -> List[ProjectInfo]:
     """Uprev the SDK on the local filesystem, and commit the uprev.
 
-    TODO(b/259445565): Implement this.
+    TODO(b/259445565): Commit the uprev.
+
+    Args:
+      target_version: The SDK version to uprev to.
 
     Returns:
       A list of repo projects with modified code.
     """
-    del target_version
     with self.m.step.nest('uprev sdk'):
-      raise InfraFailure('Not implemented yet!')
+      with self.m.step.nest('validate SDK uprev spec'):
+        if not self.properties.sdk_uprev_spec.sdk_version:
+          raise InfraFailure('No SDK version specified.')
+        if not self.properties.sdk_uprev_spec.toolchain_template:
+          raise InfraFailure('No toolchain template specified.')
+      request = UprevRequest(
+          binhost_gs_bucket="gs://chromeos-prebuilt/",
+          version=self.properties.sdk_uprev_spec.sdk_version,
+          toolchain_tarball_template=self.properties.sdk_uprev_spec
+          .toolchain_template,
+      )
+      self.m.cros_build_api.SdkService.Uprev(request)
+      return []
 
   def rebase_cl(self, open_changes: List[GerritChange], topic: str,
                 change_num: int) -> None:

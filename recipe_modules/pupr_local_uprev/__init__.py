@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.pupr_local_uprev.pupr_local_uprev import (
+    PuprLocalUprevProperties)
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -18,3 +21,5 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = PuprLocalUprevProperties

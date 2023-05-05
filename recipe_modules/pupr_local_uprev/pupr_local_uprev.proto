@@ -1,0 +1,27 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.pupr_local_uprev;
+
+import "chromiumos/common.proto";
+
+// SdkUprevSpec contains information for SDK uprevs.
+message SdkUprevSpec {
+  // sdk_version is the new value for SDK_LATEST_VERSION in the
+  // source-controlled SDK version file.
+  // Example: "2023.03.14.159265"
+  string sdk_version = 1;
+
+  // toolchain_template is the new value for TC_PATH in the source-controlled
+  // SDK version file.
+  // Example: "2023/03/%(target)s-2023.03.14.159265"
+  string toolchain_template = 2;
+}
+
+message PuprLocalUprevProperties {
+  // sdk_uprev_spec is required only for SDK uprevs. Otherwise it is ignored.
+  SdkUprevSpec sdk_uprev_spec = 1;
+}

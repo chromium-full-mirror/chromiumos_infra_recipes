@@ -24,8 +24,6 @@ from typing import NamedTuple
 from typing import Optional
 from urllib import parse
 
-from RECIPE_MODULES.chromeos.cros_sdk.api import LATEST_UPREV_TARGET_KEY
-from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
 from RECIPE_MODULES.chromeos.git.api import Reference
 from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
@@ -44,6 +42,7 @@ from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesT
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import WebUITrigger
 from PB.recipe_engine import result
+from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
 # pylint: disable=unused-import
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
@@ -306,23 +305,8 @@ class GeneratorRun:
       return self.m.pupr_local_uprev.uprev_packages(
           self.target_package_versions, self.topic)
     if self._is_sdk_uprevver:
-      target_sdk_version = self._get_target_sdk_version()
-      return self.m.pupr_local_uprev.uprev_sdk(target_sdk_version)
+      return self.m.pupr_local_uprev.uprev_sdk()
     raise InfraFailure('Not sure how to uprev.')  # pragma: nocover
-
-  def _get_target_sdk_version(self) -> str:
-    """Determine a target SDK version by reading the remote SDK version file.
-
-    Returns:
-      An SDK version, such as '2023.03.14.159265'.
-    """
-    with self.m.step.nest('determine target sdk version') as presentation:
-      contents = self.m.cros_sdk.read_remote_latest_sdk_file()
-      parsed = self.m.key_value_store.parse_contents(
-          contents, source=REMOTE_LATEST_SDK_URI)
-      target_version = parsed[LATEST_UPREV_TARGET_KEY]
-      presentation.properties['target_sdk_version'] = target_version
-    return target_version
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -1242,10 +1226,15 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'sdk-uprev',
       _props(uprev_target_kind=UprevTargetKind.SDK),
+      api.properties(
+          **{
+              '$chromeos/pupr_local_uprev':
+                  pupr_local_uprev.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                          sdk_version='2023.03.14.159265',
+                          toolchain_template='2023/03/%(target)s-2023.03.14.159265.tar.xz',
+                      ),
+                  ),
+          }),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.post_check(post_process.StepSuccess, 'determine target sdk version'),
-      api.post_check(post_process.StepException, 'uprev sdk'),
-      api.post_check(post_process.PropertyEquals, 'target_sdk_version',
-                     '2023.03.14.159265'),
-      status='INFRA_FAILURE',
   )
