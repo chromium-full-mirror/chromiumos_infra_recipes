@@ -8,7 +8,10 @@ steps:
         set -ev
         git init
         git remote add origin ${_URL}
-        git fetch --depth ${_FETCH_DEPTH} ${_URL} ${_REF}
+        for i in $(seq 18); do
+          git fetch --depth ${_FETCH_DEPTH} ${_URL} ${_REF} && break
+          sleep 10
+        done
         git checkout FETCH_HEAD
 substitutions:
   _URL: https://chromium.googlesource.com/chromiumos/third_party/kernel

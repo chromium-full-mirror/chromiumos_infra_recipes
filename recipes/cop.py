@@ -4,7 +4,8 @@
 # found in the LICENSE file.
 
 """Recipe for CoP: A CL validator based on Google Cloud Build. go/cros-cop"""
-import datetime
+import base64
+import binascii
 
 from typing import Dict
 from typing import Generator
@@ -17,11 +18,10 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
-from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
-
 DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
     'depot_gerrit': 'depot_tools/gerrit',
+    'easy': 'easy',
     'file': 'recipe_engine/file',
     'json': 'recipe_engine/json',
     'path': 'recipe_engine/path',
@@ -30,9 +30,9 @@ DEPS = {
     'tricium': 'recipe_engine/tricium',
     'src_state': 'src_state',
     'gerrit': 'gerrit',
+    'raw_io': 'recipe_engine/raw_io',
     'support': 'support',
     'test_util': 'test_util',
-    'time': 'recipe_engine/time',
     'cros_infra_config': 'cros_infra_config',
 }
 
@@ -98,26 +98,18 @@ def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
   return _run_script(api, "fetch_results.py", data_in)
 
 
-@exponential_retry(retries=10, delay=datetime.timedelta(seconds=10),
-                   condition=lambda e: e is None)
-def _fetch_cop_file(api: RecipeApi, host: str, project: str,
-                    ref: str) -> Optional[str]:
+def _fetch_cop_file(api: RecipeApi, host: str, change_id: str,
+                    revision: str) -> Optional[str]:
   """Download a user build configuration from gitiles."""
-  gitiles_input = {
-      'file': {
-          'host': host,
-          'project': project,
-          'ref': ref,
-          'path': '.cop/build.yaml',
-      }
-  }
+
+  url = 'https://%s/changes/%s/revisions/%s/files/%s/content' % (
+      host, change_id, revision, '.cop%2Fbuild.yaml')
+  data = api.easy.stdout_step('cop-fetch-file', ['curl', '-f', url])
 
   try:
-    gitiles_output = api.support.call('gitiles-fetch-file', gitiles_input)
-  # File not present is returned as InfraFailure
-  except api.step.InfraFailure:
-    return None
-  return gitiles_output['file']['content']
+    return base64.b64decode(data).decode('utf-8')
+  except binascii.Error as e:
+    raise api.step.InfraFailure('CoP file not valid.') from e
 
 
 def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
@@ -161,9 +153,11 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       return
 
   with api.step.nest('check CoP') as presentation:
-    user_yaml = _fetch_cop_file(api, patch_set.short_host, patch_set.project,
-                                patch_set.current_revision)
-    if not user_yaml:
+    try:
+      user_yaml = _fetch_cop_file(api, patch_set.host, patch_set.change_id,
+                                  patch_set.current_revision)
+    # File not present is returned as InfraFailure
+    except api.step.InfraFailure:
       presentation.step_text = 'No cop file: Exiting'
       return
 
@@ -282,17 +276,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
-  gitiles_file = {'file': {'content': 'Testing123',}}
-
   yield api.test('missing-user-yaml', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
-                 api.step_data('check CoP.gitiles-fetch-file',api.json.output(gitiles_file), retcode=1),
+                 api.step_data('check CoP.cop-fetch-file', stdout=api.raw_io.output("NotAbase64")),
                  api.post_check(post_process.StepSuccess, 'check committer'),
                  api.post_check(post_process.DoesNotRun, 'generate build config'),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
+  cop_file = base64.b64encode('{"test_step:" 1}'.encode('ascii'))
   cloud_build = {'id': 'acabad0', 'log_url': 'http://google.com'}
   results = {
       'result': {
@@ -309,7 +302,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('success-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
-                 api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
+                 api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
@@ -321,7 +314,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
                  api.buildbucket.generic_build(bucket='staging'),
-                 api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
+                 api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
@@ -345,7 +338,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('failure-run', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
-                 api.step_data('check CoP.gitiles-fetch-file',stdout=api.json.output(gitiles_file)),
+                 api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
