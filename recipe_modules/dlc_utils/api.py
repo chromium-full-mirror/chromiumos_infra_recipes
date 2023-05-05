@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from recipe_engine import recipe_api
 
@@ -21,6 +21,17 @@ class DlcUtilsApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._dlc_directories = properties.dlc_directories or DEFAULT_DLC_DIRECTORIES
     self._dlc_file_names = properties.dlc_file_names or DEFAULT_DLC_FILE_NAMES
+    self._artifacts_local_path = None
+
+  @property
+  def artifacts_local_path(self) -> str:
+    """Return the local path where artifacts are placed by BAPI, if set."""
+    return self._artifacts_local_path
+
+  @artifacts_local_path.setter
+  def artifacts_local_path(self, artifacts_local_path: str):
+    """Set the local path where artifacts are placed by BAPI."""
+    self._artifacts_local_path = artifacts_local_path
 
   def _get_gs_recursive_uri(self, gs_image_dir: str, dlc_dir: str) -> str:
     """Returns GS path to use for listing DLCs."""
@@ -79,3 +90,40 @@ class DlcUtilsApi(recipe_api.RecipeApi):
               dlc_paths.append(uri)
 
       return dlc_paths
+
+  def get_dlc_artifacts(self, gs_path: str) -> Dict[str, str]:
+    """Retrieves DLC artifact locations and corresponding file hashes.
+
+    Args:
+      gs_path: GS path used to report uploaded artifacts.
+
+    Returns:
+      Dict mapping DLC locations to file hashes.
+    """
+    with self.m.step.nest("Hash DLCs") as pres:
+      dlc_artifacts = {}
+      failed_logs = []
+      # List uploaded DLCs
+      uploaded_dlcs = self.get_dlcs_in_path(gs_path)
+      for uploaded_dlc in uploaded_dlcs:
+        # Look for a local version to hash.
+        local_dlc = uploaded_dlc.replace(gs_path, self.artifacts_local_path)
+        # Double check the local version exists.
+        if self.m.path.exists(local_dlc):
+          file_hash = self.m.file.file_hash(local_dlc, test_data='deadbeef')
+          # Report the uploaded location.
+          dlc_artifacts[uploaded_dlc] = file_hash
+        else:
+          failed_logs.append(
+              f'Failed to find corresponding local DLC (at {local_dlc}) for GS DLC (at {uploaded_dlc}).'
+          )
+          # Fall back to downloading the Google Storage version if we can't avoid the network call.
+          self.m.gcloud.download_file(uploaded_dlc, local_dlc)
+          file_hash = self.m.file.file_hash(local_dlc, test_data='deadbeef')
+          dlc_artifacts[uploaded_dlc] = file_hash
+      if failed_logs:
+        failed_logs = [
+            'The following DLCs were not found locally: '
+        ] + failed_logs + ['Attempting to download from Google Storage.']
+        pres.logs['failed local hashes'] = "\n".join(failed_logs)
+      return dlc_artifacts

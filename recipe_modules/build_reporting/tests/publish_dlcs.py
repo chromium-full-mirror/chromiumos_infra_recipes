@@ -1,0 +1,54 @@
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from PB.chromiumos.build_report import BuildReport
+from recipe_engine import post_process
+
+DEPS = [
+    'build_reporting',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+
+def RunSteps(api):
+  # Basic build setup
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     "build_target")
+
+  # DLC GS locations.
+  api.build_reporting.publish_dlcs([
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img'
+  ])
+
+  # DLC GS locations with hashes.
+  api.build_reporting.publish_dlc_artifacts({
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/libsoda/package/dlc.img':
+          "deadbeef",
+      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-es/package/dlc.img':
+          "beefdead"
+  })
+
+
+def GenTests(api):
+  yield api.test(
+      'publish-dlcs',
+      api.post_check(post_process.LogDoesNotContain,
+                     'build status pubsub update', 'message',
+                     ['dlcArtifactDetails']),
+      api.post_check(
+          post_process.LogContains, 'build status pubsub update', 'message', [
+              '"gcs\": \"gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img\"'
+          ]),
+      api.post_check(post_process.LogContains, 'build status pubsub update (2)',
+                     'message', ['dlcArtifactDetails']),
+      api.post_check(
+          post_process.LogContains, 'build status pubsub update (2)', 'message',
+          [
+              '"gcs\": \"gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/libsoda/package/dlc.img\"'
+          ]),
+      api.post_check(post_process.LogContains, 'build status pubsub update (2)',
+                     'message', ['"sha256\": \"deadbeef\"']),
+      api.post_process(post_process.DropExpectation))

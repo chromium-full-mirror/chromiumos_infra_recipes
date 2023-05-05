@@ -1309,3 +1309,15 @@ class GcloudApi(recipe_api.RecipeApi):
     # Return the recovery name for later deletion (not deleting now because of
     # race condition).
     return fallback_recovery_name
+
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
+  def download_file(self, source_path: str, dest_path: str):
+    """Download Google Storage object.
+
+    Args:
+      source_path: Google Storage path to copy (e.g. 'gs://my-bucket/file.txt')
+      dest_path: Local path to save the object (e.g. '/tmp')
+    """
+    with self.m.context(env={'VIRTUAL_ENV': '1'}):
+      self.m.step('download GS file',
+                  ['gcloud', 'storage', 'cp', source_path, dest_path])

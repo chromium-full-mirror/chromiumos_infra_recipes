@@ -844,9 +844,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # Also generate provenance for all DLCs placed locally by BAPI.
         # TODO(b/277931195): Remove ignore exceptions when stable.
         with self.m.failures.ignore_exceptions():
-          dlc_paths = self.m.dlc_utils.get_dlcs_in_path(outpath,
-                                                        use_local_path=True)
-          for dlc in dlc_paths:
+          self.m.dlc_utils.artifacts_local_path = str(outpath)
+          dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
+              outpath, use_local_path=True)
+          for dlc in dlc_local_paths:
             _, dlc_basename = self.m.path.split(dlc)
             paths_to_hash[dlc] = dlc_basename
 

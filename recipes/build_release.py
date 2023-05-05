@@ -31,7 +31,9 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/futures',
     'recipe_engine/led',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/runtime',
     'recipe_engine/step',
     'bot_scaling',
@@ -69,6 +71,11 @@ def RunSteps(api, properties):
   api.checkpoint.register()
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
   api.cros_release.set_output_properties()
+  # For dlc_utils.get_dlc_artifacts.
+  api.path.mock_add_paths(
+      api.path['cleanup'].join('artifacts_tmp_1/dlc/fake/dlc.img'))
+  api.path.mock_add_paths(
+      api.path['cleanup'].join('artifacts_tmp_1/dlc/fake2/dlc.img'))
 
   if api.cros_infra_config.is_staging and not api.led.run_id:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
@@ -191,8 +198,14 @@ def DoRunSteps(api, config, properties):
               bucket=uploaded_artifacts.gs_bucket,
               path=uploaded_artifacts.gs_path)
           with api.step.nest("publish DLCs to pubsub"):
+            # TODO(b/277931195): Determine whether dlc_locations publishing is
+            # still needed by GoldenEye and remove if not.
             dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
             api.build_reporting.publish_dlcs(dlc_locations)
+            # TODO(b/277931195): Remove when stable.
+            with api.failures.ignore_exceptions():
+              dlc_artifacts = api.dlc_utils.get_dlc_artifacts(gs_image_dir)
+              api.build_reporting.publish_dlc_artifacts(dlc_artifacts)
       except StepFailure as sf:
         # If uploading artifacts threw an exception, surface that exception unless
         # build_images above threw an exception, in which case we want to
@@ -404,6 +417,23 @@ def GenTests(api):
                   MessageToDict(SigningProperties(timeout=5))
           }),
       api.signing.setup_mocks(),
+      api.step_data(
+          'publish DLCs to pubsub.Hash DLCs.Find DLCs.gsutil ls dlc',
+          stdout=api.raw_io.output_text("""
+gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img
+gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
+      """), retcode=0),
+      api.post_check(post_process.LogContains,
+                     'publish DLCs to pubsub.build status pubsub update (2)',
+                     'message', ['dlcArtifactDetails']),
+      api.post_check(
+          post_process.LogContains,
+          'publish DLCs to pubsub.build status pubsub update (2)', 'message', [
+              '"gcs\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img\"'
+          ]),
+      api.post_check(post_process.LogContains,
+                     'publish DLCs to pubsub.build status pubsub update (2)',
+                     'message', ['"sha256\": \"deadbeef\"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),

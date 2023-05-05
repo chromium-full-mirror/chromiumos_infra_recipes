@@ -16,4 +16,7 @@ message DlcUtilsTestProperties {
 
   // Whether dlc_path is a local path (vs. a GS path).
   bool use_local_path = 3;
+
+  // Expected artifacts returned for test case.
+  map<string,string> expected_artifacts = 4;
 }

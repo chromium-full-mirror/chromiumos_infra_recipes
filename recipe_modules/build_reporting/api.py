@@ -22,6 +22,7 @@ the unfiltered top-level topic for all builds.
 
 import base64
 import contextlib
+from typing import Dict
 
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 from google.protobuf.json_format import MessageToJson
@@ -532,5 +533,21 @@ class BuildReportingApi(recipe_api.RecipeApi):
     for location in dlc_locations:
       dlc_artifact = build_report.dlcs.dlc_artifacts.add()
       dlc_artifact.gcs = location
+
+    self.publish(build_report)
+
+  def publish_dlc_artifacts(self, dlc_artifacts: Dict[str, str]):
+    """Publish DLC artifacts to pubsub, including URL and hash.
+
+    Args:
+      dlc_artifacts: DLC locations in GS and file hashes.
+    """
+
+    build_report = BuildReport()
+
+    for location, file_hash in dlc_artifacts.items():
+      dlc_artifact_details = build_report.dlcs.dlc_artifact_details.add()
+      dlc_artifact_details.uri.gcs = location
+      dlc_artifact_details.sha256 = file_hash
 
     self.publish(build_report)

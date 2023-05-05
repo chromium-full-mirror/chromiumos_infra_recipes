@@ -173,6 +173,7 @@
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
+  * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
@@ -384,6 +385,7 @@
   * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught)
   * [dirmd:examples/full](#recipes-dirmd_examples_full)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
+  * [dlc_utils:tests/get_dlc_artifacts](#recipes-dlc_utils_tests_get_dlc_artifacts) &mdash; Tests to verify dlc_utils.
   * [dlc_utils:tests/get_dlcs_in_path](#recipes-dlc_utils_tests_get_dlcs_in_path) &mdash; Tests to verify dlc_utils.
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
   * [dut_interface:tests/full](#recipes-dut_interface_tests_full)
@@ -436,6 +438,7 @@
   * [gce_test](#recipes-gce_test) &mdash; An experimental recipe for running GCE tests.
   * [gcloud:tests/cache_properties](#recipes-gcloud_tests_cache_properties)
   * [gcloud:tests/create_image_from_disk](#recipes-gcloud_tests_create_image_from_disk)
+  * [gcloud:tests/download_file](#recipes-gcloud_tests_download_file)
   * [gcloud:tests/full](#recipes-gcloud_tests_full)
   * [gcloud:tests/gcloud_disks](#recipes-gcloud_tests_gcloud_disks)
   * [gcloud:tests/lookup_device_id](#recipes-gcloud_tests_lookup_device_id)
@@ -1468,22 +1471,22 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#99)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#100)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#113)(build_config, kind, value):**
+&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#114)(build_config, kind, value):**
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#128)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#129)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#225)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#226)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#318)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#319)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1498,9 +1501,9 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#132)(self):**
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#133)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#160)(self, build_report, raise_on_failed_publish=False, override_buildbucket_id=None):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#161)(self, build_report, raise_on_failed_publish=False, override_buildbucket_id=None):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1518,14 +1521,14 @@ Args:
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#245)(self, branch: str):**
+&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#246)(self, branch: str):**
 
 Publish the build's branch.
 
 Args:
   branch: The branch.
 
-&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#282)(self, artifact_type, gs_uri, sha256, created=None):**
+&mdash; **def [publish\_build\_artifact](/recipe_modules/build_reporting/api.py#283)(self, artifact_type, gs_uri, sha256, created=None):**
 
 Publish and merge information about a created artifact.
 
@@ -1541,7 +1544,7 @@ Raises:
 Return:
   None
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#444)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#445)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1550,25 +1553,32 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#523)(self, dlc_locations):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#539)(self, dlc_artifacts: Dict[(str, str)]):**
+
+Publish DLC artifacts to pubsub, including URL and hash.
+
+Args:
+  dlc_artifacts: DLC locations in GS and file hashes.
+
+&mdash; **def [publish\_dlcs](/recipe_modules/build_reporting/api.py#524)(self, dlc_locations):**
 
 Publish DLC locations to pubsub.
 
 Args:
   dlc_locations (List[str]): List of DLC locations in GS.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#464)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#465)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#237)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#238)(self, status):**
 
 Publish and merge build status.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#417)(self, gs_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#418)(self, gs_path=None):**
 
 Create a context manager to automatically publish to gs.
 
@@ -1578,7 +1588,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#509)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#510)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1586,7 +1596,7 @@ Args:
   toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
     usage.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#256)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#257)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1596,19 +1606,19 @@ Args:
 Return:
   Nothing
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#120)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#121)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#124)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#125)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#136)(self, build_type, build_target):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#137)(self, build_type, build_target):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#108)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#109)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#357)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#358)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -2162,7 +2172,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#998)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#999)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -2177,7 +2187,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1032)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1033)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -2206,14 +2216,14 @@ Args:
 Returns:
   Whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#975)(self, properties: List[UploadedArtifacts]):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#976)(self, properties: List[UploadedArtifacts]):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1052)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1053)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -2234,7 +2244,7 @@ Returns:
   is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1221)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1222)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -2247,7 +2257,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1189)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1190)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2314,7 +2324,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#929)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#930)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -5089,14 +5099,28 @@ Args:
 A context wrapper for track().
 ### *recipe_modules* / [dlc\_utils](/recipe_modules/dlc_utils)
 
-[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [gcloud](#recipe_modules-gcloud), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 #### **class [DlcUtilsApi](/recipe_modules/dlc_utils/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module handle special operations around DLCs.
 
-&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#53)(self, path: str, use_local_path: Optional[bool]=False):**
+&emsp; **@artifacts_local_path.setter**<br>&mdash; **def [artifacts\_local\_path](/recipe_modules/dlc_utils/api.py#31)(self, artifacts_local_path: str):**
+
+Set the local path where artifacts are placed by BAPI.
+
+&mdash; **def [get\_dlc\_artifacts](/recipe_modules/dlc_utils/api.py#94)(self, gs_path: str):**
+
+Retrieves DLC artifact locations and corresponding file hashes.
+
+Args:
+  gs_path: GS path used to report uploaded artifacts.
+
+Returns:
+  Dict mapping DLC locations to file hashes.
+
+&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#64)(self, path: str, use_local_path: Optional[bool]=False):**
 
 Retrieves a list of DLCs in the provided local or GS path.
 
@@ -5976,6 +6000,14 @@ Returns:
   Bool of whether the disk exists or not.
 
 &emsp; **@property**<br>&mdash; **def [disk\_short\_name](/recipe_modules/gcloud/api.py#139)(self):**
+
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [download\_file](/recipe_modules/gcloud/api.py#1313)(self, source_path: str, dest_path: str):**
+
+Download Google Storage object.
+
+Args:
+  source_path: Google Storage path to copy (e.g. 'gs://my-bucket/file.txt')
+  dest_path: Local path to save the object (e.g. '/tmp')
 
 &emsp; **@property**<br>&mdash; **def [gce\_disk](/recipe_modules/gcloud/api.py#125)(self):**
 
@@ -10595,14 +10627,14 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#33)(api: RecipeApi):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#27): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#27): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#124)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#131)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#66)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#68)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -10627,6 +10659,12 @@ Recipe for building images for release.
 
 
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#42)(api):**
+### *recipes* / [build\_reporting:tests/publish\_dlcs](/recipe_modules/build_reporting/tests/publish_dlcs.py)
+
+[DEPS](/recipe_modules/build_reporting/tests/publish_dlcs.py#8): [build\_reporting](#recipe_modules-build_reporting)
+
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_dlcs.py#15)(api):**
 ### *recipes* / [build\_reporting:tests/publish\_to\_gs](/recipe_modules/build_reporting/tests/publish_to_gs.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/publish_to_gs.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12159,6 +12197,14 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/disk_usage/examples/full.py#14)(api):**
+### *recipes* / [dlc\_utils:tests/get\_dlc\_artifacts](/recipe_modules/dlc_utils/tests/get_dlc_artifacts.py)
+
+[DEPS](/recipe_modules/dlc_utils/tests/get_dlc_artifacts.py#10): [dlc\_utils](#recipe_modules-dlc_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Tests to verify dlc_utils.get_dlc_artifacts.
+
+&mdash; **def [RunSteps](/recipe_modules/dlc_utils/tests/get_dlc_artifacts.py#26)(api, properties):**
 ### *recipes* / [dlc\_utils:tests/get\_dlcs\_in\_path](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py)
 
 [DEPS](/recipe_modules/dlc_utils/tests/get_dlcs_in_path.py#11): [dlc\_utils](#recipe_modules-dlc_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12500,6 +12546,12 @@ An experimental recipe for running GCE tests.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gcloud/tests/create_image_from_disk.py#22)(api: RecipeApi):**
+### *recipes* / [gcloud:tests/download\_file](/recipe_modules/gcloud/tests/download_file.py)
+
+[DEPS](/recipe_modules/gcloud/tests/download_file.py#7): [gcloud](#recipe_modules-gcloud)
+
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/download_file.py#14)(api):**
 ### *recipes* / [gcloud:tests/full](/recipe_modules/gcloud/tests/full.py)
 
 [DEPS](/recipe_modules/gcloud/tests/full.py#12): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
