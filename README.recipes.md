@@ -10426,15 +10426,15 @@ This recipe should only be used for ToT firmware builds.
 &mdash; **def [UploadTestResults](/recipes/build_firmware.py#45)(api, location, builder_name):**
 ### *recipes* / [build\_incremental](/recipes/build_incremental.py)
 
-[DEPS](/recipes/build_incremental.py#20): [build\_menu](#recipe_modules-build_menu), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_incremental.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#48)(api: RecipeApi, config: BuilderConfig, extra_properties: IncrementalProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#49)(api: RecipeApi, config: BuilderConfig, extra_properties: IncrementalProperties):**
 
-&mdash; **def [RunSteps](/recipes/build_incremental.py#37)(api: RecipeApi, properties: IncrementalProperties):**
+&mdash; **def [RunSteps](/recipes/build_incremental.py#38)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#18): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

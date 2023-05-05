@@ -24,6 +24,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
+    'cros_sdk',
     'git',
     'repo',
 ]
@@ -78,7 +79,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                 retry_fetches=3, force_remove_dirty=True)
 
-  api.build_menu.setup_chroot(update=True)
+  api.cros_sdk.update_chroot(
+      toolchain_targets=[api.build_menu.build_target],
+      build_source=config.build.sdk_update.compile_source)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
   packages = env_info.packages
 
@@ -103,7 +106,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                     retry_fetches=3, force_remove_dirty=True)
 
-      api.build_menu.setup_chroot(update=True)
+      api.cros_sdk.update_chroot(
+          toolchain_targets=[api.build_menu.build_target],
+          build_source=config.build.sdk_update.compile_source)
       if api.build_menu.install_packages(config, packages):
         # Only want to build and test the image once (after the ff/rebuild).
         api.build_menu.build_and_test_images(config)
