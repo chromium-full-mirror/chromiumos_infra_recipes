@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
   * [android](#recipe_modules-android)
+  * [binhost_lookup_service](#recipe_modules-binhost_lookup_service)
   * [bot_cost](#recipe_modules-bot_cost)
   * [bot_scaling](#recipe_modules-bot_scaling)
   * [breakpad](#recipe_modules-breakpad)
@@ -126,6 +127,7 @@
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
   * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
@@ -790,6 +792,27 @@ Args:
 
 Returns:
   List of modified files.
+### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
+
+[DEPS](/recipe_modules/binhost_lookup_service/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+#### **class [BinhostLookupServiceApi](/recipe_modules/binhost_lookup_service/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for operations related to the binhost lookup service.
+
+&mdash; **def [publish\_snapshot\_metadata](/recipe_modules/binhost_lookup_service/api.py#65)(self, snapshot_sha: str, snapshot_num: int, external: bool, buildbucket_id: int, raise_on_failure: bool=False):**
+
+Wrapper function to publish snapshot metadata.
+
+Provides additional exception handling and sets the step presentation data.
+
+Args:
+  snapshot_sha: Unique sha of the snapshot.
+  snapshot_num: Snapshot number.
+  external: Bool to denote if the snapshot is external.
+  buildbucket_id: ID of the annealing builder that created the snapshot.
+  raise_on_failure: Whether to raise an exception on failure.
 ### *recipe_modules* / [bot\_cost](/recipe_modules/bot_cost)
 
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -10325,7 +10348,7 @@ Android uprev.
 &mdash; **def [RunSteps](/recipes/android_uprev_orchestrator.py#61)(api: RecipeApi, properties: AndroidUprevProperties):**
 ### *recipes* / [annealing](/recipes/annealing.py)
 
-[DEPS](/recipes/annealing.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/annealing.py#32): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for the Chrome OS annealing builders.
@@ -10340,7 +10363,15 @@ The annealing builders run in serial and do the following:
 5. Perform post-submit tasks like:
   * push metadata for e.g. Goldeneye, findit
 
-&mdash; **def [RunSteps](/recipes/annealing.py#61)(api, properties):**
+&mdash; **def [RunSteps](/recipes/annealing.py#62)(api, properties):**
+### *recipes* / [binhost\_lookup\_service:examples/publish\_snapshot\_data](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py)
+
+[DEPS](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#13): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test the `publish snapshot metadata` functionality of the module.
+
+&mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#25)(api: RecipeApi, raise_on_failure):**
 ### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

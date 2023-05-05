@@ -38,6 +38,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'binhost_lookup_service',
     'cros_build_api',
     'cros_cq_depends',
     'cros_infra_config',
@@ -256,6 +257,18 @@ def RunSteps(api, properties):
         api.src_state.gitiles_commit = internal_snapshot_commit
         api.cros_tags.add_tags_to_current_build(**dict(
             published_snapshot_id=internal_snapshot_commit.id))
+
+      if ('chromeos.publish.to.binhost_lookup_service'
+          in api.buildbucket.build.input.experiments):
+        with api.step.nest('publish snapshot metadata'):
+          # Publish external snapshot metadata.
+          api.binhost_lookup_service.publish_snapshot_metadata(
+              external_snapshot_commit.id, snapshot_identifier, True,
+              api.buildbucket.build.id)
+          # Publish internal snapshot metadata.
+          api.binhost_lookup_service.publish_snapshot_metadata(
+              external_snapshot_commit.id, snapshot_identifier, False,
+              api.buildbucket.build.id)
 
 
 def _sync_manifest(api, _properties, manifest_ref, prior_internal,
@@ -836,11 +849,14 @@ def GenTests(api):
   # CQ: manifest changes, but no gerrit change to go with it.
   yield api.test(
       'cq-build',
-      api.buildbucket.try_build(project='chromeos',
-                                git_repo=api.src_state.internal_manifest.url,
-                                git_ref='refs/heads/snapshot'),
+      api.buildbucket.try_build(
+          project='chromeos', git_repo=api.src_state.internal_manifest.url,
+          git_ref='refs/heads/snapshot',
+          experiments=['chromeos.publish.to.binhost_lookup_service']),
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot'),
+          **api.binhost_lookup_service.input_properties),
       api.step_data(
           'generate external manifest', stdout=api.raw_io.output_text(
               '<manifest visibility="external">'
@@ -860,6 +876,7 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
+      api.post_check(post_process.MustRun, 'publish snapshot metadata'),
   )
 
   yield api.test(
@@ -878,9 +895,12 @@ def GenTests(api):
 
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
   yield api.test(
-      'cq-build-no-commit',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      'cq-build-no-commit', api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.try_build(
+          experiments=['chromeos.publish.to.binhost_lookup_service']),
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot'),
+          **api.binhost_lookup_service.input_properties),
       api.step_data(
           'generate external manifest', stdout=api.raw_io.output_text(
               '<manifest visibility="external">'
@@ -900,7 +920,7 @@ def GenTests(api):
           'record new gerrit changes.NAME.read git footers', ''),
       api.post_check(post_process.MustRun, 'record new gerrit changes'),
       api.post_check(post_process.MustRun, 'publish internal snapshot'),
-  )
+      api.post_check(post_process.MustRun, 'publish snapshot metadata'))
 
   yield api.test(
       'only-ignored-gerrit-change',
@@ -1061,3 +1081,89 @@ def GenTests(api):
       api.step_data('ensure manifest cq-depend fulfilled.git log', retcode=3),
       status='INFRA_FAILURE',
   )
+
+  # Publish metadata by adding the `chromeos.publish.to.binhost_lookup_service`
+  # experiment.
+  yield api.test(
+      'publish-metadata',
+      api.buildbucket.try_build(
+          project='chromeos', git_repo=api.src_state.internal_manifest.url,
+          git_ref='refs/heads/snapshot',
+          experiments=['chromeos.publish.to.binhost_lookup_service']),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot'),
+          **api.binhost_lookup_service.input_properties),
+      api.step_data(
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.post_check(post_process.StepSuccess, 'publish snapshot metadata'),
+      api.post_check(post_process.DropExpectation))
+
+  # Publish metadata does not run when the
+  # `chromeos.publish.to.binhost_lookup_service`experiment is not enabled.
+  yield api.test(
+      'publish-metadata-does-not-run',
+      api.buildbucket.try_build(project='chromeos',
+                                git_repo=api.src_state.internal_manifest.url,
+                                git_ref='refs/heads/snapshot'),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(
+          AnnealingProperties(manifest_ref='snapshot'),
+          **api.binhost_lookup_service.input_properties),
+      api.step_data(
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.post_check(post_process.DoesNotRun, 'publish snapshot metadata'),
+      api.post_check(post_process.DropExpectation))
+
+  # Publish metadata fails when required properties are not passed.
+  yield api.test(
+      'publish-metadata-no-properties-failure',
+      api.buildbucket.try_build(
+          project='chromeos', git_repo=api.src_state.internal_manifest.url,
+          git_ref='refs/heads/snapshot',
+          experiments=['chromeos.publish.to.binhost_lookup_service']),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'generate internal manifest', stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>')),
+      api.step_data(
+          'diff remote and local manifest.git show',
+          stdout=api.raw_io.output_text(
+              '<manifest><project name="NAME" revision="FROM_REV" /></manifest>'
+          )),
+      api.post_check(post_process.StepException, 'publish snapshot metadata'),
+      api.post_check(post_process.DropExpectation))

@@ -1,0 +1,15 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.binhost_lookup_service;
+
+message BinhostLookupServiceProperties {
+  // The Cloud Pub/Sub project to publish events to.
+  string pubsub_project_id = 1;
+
+  // The Cloud Pub/Sub topic to publish events to update snapshot data.
+  string pubsub_topic_id_update_snapshot_data = 2;
+}

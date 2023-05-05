@@ -5,6 +5,124 @@
   },
   {
     "cmd": [],
+    "name": "configure builder.ensure support CIPD package",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd-support",
+      "-ensure-file",
+      "chromiumos/infra/support/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "configure builder.ensure support CIPD package.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd-support/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "configure builder.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false}",
+    "timeout": 2160,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder.cros_infra_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -13,9 +131,10 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.cros_infra_config.set recipes_git_revision",
+    "name": "configure builder.cros_infra_config.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@experiments@[\"chromeos.publish.to.binhost_lookup_service\"]@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
     ]
   },
@@ -39,6 +158,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -79,7 +210,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@changes@[]@@@"
+      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"project\\\",\\n  \\\"change\\\": \\\"123456\\\",\\n  \\\"patchset\\\": \\\"7\\\"\\n}\"]@@@"
     ]
   },
   {
@@ -90,47 +221,22 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "configure builder.ensure support CIPD package",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd-support",
-      "-ensure-file",
-      "chromiumos/infra/support/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "configure builder.ensure support CIPD package.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/cipd-support/gitiles-fetch-ref"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
@@ -177,6 +283,18 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "set gcloud project"
   },
   {
@@ -216,6 +334,18 @@
       "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -240,6 +370,18 @@
       "name="
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -272,6 +414,18 @@
       "name=initial-chromeos-source-snapshot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -304,6 +458,18 @@
       "name=initial-chromeos-source-snapshot-fallback"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot-fallback",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -344,6 +510,18 @@
       "json(name)"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -370,6 +548,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -388,6 +578,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.mount disk internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -406,6 +608,18 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.determine UUID",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -422,6 +636,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.update fstab for /dev/sds",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromeos ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
@@ -440,6 +666,18 @@
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.write overlayfs branch file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -462,6 +700,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -479,6 +729,18 @@
       "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -505,6 +767,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -537,6 +811,18 @@
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -555,6 +841,18 @@
       "[CACHE]/chromeos/workdir/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -573,6 +871,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -591,6 +901,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -606,6 +928,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git config"
   },
   {
@@ -618,6 +952,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git config (2)"
   },
   {
@@ -644,6 +990,18 @@
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -676,6 +1034,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.ensure root path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -704,6 +1074,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo init",
     "timeout": 900,
     "~followup_annotations": [
@@ -732,6 +1114,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -745,6 +1139,18 @@
     ],
     "cwd": "[CACHE]/chromeos/.repo/repo",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo binary update.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -765,6 +1171,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -785,6 +1203,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -803,6 +1233,18 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -835,6 +1277,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -869,6 +1323,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -899,6 +1365,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -933,6 +1411,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
@@ -968,6 +1458,18 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1014,6 +1516,18 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.ensure synced checkout.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1031,6 +1545,18 @@
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1050,6 +1576,18 @@
     ],
     "cwd": "[CACHE]/chromeos/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync cached directory.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1072,6 +1610,18 @@
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay workspace.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1090,6 +1640,18 @@
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay workspace.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1108,6 +1670,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay workspace.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1126,6 +1700,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1140,6 +1726,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git fetch"
   },
   {
@@ -1150,6 +1748,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "git rev-parse"
   },
   {
@@ -1166,6 +1776,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.git config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1181,6 +1803,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.git config (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1207,6 +1841,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1240,6 +1886,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.ensure root path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1268,6 +1926,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.repo init",
     "timeout": 900,
     "~followup_annotations": [
@@ -1287,6 +1957,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1319,6 +2001,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1353,6 +2047,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1383,6 +2089,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1417,6 +2135,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
@@ -1452,6 +2182,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1498,6 +2240,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.ensure synced checkout.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1516,6 +2270,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1542,6 +2308,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync manifest branches.sync chromeos/manifest-internal branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1555,6 +2333,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync manifest branches.sync chromiumos/manifest branches",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1583,6 +2373,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.fetch deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -1602,6 +2404,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1632,6 +2446,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.repo init",
     "timeout": 900,
     "~followup_annotations": [
@@ -1663,6 +2489,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.repo sync",
     "timeout": 10800,
     "~followup_annotations": [
@@ -1698,6 +2536,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1744,6 +2594,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1773,6 +2635,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.sync to gitiles commit.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1788,6 +2662,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1802,6 +2688,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1817,6 +2715,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1845,6 +2755,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "recreating older run.repo init",
     "timeout": 900,
     "~followup_annotations": [
@@ -1875,6 +2797,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/codesearch-chromiumos.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1893,6 +2827,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/full.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1911,6 +2857,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/_kernel_upstream.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1929,6 +2887,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/_remotes.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1947,6 +2917,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/_toolchain.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1965,6 +2947,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/DIR_METADATA",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1983,6 +2977,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.Copy manifest-internal/README.md",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1996,6 +3002,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2017,6 +3035,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check.git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2032,6 +3062,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2053,6 +3095,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (2).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2068,6 +3122,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (2).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2089,6 +3155,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (3).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2104,6 +3182,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (3).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2125,6 +3215,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (4).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2140,6 +3242,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (4).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2161,6 +3275,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (5).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2176,6 +3302,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (5).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2197,6 +3335,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (6).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2212,6 +3362,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (6).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2233,6 +3395,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (7).git ls-files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2248,6 +3422,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "sync manifests.diff check (7).git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2290,6 +3476,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2311,6 +3509,18 @@
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.call build API script",
     "timeout": 600,
@@ -2336,6 +3546,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2358,6 +3580,7 @@
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:24.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:26Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"uprev packages|uprev packages|call chromite.api.PackageService/Uprev|call build API script\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"uprevPackagesRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
@@ -2382,7 +3605,7 @@
     "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCWnVwcmV2IHBhY2thZ2VzfHVwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKBAQo3CjVbQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL292ZXJsYXkvZm9vLmVidWlsZAo/Cj1bQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1aWxkEgUxLjIuMw==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJadXByZXYgcGFja2FnZXN8dXByZXYgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -2401,8 +3624,20 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNoCWnVwcmV2IHBhY2thZ2VzfHVwcmV2IHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlBhY2thZ2VTZXJ2aWNlL1VwcmV2fGNhbGwgYnVpbGQgQVBJIHNjcmlwdOICAhgB6gKBAQo3CjVbQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL292ZXJsYXkvZm9vLmVidWlsZAo/Cj1bQ0xFQU5VUF0vY2hyb21pdW1vc193b3Jrc3BhY2Uvc3JjL3ByaXZhdGUtb3ZlcmxheS9iYXIuZWJ1aWxkEgUxLjIuMw==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BNAC0OyA2a7xtZJ82gJadXByZXYgcGFja2FnZXN8dXByZXYgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2450,6 +3685,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "uprev packages.revbump chrome.revbump chrome.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2471,6 +3718,18 @@
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "uprev packages.revbump chrome.revbump chrome.call build API script",
     "~followup_annotations": [
@@ -2495,6 +3754,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "uprev packages.revbump chrome.revbump chrome.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2533,6 +3804,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.retrieve project information.repo for src/overlay/foo.ebuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2546,6 +3829,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.retrieve project information.repo for src/private-overlay/bar.ebuild",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2559,6 +3854,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.retrieve project information.repo for src/overlay/foo.ebuild (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2572,6 +3879,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.retrieve project information.repo for src/private-overlay/bar.ebuild (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2603,6 +3922,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2616,17 +3947,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_source/push_uprevs\n",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_source/push_uprevs\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_source/push_uprevs@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -2643,6 +3986,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2667,6 +4022,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2680,17 +4047,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_source/push_uprevs\n",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_source/push_uprevs\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_source/push_uprevs@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
@@ -2707,6 +4086,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2744,6 +4135,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.push to src/overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2763,6 +4166,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.push to src/overlay.git push src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2801,6 +4216,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.push to src/private-overlay.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2820,6 +4247,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "push uprevs.push to src/private-overlay.git push src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2851,6 +4290,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "generate external manifest",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
@@ -2873,6 +4324,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "generate internal manifest",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
@@ -2892,6 +4355,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "diff remote and local manifest.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2905,6 +4380,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "diff remote and local manifest.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2918,6 +4405,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "diff remote and local manifest.git show",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2949,6 +4448,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "diff remote and local manifest.validate NAME.git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2964,6 +4475,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "diff remote and local manifest.validate NAME.git merge-base (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2991,6 +4514,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "check reachability.git merge-base",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3016,6 +4551,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "ensure manifest cq-depend fulfilled.git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3052,6 +4599,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record new gerrit changes.NAME.git log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -3068,6 +4627,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/NAME",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "record new gerrit changes.NAME.read git footers",
     "stdin": "message",
     "~followup_annotations": [
@@ -3087,6 +4658,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "fetch previous snapshot identifier.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3100,6 +4683,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "fetch previous snapshot identifier.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3115,6 +4710,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "fetch previous snapshot identifier.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3133,6 +4740,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3146,6 +4765,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3160,6 +4791,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git symbolic-ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3175,6 +4818,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3196,6 +4851,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.create commit message.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -3209,6 +4876,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3224,6 +4903,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish external snapshot.git checkout (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3250,6 +4941,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3263,6 +4966,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3277,6 +4992,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git symbolic-ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3292,6 +5019,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3313,6 +5052,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.create commit message.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -3326,6 +5077,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git rev-parse (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3341,6 +5104,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "publish internal snapshot.git checkout (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3379,6 +5154,119 @@
   },
   {
     "cmd": [],
+    "name": "publish snapshot metadata"
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot metadata.publish external snapshot metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"snapshotSha\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"snapshotNum\": 1000001,@@@",
+      "@@@STEP_LOG_LINE@published event@  \"external\": true,@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildbucketId\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot metadata.publish external snapshot metadata.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPRgBINDsgNmu8bWSfA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-prebuilts',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'test_topic_id_update_snapshot_data'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd-support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish snapshot metadata.publish external snapshot metadata.publish message.publish-message",
+    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPRgBINDsgNmu8bWSfA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"test_topic_id_update_snapshot_data\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot metadata.publish internal snapshot metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"snapshotSha\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"snapshotNum\": 1000001,@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildbucketId\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "publish snapshot metadata.publish internal snapshot metadata.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPSDQ7IDZrvG1knw=',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-prebuilts',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'test_topic_id_update_snapshot_data'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd-support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish snapshot metadata.publish internal snapshot metadata.publish message.publish-message",
+    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPSDQ7IDZrvG1knw=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"test_topic_id_update_snapshot_data\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
@@ -3394,6 +5282,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.unmount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3407,6 +5307,18 @@
       "[CACHE]/chromeos/workdir"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3418,6 +5330,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3431,6 +5355,18 @@
       "[CACHE]/workspace/workdir"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
