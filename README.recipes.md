@@ -674,7 +674,7 @@
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#72)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#197)(self, request: Any, response: Any):**
+&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#157)(self, request: Any, response: Any):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -695,7 +695,7 @@ Args:
 Return:
   Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#221)(self, request: Any, response: Any, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: str=None):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#180)(self, request: Any, response: Any, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: str=None):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -813,11 +813,11 @@ Args:
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotScalingApi](/recipe_modules/bot_scaling/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that determines how to scale bot groups.
 
-&mdash; **def [drop\_cpu\_cores](/recipe_modules/bot_scaling/api.py#42)(self, min_cpus_left=4, max_drop_ratio=0.75, test_rand=None):**
+&mdash; **def [drop\_cpu\_cores](/recipe_modules/bot_scaling/api.py#48)(self, min_cpus_left=4, max_drop_ratio=0.75, test_rand=None):**
 
 Gather data on build's per core scaling efficiencies.
 
@@ -836,7 +836,7 @@ Args:
 
 Returns: The number of cpus dropped.
 
-&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#178)(self, demand, scaling_restriction):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#184)(demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -848,7 +848,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#304)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#311)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -860,19 +860,18 @@ Returns:
   ConfigResponse (named_tuple), GCE Provider config definitions and missing
     configs.
 
-&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#321)(self, region_restrictions, config_map):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#328)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
 
 Sums the total number of configured bots per bot policy.
 
 Args:
-  region_restrictions(list[RegionRestriction]): Regional preferences
-    from config.
-  config_map(dict|Config): Map of GCE Config to prefix
+  region_restrictions: Regional preferences from config.
+  config_map: Map of prefix to GCE Config.
 
 Returns:
-  int, sum of the total number of bots in GCE Provider
+  Sum of the total number of bots in GCE Provider
 
-&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#196)(self, bots_requested, region_restrictions):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#203)(bots_requested: int, region_restrictions: List[BotPolicy.RegionRestriction]):**
 
 Determines regional distribution of bot requests.
 
@@ -880,14 +879,13 @@ This function uses a running total and residual to ensure we're accurate
 in computing totals to equal bots_requested.
 
 Args:
-  bots_requested(int): Total number of bots requested.
-  region_restrictions(list[RegionRestriction]): Regional preferences
-    from config.
+  bots_requested: Total number of bots requested.
+  region_restrictions: Regional preferences from config.
 
 Returns:
-  list[RegionalAction], region wise distribution of bots requested.
+  Region wise distribution of bots requested.
 
-&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#93)(self, bot_policy_config, configs, swarming_stats):**
+&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#99)(self, bot_policy_config, configs, swarming_stats):**
 
 Function to compute all the actions of this RoboCrop.
 
@@ -901,7 +899,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#135)(self, demand, bot_policy, configs):**
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#141)(self, demand, bot_policy, configs):**
 
 The function that creates a ScalingAction for a bot group.
 
@@ -913,19 +911,18 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#232)(self, swarming_stats, bot_group):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#242)(swarming_stats: SwarmingStats, bot_group: str):**
 
 Return the demand for bots in a bot group.
 
 Args:
-  swarming_stats(SwarmingStats): Named tuple containing bot and task
-    Swarming stats.
-  bot_group (str): Name of bot group
+  swarming_stats: Named tuple containing bot and task Swarming stats.
+  bot_group: Name of bot group.
 
 Returns:
-  int, the current demand for bots in the group.
+  The current demand for bots in the group.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#280)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#287)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -936,19 +933,17 @@ Args:
 Returns:
   SwarmingStats:  bot and task stats named tuple.
 
-&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#361)(self, bot_policy_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#371)(bot_policy_config: BotPolicyCfg):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
 Args:
-  bot_policy_config(BotPolicyCfg): Config define Policy for
-    the RoboCrop.
+  bot_policy_config: Config define Policy for the RoboCrop.
 
 Returns:
-  str, scaled down config that only includes data needed
-  for plx
+  Scaled-down config that only includes data needed for Plx.
 
-&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#414)(self, dimensions):**
+&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#424)(dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -958,19 +953,19 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#338)(self, bot_policy_config, configs):**
+&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#346)(bot_policy_config: BotPolicyCfg, configs: Configs):**
 
 Sums the min and max bot numbers per bot policy.
 
 Args:
-  bot_policy_config(BotPolicyCfg): Config define Policy for
-    the RoboCrop.
-  config_map(dict|Config): Map of GCE Config to prefix
+  bot_policy_config: Config define Policy for the RoboCrop.
+  configs: GCE Configs.
 
 Returns:
-  BotPolicy, updated to reflect ScalingRestriction values.
+  The original bot_policy_config, updated to reflect ScalingRestriction
+  values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#385)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#395)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -6346,11 +6341,11 @@ Args:
 
 API for working with git.
 
-#### **class [GitApi](/recipe_modules/git/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitApi](/recipe_modules/git/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with git.
 
-&mdash; **def [add](/recipe_modules/git/api.py#76)(self, paths):**
+&mdash; **def [add](/recipe_modules/git/api.py#77)(self, paths):**
 
 Add/stage paths.
 
@@ -6360,7 +6355,7 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   paths (list[str|Path]): The file paths to stage.
 
-&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#335)(self, message, \*\*kwargs):**
+&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#336)(self, message, \*\*kwargs):**
 
 Runs 'git commit --amend' with the given description.
 
@@ -6368,7 +6363,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#810)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#811)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -6377,7 +6372,7 @@ Args:
 
 Returns: (str): commit author email.
 
-&mdash; **def [branch\_exists](/recipe_modules/git/api.py#850)(self, branch):**
+&mdash; **def [branch\_exists](/recipe_modules/git/api.py#851)(self, branch):**
 
 Check if a branch exists.
 
@@ -6386,7 +6381,7 @@ Args:
 
 Returns: (bool) Whether or not the branch exists.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#258)(self, commit=None, force=False, branch=None):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#259)(self, commit=None, force=False, branch=None):**
 
 Runs 'git checkout'.
 
@@ -6395,7 +6390,7 @@ Args:
   force (bool): If True, throw away local changes (--force).
   branch (Optional[str]): The branch to check out a commit from.
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#305)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#306)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
@@ -6403,11 +6398,11 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [cherry\_pick\_abort](/recipe_modules/git/api.py#331)(self):**
+&mdash; **def [cherry\_pick\_abort](/recipe_modules/git/api.py#332)(self):**
 
 Runs 'git cherry_pick --abort'.
 
-&mdash; **def [cherry\_pick\_silent\_fail](/recipe_modules/git/api.py#315)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick\_silent\_fail](/recipe_modules/git/api.py#316)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick' and returns whether the cherry-pick succeeded.
 
@@ -6415,7 +6410,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#629)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
+&mdash; **def [clone](/recipe_modules/git/api.py#630)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -6433,7 +6428,7 @@ Args:
   verbose (bool): If set, run git clone as verbose.
   progress (bool): If set, print progress to stdout.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#352)(self, message, files=None, author=None, \*\*kwargs):**
+&mdash; **def [commit](/recipe_modules/git/api.py#353)(self, message, files=None, author=None, \*\*kwargs):**
 
 Runs 'git commit' with the given files.
 
@@ -6444,7 +6439,7 @@ Args:
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_branch](/recipe_modules/git/api.py#836)(self, branch, remote_branch=None):**
+&mdash; **def [create\_branch](/recipe_modules/git/api.py#837)(self, branch, remote_branch=None):**
 
 Create a branch.
 
@@ -6454,7 +6449,7 @@ Args:
   * remote_branch (str): Name of the remote branch to track, e.g.
     origin/main or cros/mybranch.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#615)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#616)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -6466,7 +6461,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#433)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#434)(self):**
 
 Returns the currently checked out branch name.
 
@@ -6474,13 +6469,13 @@ Returns:
   (str): The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
-&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#866)(self, branch):**
+&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#867)(self, branch):**
 
 Deletes the local branch (if it exists).
 Args:
   branch (str): Name of the branch to be deleted.
 
-&mdash; **def [diff\_check](/recipe_modules/git/api.py#87)(self, path):**
+&mdash; **def [diff\_check](/recipe_modules/git/api.py#88)(self, path):**
 
 Check if the given file changed from HEAD.
 
@@ -6491,7 +6486,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#695)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#696)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -6505,7 +6500,7 @@ Args:
 Returns:
   (str): the extracted branch name.
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#175)(self, remote, refs=None, timeout_sec=None, retries=2):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#176)(self, remote, refs=None, timeout_sec=None, retries=2):**
 
 Runs 'git fetch'.
 
@@ -6515,7 +6510,7 @@ Args:
   timeout_sec (int): Timeout in seconds.
   retries (int): Number of times to retry.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#229)(self, remote, ref, timeout_sec=None):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#230)(self, remote, ref, timeout_sec=None):**
 
 Fetch a ref, and return the commit ID (SHA).
 
@@ -6527,7 +6522,7 @@ Args:
 Returns:
   (str): The commit ID (SHA) of the fetched ref.
 
-&mdash; **def [fetch\_refs](/recipe_modules/git/api.py#190)(self, remote, ref, timeout_sec=None, count=1, test_ids=None):**
+&mdash; **def [fetch\_refs](/recipe_modules/git/api.py#191)(self, remote, ref, timeout_sec=None, count=1, test_ids=None):**
 
 Fetch a list of remote refs.
 
@@ -6541,7 +6536,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#714)(self, branch):**
+&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#715)(self, branch):**
 
 Creates the full ref for a branch.
 
@@ -6553,7 +6548,7 @@ Args:
 Returns:
   (str): The ref for the branch.
 
-&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#118)(self, from_rev=None, to_rev=None, test_stdout=None):**
+&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#119)(self, from_rev=None, to_rev=None, test_stdout=None):**
 
 Runs 'git diff' to find files changed between two revs.
 
@@ -6569,7 +6564,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#729)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#730)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -6579,11 +6574,11 @@ Args:
 Returns:
   (list[str]): parent commit hash(es).
 
-&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#149)(self):**
+&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#150)(self):**
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#754)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#755)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -6594,15 +6589,15 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#476)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#477)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#484)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#485)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#743)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#744)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -6612,7 +6607,7 @@ Args:
 Returns:
   (bool): whether the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#548)(self, revision, head='HEAD'):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#549)(self, revision, head='HEAD'):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -6623,7 +6618,7 @@ Args:
 Returns:
   (bool): Whether the revision is reachable from (is an ancestor of) |head|.
 
-&mdash; **def [log](/recipe_modules/git/api.py#515)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#516)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -6636,7 +6631,7 @@ Args:
 Returns:
   (list[Commit]): A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#494)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#495)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -6647,7 +6642,7 @@ Args:
 Returns:
   (list[Reference]): A list of Refs.
 
-&mdash; **def [merge](/recipe_modules/git/api.py#275)(self, ref, message, \*args, \*\*kwargs):**
+&mdash; **def [merge](/recipe_modules/git/api.py#276)(self, ref, message, \*args, \*\*kwargs):**
 
 Runs `git merge`.
 
@@ -6657,11 +6652,11 @@ Args:
   args (tuple): Additional arguments to git merge.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [merge\_abort](/recipe_modules/git/api.py#327)(self):**
+&mdash; **def [merge\_abort](/recipe_modules/git/api.py#328)(self):**
 
 Runs 'git merge --abort'.
 
-&mdash; **def [merge\_base](/recipe_modules/git/api.py#581)(self, \*args, \*\*kwargs):**
+&mdash; **def [merge\_base](/recipe_modules/git/api.py#582)(self, \*args, \*\*kwargs):**
 
 Return the output from `git merge-base`.
 
@@ -6672,7 +6667,7 @@ Args:
 Returns:
   (str) stdout of the command, or None for errors.
 
-&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#287)(self, ref, message, \*\*kwargs):**
+&mdash; **def [merge\_silent\_fail](/recipe_modules/git/api.py#288)(self, ref, message, \*\*kwargs):**
 
 Runs `git merge` and returns whether the merge succeeded.
 
@@ -6686,7 +6681,7 @@ Args:
 Returns:
   (bool): whether the merge succeeded
 
-&mdash; **def [push](/recipe_modules/git/api.py#408)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
+&mdash; **def [push](/recipe_modules/git/api.py#409)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
 
 Runs 'git push'.
 
@@ -6703,7 +6698,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#669)(self, force=False, branch=None, strategy_option=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#670)(self, force=False, branch=None, strategy_option=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -6713,13 +6708,13 @@ Args:
   strategy_option (str): If set, sets the --strategy-option flag. See
     `git help rebase` for details.
 
-&mdash; **def [remote](/recipe_modules/git/api.py#822)(self):**
+&mdash; **def [remote](/recipe_modules/git/api.py#823)(self):**
 
 Return the name of the remote.
 
 Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#450)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#451)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -6730,7 +6725,7 @@ Returns:
    (str): ref contained in the remote HEAD (ie the default branch), or None
       on error.
 
-&emsp; **@exponential_retry(retries=19, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#248)(self, step_name, timeout_sec=None):**
+&emsp; **@exponential_retry(retries=19, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#249)(self, step_name, timeout_sec=None):**
 
 Runs 'git remote update'.
 
@@ -6738,7 +6733,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#778)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#779)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -6748,7 +6743,7 @@ Args:
 Returns:
   URL to the remote on success
 
-&mdash; **def [repository\_root](/recipe_modules/git/api.py#60)(self, step_name=None):**
+&mdash; **def [repository\_root](/recipe_modules/git/api.py#61)(self, step_name=None):**
 
 Return the git repository root for the current directory.
 
@@ -6758,14 +6753,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#687)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#688)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#794)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#795)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -6776,7 +6771,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#598)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#599)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -6787,7 +6782,7 @@ Args:
 Returns:
   (str): The contents of the file, None if the file does not exist in |rev|.
 
-&mdash; **def [stash](/recipe_modules/git/api.py#862)(self):**
+&mdash; **def [stash](/recipe_modules/git/api.py#863)(self):**
 
 Stash changes.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
@@ -7582,33 +7577,33 @@ Returns:
 
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#21)(self, build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#26)(build: build_pb2.Build):**
 
 Get a string to describe the build.
 
 Args:
-  build (Build): The build to describe.
+  build: The build to describe.
 
 Returns:
-  str: A string describing the build.
+  A string describing the build.
 
-&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#95)(self, commit):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#103)(commit: Commit):**
 
 Get a string to describe the commit.
 
 This is typically the first line of the commit message.
 
 Args:
-  commit (Commit): The commit in question. See recipe_modules/git/api.py
+  commit: The commit in question. See recipe_modules/git/api.py
 
 Returns:
-  str: The commit title.
+  The commit title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#168)(req):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#179)(req):**
 
 Get a presentation name for a single GenerationRequest.
 
@@ -7619,27 +7614,27 @@ Args:
 Returns:
   A string providing helpful info about that payload.
 
-&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(self, hw_test):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#53)(hw_test: HwTestCfg.HwTest):**
 
 Get a string to describe the HW test.
 
 Args:
-  hw_test (HwTest): The HW test in question.
+  hw_test: The HW test in question.
 
 Returns:
-  str: The HW test title.
+  The HW test title.
 
-&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#110)(self, package):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#119)(package: common_pb2.PackageInfo):**
 
 Get a string to describe the package.
 
 Args:
-  package (PackageInfo): The package in question.
+  package: The package in question.
 
 Returns:
-  str: The package title.
+  The package title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#124)(build_id, paygen_request_dicts):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#134)(build_id: int, paygen_request_dicts: List[Dict]):**
 
 Get a presentation name for a build running a batch of PaygenRequests.
 
@@ -7651,45 +7646,45 @@ Args:
 Returns:
   A string providing helpful info about the paygens being run.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#76)(self, skylab_result: SkylabResult):**
 
 Get a string to describe the HW test.
 
 Args:
-  skylab_result (SkylabResult): The Skylab result in question.
+  skylab_result: The Skylab result in question.
 
 Returns:
-  str: The HW test title.
+  The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#58)(self, skylab_task):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#65)(self, skylab_task: SkylabTask):**
 
 Get a string to describe the Skylab task.
 
 Args:
-  skylab_task (SkylabTask): The Skylab task in question.
+  skylab_task: The Skylab task in question.
 
 Returns:
-  str: The Skylab task title.
+  The Skylab task title.
 
-&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#32)(self, test):**
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#38)(self, test: Union[(SkylabResult, build_pb2.Build)]):**
 
 Get a string to describe the test.
 
 Args:
-  test (SkylabResult|Build): The test in question.
+  test: The test in question.
 
 Returns:
   A str describing the test.
 
-&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#80)(self, vm_test):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_vm\_test\_title](/recipe_modules/naming/api.py#87)(vm_test: build_pb2.Build):**
 
 Get a string to describe the VM test.
 
 Args:
-  vm_test (Build): The buildbucket build for the VM test.
+  vm_test: The buildbucket build for the VM test.
 
 Returns:
-  str: A string describing the VM test.
+  A string describing the VM test.
 ### *recipe_modules* / [observability\_image\_size](/recipe_modules/observability_image_size)
 
 [DEPS](/recipe_modules/observability_image_size/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8530,7 +8525,7 @@ Return the checkout path where the build is processed.
 
 A module for util functions associated with ResultDB.
 
-&mdash; **def [get\_build\_target\_from\_variant](/recipe_modules/rdb_util/api.py#43)(self, variant: Variant):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_from\_variant](/recipe_modules/rdb_util/api.py#45)(variant: Variant):**
 
 Get build_target info from Variant definition.
 
@@ -8539,7 +8534,7 @@ Args:
 
 Returns: build_target of the test or ''.
 
-&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#30)(self, test_config: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#31)(test_config: str):**
 
 Get the test config without shard suffix.
 
@@ -8550,7 +8545,7 @@ Args:
 Returns:
   A string of just the test config name registered in RDB without the shard info.
 
-&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#15)(self, composite_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#15)(composite_name: str):**
 
 Get the name of the suite of a VM/GCE run from the composite name.
 
@@ -9688,37 +9683,36 @@ API to simpify testing Chrome OS recipes.
 A module providing test methods to simplify testing Chrome OS recipes.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
-[DEPS](/recipe_modules/urls/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
 API for creating task URLs out of complex data structures.
 
-#### **class [UrlsApi](/recipe_modules/urls/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [UrlsApi](/recipe_modules/urls/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for creating links to tasks.
 
-&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#22)(self, build):**
+&mdash; **def [get\_build\_link\_map](/recipe_modules/urls/api.py#28)(self, build: build_pb2.Build):**
 
-Returns the title->URL to the given buildbucket build.
+Returns a {title->URL} for the given buildbucket build.
 
 Args:
-  build (Build): The buildbucket build in question.
+  build: The buildbucket build in question.
 
 Returns:
-  str->str: title->URL pointing to the build milo page.
+  Dict of {title: URL} pointing to the build's MILO page.
 
-&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#153)(self, gs_path):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gs\_path\_url](/recipe_modules/urls/api.py#162)(gs_uri):**
 
 Returns the Cloud Storage Browser URL to the given GS path.
 
 Args:
-  gs_path (str): A string of the format "gs://<bucket>/<object>"
+  gs_uri: A string of the format "gs://<bucket>/<object>"
 
 Returns:
-  str: URL pointing to the Cloud Storage Browser page for the
-    object.
+  URL pointing to the Cloud Storage Browser page for the object.
 
-&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#173)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
+&mdash; **def [get\_logdog\_url](/recipe_modules/urls/api.py#177)(self, step: step_data.StepData, log_name: str, use_top_level_step: bool=True):**
 
 Returns the LogDog URL for a step's log.
 
@@ -9741,47 +9735,47 @@ Args:
 Returns:
   The LogDog URL.
 
-&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#68)(self, skylab_result):**
+&mdash; **def [get\_skylab\_result\_link\_map](/recipe_modules/urls/api.py#75)(self, skylab_result: SkylabResult):**
 
 Returns the URL to the given skylab result page.
 
 Args:
-  skylab_task (SkylabResult): The Skylab result in question.
+  skylab_task: The Skylab result in question.
 
 Returns:
-  str->str map: title to URL to the skylab swarming task page
-  if the suite succeeded or entries of just the failed tests.
+  Dict of {title: URL} for the Skylab swarming task parge if the suite
+  succeeded, or entries of just the failed tests.
 
-&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#57)(self, skylab_task):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_skylab\_task\_url](/recipe_modules/urls/api.py#63)(skylab_task: SkylabTask):**
 
 Returns the URL to the given skylab task.
 
 Args:
-  skylab_task (SkylabTask): The Skylab task in question.
+  skylab_task: The Skylab task in question.
 
 Returns:
-  str: URL pointing to the skylab swarming task page.
+  URL pointing to the Swarming task page for the Skylab task.
 
-&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#132)(self, task_state):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_state\_suffix](/recipe_modules/urls/api.py#140)(task_state: TaskState):**
 
-String suffix to supply info about the task.
+Returns a string suffix to supply info about the task.
 
 Args:
-  tast_state(TaskState): The task state.
+  tast_state: The task state.
 
 Returns:
-  str, denoting more information about the task.
+  A string denoting more information about the task.
 
-&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#34)(self, vm_test):**
+&mdash; **def [get\_vm\_test\_link\_map](/recipe_modules/urls/api.py#40)(self, vm_test: build_pb2.Build):**
 
-Returns the title->URL results from the given VM test.
+Returns a {title: URL} dict for the given VM test build.
 
 Args:
-  vm_test (Build): The vm test in question.
+  vm_test: The VM test build in question.
 
 Returns:
-  str->str: title->URL pointing to the vm_test's milo page.
-    For direct-vm tests, the individual failing tests are listed.
+  Dict of {title: URL} pointing to the vm_test's MILO page.
+  For direct-vm tests, the individual failing tests are listed.
 ### *recipe_modules* / [util](/recipe_modules/util)
 
 [DEPS](/recipe_modules/util/__init__.py#10): [recipe\_engine/path][recipe_engine/recipe_modules/path]

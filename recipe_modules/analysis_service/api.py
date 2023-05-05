@@ -78,45 +78,6 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         properties.pubsub_topic_id or "analysis-service-events")
     self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
-  def _get_field_name_by_matching_type(self, oneof_name: str,
-                                       message: Any) -> Optional[str]:
-    """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
-
-    Args:
-      oneof_name: The name of a oneof on 'analysis_service_event'.
-      message (proto in an AnalysisServiceEvent oneof): The proto that will be
-        copied to 'analysis_service_event'.
-
-    For example, if 'oneof_name' is request, and 'message' is of type,
-    InstallPackagesRequest, the returned field name will be
-    'install_packages_request'.
-
-    Return:
-      A str if there is a matching field, None otherwise.
-    """
-    # The type name of 'message'.
-    message_type_name = message.DESCRIPTOR.full_name
-
-    # Iterate the possible values of 'oneof_name'. Create a list of all that
-    # match the type of 'message'.
-    oneof_descriptor = AnalysisServiceEvent(
-    ).DESCRIPTOR.oneofs_by_name[oneof_name]
-
-    matching_field_descriptors = []
-    for field_descriptor in oneof_descriptor.fields:
-      if field_descriptor.message_type.full_name == message_type_name:
-        matching_field_descriptors.append(field_descriptor)
-
-    # Check there is no more than one value of 'oneof_name' that has the same
-    # type as 'message'.
-    assert len(matching_field_descriptors) <= 1, (
-        'Expected exactly no more than one type in {} to be of type {}. '
-        'Found {}.').format(oneof_name, message_type_name,
-                            len(matching_field_descriptors))
-
-    return (matching_field_descriptors[0].name
-            if matching_field_descriptors else None)
-
   def _set_oneof_by_matching_type(self,
                                   analysis_service_event: AnalysisServiceEvent,
                                   oneof_name: str, message: Any):
@@ -150,8 +111,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is None, '{} is already set.'.format(oneof_name)
 
-    matching_field_name = self._get_field_name_by_matching_type(
-        oneof_name, message)
+    matching_field_name = _get_field_name_by_matching_type(oneof_name, message)
 
     # Callers should check can_publish_event, so there must be a returned
     # field name.
@@ -214,9 +174,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     Return:
       Whether an event can be published.
     """
-    return self._get_field_name_by_matching_type(
-        'request', request) and self._get_field_name_by_matching_type(
-            'response', response)
+    return (_get_field_name_by_matching_type('request', request) and
+            _get_field_name_by_matching_type('response', response))
 
   def publish_event(self, request: Any, response: Any, request_time: Timestamp,
                     response_time: Timestamp, step_data: StepData,
@@ -280,3 +239,43 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       event_b64 = base64.b64encode(event_serialized).decode()
       self.m.cloud_pubsub.publish_message(self._pubsub_project_id,
                                           self._pubsub_topic_id, event_b64)
+
+
+def _get_field_name_by_matching_type(oneof_name: str,
+                                     message: Any) -> Optional[str]:
+  """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
+
+  Args:
+    oneof_name: The name of a oneof on 'analysis_service_event'.
+    message (proto in an AnalysisServiceEvent oneof): The proto that will be
+      copied to 'analysis_service_event'.
+
+  For example, if 'oneof_name' is request, and 'message' is of type,
+  InstallPackagesRequest, the returned field name will be
+  'install_packages_request'.
+
+  Return:
+    A str if there is a matching field, None otherwise.
+  """
+  # The type name of 'message'.
+  message_type_name = message.DESCRIPTOR.full_name
+
+  # Iterate the possible values of 'oneof_name'. Create a list of all that
+  # match the type of 'message'.
+  oneof_descriptor = AnalysisServiceEvent(
+  ).DESCRIPTOR.oneofs_by_name[oneof_name]
+
+  matching_field_descriptors = []
+  for field_descriptor in oneof_descriptor.fields:
+    if field_descriptor.message_type.full_name == message_type_name:
+      matching_field_descriptors.append(field_descriptor)
+
+  # Check there is no more than one value of 'oneof_name' that has the same
+  # type as 'message'.
+  assert len(matching_field_descriptors) <= 1, (
+      'Expected exactly no more than one type in {} to be of type {}. '
+      'Found {}.').format(oneof_name, message_type_name,
+                          len(matching_field_descriptors))
+
+  return (matching_field_descriptors[0].name
+          if matching_field_descriptors else None)

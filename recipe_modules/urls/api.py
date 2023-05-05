@@ -5,41 +5,47 @@
 
 """API for creating task URLs out of complex data structures."""
 
-from recipe_engine import recipe_api, step_data
+from typing import Dict
+
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.test_platform.taskstate import TaskState
+from recipe_engine import recipe_api
+from recipe_engine import step_data
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
+
+_LOGDOG_URL_TEMPLATE = (
+    'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
+    '+/u/%(step_name)s/%(log_name)s')
 
 
 class UrlsApi(recipe_api.RecipeApi):
   """A module for creating links to tasks."""
 
-  # pylint: disable=unused-argument
-  def __init__(self, properties, **kwargs):
-    super().__init__(**kwargs)
-
-  def get_build_link_map(self, build):
-    """Returns the title->URL to the given buildbucket build.
+  def get_build_link_map(self, build: build_pb2.Build) -> Dict[str, str]:
+    """Returns a {title->URL} for the given buildbucket build.
 
     Args:
-      build (Build): The buildbucket build in question.
+      build: The buildbucket build in question.
 
     Returns:
-      str->str: title->URL pointing to the build milo page.
+      Dict of {title: URL} pointing to the build's MILO page.
     """
     link_url = self.m.buildbucket.build_url(build_id=build.id)
     return {'build page': link_url}
 
-  def get_vm_test_link_map(self, vm_test):
-    """Returns the title->URL results from the given VM test.
+  def get_vm_test_link_map(self, vm_test: build_pb2.Build) -> Dict[str, str]:
+    """Returns a {title: URL} dict for the given VM test build.
 
     Args:
-      vm_test (Build): The vm test in question.
+      vm_test: The VM test build in question.
 
     Returns:
-      str->str: title->URL pointing to the vm_test's milo page.
-        For direct-vm tests, the individual failing tests are listed.
+      Dict of {title: URL} pointing to the vm_test's MILO page.
+      For direct-vm tests, the individual failing tests are listed.
     """
     link_url = self.m.buildbucket.build_url(build_id=vm_test.id)
     if 'failed_test_cases' in vm_test.output.properties and len(
@@ -54,26 +60,28 @@ class UrlsApi(recipe_api.RecipeApi):
       return link_map
     return {'test page': link_url}
 
-  def get_skylab_task_url(self, skylab_task):
+  @staticmethod
+  def get_skylab_task_url(skylab_task: SkylabTask) -> str:
     """Returns the URL to the given skylab task.
 
     Args:
-      skylab_task (SkylabTask): The Skylab task in question.
+      skylab_task: The Skylab task in question.
 
     Returns:
-      str: URL pointing to the skylab swarming task page.
+      URL pointing to the Swarming task page for the Skylab task.
     """
     return skylab_task.url
 
-  def get_skylab_result_link_map(self, skylab_result):
+  def get_skylab_result_link_map(self,
+                                 skylab_result: SkylabResult) -> Dict[str, str]:
     """Returns the URL to the given skylab result page.
 
     Args:
-      skylab_task (SkylabResult): The Skylab result in question.
+      skylab_task: The Skylab result in question.
 
     Returns:
-      str->str map: title to URL to the skylab swarming task page
-      if the suite succeeded or entries of just the failed tests.
+      Dict of {title: URL} for the Skylab swarming task parge if the suite
+      succeeded, or entries of just the failed tests.
     """
     failure_verdicts = (TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED)
     if (skylab_result.status == common_pb2.SUCCESS or
@@ -129,14 +137,15 @@ class UrlsApi(recipe_api.RecipeApi):
 
     return link_map
 
-  def get_state_suffix(self, task_state):
-    """String suffix to supply info about the task.
+  @staticmethod
+  def get_state_suffix(task_state: TaskState) -> str:
+    """Returns a string suffix to supply info about the task.
 
     Args:
-      tast_state(TaskState): The task state.
+      tast_state: The task state.
 
     Returns:
-      str, denoting more information about the task.
+      A string denoting more information about the task.
     """
     if task_state.life_cycle == TaskState.LIFE_CYCLE_CANCELLED:
       return ' (canceled before starting)'
@@ -150,25 +159,20 @@ class UrlsApi(recipe_api.RecipeApi):
       return ' (timed out waiting for available DUT)'
     return ''
 
-  def get_gs_path_url(self, gs_path):
+  @staticmethod
+  def get_gs_path_url(gs_uri):
     """Returns the Cloud Storage Browser URL to the given GS path.
 
     Args:
-      gs_path (str): A string of the format "gs://<bucket>/<object>"
+      gs_uri: A string of the format "gs://<bucket>/<object>"
 
     Returns:
-      str: URL pointing to the Cloud Storage Browser page for the
-        object.
+      URL pointing to the Cloud Storage Browser page for the object.
     """
 
-    if not gs_path.startswith('gs://'):
-      raise ValueError('gs_path argument must start with "gs://"')
-
-    return 'https://storage.cloud.google.com/' + gs_path[len('gs://'):]
-
-  _LOGDOG_URL_TEMPLATE = (
-      'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
-      '+/u/%(step_name)s/%(log_name)s')
+    if not gs_uri.startswith('gs://'):
+      raise ValueError('gs_uri argument must start with "gs://"')
+    return 'https://storage.cloud.google.com/' + gs_uri[len('gs://'):]
 
   def get_logdog_url(self, step: step_data.StepData, log_name: str,
                      use_top_level_step: bool = True) -> str:
@@ -203,7 +207,7 @@ class UrlsApi(recipe_api.RecipeApi):
     ]
     step_name = "/".join(sanitized_name_tokens)
 
-    return self._LOGDOG_URL_TEMPLATE % {
+    return _LOGDOG_URL_TEMPLATE % {
         'logdog_hostname': self.m.buildbucket.build.infra.logdog.hostname,
         'logdog_project': self.m.buildbucket.build.infra.logdog.project,
         'logdog_prefix': self.m.buildbucket.build.infra.logdog.prefix,

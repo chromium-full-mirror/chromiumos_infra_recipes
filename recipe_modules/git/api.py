@@ -16,13 +16,14 @@ from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 
+Commit = namedtuple('Commit', ['rev', 'message'])
 Reference = namedtuple('Reference', ['hash', 'ref'])
 
 
 class GitApi(recipe_api.RecipeApi):
   """A module for interacting with git."""
 
-  Commit = namedtuple('Commit', ['rev', 'message'])
+  Commit = Commit
   Reference = Reference
 
   def _step(self, args, name=None, test_stdout=None, log_args=False, **kwargs):

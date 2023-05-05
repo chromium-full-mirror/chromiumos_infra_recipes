@@ -173,7 +173,8 @@ class BotCostApi(RecipeApi):
     predicate.builder.project = self.m.buildbucket.build.builder.project
     return self.m.buildbucket.search(predicate, fields=fields)
 
-  def _get_child_builds_cost(self, child_builds: List[Build],
+  @staticmethod
+  def _get_child_builds_cost(child_builds: List[Build],
                              parent_step: Step) -> float:
     """Get the cost of building child images during this cq run.
 
@@ -187,7 +188,8 @@ class BotCostApi(RecipeApi):
       parent_step: The calling step, to be used for presentation purposes.
 
     Returns:
-      total_child_build_cost: The cost (USD) of building child images during this cq run.
+      total_child_build_cost: The cost (USD) of building child images during
+      this cq run.
     """
     total_child_build_cost = 0
     child_builds_missing_cost = []

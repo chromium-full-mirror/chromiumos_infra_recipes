@@ -12,7 +12,8 @@ from PB.go.chromium.org.luci.analysis.proto.v1.common import Variant
 class RDBUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with ResultDB."""
 
-  def get_vm_suite(self, composite_name: str) -> str:
+  @staticmethod
+  def get_vm_suite(composite_name: str) -> str:
     """Get the name of the suite of a VM/GCE run from the composite name.
 
     Args:
@@ -27,7 +28,8 @@ class RDBUtilApi(recipe_api.RecipeApi):
     match = re.match(r'(\w+)_shard_.*', suite)
     return match.groups()[0] if match else suite
 
-  def get_shardless_test_config(self, test_config: str) -> str:
+  @staticmethod
+  def get_shardless_test_config(test_config: str) -> str:
     """Get the test config without shard suffix.
 
     Args:
@@ -40,7 +42,8 @@ class RDBUtilApi(recipe_api.RecipeApi):
     match = re.match(r'(\w.+)_shard_.*', test_config)
     return match.groups()[0] if match else test_config
 
-  def get_build_target_from_variant(self, variant: Variant) -> str:
+  @staticmethod
+  def get_build_target_from_variant(variant: Variant) -> str:
     """Get build_target info from Variant definition.
 
     Args:

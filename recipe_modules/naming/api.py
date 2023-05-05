@@ -5,35 +5,41 @@
 
 """API featuring shared helpers for naming things."""
 
+from typing import Dict, List, Union
+
 from google.protobuf import json_format
 
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipes.chromeos.tast_vm import TastVmProperties
-
+from PB.testplans.target_test_requirements_config import HwTestCfg
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.git.api import Commit
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
 
 
 class NamingApi(recipe_api.RecipeApi):
   """A module with helpers for naming things."""
 
-  def get_build_title(self, build):
+  @staticmethod
+  def get_build_title(build: build_pb2.Build) -> str:
     """Get a string to describe the build.
 
     Args:
-      build (Build): The build to describe.
+      build: The build to describe.
 
     Returns:
-      str: A string describing the build.
+      A string describing the build.
     """
     return build.builder.builder
 
-  def get_test_title(self, test):
+  def get_test_title(self, test: Union[SkylabResult, build_pb2.Build]):
     """Get a string to describe the test.
 
     Args:
-      test (SkylabResult|Build): The test in question.
+      test: The test in question.
 
     Returns:
       A str describing the test.
@@ -44,47 +50,49 @@ class NamingApi(recipe_api.RecipeApi):
       return self.get_skylab_result_title(test)
     raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
 
-  def get_hw_test_title(self, hw_test):
+  @staticmethod
+  def get_hw_test_title(hw_test: HwTestCfg.HwTest) -> str:
     """Get a string to describe the HW test.
 
     Args:
-      hw_test (HwTest): The HW test in question.
+      hw_test: The HW test in question.
 
     Returns:
-      str: The HW test title.
+      The HW test title.
     """
     return hw_test.common.display_name
 
-  def get_skylab_task_title(self, skylab_task):
+  def get_skylab_task_title(self, skylab_task: SkylabTask) -> str:
     """Get a string to describe the Skylab task.
 
     Args:
-      skylab_task (SkylabTask): The Skylab task in question.
+      skylab_task: The Skylab task in question.
 
     Returns:
-      str: The Skylab task title.
+      The Skylab task title.
     """
     return self.get_hw_test_title(skylab_task.test)
 
-  def get_skylab_result_title(self, skylab_result):
+  def get_skylab_result_title(self, skylab_result: SkylabResult) -> str:
     """Get a string to describe the HW test.
 
     Args:
-      skylab_result (SkylabResult): The Skylab result in question.
+      skylab_result: The Skylab result in question.
 
     Returns:
-      str: The HW test title.
+      The HW test title.
     """
     return self.get_skylab_task_title(skylab_result.task)
 
-  def get_vm_test_title(self, vm_test):
+  @staticmethod
+  def get_vm_test_title(vm_test: build_pb2.Build) -> str:
     """Get a string to describe the VM test.
 
     Args:
-      vm_test (Build): The buildbucket build for the VM test.
+      vm_test: The buildbucket build for the VM test.
 
     Returns:
-      str: A string describing the VM test.
+      A string describing the VM test.
     """
     all_properties = vm_test.input.properties or vm_test.output.properties
     input_properties = json_format.Parse(
@@ -92,29 +100,31 @@ class NamingApi(recipe_api.RecipeApi):
         ignore_unknown_fields=True)
     return input_properties.name
 
-  def get_commit_title(self, commit):
+  @staticmethod
+  def get_commit_title(commit: Commit) -> str:
     """Get a string to describe the commit.
 
     This is typically the first line of the commit message.
 
     Args:
-      commit (Commit): The commit in question. See recipe_modules/git/api.py
+      commit: The commit in question. See recipe_modules/git/api.py
 
     Returns:
-      str: The commit title.
+      The commit title.
     """
     lines = [l.strip() for l in commit.message.splitlines() if l.strip()]
     assert lines, 'unexpected empty commit message: %s' % commit.message
     return lines[0]
 
-  def get_package_title(self, package):
+  @staticmethod
+  def get_package_title(package: common_pb2.PackageInfo) -> str:
     """Get a string to describe the package.
 
     Args:
-      package (PackageInfo): The package in question.
+      package: The package in question.
 
     Returns:
-      str: The package title.
+      The package title.
     """
     title = '{}/{}'.format(package.category, package.package_name)
     if package.version:
@@ -122,7 +132,8 @@ class NamingApi(recipe_api.RecipeApi):
     return title
 
   @staticmethod
-  def get_paygen_build_title(build_id, paygen_request_dicts):
+  def get_paygen_build_title(build_id: int,
+                             paygen_request_dicts: List[Dict]) -> str:
     """Get a presentation name for a build running a batch of PaygenRequests.
 
     Args:
@@ -177,21 +188,21 @@ class NamingApi(recipe_api.RecipeApi):
       A string providing helpful info about that payload.
     """
 
-    def _get_img_version(image_field_name):
+    def _get_img_version(image_field_name: str) -> str:
       """Get an image version from the request dict."""
       return req.get(image_field_name,
                      {}).get('build', {}).get('version', 'unknown-version')
 
-    def _get_img_channel(image_field_name):
+    def _get_img_channel(image_field_name: str) -> str:
       """Get an image channel from the request dict."""
       return req.get(image_field_name,
                      {}).get('build', {}).get('channel', 'unknown-channel')
 
-    def _get_img_type(image_field_name):
+    def _get_img_type(image_field_name: str) -> str:
       """Get an image type from the request dict."""
       return req.get(image_field_name, {}).get('imageType', 'unknown-type')
 
-    def _get_delta_string(image_field_name, target_version):
+    def _get_delta_string(image_field_name: str, target_version: str) -> str:
       """Get the string representation of a delta for a given image type."""
       source_version = _get_img_version(image_field_name)
       label = 'Delta'

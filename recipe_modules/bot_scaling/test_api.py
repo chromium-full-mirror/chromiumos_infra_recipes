@@ -10,34 +10,35 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Con
 class BotScalingTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the bot_scaling module."""
 
-  def gce_provider_config(self):
+  def gce_provider_config(self) -> Configs:
+    """Return a sample list of GCE provider configs."""
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),
-               current_amount=19, attributes=self._get_disk()),
+               current_amount=19, attributes=_get_disk()),
         Config(prefix='prefix-second', amount=Amount(min=5, max=45),
-               current_amount=23, attributes=self._get_disk()),
+               current_amount=23, attributes=_get_disk()),
         Config(prefix='prefix-third', amount=Amount(min=5, max=30),
-               current_amount=18, attributes=self._get_disk()),
+               current_amount=18, attributes=_get_disk()),
         Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
-               current_amount=25, attributes=self._get_disk()),
+               current_amount=25, attributes=_get_disk()),
     ])
 
-  def gce_provider_config_ceiling(self):
+  def gce_provider_config_ceiling(self) -> Configs:
+    """Return a sample list of GCE provider configs with near-maxed amounts."""
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),
-               current_amount=29, attributes=self._get_disk()),
+               current_amount=29, attributes=_get_disk()),
         Config(prefix='prefix-second', amount=Amount(min=5, max=45),
-               current_amount=44, attributes=self._get_disk()),
+               current_amount=44, attributes=_get_disk()),
         Config(prefix='prefix-third', amount=Amount(min=5, max=30),
-               current_amount=25, attributes=self._get_disk()),
+               current_amount=25, attributes=_get_disk()),
         Config(prefix='prefix-fourth', amount=Amount(min=5, max=45),
-               current_amount=42, attributes=self._get_disk()),
+               current_amount=42, attributes=_get_disk()),
     ])
 
-  def _get_disk(self):
-    return VM(disk=[Disk(size=750)])
-
-  def get_bot_type(self):
+  @staticmethod
+  def get_bot_type() -> BotType:
+    """Return a sample BotType for tests."""
     return BotType(
         bot_size="small",
         cores_per_bot=4,
@@ -45,8 +46,15 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
         memory_gb=16,
     )
 
-  def robocrop_bot_policy_config(self, policy_mode=BotPolicy.CONFIGURED,
-                                 repeated=1):
+  def robocrop_bot_policy_config(self,
+                                 policy_mode: BotPolicy = BotPolicy.CONFIGURED,
+                                 repeated: int = 1) -> BotPolicyCfg:
+    """Return a sample BotPolicyCfg for tests.
+
+    Args:
+      policy_mode: The policy mode to set for all BotPolicies.
+      repeated: The number of BotPolicies to include in the config.
+    """
     scaling_restriction = BotPolicy.ScalingRestriction(
         min_idle=25,
         step_size=25,
@@ -79,10 +87,15 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
     bot_policy_cfg = []
     for x in range(repeated):
       bot_policy_cfg.append(
-          BotPolicy(bot_group='cq{}'.format(x), bot_type=bot_type,
+          BotPolicy(bot_group=f'cq{x}', bot_type=bot_type,
                     scaling_restriction=scaling_restriction,
                     region_restrictions=region_restrictions,
                     policy_mode=policy_mode, scaling_mode=BotPolicy.STEPPED,
                     swarming_instance='chromeos-swarming.appspot.com',
                     application='chromeos'))
     return BotPolicyCfg(bot_policies=bot_policy_cfg)
+
+
+def _get_disk() -> VM:
+  """Return a sample VM with a sample disk."""
+  return VM(disk=[Disk(size=750)])

@@ -8,14 +8,20 @@ from collections import namedtuple
 import decimal
 import itertools
 import math
+from typing import Dict, List
 
-from PB.chromiumos.bot_scaling import (ApplicationUtilization, BotPolicy,
-                                       ReducedBotPolicyCfg, ResourceUtilization,
-                                       RoboCropAction, ScalingAction)
+from PB.chromiumos.bot_scaling import ApplicationUtilization
+from PB.chromiumos.bot_scaling import BotPolicy
+from PB.chromiumos.bot_scaling import BotPolicyCfg
+from PB.chromiumos.bot_scaling import ReducedBotPolicyCfg
+from PB.chromiumos.bot_scaling import ResourceUtilization
+from PB.chromiumos.bot_scaling import RoboCropAction
+from PB.chromiumos.bot_scaling import ScalingAction
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
+from PB.go.chromium.org.luci.gce.api.config.v1.config import Configs
 
 from google.protobuf import json_format as jsonpb
 from google.protobuf import timestamp_pb2
@@ -146,7 +152,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     bots_requested = self.get_bot_request(demand,
                                           bot_policy.scaling_restriction)
     bots_configured = self.get_gce_bots_configured(
-        bot_policy.region_restrictions, self._get_prefix_to_gce_config(configs))
+        bot_policy.region_restrictions, _get_prefix_to_gce_config(configs))
     actionable = ScalingAction.NO
 
     # Check to determine whether bots should be scaled up or down.
@@ -166,7 +172,7 @@ class BotScalingApi(recipe_api.RecipeApi):
         bot_max=bot_policy.scaling_restriction.bot_ceiling,
         application=bot_policy.application)
 
-    scaling_action.bots_requested = self._calculate_bot_adjustment(
+    scaling_action.bots_requested = _calculate_bot_adjustment(
         bot_policy, bots_requested, bots_configured)
     scaling_action.estimated_savings = self._calculate_estimated_savings(
         bot_policy, scaling_action.bots_requested, bots_configured, actionable)
@@ -175,7 +181,8 @@ class BotScalingApi(recipe_api.RecipeApi):
                                   bot_policy.region_restrictions))
     return scaling_action
 
-  def get_bot_request(self, demand, scaling_restriction):
+  @staticmethod
+  def get_bot_request(demand, scaling_restriction):
     """Core function that scales bots based on demand.
 
     Args:
@@ -193,19 +200,22 @@ class BotScalingApi(recipe_api.RecipeApi):
     bot_request = min(bot_request, bot_ceiling)
     return bot_request
 
-  def get_regional_actions(self, bots_requested, region_restrictions):
+  @staticmethod
+  def get_regional_actions(
+      bots_requested: int,
+      region_restrictions: List[BotPolicy.RegionRestriction]
+  ) -> List[ScalingAction.RegionalAction]:
     """Determines regional distribution of bot requests.
 
     This function uses a running total and residual to ensure we're accurate
     in computing totals to equal bots_requested.
 
     Args:
-      bots_requested(int): Total number of bots requested.
-      region_restrictions(list[RegionRestriction]): Regional preferences
-        from config.
+      bots_requested: Total number of bots requested.
+      region_restrictions: Regional preferences from config.
 
     Returns:
-      list[RegionalAction], region wise distribution of bots requested.
+      Region wise distribution of bots requested.
     """
     D = decimal.Decimal
 
@@ -229,24 +239,21 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     return actions
 
-  def get_swarming_demand(self, swarming_stats, bot_group):
+  @staticmethod
+  def get_swarming_demand(swarming_stats: SwarmingStats, bot_group: str) -> int:
     """Return the demand for bots in a bot group.
 
     Args:
-      swarming_stats(SwarmingStats): Named tuple containing bot and task
-        Swarming stats.
-      bot_group (str): Name of bot group
+      swarming_stats: Named tuple containing bot and task Swarming stats.
+      bot_group: Name of bot group.
 
     Returns:
-      int, the current demand for bots in the group.
+      The current demand for bots in the group.
     """
-    demand = 0
-    for stat in swarming_stats.task_stats:
-      if stat.bot_group == bot_group:
-        if stat.task_state in TASK_STATES:
-          demand += int(stat.count)
-
-    return demand
+    return sum(
+        (stat.count
+         for stat in swarming_stats.task_stats
+         if stat.bot_group == bot_group and stat.task_state in TASK_STATES))
 
   def _make_swarming_calls(self, policy):
     """Makes the individual Swarming calls via CLI
@@ -264,13 +271,13 @@ class BotScalingApi(recipe_api.RecipeApi):
       # Bot counts get duplicated, due to the way dimensions are associated,
       # therefore we only need to count the first returned count.
       if not bot_stats_hold:
-        bot_stats_hold = self._bot_swarming_stats(
+        bot_stats_hold = _bot_swarming_stats(
             policy.bot_group,
             self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
             policy.scaling_restriction.bot_floor,
             policy.scaling_restriction.bot_ceiling)
       for state in TASK_STATES:
-        task_stats_hold = self._task_swarming_stats(
+        task_stats_hold = _task_swarming_stats(
             policy.bot_group, state, task_stats_hold,
             self.m.swarming_cli.get_task_counts(dim, state,
                                                 policy.lookback_hours,
@@ -318,16 +325,17 @@ class BotScalingApi(recipe_api.RecipeApi):
         prefixes.append(restriction.prefix)
     return self.m.gce_provider.get_current_config(prefixes)
 
-  def get_gce_bots_configured(self, region_restrictions, config_map):
+  @staticmethod
+  def get_gce_bots_configured(region_restrictions: List[
+      BotPolicy.RegionRestriction], config_map: Dict[str, Config]) -> int:
     """Sums the total number of configured bots per bot policy.
 
     Args:
-      region_restrictions(list[RegionRestriction]): Regional preferences
-        from config.
-      config_map(dict|Config): Map of GCE Config to prefix
+      region_restrictions: Regional preferences from config.
+      config_map: Map of prefix to GCE Config.
 
     Returns:
-      int, sum of the total number of bots in GCE Provider
+      Sum of the total number of bots in GCE Provider
     """
     policy_count = 0
     for restriction in region_restrictions:
@@ -335,18 +343,20 @@ class BotScalingApi(recipe_api.RecipeApi):
       policy_count += config.current_amount
     return policy_count
 
-  def update_bot_policy_limits(self, bot_policy_config, configs):
+  @staticmethod
+  def update_bot_policy_limits(bot_policy_config: BotPolicyCfg,
+                               configs: Configs) -> BotPolicyCfg:
     """Sums the min and max bot numbers per bot policy.
 
     Args:
-      bot_policy_config(BotPolicyCfg): Config define Policy for
-        the RoboCrop.
-      config_map(dict|Config): Map of GCE Config to prefix
+      bot_policy_config: Config define Policy for the RoboCrop.
+      configs: GCE Configs.
 
     Returns:
-      BotPolicy, updated to reflect ScalingRestriction values.
+      The original bot_policy_config, updated to reflect ScalingRestriction
+      values.
     """
-    config_map = self._get_prefix_to_gce_config(configs)
+    config_map = _get_prefix_to_gce_config(configs)
     for policy in bot_policy_config.bot_policies:
       policy.scaling_restriction.bot_ceiling = 0
       policy.scaling_restriction.bot_floor = 0
@@ -358,16 +368,16 @@ class BotScalingApi(recipe_api.RecipeApi):
         policy.scaling_restriction.bot_floor = policy.scaling_restriction.min_idle
     return bot_policy_config
 
-  def reduce_bot_policy_config_for_table(self, bot_policy_config):
-    """ Reduces bot_policy_config fields prior to sending to bb tables.
+  @staticmethod
+  def reduce_bot_policy_config_for_table(
+      bot_policy_config: BotPolicyCfg) -> str:
+    """Reduces bot_policy_config fields prior to sending to bb tables.
 
     Args:
-      bot_policy_config(BotPolicyCfg): Config define Policy for
-        the RoboCrop.
+      bot_policy_config: Config define Policy for the RoboCrop.
 
     Returns:
-      str, scaled down config that only includes data needed
-      for plx
+      Scaled-down config that only includes data needed for Plx.
     """
     config = jsonpb.MessageToDict(bot_policy_config)
 
@@ -394,7 +404,7 @@ class BotScalingApi(recipe_api.RecipeApi):
       list(Config), GCE Provider config definitions.
     """
     gce_configs = []
-    gce_map = self._get_prefix_to_gce_config(configs)
+    gce_map = _get_prefix_to_gce_config(configs)
     futures = {}
     for scaling_action in robocrop_actions.scaling_actions:
       if scaling_action.actionable == ScalingAction.YES:
@@ -411,7 +421,8 @@ class BotScalingApi(recipe_api.RecipeApi):
       gce_configs.append(fut.result())
     return Configs(vms=gce_configs)
 
-  def unpack_policy_dimensions(self, dimensions):
+  @staticmethod
+  def unpack_policy_dimensions(dimensions):
     """Method to iterate through dimensions and return possible combinations.
 
     Args:
@@ -429,7 +440,8 @@ class BotScalingApi(recipe_api.RecipeApi):
       policy_dimensions.append(temp_dimensions)
     return list(itertools.product(*policy_dimensions))
 
-  def _get_quota_usage(self, scaling_actions, configs):
+  @staticmethod
+  def _get_quota_usage(scaling_actions, configs):
     """Method to calculate quota usage based on scaling actions.
 
     Args:
@@ -439,7 +451,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       ResourceUtilization, total resource usage across all bot groups.
     """
-    config_map = self._get_prefix_to_gce_config(configs)
+    config_map = _get_prefix_to_gce_config(configs)
     appl_resource_utilization = {}
     for action in scaling_actions:
       resource_utilization = {}
@@ -490,93 +502,6 @@ class BotScalingApi(recipe_api.RecipeApi):
           application=action.application,
           resource_utilization=resource_utilization.values())
     return appl_resource_utilization.values()
-
-  def _get_prefix_to_gce_config(self, configs):
-    """Helper method that returns the prefix to Config map.
-
-    Loads the proto and builds the map.
-
-    Args:
-      configs (Configs): list of GCE Provider Config meessages.
-
-    Returns:
-      dict, map of prefix to GCE Config
-    """
-    return {c.prefix: c for c in configs.vms}
-
-  def _bot_swarming_stats(self, bot_group, cli_stats, b_min, b_max):
-    """Helper method that formats the bot stats into a named tuple.
-
-    Args:
-      bot_group (str): name of bot group associated with stats.
-      cli_stats (dict): swarming CLI dict of bot stats.
-      b_min (int): bot floor from config
-      b_max (int): bot ceiling from config
-
-    Returns:
-      BotStats: Swarming bot stats named tuple.
-    """
-    return BotStats(bot_group, int(cli_stats.get('busy', 0)),
-                    int(cli_stats.get('count', 0)),
-                    int(cli_stats.get('dead', 0)),
-                    int(cli_stats.get('maintenance', 0)),
-                    int(cli_stats.get('quarantined', 0)), b_min, b_max)
-
-  def _task_swarming_stats(self, bot_group, state, task_stats, cli_stats):
-    """Helper method that formats the bot stats into a named tuple.
-
-    Args:
-      bot_group (str): name of bot group associated with stats.
-      state (str): Swarming task state.
-      task_stats (TaskStats): current value of accumulated task stats.
-      cli_stats (dict): swarming CL dict of task stats.
-
-    Returns:
-      TaskStats: Swarming task stats named tuple.
-    """
-    new_task = True
-    updated_stats = []
-    for stat in task_stats:
-      if stat.bot_group == bot_group and stat.task_state == state:
-        updated_stats.append(
-            TaskStats(bot_group, state,
-                      int(stat.count) + int(cli_stats.get('count', 0))))
-        new_task = False
-      else:
-        updated_stats.append(stat)
-    if new_task:
-      updated_stats.append(
-          TaskStats(bot_group, state, int(cli_stats.get('count', 0))))
-    return updated_stats
-
-  def _calculate_bot_adjustment(self, bot_policy, requested, current_amount):
-    """Helper to calculate the number of bots to request.
-
-    Args:
-      bot_policy_config(BotPolicy): Group Policy for RoboCrop.
-      requested (int): number of bots needed.
-      curent_amount (int): current number of bots configured.
-
-    Returns:
-      int, the number of bots to request.
-    """
-    bots_requested = 0
-    if requested >= current_amount:
-      if bot_policy.scaling_mode == BotPolicy.STEPPED:
-        bots_requested = current_amount + min(
-            (requested - current_amount),
-            bot_policy.scaling_restriction.step_size)
-      else:
-        bots_requested = requested
-    else:
-      if (bot_policy.scaling_mode == BotPolicy.STEPPED or
-          bot_policy.scaling_mode == BotPolicy.STEPPED_DECREASE):
-        bots_requested = current_amount - min(
-            (current_amount - requested),
-            bot_policy.scaling_restriction.step_size)
-      else:
-        bots_requested = requested
-    return bots_requested
 
   def _calculate_estimated_savings(self, bot_policy, requested, configured,
                                    actionable):
@@ -636,3 +561,96 @@ class BotScalingApi(recipe_api.RecipeApi):
         _warn_about_default('Buildbucket search returned no builds')
         return DEFAULT_HOURS_BETWEEN_BUILDS
       return 1.0 / len(recent_builds)
+
+
+def _get_prefix_to_gce_config(configs: Configs) -> Dict[str, Config]:
+  """Helper function that returns the prefix to Config map.
+
+  Loads the proto and builds the map.
+
+  Args:
+    configs (Configs): list of GCE Provider Config meessages.
+
+  Returns:
+    Map of prefix to GCE Config.
+  """
+  return {c.prefix: c for c in configs.vms}
+
+
+def _bot_swarming_stats(bot_group: str, cli_stats: Dict, b_min: int,
+                        b_max: int) -> BotStats:
+  """Helper method that formats the bot stats into a named tuple.
+
+  Args:
+    bot_group: name of bot group associated with stats.
+    cli_stats: swarming CLI dict of bot stats.
+    b_min: bot floor from config
+    b_max: bot ceiling from config
+
+  Returns:
+    Swarming bot stats named tuple.
+  """
+  return BotStats(bot_group, int(cli_stats.get('busy', 0)),
+                  int(cli_stats.get('count', 0)), int(cli_stats.get('dead', 0)),
+                  int(cli_stats.get('maintenance', 0)),
+                  int(cli_stats.get('quarantined', 0)), b_min, b_max)
+
+
+def _task_swarming_stats(bot_group: str, state: str, task_stats: TaskStats,
+                         cli_stats: Dict) -> TaskStats:
+  """Helper method that formats the bot stats into a named tuple.
+
+  Args:
+    bot_group: name of bot group associated with stats.
+    state: Swarming task state.
+    task_stats: current value of accumulated task stats.
+    cli_stats: swarming CL dict of task stats.
+
+  Returns:
+    Swarming task stats named tuple.
+  """
+  new_task = True
+  updated_stats = []
+  for stat in task_stats:
+    if stat.bot_group == bot_group and stat.task_state == state:
+      updated_stats.append(
+          TaskStats(bot_group, state,
+                    int(stat.count) + int(cli_stats.get('count', 0))))
+      new_task = False
+    else:
+      updated_stats.append(stat)
+  if new_task:
+    updated_stats.append(
+        TaskStats(bot_group, state, int(cli_stats.get('count', 0))))
+  return updated_stats
+
+
+def _calculate_bot_adjustment(bot_policy: BotPolicy, requested: int,
+                              current_amount: int) -> int:
+  """Helper to calculate the number of bots to request.
+
+  Args:
+    bot_policy_config: Group Policy for RoboCrop.
+    requested: number of bots needed.
+    curent_amount: current number of bots configured.
+
+  Returns:
+    The number of bots to request.
+  """
+  bots_requested = 0
+  if requested >= current_amount:
+    if bot_policy.scaling_mode == BotPolicy.STEPPED:
+      bots_requested = current_amount + min(
+          (requested - current_amount),
+          bot_policy.scaling_restriction.step_size)
+    else:
+      bots_requested = requested
+  else:
+    if (bot_policy.scaling_mode == BotPolicy.STEPPED or
+        bot_policy.scaling_mode == BotPolicy.STEPPED_DECREASE):
+      bots_requested = current_amount - min(
+          (current_amount - requested),
+          bot_policy.scaling_restriction.step_size)
+    else:
+      bots_requested = requested
+  return bots_requested
