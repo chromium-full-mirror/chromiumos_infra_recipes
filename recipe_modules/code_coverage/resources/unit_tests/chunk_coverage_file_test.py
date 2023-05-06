@@ -24,7 +24,8 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
   def tearDown(self):
     shutil.rmtree(self.tmpdir)
 
-  def coverage_json(self, coverage_data_size):
+  @staticmethod
+  def coverage_json(coverage_data_size):
     coverage_data = []
 
     i = 0
@@ -39,7 +40,8 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
         'version': '2.0.1',
     }
 
-  def read_coverage_data(self, file_path):
+  @staticmethod
+  def read_coverage_data(file_path):
     with open(file_path) as f:
       coverage_json = json.load(f)
       return coverage_json['data'][0]['files']
@@ -55,7 +57,6 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
     self.assertEqual(0, len(chunk_files), 'There should be 0 chunks.')
 
   def testShouldSplitSuccessfully_1(self):
-
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
     with open(coverage_path, 'w') as outfile:
       outfile.write(json.dumps(self.coverage_json(4)))
@@ -70,7 +71,6 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
                        'Each chunk should have exactly 2 entries')
 
   def testShouldSplitSuccessfully_2(self):
-
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
     with open(coverage_path, 'w') as outfile:
       outfile.write(json.dumps(self.coverage_json(5)))
@@ -88,7 +88,6 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
     self.assertEqual(5, count)
 
   def testShouldSplitSuccessfully_3(self):
-
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
 
     with open(coverage_path, 'w') as outfile:

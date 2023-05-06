@@ -53,7 +53,7 @@ STATUS_FAILED = "FAILED"
 class CheckpointApi(recipe_api.RecipeApi):
   """A module for managing release build checkpoints.
 
-    See go/release-checkpoints-dd for context.
+  See go/release-checkpoints-dd for context.
   """
 
   # TODO(b/262388770): Improve documentaton here, and link to a dev guide.
@@ -91,7 +91,7 @@ class CheckpointApi(recipe_api.RecipeApi):
     """Return whether the build is a retry build."""
     return self._retry_run
 
-  def is_run_step(self, step: "RetryStep"):
+  def is_run_step(self, step: 'RetryStep'):
     """Return whether the step will be run in this retry."""
     # RUN_FAILED_CHILDREN is not a step that is normally run, so we shouldn't
     # return true if we're not a retry.
@@ -100,11 +100,11 @@ class CheckpointApi(recipe_api.RecipeApi):
     return not self._retry_run or step in self._run_steps
 
   def builder_children(self) -> List[int]:
-    """Gets the BBIDs of the child builders that are image builders."""
+    """Get the BBIDs of the child builders that are image builders."""
     return list(self._builder_children.keys())
 
   def successful_builder_children_bbids(self) -> List[int]:
-    """Gets the BBIDs of the child builders that were successful."""
+    """Get the BBIDs of the child builders that were successful."""
     child_builds = []
     for bbid, build in self._builder_children.items():
       if build.status == common_pb2.SUCCESS:
@@ -112,10 +112,10 @@ class CheckpointApi(recipe_api.RecipeApi):
     return child_builds
 
   def failed_builder_children(self) -> List[str]:
-    """Returns the list of child builders that failed.
+    """Return the list of child builders that failed.
 
-      Returns: (List[str]) names of child builders that failed, e.g.
-        eve-release-main.
+    Returns:
+      Names of child builders that failed, e.g. eve-release-main.
     """
     failed_children = []
     for _, build in self._builder_children.items():
@@ -143,10 +143,12 @@ class CheckpointApi(recipe_api.RecipeApi):
         }
     }
 
-  def cascade(self, requested_steps: List["RetryStep"]):
+  @staticmethod
+  def cascade(requested_steps: List['RetryStep']) -> List['RetryStep']:
     """Process step cascades for the requested steps.
 
-      Returns: (List["RetryStep"]) all the steps that are meant to be run.
+    Returns:
+      All the steps that are meant to be run.
     """
     exec_steps = set()
 
@@ -166,7 +168,9 @@ class CheckpointApi(recipe_api.RecipeApi):
 
     return sorted(list(exec_steps))
 
-  def _retry_steps_to_strings(self, steps: List["RetryStep"]):
+  @staticmethod
+  def _retry_steps_to_strings(steps: List['RetryStep']) -> List['RetryStep']:
+    """Return the string names of the given steps."""
     return [RetryStep.Name(step) for step in steps]
 
   def register(self):
@@ -221,8 +225,8 @@ class CheckpointApi(recipe_api.RecipeApi):
             if build.input.properties['recipe'] == 'build_release':
               self._builder_children[bbid] = build
 
-  def update_summary(self, step: "RetryStep", status: str):
-    """Updates the retry_summary output property with the given step/status."""
+  def update_summary(self, step: 'RetryStep', status: str):
+    """Update the retry_summary output property with the given step/status."""
     if not self._do_retry_summary:
       return
     if status not in [
@@ -235,7 +239,7 @@ class CheckpointApi(recipe_api.RecipeApi):
                                     step_name='update retry summary')
 
   @contextmanager
-  def retry(self, step: "RetryStep"):
+  def retry(self, step: 'RetryStep'):
     """Context to handle retry logic / status reporting."""
     run_step = not self._retry_run or step in self._run_steps
 

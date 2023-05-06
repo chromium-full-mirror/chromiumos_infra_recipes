@@ -452,15 +452,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
       pres.step_text = 'force rebuild %s target(s)' % len(forced_rebuilds)
       return forced_rebuilds
 
-  def get_slim_builder_name(self, builder_name):
+  @staticmethod
+  def get_slim_builder_name(builder_name: str) -> str:
     """Returns to the name of the slim variant of the builder.
 
     Args:
-      builder_name (str): The name of the builder for which to get the slim
-        builder variant name.
+      builder_name: The name of the builder for which to get the slim builder
+        variant name.
 
     Returns:
-       A string of the slim builder name.
+       The slim builder name.
     """
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix

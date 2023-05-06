@@ -16,7 +16,7 @@ from PB.chromite.api import artifacts
 from PB.chromite.api import firmware
 from PB.chromite.api import toolchain
 from PB.chromite.api.image import PushImageRequest
-from PB.chromiumos import common as common_pb
+from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 
@@ -210,26 +210,30 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       return files_by_artifact
 
-  def _prepare_unknown(self, _chroot, _sysroot, _artifact_types,
-                       _input_artifacts, _artifact_profile_info, test_data):
+  @staticmethod
+  def _prepare_unknown(
+      _chroot: common_pb2.Chroot, _sysroot: ArtifactsByService.Sysroot,
+      _artifact_types: List['BuilderConfig.Artifacts.ArtifactTypes'],
+      _input_artifacts: List[BuilderConfig.Artifacts.InputArtifactInfo],
+      _artifact_profile_info: common_pb2.ArtifactProfileInfo,
+      test_data: str) -> artifacts.BuildSetupResponse:
     """Declare the build necessity UNKNOWN from this artifact's perspective.
 
     Use this prepare_for_build handler for any artifact type which has no
     prepare step.  It returns "UNKNOWN".
 
     Args:
-      _chroot (Chroot): The chroot to use, or None if not yet created.
-      _sysroot (Sysroot): The sysroot to use, or None if not yet created.
-      _artifact_types (list[ArtifactTypes]): Artifact types to bundle.
-      _input_artifacts (list[InputArtifactInfo]): Where to find input artifacts.
-      _artifact_profile_info (ArtifactProfileInfo): profile information.
-      test_data (str): JSON data to use for build API calls.
+      _chroot: The chroot to use, or None if not yet created.
+      _sysroot: The sysroot to use, or None if not yet created.
+      _artifact_types: Artifact types to bundle.
+      _input_artifacts: Where to find input artifacts.
+      _artifact_profile_info: profile information.
+      test_data: JSON data to use for build API calls.
 
     Returns:
-      (artifacts.BuildSetupResponse.build_relevance) UNKNOWN.
+      UNKNOWN.
     """
-    # Noop statement to clean up pylint.
-    test_data = test_data or None
+    del test_data
     return artifacts.BuildSetupResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
@@ -377,10 +381,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return files_by_artifact, failed_artifacts
 
   @staticmethod
-  def _result_path(path, location=common_pb.Path.OUTSIDE):
+  def _result_path(path, location=common_pb2.Path.OUTSIDE):
     """Construct a common_pb.ResultPath."""
-    return common_pb.ResultPath(
-        path=common_pb.Path(path=str(path), location=location))
+    return common_pb2.ResultPath(
+        path=common_pb2.Path(path=str(path), location=location))
 
   def _bundle_artifacts_by_service(self, chroot, sysroot, artifacts_info,
                                    outpath, test_data, semaphore):
@@ -645,14 +649,15 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return links
 
-  def has_output_artifacts(self, artifacts_info):
+  @staticmethod
+  def has_output_artifacts(artifacts_info: ArtifactsByService) -> bool:
     """Return whether there are output artifacts.
 
     Args:
-      artifacts (ArtifactsByService): The artifacts config to check.
+      artifacts: The artifacts config to check.
 
     Returns:
-      (bool) whether there are any output artifacts.
+      Whether there are any output artifacts.
     """
     # Iterate over the components of artifacts_info, and return true if there
     # are any output_artifacts with artifact_types.
@@ -662,10 +667,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           return True
     return False
 
+  @staticmethod
   def _filter_previously_uploaded_artifacts(
-      self, artifacts_info: common_pb.ArtifactsByService,
+      artifacts_info: common_pb2.ArtifactsByService,
       previously_uploaded_artifacts: UploadedArtifacts
-  ) -> common_pb.ArtifactsByService:
+  ) -> common_pb2.ArtifactsByService:
     """Return a copy of artifacts_info, with all of previously_uploaded_artifacts removed.
 
     This function iterates each service in ArtifactsByService, and checks all
@@ -687,7 +693,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       A copy of artifacts_info with the types in previously_uploaded_artifacts
         filtered.
     """
-    filtered_artifacts_info = common_pb.ArtifactsByService()
+    filtered_artifacts_info = common_pb2.ArtifactsByService()
     filtered_artifacts_info.CopyFrom(artifacts_info)
 
     for _, service in filtered_artifacts_info.ListFields():
@@ -944,7 +950,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     with self.m.step.nest('upload {} metadata'.format(name)):
       # Wrap target up into a BuildTarget proto if needed
       if isinstance(target, str):
-        target = common_pb.BuildTarget(name=target)
+        target = common_pb2.BuildTarget(name=target)
 
       # Add a .jsonpb extension to the filename if we don't have one.
       path, ext = self.m.path.splitext(filename)

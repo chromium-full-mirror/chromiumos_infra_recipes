@@ -10,7 +10,8 @@ from PB.go.chromium.org.luci.gce.api.config.v1.config import Amount, Config, Con
 class BotScalingTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing the bot_scaling module."""
 
-  def gce_provider_config(self) -> Configs:
+  @staticmethod
+  def gce_provider_config() -> Configs:
     """Return a sample list of GCE provider configs."""
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),
@@ -23,7 +24,8 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
                current_amount=25, attributes=_get_disk()),
     ])
 
-  def gce_provider_config_ceiling(self) -> Configs:
+  @staticmethod
+  def gce_provider_config_ceiling() -> Configs:
     """Return a sample list of GCE provider configs with near-maxed amounts."""
     return Configs(vms=[
         Config(prefix='prefix-first', amount=Amount(min=5, max=30),

@@ -3,9 +3,9 @@
     "cmd": [],
     "name": "process additional test suites",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Additional TestSuites cannot be run on build targets that are not built or failed building as part of cq: missing_build_traget@@@",
+      "@@@STEP_TEXT@Additional TestSuites cannot be run on build targets that are not built or failed building as part of cq: missing_build_target@@@",
       "@@@STEP_LOG_LINE@read_git_footer_result@footer data: test suites: AddtnlTestSuite @@@",
-      "@@@STEP_LOG_LINE@read_git_footer_result@boards_build_targets: missing_build_traget@@@",
+      "@@@STEP_LOG_LINE@read_git_footer_result@boards_build_targets: missing_build_target@@@",
       "@@@STEP_LOG_LINE@read_git_footer_result@pool : DUT_POOL_QUOTA@@@",
       "@@@STEP_LOG_END@read_git_footer_result@@@",
       "@@@STEP_LOG_LINE@updated_test_plan@hw_test_units {@@@",
@@ -1084,7 +1084,7 @@
       "@@@STEP_LOG_LINE@updated_test_plan@  }@@@",
       "@@@STEP_LOG_LINE@updated_test_plan@}@@@",
       "@@@STEP_LOG_END@updated_test_plan@@@",
-      "@@@STEP_LOG_LINE@not_runnable_addtnl_test_suites@missing_build_traget.hw.AddtnlTestSuite@@@",
+      "@@@STEP_LOG_LINE@not_runnable_addtnl_test_suites@missing_build_target.hw.AddtnlTestSuite@@@",
       "@@@STEP_LOG_END@not_runnable_addtnl_test_suites@@@",
       "@@@STEP_EXCEPTION@@@"
     ]

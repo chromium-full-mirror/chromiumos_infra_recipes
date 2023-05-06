@@ -9,9 +9,8 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import json
-
-import mock
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(THIS_DIR, os.pardir)))
@@ -31,15 +30,18 @@ class CleanFilePathsTest(unittest.TestCase):
   def tearDown(self):
     shutil.rmtree(self.tmpdir)
 
-  def _write_to_file(self, path, content):
+  @staticmethod
+  def _write_to_file(path, content):
     with open(path, 'w') as f:
       f.write(content)
 
-  def _read_file(self, path):
+  @staticmethod
+  def _read_file(path):
     with open(path, 'r') as f:
       return f.read()
 
-  def _read_file_json(self, path):
+  @staticmethod
+  def _read_file_json(path):
     with open(path, 'r') as f:
       return json.load(f)
 

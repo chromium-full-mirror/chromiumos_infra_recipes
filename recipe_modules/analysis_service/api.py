@@ -4,9 +4,10 @@
 # found in the LICENSE file.
 
 import base64
-from typing import Any, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from google.protobuf import json_format
+from google.protobuf.message import Message
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from PB.analysis_service.analysis_service import AnalysisServiceEvent
@@ -78,9 +79,9 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
         properties.pubsub_topic_id or "analysis-service-events")
     self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
-  def _set_oneof_by_matching_type(self,
-                                  analysis_service_event: AnalysisServiceEvent,
-                                  oneof_name: str, message: Any):
+  @staticmethod
+  def _set_oneof_by_matching_type(analysis_service_event: AnalysisServiceEvent,
+                                  oneof_name: str, message: Message):
     """Set the appropriate oneof by searching on type.
 
     Args:
@@ -154,7 +155,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
             'stdout_truncation'] = 'Full step output is {} bytes, truncated to {} bytes'.format(
                 len(step_output), self._max_stdout_stderr_bytes)
 
-  def can_publish_event(self, request: Any, response: Any) -> bool:
+  @staticmethod
+  def can_publish_event(request: Message, response: Message) -> bool:
     """Return whether 'request' and 'response' can be published.
 
     Based on whether the types are both part of AnalysisServiceEvent. For
@@ -177,9 +179,10 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     return (_get_field_name_by_matching_type('request', request) and
             _get_field_name_by_matching_type('response', response))
 
-  def publish_event(self, request: Any, response: Any, request_time: Timestamp,
-                    response_time: Timestamp, step_data: StepData,
-                    step_output: str = None):
+  def publish_event(self, request: Message, response: Message,
+                    request_time: Timestamp, response_time: Timestamp,
+                    step_data: StepData,
+                    step_output: Optional[str] = None) -> None:
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
@@ -191,15 +194,13 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
     Args:
       request (proto in AnalysisServiceEvent 'request' oneof): The request to
-        log
+        log.
       response (proto in AnalysisServiceEvent 'response' oneof): The response to
-        log
-      request_time (google.protobuf.timestamp_pb2.Timestamp): The time the
-        request was sent by the caller.
-      response_time (google.protobuf.timestamp_pb2.Timestamp): The time the
-        response was received by the caller.
-      step_data (recipe_engine.StepData): Data from the step that sent the request.
-      step_output (str): Output for the step.
+        log.
+      request_time: The time the request was sent by the caller.
+      response_time: The time the response was received by the caller.
+      step_data: Data from the step that sent the request.
+      step_output: Output for the step.
     """
     with self.m.step.nest('publish event') as presentation:
       if not self.can_publish_event(request, response):
@@ -242,7 +243,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
 
 def _get_field_name_by_matching_type(oneof_name: str,
-                                     message: Any) -> Optional[str]:
+                                     message: Message) -> Optional[str]:
   """Get the field on AnalysisServiceEvent for 'oneof_name' and 'message'.
 
   Args:

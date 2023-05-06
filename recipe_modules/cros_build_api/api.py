@@ -7,9 +7,11 @@
 
 import functools
 import hashlib
+from typing import Callable
 
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
+from google.protobuf import message
 from google.protobuf import reflection
 from google.protobuf import timestamp_pb2
 
@@ -516,13 +518,12 @@ class CrosBuildApiApi(RecipeApi):
           json_format.Parse(output_json, output_proto,
                             ignore_unknown_fields=True)
 
-          # Since we can't rename the api step, and certain applications\tables
+          # Since we can't rename the api step, and certain applications/tables
           # have taken them as input (e.g. sheriff-o-matic), we then make a
           # 'response' step that we can have foreknowledge of what the name
           # _should_ be based on the call's results.
           presentation.logs['response'] = output_json
-          resp_step_name = self.response_step_name(output_proto,
-                                                   response_lambda)
+          resp_step_name = _response_step_name(output_proto, response_lambda)
 
           with self.m.step.nest(resp_step_name) as resp_pres:
             resp_pres.logs['build api stdout'] = file_contents or ''
@@ -555,9 +556,6 @@ class CrosBuildApiApi(RecipeApi):
       retcode_fn(call_step.exc_result.retcode)
       return output_proto
 
-  def response_step_name(self, output_proto, response_lambda):
-    return 'call response%s' % response_lambda(output_proto)
-
   def has_endpoint(self, stub, method):
     """Verifies that the given endpoint can be called.
 
@@ -586,3 +584,15 @@ class CrosBuildApiApi(RecipeApi):
     if self._test_data.enabled:
       remove_endpoints = self._test_data.get('remove_endpoints', {})
     return wanted in self._endpoints and wanted not in remove_endpoints
+
+
+def _response_step_name(output_proto: message.Message,
+                        create_suffix: Callable[[message.Message], str]) -> str:
+  """Create the name for a response step.
+
+  Args:
+    output_proto: A build API response message.
+    create_suffix: A function that creates a suffix for the step name based
+      on the contents of the output message.
+  """
+  return 'call response%s' % create_suffix(output_proto)

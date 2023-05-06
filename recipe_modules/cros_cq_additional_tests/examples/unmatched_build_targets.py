@@ -30,7 +30,7 @@ def RunSteps(api):
     api.cros_cq_additional_tests.append_user_provided_test_suites_to_test_plan(
         builds, gerrit_change, test_plan_response)
   except api.cros_cq_additional_tests.CrosCqAddnlTestsMissingBuildTargetsError as e:
-    api.assertions.assertTrue('missing_build_traget' in [
+    api.assertions.assertTrue('missing_build_target' in [
         t.common.display_name.split('.hw', 1)[0]
         for t in e.not_runnable_addtnl_tests
     ])
@@ -56,10 +56,10 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(['AddtnlTestSuite'],
                                             'process additional test suites',
                                             1),
-      api.git_footers.simulated_get_footers(['missing_build_traget'],
+      api.git_footers.simulated_get_footers(['missing_build_target'],
                                             'process additional test suites',
                                             2),
       api.post_check(
           post_process.StepTextEquals, 'process additional test suites',
           ('Additional TestSuites cannot be run on build targets that are not'
-           ' built or failed building as part of cq: missing_build_traget')))
+           ' built or failed building as part of cq: missing_build_target')))

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+from typing import Any, Dict
+
 from google.protobuf import json_format
 
 from recipe_engine import recipe_test_api
-
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import common
@@ -23,7 +24,9 @@ from PB.testplans.generate_test_plan import TestUnitCommon
 class CrosCqAdditionalTestsTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for cros_test_plan api."""
 
-  def generate_mock_artifact(self, build_target='target'):
+  @staticmethod
+  def generate_mock_artifact(build_target: str = 'target') -> Dict[str, Any]:
+    """Create a mock artifact for use in testing."""
     artifact = {}
     artifact['gs_bucket'] = 'chromeos-image-archive'
     artifact['gs_path'] = build_target + '-cq/R12-3.4.5-6789'
