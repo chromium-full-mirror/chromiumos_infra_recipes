@@ -45,7 +45,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'conductor',
+      'conductor-no-retries',
       api.properties(
           **{
               '$chromeos/conductor': {
@@ -57,4 +57,21 @@ def GenTests(api: RecipeTestApi):
           }),
       api.conductor.set_collect_output(test_bbids,
                                        step_name='running children'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'conductor-retries',
+      api.properties(
+          **{
+              '$chromeos/conductor': {
+                  'enable_conductor': True,
+                  'collect_configs': {
+                      'paygen': {},
+                  },
+              },
+          }),
+      # Don't return one of the original builds (8922054662172514000).
+      api.conductor.set_collect_output(
+          [str(8922054662172514001 + i) for i in range(804)],
+          step_name='running children'),
       api.post_process(post_process.DropExpectation))
