@@ -2070,9 +2070,11 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                                         SWARMING_TASK_ID='dummy-task-id1',
                                         SKYLAB_DUT_ID='dummy-dut-id')) +
             api.properties.environ(
-                CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
-                                            SWARMING_TASK_ID='dummy-task-id1',
-                                            SKYLAB_DUT_ID='dummy-dut-id')))
+                CrosToolRunnerEnvProperties(
+                    SWARMING_BOT_ID='crossk-dummy',
+                    SWARMING_TASK_ID='dummy-task-id1',
+                    SKYLAB_DUT_ID='dummy-dut-id',
+                    LOGDOG_STREAM_PREFIX='bb/cr-bb/dummy-bbid')))
 
   def _get_test_runner_properties(use_result_publishing_limit=False,
                                   non_compliant_prejob_deadline=False):

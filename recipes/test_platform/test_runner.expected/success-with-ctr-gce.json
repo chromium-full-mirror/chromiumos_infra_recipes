@@ -651,6 +651,7 @@
       "sudo",
       "--non-interactive",
       "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DOCKER_DRONE_SERVER_NAME,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS,LOGDOG_STREAM_PREFIX,SWARMING_TASK_ID",
+      "--env BUILD_BUCKET_ID=dummy-bbid",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "test",
       "-docker_key_file",
