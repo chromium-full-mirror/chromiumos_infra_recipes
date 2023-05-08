@@ -2611,50 +2611,53 @@ Raises:
 
 APIs for interacting with Cq-Depends.
 
-#### **class [CrosCqDependsApi](/recipe_modules/cros_cq_depends/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosCqDependsApi](/recipe_modules/cros_cq_depends/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for checking that Cq-Depend has been fulfilled.
 
-&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#88)(self, manifest_diffs):**
+&mdash; **def [ensure\_manifest\_cq\_depends\_fulfilled](/recipe_modules/cros_cq_depends/api.py#93)(self, manifest_diffs: List[ManifestDiff]):**
 
 Checks that Cq-Depend deps between manifests are met.
 
 Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
 
 Args:
-  manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
-      namedtuples.
+  manifest_diffs: An array of `ManifestDiff` namedtuples.
 
-&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#188)(self, gerrit_changes, chunk_size=4):**
+Raises:
+  StepFailure: If any dependencies cannot be found on the branch, and the
+    allow_missing_depends input property is False.
+
+&mdash; **def [get\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#198)(self, gerrit_changes: List[GerritChange], chunk_size: int=4):**
 
 Get Cq-Depend string for the given list of Gerrit changes.
 
 Args:
-  gerrit_changes (list[GerritChange]): The changes on which to depend.
-  chunk_size (int): The number of CLs per 'Cq-Depend:' line.
+  gerrit_changes: The changes on which to depend.
+  chunk_size: The number of CLs per 'Cq-Depend:' line.
 
 Return:
-  str: The full Cq-Depend string.
+  The full Cq-Depend string.
 
-&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#174)(self, gerrit_change):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_cq\_depend\_reference](/recipe_modules/cros_cq_depends/api.py#183)(gerrit_change: GerritChange):**
 
 Return the Cq-Depend reference string for the given change.
 
 Args:
-  gerrit_change (GerritChange): The change of interest.
+  gerrit_change: The change of interest.
 
 Returns:
-  str: The reference string for the change, e.g. chromium:12345
+  The reference string for the change, e.g. chromium:12345
 
-&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#210)(self, gerrit_changes):**
+&mdash; **def [get\_mutual\_cq\_depend](/recipe_modules/cros_cq_depends/api.py#217)(self, gerrit_changes: List[GerritChange]):**
 
 Mutually Cq-Depend all given Gerrit changes.
 
 Args:
-  gerrit_changes (list[GerritChange]): Changes to mutually CQ-depend.
+  gerrit_changes: Changes to mutually CQ-depend.
 
 Return:
-  list[str]: Cq-Depend strings in same order as changes.
+  Cq-Depend strings in same order as changes.
 ### *recipe_modules* / [cros\_debug](/recipe_modules/cros_debug)
 
 [DEPS](/recipe_modules/cros_debug/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -2737,51 +2740,52 @@ Args:
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#55)(self, snapshot_id):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#57)(self, snapshot_id: str):**
 
 Find the annealing build that created snapshot with given ID.
 
 Args:
-  snapshot_id (str): Manifest snapshot commit ID.
+  snapshot_id: Manifest snapshot commit ID.
 
 Returns:
-  build_pb2.Build of the annealing build or None.
+  If an Annealing build is found, then a proto message of that build.
+  Otherwise, None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#298)(self, build, statuses=None, start_build_id=None, limit=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#319)(self, build: build_pb2.Build, statuses: Optional[List['bb_common_pb2.Status']]=None, start_build_id: Optional[int]=None, limit: Optional[int]=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
 Args:
-  build (build_pb2.Build): build to match for.
-  statuses ([common_pb2.Status]): query for builds with these statuses.
-  start_build_id (int): exclude builds older than this ID.
-  limit (int): number of results to return. Latest first.
+  build: Build to match for.
+  statuses: Query for builds with these statuses.
+  start_build_id: Exclude builds older than this ID.
+  limit: Number of results to return. Latest first.
 
 Returns:
-  list[Build] which meet the conditions ordered from latest to oldest.
+  List of builds which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#89)(self, tags=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#100)(self, tags: Optional[List[bb_common_pb2.StringPair]]=None):**
 
 Retrieve passed builds with the same patches as current build.
 
 Args:
-  tags (list[common_pb2.StringPair]): Get builds with these tags.
+  tags: Get builds with these tags.
 
 Returns:
-  list([build_pb2.Build]): Passed builds with the most recent build per builder.
+  Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#160)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#172)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
-  set[str]: Names of passed tests, if any.
+  Names of passed tests, if any.
 
-&mdash; **def [get\_previous\_test\_results](/recipe_modules/cros_history/api.py#211)(self, test_plan: GenerateTestPlanResponse):**
+&mdash; **def [get\_previous\_test\_results](/recipe_modules/cros_history/api.py#231)(self, test_plan: GenerateTestPlanResponse):**
 
 Get the tests from the previous run.
 
@@ -2793,61 +2797,68 @@ Returns:
   A tuple containing the list of the previous VM test builds and the list
   of the previous HW test results.
 
-&mdash; **def [get\_previous\_test\_task\_ids](/recipe_modules/cros_history/api.py#188)(self):**
+&mdash; **def [get\_previous\_test\_task\_ids](/recipe_modules/cros_history/api.py#200)(self):**
 
 Get the task ids of the latest test invocations.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#259)(self, snapshot, builder_list=None, statuses=None, patches=None):**
+Returns:
+  A tuple (vm_build_ids, hw_build_ids), where:
+  * vm_build_ids is a list of buildbucket IDs for all Tast VM tests for the
+    latest invocation of this builder with the same set of Gerrit changes.
+  * hw_build_ids is a list of buildbucket IDs for all Skylab tests for the
+    latest invocation of this builder with the same set of Gerrit changes.
+
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#276)(self, snapshot: bb_common_pb2.GitilesCommit, builder_list: Optional[Set[str]]=None, statuses: Optional[List['bb_common_pb2.Status']]=None, patches: Optional[List[chromiumos_common_pb2.GerritChange]]=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
 Args:
-  snapshot (GitilesCommit): Snapshot to search on.
-  builder_list (set[str]): List of builder names to filter by. If
-    falsy, no name filtering is performed.
-  statuses ([common_pb2.Status]): The statuses of snapshots to return.
-    If falsy, no status filtering is performed.
-  patches ([GerritChange]): Patches applied to snapshot to search on.
-    If falsy, no patch filtering is performed.
+  snapshot: Snapshot to search on.
+  builder_list: List of builder names to filter by. If falsy, no name
+    filtering is performed.
+  statuses: The statuses of snapshots to return. If falsy, no status
+    filtering is performed.
+  patches: Patches applied to snapshot to search on. If falsy, no patch
+    filtering is performed.
 
 Returns:
-  list[Build] builds with the same snapshot and additional filtering.
+  Builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#130)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#142)(self):**
 
 Get builders with the given patches that failed tests in the last run.
 
 Returns:
-  set[str]: Names of builders with HW or VM testing failures, if any.
+  Names of builders with HW or VM testing failures, if any.
 
-&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#74)(self, annealing_build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#82)(annealing_build: build_pb2.Build):**
 
 Retrieve the packages upreved by the annealing build.
 
 Args:
-  annealing_build (build_pb2.Build): Annealing Build.
+  annealing_build: The Annealing build in question.
 
 Returns:
-  list(PackageCPV) of upreved packages.
+  List of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#326)(self):**
+&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#349)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#244)(self, tests):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#264)(self, tests: Iterable[str]):**
 
 Record the tests that passed in the current run.
 
-This exposes the tests to history, so future runs may know which tests
-have passed and which have not.
+This exposes the tests to history, so future runs may know which tests have
+passed and which have not.
 
 Args:
-  tests (sequence[str]): (Unique) names of the tests that passed.
+  tests: Unique names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#52)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)
@@ -11348,10 +11359,10 @@ Success workflow tests for the signing recipe module.
 &mdash; **def [RunSteps](/recipe_modules/cros_dupit/examples/full.py#16)(api):**
 ### *recipes* / [cros\_history:examples/get\_annealing\_from\_snapshot](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py)
 
-[DEPS](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#7): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#13): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_history/examples/get_annealing_from_snapshot.py#22)(api: recipe_api.RecipeApi):**
 ### *recipes* / [cros\_history:examples/get\_matching\_builds](/recipe_modules/cros_history/examples/get_matching_builds.py)
 
 [DEPS](/recipe_modules/cros_history/examples/get_matching_builds.py#9): [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq]

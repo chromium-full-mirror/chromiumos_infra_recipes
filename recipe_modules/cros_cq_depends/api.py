@@ -4,10 +4,14 @@
 # found in the LICENSE file.
 
 """APIs for interacting with Cq-Depends."""
-import re
-from collections import namedtuple
 
-from recipe_engine.recipe_api import RecipeApi, StepFailure
+from collections import namedtuple
+import re
+from typing import List
+
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.repo.api import ManifestDiff
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 PRIVATE_HOST = 'chrome-internal'
@@ -23,15 +27,16 @@ class CrosCqDependsApi(RecipeApi):
     super().__init__(*args, **kwargs)
     self._allow_missing_depends = properties.allow_missing_depends
 
-  def _gather_deps(self, manifest_diffs, dep_log):
+  def _gather_deps(self, manifest_diffs: List[ManifestDiff],
+                   dep_log: List[str]) -> List[Dep]:
     """Gathers all deps from all CLs between the given manifest diffs.
 
     Args:
-      manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`.
-      dep_log (List[str]): output human-readable log for Milo.
+      manifest_diffs: A list of diffs to gather CLs from.
+      dep_log: Human-readable output log for Milo.
 
     Returns:
-      List[Dep]: A list of `Dep` named tuples.
+      A list of `Dep` named tuples.
     """
     # Gather all Cq-Depend entries in all change messages.
     deps = []
@@ -85,14 +90,18 @@ class CrosCqDependsApi(RecipeApi):
       dep_log.append('No Cq-Depend found in any CLs')
     return valid_deps
 
-  def ensure_manifest_cq_depends_fulfilled(self, manifest_diffs):
+  def ensure_manifest_cq_depends_fulfilled(
+      self, manifest_diffs: List[ManifestDiff]) -> None:
     """Checks that Cq-Depend deps between manifests are met.
 
     Checks that all Cq-Depend in all CLs in the given manifest diffs are met.
 
     Args:
-      manifest_diffs (List[ManifestDiff]): An array of `ManifestDiff`
-          namedtuples.
+      manifest_diffs: An array of `ManifestDiff` namedtuples.
+
+    Raises:
+      StepFailure: If any dependencies cannot be found on the branch, and the
+        allow_missing_depends input property is False.
     """
     with self.m.step.nest('ensure manifest cq-depend fulfilled') as pres:
       # Short-circuit if the manifest didn't change.
@@ -171,50 +180,49 @@ class CrosCqDependsApi(RecipeApi):
       # All deps satisfied
       pres.step_text = 'cq-depend checked'
 
-  def get_cq_depend_reference(self, gerrit_change):
+  @staticmethod
+  def get_cq_depend_reference(gerrit_change: GerritChange) -> str:
     """Return the Cq-Depend reference string for the given change.
 
     Args:
-      gerrit_change (GerritChange): The change of interest.
+      gerrit_change: The change of interest.
 
     Returns:
-      str: The reference string for the change, e.g. chromium:12345
+      The reference string for the change, e.g. chromium:12345
     """
     match = re.match(r'(?:https://)?([^./]+)(:?-review.googlesource.com)',
                      gerrit_change.host)
     assert match, 'cannot parse short host of {}'.format(gerrit_change.host)
     return '{}:{}'.format(match.group(1), gerrit_change.change)
 
-  def get_cq_depend(self, gerrit_changes, chunk_size=4):
+  def get_cq_depend(self, gerrit_changes: List[GerritChange],
+                    chunk_size: int = 4) -> str:
     """Get Cq-Depend string for the given list of Gerrit changes.
 
     Args:
-      gerrit_changes (list[GerritChange]): The changes on which to depend.
-      chunk_size (int): The number of CLs per 'Cq-Depend:' line.
+      gerrit_changes: The changes on which to depend.
+      chunk_size: The number of CLs per 'Cq-Depend:' line.
 
     Return:
-      str: The full Cq-Depend string.
+      The full Cq-Depend string.
     """
     depends = list(map(self.get_cq_depend_reference, gerrit_changes))
-    if len(depends) == 0:
-      return ''
-
     chunks = []
     while depends:
       these_depends = depends[:chunk_size]
       del depends[:chunk_size]
       chunks.append('Cq-Depend: {}'.format(','.join(these_depends)))
-
     return '\n'.join(chunks)
 
-  def get_mutual_cq_depend(self, gerrit_changes):
+  def get_mutual_cq_depend(self,
+                           gerrit_changes: List[GerritChange]) -> List[str]:
     """Mutually Cq-Depend all given Gerrit changes.
 
     Args:
-      gerrit_changes (list[GerritChange]): Changes to mutually CQ-depend.
+      gerrit_changes: Changes to mutually CQ-depend.
 
     Return:
-      list[str]: Cq-Depend strings in same order as changes.
+      Cq-Depend strings in same order as changes.
     """
     return [
         self.get_cq_depend([gc

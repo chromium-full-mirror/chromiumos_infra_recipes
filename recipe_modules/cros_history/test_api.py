@@ -4,17 +4,17 @@
 # found in the LICENSE file.
 
 from typing import List
-from recipe_engine import recipe_test_api
+
+from google.protobuf import json_format, timestamp_pb2
 
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
+                                                       builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
-
-from google.protobuf import json_format, timestamp_pb2
+from recipe_engine import recipe_test_api
 
 COMPRESSED_UPREV_RESPONSE = """
 eJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\n
@@ -37,22 +37,23 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
 
   @recipe_test_api.mod_test_data
   @staticmethod
-  def is_retry(value):
+  def is_retry(value: bool) -> bool:
     """Return value for is_retry when testing."""
     return value
 
-  def build_with_passed_tests(self, tests, build_id=123,
-                              create_time=1562475240):
+  @staticmethod
+  def build_with_passed_tests(tests: List[str], build_id: int = 123,
+                              create_time: int = 1562475240) -> build_pb2.Build:
     """Generate a test build with the 'passed_tests' property.
 
     Args:
-      tests (list[str]): List of tests names that passed.
-      build_id (int): The id for the build.
-      create_time (int): The create_time for the build in seconds.
+      tests: List of tests names that passed.
+      build_id: The id for the build.
+      create_time: The create_time for the build in seconds.
 
     Returns:
-      Build: Containing the expected 'passed_tests' and 'test_summary' output
-        property.
+      Build containing the expected 'passed_tests' and 'test_summary' output
+      properties.
     """
     build = build_pb2.Build(
         id=build_id,
@@ -72,18 +73,19 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  def build_with_failed_tests(self, builder_names, build_id=123,
-                              create_time=1562475240):
+  @staticmethod
+  def build_with_failed_tests(builder_names: List[str], build_id: int = 123,
+                              create_time: int = 1562475240) -> build_pb2.Build:
     """Generate a test build with the failed tests in the output.
 
     Args:
-      tests (list[str]): List of builder names that failed hw testing.
-      build_id (int): The id for the build.
-      create_time (int): The create_time for the build in seconds.
+      tests: List of builder names that failed hw testing.
+      build_id: The id for the build.
+      create_time: The create_time for the build in seconds.
 
     Returns:
-      Build: Containing the expected 'test_failures' and 'test_summary'
-        property.
+      Build containing the expected 'test_failures' and 'test_summary'
+      properties.
     """
     build = build_pb2.Build(
         id=build_id,
@@ -104,18 +106,20 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  def empty_build_with_test_build_info(self, builder_name, build_id=123,
-                                       create_time=1562475240):
+  @staticmethod
+  def empty_build_with_test_build_info(
+      builder_name: str, build_id: int = 123,
+      create_time: int = 1562475240) -> build_pb2.Build:
     """Generate a bare minimum build.
 
     Args:
-      builder_name (str): List of builder names that failed hw testing.
-      build_id (int): The id for the build.
-      create_time (int): The create_time for the build in seconds.
+      builder_name: List of builder names that failed hw testing.
+      build_id: The id for the build.
+      create_time: The create_time for the build in seconds.
 
     Returns:
-      Build: Containing the expected 'test_failures' and 'test_summary'
-        property.
+      Build containing the expected 'test_failures' and 'test_summary'
+      properties.
     """
     build = build_pb2.Build(
         id=build_id,
@@ -135,19 +139,20 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  def build_with_test_build_ids_properties(self, hw_ids, vm_ids, build_id=12345,
-                                           create_time=1562475240):
+  @staticmethod
+  def build_with_test_build_ids_properties(
+      hw_ids: List[int], vm_ids: List[int], build_id: int = 12345,
+      create_time: int = 1562475240) -> build_pb2.Build:
     """Generate a test build with build_ids of test builds tests in the output.
 
     Args:
-      hw_ids (list[int]): List of hw builder ids.
-      vm_ids (list[int]): List of vm builder ids.
-      build_id (int): The id for the build.
-      create_time (int): The create_time for the build in seconds.
+      hw_ids: List of hw builder ids.
+      vm_ids: List of vm builder ids.
+      build_id: The id for the build.
+      create_time: The create_time for the build in seconds.
 
     Returns:
-      Build: Containing the test_tasks output property
-        property.
+      Build containing the test_tasks output property.
     """
     build = build_pb2.Build(
         id=build_id,
@@ -165,7 +170,8 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  def create_vm_builds(self, num_success: int, num_failure: int,
+  @staticmethod
+  def create_vm_builds(num_success: int, num_failure: int,
                        start_id: int = 1) -> List[build_pb2.Build]:
     """Create a list of VM test build.
 
@@ -175,7 +181,7 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
       start_id: The ID of the first build to create. Defaults to 1.
 
     Returns:
-      List: A list of VM test build objects.
+      A list of VM test build objects.
     """
     builds = []
     bbid = start_id
@@ -207,11 +213,12 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
       bbid += 1
     return builds
 
-  def build_with_uprev_response(self):
+  @staticmethod
+  def build_with_uprev_response() -> build_pb2.Build:
     """Generate a test build with the uprev response in the output.
 
     Returns:
-      Build: Containing the expected 'compressed_uprev_response' property.
+      Build containing the expected 'compressed_uprev_response' property.
     """
     build = build_pb2.Build(
         id=123, builder=builder_common_pb2.BuilderID(builder='Annealing'))

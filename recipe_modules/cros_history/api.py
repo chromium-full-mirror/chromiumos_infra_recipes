@@ -4,25 +4,27 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Tuple, List
 import base64
 import datetime
+from typing import List, Iterable, Optional, Set, Tuple
 import zlib
-from PB.go.chromium.org.luci.buildbucket.proto \
-  import builder_common as builder_common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.testplans.generate_test_plan import GenerateTestPlanResponse
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.chromite.api.packages import UprevPackagesResponse
-
-from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult, UnitHwTest
-from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+
+from PB.chromite.api.packages import UprevPackagesResponse
+from PB.chromiumos import common as chromiumos_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
+                                                       builder_common_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import (common as bb_common_pb2)
+from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from recipe_engine import recipe_api
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 PASSED_TESTS_KEY = 'passed_tests'
 UPREV_RESPONSE_KEY = 'compressed_uprev_response'
@@ -30,10 +32,10 @@ SNAPSHOT_BUCKET = 'postsubmit'
 TEST_SUMMARY_KEY = 'test_summary'
 TEST_TASKS_KEY = 'test_tasks'
 TERMINAL_STATUSES = [
-    common_pb2.SUCCESS,
-    common_pb2.FAILURE,
-    common_pb2.INFRA_FAILURE,
-    common_pb2.CANCELED,
+    bb_common_pb2.SUCCESS,
+    bb_common_pb2.FAILURE,
+    bb_common_pb2.INFRA_FAILURE,
+    bb_common_pb2.CANCELED,
 ]
 
 
@@ -48,19 +50,21 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     self._passed_tests = None
 
   @property
-  def start_time_in_seconds(self):
+  def start_time_in_seconds(self) -> float:
     """Generate start time in seconds."""
     return self.m.time.time() - self._lookback_seconds
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
-  def get_annealing_from_snapshot(self, snapshot_id):
+  def get_annealing_from_snapshot(
+      self, snapshot_id: str) -> Optional[build_pb2.Build]:
     """Find the annealing build that created snapshot with given ID.
 
     Args:
-      snapshot_id (str): Manifest snapshot commit ID.
+      snapshot_id: Manifest snapshot commit ID.
 
     Returns:
-      build_pb2.Build of the annealing build or None.
+      If an Annealing build is found, then a proto message of that build.
+      Otherwise, None.
     """
     tags = self.m.cros_tags.tags(**dict(published_snapshot_id=snapshot_id))
     # Not searching based on builder because we want to find both Annealing
@@ -68,17 +72,24 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # should be fast.
     predicate = builds_service_pb2.BuildPredicate(tags=tags)
     predicate.builder.project = 'chromeos'
-    return self.m.buildbucket.search(predicate, limit=1,
-                                     url_title_fn=self.m.naming.get_build_title)
+    builds = self.m.buildbucket.search(
+        predicate, limit=1, url_title_fn=self.m.naming.get_build_title)
+    if not builds:
+      return None
+    assert len(builds) == 1
+    return builds[0]
 
-  def get_upreved_pkgs(self, annealing_build):
+  @staticmethod
+  def get_upreved_pkgs(
+      annealing_build: build_pb2.Build
+  ) -> List[chromiumos_common_pb2.PackageInfo]:
     """Retrieve the packages upreved by the annealing build.
 
     Args:
-      annealing_build (build_pb2.Build): Annealing Build.
+      annealing_build: The Annealing build in question.
 
     Returns:
-      list(PackageCPV) of upreved packages.
+      List of upreved packages.
     """
     build_output = json_format.MessageToDict(annealing_build.output.properties)
     compressed_response = build_output.get(UPREV_RESPONSE_KEY, '')
@@ -86,14 +97,16 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     uprev_response = UprevPackagesResponse.FromString(response_str)
     return uprev_response.packages
 
-  def get_passed_builds(self, tags=None):
+  def get_passed_builds(
+      self, tags: Optional[List[bb_common_pb2.StringPair]] = None
+  ) -> List[build_pb2.Build]:
     """Retrieve passed builds with the same patches as current build.
 
     Args:
-      tags (list[common_pb2.StringPair]): Get builds with these tags.
+      tags: Get builds with these tags.
 
     Returns:
-      list([build_pb2.Build]): Passed builds with the most recent build per builder.
+      Passed builds with the most recent build per builder.
     """
     with self.m.step.nest('get change build history') as presentation:
       build = self.m.buildbucket.build
@@ -105,10 +118,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       # Search across all buckets as builders have been moved to their own individual buckets.
       builder_shell = builder_common_pb2.BuilderID(
           project=current_builder_id.project)
-      all_passed_builds = self._get_patch_history(patches,
-                                                  builder=builder_shell,
-                                                  statuses=[common_pb2.SUCCESS],
-                                                  tags=tags)
+      all_passed_builds = self._get_patch_history(
+          patches, builder=builder_shell, statuses=[bb_common_pb2.SUCCESS],
+          tags=tags)
       all_passed_builds.sort(key=lambda build: build.start_time.seconds,
                              reverse=True)
       for build in all_passed_builds:
@@ -127,11 +139,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
       return latest_passed_builds
 
-  def get_test_failure_builders(self):
+  def get_test_failure_builders(self) -> Set[str]:
     """Get builders with the given patches that failed tests in the last run.
 
     Returns:
-      set[str]: Names of builders with HW or VM testing failures, if any.
+      Names of builders with HW or VM testing failures, if any.
     """
     current_build = self.m.buildbucket.build
     past_builds = self.get_matching_builds(current_build,
@@ -157,11 +169,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # Test names are of the form `{builder_name}.{test_type}.{suite_name}`.
     return {test.split('.')[0] for test in critical_failed_test_names}
 
-  def get_passed_tests(self):
+  def get_passed_tests(self) -> Set[str]:
     """Find all tests that have passed with the given patches.
 
     Returns:
-      set[str]: Names of passed tests, if any.
+      Names of passed tests, if any.
     """
     if self._passed_tests is not None:
       return self._passed_tests
@@ -186,7 +198,15 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       return self._passed_tests
 
   def get_previous_test_task_ids(self) -> Tuple[List[int], List[int]]:
-    """Get the task ids of the latest test invocations."""
+    """Get the task ids of the latest test invocations.
+
+    Returns:
+      A tuple (vm_build_ids, hw_build_ids), where:
+      * vm_build_ids is a list of buildbucket IDs for all Tast VM tests for the
+        latest invocation of this builder with the same set of Gerrit changes.
+      * hw_build_ids is a list of buildbucket IDs for all Skylab tests for the
+        latest invocation of this builder with the same set of Gerrit changes.
+    """
     current_build = self.m.buildbucket.build
     past_builds = self.get_matching_builds(current_build,
                                            statuses=TERMINAL_STATUSES)
@@ -241,36 +261,37 @@ class CrosHistoryApi(recipe_api.RecipeApi):
             hw_build_ids, unit_hw_tests)
       return vm_test_results, hw_test_results
 
-  def set_passed_tests(self, tests):
+  def set_passed_tests(self, tests: Iterable[str]):
     """Record the tests that passed in the current run.
 
-    This exposes the tests to history, so future runs may know which tests
-    have passed and which have not.
+    This exposes the tests to history, so future runs may know which tests have
+    passed and which have not.
 
     Args:
-      tests (sequence[str]): (Unique) names of the tests that passed.
+      tests: Unique names of the tests that passed.
     """
-    # TODO(b:232246919): Figure out why this is failing, and re-enable.
-    #if len(tests) != len(set(tests)):
-    #      raise ValueError('test names must be unique, found: %r' % tests)
     self.m.easy.set_properties_step(
         **{PASSED_TESTS_KEY: sorted(list(set(tests)))})
 
-  def get_snapshot_builds(self, snapshot, builder_list=None, statuses=None,
-                          patches=None):
+  def get_snapshot_builds(
+      self, snapshot: bb_common_pb2.GitilesCommit,
+      builder_list: Optional[Set[str]] = None,
+      statuses: Optional[List['bb_common_pb2.Status']] = None,
+      patches: Optional[List[chromiumos_common_pb2.GerritChange]] = None
+  ) -> List[build_pb2.Build]:
     """Get builds ran at given snapshot and additional optional filtering.
 
     Args:
-      snapshot (GitilesCommit): Snapshot to search on.
-      builder_list (set[str]): List of builder names to filter by. If
-        falsy, no name filtering is performed.
-      statuses ([common_pb2.Status]): The statuses of snapshots to return.
-        If falsy, no status filtering is performed.
-      patches ([GerritChange]): Patches applied to snapshot to search on.
-        If falsy, no patch filtering is performed.
+      snapshot: Snapshot to search on.
+      builder_list: List of builder names to filter by. If falsy, no name
+        filtering is performed.
+      statuses: The statuses of snapshots to return. If falsy, no status
+        filtering is performed.
+      patches: Patches applied to snapshot to search on. If falsy, no patch
+        filtering is performed.
 
     Returns:
-      list[Build] builds with the same snapshot and additional filtering.
+      Builds with the same snapshot and additional filtering.
     """
     with self.m.step.nest('get snapshot builds') as presentation:
       project = self.m.buildbucket.build.builder.project
@@ -295,18 +316,20 @@ class CrosHistoryApi(recipe_api.RecipeApi):
         presentation.links[title] = url
       return snapshot_builds
 
-  def get_matching_builds(self, build, statuses=None, start_build_id=None,
-                          limit=None):
+  def get_matching_builds(
+      self, build: build_pb2.Build,
+      statuses: Optional[List['bb_common_pb2.Status']] = None,
+      start_build_id: Optional[int] = None, limit: Optional[int] = None):
     """Get builds with the matching builder and gerrit_changes.
 
     Args:
-      build (build_pb2.Build): build to match for.
-      statuses ([common_pb2.Status]): query for builds with these statuses.
-      start_build_id (int): exclude builds older than this ID.
-      limit (int): number of results to return. Latest first.
+      build: Build to match for.
+      statuses: Query for builds with these statuses.
+      start_build_id: Exclude builds older than this ID.
+      limit: Number of results to return. Latest first.
 
     Returns:
-      list[Build] which meet the conditions ordered from latest to oldest.
+      List of builds which meet the conditions ordered from latest to oldest.
     """
     # TODO(crbug/1040552): compare builder_config.build attributes as part of
     # declaring a match.
@@ -323,7 +346,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       ]
       return builds
 
-  def is_retry(self):
+  def is_retry(self) -> bool:
     """Determine if this build is being retried.
 
     Returns:
@@ -339,30 +362,35 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     return len(builds) >= 1
 
   @staticmethod
-  def _buildset_tag_from_snapshot(snapshot):
-    """Map a snapshot (GitilesCommit) into a buildset tag string value."""
-    return "/".join(
+  def _buildset_tag_from_snapshot(snapshot: bb_common_pb2.GitilesCommit) -> str:
+    """Map a snapshota commit into a buildset tag string value."""
+    return '/'.join(
         ['commit/gitiles', snapshot.host, snapshot.project, '+', snapshot.id])
 
-  def _get_patch_history(self, patches=None, snapshot=None, builder=None,
-                         limit=2000, statuses=None, start_build_id=None,
-                         tags=None):
+  def _get_patch_history(
+      self, patches: Optional[List[chromiumos_common_pb2.GerritChange]] = None,
+      snapshot: Optional[bb_common_pb2.GitilesCommit] = None,
+      builder: Optional[builder_common_pb2.BuilderID] = None, limit: int = 2000,
+      statuses: Optional[List['bb_common_pb2.Status']] = None,
+      start_build_id: Optional[builder_common_pb2.BuilderID] = None,
+      tags: Optional[List[bb_common_pb2.StringPair]] = None
+  ) -> List[build_pb2.Build]:
     """Get all the builds with specified parameters from Buildbucket.
 
     Args:
-      patches list([GerritChange]): patches to search on.
-      snapshot (GitilesCommit): snapshot to search on. This
-        will set a buildset tag and search on it.
-      builder (BuilderID): query for only this builder.
-      limit (int): limit the list returned to this number.
-      statuses ([common_pb2.Status]): query for builds with these statuses.
-      start_build_id: exclude builds older than this ID.
-      tags ([common_pb2.StringPair]): get builds with these tags only. If
-        'snapshot' is specified then it will insert 'buildset' tag for SHA1.
+      patches: Patches to search on.
+      snapshot: Snapshot to search on. This will set a buildset tag and search
+        on it.
+      builder: Query for only this builder.
+      limit: Limit the list returned to this number.
+      statuses: Query for builds with these statuses.
+      start_build_id: Exclude builds older than this ID.
+      tags: Get builds with these tags only. If 'snapshot' is specified, then
+        it will insert the 'buildset' tag for SHA1.
 
     Returns:
-      list[Build] which meet the conditions ordered from latest to oldest.  The
-        current build is never included in the list.
+      List of builds which meet the conditions ordered from latest to oldest.
+      The current build is never included in the list.
     """
     tags = [] if not tags else tags
 
@@ -372,11 +400,11 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # See also crbug.com/996706.
     if start_build_id:
       build_range = builds_service_pb2.BuildRange(start_build_id=start_build_id)
-      create_time = common_pb2.TimeRange(
+      create_time = bb_common_pb2.TimeRange(
           end_time=self.m.buildbucket.build.create_time)
     else:
       build_range = None
-      create_time = common_pb2.TimeRange(
+      create_time = bb_common_pb2.TimeRange(
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.start_time_in_seconds)),
           end_time=self.m.buildbucket.build.create_time)

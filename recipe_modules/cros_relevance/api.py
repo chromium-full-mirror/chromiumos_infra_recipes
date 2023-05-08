@@ -272,13 +272,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
     relevance_log = []
     with self.m.step.nest('postsubmit relevance check') as pres:
-      builds = self.m.cros_history.get_annealing_from_snapshot(
+      annealing_build = self.m.cros_history.get_annealing_from_snapshot(
           gitiles_commit.id)
-      if len(builds) != 1:
+      if not annealing_build:
         pres.step_text = 'relevant because annealing build was not found'
         return True
 
-      upreved_pkgs = self.m.cros_history.get_upreved_pkgs(builds[0])
+      upreved_pkgs = self.m.cros_history.get_upreved_pkgs(annealing_build)
       relevance_log.append('Packages upreved by Annealing:')
       relevance_log += self._format_pkgs(upreved_pkgs)
       dependent_pkgs = _flatten_depgraph_pkgs(dep_graph)
