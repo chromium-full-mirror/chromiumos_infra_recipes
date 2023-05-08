@@ -13906,9 +13906,9 @@ Updates test plan rules to reflect new risk-based rules.
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#769)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#818)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#871)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#920)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -13917,7 +13917,7 @@ Args:
   * requests: ExecuteRequests.tagged_requests.
   * error_in_requests: {tag: error(str)} dict.
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#243)(api, requests, error_in_requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#244)(api, requests, error_in_requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -13928,7 +13928,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#695)(api, properties, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#744)(api, properties, requests):**
 
 Execute request in the correct backend.
 
@@ -13936,14 +13936,14 @@ Args:
   properties: CrosTestPlatformProperties
   requests: ExecutionRequests payload.
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#88)(api):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#89)(api):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#965)(api, requests, responses):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1014)(api, requests, responses):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#672)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#721)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -13952,15 +13952,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1146)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1195)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1224)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1273)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1064)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1113)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#107)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#108)(api, properties):**
 
 Get and validate requests from input properties.
 

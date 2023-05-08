@@ -80,6 +80,7 @@ CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
+MAX_IN_SHARD = 70
 
 
 
@@ -463,7 +464,10 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
   """
   with api.step.nest("Shard test cases") as step:
     seed = request.test_plan.seed
-    max_in_shard = 70
+    total_shards = request.test_plan.total_shards
+    max_in_shard = request.test_plan.max_in_shard
+    if max_in_shard == 0:
+      max_in_shard = MAX_IN_SHARD
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
     if suite_name.__contains__("tast-tags-test-suite"):  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
@@ -483,9 +487,8 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
     for test_suite in test_suites:
       test_buckets = _bucket_by_dependencies(
           list(test_suite.test_cases.test_cases))
-      shards = []
-      for bucket in test_buckets:
-        shards.extend(_shard_test_cases(api, bucket, max_in_shard))
+      shards = _shard_test_buckets(api, test_buckets, total_shards,
+                                   max_in_shard)
       step.presentation.tags["shard_count"] = str(len(shards))
       step.presentation.tags["unique_dependencies_count"] = str(
           len(test_buckets))
@@ -575,7 +578,53 @@ def _bucket_by_dependencies(test_cases):
   return list(bucket.values())
 
 
-def _shard_test_cases(api, test_cases, max_in_shard=100):
+def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
+  """Distribute shards among the pool of test_buckets and shard their test cases.
+
+  If total_shards is non-zero, run through the distribution logic.
+  Each bucket will receive a number of shards from the total_shards value
+  proportional to their number of test cases as compared to the total number
+  of test cases.
+
+  Example:
+    Bucket 1: 1 test
+    Bucket 2: 40 tests
+    Bucket 3: 50 tests
+    total_shards: 4
+
+    Bucket 3 is largest. Take its test_cases ratio of 50/99 and multiply by the available shards 4.
+    Bucket 3 gets 2 shards and removes its shards and test_cases count from the total counts.
+    Bucket 2 is the next largest. Take its test_case ratio of 40/41 and multiply by the available shards, 2.
+    Bucket 2 gets 1 shard and removes its shard and test_cases count from the total counts.
+    Bucket 1 is last. Take its test_case ratio of 1/1 and multiply by the available shards, 1.
+    Bucket 1 gets 1 shard and removes its shard and test_cases count from the total counts.
+
+  Args:
+    * test_buckets: List[List[api.TestCase]]
+    * total_shards: int
+    * max_in_shard: int
+
+  Returns: List[List[api.TestCase]].
+  """
+  shards = []
+  if total_shards != 0:
+    total_shards = max(total_shards, len(test_buckets))
+  num_test_cases_left_to_shard = sum(len(bucket) for bucket in test_buckets)
+  total_shards_left = total_shards
+  # Sorted for largest buckets first. Ensures that shards allocated is always non-zero.
+  test_buckets.sort(key=len, reverse=True)
+  for bucket in test_buckets:
+    if total_shards != 0:
+      shards_allocated = math.floor(
+          (len(bucket) / num_test_cases_left_to_shard) * total_shards_left)
+      num_test_cases_left_to_shard -= len(bucket)
+      total_shards_left -= shards_allocated
+      max_in_shard = math.ceil(len(bucket) / shards_allocated)
+    shards.extend(_shard_test_cases(api, bucket, max_in_shard))
+  return shards
+
+
+def _shard_test_cases(api, test_cases, max_in_shard=MAX_IN_SHARD):
   """Create groupings of the test_cases.
 
   Args:
@@ -1349,7 +1398,8 @@ def _software_dependencies_with_milestone_before_108():
 def _test_request(request_name_tag, build_target="foo-build-target",
                   scheduling=_test_scheduling(), individual_test=False,
                   individual_test_name=None, tag_criteria=None, seed=None,
-                  software_deps=_default_software_dependencies(), retries=0):
+                  software_deps=_default_software_dependencies(), retries=0,
+                  total_shards=0):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1380,20 +1430,21 @@ def _test_request(request_name_tag, build_target="foo-build-target",
   return Request(
       params=params, test_plan=Request.TestPlan(
           suite=[Request.Suite(name='%s-suite' % request_name_tag)],
-          tag_criteria=tag_criteria, seed=seed))
+          tag_criteria=tag_criteria, seed=seed, total_shards=total_shards))
 
 
 # pylint: disable=dangerous-default-value
 def _cft_test_request(request_name, build_target="foo-build-target",
                       individual_test=False, individual_test_name=None,
                       tag_criteria=None, seed=None,
-                      software_deps=_default_software_dependencies(),
-                      retries=0):
+                      software_deps=_default_software_dependencies(), retries=0,
+                      total_shards=0):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
                            individual_test_name=individual_test_name,
                            tag_criteria=tag_criteria, seed=seed,
-                           software_deps=software_deps, retries=retries)
+                           software_deps=software_deps, retries=retries,
+                           total_shards=total_shards)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -2614,7 +2665,8 @@ def GenTests(api):
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
                           .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]))
+                                               tag_excludes=["blap", "blop"]),
+                          total_shards=5)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
