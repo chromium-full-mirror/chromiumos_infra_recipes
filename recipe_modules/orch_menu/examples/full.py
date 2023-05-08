@@ -335,6 +335,57 @@ def GenTests(api):
       bot_size='medium',
   )
 
+  yield api.orch_menu.test(
+      'release-orchestrator-retry-run-failed-children-conductor-disabled',
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0'))),
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.RUN_FAILED_CHILDREN]
+                  },
+                  'builder_exec_steps': {
+                      'octopus-release-main': {
+                          'steps': [RetryStep.PAYGEN],
+                      },
+                  }
+              },
+              '$chromeos/conductor': {
+                  'enable_conductor': False,
+                  'collect_configs': {
+                      'child builds': {},
+                  },
+              },
+          }),
+      api.buildbucket.simulated_get(
+          original_build, step_name='RUNNING IN RETRY MODE.get original build'),
+      api.buildbucket.simulated_get_multi(
+          child_builds,
+          step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
+      ),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          'RUN_FAILED_CHILDREN only works if conductor is enabled in non-dryrun mode.'
+      ),
+      api.post_process(post_process.DropExpectation),
+      input_properties=orch_menu_properties(
+          update_manifest_refs=dict(test='refs/heads/test'),
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True),
+      builder='release-main-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      bot_size='medium',
+      status='FAILURE',
+  )
+
   summary = ('Full version: R99-1234.56.0'
              '\n\n3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'

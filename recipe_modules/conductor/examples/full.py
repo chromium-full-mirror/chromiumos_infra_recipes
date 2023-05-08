@@ -24,7 +24,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api: RecipeApi):
   bbids = api.conductor.collect('child builds', ["123", "456"],
-                                step_name='conductor collect')
+                                step_name='conductor collect',
+                                initial_retry=True)
   api.assertions.assertEqual(bbids, [123, 457])
 
   api.assertions.assertEqual(api.conductor.collect_config(None), None)
@@ -66,9 +67,10 @@ def GenTests(api: RecipeTestApi):
                      [json_format.MessageToJson(collect_config)]),
       api.post_check(post_process.StepCommandContains, 'conductor collect',
                      ['collect', '--input_json']),
-      api.post_check(
-          post_process.StepCommandContains, 'conductor collect',
-          ['--bbids', '123,456', '--polling_interval', '120', '--dryrun']),
+      api.post_check(post_process.StepCommandContains, 'conductor collect', [
+          '--bbids', '123,456', '--polling_interval', '120', '--dryrun',
+          '--initial_retry'
+      ]),
       api.post_check(post_process.PropertyEquals, 'conductor_report',
                      {'child builds': TEST_REPORT}),
       api.post_process(post_process.DropExpectation),

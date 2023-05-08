@@ -1680,55 +1680,55 @@ Returns:
 [DEPS](/recipe_modules/checkpoint/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#102)(self):**
+&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#103)(self):**
 
 Get the BBIDs of the child builders that are image builders.
 
-&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#127)(self, builder: str):**
+&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#128)(self, builder: str):**
 
 Return the `checkpoint` module properties to set for the child builder.
 
-&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#146)(requested_steps: List['RetryStep']):**
+&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#147)(requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns:
   All the steps that are meant to be run.
 
-&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#114)(self):**
+&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#115)(self):**
 
-Return the list of child builders that failed.
+Returns the list of child builders that failed.
 
 Returns:
   Names of child builders that failed, e.g. eve-release-main.
 
-&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#90)(self):**
+&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#91)(self):**
 
 Return whether the build is a retry build.
 
-&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#94)(self, step: 'RetryStep'):**
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#95)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#176)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#177)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#241)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#242)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#106)(self):**
+&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#107)(self):**
 
 Get the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#228)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#229)(self, step: 'RetryStep', status: str):**
 
 Update the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -2076,7 +2076,7 @@ API wrapping the conductor tool.
 
 A module for calling conductor.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#51)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#55)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
 
 Call conductor with the given args.
 
@@ -2086,18 +2086,22 @@ Args:
   timeout: Timeout, in seconds. Defaults to one hour.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [collect](/recipe_modules/conductor/api.py#65)(self, collect_name: str, bbids: List[Union[(str, int)]], \*\*kwargs):**
+&mdash; **def [collect](/recipe_modules/conductor/api.py#69)(self, collect_name: str, bbids: List[Union[(str, int)]], initial_retry: bool=False, \*\*kwargs):**
 
 Calls `conductor collect` with the given args.
 
 Args:
   collect_name: Name of this collection (used to find collect config).
   bbids: List of BBIDs to collect.
+  initial_retry: Whether to pass --initial_retry to conductor for an
+    unconditional retry at the start of the run.
 
 Returns:
   Final set of BBIDs.
 
-&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#45)(self, collect_name: Union[(str, None)]):**
+&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#49)(self, collect_name: Union[(str, None)]):**
+
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/conductor/api.py#45)(self):**
 
 &emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#41)(self):**
 
@@ -7724,11 +7728,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1334)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1339)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1174)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1179)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7743,7 +7747,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#192)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1373)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1378)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -7808,7 +7812,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1074)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1079)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -7838,18 +7842,18 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#776)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#785)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#999)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1004)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1006)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1011)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

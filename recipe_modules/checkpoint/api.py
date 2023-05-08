@@ -11,6 +11,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.checkpoint import RetryStep
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.checkpoint.checkpoint import CheckpointProperties
 
@@ -111,8 +112,8 @@ class CheckpointApi(recipe_api.RecipeApi):
         child_builds.append(bbid)
     return child_builds
 
-  def failed_builder_children(self) -> List[str]:
-    """Return the list of child builders that failed.
+  def failed_builder_children(self) -> List[build_pb2.Build]:
+    """Returns the list of child builders that failed.
 
     Returns:
       Names of child builders that failed, e.g. eve-release-main.
@@ -121,7 +122,7 @@ class CheckpointApi(recipe_api.RecipeApi):
     for _, build in self._builder_children.items():
       # TODO(b/262388770): Handle still-running builds?
       if build.status != common_pb2.SUCCESS:
-        failed_children.append(build.builder.builder)
+        failed_children.append(build)
     return failed_children
 
   def builder_retry_props(self, builder: str) -> dict:

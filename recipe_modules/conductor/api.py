@@ -42,6 +42,10 @@ class ConductorApi(recipe_api.RecipeApi):
   def enabled(self) -> bool:
     return self._properties.enable_conductor
 
+  @property
+  def dryrun(self) -> bool:
+    return self._properties.conductor_dryrun
+
   def collect_config(self,
                      collect_name: Union[str, None]) -> Optional[CollectConfig]:
     if not self._properties.collect_configs or not collect_name:
@@ -63,12 +67,14 @@ class ConductorApi(recipe_api.RecipeApi):
                 [self._conductor_path] + cmd, timeout=timeout, **kwargs)
 
   def collect(self, collect_name: str, bbids: List[Union[str, int]],
-              **kwargs) -> List[int]:
+              initial_retry: bool = False, **kwargs) -> List[int]:
     """Calls `conductor collect` with the given args.
 
     Args:
       collect_name: Name of this collection (used to find collect config).
       bbids: List of BBIDs to collect.
+      initial_retry: Whether to pass --initial_retry to conductor for an
+        unconditional retry at the start of the run.
 
     Returns:
       Final set of BBIDs.
@@ -100,8 +106,10 @@ class ConductorApi(recipe_api.RecipeApi):
           '--polling_interval',
           str(self._properties.polling_interval_seconds)
       ]
-    if self._properties.conductor_dryrun:
+    if self.dryrun:
       cmd += ['--dryrun']
+    if initial_retry:
+      cmd += ['--initial_retry']
 
     # Try except so that the step turns red but does not doom the build.
     try:

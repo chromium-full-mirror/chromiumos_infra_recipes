@@ -717,24 +717,33 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # only works with the release orchestrator.
       with self.m.checkpoint.retry(RetryStep.RUN_CHILDREN) as run_step:
         if run_step:
-          child_specs = self._get_child_specs()
+          collect_kwargs = {}
+          collect_now, collect_after = [], []
           if self.m.checkpoint.is_run_step(RetryStep.RUN_FAILED_CHILDREN):
+            # Conductor leverages `cros try retry` to retry builds.
+            if not self.m.conductor.enabled or self.m.conductor.dryrun:
+              raise StepFailure(
+                  'RUN_FAILED_CHILDREN only works if conductor is enabled in non-dryrun mode.'
+              )
             with self.m.step.nest(
                 'only rerunning failed children') as presentation:
-              presentation.logs[
-                  'failed children'] = self.m.checkpoint.failed_builder_children(
-                  )
-              child_specs = [
-                  spec for spec in child_specs
-                  if spec.name in self.m.checkpoint.failed_builder_children()
+              presentation.logs['failed children'] = [
+                  b.builder.builder
+                  for b in self.m.checkpoint.failed_builder_children()
               ]
-
-          collect_now, collect_after = self._filter_schedule_builds(
-              pres, child_specs, extra_props=extra_child_props)
+              # Don't naively schedule builds. Instead, use conductor to
+              # retry failed builds from the previous run.
+              collect_now = self.m.checkpoint.failed_builder_children()
+              collect_kwargs['conductor_initial_retry'] = True
+          else:
+            # Schedule builds.
+            collect_now, collect_after = self._filter_schedule_builds(
+                pres, self._get_child_specs(), extra_props=extra_child_props)
 
           completed_builds = list(
               self._collect_builds([b.id for b in collect_now],
-                                   collect_name='child builds'))
+                                   collect_name='child builds',
+                                   **collect_kwargs))
           self.add_child_info_to_output_property()
         else:
           results_step_name = '(RETRY-MODE) check build results from previous builds'
@@ -889,12 +898,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Add in extra_props.
       if extra_props:
         for _, req in enumerate(new_build_requests):
-          if self.m.checkpoint.is_retry():
-            # Propagate retry properties.
-            retry_props = self.m.checkpoint.builder_retry_props(
-                req.builder.builder)
-            if retry_props:
-              req.properties['$chromeos/checkpoint'] = retry_props
           # Only set the value if it's not set already.
           # We don't want to clobber anything.
           for key, val in extra_props.items():
@@ -934,13 +937,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
             collect_when_dict[
                 BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST])
 
-  def _collect_builds(self, build_ids, collect_name=None):
+  def _collect_builds(self, build_ids, collect_name=None,
+                      conductor_initial_retry: bool = False):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
     try:
       if self.m.conductor.enabled and self.m.conductor.collect_config(
           collect_name):
         bbids = self.m.conductor.collect(collect_name, build_ids,
-                                         timeout=60 * 60 * 36)
+                                         timeout=60 * 60 * 36,
+                                         initial_retry=conductor_initial_retry)
         return self.m.buildbucket.get_multi(
             bbids, step_name='get', url_title_fn=self.m.naming.get_build_title,
             fields=fields).values()

@@ -24,8 +24,9 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(api.checkpoint.builder_children(),
                              [8922054662172514002, 8922054662172514003])
 
-  api.assertions.assertEqual(api.checkpoint.failed_builder_children(),
-                             ['eve-release-main'])
+  api.assertions.assertEqual(
+      api.checkpoint.failed_builder_children()[0].builder.builder,
+      'eve-release-main')
 
   api.assertions.assertEqual(api.checkpoint.successful_builder_children_bbids(),
                              [8922054662172514002])
