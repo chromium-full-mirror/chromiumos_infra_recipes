@@ -18,14 +18,13 @@
     "cmd": [],
     "name": "get previous failed and now exonerable suites",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 vm suites and 1 hw suite@@@",
+      "@@@STEP_TEXT@found 1 vm suite and 0 hw suite@@@",
       "@@@STEP_LOG_LINE@exonerable tests@Test Suites that previously failed but now exonerable @@@",
       "@@@STEP_LOG_LINE@exonerable tests@VM test suites:@@@",
       "@@@STEP_LOG_LINE@exonerable tests@ test_name_4@@@",
-      "@@@STEP_LOG_LINE@exonerable tests@ test_name_5@@@",
       "@@@STEP_LOG_LINE@exonerable tests@@@@",
       "@@@STEP_LOG_LINE@exonerable tests@HW test suites:@@@",
-      "@@@STEP_LOG_LINE@exonerable tests@ htarget.hw.some-other-suite@@@",
+      "@@@STEP_LOG_LINE@exonerable tests@ @@@",
       "@@@STEP_LOG_END@exonerable tests@@@"
     ]
   },
@@ -64,7 +63,7 @@
     "name": "get previous failed and now exonerable suites.get previous test results.find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"2019-07-07T04:54:00Z\", \"endTime\": \"2019-07-07T04:54:02Z\", \"id\": \"12345\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"test_tasks\": {\"skylab_builder_ids\": [\"1\", \"2\"], \"tast_vm_tests_builder_ids\": [\"3\", \"4\"]}}}, \"startTime\": \"2019-07-07T04:54:01Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"2019-07-07T04:54:00Z\", \"endTime\": \"2019-07-07T04:54:02Z\", \"id\": \"12345\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"passed_tests\": [\"htarget.hw.some-other-suite\", \"test_name_5\"], \"test_tasks\": {\"skylab_builder_ids\": [\"1\", \"2\"], \"tast_vm_tests_builder_ids\": [\"3\", \"4\"]}}}, \"startTime\": \"2019-07-07T04:54:01Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
@@ -376,7 +375,10 @@
     "name": "get previous failed and now exonerable suites.get change test history",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found no previously passed tests@@@"
+      "@@@STEP_TEXT@some tests already passed@@@",
+      "@@@STEP_LOG_LINE@list of passed tests@htarget.hw.some-other-suite@@@",
+      "@@@STEP_LOG_LINE@list of passed tests@test_name_5@@@",
+      "@@@STEP_LOG_END@list of passed tests@@@"
     ]
   },
   {
@@ -384,6 +386,7 @@
     "name": "get previous failed and now exonerable suites.get change test history.find matching builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/12345@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
@@ -406,7 +409,9 @@
     "name": "get previous failed and now exonerable suites.get change test history.find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cq-orchestrator\"}, \"createTime\": \"2019-07-07T04:54:00Z\", \"endTime\": \"2019-07-07T04:54:02Z\", \"id\": \"12345\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}]}, \"output\": {\"properties\": {\"passed_tests\": [\"htarget.hw.some-other-suite\", \"test_name_5\"], \"test_tasks\": {\"skylab_builder_ids\": [\"1\", \"2\"], \"tast_vm_tests_builder_ids\": [\"3\", \"4\"]}}}, \"startTime\": \"2019-07-07T04:54:01Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@cq-orchestrator@https://cr-buildbucket.appspot.com/build/12345@@@"
     ]
   },
   {

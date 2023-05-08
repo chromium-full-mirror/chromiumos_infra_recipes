@@ -94,6 +94,56 @@ def GenTests(api):
            'VM test suites:\n test_name_4\n test_name_5\n\n'
            'HW test suites:\n htarget.hw.some-other-suite')))
 
+  prev_orch = api.cros_history.build_with_test_build_ids_properties(['1', '2'],
+                                                                    ['3', '4'])
+  prev_orch.output.properties['passed_tests'] = [
+      'htarget.hw.some-other-suite', 'test_name_5'
+  ]
+  yield api.test(
+      'filter-out-previously-exonerated',
+      api.properties(
+          **
+          {'$chromeos/exonerate': ExonerateProperties(
+              enable_exoneration=True)}),
+      api.buildbucket.simulated_search_results(
+          [prev_orch],
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.find matching builds.buildbucket.search')),
+      api.buildbucket.simulated_get_multi([
+          api.skylab_results.test_with_multi_response(
+              1234, names=['htarget.hw.bvt-cq'],
+              task_state=TaskState(verdict=TaskState.VERDICT_PASSED)),
+          api.skylab_results.test_with_multi_response(
+              5679, names=['htarget.hw.bvt-inline'],
+              task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
+              test_cases_verdict=TaskState.VERDICT_FAILED),
+          api.skylab_results.test_with_multi_response(
+              9877, names=['htarget.hw.some-other-suite'],
+              task_state=TaskState(verdict=TaskState.VERDICT_FAILED),
+              test_cases_verdict=TaskState.VERDICT_FAILED),
+      ], step_name=('get previous failed and now exonerable suites'
+                    '.get previous test results'
+                    '.get previous skylab tasks v2.buildbucket.get_multi')),
+      api.buildbucket.simulated_get_multi(
+          api.cros_history.create_vm_builds(3, 2),
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.get tast vm tests from previous run')),
+      api.buildbucket.simulated_search_results([
+          prev_orch
+      ], 'get previous failed and now exonerable suites.get change test history.find matching builds.buildbucket.search'
+                                              ),
+      api.post_process(post_process.StepTextEquals,
+                       'get previous failed and now exonerable suites',
+                       'found 1 vm suite and 0 hw suite'),
+      api.post_process(
+          post_process.LogEquals,
+          'get previous failed and now exonerable suites', 'exonerable tests',
+          ('Test Suites that previously failed but now exonerable \n'
+           'VM test suites:\n test_name_4\n\n'
+           'HW test suites:\n ')))
+
   dry_run_exonerate_retried_suites = True
   yield api.test(
       'basic_dry_run_exonerate_retried_suites',

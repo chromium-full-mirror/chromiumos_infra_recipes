@@ -45,6 +45,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     self._use_group_key = not properties.disable_group_key
     self._lookback_seconds = properties.lookback_seconds or 5 * 24 * 60 * 60
 
+    self._passed_tests = None
+
   @property
   def start_time_in_seconds(self):
     """Generate start time in seconds."""
@@ -161,6 +163,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       set[str]: Names of passed tests, if any.
     """
+    if self._passed_tests is not None:
+      return self._passed_tests
+
     with self.m.step.nest('get change test history') as presentation:
       current_build = self.m.buildbucket.build
       past_builds = self.get_matching_builds(current_build,
@@ -177,7 +182,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if all_passed_tests:
         presentation.logs['list of passed tests'] = sorted(all_passed_tests)
 
-      return all_passed_tests
+      self._passed_tests = all_passed_tests
+      return self._passed_tests
 
   def get_previous_test_task_ids(self) -> Tuple[List[int], List[int]]:
     """Get the task ids of the latest test invocations."""

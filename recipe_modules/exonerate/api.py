@@ -744,9 +744,11 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns:
       A list of the exonerable VM test builds.
     """
+    passed_tests = self.m.cros_history.get_passed_tests()
     exonerable_vm_results = [
         build for build in vm_test_builds
-        if self.is_vm_test_build_exonerable(build)
+        if self.is_vm_test_build_exonerable(build) and
+        self.m.naming.get_vm_test_title(build) not in passed_tests
     ]
     return exonerable_vm_results
 
@@ -760,8 +762,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns:
       A list of the exonerable hardware test results.
     """
+    passed_tests = self.m.cros_history.get_passed_tests()
     exonerable_hw_results = [
         result for result in hw_test_results
-        if self.is_hw_result_exonerable(result)
+        if self.is_hw_result_exonerable(result) and
+        self.m.naming.get_skylab_result_title(result) not in passed_tests
     ]
     return exonerable_hw_results
