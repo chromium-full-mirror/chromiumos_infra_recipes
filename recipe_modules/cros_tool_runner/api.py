@@ -84,7 +84,8 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           "DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
 
           # BBID
-          "LOGDOG_STREAM_PREFIX"
+          "LOGDOG_STREAM_PREFIX",
+          "SWARMING_TASK_ID",
       ]
       cmd = [
           "sudo",
