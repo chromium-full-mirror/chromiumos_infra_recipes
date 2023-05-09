@@ -636,6 +636,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           ] + build_ids,
           timeout=timeout,
           stdout=self.m.raw_io.output_text(add_output_log=True),
+          infra_step=True,
       )
 
       completed_builds = {}

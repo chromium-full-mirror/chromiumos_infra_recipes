@@ -243,5 +243,5 @@ def GenTests(api):
       'build-poller-fails',
       api.step_data('run builds.collect', retcode=1),
       api.post_process(post_process.DropExpectation),
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )
