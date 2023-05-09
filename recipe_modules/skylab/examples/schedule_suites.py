@@ -68,6 +68,7 @@ def RunSteps(api):
   hw_test_container = hw_test_unit_with_license.hw_test_cfg.hw_test[0]
   hw_test_container.run_via_cft = True
   hw_test_container.run_via_trv2 = True
+  hw_test_container.total_shards = 5
   hw_test_container.tag_criteria.CopyFrom(
       ctr_test_suite.TestSuite.TestCaseTagCriteria(
           tags=["include_this_tag_1", "include_this_tag_2"],
