@@ -41,6 +41,15 @@ def GenTests(api):
   yield api.test(
       'basic',
       orchestrator(),
+      api.step_data(
+          'bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read chromeos_version.sh',
+          api.file.read_text(
+              text_content=api.cros_version.chromeos_version_contents(
+                  'R99-1234.55.0'))),
+      api.post_check(
+          post_process.MustRun,
+          'bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote (2)'
+      ),
       api.post_check(post_process.StepCommandContains,
                      'bump version.ensure version_bumper.ensure_installed',
                      ['chromiumos/infra/version_bumper/${platform} prod']),

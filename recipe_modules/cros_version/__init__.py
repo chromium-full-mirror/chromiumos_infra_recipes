@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'recipe_engine/time',
     'cros_infra_config',
     'cros_source',
     'easy',

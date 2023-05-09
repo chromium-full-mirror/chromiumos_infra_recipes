@@ -5,11 +5,13 @@
 
 """API for working with CrOS version numbers."""
 
+import datetime
 import re
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.chromeos.cros_version.version import Version
 from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
 CHROMEOS_VERSION_FILE = 'chromeos/config/chromeos_version.sh'
@@ -130,6 +132,21 @@ class CrosVersionApi(RecipeApi):
 
         self._version_bumper_path = cipd_dir.join('version_bumper')
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))
+  def _check_version(self, branch, expected_version):
+    with self.m.step.nest('check version change reflected on remote'):
+      # Reset to the remote branch.
+      # We need to do this so that the local checkout has the correct SHA
+      # for the version bump SHA (gerrit.create_change will push the local
+      # change to a different SHA on the remote even if we're on the correct
+      # branch).
+      self.m.git.fetch_refs('cros', branch)
+      self.m.step('reset to remote branch',
+                  ['git', 'reset', '--hard', 'cros/{}'.format(branch)])
+      version = self.read_workspace_version(name='read remote version')
+      if version != expected_version:
+        raise StepFailure('version bump not reflected on remote')
+
   def bump_version(self, dry_run=True, use_local_diff=False):
     """Bumps the chromeos version (as represented in chromeos_version.sh)
       and pushes the change to the chromiumos-overlay repo.
@@ -202,11 +219,5 @@ class CrosVersionApi(RecipeApi):
             }
             self.m.gerrit.set_change_labels_remote(change, labels)
             self.m.gerrit.submit_change(change, project_path=overlay_path)
-          # Reset to the remote branch.
-          # We need to do this so that the local checkout has the correct SHA
-          # for the version bump SHA (gerrit.create_change will push the local
-          # change to a different SHA on the remote even if we're on the correct
-          # branch).
-          self.m.git.fetch_refs('cros', push_branch)
-          self.m.step('reset to remote branch',
-                      ['git', 'reset', '--hard', 'cros/{}'.format(push_branch)])
+
+          self._check_version(push_branch, new_version)
