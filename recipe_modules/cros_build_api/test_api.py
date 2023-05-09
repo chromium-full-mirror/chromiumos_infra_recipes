@@ -490,7 +490,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     2,  # chromiumos.Path.Location.OUTSIDE
             },
         ],
-        version='2023.02.12.144623',
+        version='2023.03.14.159265',
     )
     responses['BuildPrebuilts'] = '{}'
     responses['BuildSdkTarball'] = jsonify(

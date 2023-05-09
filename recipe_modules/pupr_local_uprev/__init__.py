@@ -18,6 +18,7 @@ DEPS = [
     'naming',
     'repo',
     'src_state',
+    'util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

@@ -203,7 +203,7 @@ class GeneratorRun:
       return self.properties.topic
     if self._is_package_uprevver:
       return self.cpvs[0]
-    if self._is_sdk_uprevver:  # pragma: nocover
+    if self._is_sdk_uprevver:
       return 'cros_sdk'
     raise InfraFailure('Not sure how to generate topic')  # pragma: nocover
 
@@ -305,7 +305,7 @@ class GeneratorRun:
       return self.m.pupr_local_uprev.uprev_packages(
           self.target_package_versions, self.topic)
     if self._is_sdk_uprevver:
-      return self.m.pupr_local_uprev.uprev_sdk()
+      return self.m.pupr_local_uprev.uprev_sdk(self.topic)
     raise InfraFailure('Not sure how to uprev.')  # pragma: nocover
 
   def _validate_properties(self):

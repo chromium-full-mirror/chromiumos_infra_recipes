@@ -7,11 +7,13 @@
 
 from typing import Generator
 
-from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
+from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
+                                                         pupr_local_uprev_pb2)
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+from RECIPE_MODULES.chromeos.pupr_local_uprev import api as pupr_local_uprev_api
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,7 +24,7 @@ DEPS = [
 
 def RunSteps(api: RecipeApi):
   """Main test case logic."""
-  api.pupr_local_uprev.uprev_sdk()
+  api.pupr_local_uprev.uprev_sdk('cros_sdk')
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -35,8 +37,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{
               '$chromeos/pupr_local_uprev':
-                  pupr_local_uprev.PuprLocalUprevProperties(
-                      sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                  pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                           sdk_version='2023.03.14.159265',
                           toolchain_template='2023/03/%(target)s-2023.03.14.159265.tar.xz',
                       ),
@@ -46,15 +48,28 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepSuccess,
           'uprev sdk.validate SDK uprev spec',
       ),
-  )
+      api.post_check(post_process.StepSuccess, 'uprev sdk.commit uprev'),
+      api.post_check(post_process.StepSuccess,
+                     'uprev sdk.commit uprev.commit in overlays'),
+      api.post_check(post_process.StepSuccess,
+                     'uprev sdk.commit uprev.commit in chromiumos-overlay'),
+      # Assertions about the commit message
+      api.post_check(
+          post_process.LogContains,
+          'uprev sdk.commit uprev.commit in overlays.write commit message',
+          'commit_msg_tmp_2', ['SDK: Automatic uprev to 2023.03.14.159265.']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'uprev sdk.commit uprev.commit in overlays.write commit message',
+          'commit_msg_tmp_2', [pupr_local_uprev_api.UPREV_VERSION_LABEL]))
 
   yield api.test(
       'no-sdk-version',
       api.properties(
           **{
               '$chromeos/pupr_local_uprev':
-                  pupr_local_uprev.PuprLocalUprevProperties(
-                      sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                  pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                           toolchain_template='2023/03/%(target)s-2023.03.14.159265.tar.xz',
                       ),
                   ),
@@ -73,8 +88,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           **{
               '$chromeos/pupr_local_uprev':
-                  pupr_local_uprev.PuprLocalUprevProperties(
-                      sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                  pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                           sdk_version='2023.03.14.159265',
                       ),
                   ),

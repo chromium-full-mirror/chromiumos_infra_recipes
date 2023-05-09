@@ -1916,7 +1916,6 @@
       "pupr",
       "src/[CLEANUP]/chromiumos_workspace/src/overlay"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
