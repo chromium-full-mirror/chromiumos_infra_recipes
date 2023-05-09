@@ -14012,7 +14012,16 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1747)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1793)(api, properties):**
+
+Entrypoint to the script
+
+Args:
+  api: a RecipeScriptApi instance
+  properties: a TestRunnerProperties instance
+
+Returns:
+  None
 
 &mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#166)(api, interface, test_metadata, result):**
 
@@ -14082,6 +14091,17 @@ Args:
 * parent_request_uid (string): The UID of the individual CTP request which kicked off this test run.
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
+
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1747)(api, properties):**
+
+Run test and upload results.
+
+Args:
+  api: a RecipeScriptApi instance
+  properties: a TestRunnerProperties instance
+
+Returns:
+  None
 
 &mdash; **def [s\_link](/recipes/test_platform/test_runner.py#103)(step, name, link):**
 

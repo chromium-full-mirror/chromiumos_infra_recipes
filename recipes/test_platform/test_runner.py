@@ -1744,7 +1744,16 @@ def _trv2_post_processing(api):
       api.cts_results_archive.archive(str(directory))
 
 
-def RunSteps(api, properties):
+def run_and_upload(api, properties):
+  """Run test and upload results.
+
+  Args:
+    api: a RecipeScriptApi instance
+    properties: a TestRunnerProperties instance
+
+  Returns:
+    None
+  """
   api.easy.log_parent_step()
   # Set max_threads to 1 for whole test_runner build. Details: b/270152591.
   api.cipd.max_threads = 1
@@ -1779,6 +1788,22 @@ def RunSteps(api, properties):
       if result.prejob_failed():
         raise api.step.StepFailure('prejob failed')
       raise api.step.StepFailure('prejob or test failed')
+
+
+def RunSteps(api, properties):
+  """Entrypoint to the script
+
+  Args:
+    api: a RecipeScriptApi instance
+    properties: a TestRunnerProperties instance
+
+  Returns:
+    None
+  """
+  try:
+    run_and_upload(api, properties)
+  finally:
+    pass
 
 
 def GenTests(api):
