@@ -3763,6 +3763,22 @@
   },
   {
     "cmd": [],
+    "name": "run builds.categorize builds by collect handling.check test planning v2 enabled",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@no migration config found for (chromium-review.googlesource.com, project-a), not enabling test planning v2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run builds.categorize builds by collect handling.set test_planning_v2_enabled",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@test_planning_v2_enabled@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

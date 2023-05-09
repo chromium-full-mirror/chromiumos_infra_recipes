@@ -37,10 +37,6 @@ CHILD_BUILD_SEARCH_FIELDS = frozenset({
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
-
-GET_TESTABLE_EXPERIMENT = 'chromeos.orch_menu.get_testable_collect_strategy'
-
-
 class BuildsStatus():
   """The running status of the builds.
 
@@ -155,9 +151,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
-    # Identify testable builders using coverage rules.
-    self._use_get_testable_collect_strategy = (
-        GET_TESTABLE_EXPERIMENT in self.m.cros_infra_config.experiments)
 
     self._build_poller_cipd_package = (
         self._properties.build_poller_cipd_package.encode('utf-8') or
@@ -1391,7 +1384,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           category.
     """
     with self.m.step.nest('categorize builds by collect handling') as pres:
-      if (self.m.cq.active and self._use_get_testable_collect_strategy and
+      if (self.m.cq.active and self.gerrit_changes and
           self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
         collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
             builds)

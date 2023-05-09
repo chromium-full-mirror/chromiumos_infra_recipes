@@ -7,7 +7,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
 from recipe_engine import post_process
-from RECIPE_MODULES.chromeos.orch_menu.api import GET_TESTABLE_EXPERIMENT
 
 DEPS = [
     'recipe_engine/assertions',
@@ -91,8 +90,7 @@ def GenTests(api):
   yield api.test(
       'cq',
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.try_build(builder='cq-orchestrator',
-                                experiments=[GET_TESTABLE_EXPERIMENT]),
+      api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{
               '$chromeos/cros_test_plan_v2':
@@ -122,8 +120,7 @@ def GenTests(api):
   yield api.test(
       'cq-get-testable-failure',
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.try_build(builder='cq-orchestrator',
-                                experiments=[GET_TESTABLE_EXPERIMENT]),
+      api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{
               '$chromeos/cros_test_plan_v2':
@@ -151,20 +148,9 @@ def GenTests(api):
   # The rest of the test cases should use the default categorization using
   # ChildSpecs.
   yield api.test(
-      'cq-without-experiment',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.try_build(builder='cq-orchestrator'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'categorize builds by collect handling.get testable builders'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
       'cq-v2-planning-not-enabled',
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.try_build(builder='cq-orchestrator',
-                                experiments=[GET_TESTABLE_EXPERIMENT]),
+      api.buildbucket.try_build(builder='cq-orchestrator'),
       api.post_check(
           post_process.DoesNotRun,
           'categorize builds by collect handling.get testable builders'),
