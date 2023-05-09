@@ -105,11 +105,10 @@ def _fetch_cop_file(api: RecipeApi, host: str, change_id: str,
   url = 'https://%s/changes/%s/revisions/%s/files/%s/content' % (
       host, change_id, revision, '.cop%2Fbuild.yaml')
   data = api.easy.stdout_step('cop-fetch-file', ['curl', '-f', url])
-
   try:
     return base64.b64decode(data).decode('utf-8')
   except binascii.Error as e:
-    raise api.step.InfraFailure('CoP file not valid.') from e
+    raise api.step.StepFailure('CoP has invalid encoding.') from e
 
 
 def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
@@ -156,8 +155,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     try:
       user_yaml = _fetch_cop_file(api, patch_set.host, patch_set.change_id,
                                   patch_set.current_revision)
-    # File not present is returned as InfraFailure
-    except api.step.InfraFailure:
+    except api.step.StepFailure:
       presentation.step_text = 'No cop file: Exiting'
       return
 
