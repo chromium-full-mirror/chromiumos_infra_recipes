@@ -5,9 +5,12 @@
 
 """Recipe that builds a ChromiumOS SDK and cross-compilers."""
 
+import functools
 import os
 import re
 from typing import List, Optional
+
+from google.protobuf import json_format
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import BuildSdkTarballRequest
@@ -15,6 +18,7 @@ from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromiumos import common as common_pb2
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
+from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
 from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
 
 from recipe_engine import post_process
@@ -29,6 +33,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/scheduler',
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/gsutil',
@@ -70,12 +75,55 @@ class BuildSDKRun:
     """Initialize the builder run."""
     self.m = api
     self.properties = properties
+
+    # Paths of built files. These will be set after build API calls.
     self._sdk_tarball_path: Optional[Path] = None
     self._sdk_manifest_path: Optional[Path] = None
     self._toolchain_tarball_paths: Optional[List[Path]] = None
-    self._version = properties.version or \
-        self.m.buildbucket.build.start_time.ToDatetime().strftime('%Y.%m.%d.%H%M%S')
-    self.m.easy.set_properties_step(version=self._version)
+
+    self.m.easy.set_properties_step(version=self.version)
+
+  @functools.cached_property
+  def version(self) -> str:
+    """Return the SDK version created by this build.
+
+    Typically, SDK builds are versioned according to the build start time.
+    For example, '2023.03.14.159265'.
+    However, this can be overridden by input properties.
+    """
+    if self.properties.version:
+      return self.properties.version
+    return self.m.buildbucket.build.start_time.ToDatetime().strftime(
+        '%Y.%m.%d.%H%M%S')
+
+  @functools.cached_property
+  def _toolchain_tarball_dir(self) -> str:
+    """Return the remote dir for toolchain tarballs, relative to SDK_BUCKET.
+
+    Typically toolchain tarballs go into a directory timestamped as 'YYYY/MM'.
+    For example: gs://chromiumos-sdk/2023/03/, for a build from March 2023.
+
+    Returns:
+      The Google Storage folder, relative to SDK_BUCKET, with a trailing slash.
+      For example, '2023/03/'.
+    """
+    return self.m.buildbucket.build.start_time.ToDatetime().strftime('%Y/%m/')
+
+  @functools.cached_property
+  def _toolchain_tarball_template(self) -> str:
+    """Return the remote toolchain tarball template, relative to SDK_BUCKET.
+
+    This eventually gets sent into the source-controlled sdk_version.conf, as
+    TC_PATH. Chromite consumes the value and %-formats it with the named string
+    "target" representing a build target architecture. Thus, the template must
+    include the string literal "%(target)s".
+
+    Returns:
+      A template for toolchain tarballs, relative to SDK_BUCKET. FOr example,
+      '2023/03/%(target)s-2023.03.14.159265.tar.xz'.
+    """
+    return os.path.join(self._toolchain_tarball_dir,
+                        f'%(target)s-{self.version}.tar.xz')
 
   def run(self):
     """Run the main logic for this builder."""
@@ -90,6 +138,7 @@ class BuildSDKRun:
       self._upload_prebuilts()
       self._upload_sdk_tarball_and_manifest()
       self._update_gs_latest_file()
+      self._schedule_uprev()
 
   @property
   def _skip_uploads(self):
@@ -158,7 +207,6 @@ class BuildSDKRun:
     with self.m.step.nest('upload prebuilts'):
       self._upload_host_prebuilts()
       self._upload_target_prebuilts()
-      self._upload_packages_index()
       self._upload_toolchain_prebuilts()
 
   def _upload_host_prebuilts(self) -> None:
@@ -175,7 +223,7 @@ class BuildSDKRun:
       source_dir = self.m.cros_sdk.chroot_path.join('var', 'lib', 'portage',
                                                     'pkgs')
       dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
-                               f'chroot-{self._version}', 'packages')
+                               f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
       self._gsutil_upload(source_dir, PREBUILTS_BUCKET, dest_path)
 
@@ -193,50 +241,38 @@ class BuildSDKRun:
       source_dir = self.m.cros_sdk.chroot_path.join('build', SDK_BUILD_TARGET,
                                                     'packages')
       dest_path = os.path.join('board', SDK_BUILD_TARGET,
-                               f'chroot-{self._version}', 'packages')
+                               f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
       self._gsutil_upload(source_dir, PREBUILTS_BUCKET, dest_path)
 
-  def _upload_packages_index(self) -> None:
-    """Upload the packages index file to Google Storage.
-
-    The destination URI typically looks like:
-      gs://chromeos-prebuilt/board/amd64-host/chroot-{version}/packages/Packages
-    where ${version} is the SDK version (declared elsewhere in this recipe).
-
-    TODO(b/270142110): Implement this.
-    """
-
   def _upload_toolchain_prebuilts(self) -> None:
-    """Upload toolchain prebuilt tarballs to GS://.
-
-    The destination folder typically looks like:
-      gs://chromiumos-sdk/YYYY/MM
-    where YYYY is the current year and MM is the current month.
-    For example, gs://chromiumos-sdk/1970/01/**.tar.xz
+    """Upload toolchain prebuilt tarballs to Google Storage.
 
     Raises:
       AssertionError: If toolchain tarballs have not been built yet.
     """
     with self.m.step.nest('upload sdk toolchain tarballs'):
       assert self._toolchain_tarball_paths is not None
-      for source_path in self._toolchain_tarball_paths:
-        self._upload_one_toolchain_prebuilt(source_path)
+      for local_path in self._toolchain_tarball_paths:
+        self._upload_one_toolchain_prebuilt(local_path)
 
   def _upload_one_toolchain_prebuilt(self, source_path: Path) -> None:
-    """Upload a single toolchain prebuilt tarball to GS://.
+    """Upload a single toolchain prebuilt tarball to Google Storage.
 
-    The destination folder typically looks like:
-      gs://chromiumos-sdk/YYYY/MM
-    where YYYY is the current year and MM is the current month.
-    For example, gs://chromiumos-sdk/1970/01/**.tar.xz
+    The destination path typically looks like:
+      gs://chromiumos-sdk/${YEAR}/${MONTH}/${TARGET}-${VERSION}.tar.xz
+    where:
+      ${YEAR} is the current four-digit year (ex. 2023).
+      ${MONTH} is the current four-digit month (ex. 03).
+      ${TARGET} is the target architecture (ex. aarch64-cros-linux-gnu).
+      ${VERSION} is the SDK version (ex. 2023.03.14.159265).
 
     Args:
       source_path: The local path to the toolchain file.
     """
     basename = self.m.path.basename(source_path)
     with self.m.step.nest(f'upload {basename}'):
-      dest_path = os.path.join(self.m.time.utcnow().strftime('%Y/%m'), basename)
+      dest_path = os.path.join(self._toolchain_tarball_dir, basename)
       self._gsutil_upload(source_path, SDK_BUCKET, dest_path)
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
@@ -255,7 +291,7 @@ class BuildSDKRun:
     with self.m.step.nest('upload sdk tarball and manifest'):
       with self.m.step.nest('upload sdk tarball'):
         assert self._sdk_tarball_path is not None
-        tarball_dest_path = f'cros-sdk-{self._version}.tar.xz'
+        tarball_dest_path = f'cros-sdk-{self.version}.tar.xz'
         self._gsutil_upload(self._sdk_tarball_path, SDK_BUCKET,
                             tarball_dest_path)
       with self.m.step.nest('upload sdk manifest'):
@@ -269,12 +305,12 @@ class BuildSDKRun:
     with self.m.step.nest('update gs:// latest file') as presentation:
       old_contents = self._read_existing_gs_latest_file()
       new_contents = self.m.key_value_store.update_one_value(
-          old_contents, 'LATEST_SDK_UPREV_TARGET', self._version, True)
+          old_contents, 'LATEST_SDK_UPREV_TARGET', self.version, True)
       tempfile = self.m.path.mkstemp()
       self.m.file.write_text('write local file to upload', tempfile,
                              new_contents)
       self._gsutil_upload(tempfile, SDK_BUCKET, 'cros-sdk-latest.conf')
-      presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self._version
+      presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self.version
 
   def _read_existing_gs_latest_file(self) -> str:
     """Read, log, and return the existing latest SDK file on GS://.
@@ -332,6 +368,36 @@ class BuildSDKRun:
     self.m.gsutil.upload(
         str(source_path), dest_bucket, dest_path, args=args,
         multithreaded=multithreaded, dry_run=self._skip_uploads)
+
+  def _schedule_uprev(self) -> None:
+    """Trigger a PUpr build to uprev to the newly-built SDK.
+
+    The PUpr build should be staging if this build is staging, and prod if this
+    build is prod.
+
+    The llvm-next builder should not trigger an uprev.
+    """
+    if self.properties.use_llvm_next:
+      return
+    if self.m.build_menu.is_staging:
+      bucket, builder = 'staging', 'staging-chromiumos-sdk-pupr-generator'
+    else:
+      bucket, builder = 'infra', 'chromiumos-sdk-pupr-generator'
+    request = self.m.buildbucket.schedule_request(
+        builder=builder,
+        bucket=bucket,
+        properties={
+            '$chromeos/pupr_local_uprev':
+                json_format.MessageToDict(
+                    pupr_local_uprev.PuprLocalUprevProperties(
+                        sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                            sdk_version=self.version,
+                            toolchain_template=self._toolchain_tarball_template,
+                        ))),
+        },
+        can_outlive_parent=True,
+    )
+    self.m.buildbucket.schedule([request], step_name='schedule uprev')
 
 
 def GenTests(api: RecipeTestApi):
@@ -405,7 +471,15 @@ def GenTests(api: RecipeTestApi):
           "new_LATEST_SDK_UPREV_TARGET",
           DEFAULT_VERSION,
       ),
-      status='SUCCESS')
+      # Prod builder should run prod PUpr.
+      api.post_check(post_process.MustRun, 'schedule uprev'),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
+          r'"bucket": "infra"',
+          r'"builder": "chromiumos-sdk-pupr-generator"',
+          r'"sdkVersion": "1970.01.01.000000"',
+          r'"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
+      ]),
+  )
 
   yield api.test(
       'llvm-next',
@@ -415,12 +489,15 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.LogContains,
                      'call chromite.api.SdkService/BuildSdkToolchain',
                      'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
+      # llvm-next builder should not run PUpr.
+      api.post_check(post_process.DoesNotRun, 'schedule uprev'),
       api.post_process(post_process.DropExpectation),
-      status='SUCCESS',
   )
 
   yield api.build_menu.test(
-      'staging-does-not-upload',
+      'staging',
+      # Because properties.upload_to_staging_dir is not set, all uploads should
+      # be no-ops.
       api.post_check(post_process.StepCommandEmpty,
                      'upload prebuilts.upload host prebuilts.gsutil upload'),
       api.post_check(post_process.StepCommandEmpty,
@@ -439,9 +516,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandEmpty,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload'),
+      # Staging builder should launch the staging PUpr.
+      api.post_check(post_process.MustRun, 'schedule uprev'),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request',
+                     (r'"bucket": "staging"',
+                      r'"builder": "staging-chromiumos-sdk-pupr-generator"')),
+      api.post_process(post_process.DropExpectation),
       builder='staging-chromiumos-sdk',
       bucket='staging',
-      status='SUCCESS',
   )
 
   yield api.test(
@@ -454,6 +536,7 @@ def GenTests(api: RecipeTestApi):
               "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
               "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz"
           ]),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.build_menu.test(
@@ -466,7 +549,14 @@ def GenTests(api: RecipeTestApi):
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
               'gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
+      api.post_process(post_process.DropExpectation),
       builder='staging-chromiumos-sdk',
       bucket='staging',
-      status='SUCCESS',
+  )
+
+  yield api.build_menu.test(
+      'declare-version-in-properties',
+      api.properties(version='my-cool-version'),
+      api.post_check(post_process.PropertyEquals, 'version', 'my-cool-version'),
+      api.post_process(post_process.DropExpectation),
   )
