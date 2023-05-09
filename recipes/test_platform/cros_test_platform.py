@@ -584,7 +584,8 @@ def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
   If total_shards is non-zero, run through the distribution logic.
   Each bucket will receive a number of shards from the total_shards value
   proportional to their number of test cases as compared to the total number
-  of test cases.
+  of test cases. Start with the smallest buckets to ensure they receive at
+  least one shard allocated.
 
   Example:
     Bucket 1: 1 test
@@ -592,12 +593,12 @@ def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
     Bucket 3: 50 tests
     total_shards: 4
 
-    Bucket 3 is largest. Take its test_cases ratio of 50/99 and multiply by the available shards 4.
-    Bucket 3 gets 2 shards and removes its shards and test_cases count from the total counts.
-    Bucket 2 is the next largest. Take its test_case ratio of 40/41 and multiply by the available shards, 2.
-    Bucket 2 gets 1 shard and removes its shard and test_cases count from the total counts.
-    Bucket 1 is last. Take its test_case ratio of 1/1 and multiply by the available shards, 1.
+    Bucket 1 is smallest. Take its test_cases ratio of 1/99 and multiply by the available shards 4.
     Bucket 1 gets 1 shard and removes its shard and test_cases count from the total counts.
+    Bucket 2 is next smallest. Take its test_cases ratio of 40/90 and multiply by the available shards 3.
+    Bucket 2 gets 1 shard and removes its shard and test_cases count from the total counts.
+    Bucket 3 is last. Take its test_cases ratio of 50/50 and multiply by the available shards 2.
+    Bucket 3 gets 2 shard and removes its shard and test_cases count from the total counts.
 
   Args:
     * test_buckets: List[List[api.TestCase]]
@@ -612,11 +613,13 @@ def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
   num_test_cases_left_to_shard = sum(len(bucket) for bucket in test_buckets)
   total_shards_left = total_shards
   # Sorted for largest buckets first. Ensures that shards allocated is always non-zero.
-  test_buckets.sort(key=len, reverse=True)
+  test_buckets.sort(key=len)
   for bucket in test_buckets:
     if total_shards != 0:
-      shards_allocated = math.floor(
-          (len(bucket) / num_test_cases_left_to_shard) * total_shards_left)
+      shards_allocated = max(
+          1,
+          math.floor(
+              (len(bucket) / num_test_cases_left_to_shard) * total_shards_left))
       num_test_cases_left_to_shard -= len(bucket)
       total_shards_left -= shards_allocated
       max_in_shard = math.ceil(len(bucket) / shards_allocated)
