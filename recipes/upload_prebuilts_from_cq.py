@@ -233,17 +233,13 @@ def RunSteps(api: RecipeApi):
       for entry in prebuilt_entries:
         build_target = entry['build_target']
         with api.step.nest(f'update {build_target.name}') as presentation:
-          # Currently we update the binhost only on staging environment:
-          if is_staging:
-            api.cros_prebuilts.set_binhost(
-                build_target,
-                entry['prebuilts_private'],
-                binhost_pb.CQ_BINHOST,
-                entry['prebuilts_uri'],
-                push_retries=GIT_PUSH_MAX_RETRY_COUNT,
-            )
-          else:
-            presentation.step_summary_text = 'Not enabled yet.'
+          api.cros_prebuilts.set_binhost(
+              build_target,
+              entry['prebuilts_private'],
+              binhost_pb.CQ_BINHOST,
+              entry['prebuilts_uri'],
+              push_retries=GIT_PUSH_MAX_RETRY_COUNT,
+          )
 
 
 def GenTests(api: RecipeTestApi):
