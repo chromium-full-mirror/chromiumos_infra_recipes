@@ -631,8 +631,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
       poll_result = self.m.step(
           'collect',
           [
-              build_poller_path, 'collect', '-outputprop', output_property,
-              '-interval', f'{interval}s', '-json', '-'
+              build_poller_path, 'collect', '-loglevel', 'debug', '-outputprop',
+              output_property, '-interval', f'{interval}s', '-json', '-'
           ] + build_ids,
           timeout=timeout,
           stdout=self.m.raw_io.output_text(add_output_log=True),

@@ -4042,6 +4042,8 @@
     "cmd": [
       "[START_DIR]/cipd_build_poller/build_poller",
       "collect",
+      "-loglevel",
+      "debug",
       "-outputprop",
       "image_artifacts_uploaded",
       "-interval",
