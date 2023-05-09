@@ -1,6 +1,7 @@
 logsBucket: 'gs://${PROJECT_ID}-logs'
 steps:
 - name: 'gcr.io/cloud-builders/git'
+  id: 'init'
   entrypoint: 'bash'
   args:
   - '-c'
