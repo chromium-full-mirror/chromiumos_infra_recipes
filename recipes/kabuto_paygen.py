@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Recipe for generating a Kabuto payload."""
+
+from typing import Generator
+
+from PB.recipes.chromeos.kabuto_paygen import (KabutoPaygenProperties)
+from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine.recipe_test_api import TestData
+
+DEPS = [
+    'recipe_engine/context',
+    'recipe_engine/path',
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'depot_tools/depot_tools',
+    'depot_tools/gsutil',
+    'build_menu',
+    'cros_sdk',
+    'cros_source',
+    'easy',
+    'src_state',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = KabutoPaygenProperties
+
+
+def _gs_path(bucket: str, path: str) -> str:
+  """Returns the full gs:// path for bucket, path and filename."""
+  return 'gs://' + bucket + '/' + path
+
+
+def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
+  with api.step.nest('validate properties') as presentation:
+    if not properties.destination_gs_bucket:
+      raise StepFailure('must set destination_gs_bucket')
+    if not properties.destination_gs_path:
+      raise StepFailure('must set destination_gs_path')
+
+    presentation.step_text = 'all properties good'
+
+  commit = None
+  if properties.manifest_branch:
+    commit = api.src_state.internal_manifest.as_gitiles_commit_proto
+    commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
+
+  with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
+    api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
+    api.cros_sdk.create_chroot(version=None, timeout_sec=None)
+    api.cros_sdk.update_chroot(timeout_sec=None)
+
+    return DoRunSteps(api, properties)
+
+
+def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
+  chroot_path = api.cros_source.workspace_path
+  kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
+  with api.context(cwd=kabuto_path), api.depot_tools.on_path():
+    # Build Mesa and fossilize tools.
+    api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
+
+    # TODO(b/282030070): randomize this to avoid collisions.
+    payload_filename = 'kabuto_payload.tar.xz'
+
+    # Tar payload for upload.
+    api.step('tar up payload',
+             ['tar', 'cvfJ', payload_filename, 'in/fossilize_tools'])
+
+    # Upload payload to GS.
+    upload_path = properties.destination_gs_path + '/' + payload_filename
+    api.gsutil.upload(payload_filename, properties.destination_gs_bucket,
+                      upload_path)
+
+    # Set output properties for orchestrator.
+    payload_gs_url = _gs_path(properties.destination_gs_bucket, upload_path)
+    api.easy.set_properties_step(payload_gs_url=payload_gs_url)
+
+
+def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
+  good_props = {
+      'destination_gs_bucket': 'chromeos-localmirror-private',
+      'destination_gs_path': 'borealis',
+  }
+  yield api.test(
+      'basic',
+      api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  del props['destination_gs_bucket']
+  yield api.test(
+      'no-destination_gs_bucket',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      status='FAILURE',
+  )
+
+  props = good_props.copy()
+  del props['destination_gs_path']
+  yield api.test(
+      'no-destination_gs_path',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  yield api.test(
+      'branched-manifest', api.properties(**props),
+      api.post_check(post_process.MustRun,
+                     'configure builder.cros_infra_config.gitiles-fetch-ref'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'ensure synced checkout.repo init',
+          [
+              '--manifest-branch',
+              'release-R105-14989.B',
+          ],
+      ))

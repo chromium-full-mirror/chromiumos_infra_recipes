@@ -487,6 +487,7 @@
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
   * [kabuto_orchestrator](#recipes-kabuto_orchestrator) &mdash; Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
+  * [kabuto_paygen](#recipes-kabuto_paygen) &mdash; Recipe for generating a Kabuto payload.
   * [kabuto_shadercache_uprev](#recipes-kabuto_shadercache_uprev) &mdash; Recipe for uprev'ing shadercache DLC ebuilds.
   * [kernel_checkconfig](#recipes-kernel_checkconfig) &mdash; Recipe for testing the kernel splitconfig normalization.
   * [kernel_technical_debt](#recipes-kernel_technical_debt) &mdash; Recipe to enforce go/kernel-upstream-tracking-process.
@@ -12729,6 +12730,16 @@ Recipe that schedules jobs based on its triggers.
 Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
 
 &mdash; **def [RunSteps](/recipes/kabuto_orchestrator.py#16)(api: RecipeApi):**
+### *recipes* / [kabuto\_paygen](/recipes/kabuto_paygen.py)
+
+[DEPS](/recipes/kabuto_paygen.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for generating a Kabuto payload.
+
+&mdash; **def [DoRunSteps](/recipes/kabuto_paygen.py#63)(api: RecipeApi, properties: KabutoPaygenProperties):**
+
+&mdash; **def [RunSteps](/recipes/kabuto_paygen.py#41)(api: RecipeApi, properties: KabutoPaygenProperties):**
 ### *recipes* / [kabuto\_shadercache\_uprev](/recipes/kabuto_shadercache_uprev.py)
 
 [DEPS](/recipes/kabuto_shadercache_uprev.py#11): [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -1,0 +1,21 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.kabuto_paygen;
+
+message KabutoPaygenProperties {
+  // Destination gs bucket where the payload will be copied.
+  // Required
+  string destination_gs_bucket = 1;
+
+  // Destination gs path where the payload will be copied.
+  // Required
+  string destination_gs_path = 2;
+
+  // The manifest branch to check out (e.g. 'release-R105-14989.B')
+  // Defaults to main tip of tree if not specified.
+  string manifest_branch = 3;
+}
