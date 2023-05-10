@@ -14,11 +14,13 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/gsutil',
+    'easy',
     'failures',
     'git',
 ]
@@ -108,6 +110,15 @@ def DoRunSteps(api: RecipeTestApi,
     # Upload Kabuto's logs to Google Storage.
     with api.step.nest('upload kabuto logs'):
       _upload_kabuto_logs(api)
+
+    # Get info on newly compiled shadercaches for uprev.
+    updated_artifacts = api.file.read_text(
+        'Read updated_artifacts.json',
+        api.path.join(borealis_checkout,
+                      'tools/kabuto/out/updated_artifacts.json'))
+
+    # Set our output properties for the orchestrator to read.
+    api.easy.set_properties_step(uprev_info=updated_artifacts)
 
 
 def GenTests(api: RecipeTestApi) -> None:

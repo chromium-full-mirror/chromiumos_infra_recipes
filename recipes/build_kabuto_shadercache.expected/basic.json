@@ -115,6 +115,31 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/borealis_tmp_1/tools/kabuto/out/updated_artifacts.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/borealis_tmp_1",
+    "infra_step": true,
+    "name": "Read updated_artifacts.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@updated_artifacts.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set uprev_info",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@uprev_info@\"\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
