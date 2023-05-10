@@ -5,6 +5,8 @@
 
 # pylint: disable=protected-access
 
+from recipe_engine import post_process
+
 from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction
 
 DEPS = [
@@ -121,4 +123,9 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.step_data('delete instance', retcode=1),
+      api.step_data('delete instance (2)', retcode=1),
+      api.post_check(post_process.MustRun, 'delete instance (3)'),
+  )

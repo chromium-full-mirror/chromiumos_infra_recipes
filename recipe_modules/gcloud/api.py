@@ -275,6 +275,7 @@ class GcloudApi(recipe_api.RecipeApi):
       return output[0]['name'], output[0]['networkInterfaces'][0][
           'networkIP'], ext_ip_addr
 
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def delete_instance(self, instance, project, zone):
     """Delete a GCE instance.
 

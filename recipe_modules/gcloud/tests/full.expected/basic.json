@@ -311,7 +311,47 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
-    "name": "delete instance"
+    "name": "delete instance",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "image-name",
+      "--quiet",
+      "--zone=us-central1-a",
+      "--project=chromeos-gce-tests"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "delete instance (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "image-name",
+      "--quiet",
+      "--zone=us-central1-a",
+      "--project=chromeos-gce-tests"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "name": "delete instance (3)"
   },
   {
     "cmd": [
