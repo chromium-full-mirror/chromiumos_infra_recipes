@@ -48,6 +48,7 @@ def release_exemption(build: str) -> bool:
     return False
   ignorable_summary_markdown_re = [
       re.compile(r'^failed unit tests for'),
+      re.compile(r'^failed compilation for'),
       re.compile(r'\d+ out of \d+ builds failed'),
   ]
   for regex in ignorable_summary_markdown_re:
