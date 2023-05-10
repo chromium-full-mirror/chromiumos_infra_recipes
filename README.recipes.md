@@ -153,6 +153,7 @@
   * [build_legacy_factory](#recipes-build_legacy_factory) &mdash; Recipe that builds factory images/artifacts on a factory branch.
   * [build_legacy_fw](#recipes-build_legacy_fw) &mdash; Recipe that builds chromeos-firmware on a firmware branch.
   * [build_linters](#recipes-build_linters) &mdash; Recipe for linting CLs.
+  * [build_mass_deploy](#recipes-build_mass_deploy) &mdash; Recipe for modifying images for mass deployment.
   * [build_menu:examples/full](#recipes-build_menu_examples_full)
   * [build_menu:tests/is_staging](#recipes-build_menu_tests_is_staging)
   * [build_menu:tests/no_dep_graph](#recipes-build_menu_tests_no_dep_graph)
@@ -10361,6 +10362,14 @@ Recipe for linting CLs.
 &mdash; **def [DoRunSteps](/recipes/build_linters.py#275)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
 
 &mdash; **def [RunSteps](/recipes/build_linters.py#258)(api: RecipeApi, properties: BuildLintersProperties):**
+### *recipes* / [build\_mass\_deploy](/recipes/build_mass_deploy.py)
+
+[DEPS](/recipes/build_mass_deploy.py#12): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for modifying images for mass deployment. Intended for use with ChromeOS Flex.
+
+&mdash; **def [RunSteps](/recipes/build_mass_deploy.py#28)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
 [DEPS](/recipe_modules/build_menu/examples/full.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
