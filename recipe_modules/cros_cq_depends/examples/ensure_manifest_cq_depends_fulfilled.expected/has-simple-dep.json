@@ -1176,6 +1176,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure manifest cq-depend fulfilled (2).set found_commits",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@found_commits@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd-support/gerrit-fetch-changes"
     ],

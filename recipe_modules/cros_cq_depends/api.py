@@ -58,6 +58,7 @@ class CrosCqDependsApi(RecipeApi):
     # If there are more than 50 CLs pending, automatically allow missing depends
     # so that we can get past the problem that chumped CLs cause.
     # See crbug.com/995360.
+    self.m.easy.set_properties_step(found_commits=found_commits)
     self._allow_missing_depends |= found_commits > 50
 
     # Turn the deps into (host, cl) tuples
