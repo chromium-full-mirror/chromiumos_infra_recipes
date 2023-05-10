@@ -114,7 +114,7 @@ def main(argv: List[str]):
   # Prepare to update refs.
   pending_changes = get_pending_changes(git_prod, git_target,
                                         verbose=options.verbose)
-  report_pending_changes(pending_changes)
+  report_pending_changes(pending_changes, options.show_instances)
   check_staging_builders(options.ignore_staging_failures)
   quit_early_if_no_pending_changes(pending_changes)
   if not options.force:
@@ -153,12 +153,14 @@ class Commit:
   def set_cipd_instance(self, instanceid: CipdInstance):
     self.cipd_instance = instanceid
 
-  def color_str(self) -> str:
+  def color_str(self, show_instances: bool) -> str:
     """Return a colorified string for printing to stdout."""
     BOLDBLUE = '\033[1;34m'
     BOLDGREEN = '\033[1;32m'
     RESET = '\033[0m'
-    return (f'({self.get_cipd_instance()}) '
+    cipd_instance_str = (f'({self.get_cipd_instance()}) '
+                         if show_instances else '')
+    return (f'{cipd_instance_str}'
             f'{BOLDBLUE}{self.short_hash} '
             f'{BOLDGREEN}[{self.username}] '
             f'{RESET}{self.message}')
@@ -300,10 +302,10 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash,
   return changes
 
 
-def report_pending_changes(pending_changes: List[Commit]):
+def report_pending_changes(pending_changes: List[Commit], show_instances: bool):
   """Pretty-print info about all the pending changes."""
   for pending_change in pending_changes:
-    print(f'* {pending_change.color_str()}')
+    print(f'* {pending_change.color_str(show_instances)}')
   print()
 
 
