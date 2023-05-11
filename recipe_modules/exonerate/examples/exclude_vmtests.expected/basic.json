@@ -4,6 +4,8 @@
     "name": "exonerate vm tests",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@exoneration logs@Exonerated arc.Boot on betty@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Excluding test2 on betty from exoneration@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Excluding suite1 on betty from exoneration@@@",
       "@@@STEP_LOG_END@exoneration logs@@@",
       "@@@STEP_LOG_LINE@exonerated tests@arc.Boot:\t['betty']@@@",
       "@@@STEP_LOG_END@exonerated tests@@@"

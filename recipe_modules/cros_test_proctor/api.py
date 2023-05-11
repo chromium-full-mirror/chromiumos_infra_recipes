@@ -309,6 +309,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         autoex_running = self.m.exonerate.auto_exoneration_analysis(
             fake_data=self._test_data.enabled)
         if autoex_running:
+          self.m.exonerate.enable_excludes()
           auto_exonerated_hw_results, auto_exonerated_hw_tests = (
               self.m.exonerate.exonerate_hwtests(manually_exonerated_hw_results)
           )

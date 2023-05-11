@@ -27,7 +27,7 @@ from recipe_engine import recipe_test_api
 class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for test_plan api."""
 
-  def hw_test_unit(self, common=None, hw_tests=None):
+  def hw_test_unit(self, common=None, hw_tests=None, suite=None):
     if common is None:
       common = TestUnitCommon(
           build_target=BuildTarget(name='build_target_name'),
@@ -37,30 +37,33 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
           ),
       )
     if hw_tests is None:
-      hw_test_cfg = HwTestCfg(hw_test=[self.hw_test()])  # pragma: no cover
+      hw_test_cfg = HwTestCfg(hw_test=[self.hw_test(suite=suite)
+                                      ])  # pragma: no cover
     else:
       hw_test_cfg = HwTestCfg(hw_test=hw_tests)
     return HwTestUnit(common=common, hw_test_cfg=hw_test_cfg)
 
   def hw_test(self, name=None, suite=None, board=None, critical=True):
+    suite = suite or 'bvt-cq'
+    name = name or 'target.hw.' + suite
     return HwTestCfg.HwTest(
         common=TestSuiteCommon(
-            display_name=name or 'target.hw.bvt-cq',
+            display_name=name,
             critical={'value': critical},
         ),
-        suite=suite or 'bvt-cq',
+        suite=suite,
         skylab_board=board or 'target',
         pool='recipe_test_pool',
-    )  # pragma: no cover
+    )
 
-  def skylab_task(self, bid=None, url=None, test=None, unit=None):
+  def skylab_task(self, bid=None, url=None, test=None, unit=None, suite=None):
     if test is None and unit is None:
-      unit = self.hw_test_unit()  # pragma: no cover
-      test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
+      unit = self.hw_test_unit(suite=suite)
+      test = unit.hw_test_cfg.hw_test[0]
     elif test is None:
       test = unit.hw_test_cfg.hw_test[0]  # pragma: no cover
     else:
-      unit = self.hw_test_unit(hw_tests=[test])
+      unit = self.hw_test_unit(hw_tests=[test], suite=suite)
     return structs.SkylabTask(id=bid or 1234, url=url or 'https://google.com',
                               test=test, unit=unit)
 
@@ -70,7 +73,7 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
         task=task or self.skylab_task(),
         status=status,
         child_results=child_results or [],
-    )  # pragma: no cover
+    )
 
   @staticmethod
   def marshal_responses(responses):

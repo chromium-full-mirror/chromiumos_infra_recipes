@@ -397,6 +397,8 @@
   * [exonerate:examples/disabled_hw_exoneration](#recipes-exonerate_examples_disabled_hw_exoneration)
   * [exonerate:examples/disabled_vm_exoneration](#recipes-exonerate_examples_disabled_vm_exoneration)
   * [exonerate:examples/dont_exonerate_provision](#recipes-exonerate_examples_dont_exonerate_provision)
+  * [exonerate:examples/exclude_hwtests](#recipes-exonerate_examples_exclude_hwtests)
+  * [exonerate:examples/exclude_vmtests](#recipes-exonerate_examples_exclude_vmtests)
   * [exonerate:examples/exonerate_hwtests](#recipes-exonerate_examples_exonerate_hwtests)
   * [exonerate:examples/exonerate_vmtests](#recipes-exonerate_examples_exonerate_vmtests)
   * [exonerate:examples/get_prev_failed_now_exon](#recipes-exonerate_examples_get_prev_failed_now_exon)
@@ -569,7 +571,7 @@
   * [pvs_run_script](#recipes-pvs_run_script) &mdash; Recipe for running PVS-related scripts.
   * [rdb_util:examples/get_build_target_from_variant](#recipes-rdb_util_examples_get_build_target_from_variant)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config)
-  * [rdb_util:examples/get_vm_suite](#recipes-rdb_util_examples_get_vm_suite)
+  * [rdb_util:examples/get_suite](#recipes-rdb_util_examples_get_suite)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full)
@@ -612,6 +614,7 @@
   * [skylab_results:tests/extract_failed_test_case_names](#recipes-skylab_results_tests_extract_failed_test_case_names)
   * [skylab_results:tests/extract_failed_test_shard_names](#recipes-skylab_results_tests_extract_failed_test_shard_names)
   * [skylab_results:tests/get_tagged_response](#recipes-skylab_results_tests_get_tagged_response)
+  * [skylab_results:tests/test_test_api](#recipes-skylab_results_tests_test_test_api)
   * [skylab_results:tests/translate_result](#recipes-skylab_results_tests_translate_result)
   * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest)
@@ -4645,7 +4648,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#63)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#600)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#601)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -4704,7 +4707,7 @@ Runs the test platform v2 for a set of GerritChanges.
 Args:
   gerrit_changes (list[common_pb2.GerritChange]): changes to test.
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#476)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#477)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False):**
 
 Schedule all tests from the test_plan.
 
@@ -5180,9 +5183,9 @@ Returns:
 [DEPS](/recipe_modules/exonerate/__init__.py#7): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [exoneration\_util](#recipe_modules-exoneration_util), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#38)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerateApi](/recipe_modules/exonerate/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#528)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#570)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -5193,7 +5196,11 @@ Args:
 Returns: A boolean indicating if auto exoneration was enabled without dry_run
 and did not exceed any of the limits.
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#284)(self, hw_test_results):**
+&mdash; **def [enable\_excludes](/recipe_modules/exonerate/api.py#70)(self):**
+
+enable excludes config's use.
+
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#310)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -5204,7 +5211,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#327)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#359)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -5215,7 +5222,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#353)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#389)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -5227,7 +5234,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#386)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#422)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5238,16 +5245,17 @@ Returns:
   [Build] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#65)(self, mock_data=None):**
+&mdash; **def [fetch\_config](/recipe_modules/exonerate/api.py#74)(self, mock_data=None, mock_excludes_data=None):**
 
-Download config file and return the extracted config proto.
+Download config files and return the extracted config protos.
 
 Args:
-  mock_data: step_test_data for the config download step.
+  mock_data: step_test_data for the exoneration config download step.
+  mock_excludes_data: step_test_data for the excludes config download step.
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#489)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#531)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
 
 Get the number of failures in the last 10 independant runs from LUCI Analysis.
 
@@ -5256,7 +5264,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#764)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#806)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5266,7 +5274,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#746)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#788)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5276,7 +5284,7 @@ Args:
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#501)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#543)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
 
 Get the flake count & percent of the test for the last 24 hr period.
 
@@ -5286,7 +5294,7 @@ Args:
 Returns: Number of flaky verdict and percent of verdict with flaky
   result in the last 24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#699)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#741)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5298,11 +5306,11 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#82)(self, test_name):**
+&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#100)(self, test_name):**
 
 Return test_name without the tast prefix.
 
-&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#468)(self, test_id: str, board: str, build_target: str, suite: str):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#510)(self, test_id: str, board: str, build_target: str, suite: str):**
 
 Create test_variant dict for LUCI Analysis from inputs.
 
@@ -5314,11 +5322,11 @@ Args:
 
 Returns: A dict that contains the test & variant info.
 
-&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_enabled](/recipe_modules/exonerate/api.py#65)(self):**
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#438)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#480)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5327,7 +5335,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#629)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#671)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5338,7 +5346,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#667)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#709)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5349,15 +5357,15 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if the result itself is a success.
 
-&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#88)(self, mock_data=None):**
+&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#106)(self, mock_data=None):**
 
 Load configs from binary/json files.
 
-&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#454)(self):**
+&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#496)(self):**
 
 Populate markdown style info about suites that were exonerated.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#134)(self, property_name: str):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#156)(self, property_name: str):**
 
 Write exoneration stats to output properties & reset counts.
 
@@ -8577,13 +8585,13 @@ Args:
 Returns:
   A string of just the test config name registered in RDB without the shard info.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_vm\_suite](/recipe_modules/rdb_util/api.py#15)(composite_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_suite](/recipe_modules/rdb_util/api.py#15)(composite_name: str):**
 
-Get the name of the suite of a VM/GCE run from the composite name.
+Get the name of the suite from the composite name.
 
 Args:
   composite_name: Composite name of the builder.
-    eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5'
+    eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5', 'zork-cq.hw.bvt-inline',
 
 Returns:
   A string of just the suite name registered in RDB.
@@ -12161,6 +12169,18 @@ json files.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/dont_exonerate_provision.py#21)(api):**
+### *recipes* / [exonerate:examples/exclude\_hwtests](/recipe_modules/exonerate/examples/exclude_hwtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/exclude_hwtests.py#11): [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exclude_hwtests.py#21)(api):**
+### *recipes* / [exonerate:examples/exclude\_vmtests](/recipe_modules/exonerate/examples/exclude_vmtests.py)
+
+[DEPS](/recipe_modules/exonerate/examples/exclude_vmtests.py#17): [exonerate](#recipe_modules-exonerate), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/exclude_vmtests.py#26)(api):**
 ### *recipes* / [exonerate:examples/exonerate\_hwtests](/recipe_modules/exonerate/examples/exonerate_hwtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/exonerate_hwtests.py#13): [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13414,12 +13434,12 @@ Recipe for running PVS-related scripts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_shardless_test_config.py#14)(api):**
-### *recipes* / [rdb\_util:examples/get\_vm\_suite](/recipe_modules/rdb_util/examples/get_vm_suite.py)
+### *recipes* / [rdb\_util:examples/get\_suite](/recipe_modules/rdb_util/examples/get_suite.py)
 
-[DEPS](/recipe_modules/rdb_util/examples/get_vm_suite.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/rdb_util/examples/get_suite.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_vm_suite.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_suite.py#14)(api):**
 ### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
 
 [DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
@@ -13706,6 +13726,12 @@ Tests for sign_artifacts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/get_tagged_response.py#22)(api):**
+### *recipes* / [skylab\_results:tests/test\_test\_api](/recipe_modules/skylab_results/tests/test_test_api.py)
+
+[DEPS](/recipe_modules/skylab_results/tests/test_test_api.py#6): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/test_test_api.py#14)(api):**
 ### *recipes* / [skylab\_results:tests/translate\_result](/recipe_modules/skylab_results/tests/translate_result.py)
 
 [DEPS](/recipe_modules/skylab_results/tests/translate_result.py#14): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

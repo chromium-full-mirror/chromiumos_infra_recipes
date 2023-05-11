@@ -15,6 +15,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
     TestVariantFailureRateAnalysis
 from PB.chromiumos.test_disablement import TestDisablementCfg
+from PB.chromiumos.test_disablement import ExcludeCfg
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
@@ -26,6 +27,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
+EXCLUDE_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/exclude'
 FailedTest = namedtuple(
     'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
 DEFAULT_OVERALL_AUTOEX_LIMIT = 100
@@ -51,6 +53,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._failed_tests = set()
     # Global log store to reduce the number of steps created.
     self._global_log_lines = []
+    # Disable excludes config by default.
+    self._excludes_enabled = False
+    self._excludes = {}
     self._consistent_failure_threshold = properties.consistent_failure_threshold or DEFAULT_CONSISTENT_FAILURE_THRESHOLD
     self._flaky_percent_threshold = properties.flaky_percent_threshold or DEFAULT_FLAKY_PERCENT_THRESHOLD
     self._flaky_verdict_threshold = properties.flaky_verdict_threshold or DEFAULT_FLAKY_VERDICT_THRESHOLD
@@ -62,22 +67,35 @@ class ExonerateApi(recipe_api.RecipeApi):
     """Returns whether exoneration is enabled."""
     return self._enable_exoneration
 
-  def fetch_config(self, mock_data=None):
-    """Download config file and return the extracted config proto.
+  def enable_excludes(self):
+    """enable excludes config's use."""
+    self._excludes_enabled = True
+
+  def fetch_config(self, mock_data=None, mock_excludes_data=None):
+    """Download config files and return the extracted config protos.
 
     Args:
-      mock_data: step_test_data for the config download step.
+      mock_data: step_test_data for the exoneration config download step.
+      mock_excludes_data: step_test_data for the excludes config download step.
 
     Returns: TestDisablementCfg object of the config.
     """
     if not mock_data:
       mock_data = self.test_api.fake_config_file_contents
+    if not mock_excludes_data:
+      mock_excludes_data = self.test_api.fake_excludes_config
+
     bin_proto = self.m.cros_infra_config.download_binproto(
         EXONERATION_CONFIG_BINPROTO_PATH, timeout=3 * 60,
         repo=CONFIG_INTERNAL_REPO, step_test_data=mock_data)
-    if bin_proto:
-      return TestDisablementCfg.FromString(bin_proto)
-    return TestDisablementCfg()
+    exoneration_config = TestDisablementCfg.FromString(
+        bin_proto) if bin_proto else TestDisablementCfg()
+    bin_proto = self.m.cros_infra_config.download_binproto(
+        EXCLUDE_CONFIG_BINPROTO_PATH, timeout=3 * 60, repo=CONFIG_INTERNAL_REPO,
+        step_test_data=mock_excludes_data)
+    excludes_config = ExcludeCfg.FromString(
+        bin_proto) if bin_proto else ExcludeCfg()
+    return exoneration_config, excludes_config
 
   def get_tastless_name(self, test_name):
     """Return test_name without the tast prefix."""
@@ -88,7 +106,7 @@ class ExonerateApi(recipe_api.RecipeApi):
   def load_configs(self, mock_data=None):
     """Load configs from binary/json files."""
     self._exoneration_configs = {}
-    exoneration_cfg = self.fetch_config(mock_data)
+    exoneration_cfg, excludes_cfg = self.fetch_config(mock_data)
 
     for exoneration in exoneration_cfg.disablements:
       targets = []
@@ -98,6 +116,10 @@ class ExonerateApi(recipe_api.RecipeApi):
 
       self._exoneration_configs[exoneration.name] = targets
 
+    self._excludes = {
+        'tests': set(t.name for t in excludes_cfg.exclude_tests),
+        'suites': set(s.name for s in excludes_cfg.exclude_suites),
+    }
     self._configs_loaded = True
 
   def _add_log(self, line):
@@ -168,6 +190,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: TestCaseResult object changed based on the decision.
     """
     test_name = self.get_tastless_name(test_case.name)
+    if self._excludes_enabled and test_name in self._excludes['tests']:
+      self._add_log('Excluding {} on {} from exoneration'.format(
+          test_name, build_target))
+      return test_case
     targets = self._exoneration_configs[test_name]
     if targets == []:
       # If targets is empty, match universally.
@@ -310,6 +336,12 @@ class ExonerateApi(recipe_api.RecipeApi):
           build_target = skylab_res.task.unit.common.build_target.name
           board = skylab_res.task.test.skylab_board
           display_name = str(skylab_res.task.test.common.display_name)
+          suite_name = self.m.rdb_util.get_suite(display_name)
+          if self._excludes_enabled and suite_name in self._excludes['suites']:
+            self._add_log('Excluding {} on {} from exoneration'.format(
+                suite_name, build_target))
+            new_test_results.append(skylab_res)
+            continue
           new_child_results, new_status = self._exonerate_child_results(
               skylab_res.child_results, build_target, board)
           new_skylab_res = SkylabResult(task=skylab_res.task, status=new_status,
@@ -335,6 +367,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: test case dictionary changed based on the decision.
     """
     test_name = test_case['name']
+    if self._excludes_enabled and test_name in self._excludes['tests']:
+      self._add_log('Excluding {} on {} from exoneration'.format(
+          test_name, build_target))
+      return test_case
     targets = self._exoneration_configs[test_name]
     if targets == []:
       # If targets is empty, match universally.
@@ -416,13 +452,19 @@ class ExonerateApi(recipe_api.RecipeApi):
           build_target = self.m.cros_infra_config.get_build_target_name(build)
           prop_struct = build.output.properties['failed_test_cases']
           all_test_cases = json_format.MessageToDict(prop_struct)
+          display_name = self.m.naming.get_vm_test_title(build)
+          suite_name = self.m.rdb_util.get_suite(display_name)
+          if self._excludes_enabled and suite_name in self._excludes['suites']:
+            self._add_log('Excluding {} on {} from exoneration'.format(
+                suite_name, build_target))
+            new_vm_builds.append(build)
+            continue
           new_test_cases, new_status = self.exonerate_vm_testcases(
               all_test_cases, build_target)
           new_build.status = new_status
           new_build.output.properties.update(
               {'failed_test_cases': new_test_cases})
           if new_status == common_pb2.SUCCESS:
-            display_name = self.m.naming.get_vm_test_title(build)
             link_text = display_name
             self._exoneration_link_map[
                 link_text] = self.m.buildbucket.build_url(build_id=build.id)

@@ -15,6 +15,21 @@
     "timeout": 180
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/exclude.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:test/exoneration/generated/exclude.binaryproto",
+    "timeout": 180
+  },
+  {
     "cmd": [],
     "name": "get previous failed and now exonerable suites",
     "~followup_annotations": [

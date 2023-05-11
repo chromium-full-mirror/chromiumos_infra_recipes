@@ -13,12 +13,12 @@ class RDBUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with ResultDB."""
 
   @staticmethod
-  def get_vm_suite(composite_name: str) -> str:
-    """Get the name of the suite of a VM/GCE run from the composite name.
+  def get_suite(composite_name: str) -> str:
+    """Get the name of the suite from the composite name.
 
     Args:
       composite_name: Composite name of the builder.
-        eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5'
+        eg: 'betty-cq.tast_vm.tast_vm_default_shard_5_of_5', 'zork-cq.hw.bvt-inline',
 
     Returns:
       A string of just the suite name registered in RDB.

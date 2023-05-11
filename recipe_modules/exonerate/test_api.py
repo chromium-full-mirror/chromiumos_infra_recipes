@@ -7,6 +7,7 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.test_disablement import TestDisablement
 from PB.chromiumos.test_disablement import TestDisablementCfg
+from PB.chromiumos.test_disablement import ExcludeCfg
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 
@@ -43,6 +44,17 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
   def fake_config_file_contents(self):
     return self.m.gitiles.make_encoded_file_from_bytes(
         self.fake_exoneration_configs().SerializeToString())
+
+  def fake_excludes_configs(self):
+    """Returns fake excludes config for unittesting."""
+    exclude_tests = [ExcludeCfg.ExcludeTest(name='test2')]
+    exclude_suites = [ExcludeCfg.ExcludeSuite(name='suite1')]
+    return ExcludeCfg(exclude_tests=exclude_tests,
+                      exclude_suites=exclude_suites)
+
+  def fake_excludes_config(self):
+    return self.m.gitiles.make_encoded_file_from_bytes(
+        self.fake_excludes_configs().SerializeToString())
 
   def empty_config_file_contents(self):
     return self.m.gitiles.make_encoded_file_from_bytes(b'')

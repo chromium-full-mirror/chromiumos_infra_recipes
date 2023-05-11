@@ -34,8 +34,14 @@
     "name": "exonerate hw tests",
     "~followup_annotations": [
       "@@@STEP_LOG_END@configs@@@",
-      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
-      "@@@STEP_LOG_END@exoneration logs@@@"
+      "@@@STEP_LOG_LINE@exoneration logs@Excluding suite1 on build_target_name from exoneration@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Excluding test2 on build_target_name from exoneration@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test3 on build_target_name@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated test4 on build_target_name@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test3:\t['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@test4:\t['build_target_name']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
     ]
   },
   {
