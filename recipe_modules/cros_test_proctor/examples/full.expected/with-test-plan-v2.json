@@ -4634,6 +4634,7 @@
       "which",
       "docker"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4656,6 +4657,7 @@
       "docker",
       "version"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4713,6 +4715,7 @@
       "--config-file",
       "[CLEANUP]/.docker"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4738,6 +4741,7 @@
       "pull",
       "us-docker.pkg.dev/cros-registry/test-services/testplan:prod"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4774,6 +4778,7 @@
       "--format",
       "text"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4832,6 +4837,7 @@
       "--format",
       "text"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4890,6 +4896,7 @@
       "--format",
       "text"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -4948,6 +4955,7 @@
       "--format",
       "text"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -5006,6 +5014,7 @@
       "--format",
       "text"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -5178,6 +5187,7 @@
       "-plan",
       "/input/testrepoB/kernel2.star"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"

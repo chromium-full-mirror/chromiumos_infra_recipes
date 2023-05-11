@@ -4496,23 +4496,23 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#40)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#93)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#96)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#78)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#81)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#416)(self, starlark_packages, generate_test_plan_request=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#420)(self, starlark_packages, generate_test_plan_request=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4529,7 +4529,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#540)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#545)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the testplan Docker image to get a list of testable builders.
 
@@ -4544,9 +4544,9 @@ Args:
 Returns:
   A list of the names of the testable builders.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#59)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#62)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#192)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#195)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -4557,7 +4557,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#176)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#179)(self, directory: str):**
 
 Call test_plan validate on directory.
 

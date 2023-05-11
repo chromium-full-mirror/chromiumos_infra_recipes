@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import base64
+import datetime
 import re
 from collections import namedtuple, defaultdict
 from typing import List
@@ -17,6 +18,8 @@ from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from recipe_engine.config_types import Path
 from recipe_engine import recipe_api
+
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -284,6 +287,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
         self._test_plan_path = cipd_dir.join('test_plan')
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
   def _download_config_pb(
       self,
       repository_url: str,
@@ -433,7 +437,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       A list of generated HWTestPlans or GenerateTestPlanResponse if
         generate_ctpv1_format is true.
     """
-    with self.m.step.nest('generate hw test plans') as pres:
+    with self.m.step.nest('generate hw test plans') as pres, self.m.context(
+        infra_steps=True):
       if self.generate_ctpv1_format != (generate_test_plan_request is not None):
         raise ValueError(
             'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
