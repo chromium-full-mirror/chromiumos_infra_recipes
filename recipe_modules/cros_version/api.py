@@ -220,4 +220,5 @@ class CrosVersionApi(RecipeApi):
             self.m.gerrit.set_change_labels_remote(change, labels)
             self.m.gerrit.submit_change(change, project_path=overlay_path)
 
-          self._check_version(push_branch, new_version)
+          if not dry_run:
+            self._check_version(push_branch, new_version)
