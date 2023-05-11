@@ -175,7 +175,7 @@ def RunSteps(api):
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(len(hw_test_failures[0].child_results), 1)
 
-  api.exonerate.print_stats()
+  api.exonerate.print_stats(property_name='exoneration_stats')
   api.exonerate.auto_exoneration_analysis()
   variant = rdb_common_pb2.Variant()
   getattr(variant, 'def')['build_target'] = 'build_target_name'

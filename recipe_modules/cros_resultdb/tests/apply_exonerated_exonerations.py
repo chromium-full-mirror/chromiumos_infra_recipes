@@ -44,7 +44,7 @@ def RunSteps(api):
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
   _ = api.exonerate.exonerate_vmtests(vm_builds)
-  api.exonerate.print_stats()
+  api.exonerate.print_stats(property_name='exoneration_stats')
   api.cros_resultdb.apply_exonerated_exonerations(
       [api.cros_resultdb.current_invocation_id])
 

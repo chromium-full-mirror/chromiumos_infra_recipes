@@ -131,8 +131,12 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return lines
 
-  def print_stats(self):
-    """Write exoneration stats to output properties."""
+  def print_stats(self, property_name: str) -> None:
+    """Write exoneration stats to output properties & reset counts.
+
+    Args:
+      property_name: Name of the property to populate.
+    """
     test_stats = [
         ExonerateStats.GranularStats(name=test,
                                      count=self._test_stats_map[test])
@@ -146,7 +150,12 @@ class ExonerateApi(recipe_api.RecipeApi):
     ]
     self._stats.test_stats.extend(test_stats)
     self._stats.suite_stats.extend(suite_stats)
-    self.m.easy.set_properties_step(exoneration_stats=self._stats)
+    self.m.easy.set_properties_step(**{property_name: self._stats})
+
+    # Clear the counts.
+    self._stats = ExonerateStats(dry_run=self._dry_run)
+    self._test_stats_map = defaultdict(int)
+    self._suite_stats_map = defaultdict(int)
 
   def _exonerate_hw_testcase(self, test_case, build_target):
     """Exonerates a single TestCaseResult based on configs.

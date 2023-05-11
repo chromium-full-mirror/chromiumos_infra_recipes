@@ -303,6 +303,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         manually_exonerated_gce_results, manually_exonerated_gce_tests = (
             self.m.exonerate.exonerate_vmtests(test_results.tast_gce))
         passed_test_names += manually_exonerated_gce_tests
+        self.m.exonerate.print_stats(property_name='exoneration_stats')
 
       with self.m.step.nest('automated exoneration') as pres:
         autoex_running = self.m.exonerate.auto_exoneration_analysis(
@@ -320,6 +321,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               self.m.exonerate.exonerate_vmtests(
                   manually_exonerated_gce_results))
           passed_test_names += auto_exonerated_gce_tests
+          self.m.exonerate.print_stats(property_name='autoex_stats')
 
       final_hw_results = (
           auto_exonerated_hw_results

@@ -35,7 +35,6 @@ DEPS = [
     'cros_test_proctor',
     'cros_version',
     'easy',
-    'exonerate',
     'failures',
     'gerrit',
     'git',

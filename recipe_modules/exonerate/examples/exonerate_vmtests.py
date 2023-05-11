@@ -87,7 +87,7 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.exonerate.is_vm_test_build_exonerable(build), False)
 
-  api.exonerate.print_stats()
+  api.exonerate.print_stats(property_name='exoneration_stats')
 
 
 def GenTests(api):

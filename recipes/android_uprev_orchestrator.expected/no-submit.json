@@ -13138,9 +13138,25 @@
   },
   {
     "cmd": [],
+    "name": "check test results.manual exoneration.set exoneration_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check test results.automated exoneration",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.automated exoneration.set autoex_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@autoex_stats@{}@@@"
     ]
   },
   {
@@ -13593,14 +13609,6 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up orchestrator.set exoneration_stats",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{}@@@"
     ]
   },
   {

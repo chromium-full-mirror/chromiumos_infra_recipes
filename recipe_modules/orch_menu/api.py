@@ -389,7 +389,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
       self.m.greenness.print_step()
-      self.m.exonerate.print_stats()
       # Set child output ids if any
       self.add_child_info_to_output_property()
 
