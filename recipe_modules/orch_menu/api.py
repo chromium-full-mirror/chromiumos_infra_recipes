@@ -1252,6 +1252,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
                       'no metadata but build failed, ignoring.')
                   skipped.append((build_target, 'no metadata on failed build'))
                 else:
+                  child_step.status = self.m.step.FAILURE
+                  child_step.step_text = 'failed to download'
                   fail_parent_steps(
                       'one or more child payloads failed to download')
                 continue
@@ -1263,6 +1265,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
                 message = json_format.Parse(payload, metadata_info.msgtype())
               # pylint: disable=broad-except
               except Exception as ex:
+                child_step.status = self.m.step.FAILURE
+                child_step.step_text = 'failed to parse'
                 payload_step.logs['proto error'] = str(ex)
                 fail_parent_steps('one or more child payloads failed to parse')
                 continue

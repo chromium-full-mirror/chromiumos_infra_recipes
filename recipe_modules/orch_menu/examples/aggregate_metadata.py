@@ -225,6 +225,10 @@ def GenTests(api):
       'failed-decoding',
       step_failed('aggregating metadata'),
       step_failed('aggregating metadata.container metadata'),
+      api.post_process(
+          post_process.StepTextEquals,
+          'aggregating metadata.container metadata.processing test-target-0',
+          'failed to parse'),
       api.post_process(post_process.DropExpectation),
   )
 

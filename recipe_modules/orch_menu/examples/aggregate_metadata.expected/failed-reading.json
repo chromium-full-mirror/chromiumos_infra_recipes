@@ -2497,7 +2497,9 @@
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing test-target-1",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@failed to download@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
