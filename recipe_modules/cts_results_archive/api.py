@@ -35,7 +35,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
       result = self.m.step(
           'prepare uploads',
           [
-              'python',
+              'python3',
               self.resource('prepare_uploads.py'),
               '--json-input',
               self.m.json.input(json_input),

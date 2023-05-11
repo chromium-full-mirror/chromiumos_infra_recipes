@@ -11,7 +11,7 @@
   },
   {
     "cmd": [
-      "python",
+      "python3",
       "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
       "--json-input",
       "{\"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\"}",
