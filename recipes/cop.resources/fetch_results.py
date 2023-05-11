@@ -81,7 +81,7 @@ def main(args):
   steps = list()
   for i, step in enumerate(build.steps):
     status = build.Status(step.status).name
-    if status == 'SUCCESS':
+    if status == 'SUCCESS' and not step.id.startswith("verbose_"):
       continue
     steps.append({
         'id':
