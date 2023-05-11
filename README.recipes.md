@@ -8480,7 +8480,7 @@ A module to create local uprevs for PUpr.
 
 Initialize the module's attributes.
 
-&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#378)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
+&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#379)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
 
 Create a new uprev patch (locally) for change_id.
 
@@ -8527,7 +8527,7 @@ Returns:
   If not all packages are uprevved and allow_partial_uprev==False, return
     None. This signifies that the PUpr run should terminate immediately.
 
-&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#309)(self, topic: str):**
+&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#310)(self, topic: str):**
 
 Uprev the SDK on the local filesystem, and commit the uprev.
 

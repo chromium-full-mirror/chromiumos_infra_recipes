@@ -227,8 +227,9 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     Create them by path instead of by project name, because they may be checked
     out multiple times.
     """
-    project_paths = sorted([project.path for project in projects])
-    self.m.repo.start('pupr', projects=project_paths)
+    with self.m.context(cwd=self.workspace_path):
+      project_paths = sorted([project.path for project in projects])
+      self.m.repo.start('pupr', projects=project_paths)
 
   def _create_commit_message(
       self, prefix: str, uprevved_versions: List[str], topic: str,
