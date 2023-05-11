@@ -1,0 +1,37 @@
+
+wheel: <
+  name: "infra/python/wheels/virt-firmware-py3"
+  version: "version:23.5"
+>
+
+# Required by virt-firmware
+wheel: <
+  name: "infra/python/wheels/cryptography/${vpython_platform}"
+  version: "version:3.3.2.chromium.1"
+>
+wheel: <
+  name: "infra/python/wheels/pefile-py2_py3"
+  version: "version:2018.8.8"
+>
+
+# Required by cryptography
+wheel: <
+  name: "infra/python/wheels/cffi/${vpython_platform}"
+  version: "version:1.15.1"
+>
+wheel: <
+  name: "infra/python/wheels/six-py2_py3"
+  version: "version:1.16.0"
+>
+
+# Required by cffi
+wheel: <
+  name: "infra/python/wheels/pycparser-py2_py3"
+  version: "version:2.21"
+>
+
+# Required by pefile
+wheel: <
+  name: "infra/python/wheels/future-py2_py3"
+  version: "version:0.18.2"
+>

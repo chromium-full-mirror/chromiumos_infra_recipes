@@ -11,7 +11,9 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/archive',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
@@ -24,27 +26,143 @@ PROPERTIES = BuildMassDeployProperties
 RELEASE_BUCKET = 'chromeos-releases'
 THROWAWAY_BUCKET = 'chromeos-throw-away-bucket'
 
+# When this was a manual process this was the chosen size. I don't know why.
+# Doc describing the original process:
+# https://docs.google.com/document/d/1npLSOGnn_2CqaTh0y_iuHJuc3xViG_GC3Z5SP5xP0os/edit?resourcekey=0-aYWwlLKts-sbcakq0Ars3g
+DEFAULT_IMAGE_SIZE_GIBIBYTES = 29
+
+
+def _download_signed_image(api, input_image):
+  with api.step.nest('download signed image'):
+    api.gsutil.download(RELEASE_BUCKET, input_image, 'image.zip')
+    api.archive.extract('unzip image archive',
+                        api.context.cwd.join('image.zip'),
+                        api.context.cwd.join('image_dir'))
+
+    image_name, _ = api.path.splitext(input_image)
+    image_name = api.path.basename(image_name)
+    decompressed_image = api.context.cwd.join('image_dir', image_name)
+    return decompressed_image
+
+
+def _create_empty_image(api, output_dir, image_size):
+  output_image = output_dir / 'mass_deployable_image.bin'
+  api.step(
+      'create empty image', cmd=[
+          'qemu-img',
+          'create',
+          '-f',
+          'raw',
+          '-o',
+          f'size={image_size}G',
+          output_image,
+      ])
+  return output_image
+
+
+def _run_automatic_install(api, installer_image, output_image):
+  """Use qemu to install, using our installer_image, into output_image"""
+  with api.step.nest('set up automatic installation'):
+    # Use the UEFI-triggered auto-install feature to start installation.
+    # We use OVMF, an implementation of UEFI for VMs, to run in UEFI mode.
+    # OVMF provides OVMF_VARS.fd files which can store UEFI variables, but
+    # doesn't provide a utility for editing them. We use virt-firmware to
+    # set up an OVMF_VARS file with the correct var to trigger install.
+    ovmf_source_dir = '/usr/share/OVMF'
+    ovmf_vars_source = 'OVMF_VARS.fd'
+    # Provided by the ovmf package.
+    api.file.copy('copy UEFI variables file',
+                  api.path.join(ovmf_source_dir, ovmf_vars_source),
+                  api.context.cwd)
+    ovmf_vars_file = api.context.cwd.join(ovmf_vars_source)
+
+    api.step(
+        'create UEFI variable to trigger automatic installation', cmd=[
+            'vpython3',
+            '-vpython-spec',
+            api.resource('.vpython3'),
+            '-m',
+            'virt.firmware.vars',
+            '--set-json',
+            api.resource('autoinstall_var.json'),
+            '-i',
+            ovmf_vars_file,
+            '-o',
+            ovmf_vars_file,
+        ])
+
+  # This will shut down when the install finishes.
+  step_result = api.step(
+      'boot input image to install to output image', timeout=300, cmd=[
+          'qemu-system-x86_64',
+          '-machine',
+          'q35,smm=on,accel=kvm',
+          '-enable-kvm',
+          '-m',
+          '8G',
+          '-smp',
+          '8',
+          '-cpu',
+          'host',
+          '-vga',
+          'virtio',
+          '-display',
+          'none',
+          '-serial',
+          'none',
+          '-drive',
+          f'if=pflash,format=raw,readonly=on,file={ovmf_source_dir}/OVMF_CODE.fd',
+          '-drive',
+          f'if=pflash,format=raw,readonly=on,file={ovmf_vars_file}',
+          '-hda',
+          installer_image,
+          '-hdb',
+          output_image,
+      ])
+
+  # qemu returns 0 when killed for the timeout. Manually check if we hit the
+  # timeout and raise if we did.
+  if step_result.exc_result.had_timeout:  # pragma: nocover
+    # There's no way to simulate "had_exception" in tests, so use nocover.
+    raise StepFailure('install timed out')
+
+
+def _compress_and_upload_mass_deploy_image(api, output_dir, gs_bucket, gs_dir):
+  """Zip our output_dir and upload it to gs_dir in the gs_bucket"""
+  zip_name = api.path.basename(output_dir) + '.zip'
+
+  output_zip = api.archive.package(output_dir).archive(
+      'compress mass deploy image', api.context.cwd.join(zip_name), 'zip')
+
+  with api.step.nest('upload mass deploy image'):
+    # Construct path for new artifact, upload to GS.
+    gs_path = api.path.join(gs_dir, zip_name)
+    api.gsutil.upload(output_zip, gs_bucket, gs_path)
+
 
 def RunSteps(api, properties):
   if not properties.input_image:
     raise StepFailure('`input_image` is required')
 
+  dest_bucket = RELEASE_BUCKET if properties.production else THROWAWAY_BUCKET
+
+  image_size = properties.image_size_gib or DEFAULT_IMAGE_SIZE_GIBIBYTES
+
   working_dir = api.path.mkdtemp()
   with api.context(cwd=working_dir):
-    with api.step.nest('download signed image'):
-      api.gsutil.download(RELEASE_BUCKET, properties.input_image, 'image.zip')
+    installer_image = _download_signed_image(api, properties.input_image)
 
-    # Do work.
-    with api.step.nest('do work'):
-      output_filename = 'mass_deploy.zip'
-      api.step('create deploy image', cmd=['touch', output_filename])
+    output_dir = api.context.cwd.join('mass_deployable_image')
+    api.step('create output dir', cmd=['mkdir', output_dir])
 
-    # Construct path for new artifact, upload to GS.
-    gs_dir = api.path.dirname(properties.input_image)
-    gs_path = api.path.join(gs_dir, 'mass_deploy.zip')
+    with api.step.nest('create mass deploy image'):
+      output_image = _create_empty_image(api, output_dir, image_size)
+      _run_automatic_install(api, installer_image, output_image)
 
-    dest_bucket = RELEASE_BUCKET if properties.production else THROWAWAY_BUCKET
-    api.gsutil.upload(output_filename, dest_bucket, gs_path)
+    # Path in gs that our input image came from: upload back to that.
+    input_path = api.path.dirname(properties.input_image)
+    _compress_and_upload_mass_deploy_image(api, output_dir, dest_bucket,
+                                           input_path)
 
 
 def GenTests(api):
@@ -57,9 +175,11 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'download signed image.gsutil download',
                      ['gs://chromeos-releases/foo/bar.zip']),
-      api.post_check(post_process.MustRun, 'do work'),
-      api.post_check(post_process.StepCommandContains, 'gsutil upload',
-                     ['gs://chromeos-releases/foo/mass_deploy.zip']),
+      api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
+      api.post_check(post_process.StepCommandContains,
+                     'upload mass deploy image.gsutil upload',
+                     ['gs://chromeos-releases/foo/mass_deployable_image.zip']),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -69,11 +189,26 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'download signed image.gsutil download',
                      ['gs://chromeos-releases/foo/bar.zip']),
-      api.post_check(post_process.MustRun, 'do work'),
-      api.post_check(post_process.StepCommandContains, 'gsutil upload',
-                     ['gs://chromeos-throw-away-bucket/foo/mass_deploy.zip']),
+      api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload mass deploy image.gsutil upload',
+          ['gs://chromeos-throw-away-bucket/foo/mass_deployable_image.zip']),
       api.post_process(post_process.DropExpectation))
 
   yield api.test('no-input-image',
                  api.post_process(post_process.DropExpectation),
                  status='FAILURE')
+
+  yield api.test(
+      'install-timeout', api.properties(**{
+          'input_image': 'foo/bar.zip',
+      }),
+      api.step_data(
+          'create mass deploy image.boot input image to install to output image',
+          times_out_after=301),
+      api.post_check(
+          post_process.StepFailure,
+          'create mass deploy image.boot input image to install to output image'
+      ), api.post_process(post_process.DropExpectation), status='FAILURE')

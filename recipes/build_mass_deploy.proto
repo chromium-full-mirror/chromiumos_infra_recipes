@@ -14,4 +14,7 @@ message BuildMassDeployProperties {
     // GS path of the image to be used in construction. Should be relative to gs://chromeos-releases/, e.g.
     // "canary-channel/reven/15458.0.0/chromeos_15458.0.0_reven_recovery_canary-channel_mp-v2.bin.zip"
     string input_image = 2;
+
+    // Size of the output mass deployable image in GiB. Default is 29.
+    optional int32 image_size_gib = 3;
 }

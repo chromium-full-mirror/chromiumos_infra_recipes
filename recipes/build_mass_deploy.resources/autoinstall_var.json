@@ -1,0 +1,11 @@
+{
+    "version": 2,
+    "variables": [
+        {
+            "name": "ChromiumOSAutoInstall",
+            "guid": "2a6f93c9-29ea-46bf-b618-271b63baacf3",
+            "attr": 7,
+            "data": "01"
+        }
+    ]
+}
