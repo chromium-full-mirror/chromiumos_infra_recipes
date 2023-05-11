@@ -61,7 +61,8 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       self._data_proto.builder_metadata.manifest_commit = self.m.src_state.gitiles_commit.id
 
   def _get_image_size_data(
-      self, image_data: Iterable['PB.chromite.api.image.Image']) -> bool:
+      self, image_data: Iterable['PB.chromite.api.image.Image'],
+      chroot: ' PB.chromiumos.common.Chroot' = None) -> bool:
     """Get image/partition/package size data.
 
     Args:
@@ -76,7 +77,7 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       return False
 
     with self.m.step.nest('add data from images'):
-      request = GetImageSizeDataRequest(built_images=image_data)
+      request = GetImageSizeDataRequest(built_images=image_data, chroot=chroot)
       response = self.m.cros_build_api.ObservabilityService.GetImageSizeData(
           request)
       for img_data in response.image_data:
@@ -84,7 +85,8 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
 
       return True
 
-  def publish(self, config, build_target, target_versions, built_images):
+  def publish(self, config, build_target, target_versions, built_images,
+              chroot):
     """Collect and publish the image size data."""
     with self.m.step.nest('collect image size data') as pres:
       if not config.general.publish_image_sizes:
@@ -94,7 +96,7 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
       if not built_images:
         raise recipe_api.StepFailure('No images provided.')
 
-      if not self._get_image_size_data(built_images):
+      if not self._get_image_size_data(built_images, chroot):
         pres.step_text = 'Skipped: Image size data could not be collected.'
         return
 

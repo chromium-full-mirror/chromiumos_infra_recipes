@@ -7745,7 +7745,7 @@ Returns:
 
 Collect image size data.
 
-&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#87)(self, config, build_target, target_versions, built_images):**
+&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#88)(self, config, build_target, target_versions, built_images, chroot):**
 
 Collect and publish the image size data.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)

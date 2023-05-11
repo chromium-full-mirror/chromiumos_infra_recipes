@@ -47,6 +47,7 @@ def RunSteps(api, properties):
 
   # get_image_size_data.
   build_target = common_pb2.BuildTarget(name='amd64-generic')
+  chroot = common_pb2.Chroot()
   images = []
   if common_pb2.IMAGE_TYPE_BASE in properties.image_types:
     images.append(
@@ -58,7 +59,7 @@ def RunSteps(api, properties):
               build_target=build_target))
 
   api.observability_image_size.publish(config, build_target, target_versions,
-                                       images)
+                                       images, chroot)
 
 
 def GenTests(api):
