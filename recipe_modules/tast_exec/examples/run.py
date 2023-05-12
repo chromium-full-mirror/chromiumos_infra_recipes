@@ -34,7 +34,7 @@ def RunSteps(api):
   def modify_image(image_path):
     image_modified[image_path] = True
 
-  qcow_image, private_key_path = api.tast_exec.download_vm(
+  qcow_image = api.tast_exec.download_vm(
       BuildPayload(
           artifacts_gs_bucket='bucket',
           artifacts_gs_path='path',
@@ -43,8 +43,7 @@ def RunSteps(api):
   api.assertions.assertTrue(image_modified)
 
   vm_context = api.tast_exec.create_qemu_vm_context(
-      qcow_image, private_key_path,
-      second_image_path=vm_dir.join('second_disk.bin'))
+      qcow_image, second_image_path=vm_dir.join('second_disk.bin'))
 
   # Run with retry
   api.tast_exec.run_vm(
@@ -53,7 +52,7 @@ def RunSteps(api):
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               ), private_key_path))
+                               )))
 
   # Run without retry
   results_dir = api.path.mkdtemp(prefix='temp')
@@ -63,15 +62,14 @@ def RunSteps(api):
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               ), private_key_path))
+                               )))
   api.tast_exec.run_direct_vm(
       vm_context, results_dir,
       api.tast_exec.TastInputs(['example.Pass'], test_artifacts,
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               ), private_key_path,
-                               run_args=['-var=myVar=myVal']))
+                               ), run_args=['-var=myVar=myVal']))
 
   # Just run the VM context in isolation to test VM kill.
   with api.step.nest('run VM context'):
@@ -81,14 +79,14 @@ def RunSteps(api):
   # Run with GCE VM
   vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
                                                    'machine', 'zone', 'network',
-                                                   'subnet', private_key_path)
+                                                   'subnet')
   api.tast_exec.run_vm(
       'tast_vm', vm_context,
       api.tast_exec.TastInputs(['!informational'], test_artifacts,
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               ), private_key_path))
+                               )))
 
 
 def GenTests(api):

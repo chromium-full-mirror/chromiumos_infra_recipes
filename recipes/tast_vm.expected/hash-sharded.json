@@ -96,11 +96,35 @@
   },
   {
     "cmd": [
-      "chmod",
-      "400",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa"
     ],
-    "name": "setup vm image.calibrate ssh key permissions",
+    "infra_step": true,
+    "name": "setup vm image.copy ssh key (id_rsa)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "chmod",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "--mode",
+      "400"
+    ],
+    "infra_step": true,
+    "name": "setup vm image.calibrate ssh key permissions (id_rsa)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -213,7 +237,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -234,7 +258,7 @@
       "-remotebundledir=[CLEANUP]/test-artifacts_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/test-artifacts_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/test-artifacts_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-totalshards=2",
       "-shardindex=1",
       "-shardmethod=hash",
@@ -262,7 +286,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -288,7 +312,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "rsync",
@@ -320,7 +344,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -366,7 +390,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
       "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],

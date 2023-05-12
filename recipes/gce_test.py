@@ -14,6 +14,7 @@ from PB.recipes.chromeos.gce_test import GceTestProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/random',
@@ -21,6 +22,7 @@ DEPS = [
     'recipe_engine/time',
     'failures',
     'gcloud',
+    'git',
     'tast_exec',
     'tast_results',
 ]
@@ -61,15 +63,21 @@ def RunSteps(api: RecipeApi,
         test_artifacts_dir,
         'autotest/utils/frozen_chromite/ssh_keys/testing_rsa',
     )
-    api.step('calibrate ssh key permissions',
-             ['chmod', '400', str(private_key_path)])
+    api.tast_exec.add_ssh_key(private_key_path)
+
+    with api.step.nest('fetch partner ssh key for chromeos images'):
+      sshkeys_dir = api.path.mkdtemp(prefix='sshkeys')
+      api.git.clone('https://chrome-internal.googlesource.com/chromeos/sshkeys',
+                    branch='main', target_path=sshkeys_dir, depth=1)
+      partner_key_path = sshkeys_dir.join('partner_testing_rsa')
+      api.tast_exec.add_ssh_key(partner_key_path)
+
     vm_context = api.tast_exec.create_gce_vm_context(
         image, project=properties.gce_metadata.project,
         zone=properties.gce_metadata.zone,
         machine=properties.gce_metadata.machine_type,
         network=properties.gce_metadata.network,
-        subnet=properties.gce_metadata.subnet,
-        private_key_path=private_key_path)
+        subnet=properties.gce_metadata.subnet)
 
     # Only specify shards if there is more than 1.
     shard_args = []
@@ -85,7 +93,7 @@ def RunSteps(api: RecipeApi,
       results, empty_result = api.tast_exec.run_vm(
           properties.name, vm_context,
           api.tast_exec.TastInputs(properties.expressions, test_artifacts_dir,
-                                   properties.build_payload, private_key_path,
+                                   properties.build_payload,
                                    shard_args=shard_args))
 
     api.tast_results.print_results(results.failures, empty_result)

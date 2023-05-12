@@ -37,10 +37,9 @@ def RunSteps(api: RecipeApi, properties: TastVmProperties):
   api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
 
   image_archive_dir = api.path.mkdtemp(prefix='image-archive')
-  qcow_image_path, private_key_path = api.tast_exec.download_vm(
-      properties.build_payload, image_archive_dir)
-  vm_context = api.tast_exec.create_qemu_vm_context(qcow_image_path,
-                                                    private_key_path)
+  qcow_image_path = api.tast_exec.download_vm(properties.build_payload,
+                                              image_archive_dir)
+  vm_context = api.tast_exec.create_qemu_vm_context(qcow_image_path)
   # Only specify shards if there is more than 1.
   shard_args = []
   if properties.total_shards > 1:
@@ -55,7 +54,7 @@ def RunSteps(api: RecipeApi, properties: TastVmProperties):
     results, _ = api.tast_exec.run_vm(
         properties.name, vm_context,
         api.tast_exec.TastInputs(properties.expressions, test_artifacts_dir,
-                                 properties.build_payload, private_key_path,
+                                 properties.build_payload,
                                  shard_args=shard_args))
 
   return api.failures.aggregate_failures(results)

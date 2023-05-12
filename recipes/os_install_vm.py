@@ -168,8 +168,9 @@ def RunSteps(api: RecipeApi,
 
   # Download and prepare the installer image.
   modify_image = lambda image_path: make_into_installer(api, image_path)
-  qcow_image_path, private_key_path = api.tast_exec.download_vm(
-      properties.build_payload, image_archive_dir, modify_image=modify_image)
+  qcow_image_path = api.tast_exec.download_vm(properties.build_payload,
+                                              image_archive_dir,
+                                              modify_image=modify_image)
 
   # Create empty install target.
   install_target_image_path = image_archive_dir.join('install_target.qcow2')
@@ -181,14 +182,12 @@ def RunSteps(api: RecipeApi,
   # Prepare the initial VM context which has both the installer and
   # target disks attached.
   vm_context = api.tast_exec.create_qemu_vm_context(
-      qcow_image_path, private_key_path,
-      second_image_path=install_target_image_path)
+      qcow_image_path, second_image_path=install_target_image_path)
 
   tast_inputs = api.tast_exec.TastInputs(
       ['osinstall.OsInstall'],
       test_artifacts_dir,
       properties.build_payload,
-      private_key_path,
       # Set a timeout for the test. Note that this is different from
       # setting a timeout on the whole tast-run step, which the
       # tast_exec module already does.
@@ -220,7 +219,7 @@ def RunSteps(api: RecipeApi,
       # otherwise the previous step would block waiting for all futures to
       # complete.
       vm_context = api.tast_exec.create_qemu_vm_context(
-          install_target_image_path, private_key_path)
+          install_target_image_path)
       with vm_context():
         # Wait for the tast future to complete and return its result (or
         # propagate an exception). No timeout is needed here as the tast

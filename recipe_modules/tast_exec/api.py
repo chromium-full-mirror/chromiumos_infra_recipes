@@ -35,7 +35,6 @@ class TastExecApi(RecipeApi):
       expressions (list[str]): Expressions describing tests to run.
       test_artifacts_dir (Path): Dir containing test artifacts.
       build_payload (BuildPayload): Where the build artifact is on GS.
-      private_key_path (Path): Path to private key.
       run_args (list[str]): Additional arguments to pass to the `tast run`
           command (optional).
       shard_args (list[str]): Arguments that indicate how the test should be
@@ -44,11 +43,10 @@ class TastExecApi(RecipeApi):
     """
 
     def __init__(self, expressions, test_artifacts_dir, build_payload,
-                 private_key_path=None, run_args=None, shard_args=None):
+                 run_args=None, shard_args=None):
       self.expressions = expressions
       self.test_artifacts_dir = test_artifacts_dir
       self.build_payload = build_payload
-      self.private_key_path = private_key_path
       self.run_args = run_args or []
       self.shard_args = shard_args or []
 
@@ -90,6 +88,25 @@ class TastExecApi(RecipeApi):
     self._should_retry = properties.should_retry
     self._public_builder = properties.public_builder
     self._tast_cli_supported_flags = []
+    self._sshkeys = []
+    # We create this directory on first call to add_ssh_key.
+    self._sshkeys_dir = None
+
+  def add_ssh_key(self, path):
+    """Registers an SSH key for use during test execution.
+
+    Args:
+      path (Path): Path to the SSH key.
+    """
+    if self._sshkeys_dir is None:
+      self._sshkeys_dir = self.m.path.mkdtemp(prefix='sshkeys_dir')
+
+    name = self.m.path.basename(path)
+    newpath = self.m.path.join(self._sshkeys_dir, name)
+    self.m.file.copy('copy ssh key ({})'.format(name), path, newpath)
+    self.m.file.chmod('calibrate ssh key permissions ({})'.format(name),
+                      newpath, '400')
+    self._sshkeys.append(newpath)
 
   def download_tast(self, build_payload, test_artifacts_dir):
     """Downloads the tast executable from specified build artifacts.
@@ -123,10 +140,8 @@ class TastExecApi(RecipeApi):
         to the qcow2 format. (optional).
 
     Returns:
-      qcow_image_path (Path): The location of the qcow image. This will be
-        a location inside image_archive_dir.
-      private_key_path (Path): The location of the SSH key. This will be
-        a location inside image_archive_dir.
+      The location of the qcow image. This will be a location inside
+        image_archive_dir.
     """
     with self.m.step.nest('setup vm image'):
       test_image_zip = vm_dir.join('image.zip')
@@ -152,9 +167,8 @@ class TastExecApi(RecipeApi):
           '-b', str(vm_image_path), \
           str(qcow_image_path) \
       ])
-      self.m.step('calibrate ssh key permissions',
-                  ['chmod', '400', str(private_key_path)])
-    return qcow_image_path, private_key_path
+      self.add_ssh_key(private_key_path)
+    return qcow_image_path
 
   def run_vm(self, suite_name, vm_context, tast_inputs):
     """Run tast tests in a VM with one retry and upload logs to Google storage.
@@ -270,11 +284,10 @@ class TastExecApi(RecipeApi):
       # b/219966100: Occasionally the `tast run` step will leave the VM in an
       # unresponsive state. Make sure we can establish an SSH connection before
       # attempting to archive artifacts.
-      self._test_ssh_conn(vm.host, vm.port, tast_inputs.private_key_path)
-
+      self._test_ssh_conn(vm.host, vm.port)
       # Add logs and other artifacts from DUT into the test results directory.
-      self._archive_vm_artifacts(vm.host, vm.port, tast_inputs.private_key_path,
-                                 test_results_dir)
+      self._archive_vm_artifacts(vm.host, vm.port, test_results_dir)
+
     return tests
 
   def run_direct(self, dut_name, tast_inputs, test_results_dir):
@@ -297,9 +310,8 @@ class TastExecApi(RecipeApi):
       self._run_tests(dut_name, tast_inputs, test_results_dir)
     return tests
 
-  @staticmethod
-  def _get_ssh_conn_args(private_key_path):
-    return [
+  def _get_ssh_conn_args(self):
+    args = [
        '-oConnectionAttempts=4', \
        '-oUserKnownHostsFile=/dev/null', \
        '-oProtocol=2', \
@@ -308,32 +320,34 @@ class TastExecApi(RecipeApi):
        '-oStrictHostKeyChecking=no', \
        '-oServerAliveInterval=15', \
        '-oNumberOfPasswordPrompts=0', \
-       '-oIdentitiesOnly=yes', \
-       '-i', private_key_path]
+       '-oIdentitiesOnly=yes']
+    for p in self._sshkeys:
+      args += ['-i', p]
+    return args
 
-  def _get_scp_cmd(self, host, port, private_key_path, remote_path, local_path):
-    return ['scp', '-P', port] + self._get_ssh_conn_args(private_key_path) + \
+  def _get_scp_cmd(self, host, port, remote_path, local_path):
+    return ['scp', '-P', port] + self._get_ssh_conn_args() + \
         ['root@{}:{}'.format(host, remote_path), local_path]
 
-  def _get_ssh_cmd(self, host, port, private_key_path, cmd):
-    return ['ssh', '-p', port] + self._get_ssh_conn_args(private_key_path) + \
+  def _get_ssh_cmd(self, host, port, cmd):
+    return ['ssh', '-p', port] + self._get_ssh_conn_args() + \
         ['root@{}'.format(host), '--'] + cmd
 
-  def _archive_vm_artifacts(self, host, port, private_key_path, output_dir):
+  def _archive_vm_artifacts(self, host, port, output_dir):
     # b/204628226: Work-around tar's (non) handling of open file descriptors by
     # rsyncing artifacts to a temporary location before tarring.
-    cmd = self._get_ssh_cmd(host, port, private_key_path,
+    cmd = self._get_ssh_cmd(host, port,
                             ['rsync', '--links', '--recursive'] + \
                             VM_ARTIFACT_LIST + [VM_ARTIFACT_TEMPDIR])
     self.m.step('rsync artifacts to a temporary location on the VM', cmd,
                 infra_step=True, timeout=5 * 60)
     cmd = self._get_ssh_cmd(
-        host, port, private_key_path,
+        host, port,
         ['tar', 'cf', VM_ARTIFACT_TARBALL, '{}/*'.format(VM_ARTIFACT_TEMPDIR)])
     self.m.step('gather artifacts on VM', cmd, infra_step=True, timeout=5 * 60)
     # Remove the tempdir.
     self.m.file.remove('remove temporary artifacts', VM_ARTIFACT_TEMPDIR)
-    cmd = self._get_scp_cmd(host, port, private_key_path, VM_ARTIFACT_TARBALL,
+    cmd = self._get_scp_cmd(host, port, VM_ARTIFACT_TARBALL,
                             str(output_dir.join(ARTIFACT_TARBALL_NAME)))
     self.m.step('download artifacts from VM', cmd, infra_step=True,
                 timeout=5 * 60)
@@ -342,9 +356,8 @@ class TastExecApi(RecipeApi):
     tast_dir = tast_inputs.test_artifacts_dir
     private_builder = 'false' if self._public_builder else 'true'
     private_bundles_str = '-downloadprivatebundles={}'.format(private_builder)
-    keyfile_args = []
-    if tast_inputs.private_key_path is not None:
-      keyfile_args = ['-keyfile={}'.format(tast_inputs.private_key_path)]
+    keydir_args = ['-keydir={}'.format(self._sshkeys_dir)
+                  ] if self._sshkeys_dir else []
 
     list_stdout = self.m.easy.stdout_step('tast list', [
         str(tast_dir.join('tast')), \
@@ -358,7 +371,7 @@ class TastExecApi(RecipeApi):
             tast_dir.join('data'))), \
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner')))] + \
-    keyfile_args + \
+    keydir_args + \
     tast_inputs.shard_args + \
     [dut_name] + \
     list(tast_inputs.expressions), timeout=5 * 60,
@@ -390,9 +403,8 @@ class TastExecApi(RecipeApi):
     maybemissingvars_args = []
     if self._public_builder:
       maybemissingvars_args = [r'-maybemissingvars=.+\..+']
-    keyfile_args = []
-    if tast_inputs.private_key_path is not None:
-      keyfile_args = ['-keyfile={}'.format(tast_inputs.private_key_path)]
+    keydir_args = ['-keydir={}'.format(self._sshkeys_dir)
+                  ] if self._sshkeys_dir else []
 
     self.m.step('tast run', [
         str(tast_dir.join('tast')), \
@@ -414,20 +426,18 @@ class TastExecApi(RecipeApi):
             tast_dir.join('data'))), \
         '-remoterunner={}'.format(
             str(tast_dir.join('remote_test_runner')))] + \
-        keyfile_args + \
+        keydir_args + \
         maybemissingvars_args + \
         tast_inputs.run_args + \
         tast_inputs.shard_args + \
         [dut_name] + \
         list(tast_inputs.expressions), ok_ret='any', timeout=self._exec_timeout)
 
-  def create_qemu_vm_context(self, qcow_image_path, private_key_path,
-                             second_image_path=None):
+  def create_qemu_vm_context(self, qcow_image_path, second_image_path=None):
     """Creates a context manager which performs setup/teardown of a QEMU VM.
 
     Args:
       qcow_image_path (Path): Path to image in qcow format.
-      private_key_path (Path): Path to private key.
       second_image_path (Path): Path to a second qcow disk image (optional).
 
     Returns:
@@ -447,7 +457,7 @@ class TastExecApi(RecipeApi):
 
       self._launch_vm(qcow_image_path, overlay_image_path, kvm_pid_file,
                       kvm_monitor_file, kvm_monitor_serial_file,
-                      private_key_path, second_image_path)
+                      second_image_path)
       try:
         yield TastExecApi.VmInfo(QEMU_VM_HOST, QEMU_VM_PORT, kvm_pid_file)
       finally:
@@ -461,8 +471,7 @@ class TastExecApi(RecipeApi):
 
   @exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))
   def _launch_vm(self, qcow_image_path, overlay_image_path, kvm_pid_file,
-                 kvm_monitor_file, kvm_monitor_serial_file, private_key_path,
-                 second_image_path):
+                 kvm_monitor_file, kvm_monitor_serial_file, second_image_path):
     self.m.step('create qcow image overlay', [
         'qemu-img', \
         'create', \
@@ -512,7 +521,7 @@ class TastExecApi(RecipeApi):
 
     self.m.step('launch image as vm', qemu_args, infra_step=True)
     try:
-      self._test_ssh_conn(QEMU_VM_HOST, QEMU_VM_PORT, private_key_path)
+      self._test_ssh_conn(QEMU_VM_HOST, QEMU_VM_PORT)
     except StepFailure:  # pragma: nocover
       self._kill_vm(kvm_pid_file, overlay_image_path)
       raise
@@ -546,7 +555,7 @@ class TastExecApi(RecipeApi):
           'reading file', kvm_monitor_serial_file)
 
   def create_gce_vm_context(self, image, project, machine, zone, network,
-                            subnet, private_key_path):
+                            subnet):
     """Creates a context manager which performs setup/teardown of a GCE VM.
 
     Args:
@@ -556,7 +565,6 @@ class TastExecApi(RecipeApi):
       zone(str): GCE zone to create instance (e.g. us-central1-b).
       network(str): Network name to use.
       subnet(str): Network subnet on which to create instance.
-      private_key_path (Path): Path to private key.
 
     Returns:
       A context manager that
@@ -570,7 +578,7 @@ class TastExecApi(RecipeApi):
       instance, ip_addr, _ = self.m.gcloud.create_instance(
           image, project, machine, zone, network, subnet)
       try:
-        self._test_ssh_conn(ip_addr, GCE_VM_PORT, private_key_path)
+        self._test_ssh_conn(ip_addr, GCE_VM_PORT)
         yield TastExecApi.VmInfo(ip_addr, GCE_VM_PORT)
       finally:
         try:
@@ -580,8 +588,8 @@ class TastExecApi(RecipeApi):
 
     return gce_vm_context
 
-  def _test_ssh_conn(self, host, port, private_key_path):
-    cmd = self._get_ssh_cmd(host, port, private_key_path, ['true'])
+  def _test_ssh_conn(self, host, port):
+    cmd = self._get_ssh_cmd(host, port, ['true'])
     try:
       self.m.step('connect via ssh', cmd, timeout=5 * 60)
     except StepFailure as e:

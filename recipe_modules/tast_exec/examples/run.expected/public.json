@@ -156,10 +156,16 @@
   },
   {
     "cmd": [
-      "chmod",
-      "400",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -172,7 +178,37 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "setup vm image.calibrate ssh key permissions",
+    "name": "setup vm image.copy ssh key (id_rsa)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "chmod",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "--mode",
+      "400"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.calibrate ssh key permissions (id_rsa)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -333,7 +369,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -366,7 +402,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "localhost:9222",
       "!informational"
     ],
@@ -407,7 +443,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
       "-systemservicestimeout=600",
       "localhost:9222",
@@ -446,7 +482,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -484,7 +520,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "rsync",
@@ -528,7 +564,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -598,7 +634,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
       "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],
@@ -1372,7 +1408,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -1402,7 +1438,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "localhost:9222",
       "!informational"
     ],
@@ -1440,7 +1476,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
       "-systemservicestimeout=600",
       "localhost:9222",
@@ -1476,7 +1512,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -1511,7 +1547,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "rsync",
@@ -1552,7 +1588,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -1616,7 +1652,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
       "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
@@ -1888,7 +1924,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -1918,7 +1954,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "localhost:9222",
       "example.Pass"
     ],
@@ -1956,7 +1992,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
       "-var=myVar=myVal",
       "-systemservicestimeout=600",
@@ -1993,7 +2029,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -2028,7 +2064,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "rsync",
@@ -2069,7 +2105,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -2133,7 +2169,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost:/tmp/artifacts.tar",
       "[CLEANUP]/temp_tmp_3/artifacts.tar"
     ],
@@ -2418,7 +2454,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@localhost",
       "--",
       "true"
@@ -2717,7 +2753,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@172.16.0.15",
       "--",
       "true"
@@ -2750,7 +2786,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "172.16.0.15:22",
       "!informational"
     ],
@@ -2791,7 +2827,7 @@
       "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
-      "-keyfile=[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
       "-systemservicestimeout=600",
       "172.16.0.15:22",
@@ -2830,7 +2866,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@172.16.0.15",
       "--",
       "true"
@@ -2868,7 +2904,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@172.16.0.15",
       "--",
       "rsync",
@@ -2912,7 +2948,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@172.16.0.15",
       "--",
       "tar",
@@ -2982,7 +3018,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/temp_tmp_2/image/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
       "root@172.16.0.15:/tmp/artifacts.tar",
       "[CLEANUP]/test-results_tmp_2/artifacts.tar"
     ],
