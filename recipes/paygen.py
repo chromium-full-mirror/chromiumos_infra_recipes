@@ -17,6 +17,7 @@ from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 import PB.chromiumos.common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromite.api.payload import GenerationResponse
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
@@ -52,6 +53,7 @@ DEPS = [
     'git',
     'gitiles',
     'naming',
+    'test_util',
     'src_state',
     'workspace_util',
 ]
@@ -238,6 +240,12 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
           'https://chrome-internal.googlesource.com/chromeos/config-internal',
           branch=config_internal_branch, target_path=config_path, depth=1)
 
+    if api.src_state.gerrit_changes and api.cros_infra_config.is_staging:
+      # We're _actually_ done manipulating the input source, so apply patch sets
+      # if you can.
+      for change in api.src_state.gerrit_changes:
+        api.workspace_util.checkout_change(change=change)
+
     # Create chroot, with retries!
     timeout = properties.init_sdk_timeout_secs or None
 
@@ -404,6 +412,48 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
+  )
+
+  def test_builder(**kwargs) -> TestData:
+    """Generate a test build."""
+    kwargs.setdefault('builder', 'staging-paygen')
+    kwargs.setdefault('bucket', 'staging')
+    kwargs.setdefault('cq', 'true')
+    kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
+    return api.test_util.test_build(**kwargs).build
+
+  changes = [
+      GerritChange(change=1, project='chromiumos/third_party/kernel',
+                   host='chromium-review.googlesource.com', patchset=1),
+  ]
+
+  yield api.test(
+      'dryrun-with-changes',
+      test_builder(gerrit_changes=changes),
+      api.properties(
+          PaygenProperties(requests=[
+              dict(
+                  generation_request=api.paygen_testing
+                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                           applicable_models=['woomax'])
+                  ])
+          ]), **{
+              "$chromeos/cros_infra_config":
+                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
+          }),
+      generate_payload_response(
+          api,
+          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
+      api.post_check(post_process.MustRun,
+                     'initialization.checkout gerrit change'),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.MustRun,
+                     'initialization.clone config-internal from main branch'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.DoesNotRun,
+                     'testing paygen.buildbucket.schedule'),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
