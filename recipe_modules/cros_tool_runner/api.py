@@ -24,7 +24,6 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         env_vars.SWARMING_BOT_ID)
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
-    self._bbid = self._extract_bbid(env_vars.LOGDOG_STREAM_PREFIX)
     self._docker_key_file_location = '/creds/service_accounts/skylab-drone.json'
     # last created image file path.
     self._images_file_path = None
@@ -92,7 +91,6 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           "sudo",
           "--non-interactive",
           "--preserve-env={}".format(",".join(preserve_env)),
-          "--env BUILD_BUCKET_ID={}".format(self._bbid),
           self._cmd,
           subcommand,
           '-docker_key_file',
@@ -237,17 +235,3 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     if self._config and self._config.bot_prefix:
       return [str(self._config.bot_prefix)]
     return ['crossk-', 'cros-']
-
-  def _extract_bbid(self, logdog_stream_prefix):
-    """Extract the build bucket ID from the env vars.
-
-    LOGDOG_STREAM_PREFIX is in format of "buildbuicket/cr-buildbucket/1234"
-    Args:
-      * logdog_stream_prefix: The value of env var LOGDOG_STREAM_PREFIX.
-    """
-    if not logdog_stream_prefix:
-      return ''
-    parts = logdog_stream_prefix.split('/')
-    if len(parts) < 3:
-      return ''
-    return parts[2]

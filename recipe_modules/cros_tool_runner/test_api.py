@@ -14,7 +14,7 @@ from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import \
 class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
   """Test data for CrosToolRunner api."""
 
-  def properties(self, bot_id=None, bot_prefix=None, logdog_stream_prefix=None):
+  def properties(self, bot_id=None, bot_prefix=None):
     """Gets properties to pass to api.test().
 
     For use in recipes and modules using cros_tool_runner.
@@ -34,7 +34,6 @@ class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
 
     return self.m.properties(**{'$chromeos/cros_tool_runner':
         ctr_properties}) + self.m.properties.environ(
-            CrosToolRunnerEnvProperties(
-                SWARMING_BOT_ID=bot_id, SWARMING_TASK_ID='placeholder-task-id',
-                SKYLAB_DUT_ID='placeholder-dut-id',
-                LOGDOG_STREAM_PREFIX=logdog_stream_prefix))
+            CrosToolRunnerEnvProperties(SWARMING_BOT_ID=bot_id,
+                                        SWARMING_TASK_ID='placeholder-task-id',
+                                        SKYLAB_DUT_ID='placeholder-dut-id'))

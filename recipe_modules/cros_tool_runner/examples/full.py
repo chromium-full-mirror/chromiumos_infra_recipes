@@ -88,15 +88,3 @@ def GenTests(api):
       'basic-with-new-bot-prefix',
       api.cros_tool_runner.properties(bot_id='cros-chromeos1-row2-rack3-host4'))
          + api.post_process(DropExpectation))
-  yield (api.test('basic-with-empty-logdog-stream-prefix',
-                  api.cros_tool_runner.properties()) +
-         api.post_process(DropExpectation))
-  yield (api.test(
-      'basic-with-bad-logdog-stream-prefix',
-      api.cros_tool_runner.properties(logdog_stream_prefix='bad-env-var')) +
-         api.post_process(DropExpectation))
-  yield (api.test(
-      'basic-with-logdog-stream-prefix',
-      api.cros_tool_runner.properties(
-          logdog_stream_prefix='bb/cr-bb/dummy-bbid')) +
-         api.post_process(DropExpectation))

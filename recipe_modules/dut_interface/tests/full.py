@@ -67,11 +67,9 @@ def GenTests(api):
                                     SWARMING_TASK_ID='dummy-task-id',
                                     SKYLAB_DUT_ID='dummy-dut-id')) +
             api.properties.environ(
-                CrosToolRunnerEnvProperties(
-                    SWARMING_BOT_ID='crossk-dummy',
-                    SWARMING_TASK_ID='dummy-task-id',
-                    SKYLAB_DUT_ID='dummy-dut-id',
-                    LOGDOG_STREAM_PREFIX='bb/cr-bb/dummy-bbid')))
+                CrosToolRunnerEnvProperties(SWARMING_BOT_ID='crossk-dummy',
+                                            SWARMING_TASK_ID='dummy-task-id',
+                                            SKYLAB_DUT_ID='dummy-dut-id')))
 
   def _misc_properties_for_phosphorus():
     return (api.properties(
