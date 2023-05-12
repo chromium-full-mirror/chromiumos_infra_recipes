@@ -22,11 +22,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/exclude.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/excludes.binaryproto",
       "--format",
       "text"
     ],
-    "name": "fetch HEAD:test/exoneration/generated/exclude.binaryproto",
+    "name": "fetch HEAD:test/exoneration/generated/excludes.binaryproto",
     "timeout": 180
   },
   {
@@ -64,11 +64,11 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/exclude.binaryproto",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/excludes.binaryproto",
       "--format",
       "text"
     ],
-    "name": "exonerate hw tests.fetch HEAD:test/exoneration/generated/exclude.binaryproto",
+    "name": "exonerate hw tests.fetch HEAD:test/exoneration/generated/excludes.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

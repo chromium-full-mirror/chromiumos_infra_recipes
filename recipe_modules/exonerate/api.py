@@ -27,7 +27,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
-EXCLUDE_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/exclude'
+EXCLUDE_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/excludes'
 FailedTest = namedtuple(
     'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
 DEFAULT_OVERALL_AUTOEX_LIMIT = 100
