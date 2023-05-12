@@ -28,6 +28,7 @@ DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/futures',
     'recipe_engine/led',
@@ -78,7 +79,9 @@ def RunSteps(api, properties):
                                        api.build_menu.build_target.name)
 
     with api.failures.ignore_exceptions():
-      api.bcid_reporter.report_stage('start')
+      # If we use this recipe in CQ, we don't want to report artifacts.
+      if not api.cq.active:
+        api.bcid_reporter.report_stage('start')
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
     with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
@@ -121,7 +124,8 @@ def DoRunSteps(api, config, properties):
   api.build_reporting.publish_versions(api.build_menu.target_versions)
 
   with api.failures.ignore_exceptions():
-    api.bcid_reporter.report_stage('fetch')
+    if not api.cq.active:
+      api.bcid_reporter.report_stage('fetch')
 
   failing_build_exception = None
 
@@ -145,7 +149,8 @@ def DoRunSteps(api, config, properties):
               step.step_summary_text = 'One or more test service containers failed to build.'
 
           with api.failures.ignore_exceptions():
-            api.bcid_reporter.report_stage('compile')
+            if not api.cq.active:
+              api.bcid_reporter.report_stage('compile')
 
           api.build_menu.build_images(config, include_version=True)
           # Now that the image is built, we should have all metadata available.
@@ -171,11 +176,12 @@ def DoRunSteps(api, config, properties):
         failing_build_exception = sf
 
       with api.failures.ignore_exceptions():
-        api.bcid_reporter.report_stage('upload')
+        if not api.cq.active:
+          api.bcid_reporter.report_stage('upload')
 
       try:
         uploaded_artifacts = api.build_menu.upload_artifacts(
-            config, report_to_spike=True)
+            config, report_to_spike=not api.cq.active)
         if uploaded_artifacts:
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,
@@ -191,7 +197,8 @@ def DoRunSteps(api, config, properties):
         raise failing_build_exception or sf
 
       with api.failures.ignore_exceptions():
-        api.bcid_reporter.report_stage('upload-complete')
+        if not api.cq.active:
+          api.bcid_reporter.report_stage('upload-complete')
 
       # Trigger async image import for VM images. Exceptions are ignored as test
       # runners will also attempt to import.
@@ -413,6 +420,7 @@ def GenTests(api):
           post_process.MustRun,
           'write LATEST files.write LATEST-main.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-main'
       ),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
       api.post_check(
           post_process.StepCommandContains,
           'upload build report to GS.gsutil write build_report.json to GS',
@@ -951,6 +959,7 @@ def GenTests(api):
           post_process.ResultReason,
           'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
       ),
+      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
       api.post_process(post_process.DropExpectation),
       tags=api.cros_tags.tags(parent_buildbucket_id='123'),
       cq=True,

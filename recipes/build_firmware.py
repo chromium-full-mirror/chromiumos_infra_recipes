@@ -26,6 +26,7 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
@@ -95,7 +96,9 @@ def CreateContainers(api, config):
 
 def RunSteps(api, properties):
   with api.failures.ignore_exceptions():
-    api.bcid_reporter.report_stage('start')
+    # If we use this recipe in CQ, we don't want to report artifacts.
+    if not api.cq.active:
+      api.bcid_reporter.report_stage('start')
   if properties.manifest_branch:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
     commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
@@ -111,7 +114,8 @@ def RunSteps(api, properties):
     location = properties.firmware_location or config.general.firmware_location
 
     with api.failures.ignore_exceptions():
-      api.bcid_reporter.report_stage('compile')
+      if not api.cq.active:
+        api.bcid_reporter.report_stage('compile')
     response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
                                 code_coverage=properties.code_coverage),
@@ -150,10 +154,11 @@ def RunSteps(api, properties):
       raise ex
 
     uploaded_artifacts = api.build_menu.upload_artifacts(
-        config=config, report_to_spike=True)
+        config=config, report_to_spike=not api.cq.active)
 
     with api.failures.ignore_exceptions():
-      api.bcid_reporter.report_stage('upload-complete')
+      if not api.cq.active:
+        api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
     if _invoke_signing_for_current_build(build.builder.builder,
@@ -327,9 +332,14 @@ def GenTests(api):
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, *args, status=status)
 
-  yield test('postsubmit',)
+  yield test(
+      'postsubmit',
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
+  )
 
-  yield test('cq', cq=True, builder='fw-ec-cq')
+  yield test('cq', api.post_check(post_process.DoesNotRun,
+                                  'snoop: report_stage'), cq=True,
+             builder='fw-ec-cq')
 
   yield test(
       'zephyr-cq', cq=True, builder='fw-ec-cq',

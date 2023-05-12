@@ -471,13 +471,16 @@ class FirmwareBuilder():
 
   def run(self):
     with self.m.failures.ignore_exceptions():
-      self.m.bcid_reporter.report_stage('start')
+      # If we use this recipe in CQ, we don't want to report artifacts.
+      if not self.m.cq.active:
+        self.m.bcid_reporter.report_stage('start')
 
     all_uploaded = []
     step_failures = []
 
     with self.m.failures.ignore_exceptions():
-      self.m.bcid_reporter.report_stage('compile')
+      if not self.m.cq.active:
+        self.m.bcid_reporter.report_stage('compile')
 
     with self._setup():
       for bt in self.properties.build_targets:
@@ -487,7 +490,8 @@ class FirmwareBuilder():
             bt_uploaded = self.m.build_menu.upload_artifacts(
                 private_bundle_func=self._bundle_firmware,
                 sysroot=Sysroot(path='/build/{}'.format(bt.name),
-                                build_target=bt), report_to_spike=True)
+                                build_target=bt),
+                report_to_spike=not self.m.cq.active)
           except NoFilesToUploadFailure as e:
             # If one build target fails, continue with the other build targets
             # and fail at the end.
@@ -497,7 +501,8 @@ class FirmwareBuilder():
           self._push_image(bt)
 
     with self.m.failures.ignore_exceptions():
-      self.m.bcid_reporter.report_stage('upload-complete')
+      if not self.m.cq.active:
+        self.m.bcid_reporter.report_stage('upload-complete')
 
       # Mark whether the suite_scheduling query for firmware should find this.
       self.m.easy.set_properties_step(
@@ -552,6 +557,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.StepTextEquals, 'bump version', ''),
       api.post_check(post_process.MustRun, 'create buildspec'),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
       suite_scheduling(True),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['build_packages']),
@@ -651,6 +657,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
+      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
       suite_scheduling(False), cq=True)
 
   yield test(
