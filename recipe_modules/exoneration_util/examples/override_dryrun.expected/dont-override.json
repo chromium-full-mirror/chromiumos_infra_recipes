@@ -1,0 +1,12 @@
+[
+  {
+    "cmd": [],
+    "name": "override autoex dryrun",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@infra/recipes is not enabled@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

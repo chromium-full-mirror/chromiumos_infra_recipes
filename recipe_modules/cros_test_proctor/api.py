@@ -306,6 +306,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self.m.exonerate.print_stats(property_name='exoneration_stats')
 
       with self.m.step.nest('automated exoneration') as pres:
+        # b/282731882. Remove once autoex is fully launched
+        self.m.exonerate.update_dryrun()
         autoex_running = self.m.exonerate.auto_exoneration_analysis(
             fake_data=self._test_data.enabled)
         if autoex_running:

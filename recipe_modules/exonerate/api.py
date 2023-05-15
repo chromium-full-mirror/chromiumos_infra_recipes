@@ -67,6 +67,11 @@ class ExonerateApi(recipe_api.RecipeApi):
     """Returns whether exoneration is enabled."""
     return self._enable_exoneration
 
+  # b/282731882. Remove once autoex is fully launched
+  def update_dryrun(self):
+    self._dry_run = (
+        self._dry_run and not self.m.exoneration_util.override_dryrun())
+
   def enable_excludes(self):
     """enable excludes config's use."""
     self._excludes_enabled = True

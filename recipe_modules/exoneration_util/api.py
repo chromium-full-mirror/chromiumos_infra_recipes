@@ -19,6 +19,10 @@ RPC_BATCH_SIZE = 100
 class ExonerationUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with exoneration."""
 
+  def __init__(self, properties, **kwargs):
+    super().__init__(**kwargs)
+    self._enablement_repos = properties.enablement_repos
+
   def query_failure_rate(
       self,
       test_variant_list: List[dict]) -> List[TestVariantFailureRateAnalysis]:
@@ -124,3 +128,24 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
           updated_configs[failed_test.test_id] = [failed_test.build_target]
 
     return updated_configs
+
+  # b/282731882. Remove once autoex is fully launched
+  def override_dryrun(self):
+    """Override exoneration dry_run on select repos.
+
+    Returns:
+      A boolean indicating whether to override dry_run.
+    """
+    # if there are no repos configured or if there are no changes, return False.
+    with self.m.step.nest('override autoex dryrun') as pres:
+      gerrit_changes = self.m.buildbucket.build.input.gerrit_changes
+      if not self._enablement_repos or not gerrit_changes:
+        pres.step_text = 'could not compare'
+        return False
+      for change in gerrit_changes:
+        if change.project not in self._enablement_repos:
+          pres.step_text = change.project + ' is not enabled'
+          return False
+
+      pres.step_text = 'overriding dryrun'
+      return True
