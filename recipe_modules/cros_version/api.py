@@ -132,6 +132,12 @@ class CrosVersionApi(RecipeApi):
 
         self._version_bumper_path = cipd_dir.join('version_bumper')
 
+  def _reset_to_remote(self, branch):
+    """Reset to the remote branch."""
+    self.m.git.fetch_refs('cros', branch)
+    self.m.step('reset to remote branch',
+                ['git', 'reset', '--hard', 'cros/{}'.format(branch)])
+
   @exponential_retry(retries=3, delay=datetime.timedelta(minutes=2))
   def _check_version(self, branch, expected_version):
     with self.m.step.nest('check version change reflected on remote'):
@@ -140,9 +146,7 @@ class CrosVersionApi(RecipeApi):
       # for the version bump SHA (gerrit.create_change will push the local
       # change to a different SHA on the remote even if we're on the correct
       # branch).
-      self.m.git.fetch_refs('cros', branch)
-      self.m.step('reset to remote branch',
-                  ['git', 'reset', '--hard', 'cros/{}'.format(branch)])
+      self._reset_to_remote(branch)
       version = self.read_workspace_version(name='read remote version')
       if version != expected_version:
         raise StepFailure('version bump not reflected on remote')
@@ -222,3 +226,7 @@ class CrosVersionApi(RecipeApi):
 
           if not dry_run:
             self._check_version(push_branch, new_version)
+          else:
+            # If staging, need to blow away the version bump so that buildspecs
+            # contain SHAs that are valid on the remote.
+            self._reset_to_remote(push_branch)

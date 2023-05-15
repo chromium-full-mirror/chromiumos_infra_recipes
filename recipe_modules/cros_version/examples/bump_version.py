@@ -85,6 +85,10 @@ def GenTests(api):
           post_process.DoesNotRun,
           'bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote'
       ),
+      api.post_check(
+          post_process.MustRun,
+          'bump version.commit chromeos/config/chromeos_version.sh.reset to remote branch'
+      ),
   )
 
   yield api.test(

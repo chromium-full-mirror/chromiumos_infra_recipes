@@ -4847,7 +4847,7 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate Chrome OS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#150)(self, dry_run=True, use_local_diff=False):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#154)(self, dry_run=True, use_local_diff=False):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
