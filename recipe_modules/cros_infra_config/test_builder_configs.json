@@ -2035,7 +2035,8 @@
                   "PINNED_GUEST_IMAGES",
                   "EBUILD_LOGS",
                   "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS"
+                  "DEBUG_SYMBOLS",
+                  "IMAGE_ARCHIVES"
                 ],
                 "gsLocations": [
                   "chromeos-releases-test/{target}-release/{version}"
@@ -2061,7 +2062,8 @@
               }
             ]
           }
-        }
+        },
+        "attestationEligible": true
       },
       "chrome": {
         "internal": true
@@ -2153,7 +2155,8 @@
               }
             ]
           }
-        }
+        },
+        "attestationEligible": true
       },
       "chrome": {
         "internal": true
@@ -2879,6 +2882,33 @@
         },
         "prebuiltsGsBucket": "chromeos-prebuilt",
         "artifactsGsBucket": "chromeos-image-archive"
+      }
+    },
+    {
+      "id": {
+        "name": "firmware-ti50-postsubmit",
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_TI50"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true
       }
     },
     {

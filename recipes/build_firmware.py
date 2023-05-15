@@ -26,7 +26,6 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
@@ -96,9 +95,13 @@ def CreateContainers(api, config):
 
 def RunSteps(api, properties):
   with api.failures.ignore_exceptions():
-    # If we use this recipe in CQ, we don't want to report artifacts.
-    if not api.cq.active:
-      api.bcid_reporter.report_stage('start')
+    with api.step.nest('checking attestation eligibility') as pres:
+      # Config determines whether to report artifacts.
+      if api.cros_infra_config.config.artifacts.attestation_eligible:
+        api.bcid_reporter.report_stage('start')
+        pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
+      else:
+        pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
   if properties.manifest_branch:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
     commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
@@ -114,7 +117,7 @@ def RunSteps(api, properties):
     location = properties.firmware_location or config.general.firmware_location
 
     with api.failures.ignore_exceptions():
-      if not api.cq.active:
+      if api.cros_infra_config.config.artifacts.attestation_eligible:
         api.bcid_reporter.report_stage('compile')
     response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
@@ -154,10 +157,11 @@ def RunSteps(api, properties):
       raise ex
 
     uploaded_artifacts = api.build_menu.upload_artifacts(
-        config=config, report_to_spike=not api.cq.active)
+        config=config, report_to_spike=api.cros_infra_config.config.artifacts
+        .attestation_eligible)
 
     with api.failures.ignore_exceptions():
-      if not api.cq.active:
+      if api.cros_infra_config.config.artifacts.attestation_eligible:
         api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
@@ -334,7 +338,7 @@ def GenTests(api):
 
   yield test(
       'postsubmit',
-      api.post_check(post_process.MustRun, 'snoop: report_stage'),
+      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
   )
 
   yield test('cq', api.post_check(post_process.DoesNotRun,
@@ -354,6 +358,14 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       cq=True, builder='firmware-ti50-cq', input_properties=dict(
+          firmware_location=3,
+          chromiumos_sdk_pin_file=sdk_pin_path,
+      ))
+
+  yield test(
+      'firmware-ti50-postsubmit',
+      api.post_process(post_process.DropExpectation),
+      builder='firmware-ti50-postsubmit', input_properties=dict(
           firmware_location=3,
           chromiumos_sdk_pin_file=sdk_pin_path,
       ))

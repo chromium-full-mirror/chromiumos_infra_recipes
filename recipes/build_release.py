@@ -28,7 +28,6 @@ DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/futures',
     'recipe_engine/led',
@@ -79,9 +78,13 @@ def RunSteps(api, properties):
                                        api.build_menu.build_target.name)
 
     with api.failures.ignore_exceptions():
-      # If we use this recipe in CQ, we don't want to report artifacts.
-      if not api.cq.active:
-        api.bcid_reporter.report_stage('start')
+      with api.step.nest('checking attestation eligibility') as pres:
+        # Config determines whether to report artifacts.
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
+          api.bcid_reporter.report_stage('start')
+          pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
+        else:
+          pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
 
     #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
     with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
@@ -124,7 +127,7 @@ def DoRunSteps(api, config, properties):
   api.build_reporting.publish_versions(api.build_menu.target_versions)
 
   with api.failures.ignore_exceptions():
-    if not api.cq.active:
+    if api.cros_infra_config.config.artifacts.attestation_eligible:
       api.bcid_reporter.report_stage('fetch')
 
   failing_build_exception = None
@@ -149,7 +152,7 @@ def DoRunSteps(api, config, properties):
               step.step_summary_text = 'One or more test service containers failed to build.'
 
           with api.failures.ignore_exceptions():
-            if not api.cq.active:
+            if api.cros_infra_config.config.artifacts.attestation_eligible:
               api.bcid_reporter.report_stage('compile')
 
           api.build_menu.build_images(config, include_version=True)
@@ -176,12 +179,13 @@ def DoRunSteps(api, config, properties):
         failing_build_exception = sf
 
       with api.failures.ignore_exceptions():
-        if not api.cq.active:
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
           api.bcid_reporter.report_stage('upload')
 
       try:
         uploaded_artifacts = api.build_menu.upload_artifacts(
-            config, report_to_spike=not api.cq.active)
+            config, report_to_spike=api.cros_infra_config.config.artifacts
+            .attestation_eligible)
         if uploaded_artifacts:
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,
@@ -197,7 +201,7 @@ def DoRunSteps(api, config, properties):
         raise failing_build_exception or sf
 
       with api.failures.ignore_exceptions():
-        if not api.cq.active:
+        if api.cros_infra_config.config.artifacts.attestation_eligible:
           api.bcid_reporter.report_stage('upload-complete')
 
       # Trigger async image import for VM images. Exceptions are ignored as test

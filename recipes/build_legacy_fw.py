@@ -36,6 +36,7 @@ DEPS = [
     'build_menu',
     'cros_artifacts',
     'cros_build_api',
+    'cros_infra_config',
     'cros_release',
     'cros_sdk',
     'cros_version',
@@ -471,15 +472,19 @@ class FirmwareBuilder():
 
   def run(self):
     with self.m.failures.ignore_exceptions():
-      # If we use this recipe in CQ, we don't want to report artifacts.
-      if not self.m.cq.active:
-        self.m.bcid_reporter.report_stage('start')
+      with self.m.step.nest('checking attestation eligibility') as pres:
+        # Config determines whether to report artifacts.
+        if self.m.cros_infra_config.config.artifacts.attestation_eligible:
+          self.m.bcid_reporter.report_stage('start')
+          pres.step_text = f'{self.m.cros_infra_config.config.id.name} is attestation eligible'
+        else:
+          pres.step_text = f'{self.m.cros_infra_config.config.id.name} NOT attestation eligible'
 
     all_uploaded = []
     step_failures = []
 
     with self.m.failures.ignore_exceptions():
-      if not self.m.cq.active:
+      if self.m.cros_infra_config.config.artifacts.attestation_eligible:
         self.m.bcid_reporter.report_stage('compile')
 
     with self._setup():
@@ -490,8 +495,8 @@ class FirmwareBuilder():
             bt_uploaded = self.m.build_menu.upload_artifacts(
                 private_bundle_func=self._bundle_firmware,
                 sysroot=Sysroot(path='/build/{}'.format(bt.name),
-                                build_target=bt),
-                report_to_spike=not self.m.cq.active)
+                                build_target=bt), report_to_spike=self.m
+                .cros_infra_config.config.artifacts.attestation_eligible)
           except NoFilesToUploadFailure as e:
             # If one build target fails, continue with the other build targets
             # and fail at the end.
@@ -501,7 +506,7 @@ class FirmwareBuilder():
           self._push_image(bt)
 
     with self.m.failures.ignore_exceptions():
-      if not self.m.cq.active:
+      if self.m.cros_infra_config.config.artifacts.attestation_eligible:
         self.m.bcid_reporter.report_stage('upload-complete')
 
       # Mark whether the suite_scheduling query for firmware should find this.
@@ -553,6 +558,23 @@ def GenTests(api):
 
   yield test(
       'release',
+      api.cros_infra_config.use_custom_builder_config(
+          BuilderConfig(
+              id=BuilderConfig.Id(name='firmware-ti50-postsubmit',
+                                  bucket='firmware'),
+              artifacts=BuilderConfig.Artifacts(
+                  attestation_eligible=True,
+                  artifacts_gs_bucket="chromeos-image-archive",
+                  artifacts_info=common_pb2.ArtifactsByService(
+                      firmware=common_pb2.ArtifactsByService
+                      .Firmware(output_artifacts=[
+                          common_pb2.ArtifactsByService.Firmware.ArtifactInfo(
+                              artifact_types=[
+                                  'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
+                              ], gs_locations=[
+                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                              ])
+                      ])))), step_name='checking attestation eligibility'),
       api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.StepTextEquals, 'bump version', ''),
@@ -614,6 +636,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
+      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
       suite_scheduling(False),
       api.post_check(post_process.StepCommandContains,
                      'build target.install packages', ['build_packages']),

@@ -4,6 +4,50 @@
     "name": "configure chroot path"
   },
   {
+    "cmd": [],
+    "name": "checking attestation eligibility",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@firmware-ti50-postsubmit is attestation eligible@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking attestation eligibility.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "checking attestation eligibility.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "cipd",
       "ensure",
@@ -18,18 +62,18 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
-    "name": "ensure_installed",
+    "name": "checking attestation eligibility.ensure_installed",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -56,17 +100,19 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage"
+    "name": "checking attestation eligibility.snoop: report_stage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -77,17 +123,16 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (2)"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -99,16 +144,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"fw-atlas-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
-      "@@@STEP_LOG_LINE@builder config@  bucket: \"postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_LINE@builder config@general {@@@",
-      "@@@STEP_LOG_LINE@builder config@  firmware_location: PLATFORM_EC@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"firmware-ti50-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"firmware\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
-      "@@@STEP_LOG_LINE@builder config@  prebuilts: PRIVATE@@@",
-      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"chromeos-prebuilt\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    firmware {@@@",
@@ -119,20 +158,7 @@
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_LINE@builder config@build {@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"-cros-debug\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"chromeless_tty\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",
-      "@@@STEP_LOG_LINE@builder config@    compile_source: true@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  attestation_eligible: true@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]
@@ -143,44 +169,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -206,11 +194,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -239,11 +226,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -319,11 +305,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -370,11 +355,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -406,11 +390,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -450,11 +433,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -494,11 +476,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -546,11 +527,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -584,11 +564,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -614,11 +593,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -644,11 +622,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -672,11 +649,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -702,11 +678,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -736,11 +711,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -765,11 +739,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -803,11 +776,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -847,11 +819,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -877,11 +848,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -907,11 +877,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -937,11 +906,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -966,25 +934,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "metadata setup.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -995,14 +961,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -1017,11 +982,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1041,11 +1005,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1072,11 +1035,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1102,11 +1064,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1132,11 +1093,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1162,11 +1122,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1198,11 +1157,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1240,11 +1198,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1280,11 +1237,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1320,11 +1276,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1345,11 +1300,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1377,11 +1331,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1409,11 +1362,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1439,11 +1391,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1483,11 +1434,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1530,11 +1480,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1573,11 +1522,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1620,11 +1568,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1667,11 +1614,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1726,11 +1672,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1755,11 +1700,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1789,11 +1733,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1814,11 +1757,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1850,11 +1792,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1881,11 +1822,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1923,11 +1863,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1966,11 +1905,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2013,11 +1951,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2070,11 +2007,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2111,11 +2047,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2149,11 +2084,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2182,11 +2116,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2207,11 +2140,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2233,11 +2165,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2283,11 +2214,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2317,11 +2247,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2347,11 +2276,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2376,11 +2304,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2419,11 +2346,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2457,11 +2383,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2495,11 +2420,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2528,11 +2452,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2553,11 +2476,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2579,11 +2501,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2620,11 +2541,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2643,18 +2563,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Increment to version R109-15236.0.0-101\n\nGenerated by fw-atlas-postsubmit.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_version/bump_version",
+      "Increment to version R109-15236.0.0-101\n\nGenerated by firmware-ti50-postsubmit.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_version/bump_version",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2665,9 +2584,9 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Increment to version R109-15236.0.0-101@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by fw-atlas-postsubmit.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by firmware-ti50-postsubmit.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_version/bump_version@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
     ]
@@ -2683,11 +2602,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2708,11 +2626,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2756,11 +2673,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2792,11 +2708,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2818,11 +2733,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2842,11 +2756,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2868,11 +2781,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2905,11 +2817,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2938,11 +2849,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2973,11 +2883,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3010,11 +2919,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3040,11 +2948,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3072,11 +2979,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3113,11 +3019,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3147,11 +3052,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3181,11 +3085,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3207,11 +3110,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3232,11 +3134,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3270,11 +3171,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3303,11 +3203,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3328,11 +3227,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3354,11 +3252,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3391,11 +3288,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3431,11 +3327,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3462,11 +3357,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3492,11 +3386,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3531,11 +3424,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3554,18 +3446,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Add buildspecs/109/15236.0.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\n",
+      "Add buildspecs/109/15236.0.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_release/create_buildspec\n",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3578,7 +3469,7 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by Rubik.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_release/create_buildspec@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
@@ -3594,11 +3485,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3642,11 +3532,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3678,11 +3567,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3704,11 +3592,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3728,11 +3615,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3754,11 +3640,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3791,11 +3676,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3824,11 +3708,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3859,11 +3742,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3896,11 +3778,10 @@
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3926,11 +3807,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3958,11 +3838,10 @@
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3999,11 +3878,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4033,11 +3911,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4072,11 +3949,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4112,11 +3988,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4149,11 +4024,10 @@
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4176,7 +4050,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json@@@"
     ]
   },
   {
@@ -4187,18 +4061,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"firmware-ti50-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 0, \n    \"builder-name\": \"firmware-ti50-postsubmit\", \n    \"builder_type\": \"firmware\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"time\": {\n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4214,13 +4087,13 @@
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@        \"target\"@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"bot-config\": \"firmware-ti50-postsubmit\", @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"branch\": \"firmware-board-9999.B\", @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"build_id\": 0, @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder-name\": \"fw-atlas-postsubmit\", @@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"buildbucket_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder-name\": \"firmware-ti50-postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"firmware\", @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"master_build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"metadata-version\": \"2\", @@@",
@@ -4248,17 +4121,16 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4289,11 +4161,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4320,11 +4191,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4351,11 +4221,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4381,11 +4250,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4412,11 +4280,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4450,11 +4317,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4467,7 +4333,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "./update_chroot",
       "--toolchain_boards",
@@ -4488,11 +4354,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4509,7 +4374,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "../platform/ec/util/getversion.sh"
     ],
@@ -4527,11 +4392,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4573,7 +4437,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "setup_board",
       "--board=target",
@@ -4595,11 +4459,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4615,13 +4478,12 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "build_packages",
       "--board=target",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade",
-      "--nousepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],
@@ -4639,11 +4501,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4658,9 +4519,11 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@"
+      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@"
     ]
   },
   {
@@ -4694,11 +4557,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4732,11 +4594,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4772,11 +4633,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4795,7 +4655,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "tar",
       "cvjf",
@@ -4821,11 +4681,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4861,11 +4720,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4899,11 +4757,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4937,11 +4794,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -4975,7 +4831,59 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.Find DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/artifacts_tmp_1/dlc",
+      "--recursive"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.Find DLCs.list local DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -4992,7 +4900,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5006,11 +4914,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5027,7 +4934,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\"}@@@"
     ]
   },
   {
@@ -5035,8 +4942,8 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@"
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@"
     ]
   },
   {
@@ -5050,8 +4957,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target/"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target/firmware_from_source.tar.bz2",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5065,11 +4972,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5092,8 +4998,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target/"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5107,11 +5013,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5128,7 +5033,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"target/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"target/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target\"}]}@@@"
     ]
   },
   {
@@ -5138,7 +5043,7 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target",
       "--yes",
       "--board=target",
       "--version=R109-15236.0.0",
@@ -5161,11 +5066,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5198,11 +5102,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5224,25 +5127,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "finalize metadata.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -5253,14 +5154,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -5273,25 +5173,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "finalize metadata.buildbucket.get (2)",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -5302,14 +5200,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -5317,7 +5214,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json@@@"
     ]
   },
   {
@@ -5328,17 +5225,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"fw-atlas-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"fw-atlas-postsubmit\", \n    \"builder_type\": \"postsubmit\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    }, \n    \"boards\": [\n        \"target\"\n    ], \n    \"bot-config\": \"firmware-ti50-postsubmit\", \n    \"branch\": \"firmware-board-9999.B\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 0, \n    \"builder-name\": \"firmware-ti50-postsubmit\", \n    \"builder_type\": \"firmware\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false, \n    \"version\": {\n        \"full\": \"R109-15236.0.0\", \n        \"milestone\": 109, \n        \"platform\": \"15236.0.0\", \n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5354,13 +5250,13 @@
       "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"target\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"firmware-ti50-postsubmit\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"firmware-board-9999.B\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"fw-atlas-postsubmit\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 0, @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"firmware-ti50-postsubmit\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"firmware\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\", @@@",
@@ -5415,16 +5311,15 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5455,11 +5350,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5480,11 +5374,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5503,11 +5396,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5528,11 +5420,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -5547,7 +5438,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0005@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
     ]
   },
   {
@@ -5559,17 +5450,16 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (3)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],

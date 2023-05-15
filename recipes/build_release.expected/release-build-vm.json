@@ -61,6 +61,51 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "checking attestation eligibility",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@betty-arc-r-release-main is attestation eligible@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "checking attestation eligibility.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "checking attestation eligibility.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "cipd",
       "ensure",
@@ -85,8 +130,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "ensure_installed",
+    "name": "checking attestation eligibility.ensure_installed",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -123,7 +169,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage"
+    "name": "checking attestation eligibility.snoop: report_stage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],
@@ -303,6 +352,7 @@
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  attestation_eligible: true@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@chrome {@@@",
       "@@@STEP_LOG_LINE@builder config@  internal: true@@@",
@@ -339,47 +389,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -4804,7 +4813,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (2)"
+    "name": "snoop: report_stage"
   },
   {
     "cmd": [],
@@ -6458,7 +6467,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (3)"
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
@@ -7496,12 +7505,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (4)"
+    "name": "snoop: report_stage (3)"
   },
   {
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: AUTOTEST_FILES@https://console.cloud.google.com/storage/browser/chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101@@@",
       "@@@STEP_LINK@gs publish dir: DEBUG_SYMBOLS@https://console.cloud.google.com/storage/browser/chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101@@@",
@@ -9820,6 +9831,54 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload artifacts.Find DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/artifacts_tmp_1/dlc",
+      "--recursive"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.Find DLCs.list local DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
@@ -10394,7 +10453,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "snoop: report_stage (5)"
+    "name": "snoop: report_stage (4)"
   },
   {
     "cmd": [],
