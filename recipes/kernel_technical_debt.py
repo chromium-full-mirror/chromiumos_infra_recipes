@@ -221,23 +221,16 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'check if tech debt'),
       api.post_process(post_process.DropExpectation))
 
-  yield api.test(
-      'upstream', test_builder(gerrit_changes=changes),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'fetch patch set', changes,
-          gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile')),
-      api.post_check(post_process.StepSuccess, 'check if tech debt'),
-      api.post_check(post_process.DoesNotRun, 'check tag'),
-      api.post_process(post_process.DropExpectation))
-
-  yield api.test(
-      'fromgit', test_builder(gerrit_changes=changes),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'fetch patch set', changes,
-          gen_patch_sets('FROMGIT: drm_repo: blalah', 'Makefile')),
-      api.post_check(post_process.StepSuccess, 'check if tech debt'),
-      api.post_check(post_process.DoesNotRun, 'check tag'),
-      api.post_process(post_process.DropExpectation))
+  for idx, subject in enumerate(("FROMGIT: drm_repo", "UPSTREAM: Land Kcam",
+                                 "BACKPORT: FROMGIT: Fix all gpu crashes",
+                                 "BACKPORT: Linus fix to the big lock")):
+    yield api.test(
+        'upstream %d' % idx, test_builder(gerrit_changes=changes),
+        api.gerrit.set_gerrit_fetch_changes_response(
+            'fetch patch set', changes, gen_patch_sets(subject, 'Makefile')),
+        api.post_check(post_process.StepSuccess, 'check if tech debt'),
+        api.post_check(post_process.DoesNotRun, 'check tag'),
+        api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'chromium', test_builder(gerrit_changes=changes),
