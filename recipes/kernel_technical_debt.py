@@ -31,7 +31,7 @@ BAD_TAG_MSG = 'Bad subject tag for patch touching ChromeOS specific files. Pleas
 
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
 
-TECH_DEBT_TAGS = ('FROMGIT:', 'FROMLIST', 'BACKPORT: FROM', 'CHROMIUM:')
+TECH_DEBT_TAGS = ('FROMLIST:', 'BACKPORT: FROMLIST:', 'CHROMIUM:')
 UPSTREAM_TAGS = ('FROMLIST:', 'UPSTREAM:', 'FROMGIT:', 'BACKPORT:')
 OTHER_TAGS = (
     'CHROMIUM:',
@@ -226,6 +226,15 @@ def GenTests(api: RecipeTestApi):
       api.gerrit.set_gerrit_fetch_changes_response(
           'fetch patch set', changes,
           gen_patch_sets('UPSTREAM: Land Kcam', 'Makefile')),
+      api.post_check(post_process.StepSuccess, 'check if tech debt'),
+      api.post_check(post_process.DoesNotRun, 'check tag'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'fromgit', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets('FROMGIT: drm_repo: blalah', 'Makefile')),
       api.post_check(post_process.StepSuccess, 'check if tech debt'),
       api.post_check(post_process.DoesNotRun, 'check tag'),
       api.post_process(post_process.DropExpectation))
