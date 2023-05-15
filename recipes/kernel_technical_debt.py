@@ -92,7 +92,7 @@ def RunSteps(api: RecipeApi):
 
   with api.step.nest('check branch') as presentation:
     branch = patch_set.branch
-    if not branch.startswith("chromeos-"):
+    if not branch.startswith(("chromeos-", "chameleon-")):
       presentation.step_text = 'Branch not reviewed'
       return
 
