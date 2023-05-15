@@ -326,6 +326,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
             if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
               child_build_snapshot = external_snapshot
             tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+            tags.extend(
+                self.m.cros_tags.tags(
+                    **{'hide-in-gerrit': 'chrome-additional-builder'}))
             properties = self.m.cq.props_for_child_build
             properties.update(self.m.cros_infra_config.props_for_child_build)
 
