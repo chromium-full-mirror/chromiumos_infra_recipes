@@ -62,6 +62,7 @@ LLVM_NEXT_USE_FLAG = 'llvm-next'
 # Google storage buckets for uploads: i.e., what comes after "gs://"
 SDK_BUCKET = 'chromiumos-sdk'
 PREBUILTS_BUCKET = 'chromeos-prebuilt'
+THROW_AWAY_BUCKET = 'chromeos-throw-away-bucket'
 
 
 def RunSteps(api: RecipeApi, properties: BuildSDKProperties):
@@ -140,11 +141,6 @@ class BuildSDKRun:
       self._update_gs_latest_file()
       self._schedule_uprev()
 
-  @property
-  def _skip_uploads(self):
-    """Whether this builder should skip uploading to GS://."""
-    return self.m.build_menu.is_staging and not self.properties.upload_to_staging_dir
-
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
     request = BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
@@ -222,10 +218,11 @@ class BuildSDKRun:
     with self.m.step.nest('upload host prebuilts'):
       source_dir = self.m.cros_sdk.chroot_path.join('var', 'lib', 'portage',
                                                     'pkgs')
+      dest_bucket = self._pick_bucket(PREBUILTS_BUCKET)
       dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
                                f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
-      self._gsutil_upload(source_dir, PREBUILTS_BUCKET, dest_path)
+      self._gsutil_upload(source_dir, dest_bucket, dest_path)
 
   def _upload_target_prebuilts(self) -> None:
     """Upload binaries for the amd64-host build target to GS://.
@@ -240,10 +237,11 @@ class BuildSDKRun:
     with self.m.step.nest('upload target prebuilts'):
       source_dir = self.m.cros_sdk.chroot_path.join('build', SDK_BUILD_TARGET,
                                                     'packages')
+      dest_bucket = self._pick_bucket(PREBUILTS_BUCKET)
       dest_path = os.path.join('board', SDK_BUILD_TARGET,
                                f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
-      self._gsutil_upload(source_dir, PREBUILTS_BUCKET, dest_path)
+      self._gsutil_upload(source_dir, dest_bucket, dest_path)
 
   def _upload_toolchain_prebuilts(self) -> None:
     """Upload toolchain prebuilt tarballs to Google Storage.
@@ -272,8 +270,9 @@ class BuildSDKRun:
     """
     basename = self.m.path.basename(source_path)
     with self.m.step.nest(f'upload {basename}'):
+      dest_bucket = self._pick_bucket(SDK_BUCKET)
       dest_path = os.path.join(self._toolchain_tarball_dir, basename)
-      self._gsutil_upload(source_path, SDK_BUCKET, dest_path)
+      self._gsutil_upload(source_path, dest_bucket, dest_path)
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
     """Upload the SDK tarball, and corresponding manifest, to GS://.
@@ -289,15 +288,16 @@ class BuildSDKRun:
       AssertionError: If the SDK tarball or manifest has not been built yet.
     """
     with self.m.step.nest('upload sdk tarball and manifest'):
+      dest_bucket = self._pick_bucket(SDK_BUCKET)
       with self.m.step.nest('upload sdk tarball'):
         assert self._sdk_tarball_path is not None
         tarball_dest_path = f'cros-sdk-{self.version}.tar.xz'
-        self._gsutil_upload(self._sdk_tarball_path, SDK_BUCKET,
+        self._gsutil_upload(self._sdk_tarball_path, dest_bucket,
                             tarball_dest_path)
       with self.m.step.nest('upload sdk manifest'):
         assert self._sdk_manifest_path is not None
         manifest_dest_path = f'{tarball_dest_path}.Manifest'
-        self._gsutil_upload(self._sdk_manifest_path, SDK_BUCKET,
+        self._gsutil_upload(self._sdk_manifest_path, dest_bucket,
                             manifest_dest_path)
 
   def _update_gs_latest_file(self) -> None:
@@ -309,7 +309,8 @@ class BuildSDKRun:
       tempfile = self.m.path.mkstemp()
       self.m.file.write_text('write local file to upload', tempfile,
                              new_contents)
-      self._gsutil_upload(tempfile, SDK_BUCKET, 'cros-sdk-latest.conf')
+      dest_bucket = self._pick_bucket(SDK_BUCKET)
+      self._gsutil_upload(tempfile, dest_bucket, 'cros-sdk-latest.conf')
       presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self.version
 
   def _read_existing_gs_latest_file(self) -> str:
@@ -329,6 +330,23 @@ class BuildSDKRun:
           'old_LATEST_SDK_UPREV_TARGET'] = contents_dict.get(
               'LATEST_SDK_UPREV_TARGET', "None")
     return contents
+
+  def _pick_bucket(self, prod_bucket: str) -> str:
+    """Return prod_bucket or THROW_AWAY_BUCKET based on staging status.
+
+    The staging builder deliberately doesn't have write access to most buckets.
+    Thus, many upload steps should upload to THROW_AWAY_BUCKET in staging.
+
+    However, we shouldn't apply this 100% of the time, because we do want the
+    staging builder to upload to gs://chromeos-image-archive/.
+
+    Args:
+      prod_bucket: The bucket to return if this is a prod builder.
+
+    Returns:
+      A bucket name (without the gs:// prefix).
+    """
+    return THROW_AWAY_BUCKET if self.m.build_menu.is_staging else prod_bucket
 
   def _gsutil_upload(self, source_path: Path, dest_bucket: str,
                      dest_path: str) -> None:
@@ -367,7 +385,7 @@ class BuildSDKRun:
       dest_path = os.path.join('staging', dest_path)
     self.m.gsutil.upload(
         str(source_path), dest_bucket, dest_path, args=args,
-        multithreaded=multithreaded, dry_run=self._skip_uploads)
+        multithreaded=multithreaded)
 
   def _schedule_uprev(self) -> None:
     """Trigger a PUpr build to uprev to the newly-built SDK.
@@ -496,26 +514,36 @@ def GenTests(api: RecipeTestApi):
 
   yield api.build_menu.test(
       'staging',
-      # Because properties.upload_to_staging_dir is not set, all uploads should
-      # be no-ops.
-      api.post_check(post_process.StepCommandEmpty,
-                     'upload prebuilts.upload host prebuilts.gsutil upload'),
-      api.post_check(post_process.StepCommandEmpty,
-                     'upload prebuilts.upload target prebuilts.gsutil upload'),
+      # These steps should all upload to THROW_AWAY_BUCKET on staging builders.
+      # However, they should not upload to the /staging/ subdir.
       api.post_check(
-          post_process.StepCommandEmpty,
-          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload'
-      ),
+          post_process.StepCommandContains,
+          'upload prebuilts.upload host prebuilts.gsutil upload', [
+              'gs://chromeos-throw-away-bucket/host/amd64/amd64-host/chroot-1970.01.01.000000/packages'
+          ]),
       api.post_check(
-          post_process.StepCommandEmpty,
-          'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload'
-      ),
+          post_process.StepCommandContains,
+          'upload prebuilts.upload target prebuilts.gsutil upload', [
+              'gs://chromeos-throw-away-bucket/board/amd64-host/chroot-1970.01.01.000000/packages'
+          ]),
       api.post_check(
-          post_process.StepCommandEmpty,
-          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload'),
+          post_process.StepCommandContains,
+          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
+          ['gs://chromeos-throw-away-bucket/1970/01/foo.tar.xz']),
       api.post_check(
-          post_process.StepCommandEmpty,
-          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload'),
+          post_process.StepCommandContains,
+          'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload',
+          ['gs://chromeos-throw-away-bucket/1970/01/bar.tar.xz']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
+          ['gs://chromeos-throw-away-bucket/cros-sdk-1970.01.01.000000.tar.xz'
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
+              'gs://chromeos-throw-away-bucket/cros-sdk-1970.01.01.000000.tar.xz.Manifest'
+          ]),
       # Staging builder should launch the staging PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
@@ -547,7 +575,7 @@ def GenTests(api: RecipeTestApi):
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
               RE_GSUTIL, '----', 'cp', '-a', 'public-read',
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
-              'gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz'
+              'gs://chromeos-throw-away-bucket/staging/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
       api.post_process(post_process.DropExpectation),
       builder='staging-chromiumos-sdk',
