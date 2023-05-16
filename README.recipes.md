@@ -661,6 +661,7 @@
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
   * [upload_prebuilts_from_cq](#recipes-upload_prebuilts_from_cq) &mdash; Recipe that retrieves locations from google storage that the binpkgs are uploaded to by the Chrome PUpr and updates *_CQ_BINHOST.
   * [uprev_borealis_deps](#recipes-uprev_borealis_deps) &mdash; Recipe for upreving Borealis build dependencies.
+  * [uprev_chromite_head](#recipes-uprev_chromite_head) &mdash; Recipe for uprev'ing chromite-head.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
@@ -14331,6 +14332,14 @@ Args:
 &mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#153)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
 &mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#42)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+### *recipes* / [uprev\_chromite\_head](/recipes/uprev_chromite_head.py)
+
+[DEPS](/recipes/uprev_chromite_head.py#15): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for uprev'ing chromite-head.version file for go/deployable-chromite
+
+&mdash; **def [RunSteps](/recipes/uprev_chromite_head.py#30)(api: RecipeApi, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#38): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
