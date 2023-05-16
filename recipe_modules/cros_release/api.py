@@ -119,6 +119,32 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               presentation.status = self.m.step.FAILURE
               if fatal:
                 raise StepFailure(err)
+      else:
+        with self.m.step.nest('check for previous retries') as presentation:
+          predicate = builds_service_pb2.BuildPredicate(
+              builder=self.m.buildbucket.build.builder)
+          # Default limit is 1000 builds so shouldn't have to worry about pagination.
+          builds = self.m.buildbucket.search(predicate, limit=1000,
+                                             fields=['id', 'input.properties'],
+                                             timeout=300)
+          retry_bbid = self.m.checkpoint.original_build_bbid
+          for build in builds:
+            # Don't want to look at ourselves which is necessarily a match.
+            if build.id == self.m.buildbucket.build.id:
+              continue
+            original_build_bbid = dict(
+                dict(build.input.properties).get('$chromeos/checkpoint',
+                                                 {})).get(
+                                                     'original_build_bbid',
+                                                     None)
+            # go/cros-try should prevent this, which means this retry must have
+            # been launched out of band. Fail.
+            if str(retry_bbid) == str(original_build_bbid):
+              err = 'previous retry {} already exists for build {}.'.format(
+                  build.id, retry_bbid)
+              presentation.step_text = err
+              presentation.status = self.m.step.FAILURE
+              raise StepFailure(err)
 
   def create_buildspec(self, specs_dir='buildspecs',
                        step_name='create buildspec', dry_run=False,

@@ -1691,49 +1691,53 @@ A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#103)(self):**
+&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#109)(self):**
 
 Get the BBIDs of the child builders that are image builders.
 
-&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#128)(self, builder: str):**
+&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#134)(self, builder: str):**
 
 Return the `checkpoint` module properties to set for the child builder.
 
-&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#147)(requested_steps: List['RetryStep']):**
+&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#153)(requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns:
   All the steps that are meant to be run.
 
-&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#115)(self):**
+&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#121)(self):**
 
 Returns the list of child builders that failed.
 
 Returns:
   Names of child builders that failed, e.g. eve-release-main.
 
-&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#91)(self):**
+&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#92)(self):**
 
 Return whether the build is a retry build.
 
-&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#95)(self, step: 'RetryStep'):**
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#101)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#177)(self):**
+&emsp; **@property**<br>&mdash; **def [original\_build\_bbid](/recipe_modules/checkpoint/api.py#96)(self):**
+
+Return the BBID of the original build as set in input properties.
+
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#183)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#242)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#248)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#107)(self):**
+&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#113)(self):**
 
 Get the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#229)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#235)(self, step: 'RetryStep', status: str):**
 
 Update the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -3214,7 +3218,7 @@ Checks that the build was given a buildspec and that there doesn't
 Args:
   fatal: Whether or not to kill the build if the build already ran.
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#123)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#149)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -3230,7 +3234,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#443)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#469)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3240,7 +3244,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#369)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#395)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3253,7 +3257,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#407)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#433)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3265,7 +3269,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#463)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#489)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3284,7 +3288,7 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#288)(self, override_qs_account: str=None):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#314)(self, override_qs_account: str=None):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3295,11 +3299,11 @@ been built.
 Args:
   override_qs_account: QS Account to use instead of whatever is configured.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#503)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#529)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#511)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#537)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 

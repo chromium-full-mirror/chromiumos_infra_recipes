@@ -26,6 +26,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api: RecipeApi):
   api.checkpoint.register()
+  _ = api.checkpoint.original_build_bbid
 
   with api.checkpoint.retry(RetryStep.STAGE_ARTIFACTS) as run_step:
     if run_step:

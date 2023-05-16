@@ -32,13 +32,18 @@ def RunSteps(api, fatal):
 
 def GenTests(api):
 
-  def build_result(bbid, buildspec):
+  def build_result(bbid, buildspec, original_build_bbid=None):
     build = build_pb2.Build(id=bbid)
     build.input.properties['$chromeos/cros_source'] = {
         'syncToManifest': {
             'manifestGsPath': buildspec,
         }
     }
+    if original_build_bbid:
+      build.input.properties['$chromeos/checkpoint'] = {
+          'original_build_bbid': original_build_bbid
+      }
+
     return build
 
   yield api.test(
@@ -138,4 +143,80 @@ def GenTests(api):
                                               ),
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'retry-success',
+      api.properties(
+          # `fatal` doesn't matter for retry detection as we're trying to
+          # prevent out of band retries.
+          fatal=False,
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '123',
+              },
+              '$chromeos/cros_source': {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  },
+              },
+          }),
+      api.buildbucket.simulated_search_results(
+          [
+              build_result(
+                  123,
+                  'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
+              ),
+              # This is the current build so it should be ignored.
+              build_result(
+                  0,
+                  'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
+                  original_build_bbid='123'),
+          ],
+          step_name='check buildspec.check for previous retries.buildbucket.search'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'retry-fail',
+      api.properties(
+          # `fatal` doesn't matter for retry detection as we're trying to
+          # prevent out of band retries.
+          fatal=False,
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '123',
+              },
+              '$chromeos/cros_source': {
+                  "syncToManifest": {
+                      "manifestGsPath":
+                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  },
+              },
+          }),
+      api.buildbucket.simulated_search_results(
+          [
+              build_result(
+                  123,
+                  'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
+              ),
+              build_result(
+                  124,
+                  'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
+                  original_build_bbid='123'),
+              # This is the current build so it should be ignored.
+              build_result(
+                  0,
+                  'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
+                  original_build_bbid='123'),
+          ],
+          step_name='check buildspec.check for previous retries.buildbucket.search'
+      ),
+      api.post_check(post_process.StepFailure, 'check buildspec'),
+      api.post_process(post_process.DropExpectation),
+      status="FAILURE",
   )

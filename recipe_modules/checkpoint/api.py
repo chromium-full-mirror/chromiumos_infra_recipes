@@ -63,6 +63,7 @@ class CheckpointApi(recipe_api.RecipeApi):
     self._retry_run = properties.retry
     self._retry_summary = {}
     self._do_retry_summary = properties.force_retry_summary or properties.retry
+    self._original_build_bbid = None
 
     # If CREATE_BUILDSPEC is included we're just doing a full release build
     # so go ahead and turn off retry mode.
@@ -91,6 +92,11 @@ class CheckpointApi(recipe_api.RecipeApi):
   def is_retry(self) -> bool:
     """Return whether the build is a retry build."""
     return self._retry_run
+
+  @property
+  def original_build_bbid(self) -> int:
+    """Return the BBID of the original build as set in input properties."""
+    return self._original_build_bbid
 
   def is_run_step(self, step: 'RetryStep'):
     """Return whether the step will be run in this retry."""
