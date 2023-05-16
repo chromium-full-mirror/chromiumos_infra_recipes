@@ -559,6 +559,7 @@
   * [presubmit_cq](#recipes-presubmit_cq) &mdash; Launches presubmit tests for CQ.
   * [presubmit_tests](#recipes-presubmit_tests) &mdash; Recipe for running presubmit on multiple CLs.
   * [project_buildspec](#recipes-project_buildspec) &mdash; Recipe for invoking the per project buildspec tool.
+  * [proto_doctor](#recipes-proto_doctor) &mdash; Compile and sync proto files across ChromeOS.
   * [pupr:examples/identify_retry](#recipes-pupr_examples_identify_retry)
   * [pupr:examples/retries_frozen](#recipes-pupr_examples_retries_frozen)
   * [pupr_gerrit_interface:tests/apply_retry_policy](#recipes-pupr_gerrit_interface_tests_apply_retry_policy) &mdash; Verify that apply_retry_policy() runs the expected process.
@@ -13366,6 +13367,26 @@ Recipe for running presubmit on multiple CLs.
 Recipe for invoking the per project buildspec tool.
 
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
+### *recipes* / [proto\_doctor](/recipes/proto_doctor.py)
+
+
+Compile and sync proto files across ChromeOS.
+
+This recipe should normally be triggered via a gitiles_poller that watches for
+changes to the infra/proto repo. The poller should batch requests, so there may
+be several changes, which may be on different branches.
+For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
+
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#22)(api: recipe_api.RecipeApi):**
+
+Main recipe logic.
+
+In a nutshell, for each branch in this build's triggers:
+1.  Compile Chromite proto bindings, and submit them to Gerrit.
+2.  Sync proto bindings to prebuilts-cloud project, and submit them to Gerrit.
+
+Of course, each step is more nuanced than that. See function-specific
+docstrings.
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#16): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
