@@ -154,7 +154,7 @@ class CrosSourceApi(RecipeApi):
   @property
   def manifest_push(self):
     """Returns the manifest branch to push changes to."""
-    ret = self._manifest_branch
+    ret = self.manifest_branch
     ret = 'main' if ret in ('snapshot', 'staging-snapshot', '') else ret
     return ret
 

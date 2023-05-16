@@ -246,9 +246,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
         if self._commit_buildspec_as_snapshot:
           with self.m.step.nest('commit buildspec as snapshot') as presentation:
-            config = self.m.cros_infra_config.config
-            orch_branch = config.orchestrator.gitiles_commit.ref[
-                len('refs/heads/'):]
+            orch_branch = self.m.cros_source.manifest_push
             snapshot_branch = MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH
             # Staging is only allowed to use the staging branch.
             if not dry_run and not self.m.build_menu.is_staging:

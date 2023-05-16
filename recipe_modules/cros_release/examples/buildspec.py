@@ -5,6 +5,7 @@
 
 from recipe_engine import post_process
 
+from PB.recipe_modules.chromeos.cros_release.examples.buildspec import BuildspecProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 DEPS = [
@@ -13,6 +14,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_reporting',
     'cros_release',
+    'cros_source',
     'git',
     'orch_menu',
     'test_util',
@@ -20,8 +22,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = BuildspecProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties):
+  if properties.manifest_branch:
+    api.cros_source.test_api.manifest_branch = properties.manifest_branch
+
   api.cros_release.create_buildspec()
   api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
@@ -85,12 +92,28 @@ def GenTests(api):
       ), builder='release-main-orchestrator')
 
   yield api.orch_menu.test(
+      'commit-as-snapshot-tot-snapshot',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'commit_buildspec_as_snapshot': True,
+              },
+              'manifest_branch': 'snapshot',
+          }), api.git.diff_check(True),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot'
+      ), builder='release-main-orchestrator')
+
+  yield api.orch_menu.test(
       'commit-as-snapshot-branch',
-      api.properties(**{
-          '$chromeos/cros_release': {
-              'commit_buildspec_as_snapshot': True,
-          },
-      }), api.git.diff_check(True),
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'commit_buildspec_as_snapshot': True,
+              },
+              'manifest_branch': 'release-R108-15183.B',
+          }), api.git.diff_check(True),
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot'
