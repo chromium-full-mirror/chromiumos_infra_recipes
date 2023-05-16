@@ -1,0 +1,13 @@
+// Copyright 202# The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.orchestrator;
+
+message OrchestratorProperties {
+    // If set, build failures will make the orchestrator fail even if it's a
+    // release orchestrator.
+    bool build_failures_fatal = 1;
+}

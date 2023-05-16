@@ -20,6 +20,7 @@ from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -50,8 +51,11 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = OrchestratorProperties
 
-def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
+
+def RunSteps(api: RecipeApi,
+             properties: OrchestratorProperties) -> result_pb2.RawResult:
   api.cros_try.check_try_version()
   api.checkpoint.register()
   with api.orch_menu.setup_orchestrator() as config:
@@ -63,7 +67,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
 
     return api.orch_menu.create_recipe_result(
         include_build_details=is_release or is_public,
-        ignore_build_test_failures=is_release)
+        ignore_build_test_failures=is_release and
+        not properties.build_failures_fatal)
 
 
 def DoRunSteps(api: RecipeApi):
@@ -386,6 +391,18 @@ def GenTests(api: RecipeTestApi):
                            builder='release-main-orchestrator',
                            with_manifest_refs=True,
                            collect_builds=data.crit_fail)
+
+  yield api.orch_menu.test(
+      'critical-child-builder-fails-but-release-override',
+      api.properties(**{
+          'build_failures_fatal': True,
+      }),
+      data.ctp_normal,
+      builder='release-main-orchestrator',
+      with_manifest_refs=True,
+      collect_builds=data.crit_fail,
+      status='FAILURE',
+  )
 
   yield api.orch_menu.test('non-critical-child-builder-fails', data.ctp_normal,
                            with_manifest_refs=True,
