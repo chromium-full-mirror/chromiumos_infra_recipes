@@ -1,5 +1,17 @@
 [
   {
+    "cmd": [],
+    "name": "validate triggers"
+  },
+  {
+    "cmd": [],
+    "name": "process branch main"
+  },
+  {
+    "cmd": [],
+    "name": "process branch release-R100-14526.B"
+  },
+  {
     "name": "$result"
   }
 ]
