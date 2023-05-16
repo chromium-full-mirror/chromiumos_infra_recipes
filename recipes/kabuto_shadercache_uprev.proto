@@ -1,0 +1,17 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.kabuto_shadercache_uprev;
+
+message KabutoShadercacheUprevProperties {
+  // Uprev information from a build_kabuto_shadercache job.
+  // Required
+  string uprev_info = 1;
+
+  // The manifest branch to check out (e.g. 'release-R105-14989.B')
+  // Defaults to main tip of tree if not specified.
+  string manifest_branch = 2;
+}
