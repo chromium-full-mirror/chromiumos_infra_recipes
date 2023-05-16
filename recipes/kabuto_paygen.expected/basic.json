@@ -1932,7 +1932,7 @@
       "tar",
       "cvfJ",
       "kabuto_payload.tar.xz",
-      "in/fossilize_tools"
+      "in/fossilize_tool"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
     "env_suffixes": {
