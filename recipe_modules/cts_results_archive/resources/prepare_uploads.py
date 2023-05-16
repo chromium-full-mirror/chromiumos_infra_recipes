@@ -23,7 +23,11 @@ import shutil
 import subprocess
 import sys
 import tarfile
-import urllib
+# For python2/python3-compatibility
+try:
+  from urllib import unquote
+except ImportError:
+  from urllib.parse import unquote
 
 D = '[0-9][0-9]'
 TIMESTAMP_PATTERN = '%s%s.%s.%s_%s.%s.%s' % (D, D, D, D, D, D, D)
@@ -127,7 +131,7 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
   keyval = _parse_job_keyval(dir)
   build = keyval.get('build')
   host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
-  labels = urllib.unquote(host_keyval.get('labels'))
+  labels = unquote(host_keyval.get('labels'))
   try:
     host_model_name = re.search(r'model:(\w+)', labels).group(1)
   except AttributeError:
