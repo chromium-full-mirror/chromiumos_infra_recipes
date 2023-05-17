@@ -15,36 +15,61 @@ from typing import Generator, List
 
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
+from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 
 DEPS = [
+    'recipe_engine/context',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'repo',
+    'src_state',
 ]
 
+# Repo projects
+CHROMITE_REPO = 'chromiumos/chromite'
 INFRA_PROTO_REPO = 'chromiumos/infra/proto'
+CHROMITE_INFRA_PROTO_REPO = 'chromite/infra/proto'
+PROJECTS_TO_CHECKOUT = (
+    INFRA_PROTO_REPO,
+    CHROMITE_REPO,
+    CHROMITE_INFRA_PROTO_REPO,
+)
+
+# Branches and refs
 MAIN_BRANCH = 'main'
 MAIN_REF = 'refs/heads/main'
 
 
 def RunSteps(api: recipe_api.RecipeApi) -> None:
-  """Main recipe logic.
+  """Starting point for main recipe logic.
 
-  In a nutshell, for each branch in this build's triggers:
-  1.  Compile Chromite proto bindings, and submit them to Gerrit.
-  2.  Sync proto bindings to prebuilts-cloud project, and submit them to Gerrit.
-
-  Of course, each step is more nuanced than that. See function-specific
-  docstrings.
+  This function does setup, determines which branches to work on, and then
+  defers to child functions for specific processing.
   """
   gitiles_triggers = _validate_triggers(api)
   branches = set(_get_branch(gt) for gt in gitiles_triggers)
 
   for branch in sorted(branches):
     with api.step.nest(f'process branch {branch}'):
-      pass
+      check_out_branch(api, branch)
+
+
+def check_out_branch(api: recipe_api.RecipeApi, branch: str) -> None:
+  """Check out all the necessary projects on the given branch.
+
+  Args:
+    api: The recipe API.
+    branch: The branch to checkout, such as "main".
+  """
+  with api.context(cwd=_get_checkout_path(api)):
+    api.repo.init(
+        manifest_url=api.src_state.internal_manifest.url,
+        manifest_branch=branch,
+    )
+    api.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
 
 
 def _validate_triggers(
@@ -84,6 +109,11 @@ def _get_branch(gitiles_trigger: triggers_pb2.GitilesTrigger) -> str:
   return gitiles_trigger.ref.split('/')[-1]
 
 
+def _get_checkout_path(api: recipe_api.RecipeApi) -> config_types.Path:
+  """Return the path to the bot's local repo checkout."""
+  return api.src_state.workspace_path
+
+
 def GenTests(
     api: recipe_test_api.RecipeTestApi
 ) -> Generator[recipe_test_api.TestData, None, None]:
@@ -101,7 +131,7 @@ def GenTests(
       repo=INFRA_PROTO_REPO, ref=f'refs/heads/{release_branch}',
       revision='cccccc')
   gitiles_trigger_chromite = triggers_pb2.GitilesTrigger(
-      repo='chromiumos/chromite',
+      repo=CHROMITE_REPO,
       ref=MAIN_REF,
       revision='dddddd',
   )

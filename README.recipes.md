@@ -13372,7 +13372,7 @@ Recipe for invoking the per project buildspec tool.
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
 ### *recipes* / [proto\_doctor](/recipes/proto_doctor.py)
 
-[DEPS](/recipes/proto_doctor.py#22): [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/proto_doctor.py#23): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Compile and sync proto files across ChromeOS.
@@ -13382,16 +13382,20 @@ changes to the infra/proto repo. The poller should batch requests, so there may
 be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
-&mdash; **def [RunSteps](/recipes/proto_doctor.py#32)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#46)(api: recipe_api.RecipeApi):**
 
-Main recipe logic.
+Starting point for main recipe logic.
 
-In a nutshell, for each branch in this build's triggers:
-1.  Compile Chromite proto bindings, and submit them to Gerrit.
-2.  Sync proto bindings to prebuilts-cloud project, and submit them to Gerrit.
+This function does setup, determines which branches to work on, and then
+defers to child functions for specific processing.
 
-Of course, each step is more nuanced than that. See function-specific
-docstrings.
+&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#60)(api: recipe_api.RecipeApi, branch: str):**
+
+Check out all the necessary projects on the given branch.
+
+Args:
+  api: The recipe API.
+  branch: The branch to checkout, such as "main".
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#16): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
