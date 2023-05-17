@@ -186,7 +186,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     return False
 
-  def init(self, manifest_url, _kwonly=(), manifest_branch='', reference=None,
+  def init(self, manifest_url, *, manifest_branch='', reference=None,
            groups=None, depth=None, repo_url=None, repo_branch=None,
            local_manifests=None, manifest_name=None, projects=None,
            verbose=True, clean=True, manifest_depth=None):
@@ -208,7 +208,6 @@ class RepoApi(recipe_api.RecipeApi):
       verbose (bool): Whether to produce verbose output.
       manifest_depth (str): Value to pass in as manifest-depth to repo.
     """
-    assert _kwonly == (), 'init accepts only 1 positional arg'
     _ = projects
     verify_repo = not self._disable_repo_verify
     cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
@@ -272,12 +271,11 @@ class RepoApi(recipe_api.RecipeApi):
             data=manifest_data,
         )
 
-  def sync(self, _kwonly=(), force_sync=False, detach=False,
-           current_branch=False, jobs=None, manifest_name=None, no_tags=False,
-           optimized_fetch=False, cache_dir=None, timeout=None,
-           retry_fetches=None, projects=None, verbose=True,
-           no_manifest_update=False, force_remove_dirty=False, prune=None,
-           repo_event_log=True, manifest_branch_state=True,
+  def sync(self, *, force_sync=False, detach=False, current_branch=False,
+           jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False,
+           cache_dir=None, timeout=None, retry_fetches=None, projects=None,
+           verbose=True, no_manifest_update=False, force_remove_dirty=False,
+           prune=None, repo_event_log=True, manifest_branch_state=True,
            test_manifest_branch_state_failure=False):
     """Executes 'repo sync' with the given arguments.
 
@@ -303,7 +301,6 @@ class RepoApi(recipe_api.RecipeApi):
       test_manifest_branch_state_failure (bool): Raise StepFailure in repo-info
       step and confirm it does not fail the entire build.
     """
-    assert _kwonly == (), 'sync accepts no positional args'
     cmd = ['sync']
     if force_sync:
       cmd += ['--force-sync']

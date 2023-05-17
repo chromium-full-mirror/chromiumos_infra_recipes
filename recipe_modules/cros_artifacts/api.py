@@ -735,7 +735,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return filtered_artifacts_info
 
-  def upload_artifacts(self, builder_name, kind, gs_bucket, _kwonly=(),
+  def upload_artifacts(self, builder_name, kind, gs_bucket, *,
                        artifacts_info=None, chroot=None, sysroot=None,
                        name='upload artifacts', test_data=None,
                        private_bundle_func=None, report_to_spike=False,
@@ -780,7 +780,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
     """
-    assert _kwonly == (), 'keyword parameters passed as positional'
     uploaded_artifacts = None
 
     if previously_uploaded_artifacts:
