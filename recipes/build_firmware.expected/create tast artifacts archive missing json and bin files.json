@@ -6238,7 +6238,10 @@
   },
   {
     "cmd": [],
-    "name": "Create Ti50 Tast artifacts"
+    "name": "Create Ti50 Tast artifacts",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [
@@ -6368,7 +6371,9 @@
     "cmd": [],
     "name": "Create Ti50 Tast artifacts.Extract archive",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@No interesting files in archive.@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -6400,7 +6405,8 @@
     },
     "name": "Create Ti50 Tast artifacts.Extract archive.untar",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

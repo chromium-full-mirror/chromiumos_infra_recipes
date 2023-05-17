@@ -212,6 +212,7 @@ def CreateTi50TastArtifacts(api, location, config):
 
     temp_dir = api.path.mkdtemp()
     tast_dir = api.path.join(temp_dir, 'tast')
+    tast_dir_empty = True
     download_dir = api.path.join(temp_dir, 'download')
     api.file.ensure_directory("Create download directory", download_dir)
     signing_re = re.compile(r'.*/ti50_Unknown_(.*).bin')
@@ -229,12 +230,17 @@ def CreateTi50TastArtifacts(api, location, config):
         board = 'andreiboard'
       tast_subdir = os.path.join(tast_dir, '-'.join((board, image)))
       # Extract image binary and opentitantool config json files into tast_subdir
-      api.step('Extract archive', [
-          'tar', '-x', '--exclude=*_key*', '--wildcards',
-          '*opentitantool_*.json', '--wildcards', '*.bin',
-          r'--xform=s=^.*/\([^/]*\)$=\1=', '--one-top-level=' + tast_subdir,
-          '-f', downloaded_file
-      ])
+      with api.step.nest('Extract archive') as presentation:
+        try:
+          api.step('untar', [
+              'tar', '-x', '--exclude=*_key*', '--wildcards',
+              '*opentitantool_*.json', '--wildcards', '*.bin',
+              r'--xform=s=^.*/\([^/]*\)$=\1=', '--one-top-level=' + tast_subdir,
+              '-f', downloaded_file
+          ])
+          tast_dir_empty = False
+        except api.step.StepFailure:
+          presentation.step_text = 'No interesting files in archive.'
       for bin_file in bins:
         if bin_file.find(base) >= 0:
           dest_path = tast_subdir
@@ -244,7 +250,10 @@ def CreateTi50TastArtifacts(api, location, config):
                                      'image_' + signing_info[1] + '.bin')
           api.gsutil.download(signed_artifacts_gs_bucket, bin_file, dest_path,
                               name='download signed image')
-    api.gsutil.upload(tast_dir, artifacts_gs_bucket, artifacts_gs_path, ['-r'])
+          tast_dir_empty = False
+    if not tast_dir_empty:
+      api.gsutil.upload(tast_dir, artifacts_gs_bucket, artifacts_gs_path,
+                        ['-r'])
 
 
 def _read_chromiumos_sdk_pin(api, properties):
@@ -519,6 +528,34 @@ def GenTests(api):
       'create tast artifacts missing tar files',
       api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
       builder='amd64-generic-postsubmit', input_properties=dict(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'amd64-generic-postsubmit',
+                  },
+                  'container_version_format':
+                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+              },
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              },
+              'firmware_location': common_pb2.PLATFORM_TI50
+          }))
+
+  yield test(
+      'create tast artifacts archive missing json and bin files',
+      api.step_data(
+          'Create Ti50 Tast artifacts.gsutil list',
+          stdout=api.raw_io.output_text(
+              'gs://chromeos-image-archive/build0/ti50.tar.bz2')),
+      api.step_data(
+          'Create Ti50 Tast artifacts.gsutil list (2)',
+          stdout=api.raw_io.output_text(
+              'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
+          )),
+      api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
+                    retcode=2), builder='amd64-generic-postsubmit',
+      input_properties=dict(
           **{
               '$chromeos/build_menu': {
                   'build_target': {
