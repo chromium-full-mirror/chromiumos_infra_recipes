@@ -106,6 +106,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           if not exp_enabled or not lfg_enabled:
             self._should_lfg = False
             return self._should_lfg
+          # Only look for green in CQ.
+          if not self.m.cq.active:
+            pres.step_text = 'Skipping looks for green outside of CQ'
+            self._should_lfg = False
+            return self._should_lfg
           disallow = self.found_disallow_lfg_footer(gerrit_changes)
           has_merge_commit = self._has_merge_commit(gerrit_changes)
           self._should_lfg = (

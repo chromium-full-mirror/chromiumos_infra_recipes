@@ -9,6 +9,7 @@ from PB.recipe_modules.chromeos.looks_for_green.tests.test import ShouldLfgPrope
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'gerrit',
@@ -64,6 +65,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.step_data('check should look for green.git log',
@@ -81,6 +83,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(
           post_process.DoesNotRun,
           'check should look for green.check disallow looks for green'),
@@ -92,6 +95,7 @@ def GenTests(api):
   yield api.test(
       'lfg-disabled',
       api.properties(experiments=lfg_experiment, expected_should_lfg=False),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(
           post_process.DoesNotRun,
           'check should look for green.check disallow looks for green'),
@@ -108,6 +112,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           ['True'],
           'check should look for green.check disallow looks for green'),
@@ -123,6 +128,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
@@ -138,6 +144,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.step_data('check should look for green.git log',
@@ -153,6 +160,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }, enable_test_on_multiple_changes=True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
@@ -173,5 +181,18 @@ def GenTests(api):
       # Should not continue after finding a merge commit.
       api.post_check(post_process.DoesNotRun,
                      'check should look for green.git log (3)'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'not-cq',
+      api.properties(
+          expected_should_lfg=False, experiments=lfg_experiment, **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True
+              },
+          }),
+      api.post_check(post_process.StepTextEquals, 'check should look for green',
+                     'Skipping looks for green outside of CQ'),
       api.post_process(post_process.DropExpectation),
   )
