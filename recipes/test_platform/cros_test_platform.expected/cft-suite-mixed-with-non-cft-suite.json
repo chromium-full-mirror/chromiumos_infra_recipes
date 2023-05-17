@@ -449,6 +449,76 @@
   },
   {
     "cmd": [],
+    "name": "enumerate CFT tests.filter test cases",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.filter test cases.call `cros-tool-runner`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"containerMetadataKey\": \"foo-build-target\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"request\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"passRatePolicy\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"passRate\": 96,@@@",
+      "@@@STEP_LOG_LINE@request@      \"minRuns\": 20@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"testSuites\": [@@@",
+      "@@@STEP_LOG_LINE@request@      {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testCases\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"id\": {@@@",
+      "@@@STEP_LOG_LINE@request@                \"value\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@request@              },@@@",
+      "@@@STEP_LOG_LINE@request@              \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@request@                {@@@",
+      "@@@STEP_LOG_LINE@request@                  \"value\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@request@                }@@@",
+      "@@@STEP_LOG_LINE@request@              ]@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    ],@@@",
+      "@@@STEP_LOG_LINE@request@    \"milestone\": \"108\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"board\": \"foo-build-target\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"defaultEnabled\": true@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DOCKER_DRONE_SERVER_NAME,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS,LOGDOG_STREAM_PREFIX,SWARMING_TASK_ID",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "pre-process",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process",
+    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"passRatePolicy\": {\n      \"passRate\": 96,\n      \"minRuns\": 20\n    },\n    \"testSuites\": [\n      {\n        \"testCases\": {\n          \"testCases\": [\n            {\n              \"id\": {\n                \"value\": \"foo-test\"\n              },\n              \"dependencies\": [\n                {\n                  \"value\": \"foo-dep:bar\"\n                }\n              ]\n            }\n          ]\n        }\n      }\n    ],\n    \"milestone\": \"108\",\n    \"board\": \"foo-build-target\",\n    \"defaultEnabled\": true\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate CFT tests.Shard test cases",
     "tags": {
       "shard_count": "1",

@@ -58,6 +58,11 @@ def RunSteps(api):
   api.cros_tool_runner.find_tests(find_tests_req)
 
   with api.assertions.assertRaises(ValueError):
+    api.cros_tool_runner.pre_process(None)
+  pre_process_req = ctr.CrosToolRunnerPreTestRequest()
+  api.cros_tool_runner.pre_process(pre_process_req)
+
+  with api.assertions.assertRaises(ValueError):
     api.cros_tool_runner.test(None)
   test_req = ctr.CrosToolRunnerTestRequest()
   api.cros_tool_runner.test(test_req)

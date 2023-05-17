@@ -13,18 +13,6 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -68,57 +56,9 @@
   },
   {
     "cmd": [],
-    "name": "configure resultdb bigquery export"
-  },
-  {
-    "cmd": [
-      "rdb",
-      "rpc",
-      "luci.resultdb.v1.Recorder",
-      "UpdateInvocation",
-      "-include-update-token"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure resultdb bigquery export.mark resultdb invocation for bigquery export",
-    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:42\"}, \"updateMask\": \"bigqueryExports\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@json.input@{@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"invocation\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"bigqueryExports\": [@@@",
-      "@@@STEP_LOG_LINE@json.input@      {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"dataset\": \"resultdb\", @@@",
-      "@@@STEP_LOG_LINE@json.input@        \"project\": \"cros-test-analytics\", @@@",
-      "@@@STEP_LOG_LINE@json.input@        \"table\": \"test_results\", @@@",
-      "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
-      "@@@STEP_LOG_LINE@json.input@      }@@@",
-      "@@@STEP_LOG_LINE@json.input@    ], @@@",
-      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:42\"@@@",
-      "@@@STEP_LOG_LINE@json.input@  }, @@@",
-      "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
-      "@@@STEP_LOG_LINE@json.input@}@@@",
-      "@@@STEP_LOG_END@json.input@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "publish build ID",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: PubSub topic not set@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {
@@ -194,18 +134,6 @@
       "gs://foo-container-metadata-url"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -240,15 +168,36 @@
     "cmd": [],
     "name": "enumerate CFT tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for default@[]@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@[@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@  \"foo-suite-shard-0\"@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@]@@@",
       "@@@STEP_LOG_END@autotest tests for default@@@",
       "@@@STEP_LOG_LINE@constructed cft enumeration response@{@@@",
       "@@@STEP_LOG_LINE@constructed cft enumeration response@  \"default\": {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@    \"errorSummary\": \"no test found\"@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@    \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@      {@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@        \"resultKeyvals\": {@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"suite\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@        },@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@        \"test\": {@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"allowRetries\": true,@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@            {@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@              \"label\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@            }@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          ],@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"executionEnvironment\": \"EXECUTION_ENVIRONMENT_CLIENT\",@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"maxRetries\": 1,@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"name\": \"foo-suite-shard-0\",@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"names\": [@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@            \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@          ]@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@        }@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@      }@@@",
+      "@@@STEP_LOG_LINE@constructed cft enumeration response@    ]@@@",
       "@@@STEP_LOG_LINE@constructed cft enumeration response@  }@@@",
       "@@@STEP_LOG_LINE@constructed cft enumeration response@}@@@",
-      "@@@STEP_LOG_END@constructed cft enumeration response@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@constructed cft enumeration response@@@"
     ]
   },
   {
@@ -263,18 +212,6 @@
       "[CLEANUP]/container_images_tmp_1"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "enumerate CFT tests.writing container metadata to file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -318,7 +255,20 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"testSuites\": [@@@",
       "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"testCases\": {}@@@",
+      "@@@STEP_LOG_LINE@response@      \"testCases\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"value\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@response@            },@@@",
+      "@@@STEP_LOG_LINE@response@            \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@response@              {@@@",
+      "@@@STEP_LOG_LINE@response@                \"value\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@response@              }@@@",
+      "@@@STEP_LOG_LINE@response@            ]@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ]@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
       "@@@STEP_LOG_LINE@response@  ]@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
@@ -346,18 +296,6 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "enumerate CFT tests.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -391,18 +329,6 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "enumerate CFT tests.call `cros-tool-runner`.test-finder",
     "stdin": "{\n  \"testSuites\": [\n    {\n      \"testCaseTagCriteria\": {\n        \"tags\": [\n          \"beep\",\n          \"boop\"\n        ],\n        \"tagExcludes\": [\n          \"blap\",\n          \"blop\"\n        ]\n      }\n    }\n  ],\n  \"containerMetadataKey\": \"foo-build-target\"\n}",
     "~followup_annotations": [
@@ -412,8 +338,17 @@
   {
     "cmd": [],
     "name": "enumerate CFT tests.filter test cases",
+    "tags": {
+      "removed_tests": "{\n  \"removed\": [\n    \"foo-test-removed\"\n  ]\n}"
+    },
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@removed_tests@{@@@",
+      "@@@STEP_LOG_LINE@removed_tests@  \"removed\": [@@@",
+      "@@@STEP_LOG_LINE@removed_tests@    \"foo-test-removed\"@@@",
+      "@@@STEP_LOG_LINE@removed_tests@  ]@@@",
+      "@@@STEP_LOG_LINE@removed_tests@}@@@",
+      "@@@STEP_LOG_END@removed_tests@@@"
     ]
   },
   {
@@ -430,7 +365,20 @@
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"testSuites\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"testCases\": {}@@@",
+      "@@@STEP_LOG_LINE@request@        \"testCases\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"id\": {@@@",
+      "@@@STEP_LOG_LINE@request@                \"value\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@request@              },@@@",
+      "@@@STEP_LOG_LINE@request@              \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@request@                {@@@",
+      "@@@STEP_LOG_LINE@request@                  \"value\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@request@                }@@@",
+      "@@@STEP_LOG_LINE@request@              ]@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ],@@@",
       "@@@STEP_LOG_LINE@request@    \"milestone\": \"108\",@@@",
@@ -439,7 +387,31 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"response\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"testSuites\": [@@@",
+      "@@@STEP_LOG_LINE@response@      {@@@",
+      "@@@STEP_LOG_LINE@response@        \"testCases\": {@@@",
+      "@@@STEP_LOG_LINE@response@          \"testCases\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@                \"value\": \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@response@              },@@@",
+      "@@@STEP_LOG_LINE@response@              \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@response@                {@@@",
+      "@@@STEP_LOG_LINE@response@                  \"value\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@response@                }@@@",
+      "@@@STEP_LOG_LINE@response@              ]@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    ],@@@",
+      "@@@STEP_LOG_LINE@response@    \"removedTests\": [@@@",
+      "@@@STEP_LOG_LINE@response@      \"foo-test-removed\"@@@",
+      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -460,20 +432,8 @@
       "/dev/stdout"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process",
-    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"passRatePolicy\": {\n      \"passRate\": 96,\n      \"minRuns\": 20\n    },\n    \"testSuites\": [\n      {\n        \"testCases\": {}\n      }\n    ],\n    \"milestone\": \"108\",\n    \"board\": \"foo-build-target\",\n    \"defaultEnabled\": true\n  }\n}",
+    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"passRatePolicy\": {\n      \"passRate\": 96,\n      \"minRuns\": 20\n    },\n    \"testSuites\": [\n      {\n        \"testCases\": {\n          \"testCases\": [\n            {\n              \"id\": {\n                \"value\": \"foo-test\"\n              },\n              \"dependencies\": [\n                {\n                  \"value\": \"foo-dep:bar\"\n                }\n              ]\n            }\n          ]\n        }\n      }\n    ],\n    \"milestone\": \"108\",\n    \"board\": \"foo-build-target\",\n    \"defaultEnabled\": true\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -482,25 +442,25 @@
     "cmd": [],
     "name": "enumerate CFT tests.Shard test cases",
     "tags": {
-      "shard_count": "0",
-      "unique_dependencies_count": "0"
+      "shard_count": "1",
+      "unique_dependencies_count": "1"
     },
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@shard seed@{@@@",
       "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000001@@@",
       "@@@STEP_LOG_LINE@shard seed@}@@@",
-      "@@@STEP_LOG_END@shard seed@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "enumerate CFT tests.enumeration error",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@default : no test found@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@shard seed@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@{@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"shardName\": \"foo-suite-shard-0\",@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@    \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@  ],@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"testNames\": [@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@    \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@  ]@@@",
+      "@@@STEP_LOG_LINE@foo-suite-shard-0@}@@@",
+      "@@@STEP_LOG_END@foo-suite-shard-0@@@"
     ]
   },
   {
@@ -528,18 +488,6 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "execute.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -564,10 +512,36 @@
       "@@@STEP_LOG_LINE@responses@{@@@",
       "@@@STEP_LOG_LINE@responses@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@responses@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@responses@      \"taskResults\": [@@@",
+      "@@@STEP_LOG_LINE@responses@        {@@@",
+      "@@@STEP_LOG_LINE@responses@          \"taskUrl\": \"foo://bar/baz/b100\",@@@",
+      "@@@STEP_LOG_LINE@responses@          \"state\": {@@@",
+      "@@@STEP_LOG_LINE@responses@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@responses@            \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@responses@          },@@@",
+      "@@@STEP_LOG_LINE@responses@          \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@responses@          \"logUrl\": \"logs://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@responses@        }@@@",
+      "@@@STEP_LOG_LINE@responses@      ],@@@",
       "@@@STEP_LOG_LINE@responses@      \"state\": {@@@",
       "@@@STEP_LOG_LINE@responses@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
-      "@@@STEP_LOG_LINE@responses@        \"verdict\": \"VERDICT_FAILED\"@@@",
-      "@@@STEP_LOG_LINE@responses@      }@@@",
+      "@@@STEP_LOG_LINE@responses@        \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@responses@      },@@@",
+      "@@@STEP_LOG_LINE@responses@      \"consolidatedResults\": [@@@",
+      "@@@STEP_LOG_LINE@responses@        {@@@",
+      "@@@STEP_LOG_LINE@responses@          \"attempts\": [@@@",
+      "@@@STEP_LOG_LINE@responses@            {@@@",
+      "@@@STEP_LOG_LINE@responses@              \"taskUrl\": \"foo://bar/baz/b100\",@@@",
+      "@@@STEP_LOG_LINE@responses@              \"state\": {@@@",
+      "@@@STEP_LOG_LINE@responses@                \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@responses@                \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@responses@              },@@@",
+      "@@@STEP_LOG_LINE@responses@              \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@responses@              \"logUrl\": \"logs://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@responses@            }@@@",
+      "@@@STEP_LOG_LINE@responses@          ]@@@",
+      "@@@STEP_LOG_LINE@responses@        }@@@",
+      "@@@STEP_LOG_LINE@responses@      ]@@@",
       "@@@STEP_LOG_LINE@responses@    }@@@",
       "@@@STEP_LOG_LINE@responses@  }@@@",
       "@@@STEP_LOG_LINE@responses@}@@@",
@@ -582,29 +556,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"build\": {\n    \"create_time\": \"2018-05-25T23:50:17Z\",\n    \"id\": \"42\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"error_summary\": \"no test found\"\n      },\n      \"request_params\": {\n        \"execution_param\": {\n          \"container_metadata\": {\n            \"containers\": {\n              \"foo-build-target\": {\n                \"images\": {\n                  \"some-service\": {\n                    \"digest\": \"123abc\"\n                  }\n                }\n              }\n            }\n          }\n        },\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"container_metadata_url\": \"gs://foo-container-metadata-url\",\n          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",\n          \"test_metadata_url\": \"gs://foo-metadata-url\"\n        },\n        \"retry\": {\n          \"allow\": true,\n          \"max\": 1\n        },\n        \"run_via_cft\": true,\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_attributes\": {\n          \"build_target\": {\n            \"name\": \"foo-build-target\"\n          }\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
+      "{\n  \"build\": {\n    \"create_time\": \"1970-01-01T00:00:00Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"autotest_invocations\": [\n          {\n            \"result_keyvals\": {\n              \"suite\": \"foo-suite\"\n            },\n            \"test\": {\n              \"allow_retries\": true,\n              \"dependencies\": [\n                {\n                  \"label\": \"foo-dep:bar\"\n                }\n              ],\n              \"execution_environment\": \"EXECUTION_ENVIRONMENT_CLIENT\",\n              \"max_retries\": 1,\n              \"name\": \"foo-suite-shard-0\",\n              \"names\": [\n                \"foo-test\"\n              ]\n            }\n          }\n        ]\n      },\n      \"request_params\": {\n        \"execution_param\": {\n          \"container_metadata\": {\n            \"containers\": {\n              \"foo-build-target\": {\n                \"images\": {\n                  \"some-service\": {\n                    \"digest\": \"123abc\"\n                  }\n                }\n              }\n            }\n          }\n        },\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"container_metadata_url\": \"gs://foo-container-metadata-url\",\n          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",\n          \"test_metadata_url\": \"gs://foo-metadata-url\"\n        },\n        \"retry\": {},\n        \"run_via_cft\": true,\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_attributes\": {\n          \"build_target\": {\n            \"name\": \"foo-build-target\"\n          }\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "execute.call binary.write input",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@input.json@{@@@",
       "@@@STEP_LOG_LINE@input.json@  \"build\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"create_time\": \"2018-05-25T23:50:17Z\",@@@",
-      "@@@STEP_LOG_LINE@input.json@    \"id\": \"42\"@@@",
+      "@@@STEP_LOG_LINE@input.json@    \"create_time\": \"1970-01-01T00:00:00Z\"@@@",
       "@@@STEP_LOG_LINE@input.json@  },@@@",
       "@@@STEP_LOG_LINE@input.json@  \"tagged_requests\": {@@@",
       "@@@STEP_LOG_LINE@input.json@    \"default\": {@@@",
@@ -614,7 +575,27 @@
       "@@@STEP_LOG_LINE@input.json@        }@@@",
       "@@@STEP_LOG_LINE@input.json@      },@@@",
       "@@@STEP_LOG_LINE@input.json@      \"enumeration\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@        \"error_summary\": \"no test found\"@@@",
+      "@@@STEP_LOG_LINE@input.json@        \"autotest_invocations\": [@@@",
+      "@@@STEP_LOG_LINE@input.json@          {@@@",
+      "@@@STEP_LOG_LINE@input.json@            \"result_keyvals\": {@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"suite\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@input.json@            },@@@",
+      "@@@STEP_LOG_LINE@input.json@            \"test\": {@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"allow_retries\": true,@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@input.json@                {@@@",
+      "@@@STEP_LOG_LINE@input.json@                  \"label\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@input.json@                }@@@",
+      "@@@STEP_LOG_LINE@input.json@              ],@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"execution_environment\": \"EXECUTION_ENVIRONMENT_CLIENT\",@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"max_retries\": 1,@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"name\": \"foo-suite-shard-0\",@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"names\": [@@@",
+      "@@@STEP_LOG_LINE@input.json@                \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@input.json@              ]@@@",
+      "@@@STEP_LOG_LINE@input.json@            }@@@",
+      "@@@STEP_LOG_LINE@input.json@          }@@@",
+      "@@@STEP_LOG_LINE@input.json@        ]@@@",
       "@@@STEP_LOG_LINE@input.json@      },@@@",
       "@@@STEP_LOG_LINE@input.json@      \"request_params\": {@@@",
       "@@@STEP_LOG_LINE@input.json@        \"execution_param\": {@@@",
@@ -638,10 +619,7 @@
       "@@@STEP_LOG_LINE@input.json@          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",@@@",
       "@@@STEP_LOG_LINE@input.json@          \"test_metadata_url\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
-      "@@@STEP_LOG_LINE@input.json@        \"retry\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@          \"allow\": true,@@@",
-      "@@@STEP_LOG_LINE@input.json@          \"max\": 1@@@",
-      "@@@STEP_LOG_LINE@input.json@        },@@@",
+      "@@@STEP_LOG_LINE@input.json@        \"retry\": {},@@@",
       "@@@STEP_LOG_LINE@input.json@        \"run_via_cft\": true,@@@",
       "@@@STEP_LOG_LINE@input.json@        \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@input.json@          \"qs_account\": \"foo-qs-account\"@@@",
@@ -688,20 +666,8 @@
       "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "execute.call binary.launch luciexe",
-    "stdin": "\b*\u0012,\n\bchromeos\u0012\ftestplatform\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001c\u0012\u0002 \u001e*\u0016\u0012\u0014invocations/build:42\ufffd\u0001\u001d\n\nuser_agent\u0012\u000fsuite_scheduler",
+    "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@step.sub_build@{@@@",
@@ -722,28 +688,42 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:testplatform"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "execute.call binary.read output",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@output.json@{@@@",
       "@@@STEP_LOG_LINE@output.json@  \"tagged_responses\": {@@@",
       "@@@STEP_LOG_LINE@output.json@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@output.json@      \"consolidated_results\": [@@@",
+      "@@@STEP_LOG_LINE@output.json@        {@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"attempts\": [@@@",
+      "@@@STEP_LOG_LINE@output.json@            {@@@",
+      "@@@STEP_LOG_LINE@output.json@              \"log_url\": \"logs://bar/baz\",@@@",
+      "@@@STEP_LOG_LINE@output.json@              \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@output.json@              \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output.json@                \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@output.json@                \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output.json@              },@@@",
+      "@@@STEP_LOG_LINE@output.json@              \"task_url\": \"foo://bar/baz/b100\"@@@",
+      "@@@STEP_LOG_LINE@output.json@            }@@@",
+      "@@@STEP_LOG_LINE@output.json@          ]@@@",
+      "@@@STEP_LOG_LINE@output.json@        }@@@",
+      "@@@STEP_LOG_LINE@output.json@      ],@@@",
       "@@@STEP_LOG_LINE@output.json@      \"state\": {@@@",
       "@@@STEP_LOG_LINE@output.json@        \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
-      "@@@STEP_LOG_LINE@output.json@        \"verdict\": \"VERDICT_FAILED\"@@@",
-      "@@@STEP_LOG_LINE@output.json@      }@@@",
+      "@@@STEP_LOG_LINE@output.json@        \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output.json@      },@@@",
+      "@@@STEP_LOG_LINE@output.json@      \"task_results\": [@@@",
+      "@@@STEP_LOG_LINE@output.json@        {@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"log_url\": \"logs://bar/baz\",@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output.json@            \"life_cycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@output.json@            \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output.json@          },@@@",
+      "@@@STEP_LOG_LINE@output.json@          \"task_url\": \"foo://bar/baz/b100\"@@@",
+      "@@@STEP_LOG_LINE@output.json@        }@@@",
+      "@@@STEP_LOG_LINE@output.json@      ]@@@",
       "@@@STEP_LOG_LINE@output.json@    }@@@",
       "@@@STEP_LOG_LINE@output.json@  }@@@",
       "@@@STEP_LOG_LINE@output.json@}@@@",
@@ -757,24 +737,50 @@
       "@@@STEP_LOG_LINE@output@{@@@",
       "@@@STEP_LOG_LINE@output@  \"taggedResponses\": {@@@",
       "@@@STEP_LOG_LINE@output@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@output@      \"taskResults\": [@@@",
+      "@@@STEP_LOG_LINE@output@        {@@@",
+      "@@@STEP_LOG_LINE@output@          \"taskUrl\": \"foo://bar/baz/b100\",@@@",
+      "@@@STEP_LOG_LINE@output@          \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output@            \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@output@            \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output@          },@@@",
+      "@@@STEP_LOG_LINE@output@          \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@output@          \"logUrl\": \"logs://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@output@        }@@@",
+      "@@@STEP_LOG_LINE@output@      ],@@@",
       "@@@STEP_LOG_LINE@output@      \"state\": {@@@",
       "@@@STEP_LOG_LINE@output@        \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
-      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_FAILED\"@@@",
-      "@@@STEP_LOG_LINE@output@      }@@@",
+      "@@@STEP_LOG_LINE@output@        \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output@      },@@@",
+      "@@@STEP_LOG_LINE@output@      \"consolidatedResults\": [@@@",
+      "@@@STEP_LOG_LINE@output@        {@@@",
+      "@@@STEP_LOG_LINE@output@          \"attempts\": [@@@",
+      "@@@STEP_LOG_LINE@output@            {@@@",
+      "@@@STEP_LOG_LINE@output@              \"taskUrl\": \"foo://bar/baz/b100\",@@@",
+      "@@@STEP_LOG_LINE@output@              \"state\": {@@@",
+      "@@@STEP_LOG_LINE@output@                \"lifeCycle\": \"LIFE_CYCLE_COMPLETED\",@@@",
+      "@@@STEP_LOG_LINE@output@                \"verdict\": \"VERDICT_PASSED\"@@@",
+      "@@@STEP_LOG_LINE@output@              },@@@",
+      "@@@STEP_LOG_LINE@output@              \"name\": \"foo-passed\",@@@",
+      "@@@STEP_LOG_LINE@output@              \"logUrl\": \"logs://bar/baz\"@@@",
+      "@@@STEP_LOG_LINE@output@            }@@@",
+      "@@@STEP_LOG_LINE@output@          ]@@@",
+      "@@@STEP_LOG_LINE@output@        }@@@",
+      "@@@STEP_LOG_LINE@output@      ]@@@",
       "@@@STEP_LOG_LINE@output@    }@@@",
       "@@@STEP_LOG_LINE@output@  }@@@",
       "@@@STEP_LOG_LINE@output@}@@@",
       "@@@STEP_LOG_END@output@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrVkpJTUsszSlRslKoViouSSxJBbNyMtNSnSuTc0A8JR9PN9d450hnHyDp7xvg4xri6qKko6BUllqUkpkM0qoU5hrk4ukcEu/m6OkDlKytrQUAC9kbvA==\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTEuRiT0lNSyzNKRFiE2LhKBBgAgAo8APS\"@@@",
-      "@@@SET_BUILD_PROPERTY@response@\"{\\n  \\\"state\\\": {\\n    \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n    \\\"verdict\\\": \\\"VERDICT_FAILED\\\"\\n  }\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJzVUFELgkAM/iux50J79S3OCwQjUQsiQk5vhnR64l1Bif+9WUL03kuMjX3bvu1jPUgsxVVZ8GY9WGEuMRqChvDxXdh1igCUWnuOk4uO/OHkS9eF+QyMFRZfXFWVyO6FGhGEwZpn7MBCittNFPKU++P4DTtZFeMx2PPYD1iaRaskoeZA3UbUOJ1atMIYlCNH6fMkgTLz0QDD6dcCCt0YrSpJK+XXH4S1WLd/8hWy4QklQZIp\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwTambkYk9JTUsszSkRquAyExJKy8+30tdPSiwC4ir9JEMDAykWjgIBRiUuoIxuQWJxcWqKFl9OfnoxQpkQWIWUBbn6AYAqJOI=\"@@@",
+      "@@@SET_BUILD_PROPERTY@response@\"{\\n  \\\"consolidatedResults\\\": [\\n    {\\n      \\\"attempts\\\": [\\n        {\\n          \\\"logUrl\\\": \\\"logs://bar/baz\\\",\\n          \\\"name\\\": \\\"foo-passed\\\",\\n          \\\"state\\\": {\\n            \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n            \\\"verdict\\\": \\\"VERDICT_PASSED\\\"\\n          },\\n          \\\"taskUrl\\\": \\\"foo://bar/baz/b100\\\"\\n        }\\n      ]\\n    }\\n  ],\\n  \\\"state\\\": {\\n    \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n    \\\"verdict\\\": \\\"VERDICT_PASSED\\\"\\n  },\\n  \\\"taskResults\\\": [\\n    {\\n      \\\"logUrl\\\": \\\"logs://bar/baz\\\",\\n      \\\"name\\\": \\\"foo-passed\\\",\\n      \\\"state\\\": {\\n        \\\"lifeCycle\\\": \\\"LIFE_CYCLE_COMPLETED\\\",\\n        \\\"verdict\\\": \\\"VERDICT_PASSED\\\"\\n      },\\n      \\\"taskUrl\\\": \\\"foo://bar/baz/b100\\\"\\n    }\\n  ]\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "publish build ID (2)",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: PubSub topic not set@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {
@@ -783,36 +789,98 @@
   },
   {
     "cmd": [],
-    "name": "summarize",
+    "name": "postprocess.default",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@overall verdict@VERDICT_FAILED@@@",
-      "@@@STEP_LOG_END@overall verdict@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "name": "postprocess.default.buildbucket.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_postprocess\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\", \"testResults\": [{\"logData\": {}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"testplatform\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cros_test_postprocess\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"testplatform\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"cros_test_postprocess\"@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"logData\": {}@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }, @@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", @@@",
+      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@          }, @@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "summarize"
   },
   {
     "cmd": [],
     "name": "summarize.default task results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "summarize.default task results.enumeration error",
+    "name": "summarize.default task results.passed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@summary@default : no test found@@@",
-      "@@@STEP_LOG_END@summary@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LINK@1. (log)  foo-passed@logs://bar/baz@@@",
+      "@@@STEP_LINK@1. (task)  foo-passed@foo://bar/baz/b100@@@"
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "1 out of 1 requests were unsuccessful\n\n- Failed with incomplete results: 1 request"
-    },
     "name": "$result"
   }
 ]

@@ -19,6 +19,8 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
+from PB.chromiumos.test.api import pre_test_service as pre_request
+
 from PB.go.chromium.org.luci.resultdb.proto.v1 import (
     invocation as invocation_pb2,)
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner import (
@@ -321,6 +323,20 @@ def _should_enumerate_via_ctf(r):
   return r.params.run_via_cft and _build_supports_cros_test_finder(r)
 
 
+def _extract_build_numbers_from_request(r):
+  """Extracts the build number matches a test_platform request
+
+  Args:
+    * r: test_platform.Request
+
+  returns List[string]
+  """
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build':
+      return re.findall(r'/R(\d{2,3})-\d*', dep.chromeos_build)
+  return []  # pragma: no cover
+
+
 # TODO(b/261051011): Remove this workaround.
 def _build_supports_cros_test_finder(r):
   """Whether the given request supports cros-test-finder enumeration; only
@@ -331,12 +347,9 @@ def _build_supports_cros_test_finder(r):
 
   Returns: bool
   """
-  for dep in r.params.software_dependencies:
-    if dep.WhichOneof('dep') == 'chromeos_build':
-      build_number_matches = re.findall(r'/R(\d{2,3})-\d*', dep.chromeos_build)
-      if build_number_matches:
-        return int(build_number_matches[0]) >= 104
-      break  # pragma: no cover
+  build_number_matches = _extract_build_numbers_from_request(r)
+  if build_number_matches:
+    return int(build_number_matches[0]) >= 104
   return False  # pragma: no cover
 
 
@@ -351,13 +364,9 @@ def _should_cft_be_turned_off_for_build(r):
 
   Returns: bool
   """
-  for dep in r.params.software_dependencies:
-    if dep.WhichOneof('dep') == 'chromeos_build':
-      # this regex is trying to find all `*/R{dd/ddd}-d*' pattern in build.
-      # example build: 'foo-build-target-postsubmit/R108-33333.0.0-112318231231'.
-      # from the pattern, we can retrieve the build milestone (108 for the example).
-      build_number_matches = re.findall(r'/R(\d{2,3})-\d*', dep.chromeos_build)
-      return int(next(iter(build_number_matches), 108)) < 108
+  build_number_matches = _extract_build_numbers_from_request(r)
+  if build_number_matches:
+    return int(next(iter(build_number_matches), 108)) < 108
   return False  # pragma: no cover
 
 
@@ -423,12 +432,17 @@ def _enumerate_cft_tests(api, requests):
 
       autotest_invocations = []
       tag_criteria = r.test_plan.tag_criteria
+      test_suites = test_finder_result.test_suites
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
-        autotest_invocations = _build_tast_invocations(
-            api, r, test_finder_result.test_suites, suite_name)
+        filtered_test_suites = _build_filtered_tests(api, r, test_suites,
+                                                     build_target)
+        if build_target == "jacuzzi":  # pragma: nocover
+          test_suites = filtered_test_suites
+        autotest_invocations = _build_tast_invocations(api, r, test_suites,
+                                                       suite_name)
       else:
         autotest_invocations = _build_autotest_invocations(
-            test_finder_result.test_suites, suite_name)
+            test_suites, suite_name)
       if autotest_invocations:
         tagged_responses[t] = EnumerationResponse(
             autotest_invocations=autotest_invocations)
@@ -451,6 +465,50 @@ def _enumerate_cft_tests(api, requests):
         sort_keys=True)
 
     return tagged_responses
+
+
+def _build_filtered_tests(api, r, test_suites, build_target):
+  """Create non-breaking step to filter out test cases.
+
+  Args:
+    * r: test_platform.Request.
+    * test_suites: List[test_suite]
+    * build_target: board
+
+  Returns: List[test_suite]
+  """
+  with api.step.nest("filter test cases") as step:
+    try:
+      build_number_matches = _extract_build_numbers_from_request(r)
+      milestone = next(iter(build_number_matches))
+      req = _ctr_test_filter(test_suites, build_target, milestone)
+      pre_test_resp = api.cros_tool_runner.pre_process(req)
+      if pre_test_resp.response.removed_tests:
+        step.presentation.tags["removed_tests"] = json.dumps(
+            {
+                "removed": [
+                    str(test) for test in pre_test_resp.response.removed_tests
+                ]
+            }, separators=(',', ': '), indent=2)
+        step.presentation.logs["removed_tests"] = json.dumps(
+            {
+                "removed": [
+                    str(test) for test in pre_test_resp.response.removed_tests
+                ]
+            }, separators=(',', ': '), indent=2)
+      else:
+        return test_suites
+
+      return pre_test_resp.response.test_suites
+    # Ensure step is non-breaking
+    except Exception as e:  # pragma: nocover # pylint: disable=broad-except
+      step.presentation.tags["Exception"] = json.dumps({"exception": str(e)},
+                                                       separators=(',', ': '),
+                                                       indent=2)
+      step.presentation.logs["Exception"] = json.dumps({"exception": str(e)},
+                                                       separators=(',', ': '),
+                                                       indent=2)
+      return test_suites
 
 
 def _build_tast_invocations(api, request, test_suites, suite_name):
@@ -665,6 +723,29 @@ def _shard_dependencies(shard):
     for dep in test_case.dependencies:
       deps.add(dep.value)
   return list(deps)
+
+
+def _ctr_test_filter(test_suites, board, milestone):
+  """Build a CrosToolRunnerPreTestRequest.
+
+  Args:
+    * request: List[TestSuite]
+    * board: board
+    * milestone: string
+
+  Returns: ctr.CrosToolRunnerPreTestRequest
+  """
+
+  prp = pre_request.PassRatePolicy(pass_rate=96, min_runs=20,
+                                   num_of_milestones=0, force_enabled_tests=[],
+                                   force_disabled_tests=[])
+  formattedProto = pre_request.FilterFlakyRequest(pass_rate_policy=prp,
+                                                  board=board,
+                                                  test_suites=test_suites,
+                                                  milestone=milestone,
+                                                  default_enabled=True)
+  return ctr.CrosToolRunnerPreTestRequest(request=formattedProto,
+                                          container_metadata_key=board)
 
 
 def _ctr_test_suite(request):
@@ -1707,6 +1788,37 @@ def _generic_cft_enumerate_response(api):
 }'''))
 
 
+def _generic_cft_filter_tests_response(api):
+  return api.step_data(
+      'enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process',
+      stdout=api.raw_io.output('''
+{
+  "response": {
+    "testSuites": [
+      {
+        "test_cases":{
+            "test_cases":[
+               {
+                  "id":{
+                     "value":"foo-test"
+                  },
+                  "dependencies":[
+                     {
+                        "value":"foo-dep:bar"
+                     }
+                  ]
+               }
+            ]
+         }
+      }
+    ],
+    "removedTests": [
+      "foo-test-removed"
+    ]
+  }
+}'''))
+
+
 def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
   test_cases = ",\n".join([
       '''{
@@ -2678,6 +2790,29 @@ def GenTests(api):
               }),
       _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'cft-suite-with-filtered-tests-with-passed-tasks',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]),
+                          total_shards=5)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_cft_filter_tests_response(api),
       _generic_passing_execute_response(api),
   )
 

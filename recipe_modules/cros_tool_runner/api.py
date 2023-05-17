@@ -134,6 +134,15 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
                      ctr.CrosToolRunnerTestFinderRequest,
                      ctr.CrosToolRunnerTestFinderResponse, send_response=True)
 
+  def pre_process(self, request):
+    """Pre process commands via `pre-process` subcommand.
+
+        Args:
+          request: a CrosToolRunnerPreTestRequest.
+        """
+    return self._run('pre-process', request, ctr.CrosToolRunnerPreTestRequest,
+                     ctr.CrosToolRunnerPreTestResponse, send_response=True)
+
   def test(self, request):
     """Run test(s) via `test` subcommand.
 

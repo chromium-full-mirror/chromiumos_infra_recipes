@@ -175,6 +175,45 @@
       "--non-interactive",
       "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DOCKER_DRONE_SERVER_NAME,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS,LOGDOG_STREAM_PREFIX,SWARMING_TASK_ID",
       "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
+      "pre-process",
+      "-docker_key_file",
+      "/creds/service_accounts/skylab-drone.json",
+      "-images",
+      "[CLEANUP]/container_images_tmp_1",
+      "-input",
+      "/dev/stdin",
+      "-output",
+      "/dev/stdout"
+    ],
+    "name": "call `cros-tool-runner` (6).pre-process",
+    "stdin": "{}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (7)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call `cros-tool-runner` (8)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "--non-interactive",
+      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DOCKER_DRONE_SERVER_NAME,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS,LOGDOG_STREAM_PREFIX,SWARMING_TASK_ID",
+      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
       "test",
       "-docker_key_file",
       "/creds/service_accounts/skylab-drone.json",
@@ -185,7 +224,7 @@
       "-output",
       "/dev/stdout"
     ],
-    "name": "call `cros-tool-runner` (6).test",
+    "name": "call `cros-tool-runner` (8).test",
     "stdin": "{}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
