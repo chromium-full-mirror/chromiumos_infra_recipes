@@ -13392,7 +13392,7 @@ Recipe for invoking the per project buildspec tool.
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
 ### *recipes* / [proto\_doctor](/recipes/proto_doctor.py)
 
-[DEPS](/recipes/proto_doctor.py#23): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/proto_doctor.py#23): [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Compile and sync proto files across ChromeOS.
@@ -13402,20 +13402,28 @@ changes to the infra/proto repo. The poller should batch requests, so there may
 be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
-&mdash; **def [RunSteps](/recipes/proto_doctor.py#46)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#48)(api: recipe_api.RecipeApi):**
 
 Starting point for main recipe logic.
 
 This function does setup, determines which branches to work on, and then
 defers to child functions for specific processing.
 
-&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#60)(api: recipe_api.RecipeApi, branch: str):**
+&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#77)(api: recipe_api.RecipeApi, branch: str):**
 
 Check out all the necessary projects on the given branch.
 
 Args:
   api: The recipe API.
   branch: The branch to checkout, such as "main".
+
+&mdash; **def [process\_branch](/recipes/proto_doctor.py#66)(api: recipe_api.RecipeApi, branch: str):**
+
+For a single branch, propagate infra/proto changes across the tree.
+
+Args:
+  api: The recipe API.
+  branch: The branch to work from, such as "main".
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#16): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

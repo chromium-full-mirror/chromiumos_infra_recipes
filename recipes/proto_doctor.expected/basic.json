@@ -5,6 +5,13 @@
   },
   {
     "cmd": [],
+    "name": "set branches",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@branches@[\"main\", \"release-R100-14526.B\"]@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "process branch main"
   },
   {

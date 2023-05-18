@@ -24,6 +24,8 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'deferrals',
+    'easy',
     'repo',
     'src_state',
 ]
@@ -50,11 +52,26 @@ def RunSteps(api: recipe_api.RecipeApi) -> None:
   defers to child functions for specific processing.
   """
   gitiles_triggers = _validate_triggers(api)
-  branches = set(_get_branch(gt) for gt in gitiles_triggers)
+  branches = sorted(set(_get_branch(gt) for gt in gitiles_triggers))
+  api.easy.set_properties_step(branches=branches)
 
-  for branch in sorted(branches):
-    with api.step.nest(f'process branch {branch}'):
-      check_out_branch(api, branch)
+  # If one branch raises an exception, defer the exception so that the other
+  # branches can run.
+  with api.deferrals.raise_exceptions_at_end():
+    for branch in branches:
+      with api.deferrals.defer_exceptions():
+        process_branch(api, branch)
+
+
+def process_branch(api: recipe_api.RecipeApi, branch: str) -> None:
+  """For a single branch, propagate infra/proto changes across the tree.
+
+  Args:
+    api: The recipe API.
+    branch: The branch to work from, such as "main".
+  """
+  with api.step.nest(f'process branch {branch}'):
+    check_out_branch(api, branch)
 
 
 def check_out_branch(api: recipe_api.RecipeApi, branch: str) -> None:
@@ -173,6 +190,24 @@ def GenTests(
       api.post_check(post_process.StepException, 'validate triggers'),
       api.post_check(post_process.SummaryMarkdownRE,
                      'Gitiles trigger in non-proto repo:.*'),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'first-branch-fails-second-branch-runs',
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(gitiles=gitiles_trigger_main),
+          triggers_pb2.Trigger(gitiles=gitiles_trigger_release_branch),
+      ]),
+      api.step_data('process branch main.repo init', retcode=1),
+      # Double-check that the main branch comes before the release branch.
+      api.post_check(post_process.PropertyEquals, 'branches',
+                     [MAIN_BRANCH, release_branch]),
+      api.post_check(post_process.StepException,
+                     f'process branch {MAIN_BRANCH}'),
+      api.post_check(post_process.StepSuccess,
+                     f'process branch {release_branch}'),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
