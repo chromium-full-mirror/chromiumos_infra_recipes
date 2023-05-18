@@ -28,8 +28,8 @@ from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_api
 
 TEST_SUMMARY_KEY = 'test_summary'
-SNAPSHOT_HWTEST_SUITES = [
-    'bvt-tast-cq', 'bvt-arc', 'bvt-tast-arc', 'bvt-inline'
+DEFAULT_SNAPSHOT_HWTEST_ALLOWLIST = [
+    'bvt-tast-cq', 'bvt-arc', 'bvt-tast-arc', 'bvt-inline', 'cq-medium'
 ]
 
 # A Git footer that can be included in commit messages to tell the CQ run to
@@ -51,6 +51,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = []
     self._not_runnable_addtnl_tests = []
     self._dry_run_exonerate_retried_suites = properties.dry_run_exonerate_retried_suites
+    self._snapshot_hw_test_allowlist = properties.snapshot_hw_test_allowlist or DEFAULT_SNAPSHOT_HWTEST_ALLOWLIST
 
     # Map from (host, project) combo to the local dir the repo was cloned to.
     # This is used to cache the results of _fetch_starlark_files().
@@ -427,12 +428,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return tast_gce_unit
 
   def _filter_snapshot_hw_test_units(self, hw_test_units):
-    """Restrict to SNAPSHOT_HWTEST_SUITES only."""
+    """Restrict to _snapshot_hw_test_allowlist only."""
     filtered_hw_test_units = []
     for test_unit in hw_test_units:
       filtered_hw_test = []
       for hw_test in test_unit.hw_test_cfg.hw_test:
-        if hw_test.suite in SNAPSHOT_HWTEST_SUITES:
+        if hw_test.suite in self._snapshot_hw_test_allowlist:
           filtered_hw_test.append(hw_test)
 
       if filtered_hw_test:
