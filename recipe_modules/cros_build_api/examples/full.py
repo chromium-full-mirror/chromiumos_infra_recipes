@@ -19,7 +19,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   _ = api.cros_build_api.GetVersion()
-  # Check dumb build API call works. Use protos defined in
+  # Check that a simple build API call works. Use protos defined in
   # chromiumos_infra_proto/src/analysis_service/analysis_service.proto so that
   # the analysis_service will write an event for the result.
   input_proto = binhost.PrepareBinhostUploadsRequest(

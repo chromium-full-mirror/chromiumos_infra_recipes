@@ -162,8 +162,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       response = self.m.cros_build_api.SysrootService.InstallToolchain(
           request, response_lambda=response_lambda, timeout=timeout_sec,
           test_output_data=test_data)
-      pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
-                                                   self.m.file.read_raw)
+      pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
       self.m.failures.set_compile_failed_packages(pres, pkgs)
 
   def install_packages(self, config, dep_graph, packages=None,
@@ -272,8 +271,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
 
       pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
-                                                   response,
-                                                   self.m.file.read_raw)
+                                                   response)
       # If we have a chrome checkout and the prop to disable cleanup is not off,
       # clean up the chrome cache checkout.
       if (chrome_root and not self._disable_chrome_source_purge):

@@ -1024,7 +1024,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#72)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#735)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#734)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1033,7 +1033,7 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#749)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#748)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
@@ -1110,7 +1110,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#761)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#760)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1182,7 +1182,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#144)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#928)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#927)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1192,7 +1192,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#908)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#907)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1291,7 +1291,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#689)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#688)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
@@ -1314,18 +1314,18 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#898)(self):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#897)(self):**
 
 Upload Chrome prebuilts from the build.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#885)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#884)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#865)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#864)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -2406,7 +2406,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#153)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#248)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -2414,7 +2414,7 @@ To add a service endpoint, create a class INSIDE THIS MODULE extending Stub.
 Make sure the class name is the same as the service name.
 
 To call a service endpoint, call the corresponding method on the stub. It
-will "magicly" know what to do and fail gracefully if it does not. Example:
+will "magically" know what to do and fail gracefully if it does not. Example:
 
     # Inside recipes/my_recipe.py...
     my_request_proto = BundleRequest()
@@ -2423,16 +2423,19 @@ will "magicly" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform some validation and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#272)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#324)(self, test_data=None):**
 
 Get the Build API version.
 
 The version is always queried, and the result cached.
 
-Returns:
-  CrosBuildApi.Version, the version of the Build API.
+Args:
+  test_data: A string representation of a VersionGetResponse dict.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#382)(self, endpoint, input_proto, output_type, test_output_data=None, test_teelog_data=None, name=None, infra_step=False, timeout=None, response_lambda=None, pkg_logs_lambda=None, step_text=None, use_chromite_head=False, retcode_fn=None):**
+Returns:
+  The version of the Build API.
+
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#434)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, use_chromite_head: bool=False, retcode_fn: Optional[Callable[([int], None)]]=None):**
 
 Call the build API with the given input proto.
 
@@ -2442,38 +2445,38 @@ clients may call this function directly, they should ALMOST ALWAYS call
 the build API through the appropriate stub.
 
 Args:
-  endpoint (str): The full endpoint to call,
-      e.g. chromite.api.MyService/MyMethod
-  input_proto (google.protobuf): The input proto object.
-  output_type (google.protobuf.descriptor): The output proto type.
-  test_output_data (str): JSON to use as a response during testing.
-  test_teelog_data (str): Text to use as tee-log contents during testing.
-  name (str): Name for the step. Generated automatically if not specified.
-  infra_step (bool): Whether this build API call should be treated as an
-      infrastructure step.
-  timeout (int): timeout in seconds to be supplied to the BuildAPI call.
-  response_lambda (fn(output_proto)->str): A function that appends a string
-      to the build api response step. Used to make failure step names unique
-      across differing root causes.
-  pkg_logs_lambda (fn(failed_package_data, fn, chroot_path)->(str, str)): a
-      function which takes information about a failed package and its log
-      and produces the {cp} name of the package and the log's contents.
-  step_text (str): text to put on the step for the call.
-  use_chromite_head (bool): Whether to use chromite-HEAD instead of the
-      default branched chromite. Intended for use in the new signing flow.
-      Note: There are some instances where the build API makes other calls
-      within the build API. This will NOT work with that flow, and thus
-      should ONLY be used with calls that do not make other calls. It also
-      shouldn't be used in conjunction with calls not using chromite-HEAD
-      if you're expecting state to carry across the calls.
-  retcode_fn (fn(int)->None): Called with the return code from Build API.
-      This is useful for when the return code is 2
-      (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
+  endpoint: The full endpoint to call, e.g. chromite.api.MyService/MyMethod.
+  input_proto: The input proto object.
+  output_type: The output proto type.
+  test_output_data: String of JSON to use as a response during testing.
+  test_teelog_data: Text to use as tee-log contents during testing.
+  name: Name for the step. Generated automatically if not specified.
+  infra_step: Whether this build API call should be treated as an
+    infrastructure step.
+  timeout: Timeout in seconds to be supplied to the Build API call.
+  response_lambda: A function that appends a string to the build API
+    response step. Used to make failure step names unique across differing
+    root causes.
+  pkg_logs_lambda: A function to produce log information about failed
+    packages. It should take two arguments: the request message and the
+    response message. It should return a list of tuples (failed_package,
+    logs), where failed_package is the category-package for a package that
+    failed, and logs is the corresponding build logs contents.
+  step_text: text to put on the step for the call.
+  use_chromite_head: Whether to use chromite-HEAD instead of the
+    default branched chromite. Intended for use in the new signing flow.
+    Note: There are some instances where the build API makes other calls
+    within the build API. This will NOT work with that flow, and thus
+    should ONLY be used with calls that do not make other calls. It also
+    shouldn't be used in conjunction with calls not using chromite-HEAD
+    if you're expecting state to carry across the calls.
+  retcode_fn: Called with the return code from Build API. This is useful for
+    when the return code is 2 (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
 
 Returns:
-  google.protobuf: The parsed response proto.
+  The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#324)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#377)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2481,31 +2484,29 @@ To use this, pass response_lambda=api.cros_build_api.failed_pkg_data_names
 to the build api call.
 
 Args:
-  output_proto (a BuildAPI response): A Response that has a
-      'failed_package_data' attribute.
+  output_proto: A Response object that has a 'failed_package_data'
+      attribute.
 
 Returns:
   A string to append to the response step name.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#293)(input_proto, output_proto, read_raw_fn):**
+&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#348)(self, input_proto: message.Message, output_proto: message.Message):**
 
 Function to cat log file and retrieve package name.
 
-To use this, pass failed_pkg_lambda=api.cros_build_api.failed_pkg_logs to
+To use this, pass pkg_logs_lambda=api.cros_build_api.failed_pkg_logs to
 the build api call.
 
 Args:
-  input_proto (a BuildAPI request): A Request that contains a
-      chromiumos.Chroot attribute called 'chroot'.
-  output_proto (a BuildAPI response): A Response that has a
-      'failed_package_data' attribute.
-  read_raw_fn (the LUCI file module's read_raw function): Utility function
-      for reading log file inside the chroot.
+  input_proto: A Request object that contains a chromiumos.Chroot attribute
+    called 'chroot'.
+  output_proto: A Response object that has a 'failed_package_data'
+    attribute.
 
 Returns:
-  A list of tuples containing the package name and corresponding build log.
+  A list of tuples (package_name, build_log).
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#353)(output_proto):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#406)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2513,44 +2514,37 @@ To use this, pass response_lambda=api.cros_build_api.failed_pkg_names to the
 build api call.
 
 Args:
-  output_proto (a BuildAPI response): A Response that has a
-      'failed_packages' attribute.
+  output_proto: A Response object that has a 'failed_packages' attribute.
 
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#559)(self, stub, method):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#617)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
 Args:
-  stub (Stub): stub instance to check if `method` can be called on it.
-  method (str): name of method to check for.
+  stub: Stub instance to check whether `method` can be called on it.
+  method: Name of method to check for.
 
 Returns:
-  bool: Whether `method` can be called on `stub`.
+  Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#206)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#265)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#259)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#320)(self, major=1, minor=0, bug=0):**
 
-Is the Build API at least |major|.|minor|.|bug|.
+Return whether the Build API version is at least major.minor.bug.
 
-Args:
-  major (int): the major version.
-  minor (int): the minor level.
-  bug (int): the bug level.
+&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#281)(self):**
 
-Returns:
-  bool, whether the version is a least the required value.
+Return the log level used when calling Build API.
 
-&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#221)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#303)(self):**
 
-Log level used when calling Build API
-
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#243)(self):**
+Return the version that this build API uses.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
 
 [DEPS](/recipe_modules/cros_cache/__init__.py#5): [easy](#recipe_modules-easy), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -9433,7 +9427,7 @@ Args:
       cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#285)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None, skip_image_tests=False, verify_image_size_delta=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#283)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None, skip_image_tests=False, verify_image_size_delta=False):**
 
 Build and validate images.
 
@@ -9479,7 +9473,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#40)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#169)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#168)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None, dryrun=False):**
 
 Install packages (possibly fetching Chrome source).
 
@@ -11277,10 +11271,10 @@ Call the RunCopybot endpoint.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/remove_endpoints.py#14)(api):**
 ### *recipes* / [cros\_build\_api:tests/version](/recipe_modules/cros_build_api/tests/version.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/version.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_build_api/tests/version.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/version.py#14)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/version.py#16)(api):**
 ### *recipes* / [cros\_cache:examples/full](/recipe_modules/cros_cache/examples/full.py)
 
 [DEPS](/recipe_modules/cros_cache/examples/full.py#6): [cros\_cache](#recipe_modules-cros_cache), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -13392,7 +13386,7 @@ Recipe for invoking the per project buildspec tool.
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
 ### *recipes* / [proto\_doctor](/recipes/proto_doctor.py)
 
-[DEPS](/recipes/proto_doctor.py#23): [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/proto_doctor.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Compile and sync proto files across ChromeOS.
@@ -13402,14 +13396,14 @@ changes to the infra/proto repo. The poller should batch requests, so there may
 be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
-&mdash; **def [RunSteps](/recipes/proto_doctor.py#48)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#50)(api: recipe_api.RecipeApi):**
 
 Starting point for main recipe logic.
 
 This function does setup, determines which branches to work on, and then
 defers to child functions for specific processing.
 
-&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#77)(api: recipe_api.RecipeApi, branch: str):**
+&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#80)(api: recipe_api.RecipeApi, branch: str):**
 
 Check out all the necessary projects on the given branch.
 
@@ -13417,7 +13411,11 @@ Args:
   api: The recipe API.
   branch: The branch to checkout, such as "main".
 
-&mdash; **def [process\_branch](/recipes/proto_doctor.py#66)(api: recipe_api.RecipeApi, branch: str):**
+&mdash; **def [compile\_chromite\_protos](/recipes/proto_doctor.py#95)(api: recipe_api.RecipeApi):**
+
+Compile proto bindings in chromite/, and upload to Gerrit.
+
+&mdash; **def [process\_branch](/recipes/proto_doctor.py#68)(api: recipe_api.RecipeApi, branch: str):**
 
 For a single branch, propagate infra/proto changes across the tree.
 

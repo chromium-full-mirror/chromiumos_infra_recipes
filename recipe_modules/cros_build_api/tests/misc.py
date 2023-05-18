@@ -77,6 +77,9 @@ def RunSteps(api):
           'MarkStable': android.MarkStableResponse,
           'WriteLKGB': android.WriteLKGBResponse,
       },
+      'ApiService': {
+          'CompileProto': meta_api.CompileProtoResponse,
+      },
       'ArtifactsService': {
           'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
           'BuildSetup': artifacts.BuildSetupResponse,

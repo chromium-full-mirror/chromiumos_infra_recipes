@@ -682,8 +682,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             timeout=3 * 60 * 60,
             response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
-        pkgs = self.m.cros_build_api.failed_pkg_logs(request, response,
-                                                     self.m.file.read_raw)
+        pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
         self.m.failures.set_test_failed_packages(presentation, pkgs)
 
   def upload_artifacts(self, config=None, private_bundle_func=None,

@@ -60,8 +60,7 @@ def RunSteps(api: RecipeApi):
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
           request, response_lambda=api.cros_build_api.failed_pkg_data_names,
           pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
-      pkgs = api.cros_build_api.failed_pkg_logs(request, response,
-                                                api.file.read_raw)
+      pkgs = api.cros_build_api.failed_pkg_logs(request, response)
       api.failures.set_test_failed_packages(step, pkgs)
 
     # SDK has been modified, so ensure it is not reused.

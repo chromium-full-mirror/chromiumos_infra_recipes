@@ -6,12 +6,19 @@
 """Test responses for build API endpoints."""
 
 import json
+from typing import Any, Dict, Iterable, List, Optional
 
 from recipe_engine import recipe_test_api
-from RECIPE_MODULES.chromeos.cros_build_api.api import CrosBuildApiApi
+from RECIPE_MODULES.chromeos.cros_build_api import api as cros_build_api
+
+# Type hints to make type hints easier to understand.
+_MethodName = str
+_ServiceName = str
+# _ResponseJson is a type alias for a dict representing a proto response method.
+_ResponseJson = Dict[str, Any]
 
 
-def jsonify(**kwargs):
+def jsonify(**kwargs) -> _ResponseJson:
   """Return the kwargs as a json string."""
   return json.dumps(kwargs, sort_keys=True)
 
@@ -28,18 +35,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions"
   ]
 
-  def path(self, subpath):
+  def path(self, subpath: str) -> str:
     """Return the given subpath as a fully qualified path.
 
     Args:
-      subpath (str): Relative path of interest.
+      subpath: Relative path of interest.
 
     Returns:
-      str: An absolute, qualified recipes path.
+      An absolute, qualified recipes path.
     """
     return str(self.m.path['start_dir'].join(subpath))
 
-  def src_path(self, path):
+  def src_path(self, path: str) -> str:
     """Return the given path in the source tree checkout.
 
     Args:
@@ -51,7 +58,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return str(self.m.src_state.workspace_path.join(path))
 
   @property
-  def android_service_responses(self):
+  def android_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for AndroidService."""
     ret = {
         'GetLatestBuild':
@@ -70,7 +77,23 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return ret
 
   @property
-  def artifact_service_responses(self):
+  def api_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate test responses for ApiService."""
+    responses = {}
+    responses['CompileProto'] = jsonify(
+        modified_files=[
+            {
+                'path': self.src_path('chromite/api/gen/some_file_pb2.py')
+            },
+            {
+                'path': self.src_path('chromite/api/gen_sdk/some_file_pb2.py')
+            },
+        ],
+    )
+    return responses
+
+  @property
+  def artifact_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ArtifactsService."""
     _uploaded_path = lambda name: dict(path=self.path(name), location=2)
 
@@ -115,7 +138,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return ret
 
   @property
-  def binhost_service_responses(self):
+  def binhost_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for BinhostService."""
     responses = {}
     responses['PrepareBinhostUploads'] = jsonify(
@@ -159,7 +182,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def copybot_service_responses(self):
+  def copybot_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for CopybotService."""
     responses = {}
     responses['RunCopybot'] = jsonify(
@@ -169,7 +192,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def dependency_service_responses(self):
+  def dependency_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for DependencyService."""
     responses = {}
     responses['GetBuildDependencyGraph'] = jsonify(
@@ -210,7 +233,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def firmware_service_responses(self):
+  def firmware_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for FirmwareService."""
     _uploaded_path = lambda name: dict(path=self.path(name), location=2)
 
@@ -257,7 +280,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def image_service_responses(self):
+  def image_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ImageService."""
     responses = {}
     responses['Create'] = jsonify(
@@ -285,7 +308,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def observability_service_responses(self):
+  def observability_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ObservabilityService."""
     responses = {
         'GetImageSizeData':
@@ -358,7 +381,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def method_service_responses(self):
+  def method_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for MethodService."""
     methods = []
     responses_by_service = self.responses_by_service(
@@ -371,7 +394,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['Get'] = jsonify(methods=methods,)
     return responses
 
-  def uprev_methods_responses(self, ebuilds):
+  def uprev_methods_responses(self,
+                              ebuilds) -> Dict[_MethodName, _ResponseJson]:
     """Returns response for uprev-related methods in PackageService.
 
     Args:
@@ -392,7 +416,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def package_service_responses(self):
+  def package_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for PackageService."""
     responses = {}
     responses['BuildsChrome'] = jsonify(builds_chrome=True,)
@@ -447,7 +471,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def payload_service_responses(self):
+  def payload_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for PayloadService."""
     responses = {}
     remote_uri = ('gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
@@ -457,14 +481,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def portage_explorer_service_responses(self):
+  def portage_explorer_service_responses(
+      self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for PortageExplorerService."""
     responses = {}
     responses['RunSpiders'] = '{}'
     return responses
 
   @property
-  def sdk_service_responses(self):
+  def sdk_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for SdkService."""
     responses = {}
     responses['Clean'] = '{}'
@@ -521,7 +546,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def sysroot_service_responses(self):
+  def sysroot_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for SysrootService."""
     responses = {}
     responses['Create'] = jsonify(
@@ -537,7 +562,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def test_service_responses(self):
+  def test_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for TestService."""
     responses = {}
     responses['BuildTargetUnitTest'] = jsonify(failed_package_data=[],)
@@ -554,7 +579,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
-  def toolchain_service_responses(self):
+  def toolchain_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ToolchainService."""
     responses = {}
     responses['PrepareForBuild'] = jsonify(build_relevance="UNKNOWN")
@@ -567,29 +592,38 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     ])
     return responses
 
-  @property
-  def test_version(self):
-    return CrosBuildApiApi.Version(1, 1, 0)
+  test_version = cros_build_api.Version(1, 1, 0)
 
   @property
-  def version_service_responses(self):
+  def version_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for VersionService."""
-    return dict(
-        Get=jsonify(
-            version=dict(major=self.test_version.major, minor=self.test_version
-                         .minor, bug=self.test_version.bug)))
+    return {
+        'Get':
+            jsonify(
+                version={
+                    'major': self.test_version.major,
+                    'minor': self.test_version.minor,
+                    'bug': self.test_version.bug,
+                })
+    }
 
-  def responses_by_service(self, include_method_service=True):
+  def responses_by_service(
+      self, include_method_service: bool = True
+  ) -> Dict[_ServiceName, Dict[_MethodName, _ResponseJson]]:
     """Map service name to a dictionary of responses by method name.
 
     Args:
-      include_method_service (bool): used to include adding the endpoints of the
+      include_method_service: used to include adding the endpoints of the
           MethodService to this map. This is a hack to allow
           `method_service_responses` to use this method to generate a full
           canned response without causing infinite recursion.
+
+    Returns:
+      A dict of {service_name: {endpoint_name: sample_response_json}}.
     """
     result = {
         'AndroidService': self.android_service_responses,
+        'ApiService': self.api_service_responses,
         'ArtifactsService': self.artifact_service_responses,
         'BinhostService': self.binhost_service_responses,
         'CopybotService': self.copybot_service_responses,
@@ -610,15 +644,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       result['MethodService'] = self.method_service_responses
     return result
 
-  def response_for_endpoint(self, endpoint, test_data=None):
+  def response_for_endpoint(
+      self, endpoint: str,
+      test_data: Optional[recipe_test_api.ModuleTestData] = None) -> str:
     """Return a fake response for the endpoint, if any.
 
     Args:
-      endpoint (str): Fully qualified endpoint to get test response data for.
-      test_data (recipe_test_api.ModuleTestData): The _test_data in the invoker RecipeApi object.
+      endpoint: Fully qualified endpoint to get test response data for.
+      test_data: The _test_data in the invoker RecipeApi object.
 
     Returns:
-      str: JSON string containing fake response data for the endpoint.
+      JSON string containing fake response data for the endpoint.
     """
     service, method = endpoint.split('/')
     service = service.split('.')[-1]
@@ -647,7 +683,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
   @recipe_test_api.mod_test_data
   @staticmethod
-  def set_upreved_ebuilds(ebuilds):
+  def set_upreved_ebuilds(ebuilds: List[str]) -> List[str]:
     """Set the return data from some uprev-related build API endpoints.
 
     Changes the modified ebuild files returned from these endpoints:
@@ -656,23 +692,27 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     - RevBumpChrome
 
     Args:
-      ebuilds (list(str)): Modified ebuild file path, relative to the workspace directory.
+      ebuilds: Modified ebuild file paths, relative to the workspace directory.
+
+    Returns:
+      The same ebuilds that were passed in. But since this method is decorated
+      with mod_test_data, you can pass this into api.test().
     """
     return ebuilds
 
-  def set_api_return(self, parent_step_name, endpoint='', data='', iteration=1,
-                     retcode=0, step_name=''):
+  def set_api_return(self, parent_step_name: str, endpoint: str = '',
+                     data: str = '', iteration: int = 1, retcode: int = 0,
+                     step_name: str = '') -> recipe_test_api.TestData:
     """Set the return from a Build API call.
 
     Args:
-      parent_step_name (str): Name of the parent step, such as
-        'prepare artifacts'.
-      endpoint (str): Endpoint name, such as 'ImageService/Create'. Used to
-        generate a step name.
-      data (str): Build API response to return (JSON string).
-      iteration (int): Which call this applies to for this step/endpoint.
-      retcode (int): Return code for the Build API call.
-      step_name (str): Name of the step given to the Build API call. If provided
+      parent_step_name: Name of the parent step, such as 'prepare artifacts'.
+      endpoint: Endpoint name, such as 'ImageService/Create'. Used to generate
+        a step name.
+      data: Build API response to return, as a JSON string.
+      iteration: Which call this applies to for this step/endpoint.
+      retcode: Return code for the Build API call.
+      step_name: Name of the step given to the Build API call. If provided,
         overrides the automatically generated name using the endpoint name.
 
     Returns:
@@ -703,30 +743,30 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
   @recipe_test_api.mod_test_data
   @staticmethod
-  def call_version_service(value):
+  def call_version_service(value: bool) -> bool:
     """Whether to call VersionService/Get in testing.
 
     Args:
-      value (bool): if True, call VersionService/Get during testing.  If false,
-      just use test_data or the default test answer, without calling the test
-      method.
+      value: if True, call VersionService/Get during testing.  If false, just
+      use test_data or the default test answer, without calling the test method.
 
     Returns:
-      (mod_test_data) to pass to api.test.
+      The same value that was passed in. But since this method is decorated with
+      mod_test_data, you can pass this into api.test().
     """
     return value
 
   @recipe_test_api.mod_test_data
   @staticmethod
-  def remove_endpoints(value):
+  def remove_endpoints(value: Iterable[str]):
     """Remove the given endpoints from the API.
 
     Args:
-      value (set, dict, or list): endpoints to remove.  For example:
-         ['ArtifactsService/Get']
+      value: Endpoints to remove. For example: ['ArtifactsService/Get'].
 
     Returns:
-      (mod_test_data) to pass to api.test.
+      The same value that was passed in. But since this method is decorated with
+      mod_test_data, you can pass this into api.test().
     """
     assert not isinstance(value, str), 'endpoint must not be type str'
     return set('chromite.api.{}'.format(x) for x in value)

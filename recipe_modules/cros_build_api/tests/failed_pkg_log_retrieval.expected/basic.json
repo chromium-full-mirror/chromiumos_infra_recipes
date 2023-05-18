@@ -1,5 +1,845 @@
 [
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/0",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar0"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/1",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar1"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/2",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar2"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/3",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar3"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar4"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/5",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar5"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/6",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar6"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/7",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar7"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/8",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar8"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/9",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar9"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/10",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar10"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/11",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar11"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/12",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar12"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/13",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar13"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/14",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar14"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/15",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar15"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/16",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar16"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/17",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar17"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/18",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar18"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/19",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar19"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/20",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar20"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/21",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar21"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/22",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar22"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/23",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar23"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/24",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar24"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/25",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar25"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/26",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar26"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/27",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar27"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/28",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar28"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/29",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar29"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/30",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar30"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/31",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar31"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/32",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar32"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/33",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar33"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/34",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar34"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/35",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar35"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/36",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar36"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/37",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar37"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/38",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar38"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/39",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar39"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/40",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar40"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/41",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar41"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/42",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar42"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/43",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar43"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/44",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar44"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/45",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar45"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/46",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar46"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/47",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar47"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/48",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar48"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/49",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar49"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/50",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar50"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/51",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar51"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/52",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar52"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/53",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar53"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/54",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar54"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/55",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar55"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/56",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar56"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/57",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar57"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/58",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar58"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/59",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for foo/bar59"
+  },
+  {
     "name": "$result"
   }
 ]

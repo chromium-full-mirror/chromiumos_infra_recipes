@@ -30,8 +30,7 @@ def RunSteps(api):
 
   failed_packages = api.cros_build_api.failed_pkg_logs(
       sysroot.InstallToolchainRequest(),
-      sysroot.InstallPackagesResponse(failed_package_data=packages), lambda *
-      args: 'log file content goes here')
+      sysroot.InstallPackagesResponse(failed_package_data=packages))
 
   api.assertions.assertTrue(len(failed_packages) == len(packages))
   for i, pkg in enumerate(packages):
@@ -51,8 +50,7 @@ def RunSteps(api):
 
   failed_packages = api.cros_build_api.failed_pkg_logs(
       sysroot.InstallToolchainRequest(),
-      sysroot.InstallPackagesResponse(failed_package_data=packages), lambda *
-      args: 'log file content goes here')
+      sysroot.InstallPackagesResponse(failed_package_data=packages))
 
   api.assertions.assertTrue(len(failed_packages) == len(packages))
   for i, pkg in enumerate(packages):

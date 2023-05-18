@@ -13,6 +13,7 @@ For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
 from typing import Generator, List
 
+from PB.chromite.api import api as api_service
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from recipe_engine import config_types
@@ -24,6 +25,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'cros_build_api',
     'deferrals',
     'easy',
     'repo',
@@ -72,6 +74,7 @@ def process_branch(api: recipe_api.RecipeApi, branch: str) -> None:
   """
   with api.step.nest(f'process branch {branch}'):
     check_out_branch(api, branch)
+    compile_chromite_protos(api)
 
 
 def check_out_branch(api: recipe_api.RecipeApi, branch: str) -> None:
@@ -87,6 +90,13 @@ def check_out_branch(api: recipe_api.RecipeApi, branch: str) -> None:
         manifest_branch=branch,
     )
     api.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
+
+
+def compile_chromite_protos(api: recipe_api.RecipeApi) -> None:
+  """Compile proto bindings in chromite/, and upload to Gerrit."""
+  with api.step.nest('compile chromite protos'):
+    request = api_service.CompileProtoRequest()
+    api.cros_build_api.ApiService.CompileProto(request)
 
 
 def _validate_triggers(

@@ -7,8 +7,9 @@
 
 import functools
 import hashlib
-from typing import Callable
+from typing import Any, Callable, List, Optional, Tuple
 
+from google.protobuf import descriptor
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
 from google.protobuf import message
@@ -16,35 +17,40 @@ from google.protobuf import reflection
 from google.protobuf import timestamp_pb2
 
 from PB.chromite.api import api as meta_api
+from PB.recipe_modules.chromeos.cros_build_api import (cros_build_api as
+                                                       cros_build_api_pb2)
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
 
-def _verify_proto_endpoint(instance, method):
+def _verify_proto_endpoint(
+    service_stub: 'Stub',
+    method: str) -> Tuple[str, descriptor.MethodDescriptor]:
   """Verifies that the method exists as proto endpoint.
 
   Verifies that the method exists as a proto endpoint within the Stub purely
-  from a protocol buffer definition standpoint. If it does not exist a
-  `KeyError` is thrown.
+  from a protocol buffer definition standpoint.
 
   Args:
-    instance (Stub): The instance to check.
-    method (str): Name of method to check for.
+    service_stub: The service to check.
+    method: Name of method to check for.
 
   Returns:
-    service, method_descriptor if found, otherwise throws
-        `KeyError`.
+    A tuple of (service ID, method descriptor) for the given method.
+
+  Raises:
+    KeyError: If the method does not exist on this service.
   """
-  service = 'chromite.api.%s' % type(instance).__name__
+  service_id = 'chromite.api.%s' % type(service_stub).__name__
   # Check that the service and method exist.
-  service_descriptor = descriptor_pool.Default().FindServiceByName(service)
+  service_descriptor = descriptor_pool.Default().FindServiceByName(service_id)
   method_descriptor = service_descriptor.FindMethodByName(method)
   if not method_descriptor:
-    raise KeyError('no such method %s in service %s' % (method, service))
-  return service, method_descriptor
+    raise KeyError('no such method %s in service %s' % (method, service_id))
+  return service_id, method_descriptor
 
 
-class Stub():
+class Stub:
   """A simple client stub for the build API.
 
   This class should have one subclass for each service. It determines the exact
@@ -54,14 +60,29 @@ class Stub():
   service expects.
   """
 
-  def __init__(self, call_build_api):
-    # call_build_api is a function that (blindly) writes the proto to
-    # file, calls the build API command line, and reads the output. This
-    # needs to be a callback because non-RecipeApi classes cannot use the
-    # injected modules such as recipe_modules/file
+  def __init__(self, call_build_api: Callable) -> None:
+    """Initialize the Stub instance.
+
+    Args:
+      call_build_api: A function that (blindly) writes the proto to a file,
+        calls the build API command line, and reads the output. This needs to be
+        a callback because non-RecipeApi classes cannot use the injected modules
+        such as recipe_modules/file/.
+    """
     self._call_build_api = call_build_api
 
-  def __call__(self, method, input_proto, **kwargs):
+  def __call__(self, method: str, input_proto: message.Message,
+               **kwargs) -> message.Message:
+    """Call the given method on this service.
+
+    Args:
+      method: The name of the method, such as 'Uprev'.
+      input_proto: A populated request message corresopnding to this endpoint.
+      kwargs: Additional kwargs to pass into self._call_build_api.
+
+    Returns:
+      A populated response message returned by the endpoint.
+    """
     service, method_descriptor = _verify_proto_endpoint(self, method)
 
     # Check that the input type aligns with what is expected.
@@ -76,12 +97,32 @@ class Stub():
     return self._call_build_api(endpoint, input_proto,
                                 method_descriptor.output_type, **kwargs)
 
-  def __getattr__(self, attr):
-    return functools.partial(self, attr)
+  def __getattr__(
+      self, method: str) -> Callable[[message.Message, Any], message.Message]:
+    """Return a partial call of this Stub instance for a given endpoint.
+
+    Example usage:
+      class PackageService(Stub):
+        pass
+      PackageService.Uprev(request)
+    In this case, PackageService.Uprev calls __getattr__, which returns a
+    partial of PackageService.__call__ with method='Uprev'. Then that partial
+    is called with input_proto=request. In short, this enables the above syntax
+    as a prettier form of PackageService('Uprev', request).
+
+    Returns:
+      A callable for the given method, which takes an input proto message and
+      any number of kwargs, and returns a response proto message.
+    """
+    return functools.partial(self, method)
 
 
 class AndroidService(Stub):
   """Stub for AndroidService."""
+
+
+class ApiService(Stub):
+  """Stub for ApiService."""
 
 
 class ArtifactsService(Stub):
@@ -150,6 +191,60 @@ class VersionService(Stub):
   """Stub for VersionService."""
 
 
+@functools.total_ordering
+class Version():
+  """Version of the Build API."""
+
+  def __init__(self, major: int = 1, minor: int = 1, bug: int = 0) -> None:
+    """Initialize the Version instance."""
+    self.major = major
+    self.minor = minor
+    self.bug = bug
+
+  @property
+  def _tuple(self) -> Tuple[int, int, int]:
+    """Return a tuple of (major, minor, bug)."""
+    return (self.major, self.minor, self.bug)
+
+  def __eq__(self, other: Any) -> bool:
+    """Return whether this Version is equal to another."""
+    return self._tuple == other._tuple
+
+  def __lt__(self, other: Any) -> bool:
+    """Return whether this Version is less than another."""
+    return self._tuple < other._tuple
+
+  def __repr__(self) -> str:
+    """Return a string representation of this Version."""
+    return f'{self.major}.{self.minor}.{self.bug}'
+
+  @classmethod
+  def ParseVersion(cls, version: str) -> 'Version':
+    """Turn a dot-delimited string version into a Version instance.
+
+    Args:
+      version: A dot-delimtied string version, such as '1.2.3'.
+
+    Returns:
+      A Version representing the input version.
+    """
+    major, minor, bug = version.split('.')
+    return cls(int(major), int(minor), int(bug))
+
+  def FormatResponse(self) -> meta_api.VersionGetResponse:
+    """Return the API response for this version.
+
+    Returns:
+      A VersionGetResponse representing this Version.
+    """
+    return json_format.MessageToJson(
+        meta_api.VersionGetResponse(version={
+            'major': self.major,
+            'minor': self.minor,
+            'bug': self.bug,
+        }))
+
+
 class CrosBuildApiApi(RecipeApi):
   """This recipe module exposes client stubs for all build API services.
 
@@ -157,7 +252,7 @@ class CrosBuildApiApi(RecipeApi):
   Make sure the class name is the same as the service name.
 
   To call a service endpoint, call the corresponding method on the stub. It
-  will "magicly" know what to do and fail gracefully if it does not. Example:
+  will "magically" know what to do and fail gracefully if it does not. Example:
 
       # Inside recipes/my_recipe.py...
       my_request_proto = BundleRequest()
@@ -167,49 +262,14 @@ class CrosBuildApiApi(RecipeApi):
   The stub will perform some validation and then call the build API command.
   """
 
-  @functools.total_ordering
-  class Version():
-
-    def __init__(self, major=1, minor=1, bug=0):
-      self.major = major
-      self.minor = minor
-      self.bug = bug
-
-    def __eq__(self, other):
-      return self.major == other.major and self.minor == other.minor and self.bug == other.bug
-
-    def __lt__(self, other):
-      if self.major == other.major:
-        if self.minor == other.minor:
-          return self.bug < other.bug
-        return self.minor < other.minor
-      return self.major < other.major
-
-    def __repr__(self):
-      return '%d.%d.%d' % (self.major, self.minor, self.bug)
-
-    @classmethod
-    def ParseVersion(cls, version):
-      major, minor, bug = version.split('.')
-      return cls(int(major), int(minor), int(bug))
-
-    def FormatResponse(self):
-      """Return the API response for this version.
-
-      Returns:
-        VersionGetResponse, the Build API response for this version.
-      """
-      return json_format.MessageToJson(
-          meta_api.VersionGetResponse(
-              version=dict(major=self.major, minor=self.minor, bug=self.bug)))
-
-  def initialize(self):
+  def initialize(self) -> None:
     """Expose all client stubs defined in this module."""
     stubs = Stub.__subclasses__()
     for stub in stubs:
       setattr(self, stub.__name__, stub(self))
 
-  def __init__(self, properties, *args, **kwargs):
+  def __init__(self, properties: cros_build_api_pb2.CrosBuildApiProperties,
+               *args, **kwargs) -> None:
     super().__init__(*args, **kwargs)
     self._capture_stdout_stderr = properties.capture_stdout_stderr
     self._log_level = properties.log_level or 'debug'
@@ -219,17 +279,17 @@ class CrosBuildApiApi(RecipeApi):
     self._publish_emerge_stats_to_prop = properties.publish_emerge_stats_to_prop
 
   @property
-  def log_level(self):
-    """Log level used when calling Build API"""
+  def log_level(self) -> str:
+    """Return the log level used when calling Build API."""
     return self._log_level
 
   @property
-  def _endpoints(self):
-    """Endpoints for internal use."""
+  def _endpoints(self) -> List[str]:
+    """Return the list of endpoints. For internal use."""
     if not self._api_endpoints:
       # Initialize the endpoint list, if this is the first call to the Build
-      # API.  If we are testing, just grab the answer from test_api, rather than
-      # creating the extra steps in expectations files.  This should help reduce
+      # API. If we are testing, just grab the answer from test_api, rather than
+      # creating the extra steps in expectations files. This should help reduce
       # the churn in expectations files.
       test_data = json_format.Parse(
           self.test_api.method_service_responses['Get'],
@@ -241,9 +301,10 @@ class CrosBuildApiApi(RecipeApi):
     return self._api_endpoints
 
   @property
-  def version(self):
+  def version(self) -> Version:
+    """Return the version that this build API uses."""
     if not self._version:
-      # Get the Build API version.  If we are testing, just grab the answer from
+      # Get the Build API version. If we are testing, just grab the answer from
       # test_api, rather than creating extra steps in the expectations files.
       # This should help reduce churn in expectations files.
       test_data = json_format.Parse(
@@ -253,29 +314,23 @@ class CrosBuildApiApi(RecipeApi):
           test_data if self._test_data.enabled else self.VersionService.Get(
               meta_api.VersionGetRequest()))
       version = response.version
-      self._version = self.Version(version.major, version.minor, version.bug)
+      self._version = Version(version.major, version.minor, version.bug)
     return self._version
 
-  def is_at_least_version(self, major=1, minor=0, bug=0):
-    """Is the Build API at least |major|.|minor|.|bug|.
+  def is_at_least_version(self, major=1, minor=0, bug=0) -> bool:
+    """Return whether the Build API version is at least major.minor.bug."""
+    return self.version >= Version(major, minor, bug)
 
-    Args:
-      major (int): the major version.
-      minor (int): the minor level.
-      bug (int): the bug level.
-
-    Returns:
-      bool, whether the version is a least the required value.
-    """
-    return self.version >= self.Version(major, minor, bug)
-
-  def GetVersion(self, test_data=None):
+  def GetVersion(self, test_data=None) -> Version:
     """Get the Build API version.
 
     The version is always queried, and the result cached.
 
+    Args:
+      test_data: A string representation of a VersionGetResponse dict.
+
     Returns:
-      CrosBuildApi.Version, the version of the Build API.
+      The version of the Build API.
     """
     if (self._test_data.enabled and
         not self._test_data.get('call_version_service', False)):
@@ -287,26 +342,24 @@ class CrosBuildApiApi(RecipeApi):
                      meta_api.VersionGetRequest(),
                      meta_api.VersionGetResponse.DESCRIPTOR, infra_step=True,
                      test_output_data=test_data).version
-    self._version = self.Version(version.major, version.minor, version.bug)
+    self._version = Version(version.major, version.minor, version.bug)
     return self._version
 
-  @staticmethod
-  def failed_pkg_logs(input_proto, output_proto, read_raw_fn):
+  def failed_pkg_logs(self, input_proto: message.Message,
+                      output_proto: message.Message) -> List[Tuple[str, str]]:
     """Function to cat log file and retrieve package name.
 
-    To use this, pass failed_pkg_lambda=api.cros_build_api.failed_pkg_logs to
+    To use this, pass pkg_logs_lambda=api.cros_build_api.failed_pkg_logs to
     the build api call.
 
     Args:
-      input_proto (a BuildAPI request): A Request that contains a
-          chromiumos.Chroot attribute called 'chroot'.
-      output_proto (a BuildAPI response): A Response that has a
-          'failed_package_data' attribute.
-      read_raw_fn (the LUCI file module's read_raw function): Utility function
-          for reading log file inside the chroot.
+      input_proto: A Request object that contains a chromiumos.Chroot attribute
+        called 'chroot'.
+      output_proto: A Response object that has a 'failed_package_data'
+        attribute.
 
     Returns:
-      A list of tuples containing the package name and corresponding build log.
+      A list of tuples (package_name, build_log).
     """
     logs = []
     for failed_pkg in output_proto.failed_package_data:
@@ -314,7 +367,7 @@ class CrosBuildApiApi(RecipeApi):
       if failed_pkg.log_path.path:
         name = '%s/%s' % (failed_pkg.name.category,
                           failed_pkg.name.package_name)
-        content = read_raw_fn(
+        content = self.m.file.read_raw(
             'read log for %s' % name,
             '%s%s' % (input_proto.chroot.path, failed_pkg.log_path.path),
             'test data for %s log file' % name)
@@ -322,15 +375,15 @@ class CrosBuildApiApi(RecipeApi):
     return logs
 
   @staticmethod
-  def failed_pkg_data_names(output_proto):
+  def failed_pkg_data_names(output_proto: message.Message) -> str:
     """Function to append a list of failed package to the failure step.
 
     To use this, pass response_lambda=api.cros_build_api.failed_pkg_data_names
     to the build api call.
 
     Args:
-      output_proto (a BuildAPI response): A Response that has a
-          'failed_package_data' attribute.
+      output_proto: A Response object that has a 'failed_package_data'
+          attribute.
 
     Returns:
       A string to append to the response step name.
@@ -351,15 +404,14 @@ class CrosBuildApiApi(RecipeApi):
     return failed_packages
 
   @staticmethod
-  def failed_pkg_names(output_proto):
+  def failed_pkg_names(output_proto: message.Message) -> str:
     """Function to append a list of failed package to the failure step.
 
     To use this, pass response_lambda=api.cros_build_api.failed_pkg_names to the
     build api call.
 
     Args:
-      output_proto (a BuildAPI response): A Response that has a
-          'failed_packages' attribute.
+      output_proto: A Response object that has a 'failed_packages' attribute.
 
     Returns:
       A string to append to the response step name.
@@ -379,10 +431,17 @@ class CrosBuildApiApi(RecipeApi):
       failed_packages = ': ' + failed_packages
     return failed_packages
 
-  def __call__(self, endpoint, input_proto, output_type, test_output_data=None,
-               test_teelog_data=None, name=None, infra_step=False, timeout=None,
-               response_lambda=None, pkg_logs_lambda=None, step_text=None,
-               use_chromite_head=False, retcode_fn=None):
+  def __call__(
+      self, endpoint: str, input_proto: message.Message,
+      output_type: descriptor.Descriptor,
+      test_output_data: Optional[str] = None,
+      test_teelog_data: Optional[str] = None, name: Optional[str] = None,
+      infra_step: bool = False, timeout: Optional[int] = None,
+      response_lambda: Optional[Callable[[message.Message], str]] = None,
+      pkg_logs_lambda: Optional[Callable[[message.Message, message.Message],
+                                         Tuple[str, str]]] = None,
+      step_text: Optional[str] = None, use_chromite_head: bool = False,
+      retcode_fn: Optional[Callable[[int], None]] = None) -> message.Message:
     """Call the build API with the given input proto.
 
     This function tries to be as dumb as possible. It does not validate that
@@ -391,36 +450,36 @@ class CrosBuildApiApi(RecipeApi):
     the build API through the appropriate stub.
 
     Args:
-      endpoint (str): The full endpoint to call,
-          e.g. chromite.api.MyService/MyMethod
-      input_proto (google.protobuf): The input proto object.
-      output_type (google.protobuf.descriptor): The output proto type.
-      test_output_data (str): JSON to use as a response during testing.
-      test_teelog_data (str): Text to use as tee-log contents during testing.
-      name (str): Name for the step. Generated automatically if not specified.
-      infra_step (bool): Whether this build API call should be treated as an
-          infrastructure step.
-      timeout (int): timeout in seconds to be supplied to the BuildAPI call.
-      response_lambda (fn(output_proto)->str): A function that appends a string
-          to the build api response step. Used to make failure step names unique
-          across differing root causes.
-      pkg_logs_lambda (fn(failed_package_data, fn, chroot_path)->(str, str)): a
-          function which takes information about a failed package and its log
-          and produces the {cp} name of the package and the log's contents.
-      step_text (str): text to put on the step for the call.
-      use_chromite_head (bool): Whether to use chromite-HEAD instead of the
-          default branched chromite. Intended for use in the new signing flow.
-          Note: There are some instances where the build API makes other calls
-          within the build API. This will NOT work with that flow, and thus
-          should ONLY be used with calls that do not make other calls. It also
-          shouldn't be used in conjunction with calls not using chromite-HEAD
-          if you're expecting state to carry across the calls.
-      retcode_fn (fn(int)->None): Called with the return code from Build API.
-          This is useful for when the return code is 2
-          (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
+      endpoint: The full endpoint to call, e.g. chromite.api.MyService/MyMethod.
+      input_proto: The input proto object.
+      output_type: The output proto type.
+      test_output_data: String of JSON to use as a response during testing.
+      test_teelog_data: Text to use as tee-log contents during testing.
+      name: Name for the step. Generated automatically if not specified.
+      infra_step: Whether this build API call should be treated as an
+        infrastructure step.
+      timeout: Timeout in seconds to be supplied to the Build API call.
+      response_lambda: A function that appends a string to the build API
+        response step. Used to make failure step names unique across differing
+        root causes.
+      pkg_logs_lambda: A function to produce log information about failed
+        packages. It should take two arguments: the request message and the
+        response message. It should return a list of tuples (failed_package,
+        logs), where failed_package is the category-package for a package that
+        failed, and logs is the corresponding build logs contents.
+      step_text: text to put on the step for the call.
+      use_chromite_head: Whether to use chromite-HEAD instead of the
+        default branched chromite. Intended for use in the new signing flow.
+        Note: There are some instances where the build API makes other calls
+        within the build API. This will NOT work with that flow, and thus
+        should ONLY be used with calls that do not make other calls. It also
+        shouldn't be used in conjunction with calls not using chromite-HEAD
+        if you're expecting state to carry across the calls.
+      retcode_fn: Called with the return code from Build API. This is useful for
+        when the return code is 2 (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
 
     Returns:
-      google.protobuf: The parsed response proto.
+      The parsed response proto.
     """
     # Fetch the endpoint list on the first call, rather than first call to
     # has_endpoint. This should reduce the expectations churn as has_endpoint
@@ -527,8 +586,7 @@ class CrosBuildApiApi(RecipeApi):
 
           with self.m.step.nest(resp_step_name) as resp_pres:
             resp_pres.logs['build api stdout'] = file_contents or ''
-            pkg_logs = pkg_logs_lambda(input_proto, output_proto,
-                                       self.m.file.read_raw)
+            pkg_logs = pkg_logs_lambda(input_proto, output_proto)
             pkg_logs.sort(key=lambda pl: pl[0].package_name)
             resp_pres.logs.update({
                 '%s/%s log' % (p.category, p.package_name): log_contents
@@ -556,15 +614,15 @@ class CrosBuildApiApi(RecipeApi):
       retcode_fn(call_step.exc_result.retcode)
       return output_proto
 
-  def has_endpoint(self, stub, method):
+  def has_endpoint(self, stub: 'Stub', method: str) -> bool:
     """Verifies that the given endpoint can be called.
 
     Args:
-      stub (Stub): stub instance to check if `method` can be called on it.
-      method (str): name of method to check for.
+      stub: Stub instance to check whether `method` can be called on it.
+      method: Name of method to check for.
 
     Returns:
-      bool: Whether `method` can be called on `stub`.
+      Whether `method` can be called on `stub`.
     """
     # First check that stub is really a Stub registered with the API.
     stub_name = type(stub).__name__
