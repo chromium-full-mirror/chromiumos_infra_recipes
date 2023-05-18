@@ -119,3 +119,18 @@ def GenTests(api):
           post_process.DoesNotRun,
           'upload artifacts.generate provenance.snoop: report_gcs (3)'),
       api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'provenance-failure',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
+          'ArtifactsService/BundleImageArchives',
+          json.dumps({
+              'artifacts': [{
+                  'path': 'chromiumos_base_image.tar.xz',
+              }],
+          }, sort_keys=True)),
+      api.step_data(
+          'upload artifacts.generate provenance.snoop: report_gcs',
+          retcode=1,
+      ), api.post_process(post_process.DropExpectation))
