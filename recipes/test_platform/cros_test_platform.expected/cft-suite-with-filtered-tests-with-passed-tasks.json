@@ -338,9 +338,6 @@
   {
     "cmd": [],
     "name": "enumerate CFT tests.filter test cases",
-    "tags": {
-      "removed_tests": "{\n  \"removed\": [\n    \"foo-test-removed\"\n  ]\n}"
-    },
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@removed_tests@{@@@",

@@ -484,12 +484,6 @@ def _build_filtered_tests(api, r, test_suites, build_target):
       req = _ctr_test_filter(test_suites, build_target, milestone)
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:
-        step.presentation.tags["removed_tests"] = json.dumps(
-            {
-                "removed": [
-                    str(test) for test in pre_test_resp.response.removed_tests
-                ]
-            }, separators=(',', ': '), indent=2)
         step.presentation.logs["removed_tests"] = json.dumps(
             {
                 "removed": [
@@ -502,9 +496,6 @@ def _build_filtered_tests(api, r, test_suites, build_target):
       return pre_test_resp.response.test_suites
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
-      step.presentation.tags["Exception"] = json.dumps({"exception": str(e)},
-                                                       separators=(',', ': '),
-                                                       indent=2)
       step.presentation.logs["Exception"] = json.dumps({"exception": str(e)},
                                                        separators=(',', ': '),
                                                        indent=2)
