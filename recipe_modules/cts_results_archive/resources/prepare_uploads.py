@@ -219,7 +219,7 @@ def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
 
     test_result_file_gz = '%s.gz' % test_result_file
     with open(test_result_file,
-              'r') as f_in, (gzip.open(test_result_file_gz, 'w')) as f_out:
+              'rb') as f_in, (gzip.open(test_result_file_gz, 'w')) as f_out:
       shutil.copyfileobj(f_in, f_out)
     instructions.append({
         'name': 'results:' + test_result_gs_suffix,
