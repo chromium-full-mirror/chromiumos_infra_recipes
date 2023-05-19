@@ -13396,7 +13396,7 @@ Recipe for invoking the per project buildspec tool.
 &mdash; **def [RunSteps](/recipes/project_buildspec.py#31)(api: RecipeApi, properties: ProjectBuildspecProperties):**
 ### *recipes* / [proto\_doctor](/recipes/proto_doctor.py)
 
-[DEPS](/recipes/proto_doctor.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/proto_doctor.py#28): [cros\_build\_api](#recipe_modules-cros_build_api), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Compile and sync proto files across ChromeOS.
@@ -13406,32 +13406,38 @@ changes to the infra/proto repo. The poller should batch requests, so there may
 be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
-&mdash; **def [RunSteps](/recipes/proto_doctor.py#50)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#63)(api: recipe_api.RecipeApi):**
 
 Starting point for main recipe logic.
 
 This function does setup, determines which branches to work on, and then
 defers to child functions for specific processing.
 
-&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#80)(api: recipe_api.RecipeApi, branch: str):**
+&mdash; **def [check\_out\_branch](/recipes/proto_doctor.py#94)(api: recipe_api.RecipeApi, manifest_branch: str):**
 
 Check out all the necessary projects on the given branch.
 
 Args:
   api: The recipe API.
-  branch: The branch to checkout, such as "main".
+  manifest_branch: The branch to check out on the manifests repo, such as
+    "main".
 
-&mdash; **def [compile\_chromite\_protos](/recipes/proto_doctor.py#95)(api: recipe_api.RecipeApi):**
+&mdash; **def [compile\_chromite\_protos](/recipes/proto_doctor.py#110)(api: recipe_api.RecipeApi, ref: str):**
 
 Compile proto bindings in chromite/, and upload to Gerrit.
 
-&mdash; **def [process\_branch](/recipes/proto_doctor.py#68)(api: recipe_api.RecipeApi, branch: str):**
+Args:
+  api: The recipe API.
+  ref: The git ref for which protos are being compiled, such as
+    "refs/heads/main".
 
-For a single branch, propagate infra/proto changes across the tree.
+&mdash; **def [process\_ref](/recipes/proto_doctor.py#81)(api: recipe_api.RecipeApi, ref: str):**
+
+For a single ref, propagate infra/proto changes across the tree.
 
 Args:
   api: The recipe API.
-  branch: The branch to work from, such as "main".
+  ref: The git ref for the branch to work from, such as "refs/heads/main".
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#16): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -14,20 +14,27 @@ For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 from typing import Generator, List
 
 from PB.chromite.api import api as api_service
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
+                                                       builder_common_pb2)
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.gerrit import api as gerrit_api
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'cros_build_api',
     'deferrals',
     'easy',
+    'gerrit',
+    'git',
     'repo',
     'src_state',
 ]
@@ -46,6 +53,12 @@ PROJECTS_TO_CHECKOUT = (
 MAIN_BRANCH = 'main'
 MAIN_REF = 'refs/heads/main'
 
+# Hashtag used to identify CLs launched by ProtoDoctor.
+# Note that the hashtag alone is not sufficient to identify ProtoDoctor CLs,
+# since a human user could also use the same hashtag.
+# But checking hashtag + owner should be sufficient.
+HASHTAG = 'protodoctor'
+
 
 def RunSteps(api: recipe_api.RecipeApi) -> None:
   """Starting point for main recipe logic.
@@ -54,49 +67,61 @@ def RunSteps(api: recipe_api.RecipeApi) -> None:
   defers to child functions for specific processing.
   """
   gitiles_triggers = _validate_triggers(api)
-  branches = sorted(set(_get_branch(gt) for gt in gitiles_triggers))
-  api.easy.set_properties_step(branches=branches)
+  refs = sorted(set(gt.ref for gt in gitiles_triggers))
+  api.easy.set_properties_step(refs=refs)
 
   # If one branch raises an exception, defer the exception so that the other
   # branches can run.
   with api.deferrals.raise_exceptions_at_end():
-    for branch in branches:
+    for ref in refs:
       with api.deferrals.defer_exceptions():
-        process_branch(api, branch)
+        process_ref(api, ref)
 
 
-def process_branch(api: recipe_api.RecipeApi, branch: str) -> None:
-  """For a single branch, propagate infra/proto changes across the tree.
+def process_ref(api: recipe_api.RecipeApi, ref: str) -> None:
+  """For a single ref, propagate infra/proto changes across the tree.
 
   Args:
     api: The recipe API.
-    branch: The branch to work from, such as "main".
+    ref: The git ref for the branch to work from, such as "refs/heads/main".
   """
+  branch = api.git.extract_branch(ref)
   with api.step.nest(f'process branch {branch}'):
     check_out_branch(api, branch)
-    compile_chromite_protos(api)
+    compile_chromite_protos(api, ref)
 
 
-def check_out_branch(api: recipe_api.RecipeApi, branch: str) -> None:
+def check_out_branch(api: recipe_api.RecipeApi, manifest_branch: str) -> None:
   """Check out all the necessary projects on the given branch.
 
   Args:
     api: The recipe API.
-    branch: The branch to checkout, such as "main".
+    manifest_branch: The branch to check out on the manifests repo, such as
+      "main".
   """
-  with api.context(cwd=_get_checkout_path(api)):
+  with api.context(cwd=_get_workspace_path(api)):
     api.repo.init(
         manifest_url=api.src_state.internal_manifest.url,
-        manifest_branch=branch,
+        manifest_branch=manifest_branch,
     )
     api.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
 
 
-def compile_chromite_protos(api: recipe_api.RecipeApi) -> None:
-  """Compile proto bindings in chromite/, and upload to Gerrit."""
+def compile_chromite_protos(api: recipe_api.RecipeApi, ref: str) -> None:
+  """Compile proto bindings in chromite/, and upload to Gerrit.
+
+  Args:
+    api: The recipe API.
+    ref: The git ref for which protos are being compiled, such as
+      "refs/heads/main".
+  """
   with api.step.nest('compile chromite protos'):
     request = api_service.CompileProtoRequest()
-    api.cros_build_api.ApiService.CompileProto(request)
+    response = api.cros_build_api.ApiService.CompileProto(request)
+    modified_paths = [f.path for f in response.modified_files]
+    chromite_path = _get_workspace_path(api).join('chromite')
+    commit_subject = 'api: Automatically compile protos'
+    _commit_and_upload(api, chromite_path, ref, modified_paths, commit_subject)
 
 
 def _validate_triggers(
@@ -131,20 +156,78 @@ def _validate_triggers(
     return gitiles_triggers
 
 
-def _get_branch(gitiles_trigger: triggers_pb2.GitilesTrigger) -> str:
-  """Return the branch that a GitilesTrigger was on."""
-  return gitiles_trigger.ref.split('/')[-1]
+def _commit_and_upload(api: recipe_api.RecipeApi,
+                       project_path: config_types.Path, ref: str,
+                       modified_paths: List[config_types.Path],
+                       commit_subject: str) -> None:
+  _create_commit(api, project_path, modified_paths, commit_subject)
+  if not _is_staging(api):
+    _push_to_cq(api, project_path, ref)
 
 
-def _get_checkout_path(api: recipe_api.RecipeApi) -> config_types.Path:
-  """Return the path to the bot's local repo checkout."""
+def _create_commit(api: recipe_api.RecipeApi, project_path: config_types.Path,
+                   modified_paths: List[config_types.Path],
+                   subject: str) -> None:
+  """Create a new branch and commit the modified files.
+
+  Args:
+    api: The recipe API.
+    repo_path: The local path to the repo project in which to commit.
+    modified_paths: A list of modified files to commit within the project.
+    subject: The first line to write in the new commit.
+    remote_branch: The remote branch to track, such as 'cros/main'.
+  """
+  with api.context(cwd=project_path):
+    api.git.add(modified_paths)
+    commit_message = '\n'.join((
+        subject,
+        '',
+        'This CL was automatically created by ProtoDoctor.',
+        api.buildbucket.build_url(),
+        '',
+        'BUG=None',
+        'TEST=CQ',
+    ))
+    api.git.commit(commit_message)
+
+
+def _push_to_cq(api: recipe_api.RecipeApi, project_path: config_types.Path,
+                ref: str) -> None:
+  """Upload the local changes for the given project, and send to CQ.
+
+  TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
+  actual reviewers based on who modified infra/proto, and use CQ+2.
+
+  Args:
+    api: The recipe API.
+    project_path: The local path to the repo project.
+    ref: The ref being worked on, such as "refs/heads/main".
+  """
+  assert not _is_staging(api)
+  change = api.gerrit.create_change(project=project_path,
+                                    reviewers=['gredelston@google.com'],
+                                    ref=ref, hashtags=[HASHTAG])
+  labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
+  api.gerrit.set_change_labels_remote(change, labels)
+
+
+def _get_workspace_path(api: recipe_api.RecipeApi) -> config_types.Path:
+  """Return the build's workspace path, where `repo` should be checked out."""
   return api.src_state.workspace_path
+
+
+def _is_staging(api: recipe_api.RecipeApi) -> bool:
+  """Determine whether this is a staging build."""
+  return api.buildbucket.build.builder.bucket == 'staging'
 
 
 def GenTests(
     api: recipe_test_api.RecipeTestApi
 ) -> Generator[recipe_test_api.TestData, None, None]:
   """Generate test cases for this recipe."""
+  release_branch = 'release-R100-14526.B'
+  release_ref = f'refs/heads/{release_branch}'
+
   gitiles_trigger_main = triggers_pb2.GitilesTrigger(repo=INFRA_PROTO_REPO,
                                                      ref=MAIN_REF,
                                                      revision='aaaaaa')
@@ -153,10 +236,8 @@ def GenTests(
       ref=MAIN_REF,
       revision='bbbbbb',
   )
-  release_branch = 'release-R100-14526.B'
   gitiles_trigger_release_branch = triggers_pb2.GitilesTrigger(
-      repo=INFRA_PROTO_REPO, ref=f'refs/heads/{release_branch}',
-      revision='cccccc')
+      repo=INFRA_PROTO_REPO, ref=release_ref, revision='cccccc')
   gitiles_trigger_chromite = triggers_pb2.GitilesTrigger(
       repo=CHROMITE_REPO,
       ref=MAIN_REF,
@@ -178,6 +259,64 @@ def GenTests(
       api.post_check(post_process.DoesNotRun,
                      f'process branch {MAIN_BRANCH} (2)'),
       api.post_check(post_process.MustRun, f'process branch {release_branch}'),
+      # Check that the expected Chromite files get uploaded
+      api.post_check(
+          post_process.StepCommandContains,
+          'process branch main.compile chromite protos.git add', [
+              '[CLEANUP]/chromiumos_workspace/chromite/api/gen/some_file_pb2.py',
+              '[CLEANUP]/chromiumos_workspace/chromite/api/gen_sdk/some_file_pb2.py',
+          ]),
+      # Production builder should actually upload changes
+      api.post_check(
+          post_process.MustRun,
+          '.'.join((
+              'process branch main', 'compile chromite protos',
+              'create gerrit change for [CLEANUP]/chromiumos_workspace/chromite'
+          )),
+      ),
+      api.post_check(
+          post_process.LogEquals,
+          'process branch main.compile chromite protos.set labels on CL 1',
+          'labels',
+          '{"Commit-Queue": 1}',
+      ),
+  )
+
+  yield api.test(
+      'staging',
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(gitiles=gitiles_trigger_main),
+      ]),
+      # Staging branch should make local changes, but not upload.
+      api.post_check(
+          post_process.MustRun,
+          '.'.join((
+              'process branch main',
+              'compile chromite protos',
+              'call chromite.api.ApiService/CompileProto',
+          )),
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'process branch main.compile chromite protos.git commit',
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          '.'.join((
+              'process branch main', 'compile chromite protos',
+              'create gerrit change for [CLEANUP]/chromiumos_workspace/chromite'
+          )),
+      ),
+      api.buildbucket.build(
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='staging',
+                  builder='staging-ProtoDoctor',
+              ),
+          ),
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -212,8 +351,8 @@ def GenTests(
       ]),
       api.step_data('process branch main.repo init', retcode=1),
       # Double-check that the main branch comes before the release branch.
-      api.post_check(post_process.PropertyEquals, 'branches',
-                     [MAIN_BRANCH, release_branch]),
+      api.post_check(post_process.PropertyEquals, 'refs',
+                     [MAIN_REF, release_ref]),
       api.post_check(post_process.StepException,
                      f'process branch {MAIN_BRANCH}'),
       api.post_check(post_process.StepSuccess,
