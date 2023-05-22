@@ -2043,10 +2043,19 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--chroot",
+      "[CACHE]/cros_chroot/chroot",
+      "--out-dir",
+      "[CACHE]/cros_chroot/out",
+      "--",
       ""
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "name": "Call "
+    "name": "Call ",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
   },
   {
     "cmd": [],

@@ -13506,12 +13506,12 @@ Verify that uprev_sdk() creates local uprev commits as expected.
 Main test case logic.
 ### *recipes* / [pvs\_run\_script](/recipes/pvs_run_script.py)
 
-[DEPS](/recipes/pvs_run_script.py#11): [build\_menu](#recipe_modules-build_menu), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/pvs_run_script.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for running PVS-related scripts.
 
-&mdash; **def [RunSteps](/recipes/pvs_run_script.py#19)(api, properties):**
+&mdash; **def [RunSteps](/recipes/pvs_run_script.py#23)(api, properties):**
 ### *recipes* / [rdb\_util:examples/get\_build\_target\_from\_variant](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#8): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
