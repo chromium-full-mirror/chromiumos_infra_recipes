@@ -7382,7 +7382,7 @@ Labpack has the following public attributes:
 
 - has_downloaded_package: bool
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#48)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#52)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -7394,11 +7394,11 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#32)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#35)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#36)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#40)(self):**
 
 Get the path of the cipd package.
 
@@ -7409,7 +7409,9 @@ See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#114)(self, labpack_input: LabpackInput, \*\*kwargs):**
+&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#32)(self):**
+
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#77)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 

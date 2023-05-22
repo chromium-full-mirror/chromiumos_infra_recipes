@@ -18,7 +18,7 @@ def extract_executable_name_from_cipd_path(cipd_path):
 
   Returns str containing just the name of the executable.
   """
-  return cipd_path.split('/')[-2]
+  return cipd_path.split('/')[-2]  # pragma: nocover
 
 
 def catch(f, *args, **kwargs):

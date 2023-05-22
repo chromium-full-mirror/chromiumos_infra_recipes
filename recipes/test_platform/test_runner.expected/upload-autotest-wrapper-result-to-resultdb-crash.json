@@ -1492,18 +1492,25 @@
     "name": "ensure labpack"
   },
   {
+    "cmd": [],
+    "name": "ensure labpack.install chromiumos/infra/labpack",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CLEANUP]/cipd/labpack",
-      "-ensure-file",
-      "chromiumos/infra/labpack/${platform} prod",
-      "-max-threads",
-      "1",
-      "-json-output",
-      "/path/to/tmp/json"
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/prod"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:test_runner"
@@ -1516,9 +1523,40 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "ensure labpack.ensure_installed",
+    "name": "ensure labpack.install chromiumos/infra/labpack.ensure package directory",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/prod",
+      "-ensure-file",
+      "chromiumos/infra/labpack/${platform} prod",
+      "-max-threads",
+      "1",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "ensure labpack.install chromiumos/infra/labpack.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -1531,10 +1569,6 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "confirm labpack is installed"
   },
   {
     "cmd": [],
