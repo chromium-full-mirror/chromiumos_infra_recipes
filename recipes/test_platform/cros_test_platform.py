@@ -728,7 +728,7 @@ def _ctr_test_filter(test_suites, board, milestone):
   """
 
   prp = pre_request.PassRatePolicy(pass_rate=96, min_runs=20,
-                                   num_of_milestones=0, force_enabled_tests=[],
+                                   num_of_milestones=1, force_enabled_tests=[],
                                    force_disabled_tests=[])
   formattedProto = pre_request.FilterFlakyRequest(pass_rate_policy=prp,
                                                   board=board,
