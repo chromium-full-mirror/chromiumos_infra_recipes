@@ -57,6 +57,22 @@ def get_build_info(project, build_id):
   return client.get_build(project_id=project, id=build_id)
 
 
+def should_log_step(step):
+  """Given a step return whether this step should be logged"""
+  if step.id.startswith('verbose_'):
+    return True
+  if step.status in (
+      cloudbuild_v1.Build.Status.SUCCESS,
+      # If a step fails then other parallel steps are terminated early.
+      # They have status CANCELLED if the terminated step is already running,
+      # and QUEUED if the terminated step hasn't started yet.
+      cloudbuild_v1.Build.Status.QUEUED,
+      cloudbuild_v1.Build.Status.CANCELLED,
+  ):
+    return False
+  return True
+
+
 def main(args):
   parser = argparse.ArgumentParser()
   parser.add_argument('-input-json', type=argparse.FileType('r'), required=True)
@@ -81,7 +97,7 @@ def main(args):
   steps = list()
   for i, step in enumerate(build.steps):
     status = build.Status(step.status).name
-    if status == 'SUCCESS' and not step.id.startswith("verbose_"):
+    if not should_log_step(step):
       continue
     steps.append({
         'id':
