@@ -93,6 +93,8 @@ def main(args):
           build.Status(build.status).name,
       'log':
           f'CoP Log URL: {build.log_url}\n {result_logs[-MAX_COMMENT_SIZE:]}',
+      'log_url':
+          build.log_url,
   }
   steps = list()
   for i, step in enumerate(build.steps):
