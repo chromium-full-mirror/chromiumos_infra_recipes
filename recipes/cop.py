@@ -190,18 +190,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     results = _fetch_results(api, properties.project_name, build_id)
     build_passed = results['result']['status'] == "SUCCESS"
 
-  with api.step.nest('send Tricium comments') as presentation:
-    api.tricium.add_comment(f"CoP Result: {results['result']['status']}",
-                            results['result']['log'], '/PATCHSET_LEVEL')
-    for step in results['steps']:
-      name = f"CoP Step {step['id']} ({step['name']}): {step['status']}"
-      api.tricium.add_comment(name, step['log'], '/PATCHSET_LEVEL')
-    api.tricium.write_comments()
-
-  # Do not vote with the staging builder
-  if api.cros_infra_config.is_staging:
-    return
-
+  log_url_set_in_review_comment = False
   with api.step.nest('send Vote to Gerrit') as presentation:
     body = {
         'message':
@@ -219,20 +208,34 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
           'ignore_automatic_attention_set_rules': True,
       })
     vote = 1 if build_passed else -1
-    if _set_gerrit_review(api, patch_set, body={
+    if api.cros_infra_config.is_staging:
+      presentation.step_text = 'Do not vote or comment with the staging builder.'
+    elif _set_gerrit_review(api, patch_set, body={
         "labels": {
             "Verified": vote
         },
         **body
     }, name='comment and vote'):
       presentation.step_text = 'Commented and Voted V %d.' % vote
+      log_url_set_in_review_comment = True
     elif _set_gerrit_review(api, patch_set, body=body, name='comment only'):
       # If we can't vote we comment only, but also let the user know,
       # so they can change Gerrit's permissions.
       # The important things are the comments, not the vote.
       presentation.step_text = 'Commented but unable to Vote V %d: Check repo permissions.' % vote
+      log_url_set_in_review_comment = True
     else:
       presentation.step_text = 'Cannot comment or vote V %d.' % vote
+
+  with api.step.nest('send Tricium comments') as presentation:
+    # Only send to overall status comment if overall build failed.
+    if not build_passed or not log_url_set_in_review_comment:
+      api.tricium.add_comment(f"CoP Result: {results['result']['status']}",
+                              results['result']['log'], '/PATCHSET_LEVEL')
+    for step in results['steps']:
+      name = f"CoP Step {step['id']} ({step['name']}): {step['status']}"
+      api.tricium.add_comment(name, step['log'], '/PATCHSET_LEVEL')
+    api.tricium.write_comments()
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -373,7 +376,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
-                 api.post_check(post_process.DoesNotRun, 'send Vote to Gerrit'),
+                 api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Do not vote or comment',)),
+                 api.post_check(post_process.DoesNotRun, 'send Vote to Gerrit.gerrit comment and vote','send Vote to Gerrit.gerrit comment only'),
                  api.post_check(post_process.PropertyEquals,"change_type","fixed_change"),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
