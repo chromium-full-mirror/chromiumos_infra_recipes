@@ -14,4 +14,7 @@ message TestInputProperties {
 
   // The build_target
   chromiumos.BuildTarget build_target = 2;
+
+  // Whether to use CQ prebuilts.
+  bool use_cq_prebuilts = 3;
 }

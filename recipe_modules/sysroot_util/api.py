@@ -81,7 +81,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
                      replace=True, package_indexes=None, timeout_sec='DEFAULT',
-                     test_data=None, name=None):
+                     use_cq_prebuilts: bool = False, test_data=None, name=None):
     """Create the sysroot.
 
     Args:
@@ -93,6 +93,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout (in seconds).  Default: None if a
           toolchain change is detected, otherwise 10 minutes.
+      use_cq_prebuilts (bool): Whether to use CQ prebuilts.
       test_data (str): test response (JSON) from the SysrootService/Create
           call, or None to generate a default response based on the input data.
       name (str): Step name to use, or None for the default name.
@@ -118,7 +119,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           OldProfile(name=profile.name) if profile and profile.name else None)
       flags = SysrootCreateRequest.Flags(chroot_current=chroot_current,
                                          replace=replace,
-                                         toolchain_changed=toolchain_cls)
+                                         toolchain_changed=toolchain_cls,
+                                         use_cq_prebuilts=use_cq_prebuilts)
       create_sysroot_response = self.m.cros_build_api.SysrootService.Create(
           SysrootCreateRequest(build_target=build_target, profile=profile,
                                chroot=self.m.cros_sdk.chroot, flags=flags,

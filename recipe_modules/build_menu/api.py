@@ -411,8 +411,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self._package_indexes = self.m.cros_prebuilts.get_package_index_info(
           config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
           build_target=self.build_target, profile=profile)
-      self.m.sysroot_util.create_sysroot(self.build_target, profile,
-                                         package_indexes=self._package_indexes)
+      self.m.sysroot_util.create_sysroot(
+          self.build_target, profile, package_indexes=self._package_indexes,
+          use_cq_prebuilts=artifacts.use_cq_prebuilts)
 
       # Set the target_versions output property, and upload metatdata.
       # This requires a sysroot for at least the package versions.
