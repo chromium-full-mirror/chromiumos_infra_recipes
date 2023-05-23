@@ -366,7 +366,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -391,7 +391,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -415,7 +415,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -441,7 +441,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -478,7 +478,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -511,7 +511,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -546,7 +546,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -558,7 +558,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_1/+/1@@@"
     ]
   },
   {
@@ -655,7 +655,7 @@
     "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_1/+/1@@@"
     ]
   },
   {
@@ -898,7 +898,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -923,7 +923,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -947,7 +947,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git remote",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -973,7 +973,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch (2)",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1010,7 +1010,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl upload",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1043,7 +1043,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl issue",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1078,7 +1078,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl status",
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1090,7 +1090,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_1/+/1@@@"
     ]
   },
   {
@@ -1187,7 +1187,7 @@
     "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_1/+/1@@@"
     ]
   },
   {
@@ -1508,7 +1508,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -1533,7 +1533,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1557,7 +1557,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1583,7 +1583,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1620,7 +1620,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1653,7 +1653,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1688,7 +1688,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1700,7 +1700,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_2/+/1@@@"
     ]
   },
   {
@@ -1797,7 +1797,7 @@
     "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_2/+/1@@@"
     ]
   },
   {
@@ -2040,7 +2040,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2065,7 +2065,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2089,7 +2089,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git remote",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2115,7 +2115,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch (2)",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2152,7 +2152,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl upload",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2185,7 +2185,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl issue",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2220,7 +2220,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl status",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2232,7 +2232,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_2/+/1@@@"
     ]
   },
   {
@@ -2329,7 +2329,7 @@
     "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_2/+/1@@@"
     ]
   },
   {
@@ -2765,7 +2765,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2790,7 +2790,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2814,7 +2814,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2840,7 +2840,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2877,7 +2877,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2910,7 +2910,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2945,7 +2945,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2957,7 +2957,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_3/+/1@@@"
     ]
   },
   {
@@ -3054,7 +3054,7 @@
     "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_3/+/1@@@"
     ]
   },
   {
@@ -3297,7 +3297,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -3322,7 +3322,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3346,7 +3346,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git remote",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3372,7 +3372,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch (2)",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3409,7 +3409,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl upload",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3442,7 +3442,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl issue",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3477,7 +3477,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl status",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3489,7 +3489,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_3/+/1@@@"
     ]
   },
   {
@@ -3586,7 +3586,7 @@
     "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_3/+/1@@@"
     ]
   },
   {
@@ -3972,7 +3972,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -3997,7 +3997,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4021,7 +4021,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git remote",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4047,7 +4047,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git branch (2)",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4084,7 +4084,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl upload",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4117,7 +4117,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl issue",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4152,7 +4152,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for chromeos/manifest-versions.git_cl status",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4164,7 +4164,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_4/+/1@@@"
     ]
   },
   {
@@ -4261,7 +4261,7 @@
     "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-versions/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_4/+/1@@@"
     ]
   },
   {
@@ -4504,7 +4504,7 @@
   },
   {
     "cmd": [],
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -4529,7 +4529,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4553,7 +4553,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git remote",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git remote",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4579,7 +4579,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git branch (2)",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git branch (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4616,7 +4616,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl upload",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4649,7 +4649,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl issue",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git_cl issue",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4684,7 +4684,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for chromeos/manifest-internal.git_cl status",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -4696,7 +4696,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_4/+/1@@@"
     ]
   },
   {
@@ -4793,7 +4793,7 @@
     "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.submit CL 1",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromeos/manifest-internal/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-internal-snapshot_tmp_4/+/1@@@"
     ]
   },
   {

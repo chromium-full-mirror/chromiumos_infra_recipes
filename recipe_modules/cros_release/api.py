@@ -166,11 +166,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     MANIFEST_VERSIONS_DRYRUN_BRANCH = 'release'
     MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH = 'staging-buildspec-snapshot'
 
-    def commit_to_remote(project, checkout, filename, commit_message, branch):
+    def commit_to_remote(checkout, filename, commit_message, branch):
       self.m.git.add([filename])
       self.m.git.commit(commit_message)
       change = self.m.gerrit.create_change(
-          project, ref=self.m.git.get_branch_ref(branch), project_path=checkout)
+          str(checkout), ref=self.m.git.get_branch_ref(branch),
+          project_path=checkout)
       labels = {
           Label.BOT_COMMIT: 1,
           Label.VERIFIED: 1,
@@ -240,8 +241,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             commit_message = '\n'.join(commit_lines) + '\n'
             with self.m.step.nest('commit {} to {}'.format(
                 manifest_file, branch)):
-              commit_to_remote('chromeos/manifest-versions',
-                               manifest_versions_checkout, manifest_file,
+              commit_to_remote(manifest_versions_checkout, manifest_file,
                                commit_message, branch)
 
         if self._commit_buildspec_as_snapshot:
@@ -277,8 +277,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               ]
               commit_message = '\n'.join(commit_lines) + '\n'
               with self.m.step.nest('commit to {}'.format(snapshot_branch)):
-                commit_to_remote('chromeos/manifest-internal',
-                                 manifest_internal_checkout, 'snapshot.xml',
+                commit_to_remote(manifest_internal_checkout, 'snapshot.xml',
                                  commit_message, snapshot_branch)
 
         manifest_gs_path = ''
