@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# -*- coding: utf-8 -*- # Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -13,6 +12,7 @@ from RECIPE_MODULES.chromeos.dut_interface import error_messages
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+from PB.lab.labpack import LabpackInput
 
 from PB.chromiumos.build.api import container_metadata
 from PB.chromiumos.storage_path import StoragePath
@@ -1094,6 +1094,50 @@ def _get_context_deadline(api, limit_seconds, step):
   return deadline
 
 
+def get_use_ile_de_france(_models, _ile_de_france_config):
+  """Not yet implemented"""
+  return False  # pragma: nocover
+
+
+def execute_ile_de_france(api, properties, dut_state):
+  """Whether to use Ile-de-France or not.
+
+  Args:
+    * api: an api instance
+    * properties: the test runner properties
+    * dut_state: the incoming dut state
+
+  Returns:
+    * the outgoing dut_state
+  """
+  models = api.cros_tags.get_values(
+      'label-model', api.buildbucket.build.infra.swarming.bot_dimensions)
+
+  hostnames = api.cros_tags.get_values(
+      'dut_name', api.buildbucket.build.infra.swarming.bot_dimensions)
+
+  use_ile_de_france = get_use_ile_de_france(
+      _models=models, _ile_de_france_config=properties.common_config
+      .enable_ile_de_france_config)
+
+  if not use_ile_de_france:  # pragma: nocover
+    return dut_state  # pragma: nocover
+
+  if dut_state != _DUT_STATE_NEEDS_REPAIR:  # pragma: nocover
+    return dut_state  # pragma: nocover
+
+  assert api.labpack.ensure_labpack().get("ok")  # pragma: nocover
+
+  step_data = api.labpack.run_labpack(
+      labpack_input=LabpackInput(
+          unit_name=hostnames[0],
+          task_name="post_test",
+          caller="test_runner.py",
+      ))  # pragma: nocover
+  return (_DUT_STATE_READY if step_data.exc_status.retcode == 0 else
+          _DUT_STATE_NEEDS_REPAIR)  # pragma: nocover
+
+
 def _upload_steps_with_phosphorus(api, properties, interface, result,
                                   test_metadata, dut_state, run_test_response,
                                   step):
@@ -1137,6 +1181,9 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
           if result is not None and not result.prejob_response.is_failure():
             interface.upload_to_tko(test_metadata, run_test_response)
       finally:
+        if result is not None and not result.prejob_response.is_failure():
+          dut_state = execute_ile_de_france(api=api, properties=properties,
+                                            dut_state=dut_state)
         interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
         publish_to_result_flow(api, properties.config,
@@ -1518,6 +1565,10 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
           # .../cros-test/artifacts/tauto/, not its sub directory.
           api.cts_results_archive.archive(os.path.dirname(results_dir))
 
+        if result_for_output_props is not None and result_for_output_props.prejob_failed(
+        ):
+          dut_state = execute_ile_de_france(api=api, properties=properties,
+                                            dut_state=dut_state)
         interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
         publish_to_result_flow(api, properties.config,
@@ -3889,6 +3940,54 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                       'enabled': True,
                       'block_list': {
                           'boards': [],
+                          'models': []
+                      }
+                  }
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  # Ile-de-France allow list tests whether the logic
+  # for an allowed board works correctly.
+  yield api.test(
+      'ile-de-france-allow_list',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      api.properties(
+          TestRunnerProperties(
+              common_config={
+                  'enable_ile_de_france_config': {
+                      'enabled': True,
+                      'allow_list': {
+                          'models': []
+                      }
+                  }
+              })),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+  )
+
+  # Ile-de-France deny list tests whether the logic
+  # for a blocked board works correctly.
+  yield api.test(
+      'ile-de-france-block_list',
+      _set_build(bid=42),
+      _misc_properties(),
+      _request_properties(),
+      api.properties(
+          TestRunnerProperties(
+              common_config={
+                  'enable_ile_de_france_config': {
+                      'enabled': True,
+                      'deny_list': {
                           'models': []
                       }
                   }

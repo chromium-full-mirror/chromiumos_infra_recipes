@@ -14169,7 +14169,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1794)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1845)(api, properties):**
 
 Entrypoint to the script
 
@@ -14194,7 +14194,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1555)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1606)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -14206,7 +14206,19 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1293)(api, properties):**
+&mdash; **def [execute\_ile\_de\_france](/recipes/test_platform/test_runner.py#1102)(api, properties, dut_state):**
+
+Whether to use Ile-de-France or not.
+
+Args:
+  * api: an api instance
+  * properties: the test runner properties
+  * dut_state: the incoming dut state
+
+Returns:
+  * the outgoing dut_state
+
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1340)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -14222,7 +14234,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1207)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1254)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -14238,7 +14250,11 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1178)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [get\_use\_ile\_de\_france](/recipes/test_platform/test_runner.py#1097)(_models, _ile_de_france_config):**
+
+Not yet implemented
+
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1225)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -14249,7 +14265,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1748)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1799)(api, properties):**
 
 Run test and upload results.
 
@@ -14286,7 +14302,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1627)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1678)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
