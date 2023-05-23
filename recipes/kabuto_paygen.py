@@ -72,7 +72,7 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
 
     # Tar payload for upload.
     api.step('tar up payload',
-             ['tar', 'cvfJ', payload_filename, 'in/fossilize_tool'])
+             ['tar', 'cvfJ', payload_filename, '-C', 'in/', 'fossilize_tool/'])
 
     # Upload payload to GS.
     upload_path = properties.destination_gs_path + '/' + payload_filename
