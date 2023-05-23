@@ -5,11 +5,11 @@
   },
   {
     "cmd": [],
-    "name": "paygen build"
+    "name": "shadercache build"
   },
   {
     "cmd": [],
-    "name": "paygen build.buildbucket.run",
+    "name": "shadercache build.buildbucket.run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -22,8 +22,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "paygen build.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"kabuto_paygen\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"destination_gs_bucket\": \"kabuto_cache\", \"destination_gs_path\": \"test-recipe-payloads/\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "shadercache build.buildbucket.run.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"build_kabuto_shadercache\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"payload_gs_bucket\": \"kabuto_cache\", \"payload_gs_path\": \"recipe-payloads/kabuto_payload.tar.xz\"}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -32,7 +32,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"kabuto_paygen\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"build_kabuto_shadercache\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -46,7 +46,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"kabuto_paygen\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"build_kabuto_shadercache\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
@@ -54,8 +54,8 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"destination_gs_bucket\": \"kabuto_cache\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"destination_gs_path\": \"test-recipe-payloads/\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"payload_gs_bucket\": \"kabuto_cache\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"payload_gs_path\": \"recipe-payloads/kabuto_payload.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -78,7 +78,7 @@
   },
   {
     "cmd": [],
-    "name": "paygen build.buildbucket.run.collect",
+    "name": "shadercache build.buildbucket.run.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -94,7 +94,7 @@
       "8922054662172514000"
     ],
     "infra_step": true,
-    "name": "paygen build.buildbucket.run.collect.wait",
+    "name": "shadercache build.buildbucket.run.collect.wait",
     "timeout": 7200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -108,7 +108,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "paygen build.buildbucket.run.collect.get",
+    "name": "shadercache build.buildbucket.run.collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514000\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -138,11 +138,11 @@
   },
   {
     "cmd": [],
-    "name": "shadercache build"
+    "name": "uprev build"
   },
   {
     "cmd": [],
-    "name": "shadercache build.buildbucket.run",
+    "name": "uprev build.buildbucket.run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -155,8 +155,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "shadercache build.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"build_kabuto_shadercache\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"requestId\": \"0-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "uprev build.buildbucket.run.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"kabuto_shadercache_uprev\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"requestId\": \"0-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -165,7 +165,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"build_kabuto_shadercache\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"kabuto_shadercache_uprev\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514001\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -179,7 +179,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"build_kabuto_shadercache\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"kabuto_shadercache_uprev\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
@@ -207,7 +207,7 @@
   },
   {
     "cmd": [],
-    "name": "shadercache build.buildbucket.run.collect",
+    "name": "uprev build.buildbucket.run.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -223,7 +223,7 @@
       "8922054662172514001"
     ],
     "infra_step": true,
-    "name": "shadercache build.buildbucket.run.collect.wait",
+    "name": "uprev build.buildbucket.run.collect.wait",
     "timeout": 7200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -237,7 +237,7 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "name": "shadercache build.buildbucket.run.collect.get",
+    "name": "uprev build.buildbucket.run.collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514001\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -258,135 +258,6 @@
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514001\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev build"
-  },
-  {
-    "cmd": [],
-    "name": "uprev build.buildbucket.run",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "uprev build.buildbucket.run.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"kabuto_shadercache_uprev\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"kabuto_shadercache_uprev\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }, @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"infra\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"kabuto_shadercache_uprev\"@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
-      "@@@STEP_LOG_LINE@request@        }, @@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-00000000133d\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
-      "@@@STEP_LOG_LINE@request@          }, @@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\", @@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514002@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uprev build.buildbucket.run.collect",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "collect",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-interval",
-      "60s",
-      "8922054662172514002"
-    ],
-    "infra_step": true,
-    "name": "uprev build.buildbucket.run.collect.wait",
-    "timeout": 7200,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "uprev build.buildbucket.run.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514002\"}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514002\", @@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", @@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514002\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",

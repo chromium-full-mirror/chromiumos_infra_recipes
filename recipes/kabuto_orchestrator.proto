@@ -1,0 +1,16 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.kabuto_orchestrator;
+
+message KabutoOrchestratorProperties {
+  // Location of precompiled payload. Can be used to skip paygen step.
+  string payload_gs_url = 1;
+
+  // The manifest branch to check out (e.g. 'release-R105-14989.B')
+  // Defaults to main tip of tree if not specified.
+  string manifest_branch = 2;
+}

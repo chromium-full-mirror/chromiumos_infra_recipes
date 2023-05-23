@@ -5,17 +5,179 @@
 
 """Recipe for building Kabuto payloads and launching Kabuto shadercache jobs."""
 
+from recipe_engine import post_process
+from recipe_engine.recipe_api import InfraFailure, StepFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
-DEPS = ['recipe_engine/step']
+from PB.recipes.chromeos.kabuto_orchestrator import (
+    KabutoOrchestratorProperties)
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
+
+DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'build_menu',
+    'failures',
+    'git',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = KabutoOrchestratorProperties
 
-def RunSteps(api: RecipeApi) -> None:
-  api.step('Hello World', ['echo', 'hello', 'world'])
+
+def _launch_builder(api: RecipeApi, bucket: str, builder: str, is_staging: str,
+                    input_properties=None, step_name="") -> Build:
+  """Launch a builder using api.bitbucket.run and return the build."""
+
+  # Use the builder name if the step name isn't defined.
+  step_name = step_name if step_name else builder
+
+  with api.step.nest(step_name):
+    builder = f'staging-{builder}' if is_staging else builder
+    request = [
+        api.buildbucket.schedule_request(bucket=bucket, builder=builder,
+                                         properties=input_properties)
+    ]
+
+    # Yield execution on the child build and return the properties when
+    # the job is complete..
+    # 2 hour timeout since paygen builder is roughly 1h in execution time,
+    # the default 1h timeout causes an INFRA_FAILURE.
+    build = api.buildbucket.run(request, timeout=60 * 60 * 2)[0]
+
+    # Check for FAILURE or INFRA_FAILURE on the completed child builder.
+    # Sets the appropriate status on the current step in the orchestrator
+    # so it propogates up and stops it from continuing past.
+    if build.status != common_pb2.SUCCESS:
+      build_url = f'https://cr-buildbucket.appspot.com/build/{build.id}'
+      failure = None
+      with api.step.nest('inspect failure') as presentation:
+        presentation.step_text = build.summary_markdown
+        presentation.links[build_url] = build_url
+        if build.status == common_pb2.INFRA_FAILURE:
+          presentation.status = api.step.INFRA_FAILURE
+          failure = InfraFailure
+        else:
+          presentation.status = api.step.FAILURE
+          failure = StepFailure
+      raise failure(f'{builder} failed\n{build_url}')
+
+  return build
+
+
+def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
+  # TODO(b/284198238): support building at manifest branches (eg R115).
+  bucket = 'staging' if api.build_menu.is_staging else 'infra'
+
+  ### Build and upload a Kabuto payload.
+  # If the payload_gs_url was supplied as an input property skip the build
+  # and use the supplied payload.
+  if properties.payload_gs_url:
+    paygen_output_props = {'payload_gs_url': properties.payload_gs_url}
+  else:
+    paygen_input_props = {
+        "destination_gs_bucket": "kabuto_cache",
+        "destination_gs_path": "test-recipe-payloads/"
+    }
+    paygen_build = _launch_builder(api, bucket, 'kabuto_paygen',
+                                   api.build_menu.is_staging,
+                                   paygen_input_props, 'paygen build')
+    paygen_output_props = paygen_build.output.properties
+
+  # Create the shadercache input properties from the paygen's payload_gs_url.
+  shadercache_input_props = {}
+  if 'payload_gs_url' in paygen_output_props:
+    payload_gs_url = paygen_output_props['payload_gs_url']
+    # Extra the bucket from the GS URL.
+    payload_bucket = payload_gs_url.lstrip("gs://").split("/")[0]
+    # Extra the path from the GS URL.
+    payload_path = str.join("/", payload_gs_url.lstrip("gs://").split("/")[1:])
+    shadercache_input_props = {
+        'payload_gs_bucket': payload_bucket,
+        'payload_gs_path': payload_path
+    }
+
+  ### Build Kabuto shadercaches on sandboxed builders
+  shadercache_build = _launch_builder(api, bucket, 'build_kabuto_shadercache',
+                                      api.build_menu.is_staging,
+                                      shadercache_input_props,
+                                      'shadercache build')
+  uprev_input_props = {}
+  if 'uprev_info' in shadercache_build.output.properties:
+    uprev_info = shadercache_build.output.properties['uprev_info']
+    uprev_input_props = {'uprev_info': uprev_info}
+
+  ### Uprev the ebuilds with new shadercaches.
+  _launch_builder(api, bucket, 'kabuto_shadercache_uprev',
+                  api.build_menu.is_staging, uprev_input_props, 'uprev build')
 
 
 def GenTests(api: RecipeTestApi) -> None:
-  yield api.test('basic')
+
+  def paygen_child_data() -> Build:
+    paygen_child_data = build_pb2.Build(id=8922054662172514000,
+                                        status='SUCCESS')
+    paygen_child_data.output.properties[
+        'payload_gs_url'] = "gs://kabuto_cache/kabuto_payload.tar.xz"
+    return paygen_child_data
+
+  def shadercache_child_data() -> Build:
+    shadercache_child_data = build_pb2.Build(id=8922054662172514001,
+                                             status='SUCCESS')
+    shadercache_child_data.output.properties[
+        'uprev_info'] = "uprev_info_from_shadercache_builder"
+    return shadercache_child_data
+
+  def child_builder_failure() -> Build:
+    failed_child_data = build_pb2.Build(id=8922054662172514000,
+                                        status='FAILURE')
+    return failed_child_data
+
+  def child_builder_infra_failure() -> Build:
+    failed_child_data = build_pb2.Build(id=8922054662172514000,
+                                        status='INFRA_FAILURE')
+    return failed_child_data
+
+  good_props = {}
+  yield api.test(
+      'basic',
+      api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  props[
+      'payload_gs_url'] = 'gs://kabuto_cache/recipe-payloads/kabuto_payload.tar.xz'
+  yield api.test(
+      'skip-paygen-step',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'paygen build'),
+  )
+
+  yield api.test(
+      'paygen-mock',
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data()], 'paygen build.buildbucket.run.collect'))
+
+  yield api.test(
+      'shadercache-mock',
+      api.buildbucket.simulated_collect_output(
+          [shadercache_child_data()],
+          'shadercache build.buildbucket.run.collect'))
+
+  yield api.test(
+      'child-builder-failure',
+      api.buildbucket.simulated_collect_output(
+          [child_builder_failure()], 'paygen build.buildbucket.run.collect'),
+      api.post_process(post_process.DropExpectation), status='FAILURE')
+
+  yield api.test(
+      'child-builder-infra-failure',
+      api.buildbucket.simulated_collect_output(
+          [child_builder_infra_failure()],
+          'paygen build.buildbucket.run.collect'),
+      api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')

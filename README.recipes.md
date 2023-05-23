@@ -12798,12 +12798,12 @@ Recipe that schedules jobs based on its triggers.
 &mdash; **def [RunSteps](/recipe_modules/iterutils/examples/full.py#14)(api):**
 ### *recipes* / [kabuto\_orchestrator](/recipes/kabuto_orchestrator.py)
 
-[DEPS](/recipes/kabuto_orchestrator.py#11): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/kabuto_orchestrator.py#19): [build\_menu](#recipe_modules-build_menu), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
 
-&mdash; **def [RunSteps](/recipes/kabuto_orchestrator.py#16)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/kabuto_orchestrator.py#73)(api: RecipeApi, properties: KabutoOrchestratorProperties):**
 ### *recipes* / [kabuto\_paygen](/recipes/kabuto_paygen.py)
 
 [DEPS](/recipes/kabuto_paygen.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
