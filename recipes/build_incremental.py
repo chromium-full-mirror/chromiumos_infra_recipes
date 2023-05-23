@@ -49,9 +49,19 @@ def RunSteps(api: RecipeApi,
 def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                extra_properties: IncrementalProperties) -> Optional[RawResult]:
   snapshot_branch_name = "origin/snapshot"
+
   build_time_delta = extra_properties.build_time_delta
   if not build_time_delta:
     raise StepFailure("build_time_delta input property is empty")
+
+  # Disable cros clean-outdated-pkgs, if necessary.
+  cop_enabled = extra_properties.cop_enabled
+  if not cop_enabled:
+    api.step(
+        "Disable cros clean-outdated-pkgs",
+        ["cros", "clean-outdated-pkgs", "--no-auto"],
+    )
+
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
   repo_path = str(api.repo.repo_path)
@@ -147,6 +157,37 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+      api.properties(IncrementalProperties(**{'cop_enabled': True})),
+      api.post_check(post_process.DoesNotRun,
+                     'Disable cros clean-outdated-pkgs'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'update sdk'),
+      api.post_check(post_process.MustRun, 'install packages (2)'),
+      api.post_check(post_process.MustRun, 'update sdk (2)'),
+      api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
+      api.post_check(post_process.DoesNotRun, 'install packages (3)'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      build_target='amd64-generic',
+      status='SUCCESS',
+  )
+
+  # Normal Build without cros clean-outdated-pkgs.
+  yield api.build_menu.test(
+      'inc-build-no-cop',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+      api.properties(IncrementalProperties(**{'cop_enabled': False})),
+      api.post_check(post_process.MustRun, 'Disable cros clean-outdated-pkgs'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk'),
@@ -173,6 +214,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -191,6 +233,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.properties(
           IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
       api.post_check(post_process.MustRun, 'build images'),

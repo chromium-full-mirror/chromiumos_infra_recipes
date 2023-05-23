@@ -10,4 +10,7 @@ message IncrementalProperties {
   // Incremental builder will perform first build using checkout as old as
   // specified by build_time_delta. Example value: "7.days.ago".
   string build_time_delta = 1;
+
+  // Whether to run cros clean-outdated-pkgs.
+  bool cop_enabled = 2;
 }
