@@ -192,7 +192,9 @@ def DoRunSteps(api, config, properties):
       try:
         uploaded_artifacts = api.build_menu.upload_artifacts(
             config, report_to_spike=api.cros_infra_config.config.artifacts
-            .attestation_eligible)
+            .attestation_eligible,
+            ignore_breakpad_symbol_generation_errors=failing_build_exception
+            is not None)
         if uploaded_artifacts:
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,

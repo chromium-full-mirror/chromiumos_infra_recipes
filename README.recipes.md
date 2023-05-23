@@ -1033,7 +1033,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#74)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#743)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#749)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1042,7 +1042,7 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#757)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#763)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
@@ -1117,7 +1117,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#769)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#775)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1189,7 +1189,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#146)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1008)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1014)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1199,7 +1199,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#988)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#994)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1299,7 +1299,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#697)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#697)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Upload artifacts from the build.
 
@@ -1317,23 +1317,26 @@ Args:
     from a previous call to upload_artifacts; if set, these artifact
     types will not be re-uploaded. This used to avoid re-bundling artifacts
     if upload_artifacts is called multiple times.
+  ignore_breakpad_symbol_generation_errors: If True, the
+    BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
+    generation.
 
 Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#978)(self):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#984)(self):**
 
 Upload Chrome prebuilts from the build.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#965)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#971)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#945)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#951)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1342,7 +1345,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#873)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#879)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
@@ -2199,7 +2202,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#999)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#1006)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -2214,7 +2217,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1033)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1040)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -2243,14 +2246,14 @@ Args:
 Returns:
   Whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#976)(self, properties: List[UploadedArtifacts]):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#983)(self, properties: List[UploadedArtifacts]):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1053)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1060)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -2271,7 +2274,7 @@ Returns:
   is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1222)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1229)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -2284,7 +2287,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1190)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1197)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2310,7 +2313,7 @@ Return whether to skip publish, if set in properties.
 
 Return the value of {time} in GS templates.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#738)(self, builder_name, kind, gs_bucket, \*, artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False, attestation_eligible=False, upload_coverage=True, previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/cros_artifacts/api.py#738)(self, builder_name, kind, gs_bucket, \*, artifacts_info=None, chroot=None, sysroot=None, name='upload artifacts', test_data=None, private_bundle_func=None, report_to_spike=False, attestation_eligible=False, upload_coverage=True, previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Bundle and upload the given artifacts for the given build target.
 
@@ -2347,11 +2350,14 @@ Args:
     UploadedArtifacts from a previous call to upload_artifacts; these artifact
     types will not be re-uploaded. This used to avoid re-bundling artifacts
     if upload_artifacts is called multiple times.
+  ignore_breakpad_symbol_generation_errors: If True, the
+    BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
+    generation.
 
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#930)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#937)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -10508,14 +10514,14 @@ recipe.
 &mdash; **def [RunSteps](/recipes/build_legacy_fw.py#526)(api, properties):**
 ### *recipes* / [build\_linters](/recipes/build_linters.py)
 
-[DEPS](/recipes/build_linters.py#34): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+[DEPS](/recipes/build_linters.py#35): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
 
 
 Recipe for linting CLs.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#275)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#276)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
 
-&mdash; **def [RunSteps](/recipes/build_linters.py#258)(api: RecipeApi, properties: BuildLintersProperties):**
+&mdash; **def [RunSteps](/recipes/build_linters.py#259)(api: RecipeApi, properties: BuildLintersProperties):**
 ### *recipes* / [build\_mass\_deploy](/recipes/build_mass_deploy.py)
 
 [DEPS](/recipes/build_mass_deploy.py#12): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11315,10 +11321,10 @@ Call the RunCopybot endpoint.
 &mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_artifacts.py#20)(api):**
 ### *recipes* / [cros\_artifacts:tests/upload\_attestations](/recipe_modules/cros_artifacts/tests/upload_attestations.py)
 
-[DEPS](/recipe_modules/cros_artifacts/tests/upload_attestations.py#22): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_artifacts/tests/upload_attestations.py#26): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_attestations.py#33)(api, exclude_image_archives):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/tests/upload_attestations.py#37)(api, exclude_image_archives, ignore_breakpad_symbol_generation_errors):**
 ### *recipes* / [cros\_branch:examples/full](/recipe_modules/cros_branch/examples/full.py)
 
 [DEPS](/recipe_modules/cros_branch/examples/full.py#9): [cros\_branch](#recipe_modules-cros_branch), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14643,7 +14649,7 @@ Args:
 Returns:
   Where the build artifacts were uploaded.
 
-&emsp; **@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#196)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
+&emsp; **@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#216)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
 
 Builds a new VM image for testing.
 
@@ -14654,7 +14660,7 @@ Args:
 Returns:
   The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#266)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, new_version_pin: VersionPin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#286)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, new_version_pin: VersionPin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -14662,7 +14668,7 @@ Args:
   package: the package to include in the commit message.
   new_version_pin: the new version pin data.
 
-&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#412)(api: RecipeApi, build_target: str):**
+&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#432)(api: RecipeApi, build_target: str):**
 
 Finds the latest green snapshot build for the given build target
 and returns the corresponding manifest gitiles (input) commit.
@@ -14670,18 +14676,18 @@ and returns the corresponding manifest gitiles (input) commit.
 Args:
   build_target: The name of the build target.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#308)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#328)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   The latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#392)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#412)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#349)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#369)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -14691,7 +14697,7 @@ have been checked out.
 Returns:
   The pinned version data.
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#397)(version: str, previous_version: str):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#417)(version: str, previous_version: str):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -14701,7 +14707,7 @@ Args:
   version: The version to compare.
   previous_version: The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#373)(api: RecipeApi, properties: UprevParallelsPinProperties, new_version: VersionPin):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#393)(api: RecipeApi, properties: UprevParallelsPinProperties, new_version: VersionPin):**
 
 Sets the content of the VERSION-PIN file.
 
@@ -14711,7 +14717,7 @@ have been checked out.
 Args:
   new_version: the new version pin data.
 
-&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#159)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, to_version: str):**
+&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#179)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, to_version: str):**
 
 Uprevs the Parallels package to the given version.
 

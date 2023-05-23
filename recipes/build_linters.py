@@ -28,6 +28,7 @@ from PB.recipe_engine.result import RawResult
 from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
+from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
@@ -278,6 +279,9 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
                                        Dict[PatchSet,
                                             List[str]]]) -> Optional[RawResult]:
   api.build_menu.setup_sysroot_and_determine_relevance()
+  failing_build_exception = None
+  result = None
+
   try:
     all_linter_output = []
     packages_detected = False
@@ -301,15 +305,36 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
         chrome_synced = True
       linter_output = _GetLints(api, linter, affected_packages)
       all_linter_output.extend(linter_output)
-    if not packages_detected:
-      return RawResult(status=SUCCESS,
-                       summary_markdown='No packages affected by changes.')
-    comment_count = _WriteComments(api, all_linter_output)
-    if comment_count:
-      return RawResult(status=SUCCESS,
-                       summary_markdown='Wrote %d findings.' % comment_count)
-  finally:
-    api.build_menu.upload_artifacts(config)
+    if packages_detected:
+      comment_count = _WriteComments(api, all_linter_output)
+      if comment_count:
+        result = RawResult(
+            status=SUCCESS,
+            summary_markdown='Wrote %d findings.' % comment_count)
+    else:
+      result = RawResult(status=SUCCESS,
+                         summary_markdown='No packages affected by changes.')
+  except StepFailure as sf:
+    # If we catch an exception, swallow it and store it so the next steps can
+    # still occur; there is value in uploading the artifact even
+    # in cases of build failure for debug purposes.
+    failing_build_exception = sf
+  try:
+    api.build_menu.upload_artifacts(
+        config, ignore_breakpad_symbol_generation_errors=failing_build_exception
+        is not None)
+  except StepFailure as sf:
+    # If upload_artifacts threw an exception, surface that exception unless
+    # build_and_test_images above threw an exception, in which case we want to
+    # surface *that* exception for accuracy in reporting the build (and it's
+    # likely that upload artifacts failed as a result of those previous issues).
+    raise failing_build_exception or sf
+
+  # Now that upload_artifacts is done, surface any exceptions from earlier.
+  if failing_build_exception:
+    raise failing_build_exception  # pylint: disable=raising-bad-type
+
+  return result
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -619,3 +644,26 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       **BuildTestArgs(),
       status='FAILURE',
   )
+
+  yield api.build_menu.test(
+      'upload-failure',
+      api.post_check(post_process.StepSuccess, 'get relevant patches'),
+      api.post_check(post_process.StepSuccess, 'get relevant files'),
+      api.post_check(post_process.StepSuccess, 'Sync Chrome sources'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for clippy'),
+      api.post_check(post_process.StepSuccess,
+                     'get affected packages for golint'),
+      api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
+      api.post_check(post_process.StepSuccess, 'linting packages with golint'),
+      api.post_check(post_process.StepSuccess,
+                     'write comments for linter findings'),
+      api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
+                                                   changes[:1], relevant_edits),
+      api.repo.project_infos_step_data('get affected packages for clippy',
+                                       data=project_info),
+      api.repo.project_infos_step_data('get affected packages for golint',
+                                       data=project_info),
+      api.build_menu.set_build_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          retcode=1), **BuildTestArgs(), status='INFRA_FAILURE')

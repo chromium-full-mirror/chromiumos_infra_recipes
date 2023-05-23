@@ -141,12 +141,32 @@ def build_os_with_uprev(api: RecipeApi, properties: UprevParallelsPinProperties,
       env_info = api.build_menu.setup_sysroot_and_determine_relevance()
       packages = env_info.packages
 
+      failing_build_exception = None
       try:
         api.build_menu.bootstrap_sysroot(config)
         api.build_menu.install_packages(config, packages)
         api.build_menu.build_and_test_images(config)
-      finally:
-        api.build_menu.upload_artifacts(config)
+      except StepFailure as sf:
+        # If we catch an exception, swallow it and store it so the next steps can
+        # still occur; there is value in uploading the artifact even
+        # in cases of build failure for debug purposes.
+        failing_build_exception = sf
+
+      try:
+        api.build_menu.upload_artifacts(
+            config,
+            ignore_breakpad_symbol_generation_errors=failing_build_exception
+            is not None)
+      except StepFailure as sf:
+        # If upload_artifacts threw an exception, surface that exception unless
+        # build_and_test_images above threw an exception, in which case we want to
+        # surface *that* exception for accuracy in reporting the build (and it's
+        # likely that upload artifacts failed as a result of those previous issues).
+        raise failing_build_exception or sf
+
+      # Now that upload_artifacts is done, surface any exceptions from earlier.
+      if failing_build_exception:
+        raise failing_build_exception  # pylint: disable=raising-bad-type
 
       with api.step.nest('get artifacts path'):
         gs_path = api.cros_artifacts.artifacts_gs_path(
@@ -606,7 +626,7 @@ def GenTests(api: RecipeTestApi):
           'SysrootService/InstallPackages', retcode=1),
       api.build_menu.set_build_api_return(
           _BUILD_STEP_NAME + '.upload artifacts.call artifacts service',
-          'ArtifactsService/Get', retcode=1), status='INFRA_FAILURE')
+          'ArtifactsService/Get', retcode=1), status='FAILURE')
 
   # Build image fails to schedule (infra failure)
   yield api.build_menu.test(

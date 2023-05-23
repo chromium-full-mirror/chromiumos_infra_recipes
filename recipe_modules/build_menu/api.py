@@ -697,7 +697,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def upload_artifacts(self, config=None, private_bundle_func=None,
                        sysroot=None, report_to_spike=False,
                        name='upload artifacts',
-                       previously_uploaded_artifacts=None):
+                       previously_uploaded_artifacts=None,
+                       ignore_breakpad_symbol_generation_errors=False):
     """Upload artifacts from the build.
 
     Args:
@@ -714,6 +715,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         from a previous call to upload_artifacts; if set, these artifact
         types will not be re-uploaded. This used to avoid re-bundling artifacts
         if upload_artifacts is called multiple times.
+      ignore_breakpad_symbol_generation_errors: If True, the
+        BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
+        generation.
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -737,7 +741,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
           report_to_spike=report_to_spike,
           attestation_eligible=config.artifacts.attestation_eligible,
           upload_coverage=run_upload_coverage, name=name,
-          previously_uploaded_artifacts=previously_uploaded_artifacts)
+          previously_uploaded_artifacts=previously_uploaded_artifacts,
+          ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors
+      )
     return uploaded
 
   def artifacts_build_path(self):

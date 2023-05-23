@@ -71,7 +71,9 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
     raise
   finally:
     try:
-      api.build_menu.upload_artifacts(config)
+      api.build_menu.upload_artifacts(
+          config,
+          ignore_breakpad_symbol_generation_errors=not raise_upload_failure)
     except StepFailure:
       # TODO(crbug/1086630): We do not need to catch StepFailure here after
       # 2020-12-31.

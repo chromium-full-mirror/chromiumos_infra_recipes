@@ -740,7 +740,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                        name='upload artifacts', test_data=None,
                        private_bundle_func=None, report_to_spike=False,
                        attestation_eligible=False, upload_coverage=True,
-                       previously_uploaded_artifacts=None):
+                       previously_uploaded_artifacts=None,
+                       ignore_breakpad_symbol_generation_errors=False):
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -776,6 +777,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         UploadedArtifacts from a previous call to upload_artifacts; these artifact
         types will not be re-uploaded. This used to avoid re-bundling artifacts
         if upload_artifacts is called multiple times.
+      ignore_breakpad_symbol_generation_errors: If True, the
+        BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
+        generation.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -785,6 +789,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     if previously_uploaded_artifacts:
       artifacts_info = self._filter_previously_uploaded_artifacts(
           artifacts_info, previously_uploaded_artifacts)
+
+    if artifacts_info and artifacts_info.HasField('sysroot'):
+      artifacts_info.sysroot.ignore_breakpad_symbol_generation_errors = ignore_breakpad_symbol_generation_errors
 
     with self.m.step.nest(name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')

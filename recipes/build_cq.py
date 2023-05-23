@@ -170,9 +170,14 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     if async_unit_tests_enabled:
       api.build_menu.upload_artifacts(
           config, name='final upload artifacts',
-          previously_uploaded_artifacts=uploaded_artifacts)
+          previously_uploaded_artifacts=uploaded_artifacts,
+          ignore_breakpad_symbol_generation_errors=failing_build_exception
+          is not None)
     else:
-      api.build_menu.upload_artifacts(config)
+      api.build_menu.upload_artifacts(
+          config,
+          ignore_breakpad_symbol_generation_errors=failing_build_exception
+          is not None)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
     # build_and_test_images above threw an exception, in which case we want to

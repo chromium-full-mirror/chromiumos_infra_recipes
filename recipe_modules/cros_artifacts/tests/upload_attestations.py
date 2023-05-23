@@ -17,6 +17,10 @@ PROPERTIES = {
         Property(
             help='Whether to define the artifact_info with no IMAGE_ARCHIVES type.',
             kind=bool, default=False),
+    'ignore_breakpad_symbol_generation_errors':
+        Property(
+            help="The value to pass to upload_artifacts's ignore_breakpad_symbol_generation_errors parameter",
+            kind=bool, default=False),
 }
 
 DEPS = [
@@ -30,7 +34,8 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api, exclude_image_archives):
+def RunSteps(api, exclude_image_archives,
+             ignore_breakpad_symbol_generation_errors):
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(artifact_types=[
@@ -54,6 +59,13 @@ def RunSteps(api, exclude_image_archives):
                   common.ArtifactsByService.Firmware.CODE_COVERAGE_HTML,
               ], acl_name='public-read')
       ]),
+      sysroot=common.ArtifactsByService.Sysroot(output_artifacts=[
+          common.ArtifactsByService.Sysroot.ArtifactInfo(
+              artifact_types=[
+                  common.ArtifactsByService.Sysroot.DEBUG_SYMBOLS,
+                  common.ArtifactsByService.Sysroot.BREAKPAD_DEBUG_SYMBOLS,
+              ], acl_name='public-read')
+      ]),
       infra=common.ArtifactsByService.Infra(output_artifacts=[
           common.ArtifactsByService.Infra.ArtifactInfo(artifact_types=[
               common.ArtifactsByService.Infra.BUILD_MANIFEST,
@@ -69,13 +81,31 @@ def RunSteps(api, exclude_image_archives):
       artifacts_info=artifacts_info,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
-      report_to_spike=True, attestation_eligible=True)
+      report_to_spike=True, attestation_eligible=True,
+      ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors
+  )
 
 
 def GenTests(api):
 
   yield api.test(
       'basic',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.bundle IMAGE_ARCHIVES for upload',
+          'ArtifactsService/BundleImageArchives',
+          json.dumps({
+              'artifacts': [{
+                  'path': 'chromiumos_base_image.tar.xz',
+              }],
+          }, sort_keys=True)),
+      api.post_process(
+          post_process.MustRun,
+          'upload artifacts.generate provenance.snoop: report_gcs'),
+  )
+
+  yield api.test(
+      'ignore-breakpad-symbol-generation-errors',
+      api.properties(ignore_breakpad_symbol_generation_errors=True),
       api.cros_build_api.set_api_return(
           'upload artifacts.bundle IMAGE_ARCHIVES for upload',
           'ArtifactsService/BundleImageArchives',
