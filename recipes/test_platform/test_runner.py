@@ -871,7 +871,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
       # Uploads missing test result for browser tests running with Tauto and
       # Tast
       _upload_missing_tast_results(api, config.get('base_variant'),
-                                   config.get('base_tag'), autotest_keyval_file)
+                                   config.get('base_tags'),
+                                   autotest_keyval_file)
       return
 
     first_test_case_name = ''
