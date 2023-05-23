@@ -45,4 +45,7 @@ message TestRunnerProperties {
   }
   // LUCI experiment for rolling out result publishing time limits.
   repeated LUCIExperiments experiments = 7;
+  // The following property used to determine the build configs are for
+  // parnters. Defaults to false.
+  bool partner_config = 8;
 }

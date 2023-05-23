@@ -64,4 +64,7 @@ message CrosTestPlatformProperties {
   }
   // This field is used for LUCI builder experiments defined in infra/config.
   repeated LUCIExperiments experiments = 11;
+  // The following property used to determine the build configs are for
+  // parnters. Defaults to false.
+  bool partner_config = 12;
 }

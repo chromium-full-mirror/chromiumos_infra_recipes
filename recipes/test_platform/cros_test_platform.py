@@ -922,7 +922,9 @@ def RunSteps(api, properties):
     # is completed.
     publish_to_result_flow(api, properties.config,
                            should_poll_for_completion=True)
-    postprocess(api, requests, tagged_responses)
+
+    postprocess(api, requests, tagged_responses,
+                skip_postprocess=properties.partner_config)
   summarize(api, enumerations, tagged_responses, error_in_requests,
             suite_execution_logs)
 
@@ -1086,8 +1088,12 @@ def _build_has_ancestor(api):
   return bool(api.buildbucket.build.ancestor_ids)
 
 
-def postprocess(api, requests, responses):
-  with api.step.nest('postprocess'):
+def postprocess(api, requests, responses, skip_postprocess=False):
+  with api.step.nest('postprocess') as step:
+    # For partner build configs, don't schedule cros_test_postprocess builds.
+    if skip_postprocess:
+      step.presentation.step_summary_text = 'Skipped: Using Partner config'
+      return
     for tag, response in sorted(responses.items()):
       request = requests[tag]
       if not request.params.metadata.debug_symbols_archive_url:
@@ -2216,6 +2222,16 @@ def GenTests(api):
           api.cipd.example_describe(
               'chromiumos/infra/cros_test_platform/${platform}',
               version='latest', test_data_tags=['random-key:random-value'])))
+
+
+  # An end-to-end run with partner_config set to skip cros_test_postprocess
+  yield api.test(
+      'end-to-end-execution-with-passed-tasks-with-partner-config',
+      api.properties(
+          CrosTestPlatformProperties(requests={'default': _test_request('foo')},
+                                     config=_test_config('foo'),
+                                     partner_config=True)),
+      _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
   # An end-to-end CQ retry run.
   yield api.test(
