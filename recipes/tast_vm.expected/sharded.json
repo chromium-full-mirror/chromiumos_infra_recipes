@@ -95,6 +95,31 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "setup vm image.fetch partner ssh key for chromeos images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "main",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chrome-internal.googlesource.com/chromeos/sshkeys",
+      "[CLEANUP]/sshkeys_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "setup vm image.fetch partner ssh key for chromeos images.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -102,13 +127,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/image-archive_tmp_1/image/id_rsa",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa"
+      "[CLEANUP]/sshkeys_tmp_1/partner_testing_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa"
     ],
     "infra_step": true,
-    "name": "setup vm image.copy ssh key (id_rsa)",
+    "name": "setup vm image.fetch partner ssh key for chromeos images.copy ssh key (partner_testing_rsa)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -119,14 +144,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "chmod",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "--mode",
       "400"
     ],
     "infra_step": true,
-    "name": "setup vm image.calibrate ssh key permissions (id_rsa)",
+    "name": "setup vm image.fetch partner ssh key for chromeos images.calibrate ssh key permissions (partner_testing_rsa)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -237,7 +262,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "root@localhost",
       "--",
       "true"
@@ -285,7 +310,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "root@localhost",
       "--",
       "true"
@@ -311,7 +336,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "root@localhost",
       "--",
       "rsync",
@@ -343,7 +368,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "root@localhost",
       "--",
       "tar",
@@ -389,7 +414,7 @@
       "-oNumberOfPasswordPrompts=0",
       "-oIdentitiesOnly=yes",
       "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/id_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
       "root@localhost:/tmp/artifacts.tar",
       "[CLEANUP]/test-results_tmp_1/artifacts.tar"
     ],

@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/time',
     'easy',
     'gcloud',
+    'git',
     'tast_results',
     'util',
 ]

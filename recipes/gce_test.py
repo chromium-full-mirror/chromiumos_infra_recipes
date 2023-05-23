@@ -14,7 +14,6 @@ from PB.recipes.chromeos.gce_test import GceTestProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/random',
@@ -22,7 +21,6 @@ DEPS = [
     'recipe_engine/time',
     'failures',
     'gcloud',
-    'git',
     'tast_exec',
     'tast_results',
 ]
@@ -64,13 +62,7 @@ def RunSteps(api: RecipeApi,
         'autotest/utils/frozen_chromite/ssh_keys/testing_rsa',
     )
     api.tast_exec.add_ssh_key(private_key_path)
-
-    with api.step.nest('fetch partner ssh key for chromeos images'):
-      sshkeys_dir = api.path.mkdtemp(prefix='sshkeys')
-      api.git.clone('https://chrome-internal.googlesource.com/chromeos/sshkeys',
-                    branch='main', target_path=sshkeys_dir, depth=1)
-      partner_key_path = sshkeys_dir.join('partner_testing_rsa')
-      api.tast_exec.add_ssh_key(partner_key_path)
+    api.tast_exec.fetch_partner_key()
 
     vm_context = api.tast_exec.create_gce_vm_context(
         image, project=properties.gce_metadata.project,

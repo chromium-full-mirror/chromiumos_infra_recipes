@@ -9509,7 +9509,7 @@ Returns:
   (BuildSetupResponse): Whether the build is relevant.
 ### *recipe_modules* / [tast\_exec](/recipe_modules/tast_exec)
 
-[DEPS](/recipe_modules/tast_exec/__init__.py#8): [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/tast_exec/__init__.py#8): [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [tast\_results](#recipe_modules-tast_results), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 #### **class [TastExecApi](/recipe_modules/tast_exec/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -9523,7 +9523,7 @@ Registers an SSH key for use during test execution.
 Args:
   path (Path): Path to the SSH key.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#557)(self, image, project, machine, zone, network, subnet):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#570)(self, image, project, machine, zone, network, subnet):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -9541,7 +9541,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#436)(self, qcow_image_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#449)(self, qcow_image_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -9555,7 +9555,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#111)(self, build_payload, test_artifacts_dir):**
+&mdash; **def [download\_tast](/recipe_modules/tast_exec/api.py#121)(self, build_payload, test_artifacts_dir):**
 
 Downloads the tast executable from specified build artifacts.
 
@@ -9565,7 +9565,7 @@ Args:
     downloaded. The tast executable will be found at tast/tast relative
     to this directory.
 
-&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#131)(self, build_payload, vm_dir, modify_image=None):**
+&mdash; **def [download\_vm](/recipe_modules/tast_exec/api.py#141)(self, build_payload, vm_dir, modify_image=None):**
 
 Downloads the VM image from specified build artifacts.
 
@@ -9581,7 +9581,11 @@ Returns:
   The location of the qcow image. This will be a location inside
     image_archive_dir.
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#529)(self, kvm_pid_file):**
+&mdash; **def [fetch\_partner\_key](/recipe_modules/tast_exec/api.py#111)(self):**
+
+Fetch partner key from private ChromeOS Tree
+
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#542)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -9591,7 +9595,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#293)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#306)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -9604,7 +9608,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#263)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#276)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -9619,7 +9623,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#173)(self, suite_name, vm_context, tast_inputs):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#186)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 
@@ -12435,12 +12439,12 @@ Tests to verify future_utils error handling.
 &mdash; **def [RunSteps](/recipe_modules/gce_provider/tests/get_current_config.py#23)(api, properties):**
 ### *recipes* / [gce\_test](/recipes/gce_test.py)
 
-[DEPS](/recipes/gce_test.py#15): [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/gce_test.py#15): [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 An experimental recipe for running GCE tests.
 
-&mdash; **def [RunSteps](/recipes/gce_test.py#41)(api: RecipeApi, properties: GceTestProperties):**
+&mdash; **def [RunSteps](/recipes/gce_test.py#39)(api: RecipeApi, properties: GceTestProperties):**
 ### *recipes* / [gcloud:tests/cache\_properties](/recipe_modules/gcloud/tests/cache_properties.py)
 
 [DEPS](/recipe_modules/gcloud/tests/cache_properties.py#8): [build\_menu](#recipe_modules-build_menu), [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

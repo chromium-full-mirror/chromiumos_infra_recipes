@@ -108,6 +108,16 @@ class TastExecApi(RecipeApi):
                       newpath, '400')
     self._sshkeys.append(newpath)
 
+  def fetch_partner_key(self):
+    """Fetch partner key from private ChromeOS Tree"""
+    with self.m.step.nest('fetch partner ssh key for chromeos images'):
+      sshkeys_dir = self.m.path.mkdtemp(prefix='sshkeys')
+      self.m.git.clone(
+          'https://chrome-internal.googlesource.com/chromeos/sshkeys',
+          branch='main', target_path=sshkeys_dir, depth=1)
+      partner_key_path = sshkeys_dir.join('partner_testing_rsa')
+      self.add_ssh_key(partner_key_path)
+
   def download_tast(self, build_payload, test_artifacts_dir):
     """Downloads the tast executable from specified build artifacts.
 
@@ -167,7 +177,10 @@ class TastExecApi(RecipeApi):
           '-b', str(vm_image_path), \
           str(qcow_image_path) \
       ])
-      self.add_ssh_key(private_key_path)
+      if self.m.path.exists(private_key_path):  # pragma: nocover
+        self.add_ssh_key(private_key_path)
+      self.fetch_partner_key()
+
     return qcow_image_path
 
   def run_vm(self, suite_name, vm_context, tast_inputs):
