@@ -553,8 +553,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     Args:
       interval_stats: Verdict stats of the test over interval ranges.
 
-    Returns: Number of flaky verdict and percent of verdict with flaky
-      result in the last 24 hr period rounded to the nearest integer.
+    Returns: Percent of verdict with flaky result in the last
+      24 hr period rounded to the nearest integer.
     """
     for interval_stat in interval_stats:
       # interval_age = 1 is the last 24 hr period.
@@ -566,11 +566,11 @@ class ExonerateApi(recipe_api.RecipeApi):
         total_verdicts = flaky_verdicts + non_flaky_verdicts
         flaky_percent = 0 if total_verdicts == 0 else round(
             (100 * flaky_verdicts) / total_verdicts)
-        return flaky_verdicts, flaky_percent
+        return flaky_percent
 
     # Adding a return statement here for pylint. We should only get here if the LUCI
     # analysis response is bad. 0 is the fallback in that case.
-    return 0, 0
+    return 0
 
   def auto_exoneration_analysis(self, fake_data: bool = False) -> bool:
     """Analyze failed tests to see if they can be exonerated.
@@ -620,9 +620,10 @@ class ExonerateApi(recipe_api.RecipeApi):
           stat.consistent_failure_count = (
               self.get_consistent_failure_count_from_verdicts(
                   failure_rate.recent_verdicts))
-          flaky_verdicts, stat.flaky_verdict_percent = (
+          stat.flaky_verdict_percent = (
               self.get_flake_percent_from_interval_stats(
                   failure_rate.interval_stats))
+          flaky_verdicts = len(failure_rate.run_flaky_verdict_examples)
           # This is Browser's current algorithm. Starting with this. Might change later.
           consistently_failing = (
               stat.consistent_failure_count >=

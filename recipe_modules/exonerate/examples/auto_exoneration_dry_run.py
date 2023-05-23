@@ -41,7 +41,7 @@ def RunSteps(api):
   api.exonerate.auto_exoneration_analysis()
   # To unittest the final return statement.
   api.assertions.assertEqual(
-      api.exonerate.get_flake_percent_from_interval_stats([]), (0, 0))
+      api.exonerate.get_flake_percent_from_interval_stats([]), (0))
   variant = api.exonerate.get_test_variant_dict('test_name', 'board',
                                                 'build_target', 'suite')
   api.assertions.assertEqual(variant['variant']['def']['board'], 'board')
