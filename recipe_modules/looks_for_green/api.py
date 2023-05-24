@@ -63,6 +63,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self._now
 
   @property
+  def stats(self) -> LooksForGreenStats:
+    '''Returns looks for green stats'''
+    return self._stats
+
+  @property
   def _greenness_bucket(self) -> str:
     '''Returns bucket to query for greenness.
     '''
@@ -285,14 +290,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             'hours old.')
         self._set_snapshot_stats(green, suggested=True)
         self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
-        self.m.easy.set_properties_step(looks_for_green=self._stats)
+        self.m.easy.set_properties_step(looks_for_green=self.stats)
       else:
         presentation.logs['latest green'] = (
             'Found no snapshot of at least '
             f'{self._greenness_threshold} greenness within the last '
             f'{self._lookback_hours} hours.')
         self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
-        self.m.easy.set_properties_step(looks_for_green=self._stats)
+        self.m.easy.set_properties_step(looks_for_green=self.stats)
       return green
 
   def is_snap_orch_green(self) -> bool:
@@ -310,7 +315,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     # turn around and choose a different snapshot.
     if is_snap_orch_green or self.dry_run:
       self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
-    self.m.easy.set_properties_step(looks_for_green=self._stats)
+    self.m.easy.set_properties_step(looks_for_green=self.stats)
     return is_snap_orch_green
 
   def found_disallow_lfg_footer(
