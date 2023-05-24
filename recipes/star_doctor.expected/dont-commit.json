@@ -2436,8 +2436,7 @@
     "cmd": [
       "/bin/bash",
       "test/suite_scheduler/regenerate_configs.sh",
-      "-b",
-      "--gen-rubik"
+      "-b"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_3",
     "env_suffixes": {
@@ -2492,23 +2491,6 @@
     ],
     "infra_step": true,
     "name": "generate binary config.copy INI configs.suite_scheduler.ini",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/rubik_config.ini",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy INI configs.rubik_config.ini",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

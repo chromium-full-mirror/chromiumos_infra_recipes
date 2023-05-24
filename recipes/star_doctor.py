@@ -407,10 +407,10 @@ def _regenerate_configs(api: RecipeApi) -> None:
                  timeout=3 * 60)
         api.step('regenerate test exoneration configs',
                  ['./test/exoneration/generate', '-b'], timeout=3 * 60)
-        api.step('regenerate suite scheduler configs', [
-            '/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b',
-            '--gen-rubik'
-        ], timeout=3 * 60)
+        api.step(
+            'regenerate suite scheduler configs',
+            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
+            timeout=3 * 60)
 
 
 def _ensure_cipd_packages(api: RecipeApi) -> Path:
@@ -443,8 +443,6 @@ def _copy_ini_configs(api: RecipeApi) -> None:
                   dest_dir)
     api.file.copy('suite_scheduler.ini',
                   api.path.join(orig_dir, 'suite_scheduler.ini'), dest_dir)
-    api.file.copy('rubik_config.ini',
-                  api.path.join(orig_dir, 'rubik_config.ini'), dest_dir)
 
 
 def _upload_all_changes(api: RecipeApi, properties: StarDoctorProperties,
