@@ -172,6 +172,16 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'kabuto_commit_ref',
       api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'clone kabuto.git checkout',
+          [
+              'git',
+              'checkout',
+              '--force',
+              '17e956ddabe4cba4c247dd39ebfd3e29eca5ff89',
+          ],
+      ),
   )
 
   props = good_props.copy()
@@ -179,4 +189,26 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'kabuto_cl_ref',
       api.properties(**props),
+      api.post_check(post_process.MustRun, 'clone kabuto.git fetch'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'clone kabuto.git fetch (2)',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+              'refs/changes/75/5888475/2:',
+          ],
+      ),
+      api.post_check(post_process.MustRun, 'clone kabuto.git rev-parse'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'clone kabuto.git checkout',
+          [
+              'git',
+              'checkout',
+              '--force',
+              'FETCH_HEAD',
+          ],
+      ),
   )
