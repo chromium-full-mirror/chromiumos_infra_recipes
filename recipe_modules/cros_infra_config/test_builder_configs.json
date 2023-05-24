@@ -347,7 +347,8 @@
               }
             ]
           }
-        }
+        },
+        "artifactsGsBucket": "chromeos-image-archive"
       },
       "chrome": {
         "internal": true
@@ -2278,6 +2279,50 @@
           "ref": "refs/heads/main"
         },
         "child_specs": []
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-releases-test",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS",
+                  "IMAGE_ARCHIVES"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true
       }
     },
     {

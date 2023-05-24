@@ -17,6 +17,7 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
+      "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    legacy {@@@",
       "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",

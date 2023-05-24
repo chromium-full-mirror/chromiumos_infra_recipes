@@ -3,12 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
-
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1.common import GerritChange, GitilesCommit
-from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources, SourceSpec
-from PB.recipe_modules.chromeos.metadata_json.examples.test import TestProperties
+from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
+from PB.recipe_modules.chromeos.build_menu.tests.test import TestProperties
 
 from recipe_engine import post_process
 
@@ -16,7 +14,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_infra_config',
-    'metadata_json',
+    'build_menu',
     'src_state',
     'test_util',
 ]
@@ -32,11 +30,9 @@ revision = 'c' * 40
 
 
 def RunSteps(api, properties):
-  api.metadata_json.add_source_spec(api.cros_infra_config.config)
-  metadata = api.metadata_json.get_metadata()
-  source_spec = json_format.ParseDict(
-      metadata.get('source_spec', {}), SourceSpec())
-  api.assertions.assertEqual(source_spec, properties.expected_source_spec)
+  sources = api.build_menu.upload_sources(
+      api.cros_infra_config.config) or Sources()
+  api.assertions.assertEqual(sources, properties.expected_sources)
 
 
 def GenTests(api):
@@ -54,6 +50,12 @@ def GenTests(api):
                                           git_repo=internal_git_repo,
                                           git_ref=git_ref,
                                           revision=revision).build
+
+  yield api.test(
+      'no-artifacts-bucket',
+      api.test_util.test_child_build('chromite', cq=True).build,
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'not-staging',
@@ -85,19 +87,17 @@ def GenTests(api):
                    project='chromiumos/infra', change=12340 + i, patchset=1)
       for i in range(10)
   ]
-  sources = Sources(gitiles_commit=gitiles_commit, changelists=gerrit_changes)
-  expected_source_spec = SourceSpec(sources=sources)
+  expected_sources = Sources(gitiles_commit=gitiles_commit,
+                             changelists=gerrit_changes)
   yield api.test(
       'basic',
       test_build('staging-atlas', number_of_gerrit_changes=10),
-      api.properties(TestProperties(expected_source_spec=expected_source_spec)),
-      api.post_process(post_process.DropExpectation),
+      api.properties(TestProperties(expected_sources=expected_sources)),
   )
 
-  expected_source_spec.sources.is_dirty = True
+  expected_sources.is_dirty = True
   yield api.test(
       'more-than-ten-changes',
       test_build('staging-atlas', number_of_gerrit_changes=11),
-      api.properties(TestProperties(expected_source_spec=expected_source_spec)),
-      api.post_process(post_process.DropExpectation),
+      api.properties(TestProperties(expected_sources=expected_sources)),
   )

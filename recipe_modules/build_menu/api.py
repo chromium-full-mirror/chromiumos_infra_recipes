@@ -22,6 +22,8 @@ from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from recipe_engine import recipe_api
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -320,8 +322,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       self.m.easy.set_properties_step(chromeos_version=str(version))
 
-      # SouceSpec can be added to metadata.json once the workspace is synced.
-      self.m.metadata_json.add_source_spec(config)
+      # Sources can be uploaded once the workspace is synced.
+      self.upload_sources(config)
 
       yield
 
@@ -864,6 +866,78 @@ class BuildMenuApi(recipe_api.RecipeApi):
           if failed:
             raise recipe_api.StepFailure(
                 'One or more test service containers failed to build.')
+
+  def upload_sources(self,
+                     config: BuilderConfig) -> Optional[invocation_pb2.Sources]:
+    """Add the Sources file to the build metadata artifact dir.
+
+    Note: This should only be called after syncing to the manifest.
+
+    Args:
+      config: The builder config of this builder.
+
+    Returns:
+      sources: The Sources uploaded.
+    """
+    # Skip if the builder is not configured to upload artifacts.
+    if not config.artifacts.artifacts_gs_bucket:
+      return None
+
+    # TODO(b/279631301): Gate in staging for now.
+    if not self.m.cros_infra_config.is_staging:
+      return None
+
+    # TODO(b/279631301): Remove this restriction once we figure out how to pass
+    # internal manifest commit info to builders running public targets.
+    if (self.m.src_state.build_manifest.url !=
+        self.m.src_state.internal_manifest.url):
+      return None
+
+    # This is currently limited to CQ and Postsubmit builders.
+    if not (config and config.id.type
+            in [BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT]):
+      return None
+
+    with self.m.context(cwd=self.m.src_state.build_manifest.path):
+      position = self.m.git_footers.position_num(
+          self.m.src_state.gitiles_commit.id, 999)
+
+    gitiles_commit = json_format.MessageToDict(self.m.src_state.gitiles_commit)
+    gitiles_commit['commit_hash'] = gitiles_commit.pop('id')
+    gitiles_commit['position'] = position
+    gitiles_commit = json_format.ParseDict(gitiles_commit,
+                                           rdb_common_pb2.GitilesCommit(),
+                                           ignore_unknown_fields=True)
+
+    changelists = [
+        json_format.Parse(
+            json_format.MessageToJson(x), rdb_common_pb2.GerritChange(),
+            ignore_unknown_fields=True) for x in self.m.src_state.gerrit_changes
+    ]
+    # At most 10 changelists may be specified. If more than 10 changelists are
+    # applied, then only include the first 10 and set is_dirty
+    # http://shortn/_M8WrZaNB1H.
+    if len(changelists) > 10:
+      is_dirty = True
+      changelists = changelists[:10]
+    else:
+      is_dirty = False
+
+    sources = self.m.metadata.SOURCES_METADATA_INFO.msgtype(
+        gitiles_commit=gitiles_commit, changelists=changelists,
+        is_dirty=is_dirty)
+
+    self.m.cros_artifacts.upload_metadata(
+        name=self.m.metadata.SOURCES_METADATA_INFO.name,
+        builder_name=config.id.name,
+        target=self.build_target,
+        gs_bucket=config.artifacts.artifacts_gs_bucket,
+        filename=self.m.metadata.SOURCES_METADATA_INFO.filename,
+        message=sources,
+        template=self.m.cros_artifacts.gs_upload_path,
+    )
+
+    return sources
 
   def upload_prebuilts(self, config=None):
     """Upload prebuilts from the build.

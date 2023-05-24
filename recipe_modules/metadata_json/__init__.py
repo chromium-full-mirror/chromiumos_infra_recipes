@@ -17,7 +17,6 @@ DEPS = [
     'cros_artifacts',
     'cros_infra_config',
     'cros_source',
-    'git_footers',
     'src_state',
     'test_util',
     'urls',

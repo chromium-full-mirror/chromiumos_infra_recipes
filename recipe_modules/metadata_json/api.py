@@ -8,14 +8,10 @@ import datetime
 import email.utils
 import time
 
-from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import step as step_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1.common import GerritChange, GitilesCommit
-from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources, SourceSpec
 
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from recipe_engine.recipe_api import RecipeApi
@@ -97,58 +93,6 @@ class MetadataJsonApi(RecipeApi):
     for dimension in build.infra.swarming.bot_dimensions:  # pragma: nocover
       if dimension.key == 'id':
         self._metadata['bot-hostname'] = dimension.value
-
-  def add_source_spec(self, config: BuilderConfig):
-    """Add the SourceSpec to metadata.json.
-
-    Note: This should only be called after syncing to the manifest.
-
-    Args:
-      config: The builder config of this builder.
-    """
-
-    # TODO(b//279631301): Gate in staging for now.
-    if not self.m.cros_infra_config.is_staging:
-      return
-
-    # TODO(b/279631301): Remove this restriction once we figure out how to pass
-    # internal manifest commit info to builders running public targets.
-    if (self.m.src_state.build_manifest.url !=
-        self.m.src_state.internal_manifest.url):
-      return
-
-    # This is currently limited to CQ and Postsubmit builders.
-    if not (config and config.id.type
-            in [BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT]):
-      return
-
-    with self.m.context(cwd=self.m.src_state.build_manifest.path):
-      position = self.m.git_footers.position_num(
-          self.m.src_state.gitiles_commit.id, 999)
-
-    gitiles_commit = json_format.MessageToDict(self.m.src_state.gitiles_commit)
-    if 'id' in gitiles_commit:
-      gitiles_commit['commit_hash'] = gitiles_commit.pop('id')
-    gitiles_commit['position'] = position
-    gitiles_commit = json_format.ParseDict(gitiles_commit, GitilesCommit())
-
-    changelists = [
-        json_format.Parse(json_format.MessageToJson(x), GerritChange())
-        for x in self.m.src_state.gerrit_changes
-    ]
-    # At most 10 changelists may be specified. If more than 10 changelists are
-    # applied, then only include the first 10 and set is_dirty
-    # http://shortn/_M8WrZaNB1H.
-    if len(changelists) > 10:
-      is_dirty = True
-      changelists = changelists[:10]
-    else:
-      is_dirty = False
-
-    source_spec = SourceSpec(
-        sources=Sources(gitiles_commit=gitiles_commit, changelists=changelists,
-                        is_dirty=is_dirty))
-    self._metadata['source_spec'] = json_format.MessageToDict(source_spec)
 
   def add_version_entries(self, version_dict):
     """Update metadata with version info.

@@ -1,0 +1,16 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.build_menu.tests;
+
+import "go.chromium.org/luci/resultdb/proto/v1/invocation.proto";
+
+message TestProperties {
+
+  // The expected Sources message uploaded.
+  luci.resultdb.v1.Sources expected_sources = 1;
+
+}

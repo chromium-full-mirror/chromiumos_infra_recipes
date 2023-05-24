@@ -1,0 +1,325 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "cccccccccccccccccccccccccccccccccccccccc",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read git footers"
+  },
+  {
+    "cmd": [],
+    "name": "upload sources metadata"
+  },
+  {
+    "cmd": [],
+    "name": "upload sources metadata.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload sources metadata.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "cccccccccccccccccccccccccccccccccccccccc:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "cccccccccccccccccccccccccccccccccccccccc",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"changelists\": [\n    {\n      \"change\": \"12340\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12341\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12342\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12343\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12344\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12345\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12346\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12347\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12348\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    },\n    {\n      \"change\": \"12349\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"1\",\n      \"project\": \"chromiumos/infra\"\n    }\n  ],\n  \"gitiles_commit\": {\n    \"commit_hash\": \"cccccccccccccccccccccccccccccccccccccccc\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"snapshot\"\n  }\n}",
+      "[CLEANUP]/tmp_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"changelists\": [@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12340\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12341\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12342\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12343\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12344\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12345\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12346\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12347\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12348\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    },@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"12349\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"chromiumos/infra\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  ],@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"cccccccccccccccccccccccccccccccccccccccc\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"host\": \"chrome-internal.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"position\": \"999\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"snapshot\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  }@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
+      "gs://chromeos-throwaway/staging-atlas-cq/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/staging-atlas-cq/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

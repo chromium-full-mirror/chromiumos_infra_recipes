@@ -25,6 +25,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'git_footers',
     'metadata',
     'metadata_json',
     'observability_image_size',

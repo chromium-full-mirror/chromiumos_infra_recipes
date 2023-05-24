@@ -14,6 +14,7 @@ from recipe_engine import recipe_api
 
 # Protobuffer imports
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
+from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
 
 
 class MetadataApi(recipe_api.RecipeApi):
@@ -40,9 +41,12 @@ class MetadataApi(recipe_api.RecipeApi):
   # Folder in a build's GS path to put metadata
   METADATA_GSDIR = 'metadata'
 
-  # Define suported metadata types
+  # Define supported metadata types
   CONTAINER_METADATA_INFO = \
       MetadataInfo('container', 'containers.jsonpb', ContainerMetadata)
+
+  SOURCES_METADATA_INFO = \
+      MetadataInfo('sources', 'sources.jsonpb', Sources)
 
   METADATA_PAYLOADS = {
       'container': CONTAINER_METADATA_INFO,
