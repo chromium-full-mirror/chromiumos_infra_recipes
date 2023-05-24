@@ -33,9 +33,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = KabutoPaygenProperties
 
 
-def _gs_path(bucket: str, path: str) -> str:
-  """Returns the full gs:// path for bucket, path and filename."""
-  return 'gs://' + bucket + '/' + path
+def _gs_path(api: RecipeApi, bucket: str, path: str) -> str:
+  """Returns the full gs:// path for given bucket and path."""
+  return 'gs://' + api.path.join(bucket, path)
 
 
 def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
@@ -75,12 +75,14 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
              ['tar', 'cvfJ', payload_filename, '-C', 'in/', 'fossilize_tool/'])
 
     # Upload payload to GS.
-    upload_path = properties.destination_gs_path + '/' + payload_filename
+    upload_path = api.path.join(properties.destination_gs_path,
+                                payload_filename)
     api.gsutil.upload(payload_filename, properties.destination_gs_bucket,
                       upload_path)
 
     # Set output properties for orchestrator.
-    payload_gs_url = _gs_path(properties.destination_gs_bucket, upload_path)
+    payload_gs_url = _gs_path(api, properties.destination_gs_bucket,
+                              upload_path)
     api.easy.set_properties_step(payload_gs_url=payload_gs_url)
 
 
