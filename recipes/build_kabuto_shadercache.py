@@ -82,11 +82,15 @@ def DoRunSteps(api: RecipeTestApi,
       remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
       # Clone Borealis, Kabuto is in borealis/tools/kabuto.
       api.git.clone(remote)
+      # Check out a manifest branch. Manifest branch has priority
+      # over other Kabuto checkouts if multiple are provided.
+      if properties.manifest_branch:
+        api.git.checkout(properties.manifest_branch, force=True)
       # Check out a specific Kabuto commit ref from the tree
-      if properties.kabuto_commit_ref:
+      elif properties.kabuto_commit_ref:
         api.git.checkout(properties.kabuto_commit_ref, force=True)
       # Check out a specific Kabuto CL ref from Gerrit
-      if properties.kabuto_cl_ref:
+      elif properties.kabuto_cl_ref:
         api.git.fetch(remote)
         api.git.fetch_ref(remote, properties.kabuto_cl_ref)
         api.git.checkout('FETCH_HEAD', force=True)
@@ -144,6 +148,23 @@ def GenTests(api: RecipeTestApi) -> None:
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
       status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R114-15437.B'
+  yield api.test(
+      'manifest_branch',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'clone kabuto.git checkout',
+          [
+              'git',
+              'checkout',
+              '--force',
+              'release-R114-15437.B',
+          ],
+      ),
   )
 
   props = good_props.copy()
