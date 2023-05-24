@@ -57,10 +57,11 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Disable cros clean-outdated-pkgs, if necessary.
   cop_enabled = extra_properties.cop_enabled
   if not cop_enabled:
-    api.step(
-        "Disable cros clean-outdated-pkgs",
-        ["cros", "clean-outdated-pkgs", "--no-auto"],
-    )
+    with api.repo.m.depot_tools.on_path():
+      api.step(
+          "Disable cros clean-outdated-pkgs",
+          ["cros", "clean-outdated-pkgs", "--no-auto"],
+      )
 
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
