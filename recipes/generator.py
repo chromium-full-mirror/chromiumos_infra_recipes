@@ -17,80 +17,49 @@ See go/pupr and go/pupr-generator for rationale, design decisions, and usage
 instructions.
 """
 
+import functools
 import re
-from functools import cached_property
-from typing import List
-from typing import NamedTuple
-from typing import Optional
-from urllib import parse
+from typing import List, NamedTuple, Optional
+import urllib
 
-from RECIPE_MODULES.chromeos.git.api import Reference
-from RECIPE_MODULES.chromeos.pupr.api import HASHTAG_FREEZE_RETRIES
-from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import ProjectsByRemote
-from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
-from google.protobuf.json_format import MessageToDict
-from google.protobuf.json_format import MessageToJson
-
-from PB.chromite.api.packages import UprevVersionedPackageRequest
-from PB.chromiumos.common import BuildTarget
-from PB.chromiumos.common import PackageInfo
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import CronTrigger
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import GitilesTrigger
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import Trigger
-from PB.go.chromium.org.luci.scheduler.api.scheduler.v1.triggers import WebUITrigger
-from PB.recipe_engine import result
-from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
-# pylint: disable=unused-import
-from PB.recipes.chromeos.generator import ABANDON
-from PB.recipes.chromeos.generator import BranchPolicy
-from PB.recipes.chromeos.generator import DO_NOTHING
-from PB.recipes.chromeos.generator import DRY_RUN
-from PB.recipes.chromeos.generator import FULL_RUN
-from PB.recipes.chromeos.generator import GeneratorProperties
-from PB.recipes.chromeos.generator import GitilesFetchInfo
-from PB.recipes.chromeos.generator import NO_RETRY
-from PB.recipes.chromeos.generator import OUTDATED_ABANDON
-from PB.recipes.chromeos.generator import OUTDATED_DO_NOTHING
-from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
-from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
-from PB.recipes.chromeos.generator import RetryRef
-from PB.recipes.chromeos.generator import Reviewer
-from PB.recipes.chromeos.generator import SUBMIT
-from PB.recipes.chromeos.generator import UprevTargetKind
+from google.protobuf import json_format
+from PB.chromite.api import packages as packages_pb2
+from PB.chromiumos import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
+                                                                triggers_pb2)
+from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
+                                                         pupr_local_uprev_pb2)
+from PB.recipes.chromeos import generator as generator_pb2
+from recipe_engine import config_types
 from recipe_engine import post_process
-from recipe_engine.config_types import Path
-from recipe_engine.recipe_api import InfraFailure
-from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_api import StepFailure
-from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.git import api as git_api
+from RECIPE_MODULES.chromeos.pupr import api as pupr_api
+from RECIPE_MODULES.chromeos.pupr_gerrit_interface import (
+    api as pupr_gerrit_interface_api)
+from RECIPE_MODULES.chromeos.pupr_local_uprev import api as pupr_local_uprev_api
+from RECIPE_MODULES.chromeos.repo import api as repo_api
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/file',
-    'recipe_engine/json',
-    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'cros_build_api',
-    'cros_cq_depends',
     'cros_sdk',
     'cros_source',
     'easy',
     'gerrit',
     'git',
-    'git_cl',
-    'git_footers',
     'gitiles',
-    'key_value_store',
     'naming',
-    'pupr',
     'pupr_gerrit_interface',
     'pupr_local_uprev',
     'repo',
@@ -100,32 +69,38 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = GeneratorProperties
+PROPERTIES = generator_pb2.GeneratorProperties
 
 
-def RunSteps(api: RecipeApi,
-             properties: GeneratorProperties) -> result.RawResult:
+def RunSteps(
+    api: recipe_api.RecipeApi,
+    properties: generator_pb2.GeneratorProperties) -> result_pb2.RawResult:
   summary = GeneratorRun(api, properties).run()
-  return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
+  return result_pb2.RawResult(status=bb_common_pb2.SUCCESS,
+                              summary_markdown=summary)
 
 
 class PolicyInfo(NamedTuple):
-  policy: BranchPolicy
+  policy: generator_pb2.BranchPolicy
   branch: str = ''
-  reference: Optional[Reference] = None
+  reference: Optional[git_api.Reference] = None
 
 
 class GeneratorRun:
   """A single run of a Generator builder."""
 
-  def __init__(self, api: RecipeApi, properties: GeneratorProperties):
+  def __init__(
+      self,
+      api: recipe_api.RecipeApi,
+      properties: generator_pb2.GeneratorProperties,
+  ):
     """Initialize the builder."""
     self.m = api
     self.properties = properties
 
-    self.workspace_path: Optional[Path] = None
-    self._policy: Optional[BranchPolicy] = None
-    self._modified_projects: Optional[List[ProjectInfo]] = None
+    self.workspace_path: Optional[config_types.Path] = None
+    self._policy: Optional[generator_pb2.BranchPolicy] = None
+    self._modified_projects: Optional[List[repo_api.ProjectInfo]] = None
 
     # If we see gitiles_info populated in the recipe properties, we will be
     # performing a fetch from the Gitiles API for the package's target uprev
@@ -136,37 +111,43 @@ class GeneratorRun:
   @property
   def _is_package_uprevver(self) -> bool:
     """Return whether this generator run is a package uprevver."""
-    return self.properties.uprev_target_kind is UprevTargetKind.PACKAGE
+    return (self.properties.uprev_target_kind is
+            generator_pb2.UprevTargetKind.PACKAGE)
 
   @property
   def _is_sdk_uprevver(self) -> bool:
     """Return whether this generator run is an SDK uprevver."""
-    return self.properties.uprev_target_kind is UprevTargetKind.SDK
+    return (self.properties.uprev_target_kind is
+            generator_pb2.UprevTargetKind.SDK)
 
-  @cached_property
-  def triggers(self) -> List[Trigger]:
+  @functools.cached_property
+  def triggers(self) -> List[triggers_pb2.Trigger]:
     """Get this run's triggers, all of which have the gitiles field set."""
     if self._has_cron_trigger:
       return [
-          Trigger(gitiles=GitilesTrigger(ref=self.properties.retry_ref.ref))
+          triggers_pb2.Trigger(
+              gitiles=triggers_pb2.GitilesTrigger(
+                  ref=self.properties.retry_ref.ref))
       ]
     return self._raw_triggers
 
   @property
-  def target_package_versions(self
-                             ) -> List[UprevVersionedPackageRequest.GitRef]:
+  def target_package_versions(
+      self,
+  ) -> List[packages_pb2.UprevVersionedPackageRequest.GitRef]:
     """Return the package versions to try to uprev to.
 
     Raises:
-        InfraFailure: If this generator does not uprev packages.
+      InfraFailure: If this generator does not uprev packages.
     """
     assert self._is_package_uprevver
     return [
-        UprevVersionedPackageRequest.GitRef(
-            repository=parse.urlparse(trigger.gitiles.repo).path,
+        packages_pb2.UprevVersionedPackageRequest.GitRef(
+            repository=urllib.parse.urlparse(trigger.gitiles.repo).path,
             ref=trigger.gitiles.ref,
             revision=(self.target_version_from_gitiles or
-                      trigger.gitiles.revision)) for trigger in self.triggers
+                      trigger.gitiles.revision),
+        ) for trigger in self.triggers
     ]
 
   @property
@@ -184,14 +165,14 @@ class GeneratorRun:
     ]
 
   @property
-  def policy(self) -> BranchPolicy:
+  def policy(self) -> generator_pb2.BranchPolicy:
     """Get the branch policy that applies to this build. See generator.proto."""
     assert self._policy is not None
     return self._policy
 
-  def set_policy(self, policy: BranchPolicy):
+  def set_policy(self, policy: generator_pb2.BranchPolicy):
     """Set the policy for this build, and report it as a step."""
-    self.m.easy.set_properties_step(policy=MessageToDict(policy))
+    self.m.easy.set_properties_step(policy=json_format.MessageToDict(policy))
     self._policy = policy
 
   @property
@@ -205,20 +186,21 @@ class GeneratorRun:
       return self.cpvs[0]
     if self._is_sdk_uprevver:
       return 'cros_sdk'
-    raise InfraFailure('Not sure how to generate topic')  # pragma: nocover
+    raise recipe_api.InfraFailure(
+        'Not sure how to generate topic')  # pragma: nocover
 
-  @cached_property
-  def _projects_by_remote(self) -> ProjectsByRemote:
+  @functools.cached_property
+  def _projects_by_remote(self) -> pupr_gerrit_interface_api.ProjectsByRemote:
     """Organize projects relevant to this run by remote."""
     return self.m.pupr_gerrit_interface.sort_projects_by_remote(
         self._repo_projects)
 
   @property
-  def _repo_projects(self) -> List[ProjectInfo]:
+  def _repo_projects(self) -> List[repo_api.ProjectInfo]:
     """Return all repo projects with code that this PUpr uprevs."""
     if self.retry_only_run:
       return [
-          ProjectInfo(
+          repo_api.ProjectInfo(
               remote=self.properties.retry_ref.remote,
               name=self.properties.retry_ref.name,
               branch=self.properties.retry_ref.ref,
@@ -231,7 +213,7 @@ class GeneratorRun:
 
   def make_summary(self, msg: str) -> str:
     if self.retry_only_run:
-      return '[retry-only] ' + msg
+      return f'[retry-only] {msg}'
     return msg
 
   def run(self) -> str:
@@ -248,10 +230,11 @@ class GeneratorRun:
         build_targets=self.properties.build_targets,
         packages=self.properties.packages,
     )
-    self.m.pupr_gerrit_interface.rebase_before_retry = self.properties.rebase_before_retry
+    self.m.pupr_gerrit_interface.rebase_before_retry = (
+        self.properties.rebase_before_retry)
 
-    with self.m.cros_source.checkout_overlays_context(), \
-        self.m.cros_sdk.cleanup_context():
+    with self.m.cros_source.checkout_overlays_context(
+    ), self.m.cros_sdk.cleanup_context():
       self.m.cros_source.ensure_synced_cache(manifest_branch_override='main')
 
       policy_info = self.select_policy()
@@ -275,26 +258,39 @@ class GeneratorRun:
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self._projects_by_remote, self.topic)
-      most_recent_uprev = self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
-          self._projects_by_remote, self.topic) if open_changes else None
-      do_open_cls_remain = self.m.pupr_gerrit_interface.handle_outdated_changes(
-          open_changes, most_recent_uprev, self.policy, self.retry_only_run)
+      most_recent_uprev = (
+          self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
+              self._projects_by_remote, self.topic) if open_changes else None)
+      do_open_cls_remain = (
+          self.m.pupr_gerrit_interface.handle_outdated_changes(
+              open_changes,
+              most_recent_uprev,
+              self.policy,
+              self.retry_only_run,
+          ))
 
       if not self.retry_only_run:
         summary = self.m.pupr_gerrit_interface.create_uprev_cls(
-            self._repo_projects, open_changes, do_open_cls_remain, self.policy,
-            self.topic)
+            self._repo_projects,
+            open_changes,
+            do_open_cls_remain,
+            self.policy,
+            self.topic,
+        )
       else:
         summary = self.make_summary('success')
 
-      self.m.pupr_gerrit_interface.apply_retry_policy(open_changes,
-                                                      most_recent_uprev,
-                                                      self.policy, self.topic,
-                                                      self.retry_only_run)
+      self.m.pupr_gerrit_interface.apply_retry_policy(
+          open_changes,
+          most_recent_uprev,
+          self.policy,
+          self.topic,
+          self.retry_only_run,
+      )
 
     return summary
 
-  def create_local_uprev(self) -> Optional[List[ProjectInfo]]:
+  def create_local_uprev(self) -> Optional[List[repo_api.ProjectInfo]]:
     """Create and commit uprevs on the local filesystem.
 
     Returns:
@@ -306,7 +302,7 @@ class GeneratorRun:
           self.target_package_versions, self.topic)
     if self._is_sdk_uprevver:
       return self.m.pupr_local_uprev.uprev_sdk(self.topic)
-    raise InfraFailure('Not sure how to uprev.')  # pragma: nocover
+    raise recipe_api.InfraFailure('Not sure how to uprev.')  # pragma: nocover
 
   def _validate_properties(self):
     """Ensure the input properties look OK.
@@ -316,25 +312,26 @@ class GeneratorRun:
     """
     with self.m.step.nest('validate properties') as presentation:
       if self._is_package_uprevver and not self.properties.packages:
-        raise StepFailure('must set packages to uprev for a package uprevver')
+        raise recipe_api.StepFailure(
+            'must set packages to uprev for a package uprevver')
 
       # Retrieve version information from Gitiles API.
       if self.properties.HasField('gitiles_info'):
         if not (self.properties.gitiles_info.host and
                 self.properties.gitiles_info.project and
                 self.properties.gitiles_info.path):
-          raise StepFailure('gitiles fetch requested with no fetch '
-                            'infomation supplied')
+          raise recipe_api.StepFailure(
+              'gitiles fetch requested with no fetch infomation supplied')
 
       for policy in self.properties.branch_policies:
         if not policy.pattern:
-          raise StepFailure('must specify pattern')
+          raise recipe_api.StepFailure('must specify pattern')
         if not policy.reviewers:
-          raise StepFailure('need at least one reviewer')
+          raise recipe_api.StepFailure('need at least one reviewer')
 
         for reviewer in policy.reviewers:
           if not reviewer.email:
-            raise StepFailure('must set reviewer email')
+            raise recipe_api.StepFailure('must set reviewer email')
 
       presentation.step_text = 'all properties good'
 
@@ -347,21 +344,22 @@ class GeneratorRun:
     """
     with self.m.step.nest('validate triggers') as presentation:
       if not self.triggers:
-        raise StepFailure('found no triggers')
+        raise recipe_api.StepFailure('found no triggers')
       if self._has_cron_trigger:
-        presentation.step_text = 'has cron trigger, running in retry-only mode'
+        presentation.step_text = (
+            'has cron trigger, running in retry-only mode')
       else:
         for trigger in self.triggers:
           if not trigger.HasField('gitiles'):
-            raise StepFailure('found non-gitiles trigger: %r' % trigger)
+            raise recipe_api.StepFailure('found non-gitiles trigger: %r' %
+                                         trigger)
 
-        presentation.step_text = 'found {} good triggers'.format(
-            len(self.triggers))
-        presentation.logs['list of triggers'] = map(MessageToJson,
+        presentation.step_text = f'found {len(self.triggers)} good triggers'
+        presentation.logs['list of triggers'] = map(json_format.MessageToJson,
                                                     self.triggers)
 
   @property
-  def _raw_triggers(self) -> List[Trigger]:
+  def _raw_triggers(self) -> List[triggers_pb2.Trigger]:
     """Get the triggers which actually launched this run."""
     return self.properties.triggers or self.m.scheduler.triggers
 
@@ -391,9 +389,10 @@ class GeneratorRun:
               str(self.properties.gitiles_info.project),
               str(self.properties.gitiles_info.path),
               ref=str(trigger.gitiles.ref),
-              test_output_data='MTIzLjQ1Ni43ODkuMAo=').decode()
+              test_output_data='MTIzLjQ1Ni43ODkuMAo=',
+          ).decode()
           if gitiles_response:
-            self.target_version_from_gitiles = gitiles_response.strip()
+            self.target_version_from_gitiles = (gitiles_response.strip())
 
         tag = self.target_version_from_gitiles or trigger.gitiles.ref
         policy_info = self._get_policy_info_for_tag(tag)
@@ -403,7 +402,7 @@ class GeneratorRun:
       # For Chrome, we are launched with properties.triggers, for exactly one
       # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
       if len(trigger_policies) > 1:
-        raise StepFailure('too many triggers')
+        raise recipe_api.StepFailure('too many triggers')
       return trigger_policies.pop()
 
   def _get_policy_info_for_tag(self, tag: str) -> PolicyInfo:
@@ -437,11 +436,13 @@ class GeneratorRun:
             ref = refs[0]
             return PolicyInfo(policy, ref.ref.split('/')[-1], ref)
           if refs:
-            raise StepFailure('multiple branches matched {}: {}'.format(
-                query, ' '.join(x.ref for x in refs)))
+            raise recipe_api.StepFailure(
+                'multiple branches matched {}: {}'.format(
+                    query, ' '.join(x.ref for x in refs)))
           # If we found no references, this policy does not apply.
 
-      raise StepFailure('No matching policy found for tag {}'.format(tag))
+      raise recipe_api.StepFailure(
+          'No matching policy found for tag {}'.format(tag))
 
   def checkout_branch(self, policy_info: PolicyInfo):
     """Check out the appropriate branch based on the selected policy."""
@@ -475,48 +476,58 @@ class GeneratorRun:
       with self.m.step.nest('update policy'):
         user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
         self.m.easy.set_properties_step(
-            original_policy=MessageToDict(self.policy))
+            original_policy=json_format.MessageToDict(self.policy))
         del self.policy.reviewers[:]
         self.policy.reviewers.add().email = user
-        self.policy.existing_cls_policy = ABANDON
-        self.policy.no_existing_cls_policy = ABANDON
-        self.policy.outdated_cls_policy = OUTDATED_DO_NOTHING
-        self.policy.retry_cl_policy = NO_RETRY
-        self.policy.topic = '{}-{}'.format('testing', self.topic)
-        self.m.easy.set_properties_step(policy=MessageToDict(self.policy))
+        self.policy.existing_cls_policy = generator_pb2.ABANDON
+        self.policy.no_existing_cls_policy = generator_pb2.ABANDON
+        self.policy.outdated_cls_policy = (generator_pb2.OUTDATED_DO_NOTHING)
+        self.policy.retry_cl_policy = generator_pb2.NO_RETRY
+        self.policy.topic = f'testing-{self.topic}'
+        self.m.easy.set_properties_step(
+            policy=json_format.MessageToDict(self.policy))
 
 
-def GenTests(api: RecipeTestApi):
+def GenTests(api: recipe_test_api.RecipeTestApi):
+  """Create test cases for this recipe."""
 
   def _policy(**kwargs):
     """Create a BranchPolicy, with defaults."""
     kwargs.setdefault('pattern', '.*')
     kwargs.setdefault('ignore', False)
-    kwargs.setdefault('reviewers', [
-        Reviewer(email='evanhernandez@chromium.org'),
-        Reviewer(email='chromeos-continuous-integration-team@google.com')
-    ])
-    kwargs.setdefault('existing_cls_policy', DO_NOTHING)
-    kwargs.setdefault('no_existing_cls_policy', DO_NOTHING)
-    kwargs.setdefault('outdated_cls_policy', OUTDATED_DO_NOTHING)
-    kwargs.setdefault('retry_cl_policy', NO_RETRY)
-    return BranchPolicy(**kwargs)
+    kwargs.setdefault(
+        'reviewers',
+        [
+            generator_pb2.Reviewer(email='evanhernandez@chromium.org'),
+            generator_pb2.Reviewer(
+                email='chromeos-continuous-integration-team@google.com'),
+        ],
+    )
+    kwargs.setdefault('existing_cls_policy', generator_pb2.DO_NOTHING)
+    kwargs.setdefault('no_existing_cls_policy', generator_pb2.DO_NOTHING)
+    kwargs.setdefault('outdated_cls_policy', generator_pb2.OUTDATED_DO_NOTHING)
+    kwargs.setdefault('retry_cl_policy', generator_pb2.NO_RETRY)
+    return generator_pb2.BranchPolicy(**kwargs)
 
   def _props(**kwargs):
     """Create GeneratorProperties, with defaults."""
-    if not kwargs.get('packages'):
-      kwargs.setdefault(
-          'packages',
-          [PackageInfo(category='chromeos-base', package_name='chromite')])
-    kwargs.setdefault('uprev_target_kind', UprevTargetKind.PACKAGE)
-    kwargs.setdefault('build_targets', [BuildTarget(name='build_target')])
+    kwargs.setdefault('packages', [
+        common_pb2.PackageInfo(
+            category='chromeos-base',
+            package_name='chromite',
+        )
+    ])
+    kwargs.setdefault('uprev_target_kind',
+                      generator_pb2.UprevTargetKind.PACKAGE)
+    kwargs.setdefault('build_targets',
+                      [common_pb2.BuildTarget(name='build_target')])
     kwargs.setdefault('branch_policies', [_policy()])
     kwargs.setdefault('gitiles_info', None)
-    return api.properties(GeneratorProperties(**kwargs))
+    return api.properties(generator_pb2.GeneratorProperties(**kwargs))
 
-  chromite_gitiles_trigger = Trigger(
+  chromite_gitiles_trigger = triggers_pb2.Trigger(
       id='123',
-      gitiles=GitilesTrigger(
+      gitiles=triggers_pb2.GitilesTrigger(
           repo='chromiumos/chromite',
           ref=api.src_state.default_ref,
           revision='deadbeef',
@@ -526,13 +537,23 @@ def GenTests(api: RecipeTestApi):
   def _with_infos(name: str, *args, **kwargs):
     return api.test(
         name,
-        api.repo.project_infos_step_data('commit uprev', data=[
-            dict(project='overlay'),
-        ], iteration=1),
         api.repo.project_infos_step_data(
-            'commit uprev', data=[
+            'commit uprev',
+            data=[
+                dict(project='overlay'),
+            ],
+            iteration=1,
+        ),
+        api.repo.project_infos_step_data(
+            'commit uprev',
+            data=[
                 dict(project='private-overlay', remote='cros-internal'),
-            ], iteration=2), *args, **kwargs)
+            ],
+            iteration=2,
+        ),
+        *args,
+        **kwargs,
+    )
 
   yield api.test(
       'ignore-policy',
@@ -559,36 +580,43 @@ def GenTests(api: RecipeTestApi):
 
   yield _with_infos(
       'with-uprev-dry-run-policy',
-      _props(branch_policies=[_policy(existing_cls_policy=DRY_RUN)]),
+      _props(
+          branch_policies=[_policy(existing_cls_policy=generator_pb2.DRY_RUN)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield _with_infos(
       'with-uprev-full-run-policy',
-      _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
+      _props(
+          branch_policies=[_policy(
+              existing_cls_policy=generator_pb2.FULL_RUN)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield _with_infos(
       'with-uprev-abandon-policy',
-      _props(branch_policies=[_policy(existing_cls_policy=ABANDON)]),
+      _props(
+          branch_policies=[_policy(existing_cls_policy=generator_pb2.ABANDON)]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield _with_infos(
       'with-uprev-abandon-outdated-policy',
-      _props(branch_policies=[_policy(outdated_cls_policy=OUTDATED_ABANDON)]),
+      _props(branch_policies=[
+          _policy(outdated_cls_policy=generator_pb2.OUTDATED_ABANDON)
+      ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield _with_infos(
       'with-uprev-abandon-no-nothing-policy',
-      _props(branch_policies=[_policy(
-          outdated_cls_policy=OUTDATED_DO_NOTHING)]),
+      _props(branch_policies=[
+          _policy(outdated_cls_policy=generator_pb2.OUTDATED_DO_NOTHING)
+      ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
@@ -596,7 +624,10 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'with-submit-policy',
       _props(branch_policies=[
-          _policy(no_existing_cls_policy=SUBMIT, existing_cls_policy=SUBMIT)
+          _policy(
+              no_existing_cls_policy=generator_pb2.SUBMIT,
+              existing_cls_policy=generator_pb2.SUBMIT,
+          )
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
@@ -604,16 +635,16 @@ def GenTests(api: RecipeTestApi):
 
   yield _with_infos(
       'with-uprev-comment-outdated-policy',
-      _props(
-          branch_policies=[_policy(
-              outdated_cls_policy=OUTDATED_LEAVE_COMMENT)]),
+      _props(branch_policies=[
+          _policy(outdated_cls_policy=generator_pb2.OUTDATED_LEAVE_COMMENT)
+      ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
 
   yield api.test(
       'fail-validate-props-on-gitiles-fetch-info',
-      _props(gitiles_info=GitilesFetchInfo()),
+      _props(gitiles_info=generator_pb2.GitilesFetchInfo()),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -628,7 +659,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-packages',
-      api.properties(uprev_target_kind=UprevTargetKind.PACKAGE),
+      api.properties(uprev_target_kind=generator_pb2.UprevTargetKind.PACKAGE),
       status='FAILURE',
   )
 
@@ -650,7 +681,7 @@ def GenTests(api: RecipeTestApi):
       'non-gitiles-triggers',
       _props(),
       api.scheduler(triggers=[
-          Trigger(id='456', webui=WebUITrigger()),
+          triggers_pb2.Trigger(id='456', webui=triggers_pb2.WebUITrigger()),
       ]),
       api.git.diff_check(True),
       status='FAILURE',
@@ -662,19 +693,31 @@ def GenTests(api: RecipeTestApi):
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.step_data(
           'try uprev chromeos-base/chromite.uprev versioned package'
-          '.read output file', api.file.read_raw(content='{}')),
+          '.read output file',
+          api.file.read_raw(content='{}'),
+      ),
   )
 
   yield api.test(
       'one-change',
-      _props(branch_policies=[_policy(existing_cls_policy=FULL_RUN)]),
+      _props(
+          branch_policies=[_policy(
+              existing_cls_policy=generator_pb2.FULL_RUN)]),
       # Only one changed project.
-      api.repo.project_infos_step_data('commit uprev', data=[
-          dict(project='overlay'),
-      ], iteration=1),
-      api.repo.project_infos_step_data('commit uprev', data=[
-          dict(project='overlay'),
-      ], iteration=2),
+      api.repo.project_infos_step_data(
+          'commit uprev',
+          data=[
+              dict(project='overlay'),
+          ],
+          iteration=1,
+      ),
+      api.repo.project_infos_step_data(
+          'commit uprev',
+          data=[
+              dict(project='overlay'),
+          ],
+          iteration=2,
+      ),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
   )
@@ -687,61 +730,81 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield _with_infos(
-      'with-gerrit-changes', _props(),
+      'with-gerrit-changes',
+      _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.test_util.test_build(
-          revision=None, extra_changes=[
-              GerritChange(host='chromium-review.googlesource.com', change=1234)
-          ], created_by='user:lamontjones@chromium.org').build)
+          revision=None,
+          extra_changes=[
+              bb_common_pb2.GerritChange(
+                  host='chromium-review.googlesource.com', change=1234)
+          ],
+          created_by='user:lamontjones@chromium.org',
+      ).build,
+  )
 
   yield _with_infos(
       'with-gerrit-changes_with_revision_override',
       _props(
           branch_policies=[_policy(pattern=r'.*\s*')],
-          gitiles_info=GitilesFetchInfo(host='chromium.googlesource.com',
-                                        project='chrome/src',
-                                        path='foo/bar.txt')),
+          gitiles_info=generator_pb2.GitilesFetchInfo(
+              host='chromium.googlesource.com',
+              project='chrome/src',
+              path='foo/bar.txt',
+          ),
+      ),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.post_check(
-          post_process.MustRun, 'select policy.fetch gitiles file.'
+          post_process.MustRun,
+          'select policy.fetch gitiles file.'
           'curl https://chromium.googlesource.com'
-          '/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT'),
+          '/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT',
+      ),
       api.test_util.test_build(
-          revision=None, extra_changes=[
-              GerritChange(host='chromium-review.googlesource.com', change=1234)
-          ], created_by='user:lamontjones@chromium.org').build)
+          revision=None,
+          extra_changes=[
+              bb_common_pb2.GerritChange(
+                  host='chromium-review.googlesource.com', change=1234)
+          ],
+          created_by='user:lamontjones@chromium.org',
+      ).build,
+  )
 
   yield _with_infos(
-      'cq-active', _props(), api.scheduler(triggers=[chromite_gitiles_trigger]),
-      api.git.diff_check(True), api.cq(run_mode=api.cq.FULL_RUN),
+      'cq-active',
+      _props(),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(post_process.MustRun,
                      'apply gerrit changes.update policy'),
       api.test_util.test_build(revision=None, extra_changes=[],
-                               created_by='project:chromiumos').build)
+                               created_by='project:chromiumos').build,
+  )
 
   # Set up for testing chromeos-base/chromeos-chrome trigger filtering.
-  package_chrome = PackageInfo(category='chromeos-base',
-                               package_name='chromeos-chrome')
-  trigger_prop = MessageToDict(
-      Trigger(
+  package_chrome = common_pb2.PackageInfo(category='chromeos-base',
+                                          package_name='chromeos-chrome')
+  trigger_prop = json_format.MessageToDict(
+      triggers_pb2.Trigger(
           id='123',
-          gitiles=GitilesTrigger(
+          gitiles=triggers_pb2.GitilesTrigger(
               repo='https://chromium.googlesource.com/chromium/src',
               ref='refs/tags/79.0.3945.20',
               revision='83a1812dddfc24f604d92bf61ad58efe9227a6fc',
           ),
       ))
 
-  trigger_prop2 = MessageToDict(
-      Trigger(
+  trigger_prop2 = json_format.MessageToDict(
+      triggers_pb2.Trigger(
           id='456',
-          gitiles=GitilesTrigger(
+          gitiles=triggers_pb2.GitilesTrigger(
               repo='https://chromium.googlesource.com/chromium/src',
               ref=api.src_state.default_ref,
               revision='0572e38c2b2073613ee5b861a9165335621bf54a',
@@ -753,27 +816,31 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'invoked-directly',
       _props(
-          packages=[package_chrome], branch_policies=[
-              _policy(reviewers=[Reviewer(email='dburger@chromium.org')])
-          ]),
+          packages=[package_chrome],
+          branch_policies=[
+              _policy(reviewers=[
+                  generator_pb2.Reviewer(email='dburger@chromium.org')
+              ])
+          ],
+      ),
       api.properties(triggers=[trigger_prop]),
   )
 
   branch_policy = _policy(
       pattern='refs/tags/([0-9]*).*',
       repl=r'release-R\1-*.B',
-      reviewers=[Reviewer(email='dburger@chromium.org')],
-      no_existing_cls_policy=DRY_RUN,
-      existing_cls_policy=DRY_RUN,
-      outdated_cls_policy=OUTDATED_ABANDON,
+      reviewers=[generator_pb2.Reviewer(email='dburger@chromium.org')],
+      no_existing_cls_policy=generator_pb2.DRY_RUN,
+      existing_cls_policy=generator_pb2.DRY_RUN,
+      outdated_cls_policy=generator_pb2.OUTDATED_ABANDON,
   )
   no_pattern_policy = _policy(
       pattern='',
       repl=r'release-R\1-*.B',
-      reviewers=[Reviewer(email='dburger@chromium.org')],
-      no_existing_cls_policy=DRY_RUN,
-      existing_cls_policy=DRY_RUN,
-      outdated_cls_policy=OUTDATED_ABANDON,
+      reviewers=[generator_pb2.Reviewer(email='dburger@chromium.org')],
+      no_existing_cls_policy=generator_pb2.DRY_RUN,
+      existing_cls_policy=generator_pb2.DRY_RUN,
+      outdated_cls_policy=generator_pb2.OUTDATED_ABANDON,
   )
 
   yield _with_infos(
@@ -782,8 +849,10 @@ def GenTests(api: RecipeTestApi):
       _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
-      api.post_check(post_process.MustRun,
-                     'checkout branch.checkout branch release-R79-*.B'),
+      api.post_check(
+          post_process.MustRun,
+          'checkout branch.checkout branch release-R79-*.B',
+      ),
   )
 
   yield _with_infos(
@@ -792,15 +861,19 @@ def GenTests(api: RecipeTestApi):
       _props(packages=[package_chrome], branch_policies=[branch_policy]),
       api.git.diff_check(True),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
-      api.post_check(post_process.MustRun,
-                     'checkout branch.checkout branch release-R79-*.B'),
+      api.post_check(
+          post_process.MustRun,
+          'checkout branch.checkout branch release-R79-*.B',
+      ),
   )
 
   yield api.test(
       'branch-policies-multiple-trigger-policies',
       api.properties(triggers=[trigger_prop, trigger_prop2]),
-      _props(packages=[package_chrome],
-             branch_policies=[branch_policy, _policy()]),
+      _props(
+          packages=[package_chrome],
+          branch_policies=[branch_policy, _policy()],
+      ),
       api.post_check(post_process.MustRun, 'select policy.git ls-remote'),
       status='FAILURE',
   )
@@ -817,10 +890,15 @@ def GenTests(api: RecipeTestApi):
       'branch-policies-default-branch',
       api.properties(triggers=[trigger_prop]),
       _props(
-          packages=[package_chrome], branch_policies=[
-              BranchPolicy(pattern='.*', repl='',
-                           reviewers=[Reviewer(email='a@example.com')])
-          ]),
+          packages=[package_chrome],
+          branch_policies=[
+              generator_pb2.BranchPolicy(
+                  pattern='.*',
+                  repl='',
+                  reviewers=[generator_pb2.Reviewer(email='a@example.com')],
+              )
+          ],
+      ),
       api.post_check(post_process.DoesNotRun, 'select policy.git ls-remote'),
   )
 
@@ -836,39 +914,53 @@ def GenTests(api: RecipeTestApi):
               'f3ecd792bc4822dd6686313478099b8eb3df7e55\t'
               'refs/remotes/cros-internal/release-R79-9999.B',
               '',
-          ]))),
+          ])),
+      ),
       status='FAILURE',
   )
 
   yield _with_infos(
-      'multiple-packages', api.properties(triggers=[trigger_prop]),
+      'multiple-packages',
+      api.properties(triggers=[trigger_prop]),
       _props(
           packages=[
               package_chrome,
-              PackageInfo(category='chromeos-base',
-                          package_name='chromeos-lacros'),
+              common_pb2.PackageInfo(category='chromeos-base',
+                                     package_name='chromeos-lacros'),
           ],
           topic='chromeos-base/new-topic-name',
-      ), api.git.diff_check(True),
+      ),
+      api.git.diff_check(True),
       api.post_check(post_process.MustRun,
                      'try uprev chromeos-base/chromeos-chrome'),
       api.post_check(post_process.MustRun,
                      'try uprev chromeos-base/chromeos-lacros'),
       api.post_check(
           post_process.StepCommandRE,
-          'commit uprev.commit in overlay.write commit message', [
-              '.*', '.*', '.*', '.*', '.*', '.*',
+          'commit uprev.commit in overlay.write commit message',
+          [
+              '.*',
+              '.*',
+              '.*',
+              '.*',
+              '.*',
+              '.*',
               r'(.|\n)*Pupr-Upstream-Versions: \[\{\"ref\": \"refs/tags/79.0.3945.20\", \"repository\": \"/chromium/src\", \"revision\": \"83a1812dddfc24f604d92bf61ad58efe9227a6fc\"\}\](.|\n)*',
-              '.*'
-          ]),
+              '.*',
+          ],
+      ),
       api.post_check(
           post_process.StepCommandContains,
           'generate CLs.create gerrit change for src/overlay.git_cl upload',
-          ['--topic', 'chromeos-base/new-topic-name']))
+          ['--topic', 'chromeos-base/new-topic-name'],
+      ),
+  )
 
   changes = [
-      GerritChange(change=1, host='chromium-review.googlesource.com'),
-      GerritChange(change=2, host='chromium-review.googlesource.com'),
+      bb_common_pb2.GerritChange(change=1,
+                                 host='chromium-review.googlesource.com'),
+      bb_common_pb2.GerritChange(change=2,
+                                 host='chromium-review.googlesource.com'),
   ]
 
   gerrit_changes_json = [
@@ -903,7 +995,7 @@ def GenTests(api: RecipeTestApi):
                   # CV adds timestamp to the suffix of each autogenerated:cv:* tag.
                   # This is only for making every tags unique, but not intended to store useful information.
                   # For this reason, those parts in the test data are filled with fake values.
-                  'tag': 'autogenerated:cv:full-run:1000000001'
+                  'tag': 'autogenerated:cv:full-run:1000000001',
               },
               {
                   'message':
@@ -911,8 +1003,8 @@ def GenTests(api: RecipeTestApi):
                   'date':
                       '2020-10-25T18:54:00Z',
                   'tag':
-                      'autogenerated:cv:full-run:1000000002'
-              }
+                      'autogenerated:cv:full-run:1000000002',
+              },
           ],
           'revision_info': {
               'ref': 'refs/change/foo',
@@ -931,13 +1023,19 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          [], 'https://chromium-review.googlesource.com'),
+          [],
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
-          [], 'https://chrome-internal-review.googlesource.com'),
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
       api.post_check(post_process.DoesNotRun, 'outdated CLs'),
       api.post_process(post_process.DropExpectation),
   )
@@ -945,35 +1043,50 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'with-retry-policy',
       _props(branch_policies=[
-          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+          _policy(
+              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+              existing_cls_policy=generator_pb2.DRY_RUN,
+              no_existing_cls_policy=generator_pb2.DRY_RUN,
+          )
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict,
+      ),
   )
 
   yield _with_infos(
       'with-retry-policy-but-no-open-changes',
       _props(branch_policies=[
-          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+          _policy(
+              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+              existing_cls_policy=generator_pb2.DRY_RUN,
+              no_existing_cls_policy=generator_pb2.DRY_RUN,
+          )
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chromium host', [],
-          'https://chromium-review.googlesource.com'),
+          'find open uprev CLs.find CLs from chromium host',
+          [],
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_query_changes_response(
-          'find open uprev CLs.find CLs from chrome-internal host', [],
-          'https://chrome-internal-review.googlesource.com'),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+          'find open uprev CLs.find CLs from chrome-internal host',
+          [],
+          'https://chrome-internal-review.googlesource.com',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
       api.post_check(
           post_process.DoesNotRun,
-          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
+      ),
       api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
   )
@@ -981,25 +1094,36 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'with-retry-policy-but-retries-frozen',
       _props(branch_policies=[
-          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+          _policy(
+              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+              existing_cls_policy=generator_pb2.DRY_RUN,
+              no_existing_cls_policy=generator_pb2.DRY_RUN,
+          )
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
-          [GerritChange(change=1, host='chromium-review.googlesource.com')], {
+          [
+              bb_common_pb2.GerritChange(
+                  change=1, host='chromium-review.googlesource.com')
+          ],
+          {
               1: {
                   'change_id': 777,
                   'created': '2020-10-22 18:54:00.000000000',
-                  'hashtags': [HASHTAG_FREEZE_RETRIES],
+                  'hashtags': [pupr_api.HASHTAG_FREEZE_RETRIES],
               }
-          }),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+          },
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
       api.post_check(
           post_process.DoesNotRunRE,
-          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
+      ),
       api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
   )
@@ -1007,21 +1131,27 @@ def GenTests(api: RecipeTestApi):
   yield _with_infos(
       'with-retry-policy-but-no-retry-cl-identified',
       _props(branch_policies=[
-          _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                  existing_cls_policy=DRY_RUN, no_existing_cls_policy=DRY_RUN)
+          _policy(
+              retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+              existing_cls_policy=generator_pb2.DRY_RUN,
+              no_existing_cls_policy=generator_pb2.DRY_RUN,
+          )
       ]),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
       api.post_check(
           post_process.DoesNotRun,
-          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*'),
+          r'apply retry policy RETRY_LATEST_OR_LATEST_PINNED\.retry CL .*',
+      ),
       api.post_check(post_process.MustRun, 'generate CLs'),
       api.post_process(post_process.DropExpectation),
   )
 
-  retry_ref = RetryRef(
+  retry_ref = generator_pb2.RetryRef(
       remote='cros',
       path='src/third_party/chromiumos-overlay',
       name='chromiumos/overlays/chromiumos-overlay',
@@ -1041,23 +1171,27 @@ def GenTests(api: RecipeTestApi):
       1: {
           'change_id': 1,
           'created': '2020-10-22 18:54:00.000000000',
-          'messages': [{
-              'message':
-                  'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-              'date':
-                  '2020-10-26T18:54:00Z',
-          }, {
-              'message': 'Patch Set 3:\n\nCV is trying the patch...',
-              'date': '2020-10-24T18:54:00Z',
-              'tag': 'autogenerated:cv:full-run:1000000001'
-          }, {
-              'message':
-                  'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-              'date':
-                  '2020-10-25T18:54:00Z',
-              'tag':
-                  'autogenerated:cv:full-run:1000000002'
-          }],
+          'messages': [
+              {
+                  'message':
+                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-26T18:54:00Z',
+              },
+              {
+                  'message': 'Patch Set 3:\n\nCV is trying the patch...',
+                  'date': '2020-10-24T18:54:00Z',
+                  'tag': 'autogenerated:cv:full-run:1000000001',
+              },
+              {
+                  'message':
+                      'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-25T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:full-run:1000000002',
+              },
+          ],
           'revision_info': {
               'ref': 'refs/change/foo',
               'commit': {
@@ -1077,23 +1211,35 @@ def GenTests(api: RecipeTestApi):
       'cron-trigger',
       _props(
           branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=DRY_RUN)
-          ], retry_ref=retry_ref),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict,
+      ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
       api.post_check(
           post_process.DoesNotRun,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message'
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
       ),
   )
 
@@ -1101,62 +1247,94 @@ def GenTests(api: RecipeTestApi):
       'cron-trigger-rebase',
       _props(
           branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=DRY_RUN)
-          ], retry_ref=retry_ref, rebase_before_retry=True),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+          retry_ref=retry_ref,
+          rebase_before_retry=True,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict,
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.get CL 1 description',
-          changes, value_dict),
+          changes,
+          value_dict,
+      ),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
-          'chromium-review.googlesource.com', 1, 'current', False),
+          'chromium-review.googlesource.com',
+          1,
+          'current',
+          False,
+      ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
       api.cros_build_api.set_upreved_ebuilds(['src/overlay/foo.ebuild']),
       api.post_check(
           post_process.StepSuccess,
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1'),
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1',
+      ),
       # Commit message should contain the same version label as the original.
       # The change should be uploaded as a new patch set for the same Change-Id.
       api.post_check(
           post_process.StepCommandRE,
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED.rebase CL 1.commit uprev.commit in overlay.write commit message',
           [
-              '.*', '.*', '.*', '.*', '.*', '.*',
-              r'(.|\n)*' + UPREV_VERSION_LABEL + '.*' + revision +
-              r'(.|\n)*Change-Id: deadbeef(.|\n)*', '.*'
-          ]),
-      api.post_check(post_process.MustRunRE,
-                     r'.*upload patch set for Change-Id 1\.git_cl upload'))
+              '.*',
+              '.*',
+              '.*',
+              '.*',
+              '.*',
+              '.*',
+              r'(.|\n)*' + pupr_local_uprev_api.UPREV_VERSION_LABEL + '.*' +
+              revision + r'(.|\n)*Change-Id: deadbeef(.|\n)*',
+              '.*',
+          ],
+      ),
+      api.post_check(
+          post_process.MustRunRE,
+          r'.*upload patch set for Change-Id 1\.git_cl upload',
+      ),
+  )
 
   value_dict = {
       1: {
           'change_id': 1,
           'created': '2020-10-22 18:54:00.000000000',
-          'messages': [{
-              'message':
-                  'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-              'date':
-                  '2020-10-26T18:54:00Z',
-          }, {
-              'message': 'Patch Set 3:\n\nCV is trying the patch...',
-              'date': '2020-10-24T18:54:00Z',
-              'tag': 'autogenerated:cv:full-run:1000000001'
-          }, {
-              'message':
-                  'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-              'date':
-                  '2020-10-25T18:54:00Z',
-              'tag':
-                  'autogenerated:cv:full-run:1000000002'
-          }],
+          'messages': [
+              {
+                  'message':
+                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-26T18:54:00Z',
+              },
+              {
+                  'message': 'Patch Set 3:\n\nCV is trying the patch...',
+                  'date': '2020-10-24T18:54:00Z',
+                  'tag': 'autogenerated:cv:full-run:1000000001',
+              },
+              {
+                  'message':
+                      'Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-25T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:full-run:1000000002',
+              },
+          ],
           'revision_info': {
               'ref': 'refs/change/foo',
           },
@@ -1164,20 +1342,27 @@ def GenTests(api: RecipeTestApi):
       2: {
           'change_id': 2,
           'created': '2020-10-23 18:54:00.000000000',
-          'messages': [{
-              'message':
-                  'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
-              'date':
-                  '2020-10-26T18:54:00Z',
-          }, {
-              'message': 'Patch Set 3:\n\nDry run: CV is trying the patch...',
-              'date': '2020-10-24T18:54:00Z',
-              'tag': 'autogenerated:cv:dry-run:1000000001'
-          }, {
-              'message': 'Patch Set 3:\n\nThis CL has passed the run',
-              'date': '2020-10-25T18:54:00Z',
-              'tag': 'autogenerated:cv:dry-run:1000000002'
-          }],
+          'messages': [
+              {
+                  'message':
+                      'Quote: Patch Set 3:\n\nThis CL has failed the run. Reason: ...',
+                  'date':
+                      '2020-10-26T18:54:00Z',
+              },
+              {
+                  'message':
+                      'Patch Set 3:\n\nDry run: CV is trying the patch...',
+                  'date':
+                      '2020-10-24T18:54:00Z',
+                  'tag':
+                      'autogenerated:cv:dry-run:1000000001',
+              },
+              {
+                  'message': 'Patch Set 3:\n\nThis CL has passed the run',
+                  'date': '2020-10-25T18:54:00Z',
+                  'tag': 'autogenerated:cv:dry-run:1000000002',
+              },
+          ],
           'revision_info': {
               'ref': 'refs/change/foo',
           },
@@ -1188,28 +1373,44 @@ def GenTests(api: RecipeTestApi):
       'cron-trigger-discard-before-passed-dry-run',
       _props(
           branch_policies=[
-              _policy(retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
-                      existing_cls_policy=DRY_RUN,
-                      no_existing_cls_policy=FULL_RUN,
-                      outdated_cls_policy=OUTDATED_ABANDON)
-          ], retry_ref=retry_ref),
-      api.scheduler(triggers=[Trigger(cron=CronTrigger(generation=-1))]),
+              _policy(
+                  retry_cl_policy=generator_pb2.RETRY_LATEST_OR_LATEST_PINNED,
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.FULL_RUN,
+                  outdated_cls_policy=generator_pb2.OUTDATED_ABANDON,
+              )
+          ],
+          retry_ref=retry_ref,
+      ),
+      api.scheduler(triggers=[
+          triggers_pb2.Trigger(cron=triggers_pb2.CronTrigger(generation=-1))
+      ]),
       api.git.diff_check(True),
       api.gerrit.set_gerrit_fetch_changes_response('', changes, value_dict),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED', changes,
-          value_dict),
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+          changes,
+          value_dict,
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          changes, value_dict),
+          changes,
+          value_dict,
+      ),
       api.gerrit.set_query_changes_response(
           'examine outdated CLs.merged CLs from chromium host (within 30 days)',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
       api.gerrit.set_query_changes_response(
           'find open uprev CLs.find CLs from chromium host',
-          gerrit_changes_json, 'https://chromium-review.googlesource.com'),
-      api.post_check(post_process.MustRun,
-                     'apply retry policy RETRY_LATEST_OR_LATEST_PINNED'),
+          gerrit_changes_json,
+          'https://chromium-review.googlesource.com',
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
+      ),
   )
 
   yield api.test(
@@ -1219,18 +1420,18 @@ def GenTests(api: RecipeTestApi):
       api.git.diff_check(True),
       api.post_check(
           post_process.StepWarning,
-          'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)'
+          'examine outdated CLs.merged CLs from chrome-internal host (within 30 days)',
       ),
   )
 
   yield api.test(
       'sdk-uprev',
-      _props(uprev_target_kind=UprevTargetKind.SDK),
+      _props(uprev_target_kind=generator_pb2.UprevTargetKind.SDK),
       api.properties(
           **{
               '$chromeos/pupr_local_uprev':
-                  pupr_local_uprev.PuprLocalUprevProperties(
-                      sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                  pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                           sdk_version='2023.03.14.159265',
                           toolchain_template='2023/03/%(target)s-2023.03.14.159265.tar.xz',
                       ),
