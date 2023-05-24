@@ -14,7 +14,9 @@ import string
 import subprocess
 import sys
 import typing
+from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -34,21 +36,15 @@ class StagingReCheck(typing.NamedTuple):
   bucket: str
   regex: str
   # exemptions can turn failures into successes.
-  # The input is a JSON encoded string of the `bb ls` output, e.g.
+  # The input is a dict parsed from the `bb ls` output, e.g.
   # {"id":"8782723488170713857","builder":{"project":"chromeos", ...
   # The output should be True if the failure can be ignored.
-  exemptions: List[Callable[[str], bool]] = []
+  exemptions: List[Callable[[Dict[str, Any]], bool]] = []
 
 
-def release_exemption(build: str) -> bool:
-  """Exemption function for release builds."""
-  build = json.loads(build)
-  # INFRA_FAILUREs should never be ignored.
-  if build['status'] == 'INFRA_FAILURE':
-    return False
+def orchestrator_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for orchestrator builds."""
   ignorable_summary_markdown_re = [
-      re.compile(r'^failed unit tests for'),
-      re.compile(r'^failed compilation for'),
       re.compile(r'\d+ out of \d+ builds failed'),
   ]
   for regex in ignorable_summary_markdown_re:
@@ -57,26 +53,46 @@ def release_exemption(build: str) -> bool:
   return False
 
 
+def image_builder_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for image builds."""
+  ignorable_summary_markdown_re = [
+      re.compile(r'^failed unit tests for'),
+      re.compile(r'^failed compilation for'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
+def cq_cancelled_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for CQ builds cancelled by CV."""
+  ignorable_cancellation_markdown = 'LUCI CV no longer needs this Tryjob'
+  return build.get('cancellationMarkdown',
+                   '') == ignorable_cancellation_markdown
+
+
 STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator',
-                   [release_exemption]),
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
     StagingReCheck('chromeos', 'staging',
                    r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
-                   [release_exemption]),
+                   [image_builder_exemption]),
     StagingReCheck('chromeos', 'staging',
                    r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
-                   [release_exemption]),
+                   [image_builder_exemption]),
     # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
     StagingReCheck('chromeos', 'staging',
                    r'staging-amd64-generic-direct-tast-vm'),
-    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit'),
+    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
+                   [image_builder_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
     StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
-    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator',
+                   [orchestrator_exemption, cq_cancelled_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
@@ -333,22 +349,27 @@ def check_staging_builders(ignore_failures: bool = False):
 
 
 def check_recent_build_statuses(
-    builder: str, exemptions: List[Callable[[str], bool]]) -> bool:
+    builder: str, exemptions: List[Callable[[Dict[str, Any]], bool]]) -> bool:
   """Check whether a single builder has had any recent non-successes."""
-  cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', builder]
+  cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', '-A', builder]
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
   found_statuses = set()
   for line in p.stdout.split('\n'):
     if not line:
       continue
-    status = json.loads(line)['status']
+    build = json.loads(line)
+    status = build['status']
     # Shouldn't be necessary because of `-status ended`, but better safe than
     # sorry.
     if status in ('STARTED', 'SCHEDULED'):
       continue
-    for exemption in exemptions:
-      if exemption(line):
-        status = "OK_FAILURE"
+
+    # INFRA_FAILUREs should never be ignored.
+    if status != 'INFRA_FAILURE':
+      for exemption in exemptions:
+        if exemption(build):
+          status = 'OK_FAILURE'
+
     found_statuses.add(status)
   if not found_statuses:
     print(f'No runs recorded for: {builder}')
