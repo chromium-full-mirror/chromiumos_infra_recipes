@@ -3,64 +3,41 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.build_menu.tests.is_staging import StagingProperties
+from typing import Generator
+
+from recipe_engine import post_process
+from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
 
 DEPS = [
-    'recipe_engine/assertions',
-    'recipe_engine/properties',
-    'recipe_engine/swarming',
+    'recipe_engine/buildbucket',
     'build_menu',
     'easy',
-    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = StagingProperties
+
+def RunSteps(api: recipe_api.RecipeApi) -> None:
+  """Run main test logic."""
+  with api.build_menu.configure_builder():
+    api.easy.set_properties_step(is_staging=api.build_menu.is_staging)
 
 
-def RunSteps(api, properties):
-  kwargs = {}
+def GenTests(
+    api: recipe_test_api.RecipeTestApi
+) -> Generator[recipe_test_api.TestData, None, None]:
+  """Generate test cases."""
+  STAGING_BUCKET, CQ_BUCKET = 'staging', 'cq'
+  STAGING_BUILDER, PROD_BUILDER = 'staging-amd64-generic-cq', 'amd64-generic-cq'
 
-  if properties.HasField('is_staging'):
-    is_staging = properties.is_staging.value
-  else:
-    is_staging = None
-  if properties.provide_is_staging:
-    kwargs['is_staging'] = is_staging
-
-  with api.build_menu.configure_builder(**kwargs):
-    api.easy.set_properties_step(is_staging=str(api.build_menu.is_staging))
-    if properties.expected_is_staging:
-      api.assertions.assertTrue(api.build_menu.is_staging)
-    else:
-      api.assertions.assertFalse(api.build_menu.is_staging)
-
-
-def GenTests(api):
-
-  def test(name, provide=True, give=None, expect=False, **kwargs):
-    kwargs.setdefault('cq', True)
-    props = StagingProperties(expected_is_staging=expect,
-                              provide_is_staging=provide)
-    if give is not None:
-      props.is_staging.value = give
-    return api.test(
-        name,
-        api.test_util.test_child_build('amd64-generic', **kwargs).build,
-        api.properties(props))
-
-  for bucket in 'staging', 'cq':
-    for builder in "amd64-generic-cq", "staging-amd64-generic-cq":
-      for which in 'NotPassed', None, False, True:
-        name = '%s_%s-%s' % (bucket, builder, which)
-        if which is None or which == 'NotPassed':
-          expect = bucket == 'staging' or builder.startswith('staging-')
-          provide = which is None
-          give = None
-        else:
-          give = which
-          expect = which
-          provide = True
-        yield test(name, bucket=bucket, builder=builder, give=give,
-                   provide=provide, expect=expect)
+  for bucket in STAGING_BUCKET, CQ_BUCKET:
+    for builder in STAGING_BUILDER, PROD_BUILDER:
+      expect_staging = bucket == STAGING_BUCKET or builder == STAGING_BUILDER
+      yield api.test(
+          f'{bucket}_{builder}',
+          api.buildbucket.generic_build(bucket=bucket, builder=builder),
+          api.post_check(post_process.PropertyEquals, 'is_staging',
+                         expect_staging),
+          api.post_process(post_process.DropExpectation),
+      )

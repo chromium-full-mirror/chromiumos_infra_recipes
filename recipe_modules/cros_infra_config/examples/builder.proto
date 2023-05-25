@@ -17,8 +17,7 @@ message BuilderProperties {
   // Expected builder name, if any.  See BuilderConfig.Id.name.
   string builder = 2;
 
-  // is_staging argument to configure_builder.
-  google.protobuf.BoolValue is_staging = 3;
+  reserved 3;
 
   // Expected value for is_staging.
   bool expected_is_staging = 4;

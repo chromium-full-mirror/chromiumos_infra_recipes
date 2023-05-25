@@ -21,7 +21,8 @@ from recipe_engine.config_types import Path
 
 from PB.chromite.api.packages import UprevPackagesRequest
 from PB.chromite.api.binhost import OVERLAYTYPE_BOTH
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.chromiumos import builder_config as builder_config_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
@@ -221,8 +222,11 @@ class CrosSourceApi(RecipeApi):
       jobs = multiprocessing.cpu_count()
     return jobs
 
-  def configure_builder(self, commit=None, changes=None, is_staging=None,
-                        default_main=False, name='configure builder'):
+  def configure_builder(
+      self, commit: Optional[bb_common_pb2.GitilesCommit] = None,
+      changes: Optional[List[bb_common_pb2.GerritChange]] = None,
+      default_main: bool = False, name: str = 'configure builder'
+  ) -> Optional[builder_config_pb2.BuilderConfig]:
     """Configure the builder.
 
     Fetch the builder config.
@@ -230,19 +234,17 @@ class CrosSourceApi(RecipeApi):
     Set the bisect_builder and use_flags.
 
     Args:
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          GitilesCommit(.... ref='refs/heads/snapshot').
-      changes (list[GerritChange]): The gerrit changes to apply.  Default: the
-          gerrit_changes from buildbucket.
-      is_staging (bool): Whether the builder is staging, or None to have
-          configure_builder determine, based on buildbucket bucket and/or
-          config.general.environment.
-      default_main (bool): Whether the default branch should be 'main'.
-          Default: use the appropriate snapshot branch.
-      name (string): Step name.  Default: "configure builder".
+      commit: The gitiles commit to use.  Default:
+        GitilesCommit(.... ref='refs/heads/snapshot').
+      changes: The gerrit changes to apply.  Default: the gerrit_changes from
+        buildbucket.
+      default_main: Whether the default branch should be 'main'. Default: use
+        the appropriate snapshot branch.
+      name: Step name.
 
     Returns:
-      BuilderConfig or None
+      BuilderConfig for the active build, or None if the active build does not
+      have a BuilderConfig.
     """
     branch_fmt = (r'(?P<branch>(?P<base>(factory|firmware|release|stabilize)-'
                   r'(((?P<device>[-a-zA-Z_0-9.]+)|(?P<release>R[1-9][0-9]*))-)?'
@@ -302,8 +304,8 @@ class CrosSourceApi(RecipeApi):
             conf.change_id % 100, conf.change_id, conf.patch_set)
 
       config = self.m.cros_infra_config.configure_builder(
-          commit=commit, changes=changes, is_staging=is_staging,
-          name='cros_infra_config', choose_branch=False, config_ref=config_ref)
+          commit=commit, changes=changes, name='cros_infra_config',
+          choose_branch=False, config_ref=config_ref)
 
       commit = self.m.src_state.gitiles_commit
       if not commit.ref:
@@ -386,14 +388,14 @@ class CrosSourceApi(RecipeApi):
       return 'INTERNAL'
     return 'CUSTOM'
 
-  def ensure_synced_cache(self, manifest_url: Optional[str] = None,
-                          init_opts: Optional[Dict[str, Any]] = None,
-                          sync_opts: Optional[Dict[str, Any]] = None,
-                          cache_path_override: Optional[Path] = None,
-                          is_staging: bool = False,
-                          projects: Optional[List[str]] = None,
-                          gitiles_commit: Optional[GitilesCommit] = None,
-                          manifest_branch_override: Optional[str] = None):
+  def ensure_synced_cache(
+      self, manifest_url: Optional[str] = None,
+      init_opts: Optional[Dict[str, Any]] = None,
+      sync_opts: Optional[Dict[str, Any]] = None,
+      cache_path_override: Optional[Path] = None, is_staging: bool = False,
+      projects: Optional[List[str]] = None,
+      gitiles_commit: Optional[bb_common_pb2.GitilesCommit] = None,
+      manifest_branch_override: Optional[str] = None):
     """Ensure the configured repo cache exists and is synced.
 
     Args:
@@ -401,13 +403,13 @@ class CrosSourceApi(RecipeApi):
       init_opts: Extra keyword arguments to pass to 'repo.init'.
       sync_opts: Extra keyword arguments to pass to 'repo.sync'.
       cache_path_override: Path to sync into. If None, the cache_path property
-          is used.
+        is used.
       is_staging: Flag to indicate canary staging environment.
       projects : Projects to limit the sync to, or None to sync all projects.
       gitiles_commit: The gitiles_commit, or None to use the current value.
       manifest_branch_override: If provided, override the manifest_branch value
-          in init_opts. Otherwise, use the value returned from
-          configure_builder().
+        in init_opts. Otherwise, use the value returned from
+        configure_builder().
     """
     # Make sure that there is an active overlayfs.cleanup_context.
     # See crbug.com/1165775.
@@ -526,9 +528,9 @@ class CrosSourceApi(RecipeApi):
 
     Args:
       internal_manifest_path: The path where the internal manifest is checked
-          out.
+        out.
       snapshot_commit_id: The internal snapshot commit id for which to return
-          the external snapshot commit counterpart.
+        the external snapshot commit counterpart.
 
     Raises:
       StepFailure if there is not exactly one Cr-External-Snapshot footer.
@@ -1201,7 +1203,7 @@ class CrosSourceApi(RecipeApi):
 
     Returns:
       List[PatchSet]: The list of cherry-picked patch sets. Not all patch sets
-          may be applied if ignore_missing_projects is true.
+        may be applied if ignore_missing_projects is true.
     """
     with self.m.step.nest(name or 'apply gerrit patch sets') as pres:
       if ignore_missing_projects:
@@ -1243,8 +1245,7 @@ class CrosSourceApi(RecipeApi):
       patch (PatchSet): The PatchSet to apply.
       project_path (str): The path in which to apply the change.
       is_abs_path (bool): Whether the project path is an absolute path. The
-          default is False meaning the project_path is relative to the
-          workspace.
+        default is False meaning the project_path is relative to the workspace.
     """
     path = project_path if is_abs_path else self.workspace_path.join(
         project_path)
@@ -1291,7 +1292,7 @@ class CrosSourceApi(RecipeApi):
 
       Args:
         commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-            saved in cros_infra_config.configure_builder().
+          saved in cros_infra_config.configure_builder().
         manifest_url: URL of manifest repo.  Default: internal manifest
     """
     if self._sync_to_manifest and self._sync_to_manifest.manifest_gs_path:
@@ -1484,7 +1485,7 @@ class CrosSourceApi(RecipeApi):
     Args:
       workspace_path (Path): Path to the workspace checkout.
       build_targets (list[BuildTarget]): List of build_targets whose packages.
-          should be uprevved, or None for all build_targets.
+        should be uprevved, or None for all build_targets.
       timeout_sec (int): Step timeout (in seconds).  Default: 10 minutes.
       name (string): Name for step.
 
@@ -1671,12 +1672,11 @@ class CrosSourceApi(RecipeApi):
 
     Args:
       project(ProjectInfo): Information desribing the repo.
-      dry_run(bool):        Dry run the git push.
-      step_name(string):    Step name overide for the git push.
-      branch(string):       Branch name to push to.
-      is_staging(bool):     If annealing is running in staging or not.
-      namespace(string):    The namespace for the ref ('heads' or '
-        staging-infra').
+      dry_run(bool): Dry run the git push.
+      step_name(string): Step name overide for the git push.
+      branch(string): Branch name to push to.
+      is_staging(bool): If annealing is running in staging or not.
+      namespace(string): The namespace for the ref ('heads' or 'staging-infra').
     """
     current_branch = self.m.git.current_branch() or self.m.git.head_commit()
     ref = 'refs/{}/{}'.format(namespace, branch)

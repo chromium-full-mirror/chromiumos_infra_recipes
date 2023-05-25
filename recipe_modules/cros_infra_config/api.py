@@ -2,9 +2,10 @@
 # Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
 import datetime
 import typing
-from typing import Union
+from typing import Optional, Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
@@ -66,15 +67,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # Is the builder configured?
     self._is_configured = False
 
-  def initialize(self):
-    # If the builder is in the staging bucket, or has a name that begins
-    # 'staging-', then assume we are in staging.
-    builder = self.m.buildbucket.build.builder
-    self._is_staging = any([
-        builder.bucket == 'staging',
-        builder.builder.startswith('staging-'),
-        builder.builder.endswith('-staging')
-    ])
+  def initialize(self) -> None:
+    """Perform one-time initialization.
+
+    This method automatically runs when the build begins.
+
+    Set whether the builder is staging, and align properties with experiments.
+    Hold off on other fields until they are used, to avoid unnecessary clutter
+    in the expectation files.
+    """
+    self.determine_if_staging()
 
     # Parse properties.config_ref, but only on staging.
     self._config_ref = (
@@ -87,9 +89,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._properties.release_tot_builds_snapshot |= (
         'chromeos.cros_infra_config.release_tot_builds_snapshot' in
         self.experiments)
-
-    # Hold off on the other fields until they are used, to avoid unnecessary
-    # clutter in the expectations files.
 
   @property
   def is_configured(self):
@@ -483,19 +482,24 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           ret = self._package_git_revision
     return ret
 
-  def determine_if_staging(self, is_staging=None, config=None):
-    """Configure the builder's knowledge of whether it's running in staging."""
-    build = self.m.buildbucket.build
-    if is_staging is None:
-      is_staging = (
-          build.builder.bucket == 'staging' or
-          build.builder.builder.startswith('staging-') or
-          # Cast to bool because python evaluates `None and bool` to None.
-          (bool(config) and
-           config.general.environment == BuilderConfig.General.STAGING))
-    self._is_staging = is_staging
+  def determine_if_staging(self,
+                           config: Optional[BuilderConfig] = None) -> None:
+    """Configure the builder's knowledge of whether it's running in staging.
 
-  def configure_builder(self, commit=None, changes=None, is_staging=None,
+    Args:
+      config: This build's BuilderConfig.
+    """
+    builder = self.m.buildbucket.build.builder
+    self._is_staging = any((
+        builder.bucket == 'staging',
+        builder.bucket == 'staging.shadow',
+        builder.builder.startswith('staging-'),
+        builder.builder.endswith('-staging'),
+        (config is not None and
+         config.general.environment == BuilderConfig.General.STAGING),
+    ))
+
+  def configure_builder(self, commit=None, changes=None,
                         name='configure builder', choose_branch=True,
                         config_ref=None):
     """Configure the builder.
@@ -509,9 +513,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
           GitilesCommit(.... ref='refs/heads/snapshot').
       changes (list[GerritChange]): The gerrit changes to apply.  Default: the
           gerrit_changes from buildbucket.
-      is_staging (bool): Whether the builder is staging, or None to have
-          configure_builder determine, based on buildbucket bucket and/or
-          config.general.environment.
       name (string): Step name.  Default: "configure builder".
       config_ref (string): Override properties.config_ref (for config CLs).
 
@@ -540,7 +541,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       else:
         presentation.step_text = 'config not found, assuming deleted'
 
-      self.determine_if_staging(is_staging=is_staging, config=config)
+      self.determine_if_staging(config=config)
 
       parent = [x.value for x in build.tags if x.key == 'parent_buildbucket_id']
       if parent:

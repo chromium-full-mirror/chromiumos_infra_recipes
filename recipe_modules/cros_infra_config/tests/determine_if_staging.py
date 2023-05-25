@@ -3,37 +3,50 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.cros_infra_config.tests.test import DetermineIfStagingProperties
+from typing import Generator
+
+from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
+from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/properties',
     'cros_infra_config',
+    'easy',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = DetermineIfStagingProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api: recipe_api.RecipeApi) -> None:
+  """Main test logic."""
   api.cros_infra_config.determine_if_staging()
-  api.assertions.assertEqual(api.cros_infra_config.is_staging,
-                             properties.expected_is_staging)
+  api.easy.set_properties_step(is_staging=api.cros_infra_config.is_staging)
 
 
-def GenTests(api):
+def GenTests(
+    api: recipe_test_api.RecipeTestApi
+) -> Generator[recipe_test_api.TestData, None, None]:
+  """Create test cases."""
 
-  def expected_staging(is_staging):
-    return api.properties(
-        DetermineIfStagingProperties(expected_is_staging=is_staging))
+  yield api.test(
+      'staging-bucket', api.buildbucket.generic_build(bucket="staging"),
+      api.post_check(post_process.PropertyEquals, 'is_staging', True),
+      api.post_process(post_process.DropExpectation))
 
-  yield api.test('staging-bucket', expected_staging(True),
-                 api.buildbucket.generic_build(bucket="staging"))
+  yield api.test(
+      'staging-shadow-bucket',
+      api.buildbucket.generic_build(bucket="staging.shadow"),
+      api.post_check(post_process.PropertyEquals, 'is_staging', True),
+      api.post_process(post_process.DropExpectation))
 
-  yield api.test('staging-builder', expected_staging(True),
-                 api.buildbucket.generic_build(builder="staging-sign-image"))
+  yield api.test(
+      'staging-builder',
+      api.buildbucket.generic_build(builder="staging-sign-image"),
+      api.post_check(post_process.PropertyEquals, 'is_staging', True),
+      api.post_process(post_process.DropExpectation))
 
-  yield api.test('generic-builder', expected_staging(False),
-                 api.buildbucket.generic_build())
+  yield api.test(
+      'generic-builder', api.buildbucket.generic_build(),
+      api.post_check(post_process.PropertyEquals, 'is_staging', False),
+      api.post_process(post_process.DropExpectation))

@@ -1023,7 +1023,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#72)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#734)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#738)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1032,14 +1032,14 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#748)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#752)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#504)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#506)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -1048,7 +1048,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#606)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#609)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -1061,7 +1061,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#561)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#564)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1080,7 +1080,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/build_menu/api.py#84)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#206)(self, is_staging=None, missing_ok=False, disable_sdk=False, commit=None, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [configure\_builder](/recipe_modules/build_menu/api.py#206)(self, missing_ok: bool=False, disable_sdk: bool=False, commit: Optional[bb_common_pb2.GitilesCommit]=None, targets: Iterable[common_pb2.BuildTarget]=()):**
 
 Initial setup steps for the builder.
 
@@ -1088,18 +1088,16 @@ This context manager returns with all of the contexts that an image builder
 needs to have when it runs, for cleanup to happen properly.
 
 Args:
-  is_staging (bool): Whether this is a staging builder.  Use this to
-      override auto-detection. By default, anything in the 'staging' bucket
-      is considered a staging builder.
-  missing_ok (bool): Whether it is OK if no config is found.
-  disable_sdk (bool): This builder will not be using the SDK at all. Only
-      for branches with broken or no Build API.
-  commit (GitilesCommit): The GitilesCommit for the build, or None.
-  targets (list[build_target]): List of build_targets for metadata_json to
-      use instead of our build_target.
+  missing_ok: Whether it is OK if no config is found.
+  disable_sdk: This builder will not be using the SDK at all. Only for
+    branches with broken or no Build API.
+  commit: The GitilesCommit for the build, or None.
+  targets: List of build_targets for metadata_json to use instead of our
+    build_target.
 
 Returns:
-  BuilderConfig or None, with an active context.
+  BuilderConfig for the active build (or None if the active build has no
+  corresponding config), with an active context.
 
 &emsp; **@property**<br>&mdash; **def [container\_version](/recipe_modules/build_menu/api.py#88)(self):**
 
@@ -1109,7 +1107,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#760)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#764)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1144,7 +1142,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#461)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#463)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1158,7 +1156,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#62)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#517)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#519)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False):**
 
 Install packages as appropriate.
 
@@ -1181,7 +1179,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#144)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#927)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#931)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1191,7 +1189,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#907)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#911)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1204,14 +1202,14 @@ Args:
   gs_path (str): GS path/template to write to (relative to the bucket),
     e.g. eve-release or {target}-release.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#621)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#624)(self, config=None):**
 
 run ebuild tests as specified by config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#326)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False, update: Optional[bool]=None):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#328)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False, update: Optional[bool]=None):**
 
 Setup the chroot for the builder.
 
@@ -1222,19 +1220,19 @@ Args:
   bootstrap: Whether to bootstrap the chroot.
   replace: Whether to replace the chroot if it already exists.
   update: Whether to update the chroot after creating it (overriding the
-      builder config). If not given, defer to the builder config. If the
-      builder config also does not specify, default to True.
+    builder config). If not given, defer to the builder config. If the
+    builder config also does not specify, default to True.
 
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#385)(self, with_sysroot=True):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#387)(self, with_sysroot=True):**
 
 Setup the sysroot for the builder and determine build relevance.
 
 Args:
   with_sysroot (bool): Whether to create a sysroot.  Default: True.
-      (Some builders do not require a sysroot.)
+    (Some builders do not require a sysroot.)
 
 Returns:
   An object containing:
@@ -1242,16 +1240,16 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#292)(self, cherry_pick_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#294)(self, cherry_pick_changes=True):**
 
 Setup the workspace for the builder.
 
 Args:
   cherry_pick_changes (bool): Whether to apply gerrit changes on top of the
-      checkout using cherry-pick. If set to False, will directly checkout
-      the changes using the gerrit fetch refs.
+    checkout using cherry-pick. If set to False, will directly checkout
+    the changes using the gerrit fetch refs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#265)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False, update_chroot: Optional[bool]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#267)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False, update_chroot: Optional[bool]=None):**
 
 Setup the workspace and chroot for the builder.
 
@@ -1260,12 +1258,12 @@ This context manager sets up the workspace path.
 Args:
   no_chroot_timeout: Whether to allow unlimited time to create the chroot.
   cherry_pick_changes: Whether to apply gerrit changes on top of the
-      checkout using cherry-pick. If set to False, will directly checkout
-      the changes using the gerrit fetch refs.
+    checkout using cherry-pick. If set to False, will directly checkout
+    the changes using the gerrit fetch refs.
   bootstrap_chroot: Whether to bootstrap the chroot.
   replace: Whether to replace the chroot if it already exists.
   update: Whether to update the chroot after creating it (overriding the
-      builder config). See setup_chroot() docstring for details.
+    builder config). See setup_chroot() docstring for details.
 
 Returns:
   Whether the build is relevant.
@@ -1281,7 +1279,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#591)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#594)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1290,19 +1288,19 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#688)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#692)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None):**
 
 Upload artifacts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
   private_bundle_func (func): If a private bundling method is needed (such
-      as when there is no Build API on the branch), this will be called
-      instead of the internal bundling method.
+    as when there is no Build API on the branch), this will be called
+    instead of the internal bundling method.
   sysroot (Sysroot): Use this sysroot.  Defaults to the primary Sysroot for
-      the build.
+    the build.
   report_to_spike (bool): If True, will call bcid_reporter to report artifact
-      information and trigger Spike to upload the provenance.
+    information and trigger Spike to upload the provenance.
   name (str): The step name. Defaults to 'upload artifacts'.
   previously_uploaded_artifacts(UploadedArtifacts): The UploadedArtifacts
     from a previous call to upload_artifacts; if set, these artifact
@@ -1313,18 +1311,18 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#897)(self):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#901)(self):**
 
 Upload Chrome prebuilts from the build.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#884)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#888)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#864)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#868)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -2861,14 +2859,14 @@ Generate start time in seconds.
 [DEPS](/recipe_modules/cros_infra_config/__init__.py#8): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 
-#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#601)(self, builds):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#602)(self, builds):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -2879,7 +2877,7 @@ Args:
 
 Returns: a dict(str, Build) of build_target names.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#120)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#119)(self):**
 
 Return the config for this builder.
 
@@ -2889,7 +2887,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#133)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#132)(self):**
 
 Config or default config.
 
@@ -2899,7 +2897,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#498)(self, commit=None, changes=None, is_staging=None, name='configure builder', choose_branch=True, config_ref=None):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#502)(self, commit=None, changes=None, name='configure builder', choose_branch=True, config_ref=None):**
 
 Configure the builder.
 
@@ -2912,45 +2910,45 @@ Args:
       GitilesCommit(.... ref='refs/heads/snapshot').
   changes (list[GerritChange]): The gerrit changes to apply.  Default: the
       gerrit_changes from buildbucket.
-  is_staging (bool): Whether the builder is staging, or None to have
-      configure_builder determine, based on buildbucket bucket and/or
-      config.general.environment.
   name (string): Step name.  Default: "configure builder".
   config_ref (string): Override properties.config_ref (for config CLs).
 
 Returns:
   BuilderConfig or None
 
-&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#486)(self, is_staging=None, config=None):**
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#485)(self, config: Optional[BuilderConfig]=None):**
 
 Configure the builder's knowledge of whether it's running in staging.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#181)(self, filename, step_test_data, timeout=None, repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):**
+Args:
+  config: This build's BuilderConfig.
+
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#180)(self, filename, step_test_data, timeout=None, repo=CHROME_OS_INFRA_CONFIG_REPO_URL, message=None):**
 
 Helper method to fetch a file from gitiles.
 
-&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#110)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#109)(self):**
 
 Return the list of experiments active for this build.
 
-&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#115)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#114)(self):**
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#305)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#304)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#154)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#153)(self):**
 
 Return a freshly loaded config for this builder.
 
 Returns:
   BuilderConfig for this builder, freshly reloaded.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#106)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#105)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#315)(self, application='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#314)(self, application='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -2958,7 +2956,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#563)(self, build=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#564)(self, build=None):**
 
 Return the build target from input properties.
 
@@ -2969,7 +2967,7 @@ Args:
 Returns:
   (BuildTarget) The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#587)(self, build=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#588)(self, build=None):**
 
 Return the build target name from input properties.
 
@@ -2980,7 +2978,7 @@ Args:
 Returns:
   (str) The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#255)(self, builder_name, missing_ok=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#254)(self, builder_name, missing_ok=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -3003,41 +3001,49 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#341)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#340)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#202)(self):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#201)(self):**
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#330)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#329)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
 Returns:
   SuiteRetryCfg as defined in the config repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#102)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#101)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#69)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#70)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#94)(self):**
+Perform one-time initialization.
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#150)(self):**
+This method automatically runs when the build begins.
 
-&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#98)(self):**
+Set whether the builder is staging, and align properties with experiments.
+Hold off on other fields until they are used, to avoid unnecessary clutter
+in the expectation files.
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#166)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#93)(self):**
+
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#149)(self):**
+
+&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#97)(self):**
+
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#165)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#283)(self, builder_names):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#282)(self, builder_names):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -3051,7 +3057,7 @@ Args:
 Returns:
   dict(str, BuilderConfig) of found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#615)(self, critical=None, override=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#616)(self, critical=None, override=False):**
 
 Set the buildbucket.build.critical value.
 
@@ -3061,9 +3067,9 @@ Args:
   override (bool): Whether to override the existing criticality value.
     Defaults to False.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#312)(self, run_spec):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#311)(self, run_spec):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#309)(self, run_spec):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#308)(self, run_spec):**
 ### *recipe_modules* / [cros\_lkgm](/recipe_modules/cros_lkgm)
 
 [DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_schedule](#recipe_modules-cros_schedule), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -3986,11 +3992,11 @@ Returns: A str
 
 API for working with CrOS source.
 
-#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#50)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosSourceApi](/recipe_modules/cros_source/api.py#51)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#839)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#841)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -4006,7 +4012,7 @@ Args:
 Returns:
   List[PatchSet]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1239)(self, patch, project_path, is_abs_path=False):**
+&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1241)(self, patch, project_path, is_abs_path=False):**
 
 Apply a PatchSet to the git repo in ${CWD}.
 
@@ -4014,14 +4020,13 @@ Args:
   patch (PatchSet): The PatchSet to apply.
   project_path (str): The path in which to apply the change.
   is_abs_path (bool): Whether the project path is an absolute path. The
-      default is False meaning the project_path is relative to the
-      workspace.
+    default is False meaning the project_path is relative to the workspace.
 
-&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#136)(self):**
+&emsp; **@property**<br>&mdash; **def [branch\_manifest\_file](/recipe_modules/cros_source/api.py#137)(self):**
 
 Returns the Path to the manifest_file for this build.
 
-&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#185)(self):**
+&emsp; **@property**<br>&mdash; **def [cache\_path](/recipe_modules/cros_source/api.py#186)(self):**
 
 The cached checkout path.
 
@@ -4029,7 +4034,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#677)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#679)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -4046,7 +4051,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_external\_manifest](/recipe_modules/cros_source/api.py#550)(self, commit_id: str, force: bool=True):**
+&mdash; **def [checkout\_external\_manifest](/recipe_modules/cros_source/api.py#552)(self, commit_id: str, force: bool=True):**
 
 Checkout the external manifest at the given commit.
 
@@ -4054,7 +4059,7 @@ Args:
   commit_id: The commit of the external manifest to checkout.
   force: If true, throw away any local changes.
 
-&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#870)(self, change):**
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#872)(self, change):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -4066,7 +4071,7 @@ Args:
   change (GerritChange): Change to check out.
   name (string): Step name.  Default: "checkout gerrit change".
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#563)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#565)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
 
 Check out the manifest projects.
 
@@ -4093,7 +4098,7 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#784)(self, mount_cache=True, disk_type='pd-ssd'):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#786)(self, mount_cache=True, disk_type='pd-ssd'):**
 
 Returns a context where overlays can be mounted.
 
@@ -4101,11 +4106,11 @@ Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
   disk_type (str): GCE disk type to use.  Default: pd-ssd
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#723)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#725)(self):**
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#224)(self, commit=None, changes=None, is_staging=None, default_main=False, name='configure builder'):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#225)(self, commit: Optional[bb_common_pb2.GitilesCommit]=None, changes: Optional[List[bb_common_pb2.GerritChange]]=None, default_main: bool=False, name: str='configure builder'):**
 
 Configure the builder.
 
@@ -4114,21 +4119,19 @@ Determine the actual commit and changes to use.
 Set the bisect_builder and use_flags.
 
 Args:
-  commit (GitilesCommit): The gitiles commit to use.  Default:
-      GitilesCommit(.... ref='refs/heads/snapshot').
-  changes (list[GerritChange]): The gerrit changes to apply.  Default: the
-      gerrit_changes from buildbucket.
-  is_staging (bool): Whether the builder is staging, or None to have
-      configure_builder determine, based on buildbucket bucket and/or
-      config.general.environment.
-  default_main (bool): Whether the default branch should be 'main'.
-      Default: use the appropriate snapshot branch.
-  name (string): Step name.  Default: "configure builder".
+  commit: The gitiles commit to use.  Default:
+    GitilesCommit(.... ref='refs/heads/snapshot').
+  changes: The gerrit changes to apply.  Default: the gerrit_changes from
+    buildbucket.
+  default_main: Whether the default branch should be 'main'. Default: use
+    the appropriate snapshot branch.
+  name: Step name.
 
 Returns:
-  BuilderConfig or None
+  BuilderConfig for the active build, or None if the active build does not
+  have a BuilderConfig.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#389)(self, manifest_url: Optional[str]=None, init_opts: Optional[Dict[(str, Any)]]=None, sync_opts: Optional[Dict[(str, Any)]]=None, cache_path_override: Optional[Path]=None, is_staging: bool=False, projects: Optional[List[str]]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch_override: Optional[str]=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#391)(self, manifest_url: Optional[str]=None, init_opts: Optional[Dict[(str, Any)]]=None, sync_opts: Optional[Dict[(str, Any)]]=None, cache_path_override: Optional[Path]=None, is_staging: bool=False, projects: Optional[List[str]]=None, gitiles_commit: Optional[bb_common_pb2.GitilesCommit]=None, manifest_branch_override: Optional[str]=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -4137,15 +4140,15 @@ Args:
   init_opts: Extra keyword arguments to pass to 'repo.init'.
   sync_opts: Extra keyword arguments to pass to 'repo.sync'.
   cache_path_override: Path to sync into. If None, the cache_path property
-      is used.
+    is used.
   is_staging: Flag to indicate canary staging environment.
   projects : Projects to limit the sync to, or None to sync all projects.
   gitiles_commit: The gitiles_commit, or None to use the current value.
   manifest_branch_override: If provided, override the manifest_branch value
-      in init_opts. Otherwise, use the value returned from
-      configure_builder().
+    in init_opts. Otherwise, use the value returned from
+    configure_builder().
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#729)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#731)(self, count=((7 \* 24) \* 2)):**
 
 Return snapshot SHAs for the manifest.
 
@@ -4159,7 +4162,7 @@ Args:
 Returns:
   (list[str]) The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#811)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#813)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -4175,7 +4178,7 @@ Args:
 Returns:
   list(str), The path values for the found project.
 
-&mdash; **def [get\_external\_snapshot\_commit](/recipe_modules/cros_source/api.py#518)(self, internal_manifest_path: Path, snapshot_commit_id: str):**
+&mdash; **def [get\_external\_snapshot\_commit](/recipe_modules/cros_source/api.py#520)(self, internal_manifest_path: Path, snapshot_commit_id: str):**
 
 Return the Cr-External-Snapshot for the given internal snapshot commit.
 
@@ -4186,9 +4189,9 @@ Note: This function assumes the internal manifest is synced.
 
 Args:
   internal_manifest_path: The path where the internal manifest is checked
-      out.
+    out.
   snapshot_commit_id: The internal snapshot commit id for which to return
-      the external snapshot commit counterpart.
+    the external snapshot commit counterpart.
 
 Raises:
   StepFailure if there is not exactly one Cr-External-Snapshot footer.
@@ -4196,11 +4199,11 @@ Raises:
 Returns:
   The corresponding exteral manifest snapshot commit.
 
-&mdash; **def [initialize](/recipe_modules/cros_source/api.py#86)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_source/api.py#87)(self):**
 
 Initialization that follows all module loading.
 
-&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_source\_dirty](/recipe_modules/cros_source/api.py#176)(self):**
 
 Returns whether the source is dirty.
 
@@ -4208,19 +4211,19 @@ Returns whether the source is dirty. The source is dirty if it was checked
 out to a custom snapshot from isolate or has had patches applied or has
 been moved to a branch.
 
-&emsp; **@property**<br>&mdash; **def [is\_tot](/recipe_modules/cros_source/api.py#149)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_tot](/recipe_modules/cros_source/api.py#150)(self):**
 
 Return whether or not the builder is on ToT.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#142)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_branch](/recipe_modules/cros_source/api.py#143)(self):**
 
 Returns any non-default manifest branch that is checked out.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#154)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_push](/recipe_modules/cros_source/api.py#155)(self):**
 
 Returns the manifest branch to push changes to.
 
-&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#101)(self):**
+&emsp; **@property**<br>&mdash; **def [mirrored\_manifest\_files](/recipe_modules/cros_source/api.py#102)(self):**
 
 Returns the names of files that are mirrored into the public manifest.
 
@@ -4233,11 +4236,11 @@ builders do it when applying manifest changes.
 Returns:
   (list[MirroredManifestFile]) with files we mirror.
 
-&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#128)(self):**
+&emsp; **@property**<br>&mdash; **def [pinned\_manifest](/recipe_modules/cros_source/api.py#129)(self):**
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1501)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1502)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4251,11 +4254,11 @@ Return:
   all_uprevs_passed (bool): True if all uprevs succeeded,
                             False if ANY failed.
 
-&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#204)(self):**
+&emsp; **@property**<br>&mdash; **def [snapshot\_cas\_digest](/recipe_modules/cros_source/api.py#205)(self):**
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1286)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1287)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -4264,10 +4267,10 @@ be used. Otherwise the given commit/manifest_url will be used.
 
 Args:
   commit (GitilesCommit): The gitiles_commit to sync to.  Default: commit
-      saved in cros_infra_config.configure_builder().
+    saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1379)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1380)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -4278,7 +4281,7 @@ Args:
   manifest_url: URL of manifest repo.  Default: internal manifest
   kwargs (dict): additional args for repo.sync_manifest.
 
-&emsp; **@property**<br>&mdash; **def [sync\_to\_manifest](/recipe_modules/cros_source/api.py#161)(self):**
+&emsp; **@property**<br>&mdash; **def [sync\_to\_manifest](/recipe_modules/cros_source/api.py#162)(self):**
 
 Returns the manifest being synced to as specified in properties, or None.
 
@@ -4286,7 +4289,7 @@ Uses the `sync_to_manifest` property.
 
 Returns: ManifestLocation, or None.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1308)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1309)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -4303,25 +4306,25 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1480)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1481)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
 Args:
   workspace_path (Path): Path to the workspace checkout.
   build_targets (list[BuildTarget]): List of build_targets whose packages.
-      should be uprevved, or None for all build_targets.
+    should be uprevved, or None for all build_targets.
   timeout_sec (int): Step timeout (in seconds).  Default: 10 minutes.
   name (string): Name for step.
 
 Returns:
   UprevPackagesResponse
 
-&emsp; **@property**<br>&mdash; **def [use\_external\_source\_cache](/recipe_modules/cros_source/api.py#209)(self):**
+&emsp; **@property**<br>&mdash; **def [use\_external\_source\_cache](/recipe_modules/cros_source/api.py#210)(self):**
 
 Returns whether the builder is configured to use the external cache.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#195)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/cros_source/api.py#196)(self):**
 
 The "workspace" checkout path.
 
@@ -10430,10 +10433,12 @@ Recipe for modifying images for mass deployment. Intended for use with ChromeOS 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#32)(api, properties):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
 
-[DEPS](/recipe_modules/build_menu/tests/is_staging.py#8): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_menu/tests/is_staging.py#12): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#22)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/tests/is_staging.py#21)(api: recipe_api.RecipeApi):**
+
+Run main test logic.
 ### *recipes* / [build\_menu:tests/no\_dep\_graph](/recipe_modules/build_menu/tests/no_dep_graph.py)
 
 [DEPS](/recipe_modules/build_menu/tests/no_dep_graph.py#8): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -11498,10 +11503,12 @@ post_process checks.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/configure_builder.py#24)(api, properties):**
 ### *recipes* / [cros\_infra\_config:tests/determine\_if\_staging](/recipe_modules/cros_infra_config/tests/determine_if_staging.py)
 
-[DEPS](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/determine_if_staging.py#21)(api: recipe_api.RecipeApi):**
+
+Main test logic.
 ### *recipes* / [cros\_infra\_config:tests/experiments](/recipe_modules/cros_infra_config/tests/experiments.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/experiments.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

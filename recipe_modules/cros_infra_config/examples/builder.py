@@ -28,11 +28,8 @@ def RunSteps(api, properties):
   changes = api.buildbucket.build.input.gerrit_changes
 
   api.assertions.assertFalse(api.cros_infra_config.is_configured)
-  is_staging = None
-  if properties.HasField('is_staging'):
-    is_staging = properties.is_staging.value
   config = api.cros_infra_config.configure_builder(
-      commit=commit, changes=changes, is_staging=is_staging,
+      commit=commit, changes=changes,
       choose_branch=not properties.no_choose_branch)
   api.assertions.assertTrue(api.cros_infra_config.is_configured)
   api.assertions.assertEqual(config, api.cros_infra_config.config)
@@ -92,7 +89,7 @@ def GenTests(api):
   i_manifest = api.src_state.internal_manifest
   e_manifest = api.src_state.external_manifest
 
-  def builder(build_target='grunt', is_staging=None, expected_is_staging=False,
+  def builder(build_target='grunt', expected_is_staging=False,
               expected_gitiles_commit=None, expect_empty_gitiles_commit=False,
               choose_branch=True, **kwargs):
     kwargs['exe'] = common_pb2.Executable(cipd_package='CIPD_PACKAGE',
@@ -105,8 +102,6 @@ def GenTests(api):
         expected_gitiles_commit=expected_gitiles_commit,
         expect_empty_gitiles_commit=expect_empty_gitiles_commit,
         no_choose_branch=not choose_branch)
-    if is_staging is not None:
-      props.is_staging.value = is_staging
     # None of these example cases should fail, so verify that the build finished
     # successfully.  We will inherit the name from the other call to api.test.
     return api.test(
@@ -245,6 +240,3 @@ def GenTests(api):
               host=e_manifest.host,
               project=e_manifest.project,
           )))
-
-  yield api.test('forced-staging',
-                 builder(is_staging=True, expected_is_staging=True))

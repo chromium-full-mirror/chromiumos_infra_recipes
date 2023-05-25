@@ -21,7 +21,7 @@
       "-root",
       "[START_DIR]/cipd-support",
       "-ensure-file",
-      "chromiumos/infra/support/${platform} prod",
+      "chromiumos/infra/support/${platform} staging",
       "-max-threads",
       "0",
       "-json-output",
@@ -30,7 +30,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -47,7 +47,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -63,7 +63,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -131,20 +131,19 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"staging-amd64-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: CQ@@@",
       "@@@STEP_LOG_LINE@builder config@  bucket: \"cq\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@general {@@@",
       "@@@STEP_LOG_LINE@builder config@  critical {@@@",
-      "@@@STEP_LOG_LINE@builder config@    value: true@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  environment: STAGING@@@",
+      "@@@STEP_LOG_LINE@builder config@  sdk_cache_version: 2@@@",
       "@@@STEP_LOG_LINE@builder config@  manifest: PUBLIC@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@  prebuilts: NONE@@@",
-      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"prebuilts_gs_bucket\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-throwaway\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    legacy {@@@",
       "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
@@ -161,6 +160,10 @@
       "@@@STEP_LOG_LINE@builder config@    flag: \"chrome_internal\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  apply_gerrit_changes: true@@@",
+      "@@@STEP_LOG_LINE@builder config@  build_images {@@@",
+      "@@@STEP_LOG_LINE@builder config@    image_types: IMAGE_TYPE_BASE@@@",
+      "@@@STEP_LOG_LINE@builder config@    image_types: IMAGE_TYPE_TEST@@@",
+      "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",
       "@@@STEP_LOG_LINE@builder config@    run_spec: RUN@@@",
       "@@@STEP_LOG_LINE@builder config@    dependencies: ALL_DEPENDENCIES@@@",
@@ -207,7 +210,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -274,7 +277,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -332,7 +335,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -383,7 +386,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -419,7 +422,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -463,7 +466,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -507,7 +510,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -559,7 +562,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -597,7 +600,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -627,7 +630,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -657,7 +660,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -685,7 +688,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -715,7 +718,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -749,7 +752,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -778,7 +781,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -816,7 +819,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -860,7 +863,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -890,7 +893,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -920,7 +923,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -950,7 +953,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -980,7 +983,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1006,7 +1009,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1057,7 +1060,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1081,7 +1084,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1112,7 +1115,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1142,7 +1145,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1172,7 +1175,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1202,7 +1205,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1238,7 +1241,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1280,7 +1283,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1320,7 +1323,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1360,7 +1363,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1385,7 +1388,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1417,7 +1420,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1449,7 +1452,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1479,7 +1482,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1523,7 +1526,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1569,7 +1572,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1611,7 +1614,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1657,7 +1660,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1704,7 +1707,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1762,7 +1765,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1791,7 +1794,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1825,7 +1828,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1861,7 +1864,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1892,7 +1895,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1934,7 +1937,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1977,7 +1980,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2024,7 +2027,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2081,7 +2084,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2122,7 +2125,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2150,7 +2153,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2238,7 +2241,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2277,7 +2280,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2305,7 +2308,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2330,7 +2333,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2356,7 +2359,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2401,7 +2404,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2434,7 +2437,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2459,7 +2462,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2485,7 +2488,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2539,7 +2542,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2573,7 +2576,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2609,7 +2612,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2687,7 +2690,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2727,7 +2730,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2748,7 +2751,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@not reusable: no cached SDK@@@",
-      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 1@@@",
+      "@@@STEP_LOG_LINE@sdk cache version@Version in config: 2@@@",
       "@@@STEP_LOG_LINE@sdk cache version@Version on disk: 1@@@",
       "@@@STEP_LOG_END@sdk cache version@@@",
       "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chromium.googlesource.com/chromiumos/manifest@@@",
@@ -2778,7 +2781,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2809,7 +2812,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2865,7 +2868,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2899,7 +2902,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2935,7 +2938,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3020,7 +3023,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3063,7 +3066,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3093,7 +3096,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3166,7 +3169,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3200,7 +3203,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3235,7 +3238,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3286,7 +3289,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3317,7 +3320,7 @@
       "-root",
       "[START_DIR]/cipd",
       "-ensure-file",
-      "chromiumos/infra/build_plan_generator/${platform} prod\nchromiumos/infra/pointless_build_checker/${platform} prod",
+      "chromiumos/infra/build_plan_generator/${platform} staging\nchromiumos/infra/pointless_build_checker/${platform} staging",
       "-max-threads",
       "0",
       "-json-output",
@@ -3327,7 +3330,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3344,11 +3347,11 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/build_plan_generator/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/pointless_build_checker/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -3372,7 +3375,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3400,7 +3403,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3430,7 +3433,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3508,7 +3511,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3542,7 +3545,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3578,7 +3581,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3666,7 +3669,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3700,7 +3703,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3749,7 +3752,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3793,7 +3796,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-throwaway/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com//staging-amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -3804,13 +3807,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"amd64-generic-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"amd64-generic-cq\", \n    \"builder_type\": \"cq\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:36\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
+      "{\n    \"board-metadata\": {}, \n    \"boards\": [\n        \"amd64-generic\"\n    ], \n    \"bot-config\": \"staging-amd64-generic-cq\", \n    \"branch\": \"main\", \n    \"build-number\": 0, \n    \"build_id\": 0, \n    \"buildbucket_id\": 8945511751514863184, \n    \"builder-name\": \"staging-amd64-generic-cq\", \n    \"builder_type\": \"staging\", \n    \"child-configs\": [], \n    \"master_build_id\": 0, \n    \"metadata-version\": \"2\", \n    \"results\": [\n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"00:00:00\", \n            \"log\": \"\", \n            \"name\": \"DebugSymbols\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }, \n        {\n            \"board\": \"\", \n            \"description\": \"\", \n            \"duration\": \"-1 day, 22:03:20\", \n            \"log\": \"\", \n            \"name\": \"UnitTest\", \n            \"status\": \"pass\", \n            \"summary\": \"stage was successful\"\n        }\n    ], \n    \"status\": {\n        \"current-time\": null, \n        \"status\": \"pass\", \n        \"summary\": \"\"\n    }, \n    \"time\": {\n        \"duration\": \"15474 days, 12:53:36\", \n        \"finish\": null, \n        \"start\": \"some start time\"\n    }, \n    \"unibuild\": false\n}",
       "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3828,13 +3831,13 @@
       "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ], @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"amd64-generic-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"staging-amd64-generic-cq\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"main\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184, @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"amd64-generic-cq\", @@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"staging-amd64-generic-cq\", @@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"staging\", @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [], @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0, @@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\", @@@",
@@ -3883,12 +3886,12 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/metadata.json",
-      "gs://chromeos-throwaway/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
+      "gs:///staging-amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3945,7 +3948,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3978,7 +3981,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4012,7 +4015,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4108,7 +4111,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4164,7 +4167,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4191,7 +4194,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4220,7 +4223,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4283,7 +4286,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4316,7 +4319,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4350,7 +4353,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4382,13 +4385,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"snapshot_hash\": \"staging-snapshot-HEAD-SHA\",\n  \"version\": 1\n}",
+      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"snapshot_hash\": \"staging-snapshot-HEAD-SHA\",\n  \"version\": 2\n}",
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4405,7 +4408,7 @@
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"snapshot\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"staging-snapshot-HEAD-SHA\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 2@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
       "@@@STEP_LOG_END@sdk_cache_state.json@@@"
     ]
@@ -4430,7 +4433,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4456,7 +4459,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4490,7 +4493,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4515,7 +4518,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4538,7 +4541,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4563,7 +4566,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:cq"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {

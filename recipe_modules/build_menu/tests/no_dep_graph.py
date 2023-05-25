@@ -18,7 +18,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   build_target = common.BuildTarget(name='amd64-generic')
 
-  with api.build_menu.configure_builder(build_target), \
+  with api.build_menu.configure_builder(targets=[build_target]), \
       api.build_menu.setup_workspace_and_chroot():
     pass
 
@@ -32,5 +32,8 @@ def GenTests(api):
   yield api.test('cq-build',
                  api.test_util.test_child_build('amd64-generic', cq=True).build)
 
-  yield api.test('staging-cq-build',
-                 api.test_util.test_child_build('amd64-generic', cq=True).build)
+  yield api.test(
+      'staging-cq-build',
+      api.test_util.test_child_build('amd64-generic',
+                                     builder_name='staging-amd64-generic-cq',
+                                     bucket='staging', cq=True).build)

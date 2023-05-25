@@ -8,7 +8,7 @@
 import collections
 import contextlib
 import re
-from typing import Optional
+from typing import Iterable, Optional
 
 from google.protobuf import json_format
 
@@ -20,8 +20,8 @@ from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import BuildTestServiceContainersRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import PackageInfo
-from PB.chromiumos.common import Profile
+from PB.chromiumos import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from recipe_engine import recipe_api
 
 class BuildMenuApi(recipe_api.RecipeApi):
@@ -204,26 +204,29 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return list(self._cl_affected_sysroot_packages)
 
   @contextlib.contextmanager
-  def configure_builder(self, is_staging=None, missing_ok=False,
-                        disable_sdk=False, commit=None, targets=()):
+  def configure_builder(
+      self,
+      missing_ok: bool = False,
+      disable_sdk: bool = False,
+      commit: Optional[bb_common_pb2.GitilesCommit] = None,
+      targets: Iterable[common_pb2.BuildTarget] = (),
+  ) -> Optional[BuilderConfig]:
     """Initial setup steps for the builder.
 
     This context manager returns with all of the contexts that an image builder
     needs to have when it runs, for cleanup to happen properly.
 
     Args:
-      is_staging (bool): Whether this is a staging builder.  Use this to
-          override auto-detection. By default, anything in the 'staging' bucket
-          is considered a staging builder.
-      missing_ok (bool): Whether it is OK if no config is found.
-      disable_sdk (bool): This builder will not be using the SDK at all. Only
-          for branches with broken or no Build API.
-      commit (GitilesCommit): The GitilesCommit for the build, or None.
-      targets (list[build_target]): List of build_targets for metadata_json to
-          use instead of our build_target.
+      missing_ok: Whether it is OK if no config is found.
+      disable_sdk: This builder will not be using the SDK at all. Only for
+        branches with broken or no Build API.
+      commit: The GitilesCommit for the build, or None.
+      targets: List of build_targets for metadata_json to use instead of our
+        build_target.
 
     Returns:
-      BuilderConfig or None, with an active context.
+      BuilderConfig for the active build (or None if the active build has no
+      corresponding config), with an active context.
     """
 
     @contextlib.contextmanager
@@ -238,8 +241,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.build
       changes = build.input.gerrit_changes
       commit = commit or self.m.buildbucket.gitiles_commit
-      config = self.m.cros_source.configure_builder(commit, changes,
-                                                    is_staging=is_staging)
+      config = self.m.cros_source.configure_builder(commit, changes)
       targets = targets or [self.build_target]
       if changes and config and not config.build.apply_gerrit_changes:
         raise recipe_api.StepFailure(
@@ -275,12 +277,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       no_chroot_timeout: Whether to allow unlimited time to create the chroot.
       cherry_pick_changes: Whether to apply gerrit changes on top of the
-          checkout using cherry-pick. If set to False, will directly checkout
-          the changes using the gerrit fetch refs.
+        checkout using cherry-pick. If set to False, will directly checkout
+        the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
       update: Whether to update the chroot after creating it (overriding the
-          builder config). See setup_chroot() docstring for details.
+        builder config). See setup_chroot() docstring for details.
 
     Returns:
       Whether the build is relevant.
@@ -295,8 +297,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     Args:
       cherry_pick_changes (bool): Whether to apply gerrit changes on top of the
-          checkout using cherry-pick. If set to False, will directly checkout
-          the changes using the gerrit fetch refs.
+        checkout using cherry-pick. If set to False, will directly checkout
+        the changes using the gerrit fetch refs.
     """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
@@ -336,8 +338,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       bootstrap: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
       update: Whether to update the chroot after creating it (overriding the
-          builder config). If not given, defer to the builder config. If the
-          builder config also does not specify, default to True.
+        builder config). If not given, defer to the builder config. If the
+        builder config also does not specify, default to True.
 
     Returns:
       Whether the build is relevant.
@@ -387,7 +389,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
-          (Some builders do not require a sysroot.)
+        (Some builders do not require a sysroot.)
 
     Returns:
       An object containing:
@@ -403,7 +405,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     if with_sysroot:
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
-      profile = Profile(name=config.build.portage_profile.profile)
+      profile = common_pb2.Profile(name=config.build.portage_profile.profile)
       self._package_indexes = self.m.cros_prebuilts.get_package_index_info(
           config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
           build_target=self.build_target, profile=profile)
@@ -546,7 +548,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           packages=relevant_packages, include_rev_deps=include_rev_deps)
       # Ensure implicit dependencies are installed.
       relevant_packages.append(
-          PackageInfo(category='virtual', package_name='implicit-system'))
+          common_pb2.PackageInfo(category='virtual',
+                                 package_name='implicit-system'))
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       with self.m.context(env={'DEPOT_TOOLS_COLLECT_METRICS': '0'}):
         self.m.sysroot_util.install_packages(
@@ -657,8 +660,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
           if unit_tests.packages:
             relevant_testable_packages = [
                 x for x in self._cl_affected_sysroot_packages or []
-                if PackageInfo(category=x.category, package_name=x.package_name)
-                in list(unit_tests.packages)
+                if common_pb2.PackageInfo(category=x.category,
+                                          package_name=x.package_name) in list(
+                                              unit_tests.packages)
             ]
 
           # Exit early if there are no relevant packages.
@@ -694,12 +698,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
       private_bundle_func (func): If a private bundling method is needed (such
-          as when there is no Build API on the branch), this will be called
-          instead of the internal bundling method.
+        as when there is no Build API on the branch), this will be called
+        instead of the internal bundling method.
       sysroot (Sysroot): Use this sysroot.  Defaults to the primary Sysroot for
-          the build.
+        the build.
       report_to_spike (bool): If True, will call bcid_reporter to report artifact
-          information and trigger Spike to upload the provenance.
+        information and trigger Spike to upload the provenance.
       name (str): The step name. Defaults to 'upload artifacts'.
       previously_uploaded_artifacts(UploadedArtifacts): The UploadedArtifacts
         from a previous call to upload_artifacts; if set, these artifact
@@ -873,7 +877,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     artifacts = config.artifacts
 
     # TODO(crbug/1112425): config.build.portage_profile is migrating.
-    profile = Profile(name=config.build.portage_profile.profile)
+    profile = common_pb2.Profile(name=config.build.portage_profile.profile)
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
