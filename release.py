@@ -30,6 +30,12 @@ RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
 
 MIN_BRANCH_MILESTONE = 113
 
+BOLDRED = '\033[1;31m'
+BOLDGREEN = '\033[1;32m'
+BOLDBLUE = '\033[1;34m'
+RESET = '\033[0m'
+
+
 # A tuple containing the project, builder and regex used to search.
 class StagingReCheck(typing.NamedTuple):
   project: str
@@ -140,10 +146,10 @@ def main(argv: List[str]):
   (cipd_target, git_target) = determine_cipd_and_git_targets(options.instanceid)
 
   # Prepare to update refs.
-  pending_changes = get_pending_changes(git_prod, git_target,
-                                        verbose=options.verbose)
-  report_pending_changes(pending_changes, options.show_instances)
-  check_staging_builders(options.ignore_staging_failures)
+  pending_changes = get_pending_changes(git_prod, git_target)
+  report_pending_changes(pending_changes, options.show_instances,
+                         verbose=options.verbose)
+  check_staging_builders(pending_changes, options.ignore_staging_failures)
   quit_early_if_no_pending_changes(pending_changes)
   if not options.force:
     prompt_about_setting_git_target(git_target)
@@ -167,6 +173,10 @@ class Commit:
   def short_hash(self):
     return self.hash[:9]
 
+  @property
+  def trivial(self):
+    return RE_TRIVIAL_COMMIT.match(self.message)
+
   def get_cipd_instance(self) -> str:
     """Find the recipe bundle instance that contains up to this commit."""
     tag = f'git_revision:{self.hash}'
@@ -183,9 +193,6 @@ class Commit:
 
   def color_str(self, show_instances: bool) -> str:
     """Return a colorified string for printing to stdout."""
-    BOLDBLUE = '\033[1;34m'
-    BOLDGREEN = '\033[1;32m'
-    RESET = '\033[0m'
     cipd_instance_str = (f'({self.get_cipd_instance()}) '
                          if show_instances else '')
     return (f'{cipd_instance_str}'
@@ -277,8 +284,8 @@ def cipd_version_to_githash(version: CipdVersion) -> GitHash:
   return GitHash(githash)
 
 
-def determine_cipd_and_git_targets(instanceid: Optional[CipdInstance] = None
-                                  ) -> Tuple[CipdInstance, GitHash]:
+def determine_cipd_and_git_targets(
+    instanceid: Optional[CipdInstance] = None) -> Tuple[CipdInstance, GitHash]:
   """Find the target CIPD instance (if not provided) and Git hash."""
   if instanceid:
     git_target = cipd_version_to_githash(instanceid)
@@ -299,8 +306,33 @@ def cipd_ref_to_instance_id(ref: CipdRef) -> CipdInstance:
   return CipdInstance(instance_id)
 
 
-def get_pending_changes(from_hash: GitHash, to_hash: GitHash,
-                        verbose: bool = False) -> List[Commit]:
+def build_to_cipd_version(build: Dict[str, Any]) -> Optional[CipdVersion]:
+  """Return the resolved recipes version used by the build.
+
+  In cases where there is no resolved recipes version, e.g. bbagent doesn't
+  start, return None.
+  """
+
+  try:
+    specs = build['infra']['buildbucket']['agent']['output']['resolvedData'][
+        'kitchen-checkout']['cipd']['specs']
+  except KeyError:
+    return None
+
+  recipes_version = None
+  for spec in specs:
+    if spec['package'] == RECIPE_BUNDLE:
+      recipes_version = spec['version']
+
+  if not recipes_version:
+    raise ValueError(
+        f"resolved recipes version not found for build {build['builder']['builder']}"
+    )
+
+  return recipes_version
+
+
+def get_pending_changes(from_hash: GitHash, to_hash: GitHash) -> List[Commit]:
   """Find all changes that will be released.
 
   from_hash: The git hash immediately preceding the first in the changelist.
@@ -309,8 +341,6 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash,
   """
   print('=== Checking for pending changes ===')
   print('Here are the changes from the provided (or default main) environment:')
-  if verbose:
-    print(' - Verbose specified, printing all changes')
   fmt = '%H %al %s'  # %H=commit, %al=user, %s=summary
   cmd = [
       'git', 'log', '--graph', f'--pretty=format:{fmt}',
@@ -324,30 +354,33 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash,
     if not line:
       continue
     commit_hash, commit_user, commit_message = line.split(' ', 2)
-    if RE_TRIVIAL_COMMIT.match(commit_message) and not verbose:
-      continue
     changes.append(Commit(commit_hash, commit_user, commit_message))
   return changes
 
 
-def report_pending_changes(pending_changes: List[Commit], show_instances: bool):
+def report_pending_changes(pending_changes: List[Commit], show_instances: bool,
+                           verbose: bool):
   """Pretty-print info about all the pending changes."""
+  if verbose:
+    print(' - Verbose specified, printing all changes')
   for pending_change in pending_changes:
+    if pending_change.trivial and not verbose:
+      continue
     print(f'* {pending_change.color_str(show_instances)}')
   print()
 
 
-def check_staging_builders(ignore_failures: bool = False):
+def check_staging_builders(pending_changes: List[Commit],
+                           ignore_failures: bool = False):
   """Check for failures in staging builders. Quit early if any problems."""
   print('=== Check staging status ===')
   baddies = []
-  print(
-      'Looking for 5 consecutive successes in staging, showing only failures...'
-  )
+  print('Looking for 5 consecutive successes in staging...')
   for re_check in STAGING_CHECKS_RE:
     for builder in return_builders_for_regex(re_check.project, re_check.bucket,
                                              re_check.regex):
-      if check_recent_build_statuses(builder, re_check.exemptions):
+      if check_recent_build_statuses(builder, re_check.exemptions,
+                                     pending_changes):
         baddies.append(builder)
 
   if baddies:
@@ -361,11 +394,16 @@ def check_staging_builders(ignore_failures: bool = False):
 
 
 def check_recent_build_statuses(
-    builder: str, exemptions: List[Callable[[Dict[str, Any]], bool]]) -> bool:
+    builder: str,
+    exemptions: List[Callable[[Dict[str, Any]], bool]],
+    pending_changes: List[Commit],
+) -> bool:
   """Check whether a single builder has had any recent non-successes."""
   cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', '-A', builder]
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
   found_statuses = set()
+  githashes = []
   for line in p.stdout.split('\n'):
     if not line:
       continue
@@ -383,14 +421,58 @@ def check_recent_build_statuses(
           status = 'OK_FAILURE'
 
     found_statuses.add(status)
+    cipd_version = build_to_cipd_version(build)
+    if cipd_version:
+      githashes.append(cipd_version_to_githash(cipd_version))
+
   if not found_statuses:
     print(f'No runs recorded for: {builder}')
     return True
-  if not found_statuses.issubset({'SUCCESS', 'OK_FAILURE'}):
+
+  if not githashes:
     print(
-        f'Non-success: {builder} --> {", ".join(sorted(list(found_statuses)))}')
-    return True
-  return False
+        f'No runs for builder {builder} had resolved recipes versions, likely due to infra failures'
+    )
+    return False
+
+  # Count the number of non-trivial changes since the last build.
+  most_recent_githash = githashes[0]
+  non_trivial_changes_since_most_recent_build = 0
+  for change in pending_changes:
+    if change.hash == most_recent_githash:
+      break
+
+    if not change.trivial:
+      non_trivial_changes_since_most_recent_build += 1
+
+  success = set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'})
+  success_str = f'{BOLDGREEN}Success{RESET}' if success else f'{BOLDRED}Non-success{RESET}'
+  status_str = f'{success_str}: {builder} --> {", ".join(sorted(list(found_statuses)))}'
+
+  # If there have been changes since the most recent build, add a line to the
+  # status.
+  if non_trivial_changes_since_most_recent_build:
+    changes_str = 'change' if non_trivial_changes_since_most_recent_build == 1 else 'changes'
+    status_str += f'\n  {non_trivial_changes_since_most_recent_build} {changes_str} since last build, '
+
+    non_trivial_pending_changes = list(
+        filter(lambda c: not c.trivial, pending_changes))
+
+    # If a non-trivial change was included since the last release, print the
+    # last hash.
+    if non_trivial_changes_since_most_recent_build < len(
+        non_trivial_pending_changes):
+      status_str += (
+          'last built commit was '
+          f'{BOLDBLUE}{non_trivial_pending_changes[non_trivial_changes_since_most_recent_build].short_hash}{RESET}'
+      )
+    else:
+      status_str += 'builder has not been run since last release'
+
+  if not success or non_trivial_changes_since_most_recent_build:
+    print(status_str)
+
+  return success
 
 
 def return_builders_for_regex(project: str, bucket: str,
