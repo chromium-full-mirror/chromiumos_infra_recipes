@@ -72,6 +72,17 @@ def cq_cancelled_exemption(build: Dict[str, Any]) -> bool:
                    '') == ignorable_cancellation_markdown
 
 
+def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for CQ builds that hit merge conflicts."""
+  ignorable_summary_markdown_re = [
+      re.compile(r'^Merge conflict detected!'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
 STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
                    r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
@@ -91,8 +102,9 @@ STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
     StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
-    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator',
-                   [orchestrator_exemption, cq_cancelled_exemption]),
+    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
+        orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
+    ]),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
