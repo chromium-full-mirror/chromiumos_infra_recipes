@@ -574,7 +574,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       for b in builds:
         if 'build_target' in b.input.properties:
-          args.extend(['-build', json_format.MessageToJson(b)])
+          args.extend(['-build', json_format.MessageToJson(b, indent=0)])
 
       arg_to_host_path = {
           '-dutattributes':
