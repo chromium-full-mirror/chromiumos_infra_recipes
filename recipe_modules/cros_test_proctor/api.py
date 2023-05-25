@@ -106,6 +106,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     if not filtered_builds:
       return []
     relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
+
+    # At least one plan needs to be passed in when calling testplan.
+    if not relevant_plans:
+      return []
+
     starlark_files = self._fetch_starlark_files(relevant_plans)
     return self.m.cros_test_plan_v2.get_testable_builders(
         starlark_files, filtered_builds)

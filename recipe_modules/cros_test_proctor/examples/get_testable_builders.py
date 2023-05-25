@@ -12,6 +12,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_test_proctor',
 ]
@@ -59,6 +60,23 @@ def GenTests(api):
       api.properties(builds=[build], expected_testable_builders=['target-cq']),
       api.post_process(post_process.MustRun, 'find relevant plans'),
       api.post_process(post_process.MustRun, 'get testable builders'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-plans',
+      api.buildbucket.try_build(builder='cq-orchestrator',
+                                gerrit_changes=gerrit_changes),
+      api.properties(builds=[build]),
+      api.step_data(
+          'find relevant plans.src/projectA.list output files',
+          api.file.listdir([]),
+      ),
+      api.step_data(
+          'find relevant plans.src/projectB.list output files',
+          api.file.listdir([]),
+      ),
+      api.post_process(post_process.DoesNotRun, 'get testable builders'),
       api.post_process(post_process.DropExpectation),
   )
 
