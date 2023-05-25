@@ -20,6 +20,7 @@ from PB.chromiumos.test import api as ctr_api
 from PB.chromiumos.test.lab import api as lab_api
 from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
   import CrosToolRunnerEnvProperties
@@ -568,8 +569,13 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if pool:
     base_tags.append(('pool', pool[0]))
 
+  # Fetches the label-pool from the requested task dimensions first, and then
+  # fall back to the bot dimensions if it doesn't exists.
   label_pool = api.cros_tags.get_values(
-      'label-pool', api.buildbucket.build.infra.swarming.bot_dimensions)
+      'label-pool', api.buildbucket.build.infra.swarming.task_dimensions)
+  if not label_pool:
+    label_pool = api.cros_tags.get_values(
+        'label-pool', api.buildbucket.build.infra.swarming.bot_dimensions)
   if label_pool:
     base_tags.append(('label_pool', label_pool[0]))
 
@@ -1861,7 +1867,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def _set_build(bid, tags=None, experiments=None, swarming_tags=None,
-                 ancestor_buildbucket_ids=None):
+                 swarming_task_dimensions=None, ancestor_buildbucket_ids=None):
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags) if tags else []
     build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
@@ -1870,8 +1876,14 @@ def GenTests(api):
                                                  bucket='test_runner',
                                                  builder='test_runner')
     if swarming_tags:
-      build_msg.infra.swarming.bot_dimensions.extend(
-          api.cros_tags.tags(**swarming_tags))
+      if isinstance(swarming_tags, list):
+        # Allows to pass duplicate keys via list.
+        build_msg.infra.swarming.bot_dimensions.extend(swarming_tags)
+      else:
+        build_msg.infra.swarming.bot_dimensions.extend(
+            api.cros_tags.tags(**swarming_tags))
+    if swarming_task_dimensions:
+      build_msg.infra.swarming.task_dimensions.extend(swarming_task_dimensions)
     build_msg.infra.swarming.parent_run_id = 'parent-task-id1'
 
     if ancestor_buildbucket_ids:
@@ -2995,6 +3007,58 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-pool': 'DUT_POOL_QUOTA',
               'label-carrier': 'fake-carrier',
           }),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      # Sets Tast test name in the test request for Autotest wrapper result
+      # upload.
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL, 'tast.critical-system-shard-2'),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _mock_autotest_wrapper_tast_result(),
+      _autotest_wrapper_tast_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-tast-with-swarming-task-dimensions',
+      # The label-pool "satlab_tp101" in the swarming task dimensions will be
+      # uploaded instead of the first one "satlab_faft" in the bot dimensions.
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
+          }, swarming_tags=[
+              common_pb2.StringPair(
+                  key='label-pool',
+                  value='satlab_faft',
+              ),
+              common_pb2.StringPair(
+                  key='label-pool',
+                  value='satlab_tam',
+              ),
+              common_pb2.StringPair(
+                  key='label-pool',
+                  value='satlab_tp101',
+              )
+          ], swarming_task_dimensions=[
+              common_pb2.RequestedDimension(
+                  key='label-pool',
+                  value='satlab_tp101',
+              )
+          ]),
       api.properties(result_format='tast'),
       _misc_properties(),
       # Sets Tast test name in the test request for Autotest wrapper result
