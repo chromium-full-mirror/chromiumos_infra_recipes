@@ -14,6 +14,7 @@ import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.gerrit.gerrit import GerritProperties
 
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
@@ -275,11 +276,14 @@ def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
 class GerritApi(RecipeApi):
   """A module for Gerrit helpers."""
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, properties: GerritProperties, *args, **kwargs):
     """Initialize GerritApi."""
     super().__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
     self._GET_CHANGE_DESCRIPTION_CACHE = {}
+    self._properties = properties
+    # Support for gerrit_related_changes gobin.
+    self._related_changes_path = None
 
   def _gerrit_fetch_changes(self, request: JSONObject,
                             gerrit_changes: List[GerritChange],
@@ -901,6 +905,78 @@ class GerritApi(RecipeApi):
       raise StepFailure(f'This response it not valid: (type: {type(result)})')
 
     return result
+
+  def _ensure_gerrit_related_changes(self):
+    """Ensure the gerrit_related_changes cli is installed."""
+    if self._related_changes_path:
+      return  # pragma: nocover
+
+    with self.m.step.nest('ensure gerrit_related_changes'):
+      with self.m.context(infra_steps=True):
+        self._related_changes_cipd_package = (
+            self._properties.related_changes.related_changes_cipd_package or
+            'chromiumos/infra/gerrit_related_changes/${platform}')
+        default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
+        self._related_changes_cipd_ref = (
+            self._properties.related_changes.related_changes_cipd_ref or
+            default_ref)
+
+        cipd_dir = self.m.path['start_dir'].join('cipd')
+
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package(self._related_changes_cipd_package,
+                         self._related_changes_cipd_ref)
+        self.m.cipd.ensure(cipd_dir, pkgs)
+
+        self._related_changes_path = cipd_dir.join('gerrit_related_changes')
+
+  def _call_gerrit_related_changes(self, cmd: List[str],
+                                   step_name: Optional[str] = None,
+                                   timeout: int = 3600):
+    """Call the gerrit_related_changes tool directly.
+
+    Ensure the CIPD package is present.
+    """
+    self._ensure_gerrit_related_changes()
+    self.m.step(step_name or 'gerrit_related_changes',
+                [self._related_changes_path] + cmd, timeout=timeout)
+
+  def gerrit_related_changes(self, gerrit_change: GerritChange) -> JSONObject:
+    """Fetch and return related changes given a Gerrit change.
+
+    Uses the gerrit_related_changes CIPD package.
+
+    Returns:
+      The JSON for 'related' outputted by gerrit_related_changes.
+    """
+    with self.m.step.nest('call gerrit_related_changes') as presentation:
+      messages_path = self.m.path.mkdtemp(prefix='gerrit_related_changes_')
+      input_json_file = messages_path.join('input.json')
+      output_json_file = messages_path.join('output.json')
+      input_json = {"change": gerrit_change.change, "host": gerrit_change.host}
+      self.m.file.write_text('write gerrit_related_changes input',
+                             input_json_file, json.dumps(input_json))
+      presentation.logs['input_json'] = json.dumps(input_json)
+      cmd = [
+          'gerrit_related_changes', '--input_json',
+          str(input_json_file), '--output_json',
+          str(output_json_file)
+      ]
+      presentation.logs['cmd'] = cmd
+      self._call_gerrit_related_changes(cmd)
+      # Try except so that the step turns red but does not doom the build.
+      try:
+        output_json_str = self.m.file.read_text('read output json',
+                                                output_json_file,
+                                                test_data='{"related":[]}')
+        presentation.logs['output_json'] = output_json_str
+        output = json.loads(output_json_str)
+        related = output.get('related', [])
+        return related
+      except Exception as e:  #pylint: disable=broad-except
+        presentation.step_text = "couldn't parse output of related changes"
+        presentation.logs['error'] = str(e)
+        return []
 
 
 def change_info_to_gerrit_change(change_info: ChangeInfo,

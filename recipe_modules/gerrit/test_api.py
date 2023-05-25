@@ -6,6 +6,7 @@
 """Module to help with test cases that rely on the gerrit module."""
 
 import itertools
+import json
 from typing import Dict, Iterable, List, Optional, Union
 
 from recipe_engine import recipe_test_api
@@ -255,3 +256,26 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     return self.step_data(
         f'{step_name_prefix}curl https://{gerrit_host}/changes/{change_num}/topic',
         stdout=self.m.raw_io.output(f'"{topic}"'))
+
+  def set_gerrit_related_changes(
+      self,
+      related_changes: Dict[str, List[Dict[str, str]]],
+      step_name: str = '',
+      iteration: int = 1,
+      retcode: int = 0,
+  ) -> recipe_test_api.StepTestData:
+    """Sets the depot_tools API's get_changes() response.
+
+    Args:
+      step_name: name of the step calling gerrit.get_related_changes.
+      related_changes: mock related changes.
+      iteration: Which call this applies to for this step/endpoint.
+      retcode: Retcode that should be used for the test code.
+    """
+    iteration_str = '' if iteration == 1 else f' ({iteration})'
+    prefix = f'{step_name}.' if step_name else ''
+    step_name = f'{prefix}call gerrit_related_changes{iteration_str}.read output json'
+
+    return self.override_step_data(
+        step_name, self.m.file.read_text(json.dumps(related_changes)),
+        retcode=retcode)

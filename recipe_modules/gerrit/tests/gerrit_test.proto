@@ -1,0 +1,21 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.gerrit.tests;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message GerritTestProperties {
+
+  // Gerrit change to use for testing.
+  buildbucket.v2.GerritChange gerrit_change = 1;
+
+  // Whether to expect success.
+  bool expect_success = 2;
+
+  // Mock output for file.read_text.
+  string read_text_output_str = 3;
+}

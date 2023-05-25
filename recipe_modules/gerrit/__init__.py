@@ -3,10 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.gerrit.gerrit import GerritProperties
+
 DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
     'buildbucket': 'recipe_engine/buildbucket',
+    'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
+    'cros_infra_config': 'cros_infra_config',
     'easy': 'easy',
     'file': 'recipe_engine/file',
     'json': 'recipe_engine/json',
@@ -23,3 +27,5 @@ DEPS = {
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = GerritProperties
