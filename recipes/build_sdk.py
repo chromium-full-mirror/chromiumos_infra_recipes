@@ -17,6 +17,8 @@ from PB.chromite.api.sdk import BuildSdkTarballRequest
 from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromiumos import common as common_pb2
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
+                                                                triggers_pb2)
 from PB.recipes.chromeos.build_sdk import BuildSDKProperties
 from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
 from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
@@ -394,6 +396,10 @@ class BuildSDKRun:
     build is prod.
 
     The llvm-next builder should not trigger an uprev.
+
+    PUpr uses GitilesTriggers to pick a branch policy, because originally all
+    uprevs were triggered by gitiles changes. Luckily, it provides a property
+    for spoofing GitilesTriggers.
     """
     if self.properties.use_llvm_next:
       return
@@ -412,6 +418,17 @@ class BuildSDKRun:
                             sdk_version=self.version,
                             toolchain_template=self._toolchain_tarball_template,
                         ))),
+            # PUpr uses its GitilesTriggers to pick a branch policy, because
+            # PUpr was originally always triggered by gitiles changes. Today, it
+            # allows spoofing GitilesTriggers via input properties.
+            # The ref is useful because it tells PUpr which branch to upload to.
+            # However, the repo and revision should be unnecessary.
+            'triggers': [
+                json_format.MessageToDict(
+                    triggers_pb2.Trigger(
+                        gitiles=triggers_pb2.GitilesTrigger(
+                            ref="refs/heads/main")))
+            ],
         },
         can_outlive_parent=True,
     )
