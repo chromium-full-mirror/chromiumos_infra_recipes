@@ -3903,6 +3903,14 @@
   },
   {
     "cmd": [],
+    "name": "set properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {

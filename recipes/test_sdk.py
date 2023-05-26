@@ -28,6 +28,7 @@ DEPS = [
     'cros_history',
     'cros_relevance',
     'cros_sdk',
+    'easy',
     'failures',
 ]
 
@@ -43,6 +44,8 @@ def RunSteps(api: RecipeApi):
     relevant = False
     if api.build_menu.gerrit_changes:
       relevant = api.cros_sdk.sdk_is_dirty
+      api.easy.set_properties_step(pointless_build=not relevant,
+                                   relevant_build=relevant)
     else:
       relevant = api.cros_relevance.postsubmit_relevance_check(
           api.build_menu.gitiles_commit, dep_graph.sdk)

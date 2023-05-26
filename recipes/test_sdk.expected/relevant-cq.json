@@ -3910,6 +3910,14 @@
   },
   {
     "cmd": [],
+    "name": "set properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@pointless_build@false@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@true@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run SDK package unit tests"
   },
   {
