@@ -350,7 +350,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     Returns:
       A list of ProjectInfos for repo projects with modified code.
     """
-    with self.m.step.nest('commit uprev'):
+    with self.m.step.nest('commit uprev'), self.m.context(
+        cwd=self.workspace_path):
       modified_projects = sorted(
           set(
               self.m.repo.project_infos(
