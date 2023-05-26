@@ -19,6 +19,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'build_menu',
@@ -68,7 +69,9 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
     api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
 
     # TODO(b/282030070): randomize this to avoid collisions.
-    payload_filename = 'kabuto_payload.tar.xz'
+    time_now_utc = api.time.utcnow()
+    time_string = time_now_utc.strftime('%Y%m%d%H%M%S%f')
+    payload_filename = 'kabuto_payload-' + time_string + '.tar.xz'
 
     # Tar payload for upload.
     api.step('tar up payload',

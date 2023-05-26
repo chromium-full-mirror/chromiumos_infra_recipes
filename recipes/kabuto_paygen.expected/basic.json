@@ -1931,7 +1931,7 @@
     "cmd": [
       "tar",
       "cvfJ",
-      "kabuto_payload.tar.xz",
+      "kabuto_payload-20120514125330500000.tar.xz",
       "-C",
       "in/",
       "fossilize_tool/"
@@ -1956,8 +1956,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "kabuto_payload.tar.xz",
-      "gs://chromeos-localmirror-private/borealis/kabuto_payload.tar.xz"
+      "kabuto_payload-20120514125330500000.tar.xz",
+      "gs://chromeos-localmirror-private/borealis/kabuto_payload-20120514125330500000.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
     "env_suffixes": {
@@ -1971,14 +1971,14 @@
     "infra_step": true,
     "name": "gsutil upload",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/borealis/kabuto_payload.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-localmirror-private/borealis/kabuto_payload-20120514125330500000.tar.xz@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set payload_gs_url",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@payload_gs_url@\"gs://chromeos-localmirror-private/borealis/kabuto_payload.tar.xz\"@@@"
+      "@@@SET_BUILD_PROPERTY@payload_gs_url@\"gs://chromeos-localmirror-private/borealis/kabuto_payload-20120514125330500000.tar.xz\"@@@"
     ]
   },
   {
