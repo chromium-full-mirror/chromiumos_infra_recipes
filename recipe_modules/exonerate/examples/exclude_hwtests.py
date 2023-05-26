@@ -20,8 +20,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   api.exonerate.fetch_config(api.exonerate.test_api.empty_config_file_contents)
-  # b/282731882. Remove once autoex is fully launched
-  api.exonerate.update_dryrun()
   pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
   fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)
   passing_test_cases = [

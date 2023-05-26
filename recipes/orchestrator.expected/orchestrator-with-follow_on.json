@@ -12360,21 +12360,6 @@
   },
   {
     "cmd": [],
-    "name": "check test results.manual exoneration",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check test results.manual exoneration.set exoneration_stats",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@exoneration_stats@{}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check test results.automated exoneration",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -12386,6 +12371,21 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@autoex_stats@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.manual exoneration",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check test results.manual exoneration.set exoneration_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@exoneration_stats@{}@@@"
     ]
   },
   {
