@@ -71,8 +71,11 @@ def _launch_builder(api: RecipeApi, bucket: str, builder: str, is_staging: str,
 
 
 def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
-  # TODO(b/284198238): support building at manifest branches (eg R115).
   bucket = 'staging' if api.build_menu.is_staging else 'infra'
+
+  manifest_branch = None
+  if properties.manifest_branch:
+    manifest_branch = properties.manifest_branch
 
   ### Build and upload a Kabuto payload.
   # If the payload_gs_url was supplied as an input property skip the build
@@ -84,6 +87,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
         "destination_gs_bucket": "kabuto_cache",
         "destination_gs_path": "test-recipe-payloads/"
     }
+    if manifest_branch:
+      paygen_input_props['manifest_branch'] = manifest_branch
     paygen_build = _launch_builder(api, bucket, 'kabuto_paygen',
                                    api.build_menu.is_staging,
                                    paygen_input_props, 'paygen build')
@@ -101,6 +106,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
         'payload_gs_bucket': payload_bucket,
         'payload_gs_path': payload_path
     }
+  if manifest_branch:
+    shadercache_input_props['manifest_branch'] = manifest_branch
 
   ### Build Kabuto shadercaches on sandboxed builders
   shadercache_build = _launch_builder(api, bucket, 'build_kabuto_shadercache',
@@ -111,6 +118,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   if 'uprev_info' in shadercache_build.output.properties:
     uprev_info = shadercache_build.output.properties['uprev_info']
     uprev_input_props = {'uprev_info': uprev_info}
+  if manifest_branch:
+    uprev_input_props['manifest_branch'] = manifest_branch
 
   ### Uprev the ebuilds with new shadercaches.
   _launch_builder(api, bucket, 'kabuto_shadercache_uprev',
@@ -147,6 +156,13 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'basic',
       api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  yield api.test(
+      'manifest-branch',
+      api.properties(**props),
   )
 
   props = good_props.copy()
