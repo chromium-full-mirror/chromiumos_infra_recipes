@@ -385,12 +385,21 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Set child output ids if any
       self.add_child_info_to_output_property()
 
-    results = self.m.failures.Results(
-        failures=self.builds_status.failures, successes={
-            'build':
-                self._count_successful_critical_builds(
-                    self.builds_status.completed_builds)
-        })
+    if self.is_cq_orchestrator:
+      successes = {
+          'build':
+              self._count_successful_critical_relevant_cq_builds(
+                  self.builds_status.completed_builds)
+      }
+    else:
+      successes = {
+          'build':
+              self._count_successful_critical_builds(
+                  self.builds_status.completed_builds)
+      }
+
+    results = self.m.failures.Results(failures=self.builds_status.failures,
+                                      successes=successes)
 
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)
@@ -407,6 +416,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return len([
         b for b in builds
         if b.critical == common_pb2.YES and b.status == common_pb2.SUCCESS
+    ])
+
+  def _count_successful_critical_relevant_cq_builds(self, builds):
+    return len([
+        b for b in builds if b.critical == common_pb2.YES and
+        b.status == common_pb2.SUCCESS and self._cq_relevant(b)
     ])
 
   def _validate_properties(self):
@@ -788,6 +803,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # If relevance tag is not set, assume relevance
     return True
 
+  def _cq_relevant(self, build: build_pb2.Build) -> bool:
+    """Whether the CQ child build was critical and relevant.
+
+    Args:
+      build: The child build.
+    """
+    # Assume relevant if the child doesn't have the relevant_build prop.
+    return ('relevant_build' not in build.output.properties or
+            build.output.properties['relevant_build'])
+
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
     with self.m.step.nest(results_step_name or 'check build results') as pres:
@@ -796,16 +821,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       self.builds_status.update(completed=builds, failures=failures)
 
       # Output information about child build relevancy.
-      # Assume relevant if the child doesn't have the relevant_build prop.
-      cq_relevant = lambda build: ('relevant_build' not in build.output.
-                                   properties or build.output.properties[
-                                       'relevant_build'])
 
       if self.config.id.type == BuilderConfig.Id.CQ:
         cq_relevant_builds = [
             x.builder.builder
             for x in self._builds_status.completed_builds
-            if cq_relevant(x)
+            if self._cq_relevant(x)
         ]
         pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
                                                  ['no relevant builds'])

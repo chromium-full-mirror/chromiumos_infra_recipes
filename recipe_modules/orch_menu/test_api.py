@@ -414,6 +414,11 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     def _child_build_msg(build_target_name, **kwargs):
       """Return the Build message for a child build."""
       kwargs.setdefault('status', 'SUCCESS')
+      # Mark the pointless build with the appropriate output properties.
+      if build_target_name == 'arm-generic-pointless':
+        output_properties = kwargs.pop('output_properties') or {}
+        output_properties['relevant_build'] = False
+        kwargs['output_properties'] = output_properties
       return self.m.test_util.test_child_build(build_target_name,
                                                **kwargs).message
 

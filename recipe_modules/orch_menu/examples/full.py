@@ -677,7 +677,7 @@ def GenTests(api):
   for b in collect_after:
     if b.builder.builder == 'cave-cq':
       b.status = common_pb2.FAILURE
-  summary = ('1 out of 8 builds failed\n\n- atlas-cq: [build page](https://'
+  summary = ('1 out of 6 builds failed\n\n- atlas-cq: [build page](https://'
              'cr-buildbucket.appspot.com/build/8922054662172514004)')
   yield api.orch_menu.test(
       'critical-child-builder-fails',
