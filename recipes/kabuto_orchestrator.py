@@ -28,6 +28,8 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = KabutoOrchestratorProperties
+INFRA_BUCKET = 'infra'
+STAGING_BUCKET = 'staging'
 
 
 def _launch_builder(api: RecipeApi, bucket: str, builder: str, is_staging: str,
@@ -71,7 +73,7 @@ def _launch_builder(api: RecipeApi, bucket: str, builder: str, is_staging: str,
 
 
 def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
-  bucket = 'staging' if api.build_menu.is_staging else 'infra'
+  bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
   manifest_branch = None
   if properties.manifest_branch:
@@ -110,7 +112,11 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     shadercache_input_props['manifest_branch'] = manifest_branch
 
   ### Build Kabuto shadercaches on sandboxed builders
-  shadercache_build = _launch_builder(api, bucket, 'build_kabuto_shadercache',
+  # TODO(b/284468396): change the below function call to use the proper bucket instead
+  # of defaulting to staging. Currently there is no difference for this builder between
+  # staging and prod so we can still do end to end tests with the staging builder.
+  shadercache_build = _launch_builder(api, STAGING_BUCKET,
+                                      'build_kabuto_shadercache',
                                       api.build_menu.is_staging,
                                       shadercache_input_props,
                                       'shadercache build')
