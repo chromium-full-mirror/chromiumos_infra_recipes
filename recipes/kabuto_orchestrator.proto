@@ -13,4 +13,8 @@ message KabutoOrchestratorProperties {
   // The manifest branch to check out (e.g. 'release-R105-14989.B')
   // Defaults to main tip of tree if not specified.
   string manifest_branch = 2;
+
+  // Number of sharded shadercache builders to spin off.
+  // Defaults to 1 if not provided.
+  int32 shard_count = 3;
 }

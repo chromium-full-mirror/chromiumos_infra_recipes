@@ -32,47 +32,58 @@ INFRA_BUCKET = 'infra'
 STAGING_BUCKET = 'staging'
 
 
-def _launch_builder(api: RecipeApi, bucket: str, builder: str, is_staging: str,
-                    input_properties=None, step_name="") -> Build:
-  """Launch a builder using api.bitbucket.run and return the build."""
+def _launch_builders(api: RecipeApi, bucket: str, builder: str, is_staging: str,
+                     count=1, input_properties=None, step_name="") -> list:
+  """Launch builders using api.bitbucket.run and return the list of builds."""
 
   # Use the builder name if the step name isn't defined.
   step_name = step_name if step_name else builder
 
+  # Default to an empty dict if no input properties were specified.
+  # This avoids a crash when accessing the dict below (since it's bad practice
+  # to have argument={} in a function definition.)
+  input_properties = input_properties if input_properties else {}
+
   with api.step.nest(step_name):
     builder = f'staging-{builder}' if is_staging else builder
-    request = [
-        api.buildbucket.schedule_request(bucket=bucket, builder=builder,
-                                         properties=input_properties)
-    ]
+    requests = []
+    for i in range(0, count):
+      input_properties['shard'] = i
+      requests.append(
+          api.buildbucket.schedule_request(bucket=bucket, builder=builder,
+                                           properties=input_properties))
 
     # Yield execution on the child build and return the properties when
     # the job is complete..
     # 2 hour timeout since paygen builder is roughly 1h in execution time,
     # the default 1h timeout causes an INFRA_FAILURE.
-    build = api.buildbucket.run(request, timeout=60 * 60 * 2)[0]
+    builds = api.buildbucket.run(requests, timeout=60 * 60 * 2)
 
     # Check for FAILURE or INFRA_FAILURE on the completed child builder.
     # Sets the appropriate status on the current step in the orchestrator
     # so it propogates up and stops it from continuing past.
-    if build.status != common_pb2.SUCCESS:
-      build_url = f'https://cr-buildbucket.appspot.com/build/{build.id}'
-      failure = None
-      with api.step.nest('inspect failure') as presentation:
-        presentation.step_text = build.summary_markdown
-        presentation.links[build_url] = build_url
-        if build.status == common_pb2.INFRA_FAILURE:
-          presentation.status = api.step.INFRA_FAILURE
-          failure = InfraFailure
-        else:
-          presentation.status = api.step.FAILURE
-          failure = StepFailure
-      raise failure(f'{builder} failed\n{build_url}')
+    for build in builds:
+      if build.status != common_pb2.SUCCESS:
+        build_url = f'https://cr-buildbucket.appspot.com/build/{build.id}'
+        failure = None
+        with api.step.nest('inspect failure') as presentation:
+          presentation.step_text = build.summary_markdown
+          presentation.links[build_url] = build_url
+          if build.status == common_pb2.INFRA_FAILURE:
+            presentation.status = api.step.INFRA_FAILURE
+            failure = InfraFailure
+          else:
+            presentation.status = api.step.FAILURE
+            failure = StepFailure
+        raise failure(f'{builder} failed\n{build_url}')
 
-  return build
+  return builds
 
 
 def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
+  # Default to 1 shard if number is not provided.
+  shard_count = 1 if not properties.shard_count else properties.shard_count
+
   bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
   manifest_branch = None
@@ -91,9 +102,10 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
-    paygen_build = _launch_builder(api, bucket, 'kabuto_paygen',
-                                   api.build_menu.is_staging,
-                                   paygen_input_props, 'paygen build')
+    paygen_build = _launch_builders(api, bucket, 'kabuto_paygen',
+                                    api.build_menu.is_staging, 1,
+                                    paygen_input_props, 'paygen build')
+    paygen_build = paygen_build[0]
     paygen_output_props = paygen_build.output.properties
 
   # Create the shadercache input properties from the paygen's payload_gs_url.
@@ -115,21 +127,27 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   # TODO(b/284468396): change the below function call to use the proper bucket instead
   # of defaulting to staging. Currently there is no difference for this builder between
   # staging and prod so we can still do end to end tests with the staging builder.
-  shadercache_build = _launch_builder(api, STAGING_BUCKET,
-                                      'build_kabuto_shadercache',
-                                      api.build_menu.is_staging,
-                                      shadercache_input_props,
-                                      'shadercache build')
-  uprev_input_props = {}
-  if 'uprev_info' in shadercache_build.output.properties:
-    uprev_info = shadercache_build.output.properties['uprev_info']
-    uprev_input_props = {'uprev_info': uprev_info}
+  shadercache_builds = _launch_builders(api, STAGING_BUCKET,
+                                        'build_kabuto_shadercache',
+                                        api.build_menu.is_staging, shard_count,
+                                        shadercache_input_props,
+                                        'shadercache build')
+
+  # Combine the multiple outputs from the builders into a single list.
+  all_uprev_info = []
+  for shadercache_build in shadercache_builds:
+    if 'uprev_info' in shadercache_build.output.properties:
+      uprev_info = shadercache_build.output.properties['uprev_info']
+      all_uprev_info.append(uprev_info)
+  # Prepare the cumulative uprev information.
+  uprev_input_props = {"uprev_info": all_uprev_info}
   if manifest_branch:
     uprev_input_props['manifest_branch'] = manifest_branch
 
   ### Uprev the ebuilds with new shadercaches.
-  _launch_builder(api, bucket, 'kabuto_shadercache_uprev',
-                  api.build_menu.is_staging, uprev_input_props, 'uprev build')
+  _launch_builders(api, bucket, 'kabuto_shadercache_uprev',
+                   api.build_menu.is_staging, 1, uprev_input_props,
+                   'uprev build')
 
 
 def GenTests(api: RecipeTestApi) -> None:
@@ -190,6 +208,13 @@ def GenTests(api: RecipeTestApi) -> None:
       api.buildbucket.simulated_collect_output(
           [shadercache_child_data()],
           'shadercache build.buildbucket.run.collect'))
+
+  props = good_props.copy()
+  props['shard_count'] = '2'
+  yield api.test(
+      'shard_count',
+      api.properties(**props),
+  )
 
   yield api.test(
       'child-builder-failure',
