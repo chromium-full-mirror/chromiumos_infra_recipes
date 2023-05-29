@@ -43,6 +43,7 @@ class FailuresApi(RecipeApi):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
     self._exoneration_markdown = None
+    self._caught_exceptions = {}
 
   @dataclass
   class Results():
@@ -180,6 +181,9 @@ class FailuresApi(RecipeApi):
     except Exception as e:  # pylint: disable=broad-except
       step = self.m.step('ignored exception', cmd=None)
       step.presentation.logs['caught exception'] = repr(e)
+      # Update the caught_exceptions output property with error for the current step.
+      self._caught_exceptions.update({".".join(self.m.step.active_result.name_tokens): repr(e)})
+      self.m.easy.set_properties_step(caught_exceptions=self._caught_exceptions)
 
   def _set_failed_packages(self, enclosing_step, packages, compile_failure):
     """If any failed packages, set presentation and raise failure.

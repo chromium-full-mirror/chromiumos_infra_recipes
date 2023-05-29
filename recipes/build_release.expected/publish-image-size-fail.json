@@ -5761,6 +5761,13 @@
   },
   {
     "cmd": [],
+    "name": "set caught_exceptions",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"StepFailure(\\\"Step('collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.call build API script') (retcode: 1)\\\")\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload devinstall prebuilts",
     "~followup_annotations": [
       "@@@STEP_TEXT@no bucket specified, skipping@@@"

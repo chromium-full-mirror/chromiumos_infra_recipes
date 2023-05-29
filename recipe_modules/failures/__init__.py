@@ -9,6 +9,7 @@ DEPS = [
     'recipe_engine/time',
     'cros_infra_config',
     'cros_som',
+    'easy',
     'naming',
     'urls',
 ]

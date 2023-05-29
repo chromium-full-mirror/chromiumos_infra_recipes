@@ -6542,6 +6542,13 @@
   },
   {
     "cmd": [],
+    "name": "set caught_exceptions",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"StepFailure(\\\"Step('collect image size data.add data from images.call chromite.api.ObservabilityService/GetImageSizeData.call build API script') (retcode: 1)\\\")\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-postsubmit-publish-img-sizes/R99-1234.56.0-101-8945511751514863184@@@"
