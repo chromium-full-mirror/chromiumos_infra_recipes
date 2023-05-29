@@ -1345,7 +1345,7 @@ Returns:
   sources: The Sources uploaded.
 ### *recipe_modules* / [build\_plan](/recipe_modules/build_plan)
 
-[DEPS](/recipe_modules/build_plan/__init__.py#8): [chrome](#recipe_modules-chrome), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_plan/__init__.py#8): [chrome](#recipe_modules-chrome), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
 #### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -1354,7 +1354,7 @@ A module to plan the builds to be launched.
 
 &emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#40)(self):**
 
-&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#500)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#505)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1369,7 +1369,7 @@ Returns:
   chosen_internal: The internal manifest snapshot that CQ will run with.
   chosen_external: The external manifest snapshot that CQ will run with.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#71)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#76)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -1392,7 +1392,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#361)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#366)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1406,7 +1406,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#447)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#452)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1422,7 +1422,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#486)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#491)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1433,7 +1433,7 @@ Args:
 Returns:
    The slim builder name.
 
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#418)(self, builds):**
+&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#423)(self, builds):**
 
 Takes a list of builds and dedups, choosing a best build, dropping others.
 

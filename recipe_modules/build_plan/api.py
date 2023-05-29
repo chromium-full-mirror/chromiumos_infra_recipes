@@ -56,11 +56,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
     if gerrit_changes:
       with self.m.step.nest('check for projects outside manifest'):
         with self.m.context(cwd=self.m.src_state.workspace_path):
+          runner = self.m.future_utils.create_parallel_runner()
+          for gc in gerrit_changes:
+            runner.run_function_async(
+                lambda project, _: self.m.repo.project_exists(project),
+                gc.project)
+          responses = runner.wait_for_and_get_responses()
           not_in_manifest = [
-              gc.project
-              for gc in gerrit_changes
-              if not self.m.repo.project_exists(gc.project) and
-              not gc.project in excluded_project
+              project.req
+              for project in responses
+              if not project.resp and not project.req in excluded_project
           ]
           if not_in_manifest:
             raise recipe_api.StepFailure(
