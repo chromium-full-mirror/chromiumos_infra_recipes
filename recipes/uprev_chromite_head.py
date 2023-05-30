@@ -29,6 +29,7 @@ PROPERTIES = UprevChromiteHeadProperties
 
 def RunSteps(api: RecipeApi, properties) -> None:
   # 1. get the chromite remote head commit.
+  api.step('git init', ['git', 'init'])
   with api.step.nest("get latest commit") as step:
     commit = api.git.fetch_ref(
         'https://chromium.googlesource.com/chromiumos/chromite/',
@@ -40,7 +41,7 @@ def RunSteps(api: RecipeApi, properties) -> None:
     api.git.clone('https://chromium.googlesource.com/chromiumos/infra/recipes/',
                   depth=1)
     # 3. modify the version file.
-    version_file_name = 'infra/config/chromite-head.version'
+    version_file_name = f'{checkout}/infra/config/chromite-head.version'
     api.file.write_text(
         'update chromite-HEAD version file',
         version_file_name,
@@ -49,13 +50,12 @@ def RunSteps(api: RecipeApi, properties) -> None:
     )
     # 4. create a cl updating the file.
     api.git.add([version_file_name])
-    api.git.commit('')
+    api.git.commit('update chromite-HEAD version')
     change = api.gerrit.create_change('chromiumos/infra/recipes',
                                       ref=api.git.get_branch_ref('main'),
                                       project_path=checkout)
     labels = {
         Label.BOT_COMMIT: 1,
-        Label.VERIFIED: 1,
     }
     api.gerrit.set_change_labels_remote(change, labels)
     if properties.dry_run:
@@ -72,6 +72,7 @@ def GenTests(api: RecipeTestApi) -> None:
       api.properties(dry_run=True),
       api.post_check(post_process.StepTextEquals, 'get latest commit',
                      'commit: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'),
+      api.post_check(post_process.MustRun, 'git init'),
       api.post_check(post_process.MustRun, 'git clone'),
       api.post_check(post_process.MustRun, 'update chromite-HEAD version file'),
       api.post_check(post_process.MustRun, 'git add'),
@@ -87,6 +88,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'full-run',
       api.post_check(post_process.StepTextEquals, 'get latest commit',
                      'commit: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'),
+      api.post_check(post_process.MustRun, 'git init'),
       api.post_check(post_process.MustRun, 'git clone'),
       api.post_check(post_process.MustRun, 'update chromite-HEAD version file'),
       api.post_check(post_process.MustRun, 'git add'),
