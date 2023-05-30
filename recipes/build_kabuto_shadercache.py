@@ -116,10 +116,14 @@ def DoRunSteps(api: RecipeTestApi,
       _upload_kabuto_logs(api)
 
     # Get info on newly compiled shadercaches for uprev.
-    updated_artifacts = api.file.read_text(
-        'Read updated_artifacts.json',
-        api.path.join(borealis_checkout,
-                      'tools/kabuto/out/updated_artifacts.json'))
+    # If this step fails we can continue with an empty updated_artifacts,
+    # this can (rarely) happen in sharding situations.
+    updated_artifacts = "{}"
+    with api.failures.ignore_exceptions():
+      updated_artifacts = api.file.read_text(
+          'Read updated_artifacts.json',
+          api.path.join(borealis_checkout,
+                        'tools/kabuto/out/updated_artifacts.json'))
 
     # Set our output properties for the orchestrator to read.
     api.easy.set_properties_step(uprev_info=updated_artifacts)
