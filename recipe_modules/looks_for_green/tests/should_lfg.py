@@ -136,6 +136,36 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  # TODO(b/276363760): Remove when relation chains are supported.
+  related_output = {
+      'related': [{
+          "_change_number": "1234"
+      }, {
+          "_change_number": "4321"
+      }]
+  }
+  yield api.test(
+      'relation-chain',
+      api.properties(
+          expected_should_lfg=False, experiments=lfg_experiment, **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True
+              },
+          }),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.git_footers.simulated_get_footers(
+          [], 'check should look for green.check disallow looks for green'),
+      api.step_data('check should look for green.git log',
+                    api.raw_io.stream_output_text('commitsha1')),
+      api.git_footers.simulated_get_footers(
+          [], 'check should look for green.check if CL uses Cq-Depend'),
+      api.gerrit.set_gerrit_related_changes(
+          related_output,
+          'check should look for green.check if CL has related changes.Check for stacked change'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
   yield api.test(
       'merge-commit',
       api.properties(

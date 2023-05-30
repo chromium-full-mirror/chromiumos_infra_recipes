@@ -1378,6 +1378,179 @@
   },
   {
     "cmd": [],
+    "name": "filter builds.check should look for green.check if CL has related changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@input_json@{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}@@@",
+      "@@@STEP_LOG_END@input_json@@@",
+      "@@@STEP_LOG_LINE@cmd@gerrit_related_changes@@@",
+      "@@@STEP_LOG_LINE@cmd@--input_json@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/gerrit_related_changes__tmp_1/input.json@@@",
+      "@@@STEP_LOG_LINE@cmd@--output_json@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/gerrit_related_changes__tmp_1/output.json@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@output_json@{\"related\":[]}@@@",
+      "@@@STEP_LOG_END@output_json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/input.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes.write gerrit_related_changes input",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@input.json@{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes.ensure gerrit_related_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "chromiumos/infra/gerrit_related_changes/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes.ensure gerrit_related_changes.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/gerrit_related_changes/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/gerrit_related_changes",
+      "gerrit_related_changes",
+      "--input_json",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/input.json",
+      "--output_json",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/output.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes.gerrit_related_changes",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/output.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.check should look for green.check if CL has related changes.Check for stacked change.call gerrit_related_changes.read output json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@output.json@{\"related\":[]}@@@",
+      "@@@STEP_LOG_END@output.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

@@ -153,6 +153,17 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                 pres.logs['Cq-Depend footer'] = (
                     'Found Cq-Depend footer. Skipping'
                     ' looks for green.')
+          # TODO(b/276363760): Don't LFG with stacked changes until supported.
+          if self._should_lfg:
+            with self.m.step.nest('check if CL has related changes'):
+              related, gerrit_change, num_related = self._has_stacked_change(
+                  gerrit_changes)
+              if related:
+                self._should_lfg = False
+                should_lfg_log += '. Found relation chain'
+                pres.logs['Relation chain'] = (
+                    f'Found CL {gerrit_change.change} is part of a relation chain with {num_related} changes. Skipping'
+                    ' looks for green.')
           if not self._should_lfg:
             should_lfg_log += '. Using original snapshot.'
           pres.logs['should_lfg'] = should_lfg_log
@@ -398,3 +409,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
               'for green behavior.')
 
       return found_disallow
+
+  def _has_stacked_change(
+      self, gerrit_changes: List[GerritChange]
+  ) -> (bool, Optional[GerritChange], int):
+    '''Returns whether any change is part of a stack aka relation chain.'''
+    with self.m.step.nest('Check for stacked change'):
+      with self.m.context(cwd=self.m.cros_source.workspace_path):
+        for gerrit_change in gerrit_changes:
+          related = self.m.gerrit.gerrit_related_changes(gerrit_change)
+          if len(related):
+            return True, gerrit_change, len(related)
+        return False, None, 0
