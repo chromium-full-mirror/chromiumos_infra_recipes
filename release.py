@@ -13,6 +13,7 @@ import re
 import string
 import subprocess
 import sys
+import tempfile
 import typing
 from typing import Any
 from typing import Callable
@@ -149,7 +150,9 @@ def main(argv: List[str]):
   pending_changes = get_pending_changes(git_prod, git_target)
   report_pending_changes(pending_changes, options.show_instances,
                          verbose=options.verbose)
-  check_staging_builders(pending_changes, options.ignore_staging_failures)
+
+  check_staging_builders(pending_changes,
+                         ignore_failures=options.ignore_staging_failures)
   quit_early_if_no_pending_changes(pending_changes)
   if not options.force:
     prompt_about_setting_git_target(git_target)
@@ -372,17 +375,96 @@ def report_pending_changes(pending_changes: List[Commit], show_instances: bool,
   print()
 
 
-def check_staging_builders(pending_changes: List[Commit],
+@lru_cache(maxsize=None)
+def _get_affected_recipes(newest_change: Commit, oldest_change: Commit,
+                          recipes: str) -> List[str]:
+  """Inner (cachable) function for get_affected_recipes."""
+  recipes = sorted(recipes.split(','))
+
+  cmd = [
+      'git', 'diff', '--name-only', newest_change.hash, f'{oldest_change.hash}~'
+  ]
+  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  affected_files = p.stdout.strip().split()
+
+  with tempfile.NamedTemporaryFile(mode='w') as input_file, \
+        tempfile.NamedTemporaryFile() as output_file:
+    json.dump(
+        {
+            'files': affected_files,
+            'recipes': recipes,
+        },
+        input_file,
+    )
+    input_file.flush()
+
+    cmd = ['./recipes.py', 'analyze', input_file.name, output_file.name]
+    subprocess.run(cmd, capture_output=True, check=True)
+
+    data = json.loads(output_file.read())
+
+  return data['recipes']
+
+
+def get_affected_recipes(newest_change: Commit, oldest_change: Commit,
+                         recipes: List[str]) -> List[str]:
+  """Get the list of recipes affected by the given commits.
+
+  Args:
+    recipes: List of recipes used by the staging builders. Required arg for
+      `./recipes.py analyze`.
+  """
+  return _get_affected_recipes(newest_change, oldest_change,
+                               ','.join(sorted(recipes)))
+
+
+@lru_cache(maxsize=None)
+def _get_builder_recipe(builder: str):
+  """Get the recipe used by the given builder."""
+  cmd = ['led', 'get-builder', builder]
+  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  builder_data = json.loads(p.stdout)
+  return builder_data['buildbucket']['bbagent_args']['build']['input'][
+      'properties']['recipe']
+
+
+def check_staging_builders(changes: List[Commit],
                            ignore_failures: bool = False):
   """Check for failures in staging builders. Quit early if any problems."""
   print('=== Check staging status ===')
+  print('Determining relevancy of each staging builder...')
+  builders = []
+  for re_check in STAGING_CHECKS_RE:
+    builders.extend(
+        return_builders_for_regex(re_check.project, re_check.bucket,
+                                  re_check.regex))
+
+  builder_recipes = {}
+  # Recipes used by sentinel builders.
+  for builder in builders:
+    builder_recipes[builder] = _get_builder_recipe(builder)
+
+  relevant_builders = set()
+  if changes:
+    affected_recipes = get_affected_recipes(changes[0], changes[-1],
+                                            list(builder_recipes.values()))
+    for builder, recipe in builder_recipes.items():
+      if recipe in affected_recipes:
+        relevant_builders.add(builder)
+    irrelevant_builders = set(builders) - relevant_builders
+    if irrelevant_builders:
+      print('Irrelevant builders: ', ', '.join(sorted(irrelevant_builders)))
+
   baddies = []
   print('Looking for 5 consecutive successes in staging...')
   for re_check in STAGING_CHECKS_RE:
-    for builder in return_builders_for_regex(re_check.project, re_check.bucket,
-                                             re_check.regex):
-      if check_recent_build_statuses(builder, re_check.exemptions,
-                                     pending_changes):
+    builders = return_builders_for_regex(re_check.project, re_check.bucket,
+                                         re_check.regex)
+    for builder in filter(lambda b: b in relevant_builders, builders):
+      diff_fn = lambda change: get_affected_recipes(
+          change, change, list(builder_recipes.values()))
+      if check_recent_build_statuses(builder, re_check.exemptions, changes,
+                                     diff_fn):
         baddies.append(builder)
 
   if baddies:
@@ -399,6 +481,7 @@ def check_recent_build_statuses(
     builder: str,
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[Commit],
+    diff_fn: Callable[[Commit], List[str]],
 ) -> bool:
   """Check whether a single builder has had any recent non-successes."""
   cmd = ['bb', 'ls', '-status', 'ended', '-n', '5', '-json', '-A', builder]
@@ -439,52 +522,64 @@ def check_recent_build_statuses(
 
   # Count the number of non-trivial changes since the last build.
   most_recent_githash = githashes[0]
-  non_trivial_changes_since_most_recent_build = 0
+  non_trivial_changes_since_most_recent_build = []
   for change in pending_changes:
     if change.hash == most_recent_githash:
       break
 
     if not change.trivial:
-      non_trivial_changes_since_most_recent_build += 1
+      non_trivial_changes_since_most_recent_build.append(change)
+
+  num_non_trivial_changes_since_most_recent_build = len(
+      non_trivial_changes_since_most_recent_build)
 
   success = set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'})
   success_str = f'{BOLDGREEN}Success{RESET}' if success else f'{BOLDRED}Non-success{RESET}'
   status_str = f'{success_str}: {get_builder_link(builder)} --> {", ".join(sorted(list(found_statuses)))}'
 
+  relevant_changes = []
+  builder_recipe = _get_builder_recipe(builder)
+  for change in non_trivial_changes_since_most_recent_build:
+    affected_files = diff_fn(change)
+    if builder_recipe in affected_files:
+      relevant_changes.append(change)
+
   # If there have been changes since the most recent build, add a line to the
   # status.
-  if non_trivial_changes_since_most_recent_build:
-    changes_str = 'change' if non_trivial_changes_since_most_recent_build == 1 else 'changes'
-    status_str += f'\n  {non_trivial_changes_since_most_recent_build} {changes_str} since last build, '
+  if num_non_trivial_changes_since_most_recent_build:
+    changes_str = 'change' if num_non_trivial_changes_since_most_recent_build == 1 else 'changes'
+    relevant_str = f' ({len(relevant_changes)} relevant)'
+    status_str += f'\n  {num_non_trivial_changes_since_most_recent_build} {changes_str} since last build{relevant_str}, '
 
     non_trivial_pending_changes = list(
         filter(lambda c: not c.trivial, pending_changes))
 
     # If a non-trivial change was included since the last release, print the
     # last hash.
-    if non_trivial_changes_since_most_recent_build < len(
+    if num_non_trivial_changes_since_most_recent_build < len(
         non_trivial_pending_changes):
       status_str += (
           'last built commit was '
-          f'{BOLDBLUE}{non_trivial_pending_changes[non_trivial_changes_since_most_recent_build].short_hash}{RESET}'
+          f'{BOLDBLUE}{non_trivial_pending_changes[num_non_trivial_changes_since_most_recent_build].short_hash}{RESET}'
       )
     else:
       status_str += 'builder has not been run since last release'
 
-  if not success or non_trivial_changes_since_most_recent_build:
+  if not success or (num_non_trivial_changes_since_most_recent_build and
+                     relevant_changes):
     print(status_str)
 
   return success
 
 
+@lru_cache(maxsize=None)
+def _call_bb_builders(cmd):
+  return subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+
 def return_builders_for_regex(project: str, bucket: str,
                               regex: str) -> List[str]:
   """Return the list of builders matching a certain regex."""
-
-  @lru_cache(maxsize=None)
-  def _call_bb_builders(cmd):
-    return subprocess.run(cmd, capture_output=True, text=True, check=True)
-
   r = re.compile(regex)
   cmd = ('bb', 'builders', '/'.join((project, bucket)))
   p = _call_bb_builders(cmd)
