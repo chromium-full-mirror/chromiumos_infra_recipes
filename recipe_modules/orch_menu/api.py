@@ -37,6 +37,7 @@ CHILD_BUILD_SEARCH_FIELDS = frozenset({
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
 
+
 class BuildsStatus():
   """The running status of the builds.
 
@@ -147,7 +148,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
             BuilderConfig.Orchestrator.ChildSpec.COLLECT_HANDLING_UNSPECIFIED))
 
-
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
@@ -217,6 +217,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
   @property
   def skip_paygen(self):
     return self._properties.skip_paygen
+
+  @property
+  def relevant_child_builder_names(self):
+    return self._relevant_child_builder_names
 
   def chrome_module_child_props(self):
     return json_format.MessageToDict(
@@ -821,8 +825,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                        check_critical_step_name=None):
     with self.m.step.nest(results_step_name or 'check build results') as pres:
       # Add the newly completed builds to build_status.
-      failures = self.m.failures.get_build_results(builds).failures
-      self.builds_status.update(completed=builds, failures=failures)
+      self.builds_status.update(completed=builds)
 
       # Output information about child build relevancy.
 
@@ -860,6 +863,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
         if not ps_relevant_critical_builds:
           self.m.easy.set_properties_step(all_critical_builds_irrelevant=True)
           self.m.easy.set_properties_step(sheriff_ignore_build=True)
+
+      # Add the newly completed builds to build_status.
+      failures = self.m.failures.get_build_results(
+          builds, relevant_child_builder_names=self.relevant_child_builder_names
+      ).failures
+      self.builds_status.update(failures=failures)
 
     # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
     # non-critical.
@@ -1370,8 +1379,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
           b.builder.builder]
       # Add whether this builder was tested in this run.
       child_build_dict['tested_in_this_run'] = (
-          b.builder.builder in
-          self.m.cros_test_proctor.builders_tested_in_this_run)
+          b.builder.builder
+          in self.m.cros_test_proctor.builders_tested_in_this_run)
       # Add whether this builder was relevant.
       # This is only applicable to CQ and Snapshot.
       if self.is_cq_orchestrator or self.is_snapshot_orchestrator:
@@ -1386,7 +1395,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         del child_build_dict['output']
 
       child_build_info.append(child_build_dict)
-
 
     if child_builds:
       child_build_ids = [str(b.id) for b in child_builds]

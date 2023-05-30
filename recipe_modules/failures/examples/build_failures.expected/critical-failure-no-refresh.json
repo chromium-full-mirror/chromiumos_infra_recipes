@@ -3,68 +3,41 @@
     "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.amd64-postsubmit",
+    "name": "build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@3 sbuild failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.irrelevant critical build results.amd64-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.eve-postsubmit",
+    "name": "build results.irrelevant critical build results.eve-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.grunt-postsubmit",
+    "name": "build results.irrelevant critical build results.grunt-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).amd64-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).eve-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).grunt-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]

@@ -13361,7 +13361,7 @@
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@4 hw tests failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@4 shw test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13822,72 +13822,6 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@1 builds failed, 6 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.atlas-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.amd64-generic-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.arm-generic-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.arm64-generic-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.cave-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.coral-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.check build results.build results.eve-cq",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "final build collect.check build results.set child_builds_relevant",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -13900,6 +13834,80 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@1 build failed, 6 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.amd64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.arm-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.arm64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.cave-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.coral-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.eve-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {

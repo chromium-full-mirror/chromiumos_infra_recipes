@@ -113,9 +113,11 @@ class FailuresApi(RecipeApi):
       return
 
   def _get_results(self, kind, runs, get_status, is_critical, get_title,
-                   get_link_map, get_id):
-    with self.m.step.nest('{} results'.format(kind)) as results_pres:
+                   get_link_map, get_id, build_detailed_kind = None):
+    with self.m.step.nest('{} results'.format(build_detailed_kind or kind)) as results_pres:
       results = self.Results(failures=[], successes={})
+      non_critical_build_results = self.Results(failures=[], successes={})
+
       failed_runs = [
           run for run in runs if get_status(run) != common_pb2.SUCCESS
       ]
@@ -135,6 +137,10 @@ class FailuresApi(RecipeApi):
           results.failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
                            fatal=True, id=fail_id))
+        elif build_detailed_kind:
+          non_critical_build_results.failures.append(
+              self.Failure(kind=kind, title=title, link_map=link_map,
+                           fatal=False, id=fail_id))
 
       success_runs = [run for run in runs if run not in failed_runs]
       results.successes = {kind: 0}
@@ -149,13 +155,18 @@ class FailuresApi(RecipeApi):
 
         self._present_run(title, link_map, status)
 
-      if not results.failures:
-        status = self.m.step.SUCCESS
-        step_text = 'all critical {}s succeeded'.format(kind)
-      else:
+      if results.failures or non_critical_build_results.failures:
+        s = 's' if len(failed_runs) > 1 else ''
+        step_text = '{} {}{} failed, {} succeeded'.format(
+            len(failed_runs), s, kind, len(success_runs))
         status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
-        step_text = '{} {}s failed, {} succeeded'.format(
-            len(failed_runs), kind, len(success_runs))
+      else:
+        if build_detailed_kind:
+          detailed_kind = build_detailed_kind
+        else:
+          detailed_kind = 'critical {}'.format(kind)
+        step_text = 'all {}s succeeded'.format(detailed_kind)
+        status = self.m.step.SUCCESS
 
       results_pres.status = status
       results_pres.step_text = step_text
@@ -402,12 +413,15 @@ class FailuresApi(RecipeApi):
     summary_markdown = summary_markdown.strip()
     return summary_markdown
 
-  def get_build_results(self, builds, refresh_configs=False):
+  def get_build_results(self, builds, refresh_configs=False,
+                        relevant_child_builder_names=None):
     """Verify all builds completed successfully.
 
     Args:
       builds (list[build_pb2.Build]): List of completed builds.
       refresh_configs (bool): Whether to update configs and adjust is_critical.
+      relevant_child_builder_names (list(str)): List of relevant child builder
+        names.
 
     Returns:
       A Results object containing the list[Failure] of all failures discovered
@@ -415,17 +429,42 @@ class FailuresApi(RecipeApi):
       successes.
     """
     get_id = lambda b: b.builder.builder
-    results = self._get_results('build', builds, self.get_build_status,
-                                self.m.buildbucket.is_critical,
-                                self.m.naming.get_build_title,
-                                self.m.urls.get_build_link_map, get_id)
+    kind = 'build'
+    with self.m.step.nest('{} results'.format(kind)):
+      categorized_builds = {}
+      for b in builds:
+        if relevant_child_builder_names and b.builder.builder in relevant_child_builder_names:
+          rel = 'relevant'
+        else:
+          rel = 'irrelevant'
+        if self.m.buildbucket.is_critical(b):
+          criticality = 'critical'
+        else:
+          criticality = 'non-critical'
+
+        categorized_builds.setdefault('{} {}'.format(rel, criticality), []).append(b)
+
+      all_results = self.Results(failures=[], successes={})
+      for detail, build in categorized_builds.items():
+        results = self._get_results(kind, build, self.get_build_status,
+                                    self.m.buildbucket.is_critical,
+                                    self.m.naming.get_build_title,
+                                    self.m.urls.get_build_link_map, get_id,
+                                    "{} {}".format(detail, kind))
+        all_results.failures += results.failures
+        if results.successes:
+          all_results.successes = {
+            i: all_results.successes.get(i, 0) + results.successes.get(i, 0)
+            for i in set(all_results.successes).union(results.successes)
+          }
+
     if refresh_configs:
       self.m.cros_infra_config.force_reload()
       child_configs = self.m.cros_infra_config.safe_get_builder_configs(
           [b.builder.builder for b in builds])
-      results.failures = self.update_non_critical_build_failures(
-          results.failures, child_configs)
-    return results
+      all_results.failures = self.update_non_critical_build_failures(
+          all_results.failures, child_configs)
+    return all_results
 
   def get_hw_test_results(self, hw_tests):
     """Logs hardware test status to UI, and raises on failed tests.

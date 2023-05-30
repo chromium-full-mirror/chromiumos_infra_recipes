@@ -4006,8 +4006,7 @@
     "cmd": [],
     "name": "check build results.build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@all critical builds succeeded@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -5588,7 +5588,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#289)(self, results, ignore_build_test_failures=False):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#300)(self, results, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
@@ -5604,7 +5604,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#662)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#701)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -5613,22 +5613,24 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#447)(self, not_runnable_addtnl_tests):**
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#486)(self, not_runnable_addtnl_tests):**
 
-&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#405)(self, builds, refresh_configs=False):**
+&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#416)(self, builds, refresh_configs=False, relevant_child_builder_names=None):**
 
 Verify all builds completed successfully.
 
 Args:
   builds (list[build_pb2.Build]): List of completed builds.
   refresh_configs (bool): Whether to update configs and adjust is_critical.
+  relevant_child_builder_names (list(str)): List of relevant child builder
+    names.
 
 Returns:
   A Results object containing the list[Failure] of all failures discovered
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#494)(self, build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#533)(self, build):**
 
 Retrieve the status of the build.
 
@@ -5638,7 +5640,7 @@ Args:
 Returns:
   status (common_pb2.Status) of the build.
 
-&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#430)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#469)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -5650,7 +5652,7 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#520)(self, hw_test):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#559)(self, hw_test):**
 
 Get the status of the hw_test.
 
@@ -5660,7 +5662,7 @@ Args:
 Returns:
   status (common_pb2.STATUS) of the test.
 
-&mdash; **def [get\_vm\_test\_results](/recipe_modules/failures/api.py#477)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_results](/recipe_modules/failures/api.py#516)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -5672,14 +5674,14 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#172)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#183)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#542)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#581)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -5689,7 +5691,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#554)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#593)(self, hw_test):**
 
 Determine if the hw test failed and was critical.
 
@@ -5699,7 +5701,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#505)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#544)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -5709,7 +5711,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#531)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#570)(self, hw_test):**
 
 Determine if the hw test was critical.
 
@@ -5719,7 +5721,7 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#263)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#274)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -5734,18 +5736,18 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#260)(self, enclosing_step, packages):**
+&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#271)(self, enclosing_step, packages):**
 
-&mdash; **def [set\_exoneration\_markdown](/recipe_modules/failures/api.py#164)(self, markdown_txt: str):**
+&mdash; **def [set\_exoneration\_markdown](/recipe_modules/failures/api.py#175)(self, markdown_txt: str):**
 
 Store string containing exoneration info for summary.
 
 Args:
   markdown_txt: String containing summary of exonerations.
 
-&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#257)(self, enclosing_step, packages):**
+&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#268)(self, enclosing_step, packages):**
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#583)(self, failures, fresh_builder_configs, presentation=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#622)(self, failures, fresh_builder_configs, presentation=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -5760,7 +5762,7 @@ Returns:
   updated_failures (list[Failure]): The list of Failures with 'fatal'
       statuses possibly updated.
 
-&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#620)(self, failures, test_plan_summary, presentation=None):**
+&mdash; **def [update\_non\_critical\_test\_failures](/recipe_modules/failures/api.py#659)(self, failures, test_plan_summary, presentation=None):**
 
 If tests are now non-critical, failures are non-fatal.
 
@@ -7951,18 +7953,18 @@ Collect and publish the image size data.
 
 API providing a menu for orchestrator steps
 
-#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#123)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#124)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1359)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1368)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1199)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1208)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -7977,7 +7979,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#185)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1398)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1406)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -7989,13 +7991,13 @@ Returns:
   A dict mapping CollectHandling to the list of builds which fall into that
       category.
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#221)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#225)(self):**
 
 &emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#213)(self):**
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#165)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#355)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#359)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -8030,7 +8032,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#209)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#710)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#714)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -8044,7 +8046,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1097)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1106)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -8062,7 +8064,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#670)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#674)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -8074,18 +8076,20 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#797)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#801)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1022)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#221)(self):**
+
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1031)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1029)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1038)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -8102,7 +8106,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#245)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#249)(self):**
 
 Initial setup steps for the orchestrator.
 

@@ -3,33 +3,41 @@
     "cmd": [],
     "name": "build results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.amd64-postsubmit",
+    "name": "build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@3 sbuild failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.irrelevant critical build results.amd64-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.eve-postsubmit",
+    "name": "build results.irrelevant critical build results.eve-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "build results.grunt-postsubmit",
+    "name": "build results.irrelevant critical build results.grunt-postsubmit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]
@@ -74,86 +82,6 @@
     "name": "non-critical build check",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@new non-critical builders@amd64-postsubmit@@@",
-      "@@@STEP_LOG_LINE@new non-critical builders@grunt-postsubmit@@@",
-      "@@@STEP_LOG_END@new non-critical builders@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).amd64-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).eve-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build results (2).grunt-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read builder configs (2)"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "read builder configs (2).fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "non-critical build check (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@new non-critical builders@amd64-postsubmit@@@",
-      "@@@STEP_LOG_LINE@new non-critical builders@eve-postsubmit@@@",
       "@@@STEP_LOG_LINE@new non-critical builders@grunt-postsubmit@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]

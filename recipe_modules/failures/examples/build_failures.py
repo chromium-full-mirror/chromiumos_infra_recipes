@@ -45,14 +45,15 @@ def RunSteps(api, properties):
       f for f in properties.builds if f.status == common_pb2.SUCCESS
   ]
 
+  build_results = api.failures.get_build_results(
+      properties.builds, properties.refresh_config,
+      api.properties["relevant_child_builder_names"])
+
+  api.assertions.assertEqual(expected_failures, build_results.failures)
   api.assertions.assertEqual(
-      expected_failures,
-      api.failures.get_build_results(properties.builds,
-                                     properties.refresh_config).failures)
-  api.assertions.assertEqual(
-      api.failures.get_build_results(properties.builds,
-                                     properties.refresh_config).successes,
-      {'build': len(expected_successful_builds)})
+      {'build': len(expected_successful_builds)},
+      build_results.successes,
+  )
 
 
 def GenTests(api):
@@ -84,7 +85,8 @@ def GenTests(api):
                         config)
 
   def test(name, builds, refresh_config=False, expected_failing_builds=None,
-           expected_is_critical_build_failure=False):
+           expected_is_critical_build_failure=False,
+           relevant_child_builder_names=None):
     """Create a test.
 
     Args:
@@ -116,9 +118,12 @@ def GenTests(api):
       if refresh_config:
         failing_build.critical = fail.config_critical == 'YES'
 
-    ret = api.test(name,
-                   api.test_util.test_orchestrator().build,
-                   api.properties(props))
+    ret = api.test(
+        name,
+        api.test_util.test_orchestrator().build,
+        api.properties(
+            props, relevant_child_builder_names=relevant_child_builder_names))
+
     if refresh_config:
       ret += api.cros_infra_config.override_builder_configs_test_data(configs)
     return ret
@@ -135,9 +140,18 @@ def GenTests(api):
 
   yield test('failure', [build_failure])
 
+  yield test('relevant-failure', [build_failure],
+             relevant_child_builder_names=[build_failure.config.id.name])
+
   yield test('critical-failure', [build_crit_failure], expected_failing_builds=[
       build_crit_failure,
   ], expected_is_critical_build_failure=True)
+
+  yield test('relevant-critical-failure', [build_crit_failure],
+             expected_failing_builds=[
+                 build_crit_failure,
+             ], expected_is_critical_build_failure=True,
+             relevant_child_builder_names=[build_crit_failure.config.id.name])
 
   yield test('critical-infra-failure', [crit_infra_failure],
              expected_failing_builds=[

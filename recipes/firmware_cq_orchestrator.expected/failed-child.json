@@ -535,15 +535,23 @@
     "name": "launch child.build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "launch child.build results.firmware-board-5555-cq",
+    "name": "launch child.build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@1 build failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "launch child.build results.irrelevant critical build results.firmware-board-5555-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_FAILURE@@@"
     ]

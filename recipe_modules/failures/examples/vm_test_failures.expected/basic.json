@@ -34,7 +34,7 @@
     "cmd": [],
     "name": "vm test results (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 vm tests failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@1 vm test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -51,7 +51,7 @@
     "cmd": [],
     "name": "vm test results (4)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 vm tests failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@1 vm test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
