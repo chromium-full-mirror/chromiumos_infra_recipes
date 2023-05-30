@@ -436,7 +436,7 @@ def _enumerate_cft_tests(api, requests):
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         filtered_test_suites = _build_filtered_tests(api, r, test_suites,
                                                      build_target)
-        if build_target == "jacuzzi":  # pragma: nocover
+        if build_target == "volteer":  # pragma: nocover
           test_suites = filtered_test_suites
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
