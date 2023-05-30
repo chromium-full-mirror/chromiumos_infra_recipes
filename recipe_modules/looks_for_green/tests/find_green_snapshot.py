@@ -25,6 +25,7 @@ PROPERTIES = {
     'expected_greenness': Property(default=100),
     'expected_commit_sha': Property(default='abaaaa'),
     'expected_target_greenness': Property(default={}),
+    'latest_start': Property(default=None),
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -70,8 +71,13 @@ unscored_build = build_pb2.Build(id=123, input=build_input,
 
 
 def RunSteps(api, expect_result, expected_bbid, expected_greenness,
-             expected_commit_sha, expected_target_greenness):
-  snapshot = api.looks_for_green.find_green_snapshot()
+             expected_commit_sha, expected_target_greenness, latest_start):
+  # Parse timestamp proto, if provided.
+  if latest_start:
+    latest_start_ts = timestamp_pb2.Timestamp()
+    latest_start_ts.FromJsonString(latest_start)
+    latest_start = latest_start_ts
+  snapshot = api.looks_for_green.find_green_snapshot(latest_start=latest_start)
   if expect_result:
     api.assertions.assertEqual(expected_bbid, snapshot.bbid)
     api.assertions.assertEqual(expected_greenness, snapshot.agg_green)
@@ -105,7 +111,7 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}}"
+              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2021-02-19T14:10:30Z\"}}"
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -151,7 +157,30 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               "-predicate",
-              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-25T13:50:17Z\"}}"
+              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2021-02-19T14:10:30Z\"}}"
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'latest-time',
+      api.properties(expected_bbid=123, expected_greenness=80,
+                     expected_commit_sha='ababab',
+                     latest_start=timestamp_pb2.Timestamp(seconds=1613779200),
+                     expected_target_greenness=expected_brya_greenness),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='cq-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          builds=[green_build],
+          step_name='find green snapshot.buildbucket.search'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find green snapshot.buildbucket.search',
+          [
+              "-predicate",
+              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2021-02-20T00:00:00Z\", \"startTime\": \"2021-02-19T14:00:00Z\"}}"
           ],
       ),
       api.post_process(post_process.DropExpectation),

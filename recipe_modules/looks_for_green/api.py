@@ -50,6 +50,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self.use_complete_snapshot = properties.use_complete_snapshot
     self._stats = LooksForGreenStats()
     self._now = None
+    self._seconds_now = None
     self._should_lfg = None
 
   @property
@@ -61,7 +62,23 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     '''
     if not self._now:
       self._now = self.m.time.utcnow().replace(microsecond=0)
+    # Synchronize timing.
+    if not self._seconds_now:
+      self._seconds_now = int(self.m.time.time())
     return self._now
+
+  @property
+  def seconds_utc(self) -> int:
+    '''Returns the current UTC time in seconds.
+
+    Initialized once and used throughout for any time calculations. Cast to int to use seconds as level of precision.
+    '''
+    if not self._seconds_now:
+      self._seconds_now = int(self.m.time.time())
+    # Synchronize timing.
+    if not self._now:
+      self._now = self.m.time.utcnow().replace(microsecond=0)
+    return self._seconds_now
 
   @property
   def stats(self) -> LooksForGreenStats:
@@ -142,22 +159,33 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self._should_lfg
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
-  def _get_snapshots(self,
-                     limit: Optional[int] = None) -> List[build_pb2.Build]:
+  def _get_snapshots(
+      self, limit: Optional[int] = None,
+      latest_start: Optional[timestamp_pb2.Timestamp] = None
+  ) -> List[build_pb2.Build]:
     '''Get snapshot builds within the lookback period.
 
-    Optionally specify a limit of builds to return.
+    Optionally specify a limit of builds to return. Optionally specify a latest_start time in UTC for builds.
     '''
     fields = frozenset({
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
         'end_time', 'status'
     })
-    predicate = builds_service_pb2.BuildPredicate(
-        create_time=common_pb2.TimeRange(
-            start_time=timestamp_pb2.Timestamp(
-                seconds=self.m.buildbucket.build.create_time.ToSeconds() -
-                self._lookback_hours * 60 * 60,
-            )))
+    # Look back from latest_start if specified, otherwise from current time.
+    if latest_start:
+      latest_seconds = latest_start.ToSeconds()
+      predicate = builds_service_pb2.BuildPredicate(
+          create_time=common_pb2.TimeRange(
+              start_time=timestamp_pb2.Timestamp(
+                  seconds=latest_seconds - self._lookback_hours * 60 * 60,
+              ), end_time=latest_start))
+    else:
+      latest_seconds = self.seconds_utc
+      predicate = builds_service_pb2.BuildPredicate(
+          create_time=common_pb2.TimeRange(
+              start_time=timestamp_pb2.Timestamp(
+                  seconds=latest_seconds - self._lookback_hours * 60 * 60,
+              )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = self._greenness_bucket
     predicate.builder.builder = self._greenness_builder
@@ -298,10 +326,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     latest_snap = max(green_results, key=lambda k: k.start_time)
     return latest_snap
 
-  def find_green_snapshot(self) -> Optional[Snapshot]:
-    '''Find a green snapshot within the lookback period if one exists.'''
+  def find_green_snapshot(
+      self, latest_start: Optional[timestamp_pb2.Timestamp] = None
+  ) -> Optional[Snapshot]:
+    '''Find a green snapshot within the lookback period if one exists.
+
+    Optionally specify a latest_start time in UTC for builds.'''
     with self.m.step.nest('find green snapshot') as presentation:
-      results = self._get_snapshots()
+      results = self._get_snapshots(latest_start=latest_start)
       parsed_results = []
       for result in results:
         parsed_results.append(self._parse_snapshot_result(result))
