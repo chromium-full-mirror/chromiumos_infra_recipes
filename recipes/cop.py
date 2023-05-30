@@ -6,6 +6,7 @@
 """Recipe for CoP: A CL validator based on Google Cloud Build. go/cros-cop"""
 import base64
 import binascii
+import json
 
 from typing import Dict
 from typing import Generator
@@ -267,6 +268,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
         },
     }
 
+  def tricium_has_comments(check, step_odict, comments: list):
+    """Assert that tricium has posted `comments`."""
+    build_properties = post_process.GetBuildProperties(step_odict)
+    check('tricium' in build_properties)
+    tricium = json.loads(build_properties['tricium'])
+    check('comments' in tricium)
+    check(tricium['comments'] == comments)
+
   yield api.test(
       'unset-properties', test_builder(revision=None, cq=False),
       api.post_check(post_process.StepException, 'validate properties'),
@@ -342,6 +351,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented and Voted',)),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote', test_builder(gerrit_changes=change),
@@ -354,6 +364,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('send Vote to Gerrit.gerrit comment only',api.json.output({})),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented but unable to Vote',)),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote-or-comment', test_builder(gerrit_changes=change),
@@ -366,6 +377,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('send Vote to Gerrit.gerrit comment only',retcode=1),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Cannot comment or vote',)),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: SUCCESS', 'message': 'Soo good', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
@@ -404,5 +416,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: FAILURE', 'message': 'Soo good', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run bye world): FAILURE', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
