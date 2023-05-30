@@ -1471,11 +1471,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
-    try:
+    testable_builders = None
+    with self.m.failures.ignore_exceptions():
       testable_builders = set(
           self.m.cros_test_proctor.get_testable_builders(
               self.gerrit_changes, builds))
-    except StepFailure:
+    if testable_builders is None:
       # If there is a failure in calling testplan, default to collecting all
       # critical child builds. As of now, all non-critical CQ child builds are
       # special non-image builders which should not need end-to-end testing.
