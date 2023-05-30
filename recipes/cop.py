@@ -99,11 +99,11 @@ def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
 
 
 def _fetch_cop_file(api: RecipeApi, host: str, change_id: str,
-                    revision: str) -> Optional[str]:
+                    patch_set: int) -> Optional[str]:
   """Download a user build configuration from gitiles."""
 
-  url = 'https://%s/changes/%s/revisions/%s/files/%s/content' % (
-      host, change_id, revision, '.cop%2Fbuild.yaml')
+  url = 'https://%s/changes/%s/revisions/%d/files/%s/content' % (
+      host, change_id, patch_set, '.cop%2Fbuild.yaml')
   data = api.easy.stdout_step('cop-fetch-file', ['curl', '-f', url])
   try:
     return base64.b64decode(data).decode('utf-8')
@@ -115,9 +115,9 @@ def _set_gerrit_review(api: RecipeApi, patch_set, body, name):
   """Call gerrit API to set review. Returns whether the step succeeded."""
   try:
     api.depot_gerrit.call_raw_api(
-        'https://' + patch_set.host, '/changes/%s/revisions/%s/review/' %
-        (patch_set.change_id, patch_set.current_revision), method='POST',
-        body=body, accept_statuses=[200], name=name)
+        'https://' + patch_set.host, '/changes/%s/revisions/%d/review/' %
+        (patch_set.change_id, patch_set.patch_set), method='POST', body=body,
+        accept_statuses=[200], name=name)
   except api.step.InfraFailure:
     return False
   return True
@@ -166,14 +166,14 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
   with api.step.nest('check CoP') as presentation:
     try:
       user_yaml = _fetch_cop_file(api, patch_set.host, patch_set.change_id,
-                                  patch_set.current_revision)
+                                  patch_set.patch_set)
     except api.step.StepFailure:
       presentation.step_text = 'No cop file: Exiting'
       return
 
   with api.step.nest('generate build config') as presentation:
     subs = {
-        '_REF': patch_set.current_revision,
+        '_REF': patch_set.git_fetch_ref,
         '_URL': patch_set.git_fetch_url,
     }
     build_config = _gen_build_config(api, user_yaml, subs)
@@ -262,6 +262,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                     }
                 },
                 '_number': 1,
+                'ref': 'refs/changes/1/23456789/3',
             },
         },
     }
