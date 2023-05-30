@@ -572,9 +572,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       for plan in plan_paths:
         args.extend(['-plan', plan])
 
-      for b in builds:
-        if 'build_target' in b.input.properties:
-          args.extend(['-build', json_format.MessageToJson(b, indent=0)])
+      builds_input_path = host_input_path.join('builds.jsonl')
+      builds_jsonl = '\n'.join([
+          json_format.MessageToJson(b, indent=0).replace('\n', '')
+          for b in builds
+          if 'build_target' in b.input.properties
+      ])
+
+      self.m.file.write_text('write builds.jsonl', builds_input_path,
+                             builds_jsonl, include_log=True)
+      args.extend(['-builds', f'{container_input_path}/builds.jsonl'])
 
       arg_to_host_path = {
           '-dutattributes':

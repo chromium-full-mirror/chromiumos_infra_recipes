@@ -11968,10 +11968,10 @@ Main test logic.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#26)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/get\_testable\_builders](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#11): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#9): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#17)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#14): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

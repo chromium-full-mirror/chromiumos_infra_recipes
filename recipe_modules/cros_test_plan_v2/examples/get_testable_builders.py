@@ -2,8 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from google.protobuf import json_format
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
@@ -42,21 +40,37 @@ def GenTests(api):
   build_2 = build_pb2.Build()
   build_2.builder.builder = 'target2-cq'
   build_2.input.properties['build_target'] = {'name': 'target2'}
+
   yield api.test(
       'basic',
       api.post_process(
           post_process.StepCommandContains,
+          'get testable builders.write builds.jsonl',
+          [
+              'copy',
+              ('{\"builder\": {\"builder\": \"target1-cq\"},\"input\": {\"properties\": {\"build_target\": {\"name\": \"target1\"}}}}\n'
+               '{\"builder\": {\"builder\": \"target2-cq\"},\"input\": {\"properties\": {\"build_target\": {\"name\": \"target2\"}}}}'
+              ),
+              '[CLEANUP]/tmp_tmp_1/builds.jsonl',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
           'get testable builders.docker run',
           [
+              "--image",
+              "us-docker.pkg.dev/cros-registry/test-services/testplan:prod",
+              "--dir-map",
+              "[CLEANUP]/tmp_tmp_1",
+              "/input",
+              "--",
               "get-testable",
               "-plan",
               "/input/root1/example1.star",
               "-plan",
               "/input/root2/example2.star",
-              "-build",
-              json_format.MessageToJson(build_1, indent=0),
-              "-build",
-              json_format.MessageToJson(build_2, indent=0),
+              "-builds",
+              "/input/builds.jsonl",
               "-builderconfigs",
               "/input/builder_configs.binaryproto",
               "-buildmetadata",
