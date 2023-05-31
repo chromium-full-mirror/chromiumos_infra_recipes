@@ -14,3 +14,9 @@ message IncrementalProperties {
   // Whether to run cros clean-outdated-pkgs.
   bool cop_enabled = 2;
 }
+
+enum ErrorType {
+  UNKNOWN = 0;
+  NON_INCREMENTAL = 1;
+  INCREMENTAL = 2;
+}
