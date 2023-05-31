@@ -48,7 +48,7 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str, is_staging: str,
     builder = f'staging-{builder}' if is_staging else builder
     requests = []
     for i in range(0, count):
-      input_properties['shard'] = i
+      input_properties['shard'] = f'{i}'
       requests.append(
           api.buildbucket.schedule_request(bucket=bucket, builder=builder,
                                            properties=input_properties))

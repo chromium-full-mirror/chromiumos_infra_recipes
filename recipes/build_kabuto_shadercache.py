@@ -108,8 +108,16 @@ def DoRunSteps(api: RecipeTestApi,
     # TODO(pobega): For now we want to skip failures so that we can upload logs,
     # this will be changed to using deferred for prod.
     with api.failures.ignore_exceptions():
-      api.step('run kabuto',
-               ['./tools/kabuto/kabuto', '--gcs', '--no-interactive'])
+      kabuto_cmd = ['./tools/kabuto/kabuto', '--gcs', '--no-interactive']
+      if properties.shard:
+        # If a shard number is specified we use that shard's config from
+        # Kabuto's input directory.
+        shard = int(properties.shard)
+        shard_cmd_args = [
+            f'--kabuto-config=tools/kabuto/in/prod/shard-{shard}/kabuto.json'
+        ]
+        kabuto_cmd = kabuto_cmd + shard_cmd_args
+      api.step('run kabuto', kabuto_cmd)
 
     # Upload Kabuto's logs to Google Storage.
     with api.step.nest('upload kabuto logs'):
@@ -152,6 +160,23 @@ def GenTests(api: RecipeTestApi) -> None:
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
       status='FAILURE',
+  )
+
+  # We explicitly want to test shard-0 here since in testing, 0 == False
+  # made the command not update properly.
+  props = good_props.copy()
+  props['shard'] = "0"
+  yield api.test(
+      'shard-specified',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'run kabuto',
+          [
+              "./tools/kabuto/kabuto", "--gcs", "--no-interactive",
+              "--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json"
+          ],
+      ),
   )
 
   props = good_props.copy()
