@@ -329,7 +329,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
-                   replace: bool = False,
+                   replace: bool = False, uprev_packages: bool = True,
                    update: Optional[bool] = None) -> bool:
     """Setup the chroot for the builder.
 
@@ -339,6 +339,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         for example, 2022.01.20.073008.
       bootstrap: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
+      uprev_packages: Whether to uprev packages.
       update: Whether to update the chroot after creating it (overriding the
         builder config). If not given, defer to the builder config. If the
         builder config also does not specify, default to True.
@@ -357,7 +358,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           None, config.artifacts, force_relevance=self._force_relevant_build)
 
     if not self.artifact_build or relevance != Relevance.POINTLESS:
-      self.m.cros_source.uprev_packages()
+      if uprev_packages:
+        self.m.cros_source.uprev_packages()
       # Kick off a chrome source checkout on main asynchronously. Check the
       # docs of the chrome module for more information.
       if ('chromeos.build_menu.chrome_sync'
