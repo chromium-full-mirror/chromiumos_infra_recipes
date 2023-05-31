@@ -16,7 +16,7 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStats
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 
-from google.protobuf import timestamp_pb2
+from google.protobuf import timestamp_pb2, struct_pb2
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
@@ -28,6 +28,7 @@ Snapshot = namedtuple('Snapshot', [
     'end_time',
     'agg_green',
     'approx_snap_age_hours',
+    'target_greenness',
 ])
 
 
@@ -163,6 +164,22 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self.m.buildbucket.search([predicate], limit=limit, fields=fields,
                                      timeout=60)
 
+  def _target_greenness_to_dict(
+      self, target_greenness_list_value: struct_pb2.ListValue
+  ) -> Dict[str, Dict[str, str]]:
+    '''Reformat targetGreenness ListValue to a dictionary, using target as key.
+    '''
+    target_greenness_dict = {}
+    for target_greenness in target_greenness_list_value:
+      # Use build target as key.
+      build_target = target_greenness['target']
+      target_greenness_dict[build_target] = {}
+      # Add other values.
+      for k, v in target_greenness.items():
+        if k != 'target':
+          target_greenness_dict[build_target][k] = v
+    return target_greenness_dict
+
   def _parse_snapshot_result(self,
                              snapshot_result: build_pb2.Build) -> Snapshot:
     '''Parse buildbucket return into Snapshot NamedTuple.
@@ -176,12 +193,18 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       agg_green = int(out_props['greenness']['aggregateMetric'])
     except ValueError:
       agg_green = -1
+    try:
+      target_greenness = self._target_greenness_to_dict(
+          out_props['greenness']['targetGreenness'])
+    except ValueError:
+      target_greenness = []
     approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
     return Snapshot(bbid=snapshot_result.id,
                     commit_sha=snapshot_result.input.gitiles_commit.id,
                     start_time=start_time, end_time=end_time,
                     agg_green=agg_green,
-                    approx_snap_age_hours=approx_snap_age_hours)
+                    approx_snap_age_hours=approx_snap_age_hours,
+                    target_greenness=target_greenness)
 
   def _set_snapshot_stats(
       self,

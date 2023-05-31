@@ -23,7 +23,8 @@ PROPERTIES = {
     'expect_result': Property(default=True),
     'expected_bbid': Property(default=0),
     'expected_greenness': Property(default=100),
-    'expected_commit_sha': Property(default='abaaaa')
+    'expected_commit_sha': Property(default='abaaaa'),
+    'expected_target_greenness': Property(default={}),
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -36,7 +37,12 @@ TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 # Mock builds
 output = build_pb2.Build.Output()
-output.properties['greenness'] = {'aggregateMetric': 80}
+brya_greenness = {"buildMetric": "100", "metric": "98", "target": "brya"}
+eve_greenness = {"buildMetric": "90", "metric": "80", "target": "eve"}
+output.properties['greenness'] = {
+    'aggregateMetric': 80,
+    'targetGreenness': [brya_greenness]
+}
 build_input = build_pb2.Build.Input()
 build_input.gitiles_commit.id = 'ababab'
 green_build = build_pb2.Build(id=123, output=output, input=build_input,
@@ -44,7 +50,10 @@ green_build = build_pb2.Build(id=123, output=output, input=build_input,
                               end_time=TEST_END_TIMESTAMP)
 
 output = build_pb2.Build.Output()
-output.properties['greenness'] = {'aggregateMetric': 98}
+output.properties['greenness'] = {
+    'aggregateMetric': 98,
+    'targetGreenness': [brya_greenness, eve_greenness]
+}
 build_input.gitiles_commit.id = 'sample'
 green_build2 = build_pb2.Build(id=234, output=output, input=build_input,
                                start_time=TEST_START_TIMESTAMP2,
@@ -61,21 +70,29 @@ unscored_build = build_pb2.Build(id=123, input=build_input,
 
 
 def RunSteps(api, expect_result, expected_bbid, expected_greenness,
-             expected_commit_sha):
+             expected_commit_sha, expected_target_greenness):
   snapshot = api.looks_for_green.find_green_snapshot()
   if expect_result:
     api.assertions.assertEqual(expected_bbid, snapshot.bbid)
     api.assertions.assertEqual(expected_greenness, snapshot.agg_green)
     api.assertions.assertEqual(expected_commit_sha, snapshot.commit_sha)
+    api.assertions.assertDictEqual(expected_target_greenness,
+                                   snapshot.target_greenness)
   else:
     api.assertions.assertEqual(None, snapshot)
+
+
+expected_brya_greenness = {"brya": {"buildMetric": "100", "metric": "98"}}
+expected_both_greenness = {"eve": {"buildMetric": "90", "metric": "80"}}
+expected_both_greenness.update(expected_brya_greenness)
 
 
 def GenTests(api):
   yield api.test(
       'success',
       api.properties(expected_bbid=123, expected_greenness=80,
-                     expected_commit_sha='ababab'),
+                     expected_commit_sha='ababab',
+                     expected_target_greenness=expected_brya_greenness),
       api.time.seed(TEST_SEED_TIME_SECONDS),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='cq-orchestrator'),
@@ -107,7 +124,8 @@ def GenTests(api):
   yield api.test(
       'latest-green',
       api.properties(expected_bbid=234, expected_greenness=98,
-                     expected_commit_sha='sample'),
+                     expected_commit_sha='sample',
+                     expected_target_greenness=expected_both_greenness),
       api.time.seed(TEST_SEED_TIME_SECONDS),
       api.buildbucket.simulated_search_results(
           builds=[green_build, green_build2],
@@ -119,7 +137,8 @@ def GenTests(api):
   yield api.test(
       'staging',
       api.properties(expected_bbid=123, expected_greenness=80,
-                     expected_commit_sha='ababab'),
+                     expected_commit_sha='ababab',
+                     expected_target_greenness=expected_brya_greenness),
       api.time.seed(TEST_SEED_TIME_SECONDS),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
                                builder='staging-cq-orchestrator'),
