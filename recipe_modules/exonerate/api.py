@@ -97,12 +97,6 @@ class ExonerateApi(recipe_api.RecipeApi):
         bin_proto) if bin_proto else ExcludeCfg()
     return exoneration_config, excludes_config
 
-  def get_tastless_name(self, test_name):
-    """Return test_name without the tast prefix."""
-    if test_name.startswith('tast.'):
-      return test_name[5:]
-    return test_name
-
   def load_configs(self, mock_data=None):
     """Load configs from binary/json files."""
     self._exoneration_configs = {}
@@ -189,7 +183,7 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: TestCaseResult object changed based on the decision.
     """
-    test_name = self.get_tastless_name(test_case.name)
+    test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
     if self._excludes_enabled and test_name in self._excludes['tests']:
       self._add_log('Excluding {} on {} from exoneration'.format(
           test_name, build_target))
@@ -236,7 +230,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         # If test didn't fail, noop.
         new_test_cases.append(test_case)
       else:
-        test_name = self.get_tastless_name(test_case.name)
+        test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
         if test_name == 'tast':
           # See http://b/246571825 for context. This test case only exists to
           # summarize failures. Remove from the list to let exoneration work
@@ -485,7 +479,7 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     Returns: boolean indicating if test_result was exonerated.
     """
-    test_id = self.get_tastless_name(test_result.test_id)
+    test_id = self.m.exoneration_util.get_tastless_name(test_result.test_id)
     if test_id in self._exonerated_tests:
       build_target = getattr(test_result.variant, 'def')['build_target']
       if build_target in self._exonerated_tests[test_id]:
@@ -609,7 +603,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           stat.build_target = self.m.rdb_util.get_build_target_from_variant(
               failure_rate.variant)
           # Manual exoneration's configs remove the tast prefix from test names.
-          tastless_name = self.get_tastless_name(stat.test_id)
+          tastless_name = self.m.exoneration_util.get_tastless_name(
+              stat.test_id)
           stat.manually_exonerated = self._is_test_name_exonerable(
               tastless_name, stat.build_target)
           stat.consistent_failure_count = (
@@ -699,7 +694,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         continue
       test_cases = result.test_cases
       for test_case in test_cases:
-        test_name = self.get_tastless_name(test_case.name)
+        test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
         if (test_case.verdict == TaskState.VERDICT_UNSPECIFIED or
             test_case.verdict == TaskState.VERDICT_FAILED):
           if not self._is_test_name_exonerable(test_name, build_target):

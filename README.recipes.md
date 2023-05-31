@@ -408,6 +408,7 @@
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results)
   * [exoneration_util:examples/check_overall_limit](#recipes-exoneration_util_examples_check_overall_limit)
+  * [exoneration_util:examples/get_tastless_name](#recipes-exoneration_util_examples_get_tastless_name)
   * [exoneration_util:examples/get_updated_configs](#recipes-exoneration_util_examples_get_updated_configs)
   * [exoneration_util:examples/override_calculation](#recipes-exoneration_util_examples_override_calculation)
   * [exoneration_util:examples/per_target_limit](#recipes-exoneration_util_examples_per_target_limit)
@@ -5219,7 +5220,7 @@ Returns:
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#570)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#564)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -5234,7 +5235,7 @@ and did not exceed any of the limits.
 
 enable excludes config's use.
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#310)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#304)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -5245,7 +5246,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#359)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#353)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -5256,7 +5257,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#389)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#383)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -5268,7 +5269,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#422)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#416)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5289,7 +5290,7 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#531)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#525)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
 
 Get the number of failures in the last 10 independant runs from LUCI Analysis.
 
@@ -5298,7 +5299,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#807)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#802)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5308,7 +5309,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#789)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#784)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5318,7 +5319,7 @@ Args:
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#543)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#537)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
 
 Get the flake count & percent of the test for the last 24 hr period.
 
@@ -5328,7 +5329,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#742)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#737)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5340,11 +5341,7 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exonerate/api.py#100)(self, test_name):**
-
-Return test_name without the tast prefix.
-
-&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#510)(self, test_id: str, board: str, build_target: str, suite: str):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#504)(self, test_id: str, board: str, build_target: str, suite: str):**
 
 Create test_variant dict for LUCI Analysis from inputs.
 
@@ -5360,7 +5357,7 @@ Returns: A dict that contains the test & variant info.
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#480)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#474)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5369,7 +5366,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#672)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#667)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5380,7 +5377,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#710)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#705)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5391,15 +5388,15 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if the result itself is a success.
 
-&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#106)(self, mock_data=None):**
+&mdash; **def [load\_configs](/recipe_modules/exonerate/api.py#100)(self, mock_data=None):**
 
 Load configs from binary/json files.
 
-&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#496)(self):**
+&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#490)(self):**
 
 Populate markdown style info about suites that were exonerated.
 
-&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#156)(self, property_name: str):**
+&mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#150)(self, property_name: str):**
 
 Write exoneration stats to output properties & reset counts.
 
@@ -5414,7 +5411,7 @@ Args:
 
 A module for util functions associated with exoneration.
 
-&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#94)(self, test_stats: List[FailedTestStats], overall_limit: int):**
+&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#100)(self, test_stats: List[FailedTestStats], overall_limit: int):**
 
 Check if automated exoneration exceeded overall limit.
 
@@ -5425,7 +5422,7 @@ Args:
 Returns:
   Boolean indicating if number of exonerations has exceeded overall_limit.
 
-&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#71)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
+&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#77)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
 
 Check if automated exoneration exceeded per target limit.
 
@@ -5437,7 +5434,11 @@ Returns:
   Tuple of boolean indicating if per-target exonerations have exceeded per_target_limit
   and offending build_target. If multiple targets have exceeded, return any one.
 
-&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#111)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
+&mdash; **def [get\_tastless\_name](/recipe_modules/exoneration_util/api.py#26)(self, test_name):**
+
+Return test_name without the tast prefix.
+
+&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#117)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
 
 Update exoneration configs dict based on autoex analysis.
 
@@ -5448,7 +5449,7 @@ Args:
 Returns:
   A map of the same format as manual_configs but is updated to include autoex tests.
 
-&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#46)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
+&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#52)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
 
 Populate and return OverrideInfo based on stats of auto exoneration.
 
@@ -5459,7 +5460,7 @@ Args:
 
 Returns: OverrideInfo based on auto exoneration statistics.
 
-&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#26)(self, test_variant_list: List[dict]):**
+&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#32)(self, test_variant_list: List[dict]):**
 
 Query failure rate from luci_analysis.
 
@@ -12278,6 +12279,12 @@ json files.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/check_overall_limit.py#17)(api):**
+### *recipes* / [exoneration\_util:examples/get\_tastless\_name](/recipe_modules/exoneration_util/examples/get_tastless_name.py)
+
+[DEPS](/recipe_modules/exoneration_util/examples/get_tastless_name.py#8): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/get_tastless_name.py#16)(api):**
 ### *recipes* / [exoneration\_util:examples/get\_updated\_configs](/recipe_modules/exoneration_util/examples/get_updated_configs.py)
 
 [DEPS](/recipe_modules/exoneration_util/examples/get_updated_configs.py#9): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

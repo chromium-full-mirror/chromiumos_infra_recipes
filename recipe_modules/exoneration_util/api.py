@@ -23,6 +23,12 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
     super().__init__(**kwargs)
     self._enablement_repos = properties.enablement_repos
 
+  def get_tastless_name(self, test_name):
+    """Return test_name without the tast prefix."""
+    if test_name.startswith('tast.'):
+      return test_name[5:]
+    return test_name
+
   def query_failure_rate(
       self,
       test_variant_list: List[dict]) -> List[TestVariantFailureRateAnalysis]:
@@ -122,9 +128,10 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
     updated_configs = manual_configs
     for failed_test in test_stats:
       if failed_test.automatically_exonerated and not failed_test.manually_exonerated:
-        if failed_test.test_id in updated_configs:
-          updated_configs[failed_test.test_id].append(failed_test.build_target)
+        test_name = self.get_tastless_name(failed_test.test_id)
+        if test_name in updated_configs:
+          updated_configs[test_name].append(failed_test.build_target)
         else:
-          updated_configs[failed_test.test_id] = [failed_test.build_target]
+          updated_configs[test_name] = [failed_test.build_target]
 
     return updated_configs
