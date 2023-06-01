@@ -597,7 +597,10 @@ class TastExecApi(RecipeApi):
         try:
           self.m.gcloud.get_instance_serial_output(instance, project, zone)
         finally:
-          self.m.gcloud.delete_instance(instance, project, zone)
+          # Ignore any exceptions when deleting the instance as to not block
+          # test result reporting.
+          with self.m.failures.ignore_exceptions():
+            self.m.gcloud.delete_instance(instance, project, zone)
 
     return gce_vm_context
 

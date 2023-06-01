@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'easy',
+    'failures',
     'gcloud',
     'git',
     'tast_results',

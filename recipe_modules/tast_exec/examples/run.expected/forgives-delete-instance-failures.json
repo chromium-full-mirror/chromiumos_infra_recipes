@@ -1,0 +1,5227 @@
+[
+  {
+    "cmd": [],
+    "name": "setup tast"
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket/path/autotest_server_package.tar.bz2",
+      "[CLEANUP]/temp_tmp_1/autotest_server_package.tar.bz2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup tast.gsutil download tast bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xjf",
+      "[CLEANUP]/temp_tmp_1/autotest_server_package.tar.bz2",
+      "--directory",
+      "[CLEANUP]/temp_tmp_1"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup tast.untar tast",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup vm image"
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://bucket/path/image.zip",
+      "[CLEANUP]/temp_tmp_2/image.zip"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.gsutil download image bundle from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
+      "--json-input",
+      "{\"archive_file\": \"[CLEANUP]/temp_tmp_2/image.zip\", \"include_files\": [\"chromiumos_test_image.bin\", \"id_rsa\"], \"output\": \"[CLEANUP]/temp_tmp_2/image\", \"safe_mode\": true}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.unzip image bundle",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/chromiumos_test_image.bin",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.convert image to qcow format",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup vm image.fetch partner ssh key for chromeos images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "main",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chrome-internal.googlesource.com/chromeos/sshkeys",
+      "[CLEANUP]/sshkeys_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.fetch partner ssh key for chromeos images.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/sshkeys_tmp_1/partner_testing_rsa",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.fetch partner ssh key for chromeos images.copy ssh key (partner_testing_rsa)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "chmod",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "--mode",
+      "400"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "setup vm image.fetch partner ssh key for chromeos images.calibrate ssh key permissions (partner_testing_rsa)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
+      "@@@STEP_LOG_END@tests@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "help",
+      "run"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.tast help run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_1",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_1",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_1",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_1/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "localhost:9222",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.tast list",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_1",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-systemservicestimeout=600",
+      "localhost:9222",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.connect via ssh (2)",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.remove temporary artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_1/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_1"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_1"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.remove overlay image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_1",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_1",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.read streamed_results.jsonl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.process tast output.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_1\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {}, @@@",
+      "@@@STEP_LOG_LINE@config@    \"include\": false, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.process tast output.upload test results to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-tag",
+      "builder_name:tast_vm",
+      "-tag",
+      "hostname:vm",
+      "-tag",
+      "job_name:bb-8945511751514863184-project/ci/builder",
+      "-tag",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "-tag",
+      "queued_time:2018-05-25 23:50:17.000000 UTC",
+      "-tag",
+      "task_id:fake-task-i0",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "[CLEANUP]/test-results_tmp_1/streamed_results.jsonl",
+      "-artifact-directory",
+      "[CLEANUP]/test-results_tmp_1",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"tast_vm\"}], \"testId\": \"some.test\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        ], @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration.process tast output.GS upload first_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_1",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.GS upload first_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "tests to retry",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@reason_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_END@retry_config@@@",
+      "@@@STEP_LOG_LINE@failed_tests@{'arc.Boot': name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@}@@@",
+      "@@@STEP_LOG_END@failed_tests@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
+      "@@@STEP_LOG_END@matches@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/vm_retry.binaryproto",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tests to retry.fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
+      "@@@STEP_LOG_END@tests@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_2",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_2",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_2",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_2/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "localhost:9222",
+      "arc.Boot"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.tast list",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_2",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-systemservicestimeout=600",
+      "localhost:9222",
+      "arc.Boot"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.connect via ssh (2)",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.remove temporary artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_2/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_2"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.remove overlay image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_2",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_2",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration.process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_2/streamed_results.jsonl",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.read streamed_results.jsonl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration.process tast output.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_2\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {}, @@@",
+      "@@@STEP_LOG_LINE@config@    \"include\": true, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_2/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-tag",
+      "builder_name:tast_vm",
+      "-tag",
+      "hostname:vm",
+      "-tag",
+      "job_name:bb-8945511751514863184-project/ci/builder",
+      "-tag",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "-tag",
+      "queued_time:2018-05-25 23:50:17.000000 UTC",
+      "-tag",
+      "task_id:fake-task-i0",
+      "-coerce-negative-duration",
+      "-new",
+      "-realm",
+      "project:ci",
+      "-include",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "[CLEANUP]/test-results_tmp_2/streamed_results.jsonl",
+      "-artifact-directory",
+      "[CLEANUP]/test-results_tmp_2",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"tast_vm\"}], \"testId\": \"some.test\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        ], @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration.process tast output.GS upload second_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/second_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_2",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.GS upload second_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set greenness",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@greenness@83@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs",
+    "~followup_annotations": [
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs.copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_1"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs.loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs.GS upload system_logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/var-log-dump_tmp_1",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/system_logs"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs.GS upload system_logs.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create qcow image overlay"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "count online CPUs"
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_3",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_3",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_3",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_3/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "launch image as vm"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "connect via ssh",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "localhost:9222",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast list",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/temp_tmp_3",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-systemservicestimeout=600",
+      "localhost:9222",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast run",
+    "timeout": 5400
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "connect via ssh (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "rsync artifacts to a temporary location on the VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "gather artifacts on VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove temporary artifacts"
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/temp_tmp_3/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "download artifacts from VM",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_3"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check if VM running"
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_3"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "kill vm"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove overlay image"
+  },
+  {
+    "cmd": [],
+    "name": "qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_3",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_3",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_4/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create qcow image overlay (2)"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "count online CPUs (2)"
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_4",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_4",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_4",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_4/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "launch image as vm (2)"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "connect via ssh (3)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "localhost:9222",
+      "example.Pass"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast list (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/temp_tmp_3",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-var=myVar=myVal",
+      "-systemservicestimeout=600",
+      "localhost:9222",
+      "example.Pass"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tast run (2)",
+    "timeout": 5400
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "connect via ssh (4)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "rsync artifacts to a temporary location on the VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "gather artifacts on VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove temporary artifacts (2)"
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost:/tmp/artifacts.tar",
+      "[CLEANUP]/temp_tmp_3/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "download artifacts from VM (2)",
+    "timeout": 300
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_4"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check if VM running (2)"
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_4"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "kill vm (2)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_4/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "remove overlay image (2)"
+  },
+  {
+    "cmd": [],
+    "name": "qemu logs (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "qemu logs (2).reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_4",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "qemu logs (2).reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run VM context"
+  },
+  {
+    "cmd": [
+      "qemu-img",
+      "create",
+      "-f",
+      "qcow2",
+      "-F",
+      "qcow2",
+      "-b",
+      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
+      "[CLEANUP]/image-overlay_tmp_5/qcow2.img"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.create qcow image overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "/usr/bin/qemu-system-x86_64",
+      "-m",
+      "8G",
+      "-smp",
+      "8",
+      "-vga",
+      "virtio",
+      "-daemonize",
+      "-usbdevice",
+      "tablet",
+      "-pidfile",
+      "[CLEANUP]/kvm-pid_tmp_5",
+      "-chardev",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_5",
+      "-serial",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_5",
+      "-mon",
+      "chardev=control_pipe",
+      "-cpu",
+      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
+      "-device",
+      "virtio-net,netdev=eth0",
+      "-device",
+      "virtio-scsi-pci,id=scsi",
+      "-device",
+      "virtio-rng",
+      "-device",
+      "scsi-hd,drive=hd",
+      "-drive",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_5/qcow2.img,cache=unsafe,format=qcow2",
+      "-netdev",
+      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
+      "-enable-kvm",
+      "-display",
+      "none",
+      "-device",
+      "scsi-hd,drive=hd2",
+      "-drive",
+      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.launch image as vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "9222",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@localhost",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pgrep",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_5"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.check if VM running",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "pkill",
+      "-F",
+      "[CLEANUP]/kvm-pid_tmp_5"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.kill vm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[CLEANUP]/image-overlay_tmp_5/qcow2.img"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.remove overlay image",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run VM context.qemu logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
+      "@@@STEP_LOG_END@kvm.monitor@@@",
+      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
+      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor_tmp_5",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.qemu logs.reading file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor_tmp_5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/kvm-monitor-serial_tmp_5",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run VM context.qemu logs.reading file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
+      "@@@STEP_LOG_END@tests@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "create",
+      "image",
+      "--image=image",
+      "--project=project",
+      "--machine-type=machine",
+      "--no-scopes",
+      "--zone=zone",
+      "--format=json",
+      "--network=network",
+      "--subnet=subnet",
+      "--no-address"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).create instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"accessConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"kind\": \"compute#accessConfig\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"external-nat\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"natIP\": \"8.8.8.8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"networkTier\": \"PREMIUM\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"type\": \"ONE_TO_ONE_NAT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "172.16.0.15:22",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).tast list",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_3",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-systemservicestimeout=600",
+      "172.16.0.15:22",
+      "!informational"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).connect via ssh (2)",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).remove temporary artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_3/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).get instance serial output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@serial output@@@@",
+      "@@@STEP_LOG_END@serial output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "get-serial-port-output",
+      "betty-arc-r-3447702",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).delete instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).delete instance (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_3/streamed_results.jsonl",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.read streamed_results.jsonl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).process tast output.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_3\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {}, @@@",
+      "@@@STEP_LOG_LINE@config@    \"include\": false, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_3/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-tag",
+      "builder_name:tast_vm",
+      "-tag",
+      "hostname:vm",
+      "-tag",
+      "job_name:bb-8945511751514863184-project/ci/builder",
+      "-tag",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "-tag",
+      "queued_time:2018-05-25 23:50:17.000000 UTC",
+      "-tag",
+      "task_id:fake-task-i0",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "[CLEANUP]/test-results_tmp_3/streamed_results.jsonl",
+      "-artifact-directory",
+      "[CLEANUP]/test-results_tmp_3",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/first_results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"tast_vm\"}], \"testId\": \"some.test\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        ], @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "first tast iteration (2).process tast output.GS upload first_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/first_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_3",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/first_results"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.GS upload first_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "tests to retry (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@retry_config@test_suite: \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@  requires_restart: true@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@suite_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Test did not finish\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_LINE@retry_config@reason_scenarios {@@@",
+      "@@@STEP_LOG_LINE@retry_config@  reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@retry_config@  verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@retry_config@}@@@",
+      "@@@STEP_LOG_END@retry_config@@@",
+      "@@@STEP_LOG_LINE@failed_tests@{'arc.Boot': name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@failed_tests@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@failed_tests@}@@@",
+      "@@@STEP_LOG_END@failed_tests@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@Found match name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@human_readable_summary: \"Lost SSH connection to VM\"@@@",
+      "@@@STEP_LOG_LINE@matches@<->test_name: \"arc.Boot\"@@@",
+      "@@@STEP_LOG_LINE@matches@reason: \"Lost SSH connection\"@@@",
+      "@@@STEP_LOG_LINE@matches@verdict: VERDICT_FAILED@@@",
+      "@@@STEP_LOG_LINE@matches@requires_restart: true@@@",
+      "@@@STEP_LOG_END@matches@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/generated/vm_retry.binaryproto",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "tests to retry (2).fetch HEAD:testingconfig/generated/vm_retry.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@tests@some.test@@@",
+      "@@@STEP_LOG_END@tests@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "create",
+      "image",
+      "--image=image",
+      "--project=project",
+      "--machine-type=machine",
+      "--no-scopes",
+      "--zone=zone",
+      "--format=json",
+      "--network=network",
+      "--subnet=subnet",
+      "--no-address"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).create instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"canIpForward\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"cpuPlatform\": \"Intel Cascade Lake\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"creationTimestamp\": \"2021-10-20T22:58:08.883-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"deletionProtection\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"disks\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"autoDelete\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"boot\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"deviceName\": \"persistent-disk-0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"diskSizeGb\": \"17\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"index\": 0, @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"interface\": \"SCSI\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#attachedDisk\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"licenses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"mode\": \"READ_WRITE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"source\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/disks/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"type\": \"PERSISTENT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"fingerprint\": \"96TqUn4aIDM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"4143780481849933727\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"kind\": \"compute#instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"labelFingerprint\": \"42WmSpB8rSM=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"lastStartTimestamp\": \"2021-10-20T22:58:22.786-07:00\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"machineType\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/machineTypes/n2-standard-8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"rNGahkL14fg=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"kind\": \"compute#metadata\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"name\": \"betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"networkInterfaces\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"accessConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"kind\": \"compute#accessConfig\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"name\": \"external-nat\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"natIP\": \"8.8.8.8\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"networkTier\": \"PREMIUM\", @@@",
+      "@@@STEP_LOG_LINE@json.output@            \"type\": \"ONE_TO_ONE_NAT\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ], @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fingerprint\": \"U3oPE5xhuUo=\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"kind\": \"compute#networkInterface\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"name\": \"nic0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"network\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/global/networks/chromeos-gce-tests\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"networkIP\": \"172.16.0.15\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"stackType\": \"IPV4_ONLY\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subnetwork\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/regions/us-central1/subnetworks/us-central1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"scheduling\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"automaticRestart\": true, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"onHostMaintenance\": \"MIGRATE\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"preemptible\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"selfLink\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a/instances/betty-arc-r-3447702\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"startRestricted\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"RUNNING\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"tags\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"fingerprint\": \"42WmSpB8rSM=\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"zone\": \"https://www.googleapis.com/compute/v1/projects/chromeos-gce-tests/zones/us-central1-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).connect via ssh",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "list",
+      "-build=false",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "172.16.0.15:22",
+      "arc.Boot"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).tast list",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/temp_tmp_1/tast/tast",
+      "-verbose",
+      "run",
+      "-build=false",
+      "-sshretries=2",
+      "-downloadprivatebundles=true",
+      "-buildartifactsurl=gs://artifacts-bucket/artifacts-path/",
+      "-waituntilready",
+      "-continueafterfailure",
+      "-extrauseflags=tast_vm",
+      "-var=setup.FieldTrialConfig=disable",
+      "-defaultvarsdir=[CLEANUP]/temp_tmp_1/tast/vars",
+      "-resultsdir",
+      "[CLEANUP]/test-results_tmp_4",
+      "-remotebundledir=[CLEANUP]/temp_tmp_1/tast/bundles/remote",
+      "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
+      "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
+      "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
+      "-systemservicestimeout=600",
+      "172.16.0.15:22",
+      "arc.Boot"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).tast run",
+    "timeout": 5400,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "true"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).connect via ssh (2)",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "rsync",
+      "--links",
+      "--recursive",
+      "/var/log",
+      "/var/spool/crash",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).rsync artifacts to a temporary location on the VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-p",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15",
+      "--",
+      "tar",
+      "cf",
+      "/tmp/artifacts.tar",
+      "/tmp/vm-artifacts/*"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).gather artifacts on VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "/tmp/vm-artifacts"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).remove temporary artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "scp",
+      "-P",
+      "22",
+      "-oConnectionAttempts=4",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oProtocol=2",
+      "-oConnectTimeout=30",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oServerAliveInterval=15",
+      "-oNumberOfPasswordPrompts=0",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
+      "root@172.16.0.15:/tmp/artifacts.tar",
+      "[CLEANUP]/test-results_tmp_4/artifacts.tar"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).download artifacts from VM",
+    "timeout": 300,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).get instance serial output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@serial output@@@@",
+      "@@@STEP_LOG_END@serial output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "get-serial-port-output",
+      "betty-arc-r-3447702",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).get instance serial output.gcloud compute instances get-serial-port-output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).delete instance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "gcloud",
+      "compute",
+      "instances",
+      "delete",
+      "betty-arc-r-3447702",
+      "--quiet",
+      "--zone=zone",
+      "--project=project"
+    ],
+    "env": {
+      "VIRTUAL_ENV": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).delete instance (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).process tast output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/test-results_tmp_4/streamed_results.jsonl",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.read streamed_results.jsonl",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.Boot\", \"bundle:cros\", \"dep:chrome\", \"dep:android_all\", \"group:mainline\"], \"contacts\": [\"ereth@chromium.org\", \"arc-core@google.com\", \"nya@chromium.org\"], \"data\": null, \"desc\": \"Checks that Android boots\", \"end\": \"2020-01-27T15:16:33.420622341-08:00\", \"errors\": [{\"reason\": \"Lost SSH connection to VM\"}], \"name\": \"arc.Boot\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.Boot\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"chrome\", \"android_all\"], \"start\": \"2020-01-27T15:16:15.146771555-08:00\", \"timeout\": 300000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.BuildProperties\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"niwa@chromium.org\", \"risan@chromium.org\", \"arc-eng@google.com\"], \"data\": null, \"desc\": \"Checks important Android properties such as first_api_level\", \"end\": \"2020-01-27T15:16:36.833644627-08:00\", \"errors\": null, \"name\": \"arc.BuildProperties\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.BuildProperties\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:33.421007899-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_LINE@streamed_results.jsonl@{\"additionalTime\": 30000000000, \"attr\": [\"name:arc.MiniContainerState\", \"bundle:cros\", \"dep:android\", \"dep:chrome\", \"group:mainline\"], \"contacts\": [\"yusukes@chromium.org\", \"arc-core@google.com\", \"hidehiko@chromium.org\"], \"data\": null, \"desc\": \"Verifies ARC mini container starts right after Chrome OS shows the login screen\", \"end\": \"2020-01-27T15:16:40.090886944-08:00\", \"errors\": null, \"name\": \"arc.MiniContainerState\", \"outDir\": \"/tmp/vm-test-results.JxZdcJ/tests/arc.MiniContainerState\", \"pkg\": \"chromiumos/tast/local/bundles/cros/arc\", \"skipReason\": \"\", \"softwareDeps\": [\"android\", \"chrome\"], \"start\": \"2020-01-27T15:16:36.833776957-08:00\", \"timeout\": 240000000000, \"unknownField\": 123}@@@",
+      "@@@STEP_LOG_END@streamed_results.jsonl@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).process tast output.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"[CLEANUP]/test-results_tmp_4\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ], @@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@config@            \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ], @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {}, @@@",
+      "@@@STEP_LOG_LINE@config@    \"include\": true, @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_4/streamed_results.jsonl\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-tag",
+      "builder_name:tast_vm",
+      "-tag",
+      "hostname:vm",
+      "-tag",
+      "job_name:bb-8945511751514863184-project/ci/builder",
+      "-tag",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "-tag",
+      "queued_time:2018-05-25 23:50:17.000000 UTC",
+      "-tag",
+      "task_id:fake-task-i0",
+      "-coerce-negative-duration",
+      "-new",
+      "-realm",
+      "project:ci",
+      "-include",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "[CLEANUP]/test-results_tmp_4/streamed_results.jsonl",
+      "-artifact-directory",
+      "[CLEANUP]/test-results_tmp_4",
+      "-invocation-link-artifacts",
+      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/second_results",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateTestResults",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.upload missing test cases (count: 1)",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"tast_vm\"}], \"testId\": \"some.test\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"expected\": false, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.test/results/8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\", @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"hostname\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"fake-task-i0\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }, @@@",
+      "@@@STEP_LOG_LINE@json.input@          {@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\", @@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"tast_vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@          }@@@",
+      "@@@STEP_LOG_LINE@json.input@        ], @@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.test\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "second tast iteration (2).process tast output.GS upload second_results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/second_results@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/test-results_tmp_4",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/second_results"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.GS upload second_results.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set properties (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@all_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}, {\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}, {\"name\": \"arc.BuildProperties\", \"verdict\": \"VERDICT_PASSED\"}, {\"name\": \"arc.MiniContainerState\", \"verdict\": \"VERDICT_PASSED\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_cases@[{\"humanReadableSummary\": \"Lost SSH connection to VM\", \"name\": \"arc.Boot\", \"verdict\": \"VERDICT_FAILED\"}]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set greenness (2)",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@greenness@83@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs (2)",
+    "~followup_annotations": [
+      "@@@STEP_LINK@system_logs@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "cp",
+      "-rf",
+      "/var/log",
+      "[CLEANUP]/var-log-dump_tmp_2"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs (2).copy logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "chmod",
+      "-R",
+      "777",
+      "[CLEANUP]/var-log-dump_tmp_2"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs (2).loosen permission",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record logs (2).GS upload system_logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/system_logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "[CLEANUP]/var-log-dump_tmp_2",
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/system_logs"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "record logs (2).GS upload system_logs.gsutil rsync",
+    "timeout": 120,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

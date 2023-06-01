@@ -92,7 +92,8 @@ def RunSteps(api: RecipeApi,
 
     return api.failures.aggregate_failures(results)
   finally:
-    api.gcloud.delete_image(image)
+    with api.failures.ignore_exceptions():
+      api.gcloud.delete_image(image)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -113,6 +114,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   yield api.test('basic', props, api.buildbucket.generic_build())
+
+  yield api.test(
+      'forgives-delete-image-failure',
+      props,
+      api.buildbucket.generic_build(),
+      api.step_data('delete image', retcode=1),
+      api.step_data('delete image (2)', retcode=1),
+  )
 
   yield api.test('led-build', props, api.buildbucket.generic_build(build_id=0))
 
