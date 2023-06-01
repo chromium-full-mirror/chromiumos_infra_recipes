@@ -410,7 +410,8 @@ class CrosSdkApi(RecipeApi):
 
   def create_chroot(self, version=None, bootstrap=False, sdk_version=None,
                     timeout_sec='DEFAULT', test_data=None,
-                    test_toolchain_cls=None, name=None, replace=False):
+                    test_toolchain_cls=None, name=None, replace=False,
+                    chroot_upgrade: bool = True):
     """Initialize the chroot and link it into the workspace.
 
     Create a chroot if one does not already exist in the chroot path. If one
@@ -431,6 +432,7 @@ class CrosSdkApi(RecipeApi):
       name (str): Step name.  Default: 'init sdk'.
       replace (boolean): Whether to replace the chroot if it already exists.
           Default: False.
+      chroot_upgrade: Whether to update SDK packages.
 
     Returns:
       chromiumos_pb2.Chroot protobuf for the chroot.
@@ -458,8 +460,9 @@ class CrosSdkApi(RecipeApi):
                 flags=CreateSdkRequest.Flags(no_replace=no_replace,
                                              no_use_image=True,
                                              bootstrap=bootstrap),
-                chroot=self.chroot, sdk_version=sdk_version),
-            timeout=timeout_sec, test_output_data=test_data)
+                chroot=self.chroot, sdk_version=sdk_version,
+                skip_chroot_upgrade=not chroot_upgrade), timeout=timeout_sec,
+            test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
         self.link_chroot(self.m.cros_source.workspace_path)
