@@ -253,16 +253,16 @@ class ExonerateApi(recipe_api.RecipeApi):
     return new_test_cases, new_verdict
 
   def _exonerate_child_results(self, results, build_target, board):
-    """Exonerates [WaitTaskResult.Task] based on configs.
+    """Exonerates [ExecuteResponse.TaskResult] based on configs.
 
     Args:
-      results([WaitTaskResult.Task]): child results to be
+      results([ExecuteResponse.TaskResult]): child results to be
         conditionally exonerated.
       build_target(str): build_target on which the test was executed.
       board(str): board on which the test was executed.
 
-    Returns: list of WaitTaskResult.Task changed based on the decision, new
-      overall status of the results.
+    Returns: list of ExecuteResponse.TaskResult changed based on the decision,
+      new overall status of the results.
     """
     if not results:
       # If input is empty, assume tests didn't run and return a fail result.

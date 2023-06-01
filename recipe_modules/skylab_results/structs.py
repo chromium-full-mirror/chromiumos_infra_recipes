@@ -18,7 +18,7 @@ SkylabTask = namedtuple('SkylabTask', ['id', 'url', 'test', 'unit'])
 # Fields:
 #   task (SkylabTask): The SkylabTask that ran.
 #   status (common_pb2.Status): Representation of the task status.
-#   child_results (list[WaitTaskResult.Task]): The task result of individual tests within.
+#   child_results (list[ExecuteResponse.TaskResult]): The task result of individual tests within.
 SkylabResult = namedtuple('SkylabResult', ['task', 'status', 'child_results'])
 
 # (HwTestUnit, HwTest) tuple
