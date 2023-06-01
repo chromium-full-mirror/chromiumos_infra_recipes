@@ -163,11 +163,12 @@ def main(argv: List[str]):
 
 class Commit:
 
-  def __init__(self, git_hash, username, message):
+  def __init__(self, git_hash, username, message, date):
     self.hash = git_hash
     self.username = username
     self.message = message
     self.cipd_instance = None
+    self.date = date
 
   @property
   def short_hash(self):
@@ -196,7 +197,7 @@ class Commit:
     cipd_instance_str = (f'({self.get_cipd_instance()}) '
                          if show_instances else '')
     return (f'{cipd_instance_str}'
-            f'{BOLDBLUE}{self.short_hash} '
+            f'{BOLDBLUE}{self.short_hash} ({self.date})'
             f'{BOLDGREEN}[{self.username}] '
             f'{RESET}{self.message}')
 
@@ -341,7 +342,7 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash) -> List[Commit]:
   """
   print('=== Checking for pending changes ===')
   print('Here are the changes from the provided (or default main) environment:')
-  fmt = '%H %al %s'  # %H=commit, %al=user, %s=summary
+  fmt = '%H|%al|%s|%cr'  # %H=commit, %al=user, %s=summary, %ch=commit date
   cmd = [
       'git', 'log', '--graph', f'--pretty=format:{fmt}',
       f'{from_hash}..{to_hash}'
@@ -353,8 +354,9 @@ def get_pending_changes(from_hash: GitHash, to_hash: GitHash) -> List[Commit]:
   for line in lines:
     if not line:
       continue
-    commit_hash, commit_user, commit_message = line.split(' ', 2)
-    changes.append(Commit(commit_hash, commit_user, commit_message))
+    commit_hash, commit_user, commit_message, commit_date = line.split('|')
+    changes.append(
+        Commit(commit_hash, commit_user, commit_message, commit_date))
   return changes
 
 
@@ -447,7 +449,7 @@ def check_recent_build_statuses(
 
   success = set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'})
   success_str = f'{BOLDGREEN}Success{RESET}' if success else f'{BOLDRED}Non-success{RESET}'
-  status_str = f'{success_str}: {builder} --> {", ".join(sorted(list(found_statuses)))}'
+  status_str = f'{success_str}: {get_builder_link(builder)} --> {", ".join(sorted(list(found_statuses)))}'
 
   # If there have been changes since the most recent build, add a line to the
   # status.
@@ -573,6 +575,15 @@ def get_email_link(pending_changes: List[Commit]) -> str:
   })
   url = f'https://mail.google.com/mail?{url_params}'
   return url
+
+
+def get_builder_link(builder: str) -> str:
+  if not builder.startswith('chromeos/staging/'):
+    raise ValueError(
+        f"expected builder to start with 'chromeos/staging', got {builder}")
+
+  builder_name = builder.replace('chromeos/staging/', '', 1)
+  return f'https://ci.chromium.org/p/chromeos/builders/staging/{builder_name}'
 
 
 if __name__ == '__main__':
