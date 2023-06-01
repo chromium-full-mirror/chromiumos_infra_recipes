@@ -1101,11 +1101,6 @@ def _get_context_deadline(api, limit_seconds, step):
   return deadline
 
 
-def get_use_ile_de_france(_models, _ile_de_france_config):
-  """Not yet implemented"""
-  return False  # pragma: nocover
-
-
 def execute_ile_de_france(api, properties, dut_state):
   """Whether to use Ile-de-France or not.
 
@@ -1123,9 +1118,9 @@ def execute_ile_de_france(api, properties, dut_state):
   hostnames = api.cros_tags.get_values(
       'dut_name', api.buildbucket.build.infra.swarming.bot_dimensions)
 
-  use_ile_de_france = get_use_ile_de_france(
-      _models=models, _ile_de_france_config=properties.common_config
-      .enable_ile_de_france_config)
+  use_ile_de_france = api.labpack.get_use_ile_de_france(
+      models=models,
+      ile_de_france_config=properties.common_config.enable_ile_de_france_config)
 
   if not use_ile_de_france:  # pragma: nocover
     return dut_state  # pragma: nocover

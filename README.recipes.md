@@ -499,6 +499,7 @@
   * [key_value_store:tests/parse](#recipes-key_value_store_tests_parse)
   * [key_value_store:tests/update_one_value](#recipes-key_value_store_tests_update_one_value)
   * [labpack:tests/test_ensure_labpack](#recipes-labpack_tests_test_ensure_labpack) &mdash; test_ensure_labpack.
+  * [labpack:tests/test_get_use_ile_de_france](#recipes-labpack_tests_test_get_use_ile_de_france) &mdash; test_run_labpack.
   * [labpack:tests/test_run_labpack](#recipes-labpack_tests_test_run_labpack) &mdash; test_run_labpack.
   * [labpack:tests/test_timeout](#recipes-labpack_tests_test_timeout) &mdash; test_timeout.
   * [libchrome_uprev](#recipes-libchrome_uprev) &mdash; Recipe for upreving libchrome.
@@ -7426,6 +7427,10 @@ See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#107)(models, ile_de_france_config):**
+
+Not yet implemented
+
 &mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#32)(self):**
 
 &mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#77)(self, labpack_input: LabpackInput, \*\*kwargs):**
@@ -12901,6 +12906,14 @@ exists.
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_ensure_labpack.py#24)(api):**
 
 RunSteps runs ensure_labpack
+### *recipes* / [labpack:tests/test\_get\_use\_ile\_de\_france](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py)
+
+[DEPS](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#11): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+test_run_labpack.py is a smoke test for the run_labpack function.
+
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#18)(api):**
 ### *recipes* / [labpack:tests/test\_run\_labpack](/recipe_modules/labpack/tests/test_run_labpack.py)
 
 [DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14202,7 +14215,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1852)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1847)(api, properties):**
 
 Entrypoint to the script
 
@@ -14227,7 +14240,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1613)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1608)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -14239,7 +14252,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execute\_ile\_de\_france](/recipes/test_platform/test_runner.py#1109)(api, properties, dut_state):**
+&mdash; **def [execute\_ile\_de\_france](/recipes/test_platform/test_runner.py#1104)(api, properties, dut_state):**
 
 Whether to use Ile-de-France or not.
 
@@ -14251,7 +14264,7 @@ Args:
 Returns:
   * the outgoing dut_state
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1347)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1342)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -14267,7 +14280,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1261)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1256)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -14283,11 +14296,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [get\_use\_ile\_de\_france](/recipes/test_platform/test_runner.py#1104)(_models, _ile_de_france_config):**
-
-Not yet implemented
-
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1232)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1227)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -14298,7 +14307,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1806)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1801)(api, properties):**
 
 Run test and upload results.
 
@@ -14335,7 +14344,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1685)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1680)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

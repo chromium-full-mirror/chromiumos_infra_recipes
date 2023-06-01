@@ -103,3 +103,10 @@ class LabpackCommand(recipe_api.RecipeApi):
     assert isinstance(out, StepData), "out unexpectedly has type {}".format(
         type(out))
     return out
+
+  @staticmethod
+  def get_use_ile_de_france(models, ile_de_france_config):
+    """Not yet implemented"""
+    _ = models
+    _ = ile_de_france_config
+    return False  # pragma: nocover
