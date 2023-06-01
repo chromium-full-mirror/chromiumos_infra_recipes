@@ -94,7 +94,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                   retry_fetches=3, force_remove_dirty=True)
     api.build_menu.setup_chroot(no_chroot_timeout=False, bootstrap=False,
-                                replace=False, update=False)
+                                replace=False, update=False,
+                                uprev_packages=False)
 
     api.cros_sdk.update_chroot(
         toolchain_targets=[api.build_menu.build_target],
