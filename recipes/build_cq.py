@@ -132,6 +132,12 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
       if async_unit_tests_enabled:
         api.build_menu.build_images(config)
         uploaded_artifacts = api.build_menu.upload_artifacts(config)
+
+        # Pause and throw if test containers failed to upload. Note that this
+        # is done before the image_artifacts_uploaded property is set, as
+        # containers need to be present for testing.
+        test_containers_runner.wait_for_and_throw()
+
         # Set a property to indicate image artifacts are uploaded, so CQ
         # orchestrator can poll for this property.
         api.easy.set_properties_step(image_artifacts_uploaded=True)
@@ -141,16 +147,16 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
         # check the return value.
         api.build_menu.unit_test_images(config)
       else:
-        # We have no steps following build_and_test_images, so we don't need to
-        # check the return value.
+        # Steps following build_and_test_images should alwasy run, so we don't
+        # need to check the return value.
         api.build_menu.build_and_test_images(config)
+
+        test_containers_runner.wait_for_and_throw()
+
 
       # Publish image and package sizes.
       # This method, as written, is expected to never raise exceptions.
       api.build_menu.publish_image_size_data(config)
-
-      # Pause and throw if test containers failed to upload.
-      test_containers_runner.wait_for_and_throw()
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (as stated above there is value in uploading the artifact even
