@@ -1391,7 +1391,7 @@ class CrosSourceApi(RecipeApi):
     """
     manifest_url = manifest_url or self.m.src_state.internal_manifest.url
     with self.m.step.nest('sync to gitiles commit'), self.m.context(
-        cwd=self.workspace_path):
+        cwd=self.workspace_path, infra_steps=True):
       self._manifest_branch = self._gitiles_branch(gitiles_commit.ref)
       self._sync_target = dict(call='sync_snapshot',
                                commit=MessageToDict(gitiles_commit))

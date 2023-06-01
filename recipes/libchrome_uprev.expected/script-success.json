@@ -1147,6 +1147,7 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "name": "sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -1307,6 +1308,7 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "name": "sync to gitiles commit.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

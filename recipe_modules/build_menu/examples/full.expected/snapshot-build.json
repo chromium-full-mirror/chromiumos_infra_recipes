@@ -1789,6 +1789,7 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -2009,6 +2010,7 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"

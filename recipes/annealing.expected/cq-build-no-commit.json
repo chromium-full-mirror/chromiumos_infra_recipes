@@ -1582,6 +1582,7 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "name": "recreating older run.sync to gitiles commit.fetch deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
@@ -1742,6 +1743,7 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "name": "recreating older run.sync to gitiles commit.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
