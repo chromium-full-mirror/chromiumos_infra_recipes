@@ -2045,6 +2045,22 @@
               }
             ]
           },
+          "sysroot": {
+            "output_artifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS",
+                  "BREAKPAD_DEBUG_SYMBOLS",
+                  "SIMPLE_CHROME_SYSROOT",
+                  "CHROME_EBUILD_ENV"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+
+            ]
+          },
           "image": {
             "outputArtifacts": [
               {

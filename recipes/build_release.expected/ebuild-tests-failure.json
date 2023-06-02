@@ -346,6 +346,15 @@
       "@@@STEP_LOG_LINE@builder config@        artifact_types: DLC_IMAGE@@@",
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
+      "@@@STEP_LOG_LINE@builder config@    sysroot {@@@",
+      "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: DEBUG_SYMBOLS@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: BREAKPAD_DEBUG_SYMBOLS@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: SIMPLE_CHROME_SYSROOT@@@",
+      "@@@STEP_LOG_LINE@builder config@        artifact_types: CHROME_EBUILD_ENV@@@",
+      "@@@STEP_LOG_LINE@builder config@        gs_locations: \"chromeos-releases-test/{target}-release/{version}\"@@@",
+      "@@@STEP_LOG_LINE@builder config@      }@@@",
+      "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@    infra {@@@",
       "@@@STEP_LOG_LINE@builder config@      output_artifacts {@@@",
       "@@@STEP_LOG_LINE@builder config@        artifact_types: BUILD_MANIFEST@@@",
@@ -9415,6 +9424,21 @@
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            32,@@@",
+      "@@@STEP_LOG_LINE@request@            35,@@@",
+      "@@@STEP_LOG_LINE@request@            40,@@@",
+      "@@@STEP_LOG_LINE@request@            41@@@",
+      "@@@STEP_LOG_LINE@request@          ],@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-releases-test/{target}-release/{version}\"@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"infra\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
       "@@@STEP_LOG_LINE@request@        {@@@",
@@ -9445,7 +9469,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/kukui\",\n    \"buildTarget\": {\n      \"name\": \"kukui\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1,\n            3,\n            4,\n            5,\n            7,\n            2,\n            32,\n            10\n          ],\n          \"gsLocations\": [\n            \"chromeos-releases-test/{target}-release/{version}\"\n          ]\n        }\n      ]\n    },\n    \"image\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            34\n          ]\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/kukui\",\n    \"buildTarget\": {\n      \"name\": \"kukui\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1,\n            3,\n            4,\n            5,\n            7,\n            2,\n            32,\n            10\n          ],\n          \"gsLocations\": [\n            \"chromeos-releases-test/{target}-release/{version}\"\n          ]\n        }\n      ]\n    },\n    \"image\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            34\n          ]\n        }\n      ]\n    },\n    \"sysroot\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            32,\n            35,\n            40,\n            41\n          ],\n          \"gsLocations\": [\n            \"chromeos-releases-test/{target}-release/{version}\"\n          ]\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9970,11 +9994,48 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/../../[START_DIR]/tmp/artifact.tar.gz",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.publish artifacts.gsutil cp (9)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"AUTOTEST_FILES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"DEBUG_SYMBOLS\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"EBUILD_LOGS\": [{\"files\": [\"../../[START_DIR]/log.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"IMAGE_ARCHIVES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"IMAGE_ZIP\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"PINNED_GUEST_IMAGES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"TAST_FILES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"TEST_UPDATE_PAYLOAD\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"AUTOTEST_FILES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"DEBUG_SYMBOLS\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}, {\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"EBUILD_LOGS\": [{\"files\": [\"../../[START_DIR]/log.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"IMAGE_ARCHIVES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"IMAGE_ZIP\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"PINNED_GUEST_IMAGES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"TAST_FILES\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}], \"TEST_UPDATE_PAYLOAD\": [{\"files\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/kukui-release/R99-1234.56.0-101\"}]}@@@"
     ]
   },
   {
