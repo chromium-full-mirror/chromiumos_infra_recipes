@@ -109,4 +109,47 @@ class LabpackCommand(recipe_api.RecipeApi):
     """Not yet implemented"""
     _ = models
     _ = ile_de_france_config
-    return False  # pragma: nocover
+    return False
+
+  def execute_ile_de_france(self, common_config, dut_state, models=None,
+                            hostnames=None):
+    """Whether to use Ile-de-France or not.
+
+    Args:
+      * common_config: the test runner properties
+      * dut_state: the incoming dut state
+      * models: the models in question
+      * hostnames: the hostnames in question
+
+    Returns:
+      * the outgoing dut_state
+    """
+    assert not isinstance(models, (str, bytes))
+    assert not isinstance(hostnames, (str, bytes))
+
+    models = models or self.m.cros_tags.get_values(
+        'label-model', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+
+    hostnames = hostnames or self.m.cros_tags.get_values(
+        'dut_name', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+
+    use_ile_de_france = self.get_use_ile_de_france(
+        models=models,
+        ile_de_france_config=common_config.enable_ile_de_france_config)
+
+    if not use_ile_de_france:
+      return dut_state
+
+    if dut_state != "needs_repair":  # pragma: nocover
+      return dut_state  # pragma: nocover
+
+    assert self.ensure_labpack().get("ok")  # pragma: nocover
+
+    step_data = self.run_labpack(
+        labpack_input=LabpackInput(
+            unit_name=hostnames[0],
+            task_name="post_test",
+            caller="test_runner.py",
+        ))  # pragma: nocover
+    return ("ready" if step_data.exc_status.retcode == 0 else "needs_repair"
+           )  # pragma: nocover
