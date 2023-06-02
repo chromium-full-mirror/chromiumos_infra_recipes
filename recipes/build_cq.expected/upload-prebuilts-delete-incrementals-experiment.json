@@ -6251,6 +6251,7 @@
       "https://chromium-review.googlesource.com/changes/123456/topic"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"

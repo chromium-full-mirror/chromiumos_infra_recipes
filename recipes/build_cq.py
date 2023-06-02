@@ -20,6 +20,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/led',
     'recipe_engine/random',
@@ -106,7 +107,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     if api.build_menu.install_packages(config, packages):
       # Create the test containers async.
 
-      with api.step.nest('upload prebuilts'):
+      with api.step.nest('upload prebuilts'), api.context(infra_steps=True):
         upload = False
         with api.step.nest(
             'Check if the CQ uploads the prebuilts') as presentation:
