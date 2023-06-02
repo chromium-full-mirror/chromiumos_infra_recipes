@@ -31,7 +31,6 @@
       "-c37-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.remove gs://... prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -42,7 +41,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.sort gs distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -71,7 +69,6 @@
       "match($1, /^[^d]/) { print $5 }",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.remove perms/size/timestamp prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -82,7 +79,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.sort gentoo distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -95,7 +91,6 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.get list of files in gentoo that are not in gs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -107,7 +102,6 @@
       "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.get list of files matching additional regex",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -120,7 +114,6 @@
       "[CLEANUP]/distfile_lists_tmp_1/additional_regex_matches_file.txt",
       "[CLEANUP]/distfile_lists_tmp_1/new.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.add additional regex files to distfiles list",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -181,7 +174,6 @@
       "-ls",
       "-delete"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://arch.mirror.constant.com/archlinux/.copy new distfiles to gs.filtering missing symlinks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

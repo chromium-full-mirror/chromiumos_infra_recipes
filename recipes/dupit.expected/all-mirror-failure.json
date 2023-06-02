@@ -35,7 +35,6 @@
       "-c44-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.remove gs://... prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -46,7 +45,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.sort gs distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -102,7 +100,6 @@
       "-c44-",
       "[CLEANUP]/distfile_lists_tmp_2/gs.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirror.rackspace.com/gentoo/distfiles.remove gs://... prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -113,7 +110,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_2/gs_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirror.rackspace.com/gentoo/distfiles.sort gs distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

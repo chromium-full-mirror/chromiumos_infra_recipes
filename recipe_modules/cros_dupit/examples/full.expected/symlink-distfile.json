@@ -20,7 +20,6 @@
       "-c49-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
-    "infra_step": true,
     "name": "remove gs://... prefix"
   },
   {
@@ -28,7 +27,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
-    "infra_step": true,
     "name": "sort gs distfiles"
   },
   {
@@ -51,7 +49,6 @@
       "match($1, /^[^d]/) { print $5 }",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
     ],
-    "infra_step": true,
     "name": "remove perms/size/timestamp prefix"
   },
   {
@@ -59,7 +56,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
     ],
-    "infra_step": true,
     "name": "sort gentoo distfiles"
   },
   {
@@ -69,7 +65,6 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
-    "infra_step": true,
     "name": "get list of files in gentoo that are not in gs"
   },
   {
@@ -109,7 +104,6 @@
       "awk",
       "{ print $NF }"
     ],
-    "infra_step": true,
     "name": "get list of symlinked distfiles",
     "stdin": "1 lrwxrwxrwx Feb 29 12:34 ./symlink.tar.gz -> dir/symlinked.tar.gz"
   },
@@ -120,7 +114,6 @@
       "s#^\\(../\\)*##g",
       "[CLEANUP]/distfile_lists_tmp_1/new_symlinked.txt"
     ],
-    "infra_step": true,
     "name": "make distfiles paths absolute"
   },
   {

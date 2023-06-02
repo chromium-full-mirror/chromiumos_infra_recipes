@@ -87,7 +87,7 @@ class DupItApi(recipe_api.RecipeApi):
     cut_name = 'remove gs://... prefix'
     cut_stdout = self.m.raw_io.output_text(
         leak_to=gs_distfile_relative_list_path)
-    self.m.step(cmd=cut_cmd, infra_step=True, name=cut_name, stdout=cut_stdout)
+    self.m.step(cmd=cut_cmd, name=cut_name, stdout=cut_stdout)
 
     # Ensure the list is sorted (for diffing).
     gs_distfile_relative_sorted_list_path = self._tmp_distfile_lists_path.join(
@@ -99,8 +99,7 @@ class DupItApi(recipe_api.RecipeApi):
     sort_name = 'sort gs distfiles'
     sort_stdout = self.m.raw_io.output_text(
         leak_to=gs_distfile_relative_sorted_list_path)
-    self.m.step(cmd=sort_cmd, infra_step=True, name=sort_name,
-                stdout=sort_stdout)
+    self.m.step(cmd=sort_cmd, name=sort_name, stdout=sort_stdout)
 
     return gs_distfile_relative_sorted_list_path
 
@@ -150,7 +149,7 @@ class DupItApi(recipe_api.RecipeApi):
     awk_name = 'remove perms/size/timestamp prefix'
     awk_stdout = self.m.raw_io.output(
         leak_to=gentoo_distfile_relative_list_path)
-    self.m.step(cmd=awk_cmd, infra_step=True, name=awk_name, stdout=awk_stdout)
+    self.m.step(cmd=awk_cmd, name=awk_name, stdout=awk_stdout)
 
     # Sort the file for diffing.
     gentoo_distfile_relative_sorted_list_path = (
@@ -162,8 +161,7 @@ class DupItApi(recipe_api.RecipeApi):
     sort_name = 'sort gentoo distfiles'
     sort_stdout = self.m.raw_io.output_text(
         leak_to=gentoo_distfile_relative_sorted_list_path)
-    self.m.step(cmd=sort_cmd, infra_step=True, name=sort_name,
-                stdout=sort_stdout)
+    self.m.step(cmd=sort_cmd, name=sort_name, stdout=sort_stdout)
 
     return gentoo_distfile_relative_sorted_list_path
 
@@ -187,8 +185,7 @@ class DupItApi(recipe_api.RecipeApi):
     grep_stdout = self.m.raw_io.output_text(
         leak_to=self._additional_regex_matches_file, name='regex_grep',
         add_output_log=True)
-    self.m.step(cmd=grep_cmd, infra_step=True, name=grep_name,
-                stdout=grep_stdout)
+    self.m.step(cmd=grep_cmd, name=grep_name, stdout=grep_stdout)
 
   def _get_rsync_cmd(self, files_from):
     cmd = [
@@ -254,8 +251,7 @@ class DupItApi(recipe_api.RecipeApi):
     sortuniq_stdout = self.m.raw_io.output(leak_to=distfiles_regex_sorted,
                                            name='regex_sortuniq',
                                            add_output_log=True)
-    self.m.step(cmd=sortuniq_cmd, infra_step=True, name=sortuniq_name,
-                stdout=sortuniq_stdout)
+    self.m.step(cmd=sortuniq_cmd, name=sortuniq_name, stdout=sortuniq_stdout)
 
     return distfiles_regex_sorted
 
@@ -274,8 +270,7 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     comm_name = 'get list of files in gentoo that are not in gs'
     comm_stdout = self.m.raw_io.output(leak_to=new_distfiles)
-    self.m.step(cmd=comm_cmd, infra_step=True, name=comm_name,
-                stdout=comm_stdout)
+    self.m.step(cmd=comm_cmd, name=comm_name, stdout=comm_stdout)
 
     if self._regex_for_archival_sync:
       # Populate our list of regex matches
@@ -305,8 +300,7 @@ class DupItApi(recipe_api.RecipeApi):
           'awk',
           '{ print $NF }',
       ]
-      self.m.step(cmd=cmd, infra_step=True,
-                  name='get list of symlinked distfiles', stdin=stdin,
+      self.m.step(cmd=cmd, name='get list of symlinked distfiles', stdin=stdin,
                   stdout=stdout)
 
       # (b/273524588) Remove leading `../` from paths. As of rsync 3.1.2 this
@@ -316,8 +310,7 @@ class DupItApi(recipe_api.RecipeApi):
           'fixed_symlinked.txt')
       stdout = self.m.raw_io.output(leak_to=fixed_symlinked)
       cmd = ['sed', '-e', r's#^\(../\)*##g', new_symlinked]
-      self.m.step(cmd=cmd, infra_step=True,
-                  name='make distfiles paths absolute', stdout=stdout)
+      self.m.step(cmd=cmd, name='make distfiles paths absolute', stdout=stdout)
 
       rsync_cmd = self._get_rsync_cmd(fixed_symlinked)
       rsync_name = ('ensure symlinked distfiles from %s' %
@@ -475,7 +468,7 @@ class DupItApi(recipe_api.RecipeApi):
             '-delete',
         ]
         filter_name = 'filtering missing symlinks'
-        self.m.step(cmd=filter_cmd, infra_step=True, name=filter_name)
+        self.m.step(cmd=filter_cmd, name=filter_name)
       if self.m.file.listdir('list new distfiles', self.tmp_distfiles_path):
         gsutil_cp_cmd = [
             'cp',

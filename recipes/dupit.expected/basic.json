@@ -31,7 +31,6 @@
       "-c44-",
       "[CLEANUP]/distfile_lists_tmp_1/gs.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.remove gs://... prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -42,7 +41,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.sort gs distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -71,7 +69,6 @@
       "match($1, /^[^d]/) { print $5 }",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.remove perms/size/timestamp prefix",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -82,7 +79,6 @@
       "sort",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.sort gentoo distfiles",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -95,7 +91,6 @@
       "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt",
       "[CLEANUP]/distfile_lists_tmp_1/gentoo_relative_sorted.txt"
     ],
-    "infra_step": true,
     "name": "mirror from rsync://mirrors.rit.edu/gentoo/distfiles.get list of files in gentoo that are not in gs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
