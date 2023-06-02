@@ -125,6 +125,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
     # see if a better strategy is called for.
     #
     central_cl = None
+    central_cl_autodetected = False
     binhost_cls = {}
     trybot_re = re.compile(
         r"^Cq-Include-Trybots: %s\b" %
@@ -156,13 +157,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       # If there is only one non-binhost CL, make it the central CL.
       if len(non_binhost_cls) == 1:
         central_cl = non_binhost_cls[0]
-        description = central_cl.commit_info["message"]
-        trybots_str = "Cq-Include-Trybots: %s\n" % (
-            api.buildbucket.builder_full_name,)
-        description = _insert_before_change_id(central_cl.display_id,
-                                               description, trybots_str)
-        api.gerrit.set_change_description(central_cl.to_gerrit_change_proto(),
-                                          description)
+        central_cl_autodetected = True
 
     # After all this, there should be a central CL.
     if central_cl is None:
@@ -173,6 +168,19 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
 
   with api.build_menu.configure_builder(
   ), api.build_menu.setup_workspace_and_chroot():
+
+    # If the central CL was autodetected, tag it so that we can reliably
+    # track which one it was. This code is after setup_workspace_and_chroot()
+    # to avoid b/283926323 "cwd is not a directory".
+    if central_cl_autodetected:
+      with api.step.nest("tag key CL"):
+        description = central_cl.commit_info["message"]
+        trybots_str = "Cq-Include-Trybots: %s\n" % (
+            api.buildbucket.builder_full_name,)
+        description = _insert_before_change_id(central_cl.display_id,
+                                               description, trybots_str)
+        api.gerrit.set_change_description(central_cl.to_gerrit_change_proto(),
+                                          description)
 
     with api.step.nest("build SDK packages"):
       api.cros_build_api.SdkService.BuildPrebuilts(
@@ -513,6 +521,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           fetch_changes_responses,
       ), api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
+      api.post_check(post_process.MustRun, "tag key CL"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
       api.post_check(post_process.MustRun, "upload SDK tarball"),
