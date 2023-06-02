@@ -86,7 +86,8 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     cut_name = 'remove gs://... prefix'
     cut_stdout = self.m.raw_io.output_text(
-        leak_to=gs_distfile_relative_list_path)
+        leak_to=gs_distfile_relative_list_path,
+        name=self.m.path.basename(gs_distfile_relative_list_path))
     self.m.step(cmd=cut_cmd, name=cut_name, stdout=cut_stdout)
 
     # Ensure the list is sorted (for diffing).
@@ -98,7 +99,9 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     sort_name = 'sort gs distfiles'
     sort_stdout = self.m.raw_io.output_text(
-        leak_to=gs_distfile_relative_sorted_list_path)
+        leak_to=gs_distfile_relative_sorted_list_path,
+        name=self.m.path.basename(gs_distfile_relative_sorted_list_path),
+        add_output_log=True)
     self.m.step(cmd=sort_cmd, name=sort_name, stdout=sort_stdout)
 
     return gs_distfile_relative_sorted_list_path
@@ -124,7 +127,10 @@ class DupItApi(recipe_api.RecipeApi):
         '--timeout=%d' % (6 * 60 * 60),
         self.m.path.join(self.rsync_mirror_address, '**'),
     ]
-    rsync_list_stdout = self.m.raw_io.output(leak_to=gentoo_distfile_list_path)
+    rsync_list_stdout = self.m.raw_io.output(
+        leak_to=gentoo_distfile_list_path,
+        name=self.m.path.basename(gentoo_distfile_list_path),
+        add_output_log=True)
     rsync_list_name = 'list distfiles in %s' % self.rsync_mirror_address
     self.m.step(cmd=rsync_list_cmd, infra_step=True, name=rsync_list_name,
                 stdout=rsync_list_stdout)
@@ -148,7 +154,9 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     awk_name = 'remove perms/size/timestamp prefix'
     awk_stdout = self.m.raw_io.output(
-        leak_to=gentoo_distfile_relative_list_path)
+        leak_to=gentoo_distfile_relative_list_path,
+        name=self.m.path.basename(gentoo_distfile_relative_list_path),
+        add_output_log=True)
     self.m.step(cmd=awk_cmd, name=awk_name, stdout=awk_stdout)
 
     # Sort the file for diffing.
@@ -160,7 +168,9 @@ class DupItApi(recipe_api.RecipeApi):
     ]
     sort_name = 'sort gentoo distfiles'
     sort_stdout = self.m.raw_io.output_text(
-        leak_to=gentoo_distfile_relative_sorted_list_path)
+        leak_to=gentoo_distfile_relative_sorted_list_path,
+        name=self.m.path.basename(gentoo_distfile_relative_sorted_list_path),
+        add_output_log=True)
     self.m.step(cmd=sort_cmd, name=sort_name, stdout=sort_stdout)
 
     return gentoo_distfile_relative_sorted_list_path
@@ -248,9 +258,9 @@ class DupItApi(recipe_api.RecipeApi):
         distfiles,
     ]
     sortuniq_name = 'add additional regex files to distfiles list'
-    sortuniq_stdout = self.m.raw_io.output(leak_to=distfiles_regex_sorted,
-                                           name='regex_sortuniq',
-                                           add_output_log=True)
+    sortuniq_stdout = self.m.raw_io.output(
+        leak_to=distfiles_regex_sorted,
+        name=self.m.path.basename(distfiles_regex_sorted), add_output_log=True)
     self.m.step(cmd=sortuniq_cmd, name=sortuniq_name, stdout=sortuniq_stdout)
 
     return distfiles_regex_sorted
@@ -269,7 +279,9 @@ class DupItApi(recipe_api.RecipeApi):
         gentoo_distfiles,
     ]
     comm_name = 'get list of files in gentoo that are not in gs'
-    comm_stdout = self.m.raw_io.output(leak_to=new_distfiles)
+    comm_stdout = self.m.raw_io.output(leak_to=new_distfiles,
+                                       name=self.m.path.basename(new_distfiles),
+                                       add_output_log=True)
     self.m.step(cmd=comm_cmd, name=comm_name, stdout=comm_stdout)
 
     if self._regex_for_archival_sync:
@@ -295,7 +307,9 @@ class DupItApi(recipe_api.RecipeApi):
     if symlinks:
       stdin = self.m.raw_io.input_text(symlinks)
       new_symlinked = self._tmp_distfile_lists_path.join('new_symlinked.txt')
-      stdout = self.m.raw_io.output(leak_to=new_symlinked)
+      stdout = self.m.raw_io.output(leak_to=new_symlinked,
+                                    name=self.m.path.basename(new_symlinked),
+                                    add_output_log=True)
       cmd = [
           'awk',
           '{ print $NF }',
@@ -308,7 +322,9 @@ class DupItApi(recipe_api.RecipeApi):
       # those in the --files-from list.
       fixed_symlinked = self._tmp_distfile_lists_path.join(
           'fixed_symlinked.txt')
-      stdout = self.m.raw_io.output(leak_to=fixed_symlinked)
+      stdout = self.m.raw_io.output(leak_to=fixed_symlinked,
+                                    name=self.m.path.basename(fixed_symlinked),
+                                    add_output_log=True)
       cmd = ['sed', '-e', r's#^\(../\)*##g', new_symlinked]
       self.m.step(cmd=cmd, name='make distfiles paths absolute', stdout=stdout)
 

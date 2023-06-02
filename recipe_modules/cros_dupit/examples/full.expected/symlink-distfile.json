@@ -41,7 +41,13 @@
       "rsync://mirrors.do.not.exists/distfiles/**"
     ],
     "infra_step": true,
-    "name": "list distfiles in rsync://mirrors.do.not.exists/distfiles"
+    "name": "list distfiles in rsync://mirrors.do.not.exists/distfiles",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output[gentoo.txt]@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output[gentoo.txt]@lrwxrwxrwx 12 2020/02/29 12:34:56 symlink.tar.gz -> dir/symlinked.tar.gz@@@",
+      "@@@STEP_LOG_LINE@raw_io.output[gentoo.txt]@-rw-r--r-- 12 2020/02/29 12:34:56 exists-in-gs.tar.gz@@@",
+      "@@@STEP_LOG_END@raw_io.output[gentoo.txt]@@@"
+    ]
   },
   {
     "cmd": [
