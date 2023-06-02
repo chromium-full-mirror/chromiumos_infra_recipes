@@ -141,7 +141,8 @@ class BuildSDKRun:
       self._upload_prebuilts()
       self._upload_sdk_tarball_and_manifest()
       self._update_gs_latest_file()
-      self._schedule_uprev()
+      if self.properties.launch_pupr:
+        self._schedule_uprev()
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -395,14 +396,10 @@ class BuildSDKRun:
     The PUpr build should be staging if this build is staging, and prod if this
     build is prod.
 
-    The llvm-next builder should not trigger an uprev.
-
     PUpr uses GitilesTriggers to pick a branch policy, because originally all
     uprevs were triggered by gitiles changes. Luckily, it provides a property
     for spoofing GitilesTriggers.
     """
-    if self.properties.use_llvm_next:
-      return
     if self.m.build_menu.is_staging:
       bucket, builder = 'staging', 'staging-chromiumos-sdk-pupr-generator'
     else:
@@ -446,6 +443,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'basic',
+      api.properties(launch_pupr=True),
       api.post_check(post_process.PropertyEquals, 'version', DEFAULT_VERSION),
       # Make sure we're not updating the chroot, since we need to ensure that
       # all host packages can be built using the bootstrap SDK version.
@@ -531,6 +529,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.build_menu.test(
       'staging',
+      api.properties(launch_pupr=True),
       # These steps should all upload to THROW_AWAY_BUCKET on staging builders.
       # However, they should not upload to the /staging/ subdir.
       api.post_check(

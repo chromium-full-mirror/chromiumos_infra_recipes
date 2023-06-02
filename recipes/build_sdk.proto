@@ -20,4 +20,9 @@ message BuildSDKProperties {
   // uploaded to gs://chromeos-sdk/staging/cros-sdk-latest.conf.
   // This will happen regardless of whether the builder is prod or staging.
   bool upload_to_staging_dir = 3;
+
+  // Whether this build should launch a PUpr build to uprev the SDK version file
+  // and amd64-host prebuilt file.
+  // If False, then the generated artifacts will not affect production at all.
+  bool launch_pupr = 4;
 }
