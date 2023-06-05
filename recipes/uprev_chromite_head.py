@@ -63,7 +63,7 @@ def RunSteps(api: RecipeApi, properties) -> None:
       api.gerrit.abandon_change(change)
     else:
       # 5. in production mode, we submit the cl.
-      api.gerrit.submit_change(change, retries=3)
+      api.gerrit.submit_change(change, project_path=checkout, retries=3)
 
 
 def GenTests(api: RecipeTestApi) -> None:
