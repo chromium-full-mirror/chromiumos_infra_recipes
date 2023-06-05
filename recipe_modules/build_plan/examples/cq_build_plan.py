@@ -8,6 +8,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
+from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 from PB.recipe_modules.chromeos.build_plan.examples.cq_build_plan import (
     CqBuildPlanProperties)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -571,6 +572,35 @@ def GenTests(api):
                               end_time=test_end_timestamp)
           ],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
+      ),
+  )
+
+  yield api.test(
+      'no-pruning',
+      cq_orchestrator_build_with_gerrit_change(),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.post_check(post_process.DoesNotRun,
+                     'check for projects outside manifest'),
+      api.properties(
+          **{
+              '$chromeos/build_plan':
+                  BuildPlanProperties(
+                      disable_build_plan_pruning=True,
+                  ),
+          }),
+      api.properties(
+          expected_build_requests=[
+              'amd64-generic-cq',
+              'atlas-cq',
+              'arm-generic-cq',
+              'arm-generic-pointless-cq',
+              'arm64-generic-cq',
+              'coral-cq',
+              'cave-cq',
+              'eve-cq',
+          ],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
       ),
   )
 

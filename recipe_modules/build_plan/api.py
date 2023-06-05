@@ -105,8 +105,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     skipped_builders = []
-    self._check_project_outside_manifest(gerrit_changes)
     if gerrit_changes and not self._properties.disable_build_plan_pruning:
+      self._check_project_outside_manifest(gerrit_changes)
       builders_tuple = self.m.cros_relevance.run_build_planner(
           builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
               b.id for b in builder_configs if 'pointless' not in b.id.name
