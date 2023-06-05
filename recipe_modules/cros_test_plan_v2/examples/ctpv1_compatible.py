@@ -5,10 +5,13 @@
 from google.protobuf import text_format
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
+
+TemplateParameters = source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile.TemplateParameters
 
 DEPS = [
     'recipe_engine/assertions',
@@ -47,8 +50,10 @@ def RunSteps(api):
 
   generate_test_plan_resp = api.cros_test_plan_v2.generate_hw_test_plans(
       [
-          StarlarkPackage(root='root1', main='example1.star'),
-          StarlarkPackage(root='root2', main="example2.star"),
+          StarlarkPackage(root='root1', main='example1.star',
+                          template_parameters=TemplateParameters()),
+          StarlarkPackage(root='root2', main='example2.star',
+                          template_parameters=TemplateParameters()),
       ],
       generate_test_plan_request=GenerateTestPlanRequest(
           buildbucket_protos=[ProtoBytes(serialized_proto=b'abc123')],
@@ -65,8 +70,10 @@ def RunSteps(api):
       'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
   ):
     api.cros_test_plan_v2.generate_hw_test_plans([
-        StarlarkPackage(root='root1', main='example1.star'),
-        StarlarkPackage(root='root2', main="example2.star"),
+        StarlarkPackage(root='root1', main='example1.star',
+                        template_parameters=TemplateParameters()),
+        StarlarkPackage(root='root2', main='example2.star',
+                        template_parameters=TemplateParameters()),
     ],
                                                 )
 

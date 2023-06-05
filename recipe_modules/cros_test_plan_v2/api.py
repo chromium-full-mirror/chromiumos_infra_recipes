@@ -5,8 +5,9 @@
 import base64
 import datetime
 import re
-from collections import namedtuple, defaultdict
-from typing import List
+from collections import defaultdict
+from typing import List, Optional, Tuple, Union
+from dataclasses import dataclass
 
 from google.protobuf import json_format
 from google.protobuf import text_format
@@ -15,7 +16,7 @@ from google.protobuf import message
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.chromiumos.test.api.v1 import plan as plan_pb2
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
-from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from PB.testplans.generate_test_plan import GenerateTestPlanRequest, GenerateTestPlanResponse
 from recipe_engine.config_types import Path
 from recipe_engine import recipe_api
 
@@ -44,12 +45,40 @@ FALLBACK_DEFAULT_SOURCE_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
         )
     ])
 
-# Defines a collection of Starlark files under the same root. All load
-# statements must use paths under 'root', and 'main' is the main file that is
-# executed. Note that 'main' does not need to be in the top-level dir of 'root';
-# this allows the common case where 'root' is the root of a repo and 'main' is a
-# file within the repo (and all the load paths are included in the repo).
-StarlarkPackage = namedtuple('StarlarkPackage', ['root', 'main'])
+
+@dataclass(frozen=True)
+class StarlarkPackage:
+  """Defines a Starlark file that can be executed.
+
+  All load statements must use paths under 'root'. 'main' is the main file that
+  is executed. Note that 'main' does not need to be in the top-level dir of
+  root'; this allows the common case where 'root' is the root of a repo and
+  'main' is a file within the repo (and all the load paths are included in the
+  repo).
+
+  This class is ordered and hashable.
+
+  Args:
+    root: Path that 'main' and all loaded files must be under. Often the root of
+      a repo.
+    main: Path to the Starlark file to execute.
+    template_parameters: TemplateParameters to execute the Starlark file with,
+      may be empty.
+  """
+  root: str
+  main: str
+  template_parameters: source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile.TemplateParameters
+
+  def __hash__(self) -> int:
+    return hash((self.root, self.main,
+                 json_format.MessageToJson(self.template_parameters)))
+
+  def __lt__(self, other) -> bool:
+    return (self.root, self.main,
+            json_format.MessageToJson(
+                self.template_parameters)) < (other.root, other.main,
+                                              json_format.MessageToJson(
+                                                  other.template_parameters))
 
 
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
@@ -375,14 +404,17 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                           project='cros-registry/test-services')
       self.m.docker.pull(self._docker_image)
 
-  def _copy_test_plans(self, host_dir: Path, container_path: str,
-                       starlark_pkgs: List[StarlarkPackage]) -> List[str]:
-    """Copy starlark_pkgs to host_dir, return paths relative to container_path.
+  def _copy_test_plans(
+      self, host_dir: Path, container_path: str,
+      starlark_pkgs: List[StarlarkPackage]) -> Tuple[List[str], List[str]]:
+    """Copy starlark_pkgs to host_dir, return paths and templateparameters for the container.
 
     This function is a helper to get Starlark files ready to be mounted to the
     container. The Starlark files are copied to a dir on the host, and paths to
     the files on the container are returned, so that the returned paths can be
-    used as arguments when the host dir is mounted.
+    used as arguments when the host dir is mounted. If starlark_pkgs has any
+    non-empty TemplateParameters, this function also computes -templateparameter
+    args for use in the container.
 
     Args:
       host_dir: Path on the host to copy Starlark files to.
@@ -391,15 +423,17 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       starlark_pkgs: StarlarkPackage to copy to host_dir.
 
     Returns:
-      A list of paths on the container pointing to starlark_pkgs.
+      A list of paths on the container pointing to starlark_pkgs and a list of
+        -templateparameter args.
     """
-
     plan_paths = []
+    template_parameters_args = []
 
     # Starlark packages may share the same root, because they are in the same
     # repo. Keep track of which roots have been visited, and don't copy them
     # twice.
     visited_roots = set()
+
     # Note that starlark_pkgs may contain duplicates, in this case each
     # unique package is only added to the args once.
     for package in sorted(list(set(starlark_pkgs))):
@@ -413,15 +447,28 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                              symlinks=True)
         visited_roots.add(package.root)
 
-      plan_paths.append('{}/{}/{}'.format(container_path, basename,
-                                          package.main))
-    return plan_paths
+      # Plan paths may be duplicated if a StarlarkPackage has different
+      # TemplateParameters for the same file.
+      plan_path = '{}/{}/{}'.format(container_path, basename, package.main)
+      if plan_path not in plan_paths:
+        plan_paths.append(plan_path)
+
+      # If template_parameters is non-empty form an arg
+      # "<plan>:'<template parameters jsonpb>'"
+      if package.template_parameters != source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile.TemplateParameters(
+      ):
+        template_parameter_json = json_format.MessageToJson(
+            package.template_parameters, indent=0).replace('\n', '')
+        template_parameters_args.append(
+            f"{plan_path}:'{template_parameter_json}'")
+
+    return (plan_paths, template_parameters_args)
 
   def generate_hw_test_plans(
       self,
-      starlark_packages,
-      generate_test_plan_request=None,
-  ):
+      starlark_packages: List[StarlarkPackage],
+      generate_test_plan_request: Optional[GenerateTestPlanRequest] = None,
+  ) -> Union[List[GenerateTestPlanResponse], List[plan_pb2.HWTestPlan]]:
     """Runs the testplan Docker image to get HWTestPlans.
 
     Args:
@@ -502,10 +549,13 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                 self.m.path.basename(host_path))
         ])
 
-      plan_paths = self._copy_test_plans(host_input_path, container_input_path,
-                                         starlark_packages)
+      plan_paths, template_parameters_args = self._copy_test_plans(
+          host_input_path, container_input_path, starlark_packages)
       for plan in plan_paths:
         args.extend(['-plan', plan])
+
+      for arg in template_parameters_args:
+        args.extend(['-templateparameter', arg])
 
       # Run the docker image. The directory with the input files is mounted to
       # the container.
@@ -567,10 +617,14 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       container_input_path = '/input'
 
       args = ['get-testable']
-      plan_paths = self._copy_test_plans(host_input_path, container_input_path,
-                                         starlark_packages)
+      plan_paths, template_parameters_args = self._copy_test_plans(
+          host_input_path, container_input_path, starlark_packages)
+
       for plan in plan_paths:
         args.extend(['-plan', plan])
+
+      for arg in template_parameters_args:
+        args.extend(['-templateparameter', arg])
 
       builds_input_path = host_input_path.join('builds.jsonl')
       builds_jsonl = '\n'.join([

@@ -3,8 +3,13 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.chromiumos.test.api.test_suite import TestSuite
+from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
+
+TemplateParameters = source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile.TemplateParameters
+TestCaseTagCriteria = TestSuite.TestCaseTagCriteria
 
 DEPS = [
     'recipe_engine/assertions',
@@ -16,8 +21,19 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   starlark_packages = [
-      StarlarkPackage(root='root1', main='example1.star'),
-      StarlarkPackage(root='root2', main="example2.star"),
+      StarlarkPackage(
+          root='root1',
+          main='example1.star',
+          template_parameters=TemplateParameters(
+              suite_name='catA',
+              tag_criteria=TestCaseTagCriteria(
+                  tags=['group:catA'],
+                  tag_excludes=['informational'],
+              ),
+          ),
+      ),
+      StarlarkPackage(root='root2', main="example2.star",
+                      template_parameters=TemplateParameters()),
   ]
 
   build_1 = build_pb2.Build()
@@ -69,6 +85,8 @@ def GenTests(api):
               "/input/root1/example1.star",
               "-plan",
               "/input/root2/example2.star",
+              "-templateparameter",
+              '/input/root1/example1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
               "-builds",
               "/input/builds.jsonl",
               "-builderconfigs",

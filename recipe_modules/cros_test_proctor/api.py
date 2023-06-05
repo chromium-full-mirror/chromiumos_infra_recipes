@@ -160,6 +160,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             StarlarkPackage(
                 root=target_path,
                 main=starlark_file.path,
+                template_parameters=starlark_file.template_parameters,
             ),
         )
 
