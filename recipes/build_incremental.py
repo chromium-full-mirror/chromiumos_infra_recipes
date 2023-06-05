@@ -56,15 +56,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not build_time_delta:
     raise StepFailure("build_time_delta input property is empty")
 
-  # Disable cros clean-outdated-pkgs, if necessary.
-  cop_enabled = extra_properties.cop_enabled
-  if not cop_enabled:
-    with api.repo.m.depot_tools.on_path():
-      api.step(
-          "Disable cros clean-outdated-pkgs",
-          ["cros", "clean-outdated-pkgs", "--no-auto"],
-      )
-
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
   repo_path = str(api.repo.repo_path)
@@ -96,6 +87,15 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     api.build_menu.setup_chroot(no_chroot_timeout=False, bootstrap=False,
                                 replace=False, update=False,
                                 uprev_packages=False)
+
+    # Disable cros clean-outdated-pkgs, if necessary.
+    cop_enabled = extra_properties.cop_enabled
+    if not cop_enabled:
+      with api.repo.m.depot_tools.on_path():
+        api.step(
+            "Disable cros clean-outdated-pkgs",
+            ["cros", "clean-outdated-pkgs", "--no-auto"],
+        )
 
     api.cros_sdk.update_chroot(
         toolchain_targets=[api.build_menu.build_target],
