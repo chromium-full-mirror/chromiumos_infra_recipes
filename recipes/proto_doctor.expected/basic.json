@@ -11,6 +11,13 @@
     ]
   },
   {
+    "cmd": [
+      "mkdir",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "name": "setup workspace dir"
+  },
+  {
     "cmd": [],
     "name": "process branch main"
   },

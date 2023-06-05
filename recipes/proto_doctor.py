@@ -37,6 +37,7 @@ DEPS = [
     'git',
     'repo',
     'src_state',
+    'workspace_util',
 ]
 
 # Repo projects
@@ -48,6 +49,10 @@ PROJECTS_TO_CHECKOUT = (
     CHROMITE_REPO,
     CHROMITE_INFRA_PROTO_REPO,
 )
+
+# URLs for repo projects. This is what appears in a gitiles trigger.
+INFRA_PROTO_REPO_URL = f'https://chromium.googlesource.com/{INFRA_PROTO_REPO}'
+CHROMITE_REPO_URL = f'https://chromium.googlesource.com/{CHROMITE_REPO}'
 
 # Branches and refs
 MAIN_BRANCH = 'main'
@@ -69,6 +74,7 @@ def RunSteps(api: recipe_api.RecipeApi) -> None:
   gitiles_triggers = _validate_triggers(api)
   refs = sorted(set(gt.ref for gt in gitiles_triggers))
   api.easy.set_properties_step(refs=refs)
+  _setup_workspace_dir(api)
 
   # If one branch raises an exception, defer the exception so that the other
   # branches can run.
@@ -147,7 +153,7 @@ def _validate_triggers(
     for trigger in api.scheduler.triggers:
       if not trigger.HasField('gitiles'):
         continue
-      if trigger.gitiles.repo != INFRA_PROTO_REPO:
+      if trigger.gitiles.repo != INFRA_PROTO_REPO_URL:
         raise recipe_api.InfraFailure(
             f'Gitiles trigger in non-proto repo: {trigger}')
       gitiles_triggers.append(trigger.gitiles)
@@ -216,6 +222,11 @@ def _get_workspace_path(api: recipe_api.RecipeApi) -> config_types.Path:
   return api.src_state.workspace_path
 
 
+def _setup_workspace_dir(api: recipe_api.RecipeApi) -> None:
+  """Create the workspace path directory."""
+  api.step('setup workspace dir', ['mkdir', _get_workspace_path(api)])
+
+
 def _is_staging(api: recipe_api.RecipeApi) -> bool:
   """Determine whether this is a staging build."""
   return api.buildbucket.build.builder.bucket == 'staging'
@@ -228,18 +239,18 @@ def GenTests(
   release_branch = 'release-R100-14526.B'
   release_ref = f'refs/heads/{release_branch}'
 
-  gitiles_trigger_main = triggers_pb2.GitilesTrigger(repo=INFRA_PROTO_REPO,
+  gitiles_trigger_main = triggers_pb2.GitilesTrigger(repo=INFRA_PROTO_REPO_URL,
                                                      ref=MAIN_REF,
                                                      revision='aaaaaa')
   gitiles_trigger_main2 = triggers_pb2.GitilesTrigger(
-      repo=INFRA_PROTO_REPO,
+      repo=INFRA_PROTO_REPO_URL,
       ref=MAIN_REF,
       revision='bbbbbb',
   )
   gitiles_trigger_release_branch = triggers_pb2.GitilesTrigger(
-      repo=INFRA_PROTO_REPO, ref=release_ref, revision='cccccc')
+      repo=INFRA_PROTO_REPO_URL, ref=release_ref, revision='cccccc')
   gitiles_trigger_chromite = triggers_pb2.GitilesTrigger(
-      repo=CHROMITE_REPO,
+      repo=CHROMITE_REPO_URL,
       ref=MAIN_REF,
       revision='dddddd',
   )
