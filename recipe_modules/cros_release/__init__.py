@@ -26,6 +26,7 @@ DEPS = [
     'cros_test_plan',
     'cros_version',
     'easy',
+    'failures',
     'gerrit',
     'git',
     'manifest_doctor',

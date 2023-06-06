@@ -130,3 +130,18 @@ def GenTests(api):
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to staging-buildspec-snapshot'
       ), builder='staging-release-main-orchestrator')
+
+  yield api.orch_menu.test(
+      'commit-as-snapshot-exception',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }), api.git.diff_check(True),
+      api.step_data(
+          'create buildspec.commit buildspec as snapshot.clone manifest-internal.git clone',
+          retcode=1),
+      api.post_check(post_process.StepException,
+                     'create buildspec.commit buildspec as snapshot'),
+      api.post_process(post_process.DropExpectation),
+      builder='staging-release-main-orchestrator')
