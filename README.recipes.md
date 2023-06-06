@@ -242,7 +242,6 @@
   * [cros_build_api:examples/set_api_return](#recipes-cros_build_api_examples_set_api_return)
   * [cros_build_api:examples/set_upreved_ebuilds](#recipes-cros_build_api_examples_set_upreved_ebuilds)
   * [cros_build_api:tests/bad_retcodes](#recipes-cros_build_api_tests_bad_retcodes)
-  * [cros_build_api:tests/chromite_head](#recipes-cros_build_api_tests_chromite_head)
   * [cros_build_api:tests/failed_pkg_data_names](#recipes-cros_build_api_tests_failed_pkg_data_names)
   * [cros_build_api:tests/failed_pkg_log_retrieval](#recipes-cros_build_api_tests_failed_pkg_log_retrieval)
   * [cros_build_api:tests/failed_pkg_names](#recipes-cros_build_api_tests_failed_pkg_names)
@@ -2448,7 +2447,7 @@ Args:
 Returns:
   The version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#434)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, use_chromite_head: bool=False, retcode_fn: Optional[Callable[([int], None)]]=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#434)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
 
 Call the build API with the given input proto.
 
@@ -2532,7 +2531,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#617)(self, stub: 'Stub', method: str):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#620)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
@@ -11267,12 +11266,6 @@ Call the RunCopybot endpoint.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/bad_retcodes.py#20)(api):**
-### *recipes* / [cros\_build\_api:tests/chromite\_head](/recipe_modules/cros_build_api/tests/chromite_head.py)
-
-[DEPS](/recipe_modules/cros_build_api/tests/chromite_head.py#15): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/chromite_head.py#26)(api: RecipeApi, use_chromite_head: bool):**
 ### *recipes* / [cros\_build\_api:tests/failed\_pkg\_data\_names](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/failed_pkg_data_names.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

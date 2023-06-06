@@ -440,7 +440,7 @@ class CrosBuildApiApi(RecipeApi):
       response_lambda: Optional[Callable[[message.Message], str]] = None,
       pkg_logs_lambda: Optional[Callable[[message.Message, message.Message],
                                          Tuple[str, str]]] = None,
-      step_text: Optional[str] = None, use_chromite_head: bool = False,
+      step_text: Optional[str] = None,
       retcode_fn: Optional[Callable[[int], None]] = None) -> message.Message:
     """Call the build API with the given input proto.
 
@@ -518,7 +518,11 @@ class CrosBuildApiApi(RecipeApi):
         cmd.append(str(tee_script))
         cmd.append(logfile_path)
 
-      chromite_location = 'chromite' if not use_chromite_head else 'infra/chromite-HEAD'
+      # By default, chromite-HEAD will bounce all calls it gets to the branched
+      # chromite, so we use the chromite-HEAD checkout. To update a method or
+      # service to use chromite-HEAD instead of branched chromite, see
+      # go/cros-build:use-chromite-head.
+      chromite_location = 'infra/chromite-HEAD'
       cmd.extend([
           self.m.src_state.workspace_path.join(
               f'{chromite_location}/bin/build_api'), '--input-json', input_path,
@@ -532,8 +536,7 @@ class CrosBuildApiApi(RecipeApi):
       # build-api has explicit path references. For now, rely on the fact that
       # chromite-HEAD will only be used for signing, which will never call other
       # build-api calls internally, and use chromite_location for safety.
-      chromite_bin_dir = self.m.src_state.workspace_path.join(
-          f'{chromite_location}/bin')
+      chromite_bin_dir = self.m.src_state.workspace_path.join('chromite/bin')
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         try:
           output_proto = reflection.MakeClass(output_type)()

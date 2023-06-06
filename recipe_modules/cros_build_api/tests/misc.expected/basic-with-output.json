@@ -36,7 +36,7 @@
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
       "[CLEANUP]/build_api_messages_tmp_1/build_log.txt",
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -247,7 +247,7 @@
     "cmd": [
       "RECIPE_REPO[chromeos]/recipe_scripts/tee_wrapper.sh",
       "[CLEANUP]/build_api_messages_tmp_2/build_log.txt",
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",

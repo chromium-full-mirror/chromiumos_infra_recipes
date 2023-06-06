@@ -2477,7 +2477,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
       "--output-json",
@@ -2803,7 +2803,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
       "--output-json",
@@ -3109,7 +3109,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
@@ -3343,7 +3343,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
@@ -3565,7 +3565,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
       "--output-json",
@@ -3809,7 +3809,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
       "--output-json",
@@ -4228,7 +4228,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
       "--output-json",
@@ -4481,7 +4481,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
       "--output-json",
@@ -4798,7 +4798,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
       "--output-json",
@@ -5202,7 +5202,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json",
       "--output-json",
@@ -5366,7 +5366,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
       "--output-json",
@@ -5660,7 +5660,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
@@ -5890,7 +5890,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json",
       "--output-json",
@@ -6130,7 +6130,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
       "--output-json",
@@ -6382,7 +6382,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
       "--output-json",
@@ -6598,7 +6598,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json",
       "--output-json",
@@ -7046,7 +7046,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/bin/build_api",
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
       "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
       "--output-json",
