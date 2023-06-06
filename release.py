@@ -563,7 +563,9 @@ def get_email_link(pending_changes: List[Commit]) -> str:
       'Here is a summary of the changes:',
       '',
       '\n'.join(
-          change.plain_str(with_bullet=True) for change in pending_changes),
+          change.plain_str(with_bullet=True)
+          for change in pending_changes
+          if not change.trivial),
   ])
   url_params = urllib.parse.urlencode({
       'view': 'cm',
