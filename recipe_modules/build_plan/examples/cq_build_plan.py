@@ -475,9 +475,6 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
       ),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic",
-                                 'chromium-review.googlesource.com', 123456,
-                                 "filter additional chrome pupr builds"),
       api.step_data(
           'filter additional chrome pupr builds.read git footers',
           stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
@@ -489,6 +486,7 @@ def GenTests(api):
               123456: {
                   'project': 'chromiumos/overlays/chromiumos-overlay',
                   'branch': 'main',
+                  'topic': 'chromeos-base/lacros-ash-atomic',
                   'files': {
                       'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild':
                           {},

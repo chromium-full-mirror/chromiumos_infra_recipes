@@ -50,8 +50,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(expected_result=True),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
-                                 CHANGE_NUM),
       api.step_data(
           'read git footers',
           stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
@@ -60,6 +58,7 @@ def GenTests(api):
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
+                  'topic': 'chromeos-base/lacros-ash-atomic',
                   'files': {
                       'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild':
                           {},
@@ -76,31 +75,6 @@ def GenTests(api):
   yield api.test(
       'incorrect-topic',
       api.properties(expected_result=False),
-      api.gerrit.simulated_topic("INCORRECT_TOPIC", GERRIT_HOST, CHANGE_NUM),
-  )
-
-  yield api.test(
-      'incorrect-cq-cl-tag',
-      api.properties(expected_result=False),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
-                                 CHANGE_NUM),
-      api.step_data('read git footers',
-                    stdout=api.raw_io.output('INCORRECT_CQ_CL_TAG')),
-  )
-
-  yield api.test(
-      'empty-cq-cl-tag',
-      api.properties(expected_result=False),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
-                                 CHANGE_NUM),
-      api.step_data('read git footers', stdout=api.raw_io.output('')),
-  )
-
-  yield api.test(
-      'incorrect-files',
-      api.properties(expected_result=False),
-      api.gerrit.simulated_topic("chromeos-base/lacros-ash-atomic", GERRIT_HOST,
-                                 CHANGE_NUM),
       api.step_data(
           'read git footers',
           stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
@@ -109,6 +83,39 @@ def GenTests(api):
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
+                  'topic': "INCORRECT_TOPIC",
+                  'files': {
+                      'foo/bar/bar.ebuild': {},
+                  }
+              },
+          }),
+  )
+
+  yield api.test(
+      'incorrect-cq-cl-tag',
+      api.properties(expected_result=False),
+      api.step_data('read git footers',
+                    stdout=api.raw_io.output('INCORRECT_CQ_CL_TAG')),
+  )
+
+  yield api.test(
+      'empty-cq-cl-tag',
+      api.properties(expected_result=False),
+      api.step_data('read git footers', stdout=api.raw_io.output('')),
+  )
+
+  yield api.test(
+      'incorrect-files',
+      api.properties(expected_result=False),
+      api.step_data(
+          'read git footers',
+          stdout=api.raw_io.output('pupr:chromeos-base/lacros-ash-atomic')),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          '', [GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)], {
+              CHANGE_NUM: {
+                  'project': PROJECT_NAME,
+                  'branch': 'main',
+                  'topic': "chromeos-base/lacros-ash-atomic",
                   'files': {
                       'foo/bar/bar.ebuild': {},
                   }

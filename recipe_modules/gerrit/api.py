@@ -145,6 +145,11 @@ class PatchSet:
     return self._change_info.get('submitted', None)
 
   @property
+  def topic(self) -> str:
+    """Return the topic associated with this PatchSet."""
+    return self._change_info['topic']
+
+  @property
   def hashtags(self) -> List[str]:
     """Return the hashtags associated with this PatchSet."""
     return self._change_info['hashtags']
@@ -313,10 +318,9 @@ class GerritApi(RecipeApi):
     # Support for gerrit_related_changes gobin.
     self._related_changes_path = None
 
-  def _gerrit_fetch_changes(self, request: JSONObject,
-                            gerrit_changes: List[GerritChange],
-                            test_output_data: Optional[Callable] = None
-                           ) -> JSONObject:
+  def _gerrit_fetch_changes(
+      self, request: JSONObject, test_gerrit_changes: List[GerritChange],
+      test_output_data: Optional[Callable] = None) -> JSONObject:
     """Call the gerrit-fetch-changes support tool directly.
 
     This tool is located at infra/recipes/support/gerrit-fetch-changes/.
@@ -326,7 +330,7 @@ class GerritApi(RecipeApi):
     """
     if test_output_data is None:
       test_output_data = lambda: self.test_api.test_gerrit_fetch_changes(
-          request, gerrit_changes)
+          request, test_gerrit_changes)
     return self.m.support.call('gerrit-fetch-changes', request,
                                test_output_data=test_output_data,
                                timeout=36 * 60)
@@ -900,37 +904,6 @@ class GerritApi(RecipeApi):
     if not isinstance(result, bool):
       raise StepFailure(
           f'"mergeable" value is not a bool: {data} (type: {type(result)})')
-
-    return result
-
-  def get_change_topic(self, change_num: int, gerrit_host: str,
-                       test_data: Optional[str] = None) -> str:
-    """Get the topic of the given Gerrit change.
-
-    Args:
-      change_num: The number of the change to check.
-      gerrit_host: Base URL to curl against.
-      test_data: Simulated data that is returned from the server (for testing).
-
-    Returns:
-      The topic of the gerrit change.
-    """
-    # "Get Topic" endpoint:
-    # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-topic
-    get_url = f'https://{gerrit_host}/changes/{change_num}/topic'
-    curl_params = ['-f']
-
-    data = self.m.easy.stdout_step(f'curl {get_url}',
-                                   ['curl'] + curl_params + [get_url],
-                                   test_stdout=test_data).decode()
-    data = strip_xssi_prefix(data)
-
-    try:
-      result = self.m.json.loads(data)
-    except json.decoder.JSONDecodeError as e:
-      raise StepFailure('The response is not a valid json: %s' % data) from e
-    if not isinstance(result, str):
-      raise StepFailure(f'This response it not valid: (type: {type(result)})')
 
     return result
 

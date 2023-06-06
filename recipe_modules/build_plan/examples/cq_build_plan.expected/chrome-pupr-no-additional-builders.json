@@ -700,6 +700,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
@@ -1124,10 +1125,12 @@
   },
   {
     "cmd": [
-      "curl",
-      "-f",
-      "https://chromium-review.googlesource.com/changes/123456/topic"
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cq-Cl-Tag"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -1140,7 +1143,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter additional chrome pupr builds.curl https://chromium-review.googlesource.com/changes/123456/topic",
+    "name": "filter additional chrome pupr builds.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

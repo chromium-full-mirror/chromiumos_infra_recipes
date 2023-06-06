@@ -463,7 +463,6 @@
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description)
   * [gerrit:examples/get_change_mergeable](#recipes-gerrit_examples_get_change_mergeable)
-  * [gerrit:examples/get_change_topic](#recipes-gerrit_examples_get_change_topic)
   * [gerrit:examples/has_chromite_changes](#recipes-gerrit_examples_has_chromite_changes)
   * [gerrit:examples/multiple_fetch_changes](#recipes-gerrit_examples_multiple_fetch_changes)
   * [gerrit:examples/parse_gerrit_change](#recipes-gerrit_examples_parse_gerrit_change)
@@ -1869,7 +1868,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#411)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#408)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -1886,11 +1885,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#100)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#382)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#379)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
 
 &mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#356)(self, gerrit_change: GerritChange):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#449)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#446)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -1902,7 +1901,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#391)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#388)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -1918,7 +1917,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#522)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#519)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
 
 Checks whether chrome source is needed.
 
@@ -6289,15 +6288,15 @@ Args:
 
 APIs for managing Gerrit changes.
 
-#### **class [GerritApi](/recipe_modules/gerrit/api.py#304)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GerritApi](/recipe_modules/gerrit/api.py#309)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Gerrit helpers.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#307)(self, properties: GerritProperties, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/gerrit/api.py#312)(self, properties: GerritProperties, \*args, \*\*kwargs):**
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#788)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#792)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
 
 Abandon the given change.
 
@@ -6305,7 +6304,7 @@ Args:
   gerrit_change: The change to abandon.
   message: Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#711)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#715)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -6315,7 +6314,7 @@ Args:
   project_path: If set, will use this as the project path rather than any
     value inferred from the gerrit_change.
 
-&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#467)(self, gerrit_changes: List[GerritChange], test_output_data: Union[(Callable, Dict, List, None)]=None):**
+&mdash; **def [assert\_changes\_submittable](/recipe_modules/gerrit/api.py#471)(self, gerrit_changes: List[GerritChange], test_output_data: Union[(Callable, Dict, List, None)]=None):**
 
 Check whether the given changes can be merged onto their Git branches.
 
@@ -6326,7 +6325,7 @@ Args:
 Raises:
   StepFailure if any of the changes cannot be merged.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#512)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#516)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -6349,7 +6348,7 @@ Args:
 Returns:
   The newly created change.
 
-&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#389)(self, change: GerritChange, include_files: bool=False, include_commit_info: bool=False, test_output_data: Optional[Callable]=None):**
+&mdash; **def [fetch\_patch\_set\_from\_change](/recipe_modules/gerrit/api.py#393)(self, change: GerritChange, include_files: bool=False, include_commit_info: bool=False, test_output_data: Optional[Callable]=None):**
 
 Fetch and return PatchSet associated with the given GerritChange.
 
@@ -6364,7 +6363,7 @@ Args:
 Raises:
   StepFailure: If the requested patch set is not found.
 
-&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#334)(self, gerrit_changes: List[GerritChange], include_files: bool=False, include_commit_info: bool=False, include_messages: bool=False, test_output_data: Optional[Callable]=None):**
+&mdash; **def [fetch\_patch\_sets](/recipe_modules/gerrit/api.py#338)(self, gerrit_changes: List[GerritChange], include_files: bool=False, include_commit_info: bool=False, include_messages: bool=False, test_output_data: Optional[Callable]=None):**
 
 Fetch and return PatchSets from Gerrit.
 
@@ -6381,7 +6380,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#972)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#945)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -6390,7 +6389,7 @@ Uses the gerrit_related_changes CIPD package.
 Returns:
   The JSON for 'related' outputted by gerrit_related_changes.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#729)(self, gerrit_change: GerritChange, memoize: bool=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#733)(self, gerrit_change: GerritChange, memoize: bool=False):**
 
 Get the description of the given Gerrit change.
 
@@ -6402,7 +6401,7 @@ Args:
 Returns:
   The change description.
 
-&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#874)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#878)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -6414,19 +6413,7 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&mdash; **def [get\_change\_topic](/recipe_modules/gerrit/api.py#906)(self, change_num: int, gerrit_host: str, test_data: Optional[str]=None):**
-
-Get the topic of the given Gerrit change.
-
-Args:
-  change_num: The number of the change to check.
-  gerrit_host: Base URL to curl against.
-  test_data: Simulated data that is returned from the server (for testing).
-
-Returns:
-  The topic of the gerrit change.
-
-&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#415)(self, gerrit_change_url: str):**
+&mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#419)(self, gerrit_change_url: str):**
 
 Return a GerritChange proto, parsed from the gerrit change URL.
 
@@ -6440,15 +6427,15 @@ This function expects the URL to be in one of these formats:
 and <change-number> is something like 12345.
 The https:// is optional.
 
-&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#445)(self, gerrit_change: GerritChange):**
+&mdash; **def [parse\_gerrit\_change\_url](/recipe_modules/gerrit/api.py#449)(self, gerrit_change: GerritChange):**
 
 Return a Gerrit change URL, parsed from a GerritChange proto.
 
-&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#459)(self, gerrit_change: GerritChange):**
+&mdash; **def [parse\_qualified\_gerrit\_host](/recipe_modules/gerrit/api.py#463)(self, gerrit_change: GerritChange):**
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#840)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#844)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -6460,7 +6447,7 @@ Args:
   label_constraints: Constraints on the changes' labels, to be used as a
       filter before returning.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#759)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#763)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
 
 Set the description of the given Gerrit change.
 
@@ -6473,7 +6460,7 @@ Args:
   project_path: If set, use this as the project path rather than any value
     inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#665)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#669)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -6489,7 +6476,7 @@ Args:
 Returns:
   The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#595)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#599)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
 
 Set the given labels for the given Gerrit change.
 
@@ -6503,7 +6490,7 @@ Args:
 Returns:
   The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#803)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#807)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
 
 Submit the given change.
 
@@ -12829,7 +12816,7 @@ instructions.
 [DEPS](/recipe_modules/gerrit/examples/fetch_patch_sets.py#10): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#92)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/fetch_patch_sets.py#94)(api):**
 ### *recipes* / [gerrit:examples/get\_change\_description](/recipe_modules/gerrit/examples/get_change_description.py)
 
 [DEPS](/recipe_modules/gerrit/examples/get_change_description.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -12842,12 +12829,6 @@ instructions.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_mergeable.py#23)(api, remote, expected):**
-### *recipes* / [gerrit:examples/get\_change\_topic](/recipe_modules/gerrit/examples/get_change_topic.py)
-
-[DEPS](/recipe_modules/gerrit/examples/get_change_topic.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/get_change_topic.py#25)(api, expected, simulated_response_from_server):**
 ### *recipes* / [gerrit:examples/has\_chromite\_changes](/recipe_modules/gerrit/examples/has_chromite_changes.py)
 
 [DEPS](/recipe_modules/gerrit/examples/has_chromite_changes.py#8): [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

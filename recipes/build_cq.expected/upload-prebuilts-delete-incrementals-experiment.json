@@ -100,6 +100,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
@@ -2190,6 +2191,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
@@ -6272,31 +6274,6 @@
     ]
   },
   {
-    "cmd": [
-      "curl",
-      "-f",
-      "https://chromium-review.googlesource.com/changes/123456/topic"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.Check if the CQ uploads the prebuilts.curl https://chromium-review.googlesource.com/changes/123456/topic",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "upload prebuilts.Check if the CQ uploads the prebuilts.get CL 123456 description",
     "~followup_annotations": [
@@ -6349,6 +6326,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7, @@@",
@@ -6446,6 +6424,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"chromeos-base/lacros-ash-atomic\", @@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }, @@@",
       "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 0, @@@",

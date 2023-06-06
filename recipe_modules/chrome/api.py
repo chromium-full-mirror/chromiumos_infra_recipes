@@ -358,13 +358,6 @@ class ChromeApi(recipe_api.RecipeApi):
     if gerrit_change.host == INTERNAL_GERRIT_HOST:
       return False
 
-    # Check the topic.
-    topic = self.m.gerrit.get_change_topic(gerrit_change.change,
-                                           gerrit_change.host,
-                                           '"DUMMY_TOPIC_FOR_TESTING"')
-    if topic != TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC:
-      return False
-
     # Check the 'Cq-Cl-Tag' field in the description.
     cl_tags = self.m.git_footers.get_footer_values([gerrit_change], 'Cq-Cl-Tag')
     if len(cl_tags) == 0:
@@ -375,6 +368,10 @@ class ChromeApi(recipe_api.RecipeApi):
 
     patch_sets = self.m.gerrit.fetch_patch_sets([gerrit_change],
                                                 include_files=True)
+
+    # Check the topic.
+    if patch_sets[0].topic != TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC:
+      return False
 
     # Check the ebuild file change is in the patch set.
     return self.diffed_files_requires_rebuild(patch_sets)

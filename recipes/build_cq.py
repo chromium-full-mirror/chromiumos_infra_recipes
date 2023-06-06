@@ -211,9 +211,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.build_menu.test(
       'upload-prebuilts-delete-incrementals-experiment',
       api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
-      api.gerrit.simulated_topic(
-          "chromeos-base/lacros-ash-atomic", GERRIT_HOST, CHANGE_NUM,
-          "upload prebuilts.Check if the CQ uploads the prebuilts"),
       api.step_data(
           'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
               'read git footers',
@@ -224,6 +221,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
+                  'topic': 'chromeos-base/lacros-ash-atomic',
                   'files': {
                       EBUILD_PATH: {},
                   }

@@ -42,6 +42,7 @@ def _get_values_dict(api):
               has_review_started=False,
               branch=api.src_state.default_branch,
               subject='Change title',
+              topic='Change topic',
               message='\n'.join(
                   ['a quick description', '', 'Change-Id: deadbeef', '']),
               url='https://chromium.googlesource.com/chromium/src',
@@ -68,6 +69,7 @@ def _get_values_dict(api):
               has_review_started=True,
               branch='release',
               subject='Different title',
+              topic='topic2',
               message='\n'.join(
                   ['Different title', '', 'Change-Id: Ib767aac2', '']),
               url='https://example.com/project-path',
@@ -100,6 +102,7 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.project, values['project'])
     api.assertions.assertEqual(patch.branch, values['branch'])
     api.assertions.assertEqual(patch.subject, values['subject'])
+    api.assertions.assertEqual(patch.topic, values['topic'])
     api.assertions.assertEqual(patch.git_fetch_url, values['url'])
     api.assertions.assertEqual(patch.git_fetch_ref, values['ref'])
     api.assertions.assertEqual(patch.short_host, values['_short_host'])
@@ -131,6 +134,7 @@ def RunSteps(api):
       api.assertions.assertEqual(patch.project, values['project'])
       api.assertions.assertEqual(patch.branch, values['branch'])
       api.assertions.assertEqual(patch.subject, values['subject'])
+      api.assertions.assertEqual(patch.topic, values['topic'])
       api.assertions.assertEqual(patch.git_fetch_url, values['url'])
       api.assertions.assertEqual(patch.git_fetch_ref, values['ref'])
       api.assertions.assertEqual(patch.short_host, values['_short_host'])
