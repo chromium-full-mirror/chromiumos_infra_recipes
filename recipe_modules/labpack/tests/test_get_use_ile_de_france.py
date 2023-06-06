@@ -7,6 +7,7 @@ test_run_labpack.py is a smoke test for the run_labpack function.
 """
 
 from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.labpack.utils import make_common_config
 
 DEPS = [
     'recipe_engine/step',
@@ -17,8 +18,17 @@ DEPS = [
 
 def RunSteps(api):
   with api.step.nest('get_use_ile_de_france test suite'):
-    assert api.labpack.get_use_ile_de_france(models=[],
-                                             ile_de_france_config=None) is False
+    with api.step.nest('default case'):
+      assert api.labpack.get_use_ile_de_france(models=[],
+                                               common_config=None) is False
+    with api.step.nest('opted-in model'):
+      assert api.labpack.get_use_ile_de_france(
+          models=["eve"], common_config=make_common_config(True, ["eve"],
+                                                           None)) is True
+    with api.step.nest('opted-out model'):
+      assert api.labpack.get_use_ile_de_france(
+          models=["eve"], common_config=make_common_config(True, None,
+                                                           ["eve"])) is False
 
 
 def GenTests(api):

@@ -7465,7 +7465,11 @@ Labpack has the following public attributes:
 
 - has_downloaded_package: bool
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#52)(self):**
+&emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#32)(step_data, dut_state):**
+
+Utility method to convert step data into a status like "ready". 
+
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#68)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -7477,7 +7481,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#114)(self, common_config, dut_state, models=None, hostnames=None):**
+&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#150)(self, common_config, dut_state, models=None, hostnames=None):**
 
 Whether to use Ile-de-France or not.
 
@@ -7490,11 +7494,11 @@ Args:
 Returns:
   * the outgoing dut_state
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#35)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#51)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#40)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#56)(self):**
 
 Get the path of the cipd package.
 
@@ -7505,13 +7509,20 @@ See documentation below for details:
 
 https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#107)(models, ile_de_france_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#123)(models, common_config):**
 
-Not yet implemented
+Whether to use ile de france or not
 
-&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#32)(self):**
+Args:
+  * models: a list of models
+  * common_config: the common config
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#77)(self, labpack_input: LabpackInput, \*\*kwargs):**
+Returns:
+  bool, whether to use ile de france or not
+
+&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#48)(self):**
+
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#93)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 
@@ -13035,19 +13046,15 @@ test_ensure_labpack.py tests that the labpack recipe module reports
 success on the ensure_labpack step when the fake file .../labpack/labpack
 exists.
 
-&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_execute_ile_de_france.py#44)(api):**
-
-&mdash; **def [make\_common\_config](/recipe_modules/labpack/tests/test_execute_ile_de_france.py#28)(enabled, allow_list, deny_list):**
-
-&mdash; **def [to\_message](/recipe_modules/labpack/tests/test_execute_ile_de_france.py#21)(o, message):**
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_execute_ile_de_france.py#21)(api):**
 ### *recipes* / [labpack:tests/test\_get\_use\_ile\_de\_france](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py)
 
-[DEPS](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#11): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#12): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 test_run_labpack.py is a smoke test for the run_labpack function.
 
-&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#19)(api):**
 ### *recipes* / [labpack:tests/test\_run\_labpack](/recipe_modules/labpack/tests/test_run_labpack.py)
 
 [DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]

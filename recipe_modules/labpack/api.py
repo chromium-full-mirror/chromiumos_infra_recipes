@@ -29,6 +29,22 @@ class LabpackCommand(recipe_api.RecipeApi):
     self.cipd_package = properties.version.cipd_package or DEFAULT_CIPD_PACKAGE
     self.downloaded_executable_path = None
 
+  @staticmethod
+  def convert_step_data_to_status(step_data, dut_state):
+    """Utility method to convert step data into a status like "ready". """
+    assert step_data is None or isinstance(
+        step_data, StepData), "step_data unexpectedly has type {}".format(
+            type(step_data))  # pragma: nocover
+    assert isinstance(dut_state,
+                      str), "dut_state unexpectedly has type {}".format(
+                          type(dut_state))
+    if step_data is None:  # pragma: nocover
+      return dut_state  # pragma: nocover
+
+    if step_data.exc_result.retcode != 0:  # pragma: nocover
+      return "needs_repair"
+    return "ready"
+
   def has_downloaded_package(self):
     return self.downloaded_executable_path is not None  # pragma: nocover
 
@@ -105,11 +121,31 @@ class LabpackCommand(recipe_api.RecipeApi):
     return out
 
   @staticmethod
-  def get_use_ile_de_france(models, ile_de_france_config):
-    """Not yet implemented"""
-    _ = models
-    _ = ile_de_france_config
-    return False
+  def get_use_ile_de_france(models, common_config):
+    """Whether to use ile de france or not
+
+    Args:
+      * models: a list of models
+      * common_config: the common config
+
+    Returns:
+      bool, whether to use ile de france or not"""
+
+    if not models:
+      return False
+
+    model = models[0]
+
+    if not common_config.enable_ile_de_france_config.enabled:
+      return False  # pragma: nocover
+
+    if model in common_config.enable_ile_de_france_config.allow_list.models:
+      return True  # pragma: nocover
+
+    if model not in common_config.enable_ile_de_france_config.deny_list.models:
+      return False  # pragma: nocover
+
+    return False  # pragma: nocover
 
   def execute_ile_de_france(self, common_config, dut_state, models=None,
                             hostnames=None):
@@ -126,6 +162,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     """
     assert not isinstance(models, (str, bytes))
     assert not isinstance(hostnames, (str, bytes))
+    assert isinstance(dut_state, str)
 
     models = models or self.m.cros_tags.get_values(
         'label-model', self.m.buildbucket.build.infra.swarming.bot_dimensions)
@@ -133,9 +170,8 @@ class LabpackCommand(recipe_api.RecipeApi):
     hostnames = hostnames or self.m.cros_tags.get_values(
         'dut_name', self.m.buildbucket.build.infra.swarming.bot_dimensions)
 
-    use_ile_de_france = self.get_use_ile_de_france(
-        models=models,
-        ile_de_france_config=common_config.enable_ile_de_france_config)
+    use_ile_de_france = self.get_use_ile_de_france(models=models,
+                                                   common_config=common_config)
 
     if not use_ile_de_france:
       return dut_state
@@ -151,5 +187,5 @@ class LabpackCommand(recipe_api.RecipeApi):
             task_name="post_test",
             caller="test_runner.py",
         ))  # pragma: nocover
-    return ("ready" if step_data.exc_status.retcode == 0 else "needs_repair"
-           )  # pragma: nocover
+
+    return self.convert_step_data_to_status(step_data, dut_state)

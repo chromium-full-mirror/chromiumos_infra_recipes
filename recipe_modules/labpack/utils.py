@@ -3,7 +3,32 @@
 # found in the LICENSE file.
 
 from google.protobuf import json_format
+from google.protobuf.json_format import ParseDict
 from PB.lab.labpack import LabpackInput
+from PB.test_platform.skylab_test_runner.common_config import CommonConfig
+
+
+def to_message(o, message):
+  # Don't modify scalars.
+  if isinstance(o, (int, float, str, bool)):
+    return o
+  return ParseDict(o, message)
+
+
+def make_common_config(enabled, allow_list, deny_list):
+  assert isinstance(enabled, bool)
+  assert not isinstance(allow_list, (str, bytes))
+  assert not isinstance(deny_list, (str, bytes))
+  assert (not allow_list) or (not deny_list)
+  out = {"enable_ile_de_france_config": {}}
+  out["enable_ile_de_france_config"]["enabled"] = enabled
+  if allow_list:
+    out["enable_ile_de_france_config"]["allow_list"] = {"models": allow_list}
+  if deny_list:
+    out["enable_ile_de_france_config"]["deny_list"] = {
+        "models": deny_list
+    }  # pragma: nocover
+  return to_message(out, CommonConfig())
 
 
 def extract_executable_name_from_cipd_path(cipd_path):
