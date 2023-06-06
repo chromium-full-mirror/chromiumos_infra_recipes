@@ -1047,8 +1047,7 @@ def _execution_steps_for_test_with_phosphorus(api, properties, interface,
       dut_state = result.get_dut_state()
   finally:
     _upload_steps_with_phosphorus(api, properties, interface, result,
-                                  test_metadata, dut_state, run_test_response,
-                                  step)
+                                  test_metadata, dut_state, step)
 
   return result
 
@@ -1141,8 +1140,7 @@ def execute_ile_de_france(api, properties, dut_state):
 
 
 def _upload_steps_with_phosphorus(api, properties, interface, result,
-                                  test_metadata, dut_state, run_test_response,
-                                  step):
+                                  test_metadata, dut_state, step):
   """Publish results from Phosphorus test run.
 
   Args:
@@ -1154,8 +1152,6 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
         to access a test.
       * upload_to_tko (bool): Flag to determine if results should be sent to
         tko.
-      * run_test_response (PhosphorusTestDUTResponse): Test response from the
-        DUT.
       * step (StepPresentation): The step to add this log under.
   """
   deadline = _get_context_deadline(api, _RESULT_PUBLISHING_LIMIT, step) if (
@@ -1179,9 +1175,6 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
           # only on the upload step. Even though the GCS artifact upload fails,
           # the ResultDB upload will still be executed.
           _upload_to_resultdb(api, result, properties, interface, test_metadata)
-
-          if result is not None and not result.prejob_response.is_failure():
-            interface.upload_to_tko(test_metadata, run_test_response)
       finally:
         if result is not None and not result.prejob_response.is_failure():
           dut_state = execute_ile_de_france(api=api, properties=properties,
@@ -1554,8 +1547,6 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
               test_metadata, result_for_uploading.test_responses,
               properties.common_config.partner_private,
               properties.common_config.skip_board_model_realm_check)
-          interface.upload_to_tko(test_metadata,
-                                  result_for_uploading.test_responses)
       finally:
         interface.submit_post_job()
         archive_all_logs(api, interface=interface, test_metadata=test_metadata,
@@ -3534,21 +3525,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
-      'upload-to-tko-crash',
-      _misc_properties(),
-      _request_properties(),
-      _mock_load_step(),
-      _successful_prejob_step(),
-      _successful_run_test_step(),
-      _successful_fetch_crashes_step(),
-      api.step_data(
-          'execution steps.original_test.Phosphorus: upload to TKO.call '
-          '`phosphorus`.upload-to-tko', retcode=1),
-      # TODO (b/275363240): audit this test.
-      status='INFRA_FAILURE',
-  )
-
-  yield api.test(
       'upload-to-resultdb-crash',
       _set_build(bid=42),
       _misc_properties(),
@@ -3595,32 +3571,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       api.post_process(
           post_process.MustRun,
           'execution steps.Phosphorus: remove autotest results dir'),
-  )
-
-  yield api.test(
-      'mismatched-test-result-directory',
-      _misc_properties(),
-      _request_properties(),
-      api.step_data(
-          'execution steps.original_test.Phosphorus: load skylab local state.'
-          'call `phosphorus`.load', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='dummy-results-dir', dut_topology=[
-                          skylab_local_state.load.Dut(hostname="fake_hostname",
-                                                      board="fake_board",
-                                                      model="fake_model")
-                      ])))),
-      _successful_prejob_step(),
-      api.step_data(
-          'execution steps.original_test.Phosphorus: run test.call `phosphorus`'
-          '.run-test', stdout=api.raw_io.output(
-              json_format.MessageToJson(
-                  phosphorus.runtest.RunTestResponse(
-                      results_dir='not-a-subdir-of-dummy-results-dir',
-                      state=phosphorus.runtest.RunTestResponse.SUCCEEDED)))),
-      # TODO (b/275363240): audit this test.
-      status='INFRA_FAILURE',
   )
 
   yield api.test(
