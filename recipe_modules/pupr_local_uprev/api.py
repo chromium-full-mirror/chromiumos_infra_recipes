@@ -367,12 +367,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       for project in modified_projects:
         name = self.m.path.basename(project.path)
         root = self.workspace_path.join(project.path)
-        modified_files_in_this_project: List[str] = [
-            pb2_path.path for pb2_path in uprev_sdk_response.modified_files if
-            self.m.util.proto_path_to_recipes_path(pb2_path).is_parent_of(root)
-        ]
         with self.m.step.nest(f'commit in {name}'), self.m.context(cwd=root):
-          self.m.git.add(modified_files_in_this_project)
+          self.m.git.add(['.'])
           self.m.git.commit(commit_message)
 
     return modified_projects

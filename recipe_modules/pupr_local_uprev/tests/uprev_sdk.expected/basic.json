@@ -165,7 +165,8 @@
   {
     "cmd": [
       "git",
-      "add"
+      "add",
+      "."
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_paty/chromiumos-overlay",
     "infra_step": true,
@@ -225,7 +226,8 @@
   {
     "cmd": [
       "git",
-      "add"
+      "add",
+      "."
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/overlays",
     "infra_step": true,
