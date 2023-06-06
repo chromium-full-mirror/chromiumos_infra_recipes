@@ -2052,7 +2052,7 @@
       "info",
       "project-a"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

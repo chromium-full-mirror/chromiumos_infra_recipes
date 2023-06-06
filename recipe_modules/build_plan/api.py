@@ -55,7 +55,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     excluded_project = ['chromeos/manifest', 'chromeos/manifest-internal']
     if gerrit_changes:
       with self.m.step.nest('check for projects outside manifest'):
-        with self.m.context(cwd=self.m.src_state.workspace_path):
+        with self.m.context(cwd=self.m.src_state.build_manifest.path):
           runner = self.m.future_utils.create_parallel_runner()
           for gc in gerrit_changes:
             runner.run_function_async(
