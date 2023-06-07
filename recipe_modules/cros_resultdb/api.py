@@ -179,18 +179,17 @@ class ResultDBCommand(recipe_api.RecipeApi):
       return base
     return os.path.join(base, artifact_directory)
 
-  def upload(self, config, stainless_url=None, testhaus_url=None,
+  def upload(self, config, testhaus_url=None,
              step_name='upload test results to rdb'):
     """Wrapper for uploading test results to resultDB.
 
     Args:
       config (dict) A dict wrapping all resultdb parameters.
-      stainless_url (string): Link to the Stainless logs for the test run.
       testhaus_url (string): Link to the Testhaus logs for the test run.
       step_name (str): The name of the step or None for default.
     """
     with self.m.step.nest(step_name):
-      self._upload(config, stainless_url, testhaus_url)
+      self._upload(config, testhaus_url)
 
   def _is_base_build(self, board, image):
     """Returns True if an image is a base build or False if it's a variant.
@@ -261,13 +260,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     return 'chromeos:' + realm
 
-  def _upload(self, config, stainless_url=None, testhaus_url=None):
+  def _upload(self, config, testhaus_url=None):
     """Call the ResultDB module to upload test result
 
     Args:
       config (dict) A dict wrapping all resultdb parameters. For a list of
           supported parameters refer to the recipe_engine/resultdb module.
-      stainless_url (string): Link to the Stainless logs for the test run.
       testhaus_url (string): Link to the Testhaus logs for the test run.
     """
     pres = self.m.step.active_result.presentation
@@ -301,20 +299,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
           '-test-metadata-file',
           config.get('test_metadata_file')
       ]
-    if stainless_url or (testhaus_url and
-                         config.get('result_format') != 'tast'):
-      pairs = []
-      if stainless_url:
-        stainless_url_str = bytes.decode(stainless_url) if isinstance(
-            stainless_url, bytes) else stainless_url
-        pairs.append('stainless_logs=' + stainless_url_str)
-      if testhaus_url and config.get('result_format') != 'tast':
-        testhaus_url_str = bytes.decode(testhaus_url) if isinstance(
-            testhaus_url, bytes) else testhaus_url
-        pairs.append('testhaus_logs=' + testhaus_url_str)
+    if testhaus_url and config.get('result_format') != 'tast':
+      testhaus_url_str = bytes.decode(testhaus_url) if isinstance(
+          testhaus_url, bytes) else testhaus_url
       result_adapter += [
           '-invocation-link-artifacts',
-          ','.join(pairs),
+          'testhaus_logs=' + testhaus_url_str,
       ]
     if testhaus_url and config.get('result_format') == 'tast':
       testhaus_url_str = bytes.decode(testhaus_url) if isinstance(

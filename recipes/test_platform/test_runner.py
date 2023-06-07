@@ -816,8 +816,7 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'force_current_realm': force_current_realm,
           'skip_board_model_check': skip_board_model_check
       }
-      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
-                               str(result.get_testhaus_log_url()))
+      api.cros_resultdb.upload(config, str(result.get_testhaus_log_url()))
   except api.step.StepFailure:
     # Marks the step status as Failure only and bypass the exception.
     api.step.active_result.presentation.status = api.step.FAILURE
@@ -970,8 +969,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     # Uploads test results to ResultDB only when the test result file exists.
     result_file_content = _read_test_result_file(api, result_file)
     if result_file_content:
-      api.cros_resultdb.upload(config, str(result.get_stainless_log_url()),
-                               str(result.get_testhaus_log_url()))
+      api.cros_resultdb.upload(config, str(result.get_testhaus_log_url()))
 
     # Uploads an additional Autotest wrapper result for Tast test.
     if is_tast_result:

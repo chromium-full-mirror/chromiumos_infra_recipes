@@ -92,8 +92,6 @@
       "/base/dir/autoserv_test/tast/results/streamed_results.jsonl",
       "-artifact-directory",
       "/base/dir/autoserv_test",
-      "-invocation-link-artifacts",
-      "stainless_logs=http://localhost/stainless/url",
       "-testhaus-base-url",
       "http://localhost/testhaus/url",
       "--",

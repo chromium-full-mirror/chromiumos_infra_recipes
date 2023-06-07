@@ -541,7 +541,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
             metadata, force_current_realm, skip_board_model_check)
         self._api.cros_resultdb.upload(autotest_rdb_config,
-                                       str(metadata.stainless_logs_url),
                                        str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
       for tast_result_dir in tast_results_dirs:
@@ -551,7 +550,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             temp_dir.join(self.TEST_METADATA_JSON), metadata,
             force_current_realm, skip_board_model_check)
         self._api.cros_resultdb.upload(tast_rdb_config,
-                                       str(metadata.stainless_logs_url),
                                        str(metadata.testhaus_logs_url))
       # Process missing tast tests if any
       if missing_test_names:

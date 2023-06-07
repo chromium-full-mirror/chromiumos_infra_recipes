@@ -1128,8 +1128,6 @@
       "dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl",
       "-artifact-directory",
       "dummy-results-dir/autoserv_test",
-      "-invocation-link-artifacts",
-      "stainless_logs=https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
       "-testhaus-base-url",
       "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
       "--",

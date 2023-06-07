@@ -497,12 +497,11 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     gs_bucket_path = self._get_upload_uri(tag +
                                           '_results').split(GS_URI_PREFIX)[-1]
-    stainless_log_url = STAINLESS_LOG_PREFIX + gs_bucket_path
 
     # TODO: Replace the GS bucket path with invocation id once Testhaus adapts
     # a new log URL format.
     testhaus_log_url = TESTHAUS_LOG_PREFIX + gs_bucket_path
-    self.m.cros_resultdb.upload(config, stainless_log_url, testhaus_log_url)
+    self.m.cros_resultdb.upload(config, testhaus_log_url)
     self.m.cros_resultdb.report_missing_test_cases(missing_test_names,
                                                    config.get('base_variant'),
                                                    config.get('base_tags'))

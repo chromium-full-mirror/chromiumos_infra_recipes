@@ -95,8 +95,6 @@
       "/base/dir/autoserv_test",
       "-test-metadata-file",
       "/base/dir/test_metadata.json",
-      "-invocation-link-artifacts",
-      "stainless_logs=http://localhost/stainless/url",
       "-testhaus-base-url",
       "http://localhost/testhaus/url",
       "--",

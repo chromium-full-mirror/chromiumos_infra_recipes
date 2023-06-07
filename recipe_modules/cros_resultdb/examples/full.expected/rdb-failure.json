@@ -94,7 +94,7 @@
       "-artifact-directory",
       "/base/dir/autoserv_test/",
       "-invocation-link-artifacts",
-      "stainless_logs=http://localhost/stainless/url,testhaus_logs=http://localhost/testhaus/url",
+      "testhaus_logs=http://localhost/testhaus/url",
       "--",
       "echo"
     ],
