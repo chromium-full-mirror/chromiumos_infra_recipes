@@ -10,6 +10,7 @@ See: https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
 
 import contextlib
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 
 class OverlayfsApi(recipe_api.RecipeApi):
@@ -114,7 +115,11 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """
     unmount_script = self.repo_resource('recipe_scripts/umount_path.sh')
     cmd = str(unmount_script)
-    self.m.step('unmount overlay %s' % name, [cmd, mount_path], infra_step=True)
+    try:
+      self.m.step('unmount overlay %s' % name, [cmd, mount_path],
+                  infra_step=True)
+    except StepFailure:
+      self.m.easy.set_properties_step(unmount_failure=True)
 
     # overlayfs leaves an empty dir called 'work', which is readable only by root.
     # But, 'workdir' needs to be empty for next mount.

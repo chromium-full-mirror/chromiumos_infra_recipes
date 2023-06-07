@@ -51,3 +51,6 @@ def GenTests(api):
       api.properties(**{'$chromeos/overlayfs': {
           'random_work_path': True
       }}))
+  yield api.test(
+      'unmount-exceptions-swallowed',
+      api.step_data('clean up overlayfs mounts.unmount overlay b', retcode=1))
