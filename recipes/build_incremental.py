@@ -94,7 +94,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       with api.repo.m.depot_tools.on_path():
         api.step(
             "Disable cros clean-outdated-pkgs",
-            ["cros", "clean-outdated-pkgs", "--no-auto"],
+            ["cros", "clean-outdated-pkgs", "--no-auto", "--debug"],
         )
 
     api.cros_sdk.update_chroot(

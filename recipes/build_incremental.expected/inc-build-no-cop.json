@@ -2850,7 +2850,8 @@
     "cmd": [
       "cros",
       "clean-outdated-pkgs",
-      "--no-auto"
+      "--no-auto",
+      "--debug"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
