@@ -1,4 +1,5 @@
 per-file dupit.*=file:/OWNERS.build
+per-file build_incremental.*=file:/OWNERS.build
 per-file presubmit_cq.*=file:/OWNERS.build
 per-file presubmit_tests.*=file:/OWNERS.build
 per-file regen_build_cache.*=file:/OWNERS.build
