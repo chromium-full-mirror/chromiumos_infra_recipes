@@ -1,0 +1,545 @@
+{
+  "buildbucket": {
+    "bbagent_args": {
+      "payload_path": "kitchen-checkout",
+      "cache_dir": "cache",
+      "known_public_gerrit_hosts": [
+        "android.googlesource.com",
+        "aomedia.googlesource.com",
+        "boringssl.googlesource.com",
+        "chromium.googlesource.com",
+        "dart.googlesource.com",
+        "dawn.googlesource.com",
+        "fuchsia.googlesource.com",
+        "gn.googlesource.com",
+        "go.googlesource.com",
+        "llvm.googlesource.com",
+        "pdfium.googlesource.com",
+        "quiche.googlesource.com",
+        "skia.googlesource.com",
+        "swiftshader.googlesource.com",
+        "webrtc.googlesource.com"
+      ],
+      "build": {
+        "builder": {
+          "project": "chromeos",
+          "bucket": "postsubmit",
+          "builder": "snapshot-orchestrator"
+        },
+        "input": {
+          "properties": {
+              "$chromeos/analysis_service": {
+                    "max_stdout_stderr_bytes": 1000000
+                  },
+              "$chromeos/cros_build_api": {
+                    "capture_stdout_stderr": true,
+                    "publish_emerge_stats_to_bq": true
+                  },
+              "$chromeos/cros_test_proctor": {
+                    "timeout": "14400s",
+                    "vm_bucket": "vmtest"
+                  },
+              "$chromeos/exonerate": {
+                    "consistent_failure_threshold": 6,
+                    "dry_run": true,
+                    "enable_exoneration": true,
+                    "flaky_percent_threshold": 1,
+                    "flaky_verdict_threshold": 3,
+                    "overall_autoex_limit": 150,
+                    "per_target_autoex_limit": 20
+                  },
+              "$chromeos/goma": {
+                    "goma_approach": "RBE_CHROMEOS"
+                  },
+              "$chromeos/greenness": {
+                    "publish_property": true
+                  },
+              "$chromeos/orch_menu": {
+                    "assert_singleton": true,
+                    "enable_history": true,
+                    "stagger_children_seconds": 1,
+                    "update_manifest_refs": {
+                          "build": "refs/heads/stable",
+                          "max_build_failure_ratio": 0
+                        }
+                  },
+              "$chromeos/skylab": {
+                    "skylab_qs_account": "postsubmit",
+                    "skylab_server": "https://chromeos-swarming.appspot.com"
+                  },
+              "$recipe_engine/resultdb/test_presentation": {
+                    "column_keys": [
+                          "v.build_target"
+                        ],
+                    "grouping_keys": [
+                          "v.build_target"
+                        ]
+                  },
+              "$recipe_engine/scheduler": {
+                    "hostname": "luci-scheduler.appspot.com",
+                    "invocation": "8946397612744022160",
+                    "job": "chromeos/snapshot-orchestrator",
+                    "triggers": [
+                          {
+                                "gitiles": {
+                                      "ref": "refs/heads/snapshot",
+                                      "repo": "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+                                      "revision": "b056c4c99a179758a3996f90e68371093c29b395"
+                                    },
+                                "id": "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/refs/heads/snapshot@b056c4c99a179758a3996f90e68371093c29b395",
+                                "title": "b056c4c99a179758a3996f90e68371093c29b395",
+                                "url": "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/b056c4c99a179758a3996f90e68371093c29b395"
+                              }
+                        ]
+                  },
+              "assert_singleton": true,
+              "enable_history": true,
+              "recipe": "orchestrator",
+              "sheriff_rotations": [
+                    "chromeos"
+                  ],
+              "stagger_children_seconds": 1,
+              "update_manifest_refs": {
+                    "build": "refs/heads/stable",
+                    "max_build_failure_ratio": 0
+                  }
+            },
+          "gitiles_commit": {
+            "host": "chrome-internal.googlesource.com",
+            "project": "chromeos/manifest-internal",
+            "id": "b056c4c99a179758a3996f90e68371093c29b395",
+            "ref": "refs/heads/snapshot"
+          },
+          "experimental": true,
+          "experiments": [
+            "chromeos.build_cq.upload_prebuilts",
+            "chromeos.build_plan.add_chrome_pupr_builders",
+            "chromeos.cros_infra_config.honor_gitiles_commit_ref",
+            "chromeos.cros_source.git_cherry_pick",
+            "chromeos.cros_source.make_manifest_changes_active",
+            "chromeos.orch_menu.get_testable_collect_strategy",
+            "chromeos.skylab.direct_tast_testing",
+            "chromeos.src_state.workspace_in_cleanup",
+            "chromeos.sysroot_util.chrome_cache",
+            "chromeos.sysroot_util.chrome_cache_purge",
+            "luci.buildbucket.agent.cipd_installation",
+            "luci.buildbucket.agent.start_build",
+            "luci.buildbucket.backend_go",
+            "luci.buildbucket.bbagent_getbuild",
+            "luci.buildbucket.bq_exporter_go",
+            "luci.buildbucket.omit_python2",
+            "luci.buildbucket.parent_tracking",
+            "luci.buildbucket.use_bbagent",
+            "luci.recipes.use_python3"
+          ]
+        },
+        "infra": {
+          "buildbucket": {
+            "experiment_reasons": {
+              "chromeos.build_cq.async_unit_tests": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.build_cq.upload_prebuilts": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.build_plan.add_chrome_pupr_builders": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.cq_looks": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.honor_gitiles_commit_ref": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.release_tot_builds_snapshot": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_source.git_cherry_pick": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_source.make_manifest_changes_active": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.orch_menu.get_testable_collect_strategy": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.repo.disable_source_cache_health": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.skylab.direct_tast_testing": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.src_state.workspace_in_cleanup": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.sysroot_util.chrome_cache": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.sysroot_util.chrome_cache_purge": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "luci.buildbucket.agent.cipd_installation": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.agent.start_build": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.backend_go": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.bbagent_getbuild": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.bq_exporter_go": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.canary_software": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.omit_python2": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.parent_tracking": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.use_bbagent": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "luci.buildbucket.use_bbagent_race": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.non_production": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.recipes.use_python3": "EXPERIMENT_REASON_BUILDER_CONFIG"
+            },
+            "agent": {
+              "input": {
+                "data": {
+                  "bbagent_utility_packages": {
+                    "cipd": {
+                      "specs": [
+                        {
+                          "package": "infra/tools/luci/cas/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "bbagent_utility_packages",
+                      "bbagent_utility_packages/bin"
+                    ]
+                  },
+                  "cipd_bin_packages": {
+                    "cipd": {
+                      "specs": [
+                        {
+                          "package": "infra/3pp/tools/git/${platform}",
+                          "version": "version:2@2.39.1.chromium.11"
+                        },
+                        {
+                          "package": "infra/tools/git/${platform}",
+                          "version": "git_revision:88e27d7595b414962844c6a0eb547a8f15f42e49"
+                        },
+                        {
+                          "package": "infra/tools/luci/git-credential-luci/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        },
+                        {
+                          "package": "infra/tools/luci/docker-credential-luci/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        },
+                        {
+                          "package": "infra/tools/luci/vpython3/${platform}",
+                          "version": "git_revision:3d6ee7542a04be92a48ff1c5dc28cb3c5c15dd00"
+                        },
+                        {
+                          "package": "infra/tools/luci/lucicfg/${platform}",
+                          "version": "git_revision:b9abef1757f353159607f840cc5325b0397aa73f"
+                        },
+                        {
+                          "package": "infra/tools/luci-auth/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        },
+                        {
+                          "package": "infra/tools/bb/${platform}",
+                          "version": "git_revision:d791252214c1c2c6b5fbdd773499781622a82529"
+                        },
+                        {
+                          "package": "infra/tools/cloudtail/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        },
+                        {
+                          "package": "infra/tools/prpc/${platform}",
+                          "version": "git_revision:fe9985447e6b95f4907774f05e9774f031700775"
+                        },
+                        {
+                          "package": "infra/tools/rdb/${platform}",
+                          "version": "git_revision:5111dcfc7b559e41a5256d3e7b04542eab70cb55"
+                        },
+                        {
+                          "package": "infra/tools/luci/led/${platform}",
+                          "version": "git_revision:5996f38bcf1d53582b3c62711271dc92782ce43d"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "cipd_bin_packages",
+                      "cipd_bin_packages/bin"
+                    ]
+                  },
+                  "cipd_bin_packages/cpython3": {
+                    "cipd": {
+                      "specs": [
+                        {
+                          "package": "infra/3pp/tools/cpython3/${platform}",
+                          "version": "version:2@3.8.10.chromium.26"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "cipd_bin_packages/cpython3",
+                      "cipd_bin_packages/cpython3/bin"
+                    ]
+                  },
+                  "kitchen-checkout": {
+                    "cipd": {
+                      "specs": [
+                        {
+                          "package": "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+                          "version": "prod"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "source": {
+                "cipd": {
+                  "package": "infra/tools/luci/bbagent/${platform}",
+                  "version": "git_revision:2ea4dbd05db42bc8ca91781f17a41fd80cb08721"
+                }
+              },
+              "purposes": {
+                "bbagent_utility_packages": "PURPOSE_BBAGENT_UTILITY",
+                "kitchen-checkout": "PURPOSE_EXE_PAYLOAD"
+              }
+            },
+            "known_public_gerrit_hosts": [
+              "android.googlesource.com",
+              "aomedia.googlesource.com",
+              "boringssl.googlesource.com",
+              "chromium.googlesource.com",
+              "dart.googlesource.com",
+              "dawn.googlesource.com",
+              "fuchsia.googlesource.com",
+              "gn.googlesource.com",
+              "go.googlesource.com",
+              "llvm.googlesource.com",
+              "pdfium.googlesource.com",
+              "quiche.googlesource.com",
+              "skia.googlesource.com",
+              "swiftshader.googlesource.com",
+              "webrtc.googlesource.com"
+            ],
+            "build_number": true
+          },
+          "swarming": {
+            "hostname": "chromeos-swarming.appspot.com",
+            "task_service_account": "chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
+            "priority": 40,
+            "task_dimensions": [
+              {
+                "key": "bot_size",
+                "value": "e2-medium"
+              },
+              {
+                "key": "pool",
+                "value": "ChromeOS"
+              },
+              {
+                "key": "role",
+                "value": "postsubmit"
+              }
+            ],
+            "bot_dimensions": [
+              {
+                "key": "bot_config",
+                "value": "bot_config.py"
+              },
+              {
+                "key": "bot_size",
+                "value": "e2-medium"
+              },
+              {
+                "key": "caches",
+                "value": "infra_versions"
+              },
+              {
+                "key": "caches",
+                "value": "vpython"
+              },
+              {
+                "key": "cores",
+                "value": "2"
+              },
+              {
+                "key": "cpu",
+                "value": "x86"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64-Broadwell_GCE"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64-avx2"
+              },
+              {
+                "key": "gce",
+                "value": "1"
+              },
+              {
+                "key": "gcp",
+                "value": "chromeos-bot"
+              },
+              {
+                "key": "gpu",
+                "value": "none"
+              },
+              {
+                "key": "id",
+                "value": "chromeos-ci-postsubmit-us-central1-b-x1-4-qqpq"
+              },
+              {
+                "key": "image",
+                "value": "chromeos-bionic-23051000-1a92ac8e842"
+              },
+              {
+                "key": "inside_docker",
+                "value": "0"
+              },
+              {
+                "key": "kernel",
+                "value": "5.4.0-148-generic"
+              },
+              {
+                "key": "kvm",
+                "value": "1"
+              },
+              {
+                "key": "locale",
+                "value": "en_US.UTF-8"
+              },
+              {
+                "key": "machine_type",
+                "value": "e2-medium"
+              },
+              {
+                "key": "os",
+                "value": "Linux"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-18"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-18.04"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-18.04.6"
+              },
+              {
+                "key": "pool",
+                "value": "ChromeOS"
+              },
+              {
+                "key": "python",
+                "value": "3"
+              },
+              {
+                "key": "python",
+                "value": "3.8"
+              },
+              {
+                "key": "python",
+                "value": "3.8.10+chromium.23"
+              },
+              {
+                "key": "role",
+                "value": "postsubmit"
+              },
+              {
+                "key": "server_version",
+                "value": "7169-38c7fb8"
+              },
+              {
+                "key": "ssd",
+                "value": "1"
+              },
+              {
+                "key": "zone",
+                "value": "us"
+              },
+              {
+                "key": "zone",
+                "value": "us-central"
+              },
+              {
+                "key": "zone",
+                "value": "us-central1"
+              },
+              {
+                "key": "zone",
+                "value": "us-central1-b"
+              }
+            ],
+            "caches": [
+              {
+                "name": "builder_95f3fed4c6121484ad67f395d9522717541e7b9ed31992cee7d73368f00ad578_v2",
+                "path": "builder",
+                "wait_for_warm_cache": "240s"
+              },
+              {
+                "name": "chrome",
+                "path": "chrome"
+              },
+              {
+                "name": "chromeos",
+                "path": "chromeos"
+              },
+              {
+                "name": "cros_chroot",
+                "path": "cros_chroot"
+              },
+              {
+                "name": "git",
+                "path": "git"
+              },
+              {
+                "name": "goma_v2",
+                "path": "goma"
+              },
+              {
+                "name": "infra_versions",
+                "path": "infra_versions"
+              },
+              {
+                "name": "vpython",
+                "path": "vpython",
+                "env_var": "VPYTHON_VIRTUALENV_ROOT"
+              }
+            ]
+          },
+          "logdog": {
+            "hostname": "logs.chromium.org",
+            "project": "chromeos"
+          },
+          "resultdb": {
+            "hostname": "results.api.cr.dev",
+            "invocation": "invocations/build-8780967550705628593",
+            "enable": true,
+            "bq_exports": [
+              {
+                "project": "cros-test-analytics",
+                "dataset": "resultdb",
+                "table": "test_results",
+                "test_results": {
+
+                }
+              }
+            ]
+          },
+          "bbagent": {
+            "payload_path": "kitchen-checkout",
+            "cache_dir": "cache"
+          }
+        },
+        "exe": {
+          "cipd_package": "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+          "cipd_version": "prod",
+          "cmd": [
+            "luciexe"
+          ]
+        },
+        "scheduling_timeout": "10800s",
+        "execution_timeout": "46800s",
+        "grace_period": "30s"
+      }
+    },
+    "env_prefixes": [
+      {
+        "key": "VPYTHON_VIRTUALENV_ROOT",
+        "values": [
+          "cache/vpython"
+        ]
+      }
+    ],
+    "bot_ping_tolerance": "0s",
+    "containment": {
+
+    },
+    "name": "led: get-build 8780967550705628593",
+    "final_build_proto_path": "build.proto.json"
+  }
+}

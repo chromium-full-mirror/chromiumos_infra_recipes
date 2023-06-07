@@ -1,0 +1,68 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cq_fault_attribution;
+
+enum CqFailureAttribute {
+  STATUS_UNSPECIFIED = 0;
+  // Used when a failure in a snapshot and in a CQ run have the same failure
+  // reason.
+  MATCHING_FAILURE_FOUND = 1;
+  // Used when a failure in a snapshot and in a CQ run have differing failure
+  // reason.
+  DIFFERING_FAILURE_FOUND = 2;
+  // Used when a failure exists in a CQ run but the same test passed in the
+  // compared snapshot.
+  SUCCESS_FOUND = 3;
+  // Used when a failure exists in a CQ run but the same test was either skipped
+  // or does not exist in the snapshot run.
+  NO_COMPARISON = 4;
+}
+
+message CqTestFailureFaultAttributionStats {
+  // Fault attributed tests gruped by build targets.
+  repeated FaultAttributedBuildTarget test_failure_attributions = 1;
+}
+
+message FaultAttributedBuildTarget {
+  // Build target of the failure. e.g. brya
+  string build_target = 1;
+
+  // All fault attributed tests under this buidl target.
+  repeated FaultAttributionProperties fault_attributes = 3;
+}
+
+message FaultAttributionProperties {
+  // The test name e.g. tast.cq-medium
+  string test_name = 1;
+
+  // The attempt number of this test run. Only relevant for retries.
+  int32 attempt = 2;
+
+  // The fault attribute of this test.
+  CqFailureAttribute snapshot_comparison_fault_attribution = 3;
+
+  // Whether this test has been determined to be likely flaky.
+  bool likely_flaky = 4;
+
+  // The snapshot used for determining the snapshot_comparison_fault_attribution
+  // property.
+  SnapshotProperties comparison_snapshot = 5;
+
+  // The snapshots used for determining the likely_flaky property.
+  repeated SnapshotProperties flakiness_criteria_snapshots = 6;
+}
+
+message SnapshotProperties {
+  // The bbid of the snapshot build.
+  int64 source_build_id = 1;
+
+  // The commit sha of the snapshot build.
+  string source_snapshot_sha = 2;
+
+  // The end_time of the snapshot build in unix format.
+  int64 source_completed_unix_timestamp = 3;
+}

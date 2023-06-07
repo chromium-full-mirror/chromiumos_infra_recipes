@@ -19,6 +19,7 @@
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage)
   * [conductor](#recipe_modules-conductor) &mdash; API wrapping the conductor tool.
+  * [cq_fault_attribution](#recipe_modules-cq_fault_attribution)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
@@ -220,6 +221,9 @@
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
   * [cop](#recipes-cop) &mdash; Recipe for CoP: A CL validator based on Google Cloud Build.
   * [copybot](#recipes-copybot) &mdash; Recipe for Copybot.
+  * [cq_fault_attribution:tests/comparison_snapshots_retrieval](#recipes-cq_fault_attribution_tests_comparison_snapshots_retrieval)
+  * [cq_fault_attribution:tests/set_hw_test_fault_attributes](#recipes-cq_fault_attribution_tests_set_hw_test_fault_attributes)
+  * [cq_fault_attribution:tests/skip_fault_attribution](#recipes-cq_fault_attribution_tests_skip_fault_attribution)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
@@ -2142,6 +2146,29 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/conductor/api.py#27)(self):**
 
 Initializes the module.
+### *recipe_modules* / [cq\_fault\_attribution](/recipe_modules/cq_fault_attribution)
+
+[DEPS](/recipe_modules/cq_fault_attribution/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+#### **class [CqFailureAttributionApi](/recipe_modules/cq_fault_attribution/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for ascribing build and test failure attributes based on
+snapshot build comparisons.
+
+&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#58)(self):**
+
+Returns determined failure attributes
+
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#63)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit):**
+
+Compares test failures between a snapshot and CQ build, and assigns
+failure attributes and a flakiness status to each failure if a comparison
+snapshot is found. Sets and returns failure attributes.
+
+Args:
+  test_results: HW and VM test results.
+  orch_snapshot: The manifest snapshot at the orchestrator level.
 ### *recipe_modules* / [cros\_artifacts](/recipe_modules/cros_artifacts)
 
 [DEPS](/recipe_modules/cros_artifacts/__init__.py#9): [code\_coverage](#recipe_modules-code_coverage), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [disk\_usage](#recipe_modules-disk_usage), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [metadata](#recipe_modules-metadata), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11174,6 +11201,34 @@ This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 &mdash; **def [run\_copybot](/recipes/copybot.py#39)(api: RecipeApi, properties: CopybotProperties):**
 
 Call the RunCopybot endpoint.
+### *recipes* / [cq\_fault\_attribution:tests/comparison\_snapshots\_retrieval](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py)
+
+[DEPS](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#18): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#75)(api, should_use_lfg):**
+### *recipes* / [cq\_fault\_attribution:tests/set\_hw\_test\_fault\_attributes](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py)
+
+[DEPS](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#29): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#249)(api):**
+
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#407)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
+
+&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#398)(source_build_id, source_completed_unix_timestamp):**
+
+&mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#65)(invocation_id: str):**
+
+&mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#71)(items: List[FaultAttributedBuildTarget], build_target: str):**
+
+&mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#60)(invocation_id: str, test_name: str):**
+### *recipes* / [cq\_fault\_attribution:tests/skip\_fault\_attribution](/recipe_modules/cq_fault_attribution/tests/skip_fault_attribution.py)
+
+[DEPS](/recipe_modules/cq_fault_attribution/tests/skip_fault_attribution.py#15): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/skip_fault_attribution.py#40)(api):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#10): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
