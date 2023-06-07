@@ -32,17 +32,12 @@
   {
     "src_path": "arc/vm/mojo_proxy",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/arcvm-mojo-proxy-[^/]*/work/arcvm-mojo-proxy-[^/]*/arc/vm/mojo_proxy"
+    "prefix": "tmp/portage/chromeos-base/arcvm-mojo-proxy-[^/]*/work/arcvm-mojo-proxy-[^/]*/arc/vm/mojo_proxy"
   },
   {
     "src_path": "attestation",
     "repo": "/src/platform2/",
     "prefix": "tmp/portage/chromeos-base/attestation-[^/]*/work/attestation-[^/]*/attestation"
-  },
-  {
-    "src_path": "authpolicy",
-    "repo": "/src/platform2/",
-    "prefix": "tmp/portage/chromeos-base/authpolicy-[^/]*/work/authpolicy-[^/]*/authpolicy"
   },
   {
     "src_path": "biod",
@@ -112,7 +107,7 @@
   {
     "src_path": "chromeos-config",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/chromeos-config-tools-[^/]*/work/chromeos-config-tools-[^/]*/platform2/chromeos-config"
+    "prefix": "tmp/portage/chromeos-base/chromeos-config-tools-[^/]*/work/chromeos-config-tools-[^/]*/platform2/chromeos-config"
   },
   {
     "src_path": "chromeos-dbus-bindings",
@@ -172,12 +167,12 @@
   {
     "src_path": "dlp",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/dlp-[^/]*/work/dlp-[^/]*/dlp"
+    "prefix": "tmp/portage/chromeos-base/dlp-[^/]*/work/dlp-[^/]*/dlp"
   },
   {
     "src_path": "dns-proxy",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/dns-proxy-[^/]*/work/dns-proxy-[^/]*/dns-proxy"
+    "prefix": "tmp/portage/chromeos-base/dns-proxy-[^/]*/work/dns-proxy-[^/]*/dns-proxy"
   },
   {
     "src_path": "easy-unlock",
@@ -207,7 +202,7 @@
   {
     "src_path": "u2fd/g2f_tools",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/g2f_tools-[^/]*/work/g2f_tools-[^/]*/u2fd/g2f_tools"
+    "prefix": "tmp/portage/chromeos-base/g2f_tools-[^/]*/work/g2f_tools-[^/]*/u2fd/g2f_tools"
   },
   {
     "src_path": "gestures",
@@ -247,7 +242,7 @@
   {
     "src_path": "hps",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/hpsd-[^/]*/work/hpsd-[^/]*/hps"
+    "prefix": "tmp/portage/chromeos-base/hpsd-[^/]*/work/hpsd-[^/]*/hps"
   },
   {
     "src_path": "hwsec-test-utils",
@@ -257,7 +252,7 @@
   {
     "src_path": "iioservice",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/iioservice-[^/]*/work/iioservice-[^/]*/platform2/iioservice"
+    "prefix": "tmp/portage/chromeos-base/iioservice-[^/]*/work/iioservice-[^/]*/platform2/iioservice"
   },
   {
     "src_path": "image-burner",
@@ -302,7 +297,7 @@
   {
     "src_path": "libec",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/libec-[^/]*/work/libec-[^/]*/libec"
+    "prefix": "tmp/portage/chromeos-base/libec-[^/]*/work/libec-[^/]*/libec"
   },
   {
     "src_path": "libhwsec",
@@ -342,7 +337,7 @@
   {
     "src_path": "login_manager",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/chromeos-login-[^/]*/work/chromeos-login-[^/]*/login_manager"
+    "prefix": "tmp/portage/chromeos-base/chromeos-login-[^/]*/work/chromeos-login-[^/]*/login_manager"
   },
   {
     "src_path": "lorgnette",
@@ -377,7 +372,7 @@
   {
     "src_path": "missive",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/missive-[^/]*/work/missive-[^/]*/platform2/missive"
+    "prefix": "tmp/portage/chromeos-base/missive-[^/]*/work/missive-[^/]*/platform2/missive"
   },
   {
     "src_path": "ml",
@@ -437,7 +432,7 @@
   {
     "src_path": "pciguard",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/pciguard-[^/]*/work/pciguard-[^/]*/platform2/pciguard"
+    "prefix": "tmp/portage/chromeos-base/pciguard-[^/]*/work/pciguard-[^/]*/platform2/pciguard"
   },
   {
     "src_path": "permission_broker",
@@ -457,7 +452,7 @@
   {
     "src_path": "rmad",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/rmad-[^/]*/work/rmad-[^/]*/rmad"
+    "prefix": "tmp/portage/chromeos-base/rmad-[^/]*/work/rmad-[^/]*/rmad"
   },
   {
     "src_path": "run_oci",
@@ -472,7 +467,7 @@
   {
     "src_path": "screen-capture-utils",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/screen-capture-utils-[^/]*/work/screen-capture-utils-[^/]*/screen-capture-utils"
+    "prefix": "tmp/portage/chromeos-base/screen-capture-utils-[^/]*/work/screen-capture-utils-[^/]*/screen-capture-utils"
   },
   {
     "src_path": "sealed_storage",
@@ -482,7 +477,7 @@
   {
     "src_path": "secanomalyd",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/secanomalyd-[^/]*/work/secanomalyd-[^/]*/secanomalyd"
+    "prefix": "tmp/portage/chromeos-base/secanomalyd-[^/]*/work/secanomalyd-[^/]*/secanomalyd"
   },
   {
     "src_path": "shill/cli",
@@ -512,12 +507,12 @@
   {
     "src_path": "spaced",
     "repo": "/src/platform2/",
-    "prefix":"tmp/portage/chromeos-base/spaced-[^/]*/work/spaced-[^/]*/spaced"
+    "prefix": "tmp/portage/chromeos-base/spaced-[^/]*/work/spaced-[^/]*/spaced"
   },
   {
     "src_path": "syslog-cat",
     "repo": "/src/platform2/",
-    "prefix":  "tmp/portage/chromeos-base/syslog-cat-[^/]*/work/syslog-cat-[^/]*/syslog-cat"
+    "prefix": "tmp/portage/chromeos-base/syslog-cat-[^/]*/work/syslog-cat-[^/]*/syslog-cat"
   },
   {
     "src_path": "system-proxy",
