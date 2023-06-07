@@ -14,8 +14,6 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -80,52 +78,40 @@ def RunSteps(api, properties):
   if api.cros_infra_config.is_staging and not api.led.run_id:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
-  try:
-    api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                       api.build_menu.build_target.name)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+                                     api.build_menu.build_target.name)
 
-    with api.failures.ignore_exceptions():
-      with api.step.nest('checking attestation eligibility') as pres:
-        # Config determines whether to report artifacts.
-        if api.cros_infra_config.config.artifacts.attestation_eligible:
-          api.bcid_reporter.report_stage('start')
-          pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
-        else:
-          pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
+  with api.failures.ignore_exceptions():
+    with api.step.nest('checking attestation eligibility') as pres:
+      # Config determines whether to report artifacts.
+      if api.cros_infra_config.config.artifacts.attestation_eligible:
+        api.bcid_reporter.report_stage('start')
+        pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
+      else:
+        pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
 
-    #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
-    with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
-      with api.build_reporting.publish_to_gs():
-        with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
-                                                raise_on_failed_publish=True):
-          with api.build_menu.configure_builder() as config, \
-              api.build_menu.setup_workspace_and_chroot(replace=True):
-            branch = api.src_state.gitiles_commit.ref
-            if branch.startswith('refs/heads/'):
-              branch = branch[len('refs/heads/'):]
-            api.build_reporting.publish_branch(branch)
+  #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
+  with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
+    with api.build_reporting.publish_to_gs():
+      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                              raise_on_failed_publish=True):
+        with api.build_menu.configure_builder() as config, \
+            api.build_menu.setup_workspace_and_chroot(replace=True):
+          branch = api.src_state.gitiles_commit.ref
+          if branch.startswith('refs/heads/'):
+            branch = branch[len('refs/heads/'):]
+          api.build_reporting.publish_branch(branch)
 
-            with api.step.nest('check that test config exists'):
-              try:
-                api.cros_test_plan.generate_target_test_requirements_config(
-                    paygen=True)
-              except Exception as e:
-                raise StepFailure(
-                    "testing config doesn't exist for this build target, see go/onboard-to-rubik"
-                ) from e
+          with api.step.nest('check that test config exists'):
+            try:
+              api.cros_test_plan.generate_target_test_requirements_config(
+                  paygen=True)
+            except Exception as e:
+              raise StepFailure(
+                  "testing config doesn't exist for this build target, see go/onboard-to-rubik"
+              ) from e
 
-            return DoRunSteps(api, config, properties)
-  finally:
-    # If the parent build is cancelled, by default the child build will have an
-    # INFRA_FAILURE status. Check if this build was cancelled because its
-    # parent was cancelled, and set the status.
-    parent = api.cros_tags.get_values('parent_buildbucket_id')
-    if parent and api.runtime.in_global_shutdown:
-      # pylint: disable=lost-exception
-      return RawResult(
-          status=common.CANCELED,
-          summary_markdown='Parent orchestrator ({}) cancelled'.format(
-              api.buildbucket.build_url(build_id=parent[0])))
+          return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):
@@ -976,32 +962,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
-  )
-
-  yield api.build_menu.test(
-      'parent-cancelled',
-      api.properties(
-          **{
-              '$chromeos/cros_source':
-                  MessageToDict(
-                      CrosSourceProperties(
-                          sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='release',
-                              manifest_file='buildspecs/91/13818.0.0.xml'))),
-          }),
-      api.runtime.global_shutdown_on_step(
-          'configure builder.gitiles-fetch-ref'),
-      api.post_check(
-          post_process.ResultReason,
-          'Parent orchestrator (https://cr-buildbucket.appspot.com/build/123) cancelled'
-      ),
-      api.post_check(post_process.DoesNotRun, 'snoop: report_stage'),
-      api.post_process(post_process.DropExpectation),
-      tags=api.cros_tags.tags(parent_buildbucket_id='123'),
-      cq=True,
-      builder='kukui-cq',
-      build_target='kukui',
-      status='CANCELED',
   )
 
   # Release build with container creation failure.
