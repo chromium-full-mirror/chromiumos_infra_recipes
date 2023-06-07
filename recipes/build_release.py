@@ -52,6 +52,7 @@ DEPS = [
     'dlc_utils',
     'easy',
     'failures',
+    'mass_deploy',
     'signing',
     'src_state',
     'vmlab',
@@ -307,6 +308,11 @@ def DoRunSteps(api, config, properties):
             # build if the outcome was anything other than "passed".
             api.signing.verify_signing_success(metadata, pres)
 
+          # If building mass deploy image, trigger that now, but don't wait for it
+          # to finish.
+          if properties.build_mass_deploy_image:
+            api.mass_deploy.run_mass_deploy_generation(metadata)
+
         elif not instructions:
           with api.step.nest('skipping signing') as pres:
             pres.step_text = (
@@ -328,6 +334,7 @@ def DoRunSteps(api, config, properties):
               pres.step_text = 'property `skip_paygen` was set'
             else:
               pres.step_text = 'no payloads generated since no signed images'
+
   except Exception as e:  #pylint: disable=broad-except
     # Defer any failures until after ebuild tests.
     # Failed steps within the try block will still marked appropriately.
@@ -1078,6 +1085,31 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
               RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # Release build with mass deploy.
+  yield api.build_menu.test(
+      'release-build-mass-deploy',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/signing':
+                  MessageToDict(SigningProperties(timeout=5)),
+              'build_mass_deploy_image':
+                  True,
+          }),
+      api.signing.setup_mocks(channel="stable"),
+      # This needs some work. signing needs to be mocked differently.
+      api.post_check(post_process.MustRun, 'get signed build metadata'),
+      api.post_check(post_process.MustRun, 'generate mass deploy builds'),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',

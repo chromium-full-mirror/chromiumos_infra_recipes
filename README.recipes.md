@@ -82,6 +82,7 @@
   * [labpack](#recipe_modules-labpack)
   * [looks_for_green](#recipe_modules-looks_for_green)
   * [manifest_doctor](#recipe_modules-manifest_doctor) &mdash; API wrapping the manifest_doctor tool.
+  * [mass_deploy](#recipe_modules-mass_deploy) &mdash; An API for triggering the mass deploy builder.
   * [metadata](#recipe_modules-metadata) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
@@ -526,6 +527,7 @@
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full)
+  * [mass_deploy:tests/run_mass_deploy_generation](#recipes-mass_deploy_tests_run_mass_deploy_generation) &mdash; Tests for run_mass_deploy_generation.
   * [metadata:examples/fetch_test_metadata](#recipes-metadata_examples_fetch_test_metadata)
   * [metadata:examples/gspath](#recipes-metadata_examples_gspath)
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
@@ -7648,6 +7650,20 @@ Args:
 &mdash; **def [initialize](/recipe_modules/manifest_doctor/api.py#18)(self):**
 
 Initializes the module.
+### *recipe_modules* / [mass\_deploy](/recipe_modules/mass_deploy)
+
+[DEPS](/recipe_modules/mass_deploy/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+An API for triggering the mass deploy builder
+
+#### **class [MassDeployApi](/recipe_modules/mass_deploy/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [run\_mass\_deploy\_generation](/recipe_modules/mass_deploy/api.py#35)(self, signing_metadata):**
+
+Run the generation of the mass deployment image, but don't wait for it.
+
+This assumes signed builds have already been generated.
 ### *recipe_modules* / [metadata](/recipe_modules/metadata)
 
 [DEPS](/recipe_modules/metadata/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [util](#recipe_modules-util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
@@ -10709,14 +10725,14 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#33)(api: RecipeApi):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [mass\_deploy](#recipe_modules-mass_deploy), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#117)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#118)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#66)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#67)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13236,6 +13252,14 @@ Recipe for performing various manipulations on ChromeOS manifests.
 
 
 &mdash; **def [RunSteps](/recipe_modules/manifest_doctor/examples/full.py#16)(api):**
+### *recipes* / [mass\_deploy:tests/run\_mass\_deploy\_generation](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py)
+
+[DEPS](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#13): [mass\_deploy](#recipe_modules-mass_deploy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for run_mass_deploy_generation.
+
+&mdash; **def [RunSteps](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#84)(api, signing_metadata):**
 ### *recipes* / [metadata:examples/fetch\_test\_metadata](/recipe_modules/metadata/examples/fetch_test_metadata.py)
 
 [DEPS](/recipe_modules/metadata/examples/fetch_test_metadata.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

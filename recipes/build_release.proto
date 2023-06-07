@@ -31,4 +31,7 @@ message BuildReleaseProperties {
 
   // QS Account to use instead of whatever is configured. Passed to paygen.
   string override_qs_account = 5;
+
+  // For ChromeOS Flex/reven board. Build image used by mass deploy systems.
+  bool build_mass_deploy_image = 6;
 }

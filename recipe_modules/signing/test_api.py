@@ -12,9 +12,16 @@ from recipe_engine.recipe_test_api import TestData
 
 class SigningTestApi(recipe_test_api.RecipeTestApi):
 
-  def setup_mocks(self) -> TestData:
+  def setup_mocks(self, channel: str = "dev") -> TestData:
+    """Set up mocks based on the instructions files from the build_api.
+
+    Args:
+      channel: What channel the mock data should be for.
+
+    Returns:
+      TestData object (for chaining within `yield` statements).
+    """
     data = []
-    # Set up mocks based on the instructions files from the build_api.
     for instructions in self.m.cros_build_api.INSTRUCTIONS:
       step_data = self.mock_meta(
           instructions + '.json', {
@@ -28,11 +35,11 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
                   'platform': '13816.12.0',
                   'milestone': '90'
               },
-              'channel': 'dev',
+              'channel': f'{channel}',
               'keyset': 'eve-mp-v2',
               'keyset_is_mp': True,
               'outputs': {
-                  'chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin': {
+                  f'chromeos_13816.12.0_eve_recovery_{channel}-channel_mp-v2.bin': {
                       'md5':
                           '637461a912f7d7b3a5cbe52da5bbd5d0',
                       'sha1':
@@ -42,7 +49,7 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
                       'size':
                           2688756224
                   },
-                  'chromeos_13816.12.0_eve_recovery_dev-channel_mp-v2.bin.zip': {
+                  f'chromeos_13816.12.0_eve_recovery_{channel}-channel_mp-v2.bin.zip': {
                       'md5':
                           'bf70b54b9243ac37a0b1fbb13eb14faf',
                       'sha1':
