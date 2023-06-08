@@ -60,7 +60,7 @@ def FormatCheck(input_api, output_api):
     return input_api.canned_checks.CheckPatchFormatted(
         input_api, output_api, check_python=True, check_clang_format=False,
         result_factory=output_api.PresubmitError)
-  return None
+  return []
 
 
 def CommitChecks(input_api, output_api):
@@ -81,9 +81,7 @@ def CommitChecks(input_api, output_api):
   results += PylintCheck(input_api, output_api)
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
-  fmt_results = FormatCheck(input_api, output_api)
-  if fmt_results:
-    results += fmt_results
+  results += FormatCheck(input_api, output_api)
   return results
 
 
@@ -94,9 +92,7 @@ def UploadChecks(input_api, output_api):
   results += PylintCheck(input_api, output_api)
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
-  fmt_results = FormatCheck(input_api, output_api)
-  if fmt_results:
-    results += fmt_results
+  results += FormatCheck(input_api, output_api)
   return results
 
 
