@@ -222,7 +222,7 @@
   * [cop](#recipes-cop) &mdash; Recipe for CoP: A CL validator based on Google Cloud Build.
   * [copybot](#recipes-copybot) &mdash; Recipe for Copybot.
   * [cq_fault_attribution:tests/comparison_snapshots_retrieval](#recipes-cq_fault_attribution_tests_comparison_snapshots_retrieval)
-  * [cq_fault_attribution:tests/set_hw_test_fault_attributes](#recipes-cq_fault_attribution_tests_set_hw_test_fault_attributes)
+  * [cq_fault_attribution:tests/set_test_failure_fault_attributes](#recipes-cq_fault_attribution_tests_set_test_failure_fault_attributes)
   * [cq_fault_attribution:tests/skip_fault_attribution](#recipes-cq_fault_attribution_tests_skip_fault_attribution)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
@@ -2151,7 +2151,7 @@ Returns:
 Initializes the module.
 ### *recipe_modules* / [cq\_fault\_attribution](/recipe_modules/cq_fault_attribution)
 
-[DEPS](/recipe_modules/cq_fault_attribution/__init__.py#6): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cq_fault_attribution/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 #### **class [CqFailureAttributionApi](/recipe_modules/cq_fault_attribution/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -2159,11 +2159,11 @@ Initializes the module.
 A module for ascribing build and test failure attributes based on
 snapshot build comparisons.
 
-&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#58)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#64)(self):**
 
 Returns determined failure attributes
 
-&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#63)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit):**
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#69)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit):**
 
 Compares test failures between a snapshot and CQ build, and assigns
 failure attributes and a flakiness status to each failure if a comparison
@@ -11213,22 +11213,22 @@ Call the RunCopybot endpoint.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#75)(api, should_use_lfg):**
-### *recipes* / [cq\_fault\_attribution:tests/set\_hw\_test\_fault\_attributes](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py)
+### *recipes* / [cq\_fault\_attribution:tests/set\_test\_failure\_fault\_attributes](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py)
 
-[DEPS](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#29): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#29): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#249)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#271)(api):**
 
-&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#407)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#496)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
 
-&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#398)(source_build_id, source_completed_unix_timestamp):**
+&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#487)(source_build_id, source_completed_unix_timestamp):**
 
-&mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#65)(invocation_id: str):**
+&mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#71)(invocation_id: str):**
 
-&mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#71)(items: List[FaultAttributedBuildTarget], build_target: str):**
+&mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#77)(items: List[FaultAttributedBuildTarget], build_target: str):**
 
-&mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_hw_test_fault_attributes.py#60)(invocation_id: str, test_name: str):**
+&mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#66)(invocation_id: str, test_name: str):**
 ### *recipes* / [cq\_fault\_attribution:tests/skip\_fault\_attribution](/recipe_modules/cq_fault_attribution/tests/skip_fault_attribution.py)
 
 [DEPS](/recipe_modules/cq_fault_attribution/tests/skip_fault_attribution.py#15): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]

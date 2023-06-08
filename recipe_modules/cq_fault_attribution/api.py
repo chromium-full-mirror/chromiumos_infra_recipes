@@ -7,12 +7,13 @@ import re
 from typing import List, Dict, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
+from google.protobuf import timestamp_pb2, json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit, \
-  Status, StringPair, TimeRange
+  Status, StringPair, TimeRange, Trinary
 from PB.go.chromium.org.luci.buildbucket.proto.builder_common import BuilderID
 from PB.go.chromium.org.luci.resultdb.proto.v1.test_result import TestResult, \
   TestStatus
@@ -25,7 +26,6 @@ from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.recipe_engine.resultdb.common import Invocation
 from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
-from google.protobuf import timestamp_pb2
 
 TEST_ID_REGEX = 'invocations/.*/tests/(?P<test_id>.*)/results/'
 PREDICATE_PROJECT = 'chromeos'
@@ -54,6 +54,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     # target
     self._build_target_to_test_fault_attributes: Dict[
         str, List[FaultAttributionProperties]] = defaultdict(list)
+    # Map of (invocation_id, test_id, build_target) to a list of test_result(s)
+    self._invocation_properties_to_test_result_matrix: Dict[Tuple[
+        str, str, str], List[TestResult]] = defaultdict(list)
+    # Map of (build_target, test_id, failure_reason) to total occurrence count
+    self._invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[
+        str, str, str], int] = defaultdict(int)
 
   @property
   def cq_test_failure_attributes(self) -> CqTestFailureFaultAttributionStats:
@@ -110,13 +116,19 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       if invocation_id in invocation_id_to_invocation:
         # The invocation produced test results, so we can use it to assign
         # fault attributes.
+        self._set_comparison_matrices(invocation_id_to_invocation)
         comparison_snapshot_properties = self._get_snapshot_properties_object(
             comparison_snapshot)
         flakiness_criteria_snapshot_properties = list(
             map(self._get_snapshot_properties_object, comparison_snapshots))
         with self.m.step.nest('set hw test fault attributes'):
           self._set_hwtest_fault_attributes(
-              test_results.skylab, invocation_id, invocation_id_to_invocation,
+              test_results.skylab, invocation_id,
+              comparison_snapshot_properties,
+              flakiness_criteria_snapshot_properties)
+        with self.m.step.nest('set vm & gce test fault attributes'):
+          self._set_vm_gce_test_fault_attributes(
+              test_results.tast_vm + test_results.tast_gce, invocation_id,
               comparison_snapshot_properties,
               flakiness_criteria_snapshot_properties)
         break
@@ -130,12 +142,41 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
     return fault_attributed_build_targets
 
-  def _set_hwtest_fault_attributes(
-      self, hw_test_results: SkylabResult, snapshot_build_invocation_id: str,
-      invocation_id_to_invocation: Dict[str, Invocation],
+  def _set_vm_gce_test_fault_attributes(
+      self, tests: List[build_pb2.Build], snapshot_build_invocation_id: str,
       comparison_snapshot_properties: SnapshotProperties,
       flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
-    """ Creates and sets fault attribution properties for a test case and
+    """ Creates and sets fault attribution properties for a vm and gce tests and
+      appends the fault attribution instance to the fault attribute list for the
+      corresponding build target.
+
+      Args:
+        tests: The relevant tests (Builds) to set fault attributes for.
+        snapshot_build_invocation_id: The invocation ID of the snapshot build
+          to be used for fault attribution comparisons.
+        comparison_snapshot_properties: Properties of the snapshot used for
+        flakiness_criteria_snapshot_properties: Properties of the snapshots used
+        for determining flakiness criteria.
+      """
+    for build in tests:
+      if build.critical == Trinary.NO or build.status == Status.SUCCESS:
+        continue
+      build_target = self.m.cros_infra_config.get_build_target_name(build)
+      prop_struct = build.output.properties['failed_test_cases']
+      test_failures = json_format.MessageToDict(prop_struct)
+      for test_case in test_failures:
+        test_id = test_case['name']
+        failure_reason = test_case['humanReadableSummary']
+        self._set_fault_attribution_properties(
+            build_target, test_id, failure_reason, snapshot_build_invocation_id,
+            comparison_snapshot_properties,
+            flakiness_criteria_snapshot_properties)
+
+  def _set_hwtest_fault_attributes(
+      self, hw_test_results: SkylabResult, snapshot_build_invocation_id: str,
+      comparison_snapshot_properties: SnapshotProperties,
+      flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
+    """ Creates and sets fault attribution properties for a HW test case and
       appends the fault attribution instance to the fault attribute list for the
       corresponding build target.
 
@@ -143,14 +184,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         hw_test_results: All HW test results for the given build run.
         snapshot_build_invocation_id: The invocation ID of the snapshot build
           to be used for fault attribution comparisons.
-        invocation_id_to_invocation: Map of snapshot invocation IDs to
-          invocations.
         comparison_snapshot_properties: Properties of the snapshot used for
         flakiness_criteria_snapshot_properties: Properties of the snapshots used
         for determining flakiness criteria.
       """
-    invocation_properties_to_test_result_matrix, invocation_properties_to_failure_reason_count_matrix = \
-      self._get_comparison_matrices(invocation_id_to_invocation)
     for skylab_res in hw_test_results:
       if not skylab_res.task.test.common.critical.value \
           or skylab_res.status == Status.SUCCESS:
@@ -167,35 +204,61 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           # test_case.name here is analogous to the test_id substring in
           # the rdb test_result name.
           test_id = test_case.name
-          test_fault_attribute = FaultAttributionProperties()
-          test_fault_attribute.test_name = test_id
-          test_fault_attribute.attempt = child_result.attempt
-          test_fault_attribute.comparison_snapshot.CopyFrom(
-              comparison_snapshot_properties)
-          matrix_index = (snapshot_build_invocation_id, test_id, build_target)
-          snapshot_test_results = invocation_properties_to_test_result_matrix.get(
-              matrix_index, [])
-          self._set_hwtest_failure_fault_attribution(test_case,
-                                                     test_fault_attribute,
-                                                     snapshot_test_results)
-          if test_fault_attribute.snapshot_comparison_fault_attribution == CqFailureAttribute.SUCCESS_FOUND:
-            # This is classified as a new test failure. Determine and set
-            # flakiness.
-            self._set_hwtest_failure_fault_attribution_flakiness(
-                test_fault_attribute, test_case, build_target, test_id,
-                invocation_properties_to_failure_reason_count_matrix)
-            test_fault_attribute.flakiness_criteria_snapshots.extend(
-                flakiness_criteria_snapshot_properties)
+          attempt = child_result.attempt
+          failure_reason = test_case.human_readable_summary
+          self._set_fault_attribution_properties(
+              build_target, test_id, failure_reason,
+              snapshot_build_invocation_id, comparison_snapshot_properties,
+              flakiness_criteria_snapshot_properties, attempt)
 
-          self._build_target_to_test_fault_attributes[build_target].append(
-              test_fault_attribute)
+  def _set_fault_attribution_properties(
+      self, build_target: str, test_id: str, failure_reason: str,
+      snapshot_build_invocation_id: str,
+      comparison_snapshot_properties: SnapshotProperties,
+      flakiness_criteria_snapshot_properties: List[SnapshotProperties],
+      attempt=0):
+    """ Makes the calls to set the fault attribution property for the test case,
+    under the build target, and also makes the call to set flakiness likelihood
+    if necessary.
 
-  def _set_hwtest_failure_fault_attribution_flakiness(
+    Args:
+      build_target: the build target this test ran for.
+      test_id: The name of the test.
+      failure_reason: The reason why the test failed.
+      snapshot_build_invocation_id: The invocation ID of the snapshot build
+          to be used for fault attribution comparisons.
+      comparison_snapshot_properties: Properties of the snapshot used for
+      flakiness_criteria_snapshot_properties: Properties of the snapshots used
+        for determining flakiness criteria.
+      attempt: The attempt number of this test.
+    """
+    test_fault_attribute = FaultAttributionProperties()
+    test_fault_attribute.test_name = test_id
+    test_fault_attribute.attempt = attempt
+    test_fault_attribute.comparison_snapshot.CopyFrom(
+        comparison_snapshot_properties)
+    matrix_index = (snapshot_build_invocation_id, test_id, build_target)
+    snapshot_test_results = \
+      self._invocation_properties_to_test_result_matrix.get(
+          matrix_index, [])
+    self._set_test_case_failure_fault_attribution(failure_reason,
+                                                  test_fault_attribute,
+                                                  snapshot_test_results)
+    if test_fault_attribute.snapshot_comparison_fault_attribution == \
+        CqFailureAttribute.SUCCESS_FOUND:
+      # This is classified as a new test failure. Determine and set
+      # flakiness.
+      self._set_test_case_failure_fault_attribution_flakiness(
+          test_fault_attribute, failure_reason, build_target, test_id)
+      test_fault_attribute.flakiness_criteria_snapshots.extend(
+          flakiness_criteria_snapshot_properties)
+
+    self._build_target_to_test_fault_attributes[build_target].append(
+        test_fault_attribute)
+
+  def _set_test_case_failure_fault_attribution_flakiness(
       self, test_fault_attribute: FaultAttributionProperties,
-      test_case: TestResult, build_target: str, test_id: str,
-      invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[str, str,
-                                                                       str],
-                                                                 int]):
+      failure_reason: str, build_target: str, test_id: str):
     """Sets the 'likely_flaky' property of the test_fault_attribute based
       on the number of failures present on a test case for the same failure
       reason.
@@ -203,24 +266,19 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       Args:
         test_fault_attribute: The fault attribute instance to set flakiness
           status for.
-        test_case: The test case to determine flakiness for based on
-          previous failures in snapshots.
+        failure_reason: The reason this test failed.
         build_target: The build target that this test case failure occurred
           on.
         test_id: The name of the test e.g. tast.critical-system
-        invocation_properties_to_failure_reason_count_matrix: Matrix
-          consisting of a mapping from (build_target, test_id, failure_reason)
-          to number of occurrences across all attempts in all comparison
-          snapshots.
       """
-    failure_reason = test_case.human_readable_summary
     matrix_index = (build_target, test_id, failure_reason)
-    likely_flaky = invocation_properties_to_failure_reason_count_matrix.get(
+    likely_flaky =\
+      self._invocation_properties_to_failure_reason_count_matrix.get(
         matrix_index, 0) >= FLAKINESS_THRESHOLD
     test_fault_attribute.likely_flaky = likely_flaky
 
-  def _set_hwtest_failure_fault_attribution(
-      self, test_case: TestResult,
+  def _set_test_case_failure_fault_attribution(
+      self, failure_reason: str,
       test_fault_attribute: FaultAttributionProperties,
       snapshot_test_results: List[TestResult]):
     """Sets the snapshot_comparison_fault_attribution property for a CQ
@@ -232,7 +290,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       elif all(snapshot_test_result.status == TestStatus.FAIL
                for snapshot_test_result in snapshot_test_results):
         if any(snapshot_test_result.failure_reason.primary_error_message ==
-               test_case.human_readable_summary
+               failure_reason
                for snapshot_test_result in snapshot_test_results):
           # All attempts failed, and at least one of the failure reasons
           # of the snapshot attempts matches the failure reason
@@ -311,20 +369,13 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return self.m.resultdb.query(inv_ids=invocation_ids, limit=0,
                                  tr_fields=fields)
 
-  def _get_comparison_matrices(
-      self, invocation_id_to_invocation: Dict[str, Invocation]
-  ) -> Tuple[Dict[Tuple[str, str, str], List[TestResult]], Dict[Tuple[
-      str, str, str], int]]:
-    """Returns a tuple with mappings of (invocation_id, test_id, build_target)
-      to a list of test_result(s), and (build_target, test_id, failure_reason)
-      to total occurrence count. Multiple attempts for the same test on the
-      same build target are treated as unique entries, as they have unique
-      invocation IDs. """
-    invocation_properties_to_test_result_matrix: Dict[Tuple[
-        str, str, str], List[TestResult]] = defaultdict(list)
-    invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[
-        str, str, str], int] = defaultdict(int)
-
+  def _set_comparison_matrices(self,
+                               invocation_id_to_invocation: Dict[str,
+                                                                 Invocation]):
+    """Sets the _invocation_properties_to_test_result_matrix and
+      _invocation_properties_to_failure_reason_count_matrix matrices. Multiple
+      attempts for the same test on the same build target are treated as unique
+      entries, as they have unique invocation IDs. """
     for invocation_id, invocation in invocation_id_to_invocation.items():
       for test_result in invocation.test_results:
         test_id = self._get_test_id_from_rdb_test_name(test_result.name)
@@ -332,15 +383,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           # Test name wasn't in the expected format. Skipping.
           continue
         build_target = getattr(test_result.variant, 'def')['build_target']
-        invocation_properties_to_test_result_matrix[(
+        self._invocation_properties_to_test_result_matrix[(
             invocation_id, test_id, build_target)].append(test_result)
 
         failure_reason = test_result.failure_reason.primary_error_message
-        invocation_properties_to_failure_reason_count_matrix[(
+        self._invocation_properties_to_failure_reason_count_matrix[(
             build_target, test_id, failure_reason)] += 1
-
-    return invocation_properties_to_test_result_matrix,\
-      invocation_properties_to_failure_reason_count_matrix
 
   def _get_build_invocation_id(self, build_id: int) -> str:
     return 'build-{}'.format(build_id)
