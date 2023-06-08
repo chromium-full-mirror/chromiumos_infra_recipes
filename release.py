@@ -90,6 +90,9 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
+STAGING_CHECKS_RE = (StagingReCheck('chromeos', 'staging',
+                                    r'staging-amd64-generic-postsubmit',
+                                    [image_builder_exemption]),)
 STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
                    r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
@@ -123,6 +126,7 @@ STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
 )
+
 
 # CipdInstances are instance IDs, as found on the CIPD UI under "Instances".
 # For example: "M4HmuQVGbx8YQVkM61c6LnCHVFgpJsSy1bI4DpBjSTwC"
@@ -477,6 +481,17 @@ def check_staging_builders(changes: List[Commit],
   print()
 
 
+@lru_cache(maxsize=None)
+def is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
+  cmd = ['git', 'merge-base', '--is-ancestor', maybe_older_hash, commit_hash]
+  p = subprocess.run(cmd, capture_output=True, text=True)  #pylint: disable=subprocess-run-check
+  if p.returncode == 0:
+    return True
+  if p.returncode == 1:
+    return False
+  raise Exception(f'error calling `{" ".join(cmd)}`: {p.stderr}')
+
+
 def check_recent_build_statuses(
     builder: str,
     exemptions: List[Callable[[Dict[str, Any]], bool]],
@@ -524,7 +539,7 @@ def check_recent_build_statuses(
   most_recent_githash = githashes[0]
   non_trivial_changes_since_most_recent_build = []
   for change in pending_changes:
-    if change.hash == most_recent_githash:
+    if is_older_than(change.hash, most_recent_githash):
       break
 
     if not change.trivial:
@@ -569,7 +584,7 @@ def check_recent_build_statuses(
                      relevant_changes):
     print(status_str)
 
-  return success
+  return not success
 
 
 @lru_cache(maxsize=None)
