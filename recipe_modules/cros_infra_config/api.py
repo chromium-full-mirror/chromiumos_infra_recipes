@@ -5,7 +5,7 @@
 
 import datetime
 import typing
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
@@ -176,6 +176,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         '$chromeos/cros_infra_config':
             MessageToDict(msg, preserving_proto_field_name=True)
     }
+
+  @property
+  def should_override_release_channels(self) -> bool:
+    return self._properties.should_override_release_channels
+
+  @property
+  def override_release_channels(self) -> List[str]:
+    return self._properties.override_release_channels
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))

@@ -80,6 +80,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   def buildspec(self, buildspec: ManifestLocation):
     self._buildspec = buildspec
 
+  def check_channel_override(self):
+    if self.m.cros_infra_config.should_override_release_channels:
+      with self.m.step.nest('overriding release channels') as pres:
+        pres.logs[
+            'channels'] = f'Original channel changer channels: {self._channels}. Now using: {self.m.cros_infra_config.override_release_channels}'
+        self._channels = self.m.cros_infra_config.override_release_channels
+
   def check_buildspec(self, fatal: bool = False):
     """Checks that the build was given a buildspec and that there doesn't
       already exist a build for this buildspec (and this build is not a retry).
