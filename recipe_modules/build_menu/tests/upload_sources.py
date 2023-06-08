@@ -45,11 +45,12 @@ def GenTests(api):
         for i in range(number_of_gerrit_changes)
     ]
 
+    experiments = ['chromeos.build_menu.upload_sources']
     return api.test_util.test_child_build(build_target, cq=True,
                                           gerrit_changes=gerrit_changes,
                                           git_repo=internal_git_repo,
-                                          git_ref=git_ref,
-                                          revision=revision).build
+                                          git_ref=git_ref, revision=revision,
+                                          experiments=experiments).build
 
   yield api.test(
       'no-artifacts-bucket',
@@ -58,23 +59,25 @@ def GenTests(api):
   )
 
   yield api.test(
-      'not-staging',
+      'exp-not-enabled',
       api.test_util.test_child_build('atlas', cq=True).build,
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'public-target',
-      api.test_util.test_child_build('staging-amd64-generic', cq=True,
-                                     git_repo=external_git_repo,
-                                     revision=revision, git_ref=git_ref).build,
+      api.test_util.test_child_build(
+          'staging-amd64-generic', cq=True, git_repo=external_git_repo,
+          revision=revision, git_ref=git_ref,
+          experiments=['chromeos.build_menu.upload_sources']).build,
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'staging-release',
       api.test_util.test_child_build(
-          'staging-eve', builder_name='staging-eve-release-main').build,
+          'staging-eve', builder_name='staging-eve-release-main',
+          experiments=['chromeos.build_menu.upload_sources']).build,
       api.post_process(post_process.DropExpectation),
   )
 
@@ -93,6 +96,13 @@ def GenTests(api):
       'basic',
       test_build('staging-atlas', number_of_gerrit_changes=10),
       api.properties(TestProperties(expected_sources=expected_sources)),
+  )
+
+  yield api.test(
+      'ignored-exception',
+      test_build('staging-atlas', number_of_gerrit_changes=10),
+      api.step_data('upload sources metadata.gsutil upload', retcode=1),
+      api.post_process(post_process.DropExpectation),
   )
 
   expected_sources.is_dirty = True
