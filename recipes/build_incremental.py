@@ -19,6 +19,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -40,7 +41,14 @@ def RunSteps(api: RecipeApi,
              properties: IncrementalProperties) -> Optional[RawResult]:
   with api.build_menu.configure_builder() as config, \
     api.build_menu.setup_workspace():
-    return DoRunSteps(api, config, properties)
+
+    # Disable cros clean-outdated-pkgs via ENV var, if necessary.
+    cop_enabled = properties.cop_enabled
+    if not cop_enabled:
+      with api.context(env_suffixes={'CROS_CLEAN_OUTDATED_PKGS': '0'}):
+        return DoRunSteps(api, config, properties)
+    else:
+      return DoRunSteps(api, config, properties)
 
 # Tests reliability of incremental build by performing two builds:
 #   1. Revert the checkout back in time, build_packages for that old state,
