@@ -590,6 +590,24 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "dummy-results-dir/subdir/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execution steps.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "dummy-results-dir/subdir/sysinfo/crossystem",
       "/path/to/tmp/"
     ],
@@ -608,14 +626,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "dummy-results-dir/subdir/sysinfo/uname",
+      "dummy-results-dir/subdir/sysinfo/gsctool",
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "execution steps.read kernel log file",
+    "name": "execution steps.read gsctool keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@uname@@@"
+      "@@@STEP_LOG_END@gsctool@@@"
     ]
   },
   {

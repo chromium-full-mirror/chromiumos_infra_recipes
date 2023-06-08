@@ -335,20 +335,57 @@ def _read_autotest_keyval_file(api, base_dir):
     return {}
 
 
-def _read_crossystem_keyvals(api, crossystem_file_path):
+def _read_sysinfo_keyvals(api, sysinfo_file_paths):
+  """Reads the contents of sysinfo keyval files.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * sysinfo_file_paths (string): The paths to the sysinfo dir.
+  Returns:
+  * sysinfo_keyvals (dict): Contents of the sysinfo keyval files.
+  """
+  sysinfo_keyvals = {}
+  for path in sysinfo_file_paths:
+    _read_kernel_version(api, os.path.join(path, 'uname'), sysinfo_keyvals)
+    _read_crossystem_keyvals(api, os.path.join(path, 'crossystem'),
+                             sysinfo_keyvals)
+    _read_gsctool_keyvals(api, os.path.join(path, 'gsctool'), sysinfo_keyvals)
+  return sysinfo_keyvals
+
+
+def _read_gsctool_keyvals(api, gsctool_file_path, sysinfo_keyvals):
+  """Reads the contents of gsctool keyval file.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * gsctool_file_path (string): The path to the gsctool file.
+  * sysinfo_keyvals (dict): Dict to add gsctool keyvals to.
+  """
+  try:
+    contents = api.file.read_text('read gsctool keyval file', gsctool_file_path,
+                                  test_data='').splitlines()
+    for line in contents:
+      # Line examples: "RO 0.0.38", "RW 0.24.13"
+      if line.startswith('RO '):
+        sysinfo_keyvals['gsc_ro'] = line.split(' ')[1]
+      if line.startswith('RW '):
+        sysinfo_keyvals['gsc_rw'] = line.split(' ')[1]
+  except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
+
+
+def _read_crossystem_keyvals(api, crossystem_file_path, sysinfo_keyvals):
   """Reads the contents of crossystem keyval file.
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * crossystem_file_path (string): The path to the crossystem file.
-  Returns:
-  * sysinfo_keyvals (dict): Contents of the crossystem keyval file.
+  * sysinfo_keyvals (dict): Dict to add crossystem keyvals to.
   """
   try:
     contents = api.file.read_text('read crossystem keyval file',
                                   crossystem_file_path,
                                   test_data='').splitlines()
-    crossystem_keyvals = {}
     for line in contents:
       # Line example:
       # "fwid = Google_Voema.13672.224.0 # [RO/str] Active firmware ID"
@@ -356,22 +393,21 @@ def _read_crossystem_keyvals(api, crossystem_file_path):
       items = line.split('=')
       if len(items) < 2:
         continue
-      crossystem_keyvals[items[0]] = items[1]
-
-    return crossystem_keyvals
+      if items[0] == 'ro_fwid':
+        sysinfo_keyvals['ro_fwid'] = items[1]
+      elif items[0] == 'fwid':
+        sysinfo_keyvals['rw_fwid'] = items[1]
   except (api.file.Error, FileNotFoundError):
     api.step.active_result.presentation.status = api.step.WARNING
-    return None
 
 
-def _read_kernel_version(api, kernel_log_file_path):
+def _read_kernel_version(api, kernel_log_file_path, sysinfo_keyvals):
   """Reads the kernel version from the kernel log file.
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * kernel_log_file_path (string): The path to the kernel log file.
-  Returns:
-  * kernel_version (string): The kernel version.
+  * sysinfo_keyvals (dict): Dict to add kernel version to.
   """
   try:
     # Kernel log file has only 1 line, e.g. "Linux localhost
@@ -380,13 +416,13 @@ def _read_kernel_version(api, kernel_log_file_path):
     content = api.file.read_text('read kernel log file', kernel_log_file_path,
                                  test_data='')
     if not content:
-      return ''
+      return
 
     items = content.split(' ')
-    return items[2] if len(items) >= 2 else ''
+    if len(items) >= 2:
+      sysinfo_keyvals['kernel_version'] = items[2]
   except (api.file.Error, FileNotFoundError):
     api.step.active_result.presentation.status = api.step.WARNING
-    return None
 
 
 def _read_test_result_file(api, test_result_file_path):
@@ -428,8 +464,8 @@ def _convert_to_task_request_id(swarming_task_run_id):
 
 
 def _generate_resultdb_base_tags(api, properties, test_metadata,
-                                 autotest_keyval_file, crossystem_keyvals,
-                                 kernel_version, cft_is_enabled):
+                                 autotest_keyval_file, sysinfo_keyvals,
+                                 cft_is_enabled):
   """Generate the base tags for the test results.
 
   This function adds the following tags:
@@ -473,6 +509,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. Google_Voema.13672.224.0
     * rw_fwid: Read-write firmware version,
         e.g. Google_Voema.13672.224.0
+    * gsc_ro: GSC read-only firmware version,
+        e.g. 0.0.38
+    * gsc_rw: GSC read-write firmware version,
+        e.g. 0.24.13
     * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
         e.g. "8814950840874708945, 8814951792758733697"
     * pool: Device pool, an optional dimension to Swarming, which is used only
@@ -503,8 +543,7 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * test_metadata (DUTTestMetadata): All metadata needed for the interface
         to access a test.
     * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
-    * crossystem_keyvals (dict): The keyval labels for crossystem.
-    * kernel_version (string): The kernel version.
+    * sysinfo_keyvals (dict): The sysinfo keyvals.
     * cft_is_enabled (bool): Whether CFT feature is enabled.
 
     Returns:
@@ -680,17 +719,9 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if 'lacros_version' in autotest_keyval_file:
     base_tags.append(('lacros_version', autotest_keyval_file['lacros_version']))
 
-  # Fetches the following information from crossystem keyvals.
-  if crossystem_keyvals is not None:
-    ro_fwid = crossystem_keyvals.get('ro_fwid')
-    if ro_fwid:
-      base_tags.append(('ro_fwid', ro_fwid))
-    rw_fwid = crossystem_keyvals.get('fwid')
-    if rw_fwid:
-      base_tags.append(('rw_fwid', rw_fwid))
-
-  if kernel_version:
-    base_tags.append(('kernel_version', kernel_version))
+  if sysinfo_keyvals is not None:
+    for key in sysinfo_keyvals:
+      base_tags.append((key, sysinfo_keyvals[key]))
 
   carrier = api.cros_tags.get_values(
       'label-carrier', api.buildbucket.build.infra.swarming.bot_dimensions)
@@ -1053,27 +1084,17 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     # parent result dir or in the first test case dir. Thus, we will need to read
     # both places for the worst case.
     # For Tast, read files from the parent result dir only.
-    crossystem_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
-                                        'crossystem')
-    crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-    if crossystem_keyvals is None and first_test_case_name:
-      crossystem_file_path = os.path.join(base_dir, 'autoserv_test',
-                                          first_test_case_name, 'sysinfo',
-                                          'crossystem')
-      crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-    kernel_log_file_path = os.path.join(base_dir, 'autoserv_test', 'sysinfo',
-                                        'uname')
-    kernel_version = _read_kernel_version(api, kernel_log_file_path)
-    if kernel_version is None and first_test_case_name:
-      kernel_log_file_path = os.path.join(base_dir, 'autoserv_test',
-                                          first_test_case_name, 'sysinfo',
-                                          'uname')
-      kernel_version = _read_kernel_version(api, kernel_log_file_path)
+    sysinfo_file_paths = [os.path.join(base_dir, 'autoserv_test', 'sysinfo')]
+    if first_test_case_name:
+      sysinfo_file_paths.append(
+          os.path.join(base_dir, 'autoserv_test', first_test_case_name,
+                       'sysinfo'))
+    sysinfo_keyvals = _read_sysinfo_keyvals(api, sysinfo_file_paths)
 
     base_variant = _generate_resultdb_variant_def(api, autotest_keyval_file)
     base_tags = _generate_resultdb_base_tags(api, properties, test_metadata,
                                              autotest_keyval_file,
-                                             crossystem_keyvals, kernel_version,
+                                             sysinfo_keyvals,
                                              cft_is_enabled=False)
 
     force_current_realm = properties.common_config.partner_private
@@ -1542,14 +1563,10 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
 
       # Skips reading the log files when the result_dir_path is empty. When
       # test/harness crashes, result_dir_path will be empty
-      crossystem_keyvals = {}
-      kernel_version = {}
+      sysinfo_keyvals = {}
       if results_dir:
-        crossystem_file_path = os.path.join(results_dir, 'sysinfo',
-                                            'crossystem')
-        crossystem_keyvals = _read_crossystem_keyvals(api, crossystem_file_path)
-        kernel_log_file_path = os.path.join(results_dir, 'sysinfo', 'uname')
-        kernel_version = _read_kernel_version(api, kernel_log_file_path)
+        sysinfo_file_paths = [os.path.join(results_dir, 'sysinfo')]
+        sysinfo_keyvals = _read_sysinfo_keyvals(api, sysinfo_file_paths)
       autotest_keyvals = test_metadata.autotest_keyvals
       # TODO(b/259569300): Provisioning error during CFT provisioning
       # This prevents the validation of adding ash_versoin and lacros_version
@@ -1563,8 +1580,8 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       except SourcesNotAvailableException:  # pragma: nocover
         pass
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
-          api, properties, test_metadata, autotest_keyval_file,
-          crossystem_keyvals, kernel_version, cft_is_enabled=True)
+          api, properties, test_metadata, autotest_keyval_file, sysinfo_keyvals,
+          cft_is_enabled=True)
       test_metadata.rdb_base_variant = _generate_resultdb_variant_def(
           api, autotest_keyval_file)
 
@@ -2071,6 +2088,20 @@ fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmw
 fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)
 hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
+    """))
+
+  def _gsctool_keyval_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read gsctool keyval file',
+        api.file.read_text("""
+start
+target running protocol version 6
+keyids: RO 0xc7d40497, RW 0xfba25ca9
+offsets: backup RO at 0, backup RW at 0x4000
+Current versions:
+RO 0.0.38
+RW 0.24.13
     """))
 
   def _kernel_log_file_step_data():
@@ -2808,6 +2839,19 @@ hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
     """))
 
+  def _gsctool_keyval_file_step_data_for_ctr():
+    return api.step_data(
+        'execution steps.read gsctool keyval file',
+        api.file.read_text("""
+start
+target running protocol version 6
+keyids: RO 0xc7d40497, RW 0xfba25ca9
+offsets: backup RO at 0, backup RW at 0x4000
+Current versions:
+RO 0.0.38
+RW 0.24.13
+    """))
+
   def _kernel_log_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read kernel log file',
@@ -2989,6 +3033,88 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
+      'no-parent-gsctool-keyval-file-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read gsctool keyval file',
+          api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'no-parent-and-child-gsctool-keyval-files-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      # Sets the test case so that it can use the test case name to find the
+      # child directory.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                      ]),
+                  )))),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read gsctool keyval file',
+          api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read gsctool keyval file (2)',
+          api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
       'no-parent-kernel-log-file-for-tauto',
       _set_build(
           bid=42, tags={
@@ -3136,6 +3262,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Reads rich info for the ResultDB upload.
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3188,6 +3315,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Reads rich info for the ResultDB upload.
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3234,6 +3362,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Reads rich info for the ResultDB upload.
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3267,6 +3396,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Reads rich info for the ResultDB upload.
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3450,6 +3580,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # Reads rich info for the ResultDB upload.
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -4151,6 +4282,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   yield api.test('success-with-ctr', _set_build(bid=42),
                  _misc_properties(cft_is_enabled=True),
                  _crossystem_keyval_file_step_data_for_ctr(),
+                 _gsctool_keyval_file_step_data_for_ctr(),
                  _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
@@ -4159,6 +4291,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   yield api.test('skipped-with-ctr', _set_build(bid=42),
                  _misc_properties(cft_is_enabled=True),
                  _crossystem_keyval_file_step_data_for_ctr(),
+                 _gsctool_keyval_file_step_data_for_ctr(),
                  _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
@@ -4174,6 +4307,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'success-with-ctr-misconfigured-prejob', _set_build(bid=42),
       _misc_properties(cft_is_enabled=True, non_compliant_prejob_deadline=True),
       _crossystem_keyval_file_step_data_for_ctr(),
+      _gsctool_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
       _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
       _successful_run_test_step_for_ctr())
@@ -4182,6 +4316,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       'success-with-ctr-result-publishing-experiment', _set_build(bid=42),
       _misc_properties(cft_is_enabled=True, use_result_publishing_limit=True),
       _crossystem_keyval_file_step_data_for_ctr(),
+      _gsctool_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
       _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
       _successful_run_test_step_for_ctr())
@@ -4191,6 +4326,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _set_build(bid=42),
       _misc_properties(cft_is_enabled=True),
       _crossystem_keyval_file_step_data_for_ctr(),
+      _gsctool_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),

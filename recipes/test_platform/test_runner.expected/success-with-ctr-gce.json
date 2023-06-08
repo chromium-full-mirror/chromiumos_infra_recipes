@@ -705,6 +705,39 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "dummy-results-dir/subdir/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@uname@@@@",
+      "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
+      "@@@STEP_LOG_LINE@uname@    @@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "dummy-results-dir/subdir/sysinfo/crossystem",
       "/path/to/tmp/"
     ],
@@ -749,7 +782,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "dummy-results-dir/subdir/sysinfo/uname",
+      "dummy-results-dir/subdir/sysinfo/gsctool",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -765,13 +798,19 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.read kernel log file",
+    "name": "execution steps.read gsctool keyval file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uname@@@@",
-      "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
-      "@@@STEP_LOG_LINE@uname@    @@@",
-      "@@@STEP_LOG_END@uname@@@"
+      "@@@STEP_LOG_LINE@gsctool@@@@",
+      "@@@STEP_LOG_LINE@gsctool@start@@@",
+      "@@@STEP_LOG_LINE@gsctool@target running protocol version 6@@@",
+      "@@@STEP_LOG_LINE@gsctool@keyids: RO 0xc7d40497, RW 0xfba25ca9@@@",
+      "@@@STEP_LOG_LINE@gsctool@offsets: backup RO at 0, backup RW at 0x4000@@@",
+      "@@@STEP_LOG_LINE@gsctool@Current versions:@@@",
+      "@@@STEP_LOG_LINE@gsctool@RO 0.0.38@@@",
+      "@@@STEP_LOG_LINE@gsctool@RW 0.24.13@@@",
+      "@@@STEP_LOG_LINE@gsctool@    @@@",
+      "@@@STEP_LOG_END@gsctool@@@"
     ]
   },
   {
