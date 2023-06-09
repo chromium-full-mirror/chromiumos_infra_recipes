@@ -19,7 +19,7 @@ test -n "$1" || die 'must provide build'
 
 td="$(mktemp -d)" || die 'failed to make temporary directory'
 
-./get-builder "$1" > "$td"/job.json || die 'failed to create file'
+./get-builder "$1" | ./add-stanza "$2" > "$td"/job.json || die 'failed to create file'
 test -f "$td"/job.json || die 'file does not exist'
 
 edit_file() {

@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# ./add-stanza  is a filter that adds or replaces the ile-de-france stanza
+# of a job description.
+
+import os
+import sys
+import json
+
+INDENT = "  "
+
+cfg = {
+  "enabled": True,
+  "ile_de_france_selector": {
+    "allow_list": {
+      "models": [],
+    },
+  },
+}
+
+cfg["ile_de_france_selector"]["allow_list"]["models"] = sys.argv[1].split(',') if (len(sys.argv) > 1 and sys.argv[1]) else []
+
+job = json.load(sys.stdin)
+
+job['buildbucket']['bbagent_args']['build']['input']['properties']['common_config']['enable_ile_de_france_config'] = cfg
+
+json.dump(obj=job, fp=sys.stdout, indent=INDENT)
