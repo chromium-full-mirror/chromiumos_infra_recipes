@@ -7,6 +7,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
+  import CqFaultAttributionApiProperties
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -94,12 +96,17 @@ def RunSteps(api, should_use_lfg):
 
   api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
-                    tast_gce=[]), orch_snapshot)
+                    tast_gce=[]), orch_snapshot, True)
 
 
 def GenTests(api):
   yield api.test(
-      'orch-snapshot-commit-sha', api.properties(should_use_lfg=False),
+      'orch-snapshot-commit-sha',
+      api.properties(
+          should_use_lfg=False, **{
+              '$chromeos/cq_fault_attribution':
+                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
+          }),
       api.buildbucket.simulated_search_results(
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search'),
@@ -113,7 +120,12 @@ def GenTests(api):
       ))
 
   yield api.test(
-      'lfg-snapshot-commit-sha', api.properties(should_use_lfg=True),
+      'lfg-snapshot-commit-sha',
+      api.properties(
+          should_use_lfg=True, **{
+              '$chromeos/cq_fault_attribution':
+                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
+          }),
       api.buildbucket.simulated_search_results(
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search'),

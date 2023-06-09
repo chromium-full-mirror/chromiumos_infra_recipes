@@ -1140,6 +1140,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           .require_stable_devices,
           run_async=self._properties.run_tests_async,
           container_metadata=container_metadata,
+          supports_fault_attribution=self.is_cq_orchestrator,
       )
     self._builds_status.update([], test_failures)
 

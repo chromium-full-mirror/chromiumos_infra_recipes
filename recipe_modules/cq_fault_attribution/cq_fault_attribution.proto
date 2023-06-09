@@ -6,6 +6,11 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cq_fault_attribution;
 
+message CqFaultAttributionApiProperties {
+  // Whether to attribute failures.
+  bool enable_fault_attribution = 1;
+}
+
 enum CqFailureAttribute {
   STATUS_UNSPECIFIED = 0;
   // Used when a failure in a snapshot and in a CQ run have the same failure

@@ -6,11 +6,11 @@ import re
 
 from typing import Dict, List, Optional
 from recipe_engine import post_process
-from google.protobuf.json_format import ParseDict
 from google.protobuf import timestamp_pb2, json_format
 
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution import \
-  CqFailureAttribute, FaultAttributedBuildTarget, FaultAttributionProperties, \
+  CqFaultAttributionApiProperties, CqFailureAttribute, \
+  FaultAttributedBuildTarget, FaultAttributionProperties, \
   SnapshotProperties
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -29,6 +29,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'cq_fault_attribution',
@@ -124,8 +125,12 @@ mix_of_pass_fail_skipped_child_results = \
                                                            existing_failure_test_case,
                                                            skipped_test_case])]
 
-brya_variant = ParseDict({'def': {'build_target': 'brya'}}, Variant())
-scarlet_variant = ParseDict({'def': {'build_target': 'scarlet'}}, Variant())
+brya_variant = json_format.ParseDict({'def': {
+    'build_target': 'brya'
+}}, Variant())
+scarlet_variant = json_format.ParseDict({'def': {
+    'build_target': 'scarlet'
+}}, Variant())
 
 # Setup snapshot builds in descending order of start time.
 snapshot_build_1_invocation_id = 'build-123'
@@ -339,7 +344,7 @@ def RunSteps(api):
 
   fault_attributes = api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=vm_tests,
-                    tast_gce=[failed_gce_build]), orch_snapshot)
+                    tast_gce=[failed_gce_build]), orch_snapshot, True)
 
   expected_snapshot_comparison_properties = \
     create_expected_snapshot(
@@ -472,6 +477,11 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.properties(
+          **{
+              '$chromeos/cq_fault_attribution':
+                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
+          }),
       api.buildbucket.simulated_search_results(
           builds=[snapshot_build_1],
           step_name='set fault attributes.buildbucket.search'),

@@ -4,7 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import re
-from typing import List, Dict, Tuple
+import traceback
+from typing import Any, Dict, List, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
 from google.protobuf import timestamp_pb2, json_format
@@ -20,8 +21,9 @@ from PB.go.chromium.org.luci.resultdb.proto.v1.test_result import TestResult, \
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
-  import CqFailureAttribute, CqTestFailureFaultAttributionStats, \
-  FaultAttributedBuildTarget, FaultAttributionProperties, SnapshotProperties
+  import CqFaultAttributionApiProperties, CqFailureAttribute, \
+  CqTestFailureFaultAttributionStats, FaultAttributedBuildTarget, \
+  FaultAttributionProperties, SnapshotProperties
 from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.recipe_engine.resultdb.common import Invocation
 from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
@@ -47,8 +49,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
   """A module for ascribing build and test failure attributes based on
     snapshot build comparisons."""
 
-  def __init__(self, **kwargs):
+  def __init__(self, properties: CqFaultAttributionApiProperties,
+               **kwargs: Any):
     super().__init__(**kwargs)
+    self._enable_fault_attribution = properties.enable_fault_attribution
     self._cq_test_failure_attributes = CqTestFailureFaultAttributionStats()
     # Map of build targets to a list of fault attributed tests under the
     # target
@@ -67,8 +71,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return self._cq_test_failure_attributes
 
   def set_cq_fault_attribute_properties(
-      self, test_results: MetaTestTuple,
-      orch_snapshot: GitilesCommit) -> CqTestFailureFaultAttributionStats:
+      self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit,
+      orch_supports_fault_attribution: bool
+  ) -> CqTestFailureFaultAttributionStats:
     """Compares test failures between a snapshot and CQ build, and assigns
       failure attributes and a flakiness status to each failure if a comparison
       snapshot is found. Sets and returns failure attributes.
@@ -77,20 +82,27 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_results: HW and VM test results.
         orch_snapshot: The manifest snapshot at the orchestrator level.
       """
-    with self.m.step.nest('set fault attributes'):
-      # Comparison snapshots ordered in descending order of start_time
-      comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
-      if not comparison_snapshots:
-        # No snapshots available for comparison. Skip fault attribution.
+    with self.m.step.nest('set fault attributes') as pres:
+      if not self._enable_fault_attribution or not \
+          orch_supports_fault_attribution:
         return self.cq_test_failure_attributes
-      fault_attributed_build_targets = self._get_cq_fault_attributes(
-          test_results, comparison_snapshots)
+      try:
+        # Comparison snapshots ordered in descending order of start_time
+        comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
+        if not comparison_snapshots:
+          # No snapshots available for comparison. Skip fault attribution.
+          return self.cq_test_failure_attributes
+        fault_attributed_build_targets = self._get_cq_fault_attributes(
+            test_results, comparison_snapshots)
 
-      if fault_attributed_build_targets:
-        self._cq_test_failure_attributes.test_failure_attributions.extend(
-            fault_attributed_build_targets)
-        self.m.easy.set_properties_step(
-            test_failure_attributions=self._cq_test_failure_attributes)
+        if fault_attributed_build_targets:
+          self._cq_test_failure_attributes.test_failure_attributions.extend(
+              fault_attributed_build_targets)
+          self.m.easy.set_properties_step(
+              test_failure_attributions=self._cq_test_failure_attributes)
+      except self.m.step.StepFailure:
+        # Orchestrator shouldn't fail due to failure in fault attribution.
+        pres.logs['exception'] = traceback.format_exc()
 
       return self.cq_test_failure_attributes
 

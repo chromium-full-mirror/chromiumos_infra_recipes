@@ -191,7 +191,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history, run_async=False, container_metadata=None,
-                  require_stable_devices=False, use_test_plan_v2=False):
+                  require_stable_devices=False, use_test_plan_v2=False,
+                  supports_fault_attribution=False):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -330,6 +331,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           passed_test_names += auto_exonerated_gce_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
+      with self.m.step.nest('fault attribution'):
+        self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
+            test_results, snapshot, supports_fault_attribution)
 
       test_results = test_results._replace(skylab=auto_exonerated_hw_results +
                                            old_exonerated_hw_results)

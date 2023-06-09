@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
+import CqFaultAttributionApiProperties
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/resultdb',
@@ -10,8 +13,9 @@ DEPS = [
     'recipe_engine/time',
     'easy',
     'cros_infra_config',
-    'cros_source',
     'looks_for_green',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = CqFaultAttributionApiProperties

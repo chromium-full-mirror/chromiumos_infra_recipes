@@ -6,6 +6,8 @@
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
+  import CqFaultAttributionApiProperties
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -15,6 +17,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cq_fault_attribution',
     'looks_for_green',
@@ -55,7 +58,8 @@ def RunSteps(api):
   cq_test_failure_attributes = \
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
-      orch_snapshot)
+      orch_snapshot,
+      True)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
 
@@ -65,10 +69,17 @@ def RunSteps(api):
   cq_test_failure_attributes = \
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
-      orch_snapshot)
+      orch_snapshot,
+      True)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
 
 
 def GenTests(api):
-  yield api.test('no-comparison-snapshots')
+  yield api.test(
+      'no-comparison-snapshots',
+      api.properties(
+          **{
+              '$chromeos/cq_fault_attribution':
+                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
+          }))

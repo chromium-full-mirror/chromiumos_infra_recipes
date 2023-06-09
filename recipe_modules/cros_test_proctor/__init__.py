@@ -17,6 +17,7 @@ DEPS = [
     'cros_test_plan',
     'cros_test_plan_v2',
     'cros_cq_additional_tests',
+    'cq_fault_attribution',
     'easy',
     'exonerate',
     'git',
