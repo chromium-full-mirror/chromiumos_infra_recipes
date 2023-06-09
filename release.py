@@ -23,6 +23,15 @@ from typing import Optional
 from typing import Tuple
 import urllib.parse
 
+import tabulate
+
+# [VPYTHON:BEGIN]
+# wheel: <
+#   name: "infra/python/wheels/tabulate-py3"
+#   version: "version:0.8.10"
+# >
+# [VPYTHON:END]
+
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
 RECIPE_BUNDLE = os.path.join('infra', 'recipe_bundles',
                              'chromium.googlesource.com', 'chromiumos', 'infra',
@@ -127,7 +136,6 @@ STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
 )
 
-
 # CipdInstances are instance IDs, as found on the CIPD UI under "Instances".
 # For example: "M4HmuQVGbx8YQVkM61c6LnCHVFgpJsSy1bI4DpBjSTwC"
 CipdInstance = typing.NewType('CipdInstance', str)
@@ -199,19 +207,51 @@ class Commit:
   def set_cipd_instance(self, instanceid: CipdInstance):
     self.cipd_instance = instanceid
 
-  def color_str(self, show_instances: bool) -> str:
-    """Return a colorified string for printing to stdout."""
-    cipd_instance_str = (f'({self.get_cipd_instance()}) '
-                         if show_instances else '')
-    return (f'{cipd_instance_str}'
-            f'{BOLDBLUE}{self.short_hash} ({self.date})'
-            f'{BOLDGREEN}[{self.username}] '
-            f'{RESET}{self.message}')
+  def color_strs(self, show_instances: bool) -> List[str]:
+    """Return colorified strings for each field of the Commit.
 
-  def plain_str(self, with_bullet: bool = False) -> str:
-    """Return a colorless string for printing to email."""
-    prefix = '* ' if with_bullet else ''
-    return f'{prefix}{self.short_hash} [{self.username}] {self.message}'
+    Intended for use with the tabulate library, which takes a list of lists and
+    aligns them into a table. For example
+
+    ```
+    print(tabulate([c.color_strs() for c in commits]))
+    ```
+
+    Args:
+      show_instances: If true, include the CIPD instance.
+
+    Returns:
+      A list of strings for use with tabulate.
+    """
+    strs = [
+        f'{BOLDBLUE}{self.short_hash}', self.date,
+        f'{BOLDGREEN}[{self.username}] ', f'{RESET}{self.message}'
+    ]
+    if show_instances:
+      strs = [self.get_cipd_instance()] + strs
+
+    return strs
+
+  def plain_strs(self, with_bullet: bool = False) -> str:
+    """Return plain strings for each field of the Commit.
+
+    Intended for use with the tabulate library, which takes a list of lists and
+    aligns them into a table. For example
+
+    ```
+    print(tabulate([c.plain_strs() for c in commits]))
+    ```
+
+    Args:
+      with_bullet: If true, prefix with a '*'.
+
+    Returns:
+      A list of strings for use with tabulate.
+    """
+    strs = [self.short_hash, f'[{self.username}]', self.message]
+    if with_bullet:
+      strs = ['*'] + strs
+    return strs
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -372,11 +412,13 @@ def report_pending_changes(pending_changes: List[Commit], show_instances: bool,
   """Pretty-print info about all the pending changes."""
   if verbose:
     print(' - Verbose specified, printing all changes')
+  change_strs = []
   for pending_change in pending_changes:
     if pending_change.trivial and not verbose:
       continue
-    print(f'* {pending_change.color_str(show_instances)}')
-  print()
+    change_strs.append(pending_change.color_strs(show_instances=show_instances))
+
+  print(tabulate.tabulate(change_strs, headers=[], tablefmt='plain'))
 
 
 @lru_cache(maxsize=None)
@@ -672,10 +714,11 @@ def get_email_link(pending_changes: List[Commit]) -> str:
       '',
       'Here is a summary of the changes:',
       '',
-      '\n'.join(
-          change.plain_str(with_bullet=True)
-          for change in pending_changes
-          if not change.trivial),
+      tabulate.tabulate([
+          c.plain_strs(with_bullet=True)
+          for c in pending_changes
+          if not c.trivial
+      ], headers=[], tablefmt='plain'),
   ])
   url_params = urllib.parse.urlencode({
       'view': 'cm',
