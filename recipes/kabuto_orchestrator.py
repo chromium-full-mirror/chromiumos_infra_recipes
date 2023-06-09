@@ -5,6 +5,7 @@
 
 """Recipe for building Kabuto payloads and launching Kabuto shadercache jobs."""
 
+import json
 from recipe_engine import post_process
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 from recipe_engine.recipe_api import RecipeApi
@@ -137,10 +138,14 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   all_uprev_info = []
   for shadercache_build in shadercache_builds:
     if 'uprev_info' in shadercache_build.output.properties:
-      uprev_info = shadercache_build.output.properties['uprev_info']
+      # The output property is a dict represented as a string, but for it to be
+      # proper JSON when passed as an input_property we need to use json.loads
+      # so that it remains properly JSON formatted.
+      uprev_info = json.loads(shadercache_build.output.properties['uprev_info'])
       all_uprev_info.append(uprev_info)
   # Prepare the cumulative uprev information.
-  uprev_input_props = {"uprev_info": all_uprev_info}
+  # Use json.dumps to convert back to a JSON-compatible formatted string.
+  uprev_input_props = {"uprev_info": json.dumps(all_uprev_info)}
   if manifest_branch:
     uprev_input_props['manifest_branch'] = manifest_branch
 
@@ -163,7 +168,7 @@ def GenTests(api: RecipeTestApi) -> None:
     shadercache_child_data = build_pb2.Build(id=8922054662172514001,
                                              status='SUCCESS')
     shadercache_child_data.output.properties[
-        'uprev_info'] = "uprev_info_from_shadercache_builder"
+        'uprev_info'] = '{\"a\": 1, \"b\": 2}'
     return shadercache_child_data
 
   def child_builder_failure() -> Build:
