@@ -55,9 +55,9 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str, is_staging: str,
 
     # Yield execution on the child build and return the properties when
     # the job is complete..
-    # 2 hour timeout since paygen builder is roughly 1h in execution time,
+    # 3 hour timeout since paygen builder is roughly 1h in execution time,
     # the default 1h timeout causes an INFRA_FAILURE.
-    builds = api.buildbucket.run(requests, timeout=60 * 60 * 2)
+    builds = api.buildbucket.run(requests, timeout=60 * 60 * 3)
 
     # Check for FAILURE or INFRA_FAILURE on the completed child builder.
     # Sets the appropriate status on the current step in the orchestrator
