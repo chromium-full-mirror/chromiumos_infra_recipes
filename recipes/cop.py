@@ -9,6 +9,7 @@ import binascii
 import json
 
 from typing import Dict
+from typing import List
 from typing import Generator
 from typing import Optional
 
@@ -59,13 +60,14 @@ def _run_script(api: RecipeApi, script: str, data_input: Dict,
   return result.json.output
 
 
-def _gen_build_config(api: RecipeApi, user_yaml: str,
-                      substitutions: Dict) -> Dict:
+def _gen_build_config(api: RecipeApi, user_yaml: str, substitutions: Dict,
+                      files: List) -> Dict:
   """Combine the user build configuration with the base configuration."""
   data_in = {
       'base_yaml': api.resource('base.yaml'),
       'user_yaml': user_yaml,
       'substitutions': substitutions,
+      'files': files,
   }
   return _run_script(api, "generate_build_config.py", data_in)
 
@@ -156,7 +158,8 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       change = gerrit_changes[0]
 
     patch_set = api.gerrit.fetch_patch_set_from_change(change,
-                                                       include_commit_info=True)
+                                                       include_commit_info=True,
+                                                       include_files=True)
 
   with api.step.nest('check committer') as presentation:
     committer = patch_set.commit_info['committer']['email']
@@ -177,7 +180,11 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
         '_REF': patch_set.git_fetch_ref,
         '_URL': patch_set.git_fetch_url,
     }
-    build_config = _gen_build_config(api, user_yaml, subs)
+    build_config = _gen_build_config(api, user_yaml, subs,
+                                     list(patch_set.file_infos))
+    if not build_config:
+      presentation.step_text = 'Empty build: Exiting'
+      return
 
   with api.step.nest('launch build') as presentation:
     build_id, log_url = _launch_build(api, properties.project_name,
@@ -264,6 +271,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                 },
                 '_number': 1,
                 'ref': 'refs/changes/1/23456789/3',
+                'files': {
+                    'Makefile': {
+                        'lines_inserted': 1,
+                        'size': 42,
+                        'size_delta': 3
+                    },
+                },
             },
         },
     }
@@ -327,6 +341,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.properties(CopProperties(project_name='name'))
 
   cop_file = base64.b64encode('{"test_step:" 1}'.encode('ascii'))
+  yield api.test('empty-run', test_builder(gerrit_changes=change),
+                 api.gerrit.set_gerrit_fetch_changes_response(
+                    'get change', change, gen_patch_sets()),
+                 api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output([])),
+                 api.post_check(post_process.StepSuccess, 'generate build config'),
+                 api.post_check(post_process.DoesNotRun, 'launch build'),
+                 api.post_process(post_process.DropExpectation)) + \
+                 api.properties(CopProperties(project_name='name'))
+
+  config_file = {'steps': [1, 2, 3]}
   cloud_build = {'id': 'acabad0', 'log_url': 'http://google.com'}
   results = {
       'result': {
@@ -345,6 +370,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output(config_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',api.json.output(None)),
@@ -358,6 +384,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output(config_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',retcode=1),
@@ -371,6 +398,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output(config_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',retcode=1),
@@ -386,6 +414,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                     'get change', change, gen_patch_sets()),
                  api.buildbucket.generic_build(bucket='staging'),
                  api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output(config_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
@@ -412,6 +441,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
                  api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output(config_file)),
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),

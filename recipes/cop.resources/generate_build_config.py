@@ -6,6 +6,8 @@
 """Generate a secure and valid Google Cloud Build configuration from a user-provided COP build file."""
 
 import argparse
+import copy
+import fnmatch
 import json
 import sys
 import yaml
@@ -28,6 +30,20 @@ def securize_user_config(user_config):
       sys.exit(-1)
 
   return user_config
+
+
+def strip_steps(steps, files):
+  """Remove the file-associated steps if they do no apply to a CL."""
+  allow_tag = "CoP_FilesAllow"
+  out_steps = list()
+  for step in copy.deepcopy(steps):
+    file_match_list = step.pop(allow_tag, None)
+    if file_match_list and not any(
+        fnmatch.filter(files, pattern) for pattern in file_match_list):
+      continue
+    out_steps.append(step)
+
+  return out_steps
 
 
 def patch_yaml(base_yaml, user_yaml):
@@ -86,9 +102,16 @@ def main(args):
   file_base_config = open(input_json['base_yaml'])
   base_config = yaml.safe_load(file_base_config.read())
   user_config = yaml.safe_load(input_json['user_yaml'])
+  files = input_json['files']
   substitutions = input_json['substitutions']
 
   user_config = securize_user_config(user_config)
+
+  user_config['steps'] = strip_steps(user_config['steps'], files)
+  if not user_config['steps']:
+    json.dump([], args.output_json)
+    return 0
+
   build_config = patch_yaml(base_config, user_config)
   for key in substitutions:
     build_config['substitutions'][key] = substitutions[key]
