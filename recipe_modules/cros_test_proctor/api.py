@@ -404,7 +404,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     if '!informational' in ''.join(
         expressions) or '!"informational"' in ''.join(expressions):
-      return build_target.name + '-tast-gce'
+      return staging_prefix + build_target.name + '-tast-gce'
     return staging_prefix + build_target.name + '-tast-gce-informational'
 
   def _get_non_informational(self, tast_unit):
