@@ -6,7 +6,8 @@
 """Recipe that builds and tests firmware.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
-This recipe should only be used for ToT firmware builds.
+This recipe should only be used for ToT firmware builds and build_legacy_fw
+(which is not deprecated) should be used for branch firmware builds.
 """
 
 import collections
@@ -102,12 +103,7 @@ def RunSteps(api, properties):
         pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
       else:
         pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
-  if properties.manifest_branch:
-    commit = api.src_state.internal_manifest.as_gitiles_commit_proto
-    commit.ref = 'refs/heads/{}'.format(properties.manifest_branch)
-  else:
-    commit = None
-  with api.build_menu.configure_builder(commit=commit) \
+  with api.build_menu.configure_builder() \
      as config, api.build_menu.setup_workspace():
     chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
     api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
@@ -439,22 +435,6 @@ def GenTests(api):
   yield test('output-binary-sizes',
              api.post_check(post_process.MustRun, 'output binary sizes'),
              api.post_check(post_process.MustRun, 'output got_revision'))
-
-  yield test(
-      'branched-manifest',
-      api.post_check(post_process.MustRun,
-                     'configure builder.cros_infra_config.gitiles-fetch-ref'),
-      api.post_process(
-          post_process.StepCommandContains,
-          'ensure synced checkout.repo init',
-          [
-              '--manifest-branch',
-              'factory-firmware-ti50-B',
-          ],
-      ), builder='firmware-ti50-cq',
-      input_properties=dict(firmware_location=3,
-                            chromiumos_sdk_pin_file=sdk_pin_path,
-                            manifest_branch="factory-firmware-ti50-B"))
 
   yield test(
       'create test containers',

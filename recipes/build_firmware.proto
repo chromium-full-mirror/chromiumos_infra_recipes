@@ -29,7 +29,5 @@ message BuildFirmwareProperties {
   // Currently only being used for TI50, see b/217247914 for context.
   string chromiumos_sdk_pin_file = 6;
 
-  // The manifest branch to check out (e.g. 'factory-firmware-ti50-guc-14778.B')
-  // Defaults to main tip of tree if not specified.
-  string manifest_branch = 7;
+  reserved 7;
 }
