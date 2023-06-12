@@ -31,6 +31,7 @@ DEPS = [
     'recipe_engine/scheduler',
     'recipe_engine/step',
     'cros_build_api',
+    'cros_sdk',
     'deferrals',
     'easy',
     'gerrit',
@@ -44,10 +45,14 @@ DEPS = [
 CHROMITE_REPO = 'chromiumos/chromite'
 INFRA_PROTO_REPO = 'chromiumos/infra/proto'
 CHROMITE_INFRA_PROTO_REPO = 'chromite/infra/proto'
+CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
+SCRIPTS_REPO = 'src/scripts'
 PROJECTS_TO_CHECKOUT = (
     INFRA_PROTO_REPO,
     CHROMITE_REPO,
     CHROMITE_INFRA_PROTO_REPO,
+    CHROMIUMOS_OVERLAY_REPO,  # Needed for SDK version file.
+    SCRIPTS_REPO,  # Needed for make_chroot.sh script.
 )
 
 # URLs for repo projects. This is what appears in a gitiles trigger.
@@ -93,12 +98,12 @@ def process_ref(api: recipe_api.RecipeApi, ref: str) -> None:
   """
   branch = api.git.extract_branch(ref)
   with api.step.nest(f'process branch {branch}'):
-    check_out_branch(api, branch)
+    setup_workspace(api, branch)
     compile_chromite_protos(api, ref)
 
 
-def check_out_branch(api: recipe_api.RecipeApi, manifest_branch: str) -> None:
-  """Check out all the necessary projects on the given branch.
+def setup_workspace(api: recipe_api.RecipeApi, manifest_branch: str) -> None:
+  """Check out all the necessary projects and create an SDK on the given branch.
 
   Args:
     api: The recipe API.
@@ -111,6 +116,7 @@ def check_out_branch(api: recipe_api.RecipeApi, manifest_branch: str) -> None:
         manifest_branch=manifest_branch,
     )
     api.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
+    api.cros_sdk.create_chroot(replace=True, chroot_upgrade=False)
 
 
 def compile_chromite_protos(api: recipe_api.RecipeApi, ref: str) -> None:
