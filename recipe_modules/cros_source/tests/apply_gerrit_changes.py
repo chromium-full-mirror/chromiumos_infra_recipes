@@ -31,21 +31,20 @@ def GenTests(api):
       'apply-gerrit-changes-fail',
       manifest_branch,
       api.repo.fail_repo_sync(True),
-      api.post_check(GitStrategyEquals, GitStrategy.MERGE),
+      api.post_check(GitStrategyEquals, GitStrategy.CHERRY_PICK),
       status='INFRA_FAILURE',
   )
 
   yield api.cros_source.test(
       'apply-gerrit-changes-success',
       manifest_branch,
-      api.post_check(GitStrategyEquals, GitStrategy.MERGE),
+      api.post_check(GitStrategyEquals, GitStrategy.CHERRY_PICK),
   )
 
   yield api.cros_source.test(
       'cherry-pick-success',
       manifest_branch,
-      api.buildbucket.try_build(
-          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.buildbucket.try_build(),
       api.post_check(post_process.MustRun,
                      'apply gerrit patch sets.git cherry-pick'),
       api.post_check(post_process.DoesNotRun,
@@ -59,8 +58,7 @@ def GenTests(api):
   yield api.cros_source.test(
       'cherry-pick-fail',
       manifest_branch,
-      api.buildbucket.try_build(
-          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.buildbucket.try_build(),
       api.step_data('apply gerrit patch sets.git cherry-pick', retcode=1),
       api.post_check(post_process.MustRun,
                      'apply gerrit patch sets.git cherry-pick'),
@@ -74,8 +72,7 @@ def GenTests(api):
   yield api.cros_source.test(
       'cherry-pick-fail-merge-fail',
       manifest_branch,
-      api.buildbucket.try_build(
-          experiments=['chromeos.cros_source.git_cherry_pick']),
+      api.buildbucket.try_build(),
       api.step_data('apply gerrit patch sets.git cherry-pick', retcode=1),
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.post_check(post_process.MustRun,

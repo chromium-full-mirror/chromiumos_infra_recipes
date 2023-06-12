@@ -95,9 +95,7 @@ class CrosSourceApi(RecipeApi):
         with self.m.context(cwd=workspace):
           self.m.step('ls', ['ls', '-l'])
           self.m.step('mounts', ['cat', '/proc/mounts'])
-    self.git_strategy = GitStrategy.CHERRY_PICK if (
-        'chromeos.cros_source.git_cherry_pick'
-        in self.m.cros_infra_config.experiments) else GitStrategy.MERGE
+    self.git_strategy = GitStrategy.CHERRY_PICK
 
   @property
   def mirrored_manifest_files(self):
@@ -1273,11 +1271,6 @@ class CrosSourceApi(RecipeApi):
             raise StepFailure(
                 'merge %s failed. Aborting: cannot cherry-pick merge commits' %
                 commit)
-          presentation = self.m.step.active_result.presentation
-          presentation.status = self.m.step.SUCCESS
-          presentation.step_text = 'merge failed. will try cherry-pick instead'
-          self.m.git.cherry_pick(commit, infra_step=False)
-          self.git_strategy = GitStrategy.CHERRY_PICK
       self.m.easy.set_properties_step(
           cros_source_git_strategy=self.git_strategy)
       self._applied_patches[patch.display_id].append(patch)

@@ -2226,10 +2226,35 @@
   {
     "cmd": [
       "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
     "luci_context": {
@@ -2244,7 +2269,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2254,7 +2279,7 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@1@@@"
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
     ]
   },
   {

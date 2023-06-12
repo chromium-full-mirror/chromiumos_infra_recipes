@@ -2949,10 +2949,35 @@
   {
     "cmd": [
       "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/config",
     "luci_context": {
@@ -2967,7 +2992,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2977,7 +3002,7 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@1@@@"
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
     ]
   },
   {
@@ -3071,10 +3096,35 @@
   {
     "cmd": [
       "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/program/galaxy",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git log (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/program/galaxy",
     "luci_context": {
@@ -3089,7 +3139,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge (2)",
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -3099,7 +3149,7 @@
     "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@1@@@"
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
     ]
   },
   {
