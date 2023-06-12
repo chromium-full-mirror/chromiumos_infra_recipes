@@ -85,7 +85,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       with self.m.step.nest('overriding release channels') as pres:
         pres.logs[
             'channels'] = f'Original channel changer channels: {self._channels}. Now using: {self.m.cros_infra_config.override_release_channels}'
-        self._channels = self.m.cros_infra_config.override_release_channels
+        self._channels = [
+            int(channel)
+            for channel in self.m.cros_infra_config.override_release_channels
+        ]
 
   def check_buildspec(self, fatal: bool = False):
     """Checks that the build was given a buildspec and that there doesn't

@@ -15,6 +15,8 @@ from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
+from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
+    CrosInfraConfigProperties)
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
@@ -69,6 +71,7 @@ def RunSteps(api, properties):
   api.cros_try.check_try_version()
   api.checkpoint.register()
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
+  api.cros_release.check_channel_override()
   api.cros_release.set_output_properties()
   # For dlc_utils.get_dlc_artifacts.
   api.path.mock_add_paths(
@@ -470,6 +473,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
               RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
           }),
+      api.post_check(post_process.DoesNotRun, 'overriding release channels'),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -1110,6 +1114,29 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       # This needs some work. signing needs to be mocked differently.
       api.post_check(post_process.MustRun, 'get signed build metadata'),
       api.post_check(post_process.MustRun, 'generate mass deploy builds'),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'channel-override',
+      api.properties(
+          **{
+              '$chromeos/cros_infra_config':
+                  CrosInfraConfigProperties(
+                      should_override_release_channels=True,
+                      override_release_channels=['2', '3']),
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
+      api.signing.setup_mocks(),
+      api.post_check(post_process.MustRun, 'overriding release channels'),
+      api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
