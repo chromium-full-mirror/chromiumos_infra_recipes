@@ -795,23 +795,32 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE shutdown",
+    "name": "execution steps.post upload step (ctr)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@ile-de-france intentionally skipped@@@",
+      "@@@STEP_LOG_END@summary@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE shutdown.delete instance",
+    "name": "execution steps.post upload step (ctr).Prototype GCE shutdown",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Prototype GCE shutdown.delete instance.call `vmlab`",
+    "name": "execution steps.post upload step (ctr).Prototype GCE shutdown.delete instance",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).Prototype GCE shutdown.delete instance.call `vmlab`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@vmlab CLI output@@@@",
       "@@@STEP_LOG_END@vmlab CLI output@@@"
     ]
@@ -837,30 +846,30 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Prototype GCE shutdown.delete instance.call `vmlab`.run cmd",
+    "name": "execution steps.post upload step (ctr).Prototype GCE shutdown.delete instance.call `vmlab`.run cmd",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.archive all test logs to Google Storage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS",
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`",
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@request@  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"@@@",
@@ -872,9 +881,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.ensure phosphorus",
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.ensure phosphorus",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -903,9 +912,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.ensure phosphorus.ensure_installed",
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.ensure phosphorus.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -941,17 +950,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
+    "name": "execution steps.post upload step (ctr).archive all test logs to Google Storage.CrosToolRunner: Phosphorus: upload to GS.call `phosphorus`.upload-to-gs",
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.Archive CTS results",
+    "name": "execution steps.post upload step (ctr).Archive CTS results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\"}@@@",
       "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[OrderedDict([('destination', 'gs://fake-bucket/fake-folder'), ('name', 'fake-instruction'), ('source', 'local/directory/to/upload')])]@@@",
@@ -980,9 +989,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Archive CTS results.prepare uploads",
+    "name": "execution steps.post upload step (ctr).Archive CTS results.prepare uploads",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"instructions\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -997,9 +1006,9 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.Archive CTS results.Upload prepared results",
+    "name": "execution steps.post upload step (ctr).Archive CTS results.Upload prepared results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
     ]
   },
@@ -1030,9 +1039,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.Archive CTS results.Upload prepared results.gsutil cp",
+    "name": "execution steps.post upload step (ctr).Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1052,23 +1061,23 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.stub save local DUT state",
+    "name": "execution steps.post upload step (ctr).stub save local DUT state",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.publish build ID (2)",
+    "name": "execution steps.post upload step (ctr).publish build ID",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "execution steps.publish build ID (2).call `result_flow`",
+    "name": "execution steps.post upload step (ctr).publish build ID.call `result_flow`",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildId\": \"42\",@@@",
       "@@@STEP_LOG_LINE@request@  \"testRunner\": {@@@",
@@ -1104,10 +1113,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "execution steps.publish build ID (2).call `result_flow`.publish",
+    "name": "execution steps.post upload step (ctr).publish build ID.call `result_flow`.publish",
     "stdin": "{\n  \"buildId\": \"42\",\n  \"testRunner\": {\n    \"project\": \"foo-proj\",\n    \"topic\": \"foo-topic\"\n  },\n  \"shouldPollForCompletion\": true\n}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

@@ -1134,14 +1134,17 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
           # the ResultDB upload will still be executed.
           _upload_to_resultdb(api, result, properties, interface, test_metadata)
       finally:
-        if result is not None and not result.prejob_response.is_failure():
-          dut_state = api.labpack.execute_ile_de_france(
-              common_config=properties.common_config, dut_state=dut_state)
-        interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+        with api.step.nest('post upload step (phosphorus)') as post_step:
+          if result is not None and not result.prejob_response.is_failure():
+            dut_state = api.labpack.execute_ile_de_france(
+                common_config=properties.common_config, dut_state=dut_state)
+          else:
+            s_log(post_step, "summary", "ile-de-france intentionally skipped")
+          interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
-        publish_to_result_flow(api, properties.config,
-                               properties.request.parent_request_uid,
-                               should_poll_for_completion=True)
+          publish_to_result_flow(api, properties.config,
+                                 properties.request.parent_request_uid,
+                                 should_poll_for_completion=True)
   # Set output properties whether or not we encounter a timeout. This is
   # required because CQ only reads results from output props and not
   # ResultsDB.
@@ -1506,25 +1509,29 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
               properties.common_config.partner_private,
               properties.common_config.skip_board_model_realm_check)
       finally:
-        interface.submit_post_job()
-        archive_all_logs(api, interface=interface, test_metadata=test_metadata,
-                         result=result_for_uploading)
-        # TODO(b/252945582): Handle multiple test results if needed
-        if results_dir:
-          # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
-          # results. To align with that, we need to pass the directory
-          # .../cros-test/artifacts/tauto/, not its sub directory.
-          api.cts_results_archive.archive(os.path.dirname(results_dir))
+        with api.step.nest('post upload step (ctr)') as post_step:
+          interface.submit_post_job()
+          archive_all_logs(api, interface=interface,
+                           test_metadata=test_metadata,
+                           result=result_for_uploading)
+          # TODO(b/252945582): Handle multiple test results if needed
+          if results_dir:
+            # The existing code expects $dir/*/cheets_?TS*/results/ to contain CTS
+            # results. To align with that, we need to pass the directory
+            # .../cros-test/artifacts/tauto/, not its sub directory.
+            api.cts_results_archive.archive(os.path.dirname(results_dir))
 
-        if result_for_output_props is not None and result_for_output_props.prejob_failed(
-        ):
-          dut_state = api.labpack.execute_ile_de_france(
-              common_config=properties.common_config, dut_state=dut_state)
-        interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+          if result_for_output_props is not None and result_for_output_props.prejob_failed(
+          ):
+            dut_state = api.labpack.execute_ile_de_france(
+                common_config=properties.common_config, dut_state=dut_state)
+          else:
+            s_log(post_step, "summary", "ile-de-france intentionally skipped")
+          interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
 
-        publish_to_result_flow(api, properties.config,
-                               properties.cft_test_request.parent_request_uid,
-                               should_poll_for_completion=True)
+          publish_to_result_flow(api, properties.config,
+                                 properties.cft_test_request.parent_request_uid,
+                                 should_poll_for_completion=True)
     # Set output properties whether or not we encounter a timeout. This is
     # required because CQ only reads results from output props and not
     # ResultsDB.
