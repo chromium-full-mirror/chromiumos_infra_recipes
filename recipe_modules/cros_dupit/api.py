@@ -325,7 +325,7 @@ class DupItApi(recipe_api.RecipeApi):
       stdout = self.m.raw_io.output(leak_to=fixed_symlinked,
                                     name=self.m.path.basename(fixed_symlinked),
                                     add_output_log=True)
-      cmd = ['sed', '-e', r's#^\(../\)*##g', new_symlinked]
+      cmd = ['sed', '-e', r's#^\(\.\./\)*##g', new_symlinked]
       self.m.step(cmd=cmd, name='make distfiles paths absolute', stdout=stdout)
 
       rsync_cmd = self._get_rsync_cmd(fixed_symlinked)

@@ -117,7 +117,7 @@
     "cmd": [
       "sed",
       "-e",
-      "s#^\\(../\\)*##g",
+      "s#^\\(\\.\\./\\)*##g",
       "[CLEANUP]/distfile_lists_tmp_1/new_symlinked.txt"
     ],
     "name": "make distfiles paths absolute"
