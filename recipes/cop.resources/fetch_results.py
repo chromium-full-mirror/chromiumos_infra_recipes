@@ -92,25 +92,22 @@ def main(args):
       'status':
           build.Status(build.status).name,
       'log':
-          f'CoP Log URL: {build.log_url}\n {result_logs[-MAX_COMMENT_SIZE:]}',
+          f'CoP Log URL: {build.log_url}\n```\n{result_logs[-MAX_COMMENT_SIZE:].rstrip()}\n```',
       'log_url':
           build.log_url,
   }
   steps = list()
   for i, step in enumerate(build.steps):
-    status = build.Status(step.status).name
     if not should_log_step(step):
       continue
+    status = build.Status(step.status).name
+    log = get_step_logs(storage_client, build, i,
+                        result_logs)[-MAX_COMMENT_SIZE:].rstrip()
     steps.append({
-        'id':
-            i,
-        'name':
-            step.id,
-        'status':
-            status,
-        'log':
-            get_step_logs(storage_client, build, i, result_logs)
-            [-MAX_COMMENT_SIZE:]
+        'id': i,
+        'name': step.id,
+        'status': status,
+        'log': f'```\n{log}\n```'
     })
   result['steps'] = steps
 
