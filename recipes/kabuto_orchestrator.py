@@ -33,8 +33,9 @@ INFRA_BUCKET = 'infra'
 STAGING_BUCKET = 'staging'
 
 
-def _launch_builders(api: RecipeApi, bucket: str, builder: str, is_staging: str,
-                     count=1, input_properties=None, step_name="") -> list:
+def _launch_builders(api: RecipeApi, bucket: str, builder: str,
+                     is_staging: bool, count=1, input_properties=None,
+                     step_name="") -> list:
   """Launch builders using api.bitbucket.run and return the list of builds."""
 
   # Use the builder name if the step name isn't defined.
@@ -129,9 +130,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   # of defaulting to staging. Currently there is no difference for this builder between
   # staging and prod so we can still do end to end tests with the staging builder.
   shadercache_builds = _launch_builders(api, STAGING_BUCKET,
-                                        'build_kabuto_shadercache',
-                                        api.build_menu.is_staging, shard_count,
-                                        shadercache_input_props,
+                                        'build_kabuto_shadercache', True,
+                                        shard_count, shadercache_input_props,
                                         'shadercache build')
 
   # Combine the multiple outputs from the builders into a single list.
