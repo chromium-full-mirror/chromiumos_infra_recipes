@@ -1127,6 +1127,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             run_async=self._properties.run_tests_async,
             container_metadata=container_metadata,
             use_test_plan_v2=True,
+            supports_fault_attribution=self.is_cq_orchestrator,
         )
       else:
         self.m.cros_test_proctor.run_proctor_v2(gerrit_changes)
