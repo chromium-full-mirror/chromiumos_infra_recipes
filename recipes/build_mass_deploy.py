@@ -12,11 +12,13 @@ from recipe_engine.recipe_api import StepFailure
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_infra_config',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -144,7 +146,7 @@ def RunSteps(api, properties):
   if not properties.input_image:
     raise StepFailure('`input_image` is required')
 
-  dest_bucket = RELEASE_BUCKET if properties.production else THROWAWAY_BUCKET
+  dest_bucket = THROWAWAY_BUCKET if api.cros_infra_config.is_staging else RELEASE_BUCKET
 
   image_size = properties.image_size_gib or DEFAULT_IMAGE_SIZE_GIBIBYTES
 
@@ -167,10 +169,8 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'production',
-      api.properties(**{
+      'release', api.properties(**{
           'input_image': 'foo/bar.zip',
-          'production': True,
       }),
       api.post_check(post_process.StepCommandContains,
                      'download signed image.gsutil download',
@@ -183,9 +183,9 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'non-production', api.properties(**{
+      'staging', api.properties(**{
           'input_image': 'foo/bar.zip',
-      }),
+      }), api.buildbucket.generic_build(bucket='staging'),
       api.post_check(post_process.StepCommandContains,
                      'download signed image.gsutil download',
                      ['gs://chromeos-releases/foo/bar.zip']),
