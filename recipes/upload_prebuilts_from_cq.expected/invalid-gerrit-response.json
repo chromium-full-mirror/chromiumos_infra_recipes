@@ -134,7 +134,7 @@
   },
   {
     "cmd": [],
-    "name": "search the prebuilts",
+    "name": "search the patchset",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]

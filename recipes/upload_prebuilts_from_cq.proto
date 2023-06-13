@@ -1,0 +1,15 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.upload_prebuilts_from_cq;
+
+import "chromiumos/common.proto";
+
+message UploadPrebuiltsFromCqProperties {
+  // Maximum allowed running time of the entire logic.  If
+  // it's not set or zero, the default value is used.
+  optional uint32 timeout_sec = 1;
+}

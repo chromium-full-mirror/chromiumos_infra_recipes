@@ -156,25 +156,14 @@
   },
   {
     "cmd": [],
-    "name": "search the prebuilts",
+    "name": "search the patchset",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Found 2 builds with uploaded prebuilts.@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: None (None)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: xxx (False)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: betty-pi-arc-cq: betty-pi-arc: xxx (True)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False)@@@",
-      "@@@STEP_LOG_END@debug_prebuilts_log@@@",
-      "@@@STEP_LOG_LINE@prebuilt_entries@[{'build_target': name: \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@prebuilt_entries@, 'build_end_time': , 'prebuilts_private': False, 'prebuilts_uri': 'xxx'}, {'build_target': name: \"betty-pi-arc\"@@@",
-      "@@@STEP_LOG_LINE@prebuilt_entries@, 'build_end_time': , 'prebuilts_private': True, 'prebuilts_uri': 'xxx'}]@@@",
-      "@@@STEP_LOG_END@prebuilt_entries@@@",
-      "@@@STEP_LOG_LINE@build_targets@['amd64-generic', 'betty-pi-arc']@@@",
-      "@@@STEP_LOG_END@build_targets@@@"
+      "@@@STEP_SUMMARY_TEXT@Choose the patchset #2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "search the prebuilts.patchset #2",
+    "name": "search the patchset.patchset #2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -207,7 +196,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "search the prebuilts.patchset #2.buildbucket.search",
+    "name": "search the patchset.patchset #2.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:00Z\", \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
@@ -229,20 +218,13 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs"
+    "name": "configure builder"
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder",
+    "name": "configure builder.cros_infra_config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
       "@@@STEP_LOG_LINE@builder config@  name: \"amd64-generic-postsubmit\"@@@",
       "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
@@ -291,17 +273,17 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.set recipes_git_revision",
+    "name": "configure builder.cros_infra_config.set recipes_git_revision",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.read builder configs",
+    "name": "configure builder.cros_infra_config.read builder configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -329,61 +311,61 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.update src_state.gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "configure builder.cros_infra_config.update src_state.gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\"\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.update src_state.build_manifest",
+    "name": "configure builder.cros_infra_config.update src_state.build_manifest",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.update src_state.gerrit_changes",
+    "name": "configure builder.cros_infra_config.update src_state.gerrit_changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
+    "name": "configure builder.cros_infra_config.update src_state.gerrit_changes.set gerrit_changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@SET_BUILD_PROPERTY@changes@[]@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.determine branch from changes",
+    "name": "configure builder.determine branch from changes",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.ensure support CIPD package",
+    "name": "configure builder.ensure support CIPD package",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -412,9 +394,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.configure builder.ensure support CIPD package.ensure_installed",
+    "name": "configure builder.ensure support CIPD package.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -445,10 +427,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.configure builder.gitiles-fetch-ref",
+    "name": "configure builder.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
@@ -459,25 +441,53 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.update src_state.gitiles_commit",
+    "name": "configure builder.update src_state.gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/main\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "search the prebuilts",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Total 5 builds:\n- 0 previously-updated builds\n- 2 succeeded builds with uploaded prebuilts\n- 0 running builds\n@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: None (None): => Skipped (The builder did not uploaded its prebuilt.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514008: arm64-generic-cq: arm64-generic: xxx (True): => Skipped (The builder has failed.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: xxx (False): => Uploading prebuilts@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: betty-pi-arc-cq: betty-pi-arc: xxx (True): => Uploading prebuilts@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilt  alderady uploaded.)@@@",
+      "@@@STEP_LOG_END@debug_prebuilts_log@@@",
+      "@@@STEP_LOG_LINE@prebuilt_entries@[{'build_target': name: \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@prebuilt_entries@, 'build_end_time': , 'prebuilts_private': False, 'prebuilts_uri': 'xxx'}, {'build_target': name: \"betty-pi-arc\"@@@",
+      "@@@STEP_LOG_LINE@prebuilt_entries@, 'build_end_time': , 'prebuilts_private': True, 'prebuilts_uri': 'xxx'}]@@@",
+      "@@@STEP_LOG_END@prebuilt_entries@@@",
+      "@@@STEP_LOG_LINE@build_targets@['amd64-generic', 'betty-pi-arc']@@@",
+      "@@@STEP_LOG_END@build_targets@@@",
+      "@@@STEP_LOG_LINE@running_builds@[]@@@",
+      "@@@STEP_LOG_END@running_builds@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set BINHOSTs",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Set 2 builds@@@"
     ]
   },
   {
@@ -3982,6 +3992,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Updated all of 2 builders after 1 trials."
   }
 ]

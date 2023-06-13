@@ -14661,7 +14661,7 @@ Recipe for running tricium on CLs.
 &mdash; **def [RunSteps](/recipes/tricium.py#41)(api: RecipeApi):**
 ### *recipes* / [upload\_prebuilts\_from\_cq](/recipes/upload_prebuilts_from_cq.py)
 
-[DEPS](/recipes/upload_prebuilts_from_cq.py#32): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/upload_prebuilts_from_cq.py#38): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe that retrieves locations from google storage that the binpkgs are
@@ -14670,9 +14670,62 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#118)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#324)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#57)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#317)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+
+&mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#139)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
+
+Utility function to get the builds corresponding to the gerrit change.
+
+Args:
+  api: See RunSteps documentation.
+  gerrit_change: The gerrit changes to get the corresponding builds to.
+  is_staging: True if wants the results from the staging environment.
+
+Returns:
+  Builds of the gerrit change.
+
+&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#67)(api: RecipeApi):**
+
+Utility function to get the last merged change from Gerrit.
+
+This method does double check if the result is actually latest, by querying
+Gerrit.
+
+Args:
+  api: See RunSteps documentation.
+
+Returns:
+  GerritChange of the last marged uprev. Or None if not found.
+
+&mdash; **def [search\_prebuilts](/recipes/upload_prebuilts_from_cq.py#176)(api: RecipeApi, step_name: str, fetched_builds: Optional[List[build_pb2.Build]], gerrit_change: GerritChange, finished_build_targets: Set[str], is_staging: bool):**
+
+Utility function to get the prebuilts corresponding to the gerrit change.
+
+Args:
+  api: See RunSteps documentation.
+  step_name: Name of the step of this process to be shown in the Luci UI.
+  fetched_builds: Builds corresponding to |gerrit_change|. If None, the
+      method fetches the latest result.
+  gerrit_change: The gerrit changes to get the corresponding prebuilts to.
+  finished_build_targets: Set of the finished build names. Builders in the
+      set are processed. The processed builders are added to this set.
+  is_staging: True if wants the results from the staging environment.
+
+Returns:
+  Tuple of the following 2 values:
+  - List of prebuilt entries that are added in this method
+  - List of names of running builders
+
+&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#290)(api: RecipeApi, step_name: str, prebuilt_entries: List[dict]):**
+
+Utility function to set the binhosts repeatedly.
+
+Args:
+  api: See RunSteps documentation.
+  step_name: Name of the step of this process to be shown in the Luci UI.
+  prebuilt_entries: Prebuilts to be set the binhosts of.
 ### *recipes* / [uprev\_borealis\_deps](/recipes/uprev_borealis_deps.py)
 
 [DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
