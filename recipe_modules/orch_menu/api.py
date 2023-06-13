@@ -459,10 +459,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
           try:
             self.m.git.push(manifest.url,
                             "%s:%s" % (manifest.gitiles_commit.id, ref))
-          except self.m.step.StepFailure:  #pragma: no cover
+          except self.m.step.StepFailure:
             # Making this fail silently because newer snapshot orchestrator can
             # update a ref before the older one.
-            self.m.step.active_result.presentation.status = self.m.step.WARNING
+            pres.status = self.m.step.WARNING
             pres.text = 'failed to push. continuing'
 
   def _update_test_summary(self):

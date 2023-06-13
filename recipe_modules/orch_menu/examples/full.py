@@ -132,8 +132,12 @@ def GenTests(api):
       'basic', data.ctp_normal,
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
-      input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test')),
+      api.step_data('update manifest ref refs/heads/test.git push', retcode=1),
+      api.step_data('update manifest ref refs/heads/test.git push (2)',
+                    retcode=1),
+      api.step_data('update manifest ref refs/heads/test.git push (3)',
+                    retcode=1), input_properties=orch_menu_properties(
+                        update_manifest_refs=dict(test='refs/heads/test')),
       builder='postsubmit-orchestrator', with_manifest_refs=True,
       collect_builds=data.builds, with_history=True)
 
