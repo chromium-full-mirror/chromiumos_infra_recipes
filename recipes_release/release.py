@@ -25,6 +25,8 @@ import urllib.parse
 
 import tabulate
 
+import staging_checks
+
 # [VPYTHON:BEGIN]
 # wheel: <
 #   name: "infra/python/wheels/tabulate-py3"
@@ -44,97 +46,6 @@ BOLDRED = '\033[1;31m'
 BOLDGREEN = '\033[1;32m'
 BOLDBLUE = '\033[1;34m'
 RESET = '\033[0m'
-
-
-# A tuple containing the project, builder and regex used to search.
-class StagingReCheck(typing.NamedTuple):
-  project: str
-  bucket: str
-  regex: str
-  # exemptions can turn failures into successes.
-  # The input is a dict parsed from the `bb ls` output, e.g.
-  # {"id":"8782723488170713857","builder":{"project":"chromeos", ...
-  # The output should be True if the failure can be ignored.
-  exemptions: List[Callable[[Dict[str, Any]], bool]] = []
-
-
-def orchestrator_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for orchestrator builds."""
-  ignorable_summary_markdown_re = [
-      re.compile(r'\d+ out of \d+ builds failed'),
-  ]
-  for regex in ignorable_summary_markdown_re:
-    if regex.search(build.get('summaryMarkdown', '')):
-      return True
-  return False
-
-
-def image_builder_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for image builds."""
-  ignorable_summary_markdown_re = [
-      re.compile(r'^failed unit tests for'),
-      re.compile(r'^failed compilation for'),
-  ]
-  for regex in ignorable_summary_markdown_re:
-    if regex.search(build.get('summaryMarkdown', '')):
-      return True
-  return False
-
-
-def cq_cancelled_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for CQ builds cancelled by CV."""
-  ignorable_cancellation_markdown = 'LUCI CV no longer needs this Tryjob'
-  return build.get('cancellationMarkdown',
-                   '') == ignorable_cancellation_markdown
-
-
-def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for CQ builds that hit merge conflicts."""
-  ignorable_summary_markdown_re = [
-      re.compile(r'^Merge conflict detected!'),
-  ]
-  for regex in ignorable_summary_markdown_re:
-    if regex.search(build.get('summaryMarkdown', '')):
-      return True
-  return False
-
-
-STAGING_CHECKS_RE = (StagingReCheck('chromeos', 'staging',
-                                    r'staging-amd64-generic-postsubmit',
-                                    [image_builder_exemption]),)
-STAGING_CHECKS_RE = (
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption]),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption]),
-    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
-    # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
-    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-amd64-generic-direct-tast-vm'),
-    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
-                   [image_builder_exemption]),
-    StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
-    StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
-    StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
-    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
-        orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
-    ]),
-    StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
-    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
-    StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
-    StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
-    StagingReCheck('chromeos', 'staging', r'staging-release-triggerer'),
-    StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
-    StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
-    StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
-)
 
 # CipdInstances are instance IDs, as found on the CIPD UI under "Instances".
 # For example: "M4HmuQVGbx8YQVkM61c6LnCHVFgpJsSy1bI4DpBjSTwC"
@@ -480,7 +391,7 @@ def check_staging_builders(changes: List[Commit],
   print('=== Check staging status ===')
   print('Determining relevancy of each staging builder...')
   builders = []
-  for re_check in STAGING_CHECKS_RE:
+  for re_check in staging_checks.STAGING_CHECKS_RE:
     builders.extend(
         return_builders_for_regex(re_check.project, re_check.bucket,
                                   re_check.regex))
@@ -503,7 +414,7 @@ def check_staging_builders(changes: List[Commit],
 
   baddies = []
   print('Looking for 5 consecutive successes in staging...')
-  for re_check in STAGING_CHECKS_RE:
+  for re_check in staging_checks.STAGING_CHECKS_RE:
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):

@@ -1,0 +1,102 @@
+#!/usr/bin/env vpython3
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""This file contains the staging builders (and associated configs) used for
+qualifying recipes releases."""
+
+import re
+import typing
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
+
+
+class StagingReCheck(typing.NamedTuple):
+  """A tuple containing the project, builder and regex used to search."""
+  project: str
+  bucket: str
+  regex: str
+  # exemptions can turn failures into successes.
+  # The input is a dict parsed from the `bb ls` output, e.g.
+  # {"id":"8782723488170713857","builder":{"project":"chromeos", ...
+  # The output should be True if the failure can be ignored.
+  exemptions: List[Callable[[Dict[str, Any]], bool]] = []
+
+
+def orchestrator_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for orchestrator builds."""
+  ignorable_summary_markdown_re = [
+      re.compile(r'\d+ out of \d+ builds failed'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
+def image_builder_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for image builds."""
+  ignorable_summary_markdown_re = [
+      re.compile(r'^failed unit tests for'),
+      re.compile(r'^failed compilation for'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
+def cq_cancelled_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for CQ builds cancelled by CV."""
+  ignorable_cancellation_markdown = 'LUCI CV no longer needs this Tryjob'
+  return build.get('cancellationMarkdown',
+                   '') == ignorable_cancellation_markdown
+
+
+def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for CQ builds that hit merge conflicts."""
+  ignorable_summary_markdown_re = [
+      re.compile(r'^Merge conflict detected!'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
+STAGING_CHECKS_RE = (
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
+                   [image_builder_exemption]),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
+                   [image_builder_exemption]),
+    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
+    # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-amd64-generic-direct-tast-vm'),
+    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
+                   [image_builder_exemption]),
+    StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
+    StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
+    StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
+    StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
+        orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
+    ]),
+    StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
+    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
+    StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-triggerer'),
+    StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
+    StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
+    StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
+)
