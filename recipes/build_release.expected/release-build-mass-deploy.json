@@ -11766,7 +11766,8 @@
     "cmd": [],
     "name": "generate mass deploy builds.schedule mass deploy build",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@scheduled release-mass-deploy@@@"
     ]
   },
   {
@@ -11794,7 +11795,7 @@
       }
     },
     "name": "generate mass deploy builds.schedule mass deploy build.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"mass-deploy\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"YES\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"input_image\": \"beta-channel/grunt/14493.0.0/chromeos_13816.12.0_eve_recovery_stable-channel_mp-v2.bin.zip\", \"production\": true}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"release-mass-deploy\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"YES\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"input_image\": \"beta-channel/grunt/14493.0.0/chromeos_13816.12.0_eve_recovery_stable-channel_mp-v2.bin.zip\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -11803,7 +11804,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"release\", @@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"mass-deploy\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"release-mass-deploy\", @@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        }, @@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
@@ -11818,7 +11819,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"release\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"mass-deploy\", @@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"release-mass-deploy\", @@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"YES\", @@@",
@@ -11836,8 +11837,7 @@
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30, @@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"input_image\": \"beta-channel/grunt/14493.0.0/chromeos_13816.12.0_eve_recovery_stable-channel_mp-v2.bin.zip\", @@@",
-      "@@@STEP_LOG_LINE@request@          \"production\": true@@@",
+      "@@@STEP_LOG_LINE@request@          \"input_image\": \"beta-channel/grunt/14493.0.0/chromeos_13816.12.0_eve_recovery_stable-channel_mp-v2.bin.zip\"@@@",
       "@@@STEP_LOG_LINE@request@        }, @@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", @@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",

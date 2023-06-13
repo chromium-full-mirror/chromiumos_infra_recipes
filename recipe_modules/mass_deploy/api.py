@@ -48,15 +48,13 @@ class MassDeployApi(recipe_api.RecipeApi):
       with self.m.step.nest('determine builder settings'):
         release_directory = stable_build_metadata['release_directory']
         input_zip = self._select_zip(stable_build_metadata)
-        properties = {
-            'input_image': f'{release_directory}/{input_zip}',
-            'production': not self.m.build_menu.is_staging
-        }
+        properties = {'input_image': f'{release_directory}/{input_zip}'}
 
-        builder = ('staging-mass-deploy'
-                   if self.m.build_menu.is_staging else 'mass-deploy')
+        # Match names as constructed in infra/config/release/main.star.
+        builder_prefix = 'staging-' if self.m.build_menu.is_staging else ''
+        builder = builder_prefix + 'release-mass-deploy'
 
-      with self.m.step.nest('schedule mass deploy build'):
+      with self.m.step.nest('schedule mass deploy build') as presentation:
         request = self.m.buildbucket.schedule_request(
             builder=builder,
             properties=properties,
@@ -65,3 +63,5 @@ class MassDeployApi(recipe_api.RecipeApi):
                 parent_buildbucket_id=str(self.m.buildbucket.build.id)),
         )
         self.m.buildbucket.schedule([request])
+
+        presentation.step_summary_text = f'scheduled {builder}'

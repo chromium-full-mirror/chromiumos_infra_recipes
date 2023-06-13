@@ -13285,12 +13285,12 @@ Recipe for performing various manipulations on ChromeOS manifests.
 &mdash; **def [RunSteps](/recipe_modules/manifest_doctor/examples/full.py#16)(api):**
 ### *recipes* / [mass\_deploy:tests/run\_mass\_deploy\_generation](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py)
 
-[DEPS](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#13): [mass\_deploy](#recipe_modules-mass_deploy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#13): [mass\_deploy](#recipe_modules-mass_deploy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Tests for run_mass_deploy_generation.
 
-&mdash; **def [RunSteps](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#84)(api, signing_metadata):**
+&mdash; **def [RunSteps](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#85)(api, signing_metadata):**
 ### *recipes* / [metadata:examples/fetch\_test\_metadata](/recipe_modules/metadata/examples/fetch_test_metadata.py)
 
 [DEPS](/recipe_modules/metadata/examples/fetch_test_metadata.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

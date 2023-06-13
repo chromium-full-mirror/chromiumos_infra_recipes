@@ -11,6 +11,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import Property
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'mass_deploy',
@@ -148,3 +149,20 @@ def GenTests(api):
       api.post_check(post_process.StepFailure,
                      'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation), status='FAILURE')
+
+  yield api.test(
+      'release',
+      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
+      api.post_check(post_process.StepSummaryEquals,
+                     'generate mass deploy builds.schedule mass deploy build',
+                     'scheduled release-mass-deploy'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'staging',
+      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_check(post_process.StepSummaryEquals,
+                     'generate mass deploy builds.schedule mass deploy build',
+                     'scheduled staging-release-mass-deploy'),
+      api.post_process(post_process.DropExpectation))
