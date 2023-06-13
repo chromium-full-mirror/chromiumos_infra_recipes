@@ -13685,32 +13685,6 @@ Starting point for main recipe logic.
 
 This function does setup, determines which branches to work on, and then
 defers to child functions for specific processing.
-
-&mdash; **def [compile\_chromite\_protos](/recipes/proto_doctor.py#122)(api: recipe_api.RecipeApi, ref: str):**
-
-Compile proto bindings in chromite/, and upload to Gerrit.
-
-Args:
-  api: The recipe API.
-  ref: The git ref for which protos are being compiled, such as
-    "refs/heads/main".
-
-&mdash; **def [process\_ref](/recipes/proto_doctor.py#92)(api: recipe_api.RecipeApi, ref: str):**
-
-For a single ref, propagate infra/proto changes across the tree.
-
-Args:
-  api: The recipe API.
-  ref: The git ref for the branch to work from, such as "refs/heads/main".
-
-&mdash; **def [setup\_workspace](/recipes/proto_doctor.py#105)(api: recipe_api.RecipeApi, manifest_branch: str):**
-
-Check out all the necessary projects and create an SDK on the given branch.
-
-Args:
-  api: The recipe API.
-  manifest_branch: The branch to check out on the manifests repo, such as
-    "main".
 ### *recipes* / [pupr:examples/identify\_retry](/recipe_modules/pupr/examples/identify_retry.py)
 
 [DEPS](/recipe_modules/pupr/examples/identify_retry.py#16): [gerrit](#recipe_modules-gerrit), [pupr](#recipe_modules-pupr), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -76,166 +76,170 @@ def RunSteps(api: recipe_api.RecipeApi) -> None:
   This function does setup, determines which branches to work on, and then
   defers to child functions for specific processing.
   """
-  gitiles_triggers = _validate_triggers(api)
-  refs = sorted(set(gt.ref for gt in gitiles_triggers))
-  api.easy.set_properties_step(refs=refs)
-  _setup_workspace_dir(api)
-
-  # If one branch raises an exception, defer the exception so that the other
-  # branches can run.
-  with api.deferrals.raise_exceptions_at_end():
-    for ref in refs:
-      with api.deferrals.defer_exceptions():
-        process_ref(api, ref)
+  ProtoDoctorRun(api).run()
 
 
-def process_ref(api: recipe_api.RecipeApi, ref: str) -> None:
-  """For a single ref, propagate infra/proto changes across the tree.
+class ProtoDoctorRun:
+  """A single run of ProtoDoctor."""
 
-  Args:
-    api: The recipe API.
-    ref: The git ref for the branch to work from, such as "refs/heads/main".
-  """
-  branch = api.git.extract_branch(ref)
-  with api.step.nest(f'process branch {branch}'):
-    setup_workspace(api, branch)
-    compile_chromite_protos(api, ref)
+  def __init__(self, api: recipe_api.RecipeApi) -> None:
+    """Initialize up the class by setting basic attributes."""
+    self.m = api
 
+  @property
+  def _is_staging(self) -> bool:
+    """Determine whether this is a staging build."""
+    return self.m.buildbucket.build.builder.bucket == 'staging'
 
-def setup_workspace(api: recipe_api.RecipeApi, manifest_branch: str) -> None:
-  """Check out all the necessary projects and create an SDK on the given branch.
-
-  Args:
-    api: The recipe API.
-    manifest_branch: The branch to check out on the manifests repo, such as
-      "main".
-  """
-  with api.context(cwd=_get_workspace_path(api)):
-    api.repo.init(
-        manifest_url=api.src_state.internal_manifest.url,
-        manifest_branch=manifest_branch,
-    )
-    api.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
-    api.cros_sdk.create_chroot(replace=True, chroot_upgrade=False)
-
-
-def compile_chromite_protos(api: recipe_api.RecipeApi, ref: str) -> None:
-  """Compile proto bindings in chromite/, and upload to Gerrit.
-
-  Args:
-    api: The recipe API.
-    ref: The git ref for which protos are being compiled, such as
-      "refs/heads/main".
-  """
-  with api.step.nest('compile chromite protos'):
-    request = api_service.CompileProtoRequest()
-    response = api.cros_build_api.ApiService.CompileProto(request)
-    modified_paths = [f.path for f in response.modified_files]
-    chromite_path = _get_workspace_path(api).join('chromite')
-    commit_subject = 'api: Automatically compile protos'
-    _commit_and_upload(api, chromite_path, ref, modified_paths, commit_subject)
-
-
-def _validate_triggers(
-    api: recipe_api.RecipeApi) -> List[triggers_pb2.GitilesTrigger]:
-  """Verify that the build's triggers look OK.
-
-  In general, this recipe should be triggered by Gitiles changes to the
-  infra/proto repo.
-
-  See https://go.chromium.org/luci/scheduler/api/scheduler/v1 for more info
-  about triggers and the different trigger types.
-
-  Returns:
-    A list of GitilesTriggers that triggered this build.
-
-  Raises:
-    InfraFailure: If the build does not have any Gitiles triggers.
-    InfraFailure: If any of the build's triggering CLs was from a repo besides
-      infra/proto.
-  """
-  with api.step.nest('validate triggers'):
+  @property
+  def _gitiles_triggers(self) -> List[triggers_pb2.GitilesTrigger]:
+    """Return a list of GitilesTriggers that launched this build."""
     gitiles_triggers: List[triggers_pb2.GitilesTrigger] = []
-    for trigger in api.scheduler.triggers:
+    for trigger in self.m.scheduler.triggers:
       if not trigger.HasField('gitiles'):
         continue
-      if trigger.gitiles.repo != INFRA_PROTO_REPO_URL:
-        raise recipe_api.InfraFailure(
-            f'Gitiles trigger in non-proto repo: {trigger}')
       gitiles_triggers.append(trigger.gitiles)
-    if not gitiles_triggers:
-      raise recipe_api.InfraFailure('No Gitiles triggers found')
     return gitiles_triggers
 
+  @property
+  def _workspace_path(self) -> config_types.Path:
+    """Return the build's workspace path, where `repo` should be checked out."""
+    return self.m.src_state.workspace_path
 
-def _commit_and_upload(api: recipe_api.RecipeApi,
-                       project_path: config_types.Path, ref: str,
-                       modified_paths: List[config_types.Path],
-                       commit_subject: str) -> None:
-  _create_commit(api, project_path, modified_paths, commit_subject)
-  if not _is_staging(api):
-    _push_to_cq(api, project_path, ref)
+  def run(self) -> None:
+    """Run the main recipe logic.
 
+    This function does setup,d etermines which branches to work on, and then
+    defers to child methods for specific processing.
+    """
+    self._validate_triggers()
+    refs = sorted(set(gt.ref for gt in self._gitiles_triggers))
+    self.m.easy.set_properties_step(refs=refs)
+    self._create_workspace_dir()
 
-def _create_commit(api: recipe_api.RecipeApi, project_path: config_types.Path,
-                   modified_paths: List[config_types.Path],
-                   subject: str) -> None:
-  """Create a new branch and commit the modified files.
+    # If one branch raises an exception, defer the exception so that the other
+    # branches can run.
+    with self.m.deferrals.raise_exceptions_at_end():
+      for ref in refs:
+        with self.m.deferrals.defer_exceptions():
+          self._process_ref(ref)
 
-  Args:
-    api: The recipe API.
-    repo_path: The local path to the repo project in which to commit.
-    modified_paths: A list of modified files to commit within the project.
-    subject: The first line to write in the new commit.
-    remote_branch: The remote branch to track, such as 'cros/main'.
-  """
-  with api.context(cwd=project_path):
-    api.git.add(modified_paths)
-    commit_message = '\n'.join((
-        subject,
-        '',
-        'This CL was automatically created by ProtoDoctor.',
-        api.buildbucket.build_url(),
-        '',
-        'BUG=None',
-        'TEST=CQ',
-    ))
-    api.git.commit(commit_message)
+  def _validate_triggers(self) -> None:
+    """Verify that the build's triggers look OK.
 
+    In general, this recipe should be triggered by Gitiles changes to the
+    infra/proto repo.
 
-def _push_to_cq(api: recipe_api.RecipeApi, project_path: config_types.Path,
-                ref: str) -> None:
-  """Upload the local changes for the given project, and send to CQ.
+    See https://go.chromium.org/luci/scheduler/api/scheduler/v1 for more info
+    about triggers and the different trigger types.
 
-  TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
-  actual reviewers based on who modified infra/proto, and use CQ+2.
+    Raises:
+      InfraFailure: If the build does not have any Gitiles triggers.
+      InfraFailure: If any of the build's triggering CLs was from a repo besides
+        infra/proto.
+    """
+    with self.m.step.nest('validate triggers'):
+      for gt in self._gitiles_triggers:
+        if gt.repo != INFRA_PROTO_REPO_URL:
+          raise recipe_api.InfraFailure(
+              f'Gitiles trigger in non-proto repo: {gt}')
+      if not self._gitiles_triggers:
+        raise recipe_api.InfraFailure('No Gitiles triggers found')
 
-  Args:
-    api: The recipe API.
-    project_path: The local path to the repo project.
-    ref: The ref being worked on, such as "refs/heads/main".
-  """
-  assert not _is_staging(api)
-  change = api.gerrit.create_change(project=project_path,
-                                    reviewers=['gredelston@google.com'],
-                                    ref=ref, hashtags=[HASHTAG])
-  labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
-  api.gerrit.set_change_labels_remote(change, labels)
+  def _create_workspace_dir(self) -> None:
+    """Create the workspace path directory."""
+    self.m.step('setup workspace dir', ['mkdir', self._workspace_path])
 
+  def _process_ref(self, ref: str) -> None:
+    """For a single ref, propagate infra/proto changes across the tree.
 
-def _get_workspace_path(api: recipe_api.RecipeApi) -> config_types.Path:
-  """Return the build's workspace path, where `repo` should be checked out."""
-  return api.src_state.workspace_path
+    Args:
+      ref: The git ref for the branch to work from, such as "refs/heads/main".
+    """
+    branch = self.m.git.extract_branch(ref)
+    with self.m.step.nest(f'process branch {branch}'):
+      self._setup_workspace(branch)
+      self._compile_chromite_protos(ref)
 
+  def _setup_workspace(self, manifest_branch: str) -> None:
+    """Check out necessary projects and create an SDK on the branch.
 
-def _setup_workspace_dir(api: recipe_api.RecipeApi) -> None:
-  """Create the workspace path directory."""
-  api.step('setup workspace dir', ['mkdir', _get_workspace_path(api)])
+    Args:
+      manifest_branch: The branch to check out on the manifests repo, such as
+        "main".
+    """
+    with self.m.context(cwd=self._workspace_path):
+      self.m.repo.init(
+          manifest_url=self.m.src_state.internal_manifest.url,
+          manifest_branch=manifest_branch,
+      )
+      self.m.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
+      self.m.cros_sdk.create_chroot(replace=True, chroot_upgrade=False)
 
+  def _compile_chromite_protos(self, ref: str) -> None:
+    """Compile proto bindings in chromite/, and upload to Gerrit.
 
-def _is_staging(api: recipe_api.RecipeApi) -> bool:
-  """Determine whether this is a staging build."""
-  return api.buildbucket.build.builder.bucket == 'staging'
+    Args:
+      ref: The git ref for which protos are being compiled, such as
+        "refs/heads/main".
+    """
+    with self.m.step.nest('compile chromite protos'):
+      request = api_service.CompileProtoRequest()
+      response = self.m.cros_build_api.ApiService.CompileProto(request)
+      modified_paths = [f.path for f in response.modified_files]
+      chromite_path = self._workspace_path.join('chromite')
+      commit_subject = 'api: Automatically compile protos'
+      self._commit_and_upload(chromite_path, ref, modified_paths,
+                              commit_subject)
+
+  def _commit_and_upload(self, project_path: config_types.Path, ref: str,
+                         modified_paths: List[config_types.Path],
+                         commit_subject: str) -> None:
+    """Commit all code in the modified project, and upload it to Gerrit."""
+    self._create_commit(project_path, modified_paths, commit_subject)
+    if not self._is_staging:
+      self._push_to_cq(project_path, ref)
+
+  def _create_commit(self, project_path: config_types.Path,
+                     modified_paths: List[config_types.Path],
+                     subject: str) -> None:
+    """Create a new branch and commit the modified files.
+
+    Args:
+      repo_path: The local path to the repo project in which to commit.
+      modified_paths: A list of modified files to commit within the project.
+      subject: The first line to write in the new commit.
+      remote_branch: The remote branch to track, such as 'cros/main'.
+    """
+    with self.m.context(cwd=project_path):
+      self.m.git.add(modified_paths)
+      commit_message = '\n'.join((
+          subject,
+          '',
+          'This CL was automatically created by ProtoDoctor.',
+          self.m.buildbucket.build_url(),
+          '',
+          'BUG=None',
+          'TEST=CQ',
+      ))
+      self.m.git.commit(commit_message)
+
+  def _push_to_cq(self, project_path: config_types.Path, ref: str) -> None:
+    """Upload the local changes for the given project, and send to CQ.
+
+    TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
+    actual reviewers based on who modified infra/proto, and use CQ+2.
+
+    Args:
+      project_path: The local path to the repo project.
+      ref: The ref being worked on, such as "refs/heads/main".
+    """
+    assert not self._is_staging
+    change = self.m.gerrit.create_change(project=project_path,
+                                         reviewers=['gredelston@google.com'],
+                                         ref=ref, hashtags=[HASHTAG])
+    labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
+    self.m.gerrit.set_change_labels_remote(change, labels)
 
 
 def GenTests(
