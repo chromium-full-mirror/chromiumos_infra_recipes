@@ -11,14 +11,16 @@ be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 """
 
-from typing import Generator, List
+from typing import Generator, List, Optional
 
 from PB.chromite.api import api as api_service
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
+from PB.recipes.chromeos import proto_doctor as proto_doctor_pb2
 from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
@@ -28,8 +30,10 @@ from RECIPE_MODULES.chromeos.gerrit import api as gerrit_api
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/properties',
     'recipe_engine/scheduler',
     'recipe_engine/step',
+    'recipe_engine/time',
     'cros_build_api',
     'cros_sdk',
     'deferrals',
@@ -41,7 +45,9 @@ DEPS = [
     'workspace_util',
 ]
 
-# Repo projects
+PROPERTIES = proto_doctor_pb2.ProtoDoctorProperties
+
+# Repo projects.
 CHROMITE_REPO = 'chromiumos/chromite'
 INFRA_PROTO_REPO = 'chromiumos/infra/proto'
 CHROMITE_INFRA_PROTO_REPO = 'chromite/infra/proto'
@@ -59,9 +65,13 @@ PROJECTS_TO_CHECKOUT = (
 INFRA_PROTO_REPO_URL = f'https://chromium.googlesource.com/{INFRA_PROTO_REPO}'
 CHROMITE_REPO_URL = f'https://chromium.googlesource.com/{CHROMITE_REPO}'
 
-# Branches and refs
+# Branches and refs.
 MAIN_BRANCH = 'main'
 MAIN_REF = 'refs/heads/main'
+
+# Timing constants, in case not specified via input properties.
+DEFAULT_OPEN_CL_POLL_INTERVAL_SECS = 2 * 60  # 2 minutes.
+DEFAULT_OPEN_CL_POLL_TIMEOUT_SECS = 60 * 60  # 1 hour.
 
 # Hashtag used to identify CLs launched by ProtoDoctor.
 # Note that the hashtag alone is not sufficient to identify ProtoDoctor CLs,
@@ -70,21 +80,24 @@ MAIN_REF = 'refs/heads/main'
 HASHTAG = 'protodoctor'
 
 
-def RunSteps(api: recipe_api.RecipeApi) -> None:
+def RunSteps(api: recipe_api.RecipeApi,
+             properties: proto_doctor_pb2.ProtoDoctorProperties) -> None:
   """Starting point for main recipe logic.
 
   This function does setup, determines which branches to work on, and then
   defers to child functions for specific processing.
   """
-  ProtoDoctorRun(api).run()
+  ProtoDoctorRun(api, properties).run()
 
 
 class ProtoDoctorRun:
   """A single run of ProtoDoctor."""
 
-  def __init__(self, api: recipe_api.RecipeApi) -> None:
+  def __init__(self, api: recipe_api.RecipeApi,
+               properties: proto_doctor_pb2.ProtoDoctorProperties) -> None:
     """Initialize up the class by setting basic attributes."""
     self.m = api
+    self.properties = properties
 
   @property
   def _is_staging(self) -> bool:
@@ -159,6 +172,7 @@ class ProtoDoctorRun:
     branch = self.m.git.extract_branch(ref)
     with self.m.step.nest(f'process branch {branch}'):
       self._setup_workspace(branch)
+      self._wait_for_open_cls(branch)
       self._compile_chromite_protos(ref)
 
   def _setup_workspace(self, manifest_branch: str) -> None:
@@ -175,6 +189,74 @@ class ProtoDoctorRun:
       )
       self.m.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
       self.m.cros_sdk.create_chroot(replace=True, chroot_upgrade=False)
+
+  def _wait_for_open_cls(self, branch: str) -> None:
+    """Block until all open ProtoDoctor CLs on the branch are done with CQ.
+
+    Args:
+      branch: The name of the branch to query, such as 'main'. It's also OK to
+        pass in a ref, such as 'refs/heads/main'.
+
+    Raises:
+      StepFailure: If too much time passed while waiting for CLs to finish.
+    """
+    start_time = self.m.time.time()  # Measured in seconds.
+
+    def elapsed_seconds() -> float:
+      """Return the number of seconds elapsed since polling started."""
+      return self.m.time.time() - start_time
+
+    interval_secs = (
+        self.properties.open_cl_poll_interval_secs or
+        DEFAULT_OPEN_CL_POLL_INTERVAL_SECS)
+    timeout_secs = (
+        self.properties.open_cl_poll_timeout_secs or
+        DEFAULT_OPEN_CL_POLL_TIMEOUT_SECS)
+
+    with self.m.step.nest('wait for open cls'):
+      while elapsed_seconds() < timeout_secs:
+        if self._get_open_proto_doctor_cls(branch, only_with_active_cq=True):
+          # Some CLs are still running CQ. Keep polling.
+          self.m.time.sleep(interval_secs)
+        else:
+          # No CLs are running CQ anymore. Stop blocking.
+          return
+      # Timed out while polling.
+      raise recipe_api.StepFailure('Timed out waiting for CQ to finish.')
+
+  def _get_open_proto_doctor_cls(
+      self, branch: str,
+      only_with_active_cq: bool = False) -> List[bb_common_pb2.GerritChange]:
+    """Return a list of open ProtoDoctor CLs on the branch.
+
+    Args:
+      branch: The name of the branch to query, such as 'main'.
+      only_with_active_cq: If True, only return a list of CLs that are currently
+        active in CQ, whether CQ+1 or CQ+2.
+    """
+    if not self.properties.expected_cl_owners:
+      raise recipe_api.InfraFailure(
+          'Cannot find old ProtoDoctor CLs, because expected CL owners were not '
+          'specified.')
+    label_constraints: Optional[List[gerrit_api.LabelConstraint]] = None
+    if only_with_active_cq:
+      label_constraints = [
+          gerrit_api.LabelConstraint(
+              label=gerrit_api.Label.COMMIT_QUEUE,
+              kind=gerrit_api.LabelConstraintKind.ANY_NONZERO_VOTE)
+      ]
+    open_changes: List[bb_common_pb2.GerritChange] = []
+    for host in (gerrit_api.EXTERNAL_HOST, gerrit_api.INTERNAL_HOST):
+      for cl_owner in self.properties.expected_cl_owners:
+        query_params = [
+            ('owner', cl_owner),
+            ('hashtag', HASHTAG),
+            ('branch', branch),
+        ]
+        open_changes.extend(
+            self.m.gerrit.query_changes(host=host, query_params=query_params,
+                                        label_constraints=label_constraints))
+    return open_changes
 
   def _compile_chromite_protos(self, ref: str) -> None:
     """Compile proto bindings in chromite/, and upload to Gerrit.
@@ -249,6 +331,7 @@ def GenTests(
   release_branch = 'release-R100-14526.B'
   release_ref = f'refs/heads/{release_branch}'
 
+  # Triggers used for testing.
   gitiles_trigger_main = triggers_pb2.GitilesTrigger(repo=INFRA_PROTO_REPO_URL,
                                                      ref=MAIN_REF,
                                                      revision='aaaaaa')
@@ -266,8 +349,29 @@ def GenTests(
   )
   buildbucket_trigger = triggers_pb2.BuildbucketTrigger(tags=['a:b'])
 
+  # Gerrit changes used for testing.
+  cq_active_cl = {
+      '_number': 12345,
+      'project': CHROMITE_REPO,
+      'labels': {
+          'Commit-Queue': {
+              'all': [{
+                  'value': 1,
+              },],
+          }
+      }
+  }
+  cq_inactive_cl = {
+      '_number': 12345,
+      'project': CHROMITE_REPO,
+      'labels': {
+          'Commit-Queue': {}
+      }
+  }
+
   yield api.test(
       'basic',
+      api.properties(expected_cl_owners=['sundar@google.com']),
       api.scheduler(triggers=[
           triggers_pb2.Trigger(gitiles=gitiles_trigger_main),
           triggers_pb2.Trigger(gitiles=gitiles_trigger_release_branch),
@@ -275,11 +379,48 @@ def GenTests(
           triggers_pb2.Trigger(buildbucket=buildbucket_trigger),
           triggers_pb2.Trigger(gitiles=gitiles_trigger_main2),
       ]),
-      api.post_check(post_process.MustRun, f'process branch {MAIN_BRANCH}'),
       # Each branch should only be processed once, despite multiple triggers.
+      api.post_check(post_process.MustRun, f'process branch {MAIN_BRANCH}'),
       api.post_check(post_process.DoesNotRun,
                      f'process branch {MAIN_BRANCH} (2)'),
       api.post_check(post_process.MustRun, f'process branch {release_branch}'),
+
+      ### Waiting for open CLs to finish CQ ###
+      # On the main branch on the external host, for the first query, find a
+      # CQ-active change so that we need to re-poll.
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [cq_active_cl],
+          gerrit_api.EXTERNAL_HOST),
+      # For the second query, let that change be done with CQ.
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [cq_inactive_cl],
+          gerrit_api.EXTERNAL_HOST, iteration=2),
+      # Assert that there is no third query.
+      # (Assert we _do_ run iteration #2 to ensure we have the step name right.)
+      api.post_check(
+          post_process.MustRun,
+          f'process branch main.wait for open cls.query {gerrit_api.EXTERNAL_HOST} (2)'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          f'process branch main.wait for open cls.query {gerrit_api.EXTERNAL_HOST} (3)'
+      ),
+      # For simplicity, no open CLs on other branches or on the internal host.
+      # (Internal host needs a second iteration because it requeries alongside
+      # the external host.)
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [],
+          gerrit_api.INTERNAL_HOST),
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [], gerrit_api.INTERNAL_HOST,
+          iteration=2),
+      api.gerrit.set_query_changes_response(
+          f'process branch {release_branch}.wait for open cls', [],
+          gerrit_api.EXTERNAL_HOST),
+      api.gerrit.set_query_changes_response(
+          f'process branch {release_branch}.wait for open cls', [],
+          gerrit_api.INTERNAL_HOST),
+
       # Check that the expected Chromite files get uploaded
       api.post_check(
           post_process.StepCommandContains,
@@ -305,9 +446,17 @@ def GenTests(
 
   yield api.test(
       'staging',
+      api.properties(expected_cl_owners=['sundar@google.com']),
       api.scheduler(triggers=[
           triggers_pb2.Trigger(gitiles=gitiles_trigger_main),
       ]),
+      # For simplicity, no open CLs to wait for.
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [],
+          gerrit_api.EXTERNAL_HOST),
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [],
+          gerrit_api.INTERNAL_HOST),
       # Staging branch should make local changes, but not upload.
       api.post_check(
           post_process.MustRun,
@@ -366,6 +515,7 @@ def GenTests(
 
   yield api.test(
       'first-branch-fails-second-branch-runs',
+      api.properties(expected_cl_owners=['sundar@google.com']),
       api.scheduler(triggers=[
           triggers_pb2.Trigger(gitiles=gitiles_trigger_main),
           triggers_pb2.Trigger(gitiles=gitiles_trigger_release_branch),
@@ -378,6 +528,46 @@ def GenTests(
                      f'process branch {MAIN_BRANCH}'),
       api.post_check(post_process.StepSuccess,
                      f'process branch {release_branch}'),
+      # Some necessary step data to prevent unexpected failures.
+      api.gerrit.set_query_changes_response(
+          f'process branch {release_branch}.wait for open cls', [],
+          gerrit_api.EXTERNAL_HOST),
+      api.gerrit.set_query_changes_response(
+          f'process branch {release_branch}.wait for open cls', [],
+          gerrit_api.INTERNAL_HOST),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'polling-timeout',
+      api.properties(expected_cl_owners=['sundar@google.com']),
+      api.scheduler(
+          triggers=[triggers_pb2.Trigger(gitiles=gitiles_trigger_main)]),
+      # Make the time-step large enough to query once, but not twice.
+      api.time.step(.7 * DEFAULT_OPEN_CL_POLL_TIMEOUT_SECS),
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [cq_active_cl],
+          gerrit_api.EXTERNAL_HOST),
+      api.gerrit.set_query_changes_response(
+          'process branch main.wait for open cls', [cq_active_cl],
+          gerrit_api.INTERNAL_HOST),
+      api.post_check(post_process.StepFailure,
+                     'process branch main.wait for open cls'),
+      api.post_check(post_process.SummaryMarkdown,
+                     'Timed out waiting for CQ to finish.'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'no-expected-cl-owners-specified',
+      api.scheduler(
+          triggers=[triggers_pb2.Trigger(gitiles=gitiles_trigger_main)]),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          'Cannot find old ProtoDoctor CLs, because expected CL owners were '
+          'not specified.'),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )

@@ -1,0 +1,23 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.proto_doctor;
+
+message ProtoDoctorProperties {
+  // Interval to wait when polling for open ProtoDoctor CLs to finish with CQ.
+  // If not set, a hard-coded default value from the recipe will be used.
+  int64 open_cl_poll_interval_secs = 1;
+
+  // Amount of time after which to timeout when polling for open ProtoDoctor CLs
+  // to finish with CQ.
+  // If not set, a hard-coded default value from the recipe will be used.
+  int64 open_cl_poll_timeout_secs = 2;
+
+  // Gerrit users who could have submitted ProtoDoctor changes.
+  // This is used for detecting old ProtoDoctor changes.
+  // These should be email addresses, such as "sundar@chromium.org".
+  repeated string expected_cl_owners = 3;
+}

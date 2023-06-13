@@ -22,6 +22,10 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.config_types import Path
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
+# Commonly used Gerrit hosts.
+EXTERNAL_HOST = 'https://chromium-review.googlesource.com'
+INTERNAL_HOST = 'https://chrome-internal-review.googlesource.com'
+
 # Strip these suffixes from hosts for "short" host display.
 SHORT_HOST_SUFFIXES = ('-review.googlesource.com', '.googlesource.com')
 
@@ -229,8 +233,16 @@ class Label(enum.Enum):
 
 class LabelConstraintKind(enum.Enum):
   """When querying changes, kinds of constraint one can apply to a label."""
+  # APPROVED and UNAPPROVED refer whether to the change label JSON has been
+  # "approved". The exact meaning of this varies by the label, but it is always
+  # represented by the label's "approved" attribute.
   APPROVED = 1
   UNAPPROVED = 2
+
+  # ANY_NONZERO_VOTE refers to any change for which any user has applied a
+  # nonzero vote.
+  # Votes are represented by the label's "all" attribute.
+  ANY_NONZERO_VOTE = 3
 
 
 class LabelConstraint(NamedTuple):
@@ -239,9 +251,44 @@ class LabelConstraint(NamedTuple):
   kind: LabelConstraintKind
 
 
-def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
-                                          constraints: List[LabelConstraint]
-                                         ) -> bool:
+def _does_change_label_satisfy_constraint(change_info: ChangeInfo,
+                                          constraint: LabelConstraint) -> bool:
+  """Return whether or not the Gerrit change JSON meets the label constraint.
+
+  Args:
+    change_info: JSON-like dict representing a single Gerrit change, as returned
+      by api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
+    constraint: The constraint to compare against the change.
+
+  Raises:
+    KeyError: If change_info does not contain the 'labels' key.
+    KeyError: If change_info['labels'] does not contain the label being checked.
+  """
+  try:
+    change_labels_json = change_info['labels']
+  except KeyError as e:
+    raise StepFailure(
+        'Gerrit change JSON does not contain key `labels`. Maybe '
+        'get_changes() was called without o_params=["LABELS"]?\n\n%s' %
+        change_info) from e
+  try:
+    label_json = change_labels_json[constraint.label.key]
+  except KeyError as e:
+    raise StepFailure('Gerrit change labels do not contain key %s: %s' %
+                      (constraint.label.key, change_labels_json)) from e
+  if constraint.kind == LabelConstraintKind.APPROVED:
+    return 'approved' in label_json
+  if constraint.kind == LabelConstraintKind.UNAPPROVED:
+    return 'approved' not in label_json
+  if constraint.kind == LabelConstraintKind.ANY_NONZERO_VOTE:
+    return any(
+        vote_json.get('value', 0) != 0
+        for vote_json in label_json.get('all', []))
+  raise StepFailure(f'Unexpected LabelConstraintKind: {constraint.kind}')
+
+
+def _do_change_labels_satisfy_constraints(
+    change_info: ChangeInfo, constraints: List[LabelConstraint]) -> bool:
   """Return whether or not the Gerrit change JSON meet the label constraints.
 
   Args:
@@ -249,28 +296,9 @@ def _do_change_labels_satisfy_constraints(change_info: ChangeInfo,
       by api.depot_tools_gerrit.get_changes(o_params=['LABELS']).
     constraints: The constraints to compare against the change.
   """
-  try:
-    change_labels = change_info['labels']
-  except KeyError as e:
-    raise StepFailure(
-        'Gerrit change JSON does not contain key `labels`. Maybe '
-        'get_changes() was called without o_params=["LABELS"]?\n\n%s' %
-        change_info) from e
-  for constraint in constraints:
-    try:
-      label = change_labels[constraint.label.key]
-    except KeyError as e:
-      raise StepFailure('Gerrit change labels do not contain key %s: %s' %
-                        (constraint.label.key, change_labels)) from e
-    if constraint.kind == LabelConstraintKind.APPROVED:
-      if 'approved' not in label:
-        return False
-    elif constraint.kind == LabelConstraintKind.UNAPPROVED:
-      if 'approved' in label:
-        return False
-    else:
-      raise StepFailure(f'Unexpected LabelConstraintKind: {constraint.kind}')
-  return True
+  return all(
+      _does_change_label_satisfy_constraint(change_info, constraint)
+      for constraint in constraints)
 
 
 class GerritApi(RecipeApi):
