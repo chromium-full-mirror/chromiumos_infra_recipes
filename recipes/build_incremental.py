@@ -96,15 +96,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                                 replace=False, update=False,
                                 uprev_packages=False)
 
-    # Disable cros clean-outdated-pkgs, if necessary.
-    cop_enabled = extra_properties.cop_enabled
-    if not cop_enabled:
-      with api.repo.m.depot_tools.on_path():
-        api.step(
-            "Disable cros clean-outdated-pkgs",
-            ["cros", "clean-outdated-pkgs", "--no-auto", "--debug"],
-        )
-
     api.cros_sdk.update_chroot(
         toolchain_targets=[api.build_menu.build_target],
         build_source=config.build.sdk_update.compile_source)
@@ -223,7 +214,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
       api.properties(IncrementalProperties(**{'cop_enabled': False})),
-      api.post_check(post_process.MustRun, 'Disable cros clean-outdated-pkgs'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk'),
