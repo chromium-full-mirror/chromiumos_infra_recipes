@@ -183,11 +183,11 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "500",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"2\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"2\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -224,11 +224,11 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "500",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
     ],
     "infra_step": true,
     "luci_context": {

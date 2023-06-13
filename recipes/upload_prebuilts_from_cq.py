@@ -151,23 +151,19 @@ def RunSteps(api: RecipeApi):
             patchset=patchset,
         )
 
-        # On prod, check only the prod builders
-        # On staging, check both prod and staging builders.
-        bucket = None if is_staging else 'cq'
-        builder = builder_common_pb2.BuilderID(project='chromeos',
-                                               bucket=bucket)
+        builder = builder_common_pb2.BuilderID(project='chromeos')
         builds = api.buildbucket.search(
             builds_service_pb2.BuildPredicate(
                 gerrit_changes=[gerrit_change],
                 builder=builder,
                 include_experimental=is_staging,
-            ))
+            ), limit=500)
 
         sorted_builds = sorted(builds, key=lambda b: b.start_time.ToSeconds())
         for build in reversed(sorted_builds):
           # On prod, use only prebuilts from prod (ignoring staging prebuilts).
           # On staging, use prebuilts from both prod and staging.
-          if not is_staging and build.builder.bucket != 'cq':
+          if not is_staging and build.builder.bucket == 'staging':
             continue
 
           # Ignore failed builds.
