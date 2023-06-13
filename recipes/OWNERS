@@ -5,3 +5,7 @@ per-file presubmit_tests.*=file:/OWNERS.build
 per-file regen_build_cache.*=file:/OWNERS.build
 
 per-file lvfs_mirror.py=file:/recipe_modules/cros_lvfs_mirror/OWNERS
+
+per-file android_uprev.proto=file:/OWNERS.arc
+per-file android_uprev_orchestrator.py=file:/OWNERS.arc
+per-file build_android_uprev.py=file:/OWNERS.arc
