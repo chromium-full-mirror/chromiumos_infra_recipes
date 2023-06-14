@@ -34,6 +34,7 @@ DEPS = [
     "cros_sdk",
     "cros_version",
     "gerrit",
+    "repo",
     "test_util",
 ]
 
@@ -168,6 +169,21 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
 
   with api.build_menu.configure_builder(
   ), api.build_menu.setup_workspace_and_chroot():
+    # Check out the central CL on a branch. This is necessary for calling
+    # api.gerrit.set_change_description(), which we will do later.
+    local_branch = f'sdk{version}'
+    with api.step.nest("create tracking branch for key CL"):
+      project_info = api.repo.project_info(central_cl.project)
+      api.step("create tracking branch", [
+          "git",
+          "-C",
+          project_info.path,
+          "checkout",
+          "-b",
+          local_branch,
+          "--track",
+          f"{project_info.remote}/{project_info.branch_name}",
+      ])
 
     # If the central CL was autodetected, tag it so that we can reliably
     # track which one it was. This code is after setup_workspace_and_chroot()
