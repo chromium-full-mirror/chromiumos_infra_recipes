@@ -67,6 +67,7 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     # Info used in rdb upload.
     self.rdb_base_tags = None
     self.rdb_base_variant = None
+    self.rdb_sources_file = None
 
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
@@ -619,6 +620,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             metadata.rdb_base_variant,
         'base_tags':
             metadata.rdb_base_tags,
+        'sources_file':
+            metadata.rdb_sources_file,
         'result_file':
             self._api.path.join(tast_results_dir, self.STREAMED_RESULTS_JSON),
         'artifact_directory':
@@ -661,6 +664,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'result_format': 'skylab-test-runner',
         'base_variant': metadata.rdb_base_variant,
         'base_tags': metadata.rdb_base_tags,
+        'sources_file': metadata.rdb_sources_file,
         'result_file': test_runner_result_file_path,
         'artifact_directory': None,
         'force_current_realm': force_current_realm,

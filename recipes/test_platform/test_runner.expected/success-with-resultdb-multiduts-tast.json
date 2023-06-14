@@ -12,6 +12,9 @@
       "@@@STEP_LOG_LINE@request@    \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
       "@@@STEP_LOG_LINE@request@        \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      {@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ],@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
@@ -407,6 +410,9 @@
       "@@@STEP_LOG_LINE@request@  \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -440,7 +446,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    },\n    {\n      \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -490,7 +496,8 @@
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"imageStorageServer\": \"gs://chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"deadline\": \"2012-05-14T12:53:27Z\",@@@",
       "@@@STEP_LOG_LINE@request@  \"containerImageInfo\": {}@@@",
@@ -525,7 +532,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostnames\": [\n    \"fake_host\"\n  ],\n  \"autotest\": {\n    \"name\": \"tast.critical-system-shard-2\",\n    \"testArgs\": \"foo=bar\",\n    \"displayName\": \"fancy_name\",\n    \"isClientTest\": true,\n    \"keyvals\": {\n      \"branch\": \"release-R105-14989.B\",\n      \"build\": \"guybrush-release/R105-14989.97.0\",\n      \"build_config\": \"guybrush-release\",\n      \"cidb_build_id\": \"5233649\",\n      \"label\": \"guybrush-release/R105-14989.97.0/bvt-perbuild/graphics_Idle.arc\",\n      \"master_build_config\": \"master-release\",\n      \"parent_job_id\": \"5d39c90af9d1ab11\",\n      \"suite\": \"bvt-perbuild\",\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    }\n  },\n  \"deadline\": \"2012-05-14T12:53:27Z\",\n  \"containerImageInfo\": {}\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostnames\": [\n    \"fake_host\"\n  ],\n  \"autotest\": {\n    \"name\": \"tast.critical-system-shard-2\",\n    \"testArgs\": \"foo=bar\",\n    \"displayName\": \"fancy_name\",\n    \"isClientTest\": true,\n    \"keyvals\": {\n      \"branch\": \"release-R105-14989.B\",\n      \"build\": \"guybrush-release/R105-14989.97.0\",\n      \"build_config\": \"guybrush-release\",\n      \"cidb_build_id\": \"5233649\",\n      \"label\": \"guybrush-release/R105-14989.97.0/bvt-perbuild/graphics_Idle.arc\",\n      \"master_build_config\": \"master-release\",\n      \"parent_job_id\": \"5d39c90af9d1ab11\",\n      \"suite\": \"bvt-perbuild\",\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    },\n    \"imageStorageServer\": \"gs://chromeos-image-archive\"\n  },\n  \"deadline\": \"2012-05-14T12:53:27Z\",\n  \"containerImageInfo\": {}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -946,6 +953,44 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.identify sources under test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/guybrush-release/R105-14989.97.0/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.identify sources under test.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@sources.jsonpb@https://storage.cloud.google.com/chromeos-image-archive/guybrush-release/R105-14989.97.0/metadata/sources.jsonpb@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -1110,7 +1155,8 @@
       "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\", @@@",
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false, @@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1216,6 +1262,8 @@
       "task_id:dummy-task-id0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",
@@ -1455,7 +1503,8 @@
       "@@@STEP_LOG_LINE@config@    \"force_current_realm\": false, @@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/tmp_tmp_1/autotest_wrapper_tast_result.json\", @@@",
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"skylab-test-runner\", @@@",
-      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false@@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false, @@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1512,6 +1561,8 @@
       "task_id:dummy-task-id0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "skylab-test-runner",

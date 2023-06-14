@@ -13,6 +13,14 @@
       "@@@STEP_LOG_LINE@cft_test_request@      \"buildTarget\": \"kevin\",@@@",
       "@@@STEP_LOG_LINE@cft_test_request@      \"modelName\": \"kevin\"@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    },@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    \"provisionState\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"systemImage\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"systemImagePath\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          \"hostType\": \"GS\",@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          \"path\": \"gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@    },@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    \"containerMetadataKey\": \"kevin\"@@@",
       "@@@STEP_LOG_LINE@cft_test_request@  },@@@",
       "@@@STEP_LOG_LINE@cft_test_request@  \"testSuites\": [@@@",
@@ -764,6 +772,115 @@
       "@@@STEP_LOG_LINE@uname@Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux@@@",
       "@@@STEP_LOG_LINE@uname@    @@@",
       "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.identify sources under test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.identify sources under test.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@sources.jsonpb@https://storage.cloud.google.com/chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000/metadata/sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.identify sources under test.mark sources dirty",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.identify sources under test.mark sources dirty.read sources proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"is_dirty\": true\n}",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.identify sources under test.mark sources dirty.write sources proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"is_dirty\": true@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
     ]
   },
   {

@@ -22,6 +22,7 @@ from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
   import CrosToolRunnerEnvProperties
 from PB.recipe_modules.chromeos.cros_tool_runner.cros_tool_runner \
@@ -43,6 +44,7 @@ from recipe_engine.recipe_api import StepFailure
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
 DEPS = [
+    'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -70,6 +72,7 @@ DEPS = [
     'phosphorus',
     'result_flow',
     'vmlab',
+    'urls',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -85,8 +88,13 @@ _RESULT_PUBLISHING_LIMIT = 2 * HOUR
 _PROVISION_DEADLINE = 45 * MINUTE
 TAST_MISSING_TEST_KEY = 'tast_missing_test'
 TAST_TEST_NAME_PREFIX = 'tast.'
+SOURCES_FILE_NAME = 'sources.jsonpb'
 
 RESULTDB_UPLOAD_STEP = 'Phosphorus: upload to resultdb'
+
+
+class SourcesNotAvailableException(StepFailure):
+  """Raised when the code sources are not available, letting us skip gracefully."""
 
 # API STEP HELPERS
 def s_log(step, name, log):
@@ -721,6 +729,110 @@ def _generate_resultdb_variant_def(api, autotest_keyval_file):
   return base_variant
 
 
+def _prepare_resultdb_sources_file(api, properties):
+  """Fetches information about code sources tested by this execution.
+
+  The code sources typically comprise a git commit (i.e. the Chrome OS
+  snapshot), as well as an optional list of gerrit changes. An is_dirty
+  flag identifies if there were other modifications made to the sources
+  (such as if an uncommited package uprev being built into the system
+  image or if a custom firmware build was used).
+
+  See the luci.resultdb.v1.Sources message for more.
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * properties (TestRunnerProperties): Recipe input properties.
+
+  Returns: Path to file containing test source information, as a
+    JSONPB-serialized luci.resultdb.v1.Sources proto.
+
+  Raises:
+  * SourcesNotAvailableException. If the information is not available.
+  """
+
+  with api.step.nest('identify sources under test') as step:
+    # Google Storage URL to the build.
+    build_url = None
+
+    # Whether the image provisioned on the device is a purely the
+    # supplied system image, or whether it has additional modifications
+    # (e.g. a different Lacros build or firmware).
+    is_dirty_provision = False
+
+    if properties.cft_is_enabled:
+      provision_state = properties.cft_test_request.primary_dut.provision_state
+
+      # The chromiumos.StoragePath proto describing the path to the build
+      # artifacts.
+      storage_path = provision_state.system_image.system_image_path
+      if storage_path.host_type != StoragePath.HostType.GS:  # pragma: nocover
+        raise SourcesNotAvailableException(
+            'Code sources metadata file not available for non-GS sources.')
+      # The path will be of the form gs://<bucket>/<build>.
+      build_url = storage_path.path
+
+      # Custom firmware is being tested.
+      if provision_state.firmware is not None:
+        is_dirty_provision = True
+
+      # If in future, where custom lacros builds can be deployed via CFT,
+      # is_dirty_provision should also be set to true.
+    else:
+      software_dependencies = properties.request.prejob.software_dependencies
+      chromeos_build = None
+      chromeos_build_gcs_bucket = None
+      if software_dependencies:
+        for dep in software_dependencies:
+          if dep.WhichOneof('dep') == 'chromeos_build':
+            chromeos_build = dep.chromeos_build
+          elif dep.WhichOneof('dep') == 'chromeos_build_gcs_bucket':
+            chromeos_build_gcs_bucket = dep.chromeos_build_gcs_bucket
+          else:  # pragma: nocover
+            # Custom Lacros build, or custom firmware.
+            is_dirty_provision = True
+
+      if chromeos_build is None or chromeos_build_gcs_bucket is None:  # pragma: nocover
+        raise SourcesNotAvailableException(
+            'Chrome OS build not found in request')
+      build_url = 'gs://{}/{}'.format(chromeos_build_gcs_bucket, chromeos_build)
+
+    sources_local_path = api.path.mkdtemp(
+        prefix='source_metadata').join(SOURCES_FILE_NAME)
+
+    # Source information is stored with the build, at
+    # /metadata/sources.jsonpb.
+    sources_url = api.path.join(build_url, 'metadata', SOURCES_FILE_NAME)
+    try:
+      # Download the file from Google Stroage.
+      gs_step = api.gsutil.download_url(sources_url, sources_local_path,
+                                        name='download metadata/sources.jsonpb')
+      gs_step.presentation.links[SOURCES_FILE_NAME] = api.urls.get_gs_path_url(
+          sources_url)
+    except StepFailure as e:
+      step.step_text = 'Source information not found'
+      step.presentation.status = api.step.SUCCESS
+      raise SourcesNotAvailableException(
+          'sources.jsonpb file not found in GS.') from e
+
+    # Combine is_dirty_provision with the existing is_dirty flag.
+    # Both dirty source and dirty provision can make the specification
+    # of sources under test incomplete.
+    if is_dirty_provision:
+      with api.step.nest('mark sources dirty') as step:
+        test_sources = invocation_pb2.Sources()
+        sources_proto = api.file.read_proto('read sources proto',
+                                            sources_local_path,
+                                            invocation_pb2.Sources, 'JSONPB',
+                                            test_proto=test_sources)
+
+        sources_proto.is_dirty = sources_proto.is_dirty or is_dirty_provision
+        api.file.write_proto('write sources proto', sources_local_path,
+                             sources_proto, 'JSONPB')
+
+    return sources_local_path
+
+
 def _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file):
   """Upload test results for missing Tast test cases to ResultDB.
@@ -747,7 +859,8 @@ def _upload_missing_tast_results(api, base_variant, base_tags,
 def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                              autotest_keyval_file, base_variant,
                                              base_tags, force_current_realm,
-                                             skip_board_model_check):
+                                             skip_board_model_check,
+                                             sources_file):
   """Upload the Autotest wrapper result for Tast test with base variants and
   base tags. The Autotest wrapper result is captured in the first test case
   after the test execution.
@@ -765,6 +878,8 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
   * force_current_realm (Bool): If enabled, publish to realm test is running in
   * skip_board_model_check (Bool): If enabled, don't verify board-model realm
       actually exists
+  * sources_file (str): Path to a file containing a JSON-serialized
+      luci.resultdb.v1.Sources proto describing the code sources being tested.
   """
   try:
     # Skips if it's not a Tast test.
@@ -814,7 +929,8 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'result_file': test_result_file,
           'artifact_directory': None,
           'force_current_realm': force_current_realm,
-          'skip_board_model_check': skip_board_model_check
+          'skip_board_model_check': skip_board_model_check,
+          'sources_file': sources_file
       }
       api.cros_resultdb.upload(config, str(result.get_testhaus_log_url()))
   except api.step.StepFailure:
@@ -869,6 +985,13 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
         config[
             'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
                 base_dir, result_format, artifact_directory)
+
+      # Capture the code sources which were tested.
+      try:
+        config['sources_file'] = str(
+            _prepare_resultdb_sources_file(api, properties))
+      except SourcesNotAvailableException:  # pragma: nocover
+        pass
 
       # Upload to rdb using extracted configs.
       api.cros_resultdb.upload(config,
@@ -956,6 +1079,13 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     force_current_realm = properties.common_config.partner_private
     skip_board_model_check = properties.common_config.skip_board_model_realm_check
 
+    # Capture the code sources which were tested.
+    sources_file = None
+    try:
+      sources_file = str(_prepare_resultdb_sources_file(api, properties))
+    except SourcesNotAvailableException:  # pragma: nocover
+      pass
+
     config = {
         'result_format': result_format,
         'base_variant': base_variant,
@@ -963,7 +1093,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
         'result_file': result_file,
         'artifact_directory': artifact_directory,
         'force_current_realm': force_current_realm,
-        'skip_board_model_check': skip_board_model_check
+        'skip_board_model_check': skip_board_model_check,
+        'sources_file': sources_file
     }
 
     # Uploads test results to ResultDB only when the test result file exists.
@@ -973,11 +1104,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
     # Uploads an additional Autotest wrapper result for Tast test.
     if is_tast_result:
-      _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
-                                               autotest_keyval_file,
-                                               base_variant, base_tags,
-                                               force_current_realm,
-                                               skip_board_model_check)
+      _upload_autotest_wrapper_result_for_tast(
+          api, test_metadata, result, autotest_keyval_file, base_variant,
+          base_tags, force_current_realm, skip_board_model_check, sources_file)
 
     _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file)
@@ -1428,6 +1557,11 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       # from the input test metadata to adhere to the interface.
       autotest_keyval_file = autotest_keyvals
 
+      try:
+        test_metadata.rdb_sources_file = _prepare_resultdb_sources_file(
+            api, properties)
+      except SourcesNotAvailableException:  # pragma: nocover
+        pass
       test_metadata.rdb_base_tags = _generate_resultdb_base_tags(
           api, properties, test_metadata, autotest_keyval_file,
           crossystem_keyvals, kernel_version, cft_is_enabled=True)
@@ -1450,7 +1584,6 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
                            dut_state, step)
 
   return result_for_output_props
-
 
 def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
                            result_for_uploading, results_dir, test_metadata,
@@ -2204,9 +2337,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                     'name': 'fake_board',
                 },
             },
-            'software_dependencies': [{
-                'chromeos_build': 'guybrush-release/R105-14989.97.0',
-            },]
+            'software_dependencies': [
+                {
+                    'chromeos_build': 'guybrush-release/R105-14989.97.0',
+                },
+                {
+                    'chromeos_build_gcs_bucket': 'chromeos-image-archive',
+                },
+            ]
         },
         'test': {
             'autotest': {
@@ -2254,9 +2392,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                     'name': 'fake_board',
                 },
             },
-            'software_dependencies': [{
-                'chromeos_build': 'bob-release/R102-14637.0.0',
-            },]
+            'software_dependencies': [
+                {
+                    'chromeos_build': 'bob-release/R102-14637.0.0',
+                },
+                {
+                    'chromeos_build_gcs_bucket': 'chromeos-image-archive',
+                },
+            ]
         },
         'tests': {
             'multi_test_2':
@@ -2305,9 +2448,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                     'name': 'fake_board',
                 },
             },
-            'software_dependencies': [{
-                'chromeos_build': 'guybrush-release/R105-14989.97.0',
-            },],
+            'software_dependencies': [
+                {
+                    'chromeos_build': 'guybrush-release/R105-14989.97.0',
+                },
+                {
+                    'chromeos_build_gcs_bucket': 'chromeos-image-archive',
+                },
+            ],
             'secondary_devices': [{
                 'software_attributes': {
                     'build_target': {
@@ -2345,9 +2493,14 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                     'name': 'fake_board',
                 },
             },
-            'software_dependencies': [{
-                'chromeos_build': 'guybrush-release/R105-14989.97.0',
-            },],
+            'software_dependencies': [
+                {
+                    'chromeos_build': 'guybrush-release/R105-14989.97.0',
+                },
+                {
+                    'chromeos_build_gcs_bucket': 'chromeos-image-archive',
+                },
+            ],
             'secondary_devices': [{
                 'software_attributes': {
                     'build_target': {
@@ -2476,7 +2629,17 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             "dut_model": {
                 "build_target": "kevin",
                 "model_name": "kevin"
-            }
+            },
+            "provision_state": {
+                "system_image": {
+                    "system_image_path": {
+                        "host_type":
+                            "GS",
+                        "path":
+                            "gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000",
+                    },
+                },
+            },
         },
         "test_suites": [{
             "name": "suite1",
@@ -4115,4 +4278,20 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _successful_prejob_step_for_ctr(),
       _failed_run_test_step_for_ctr(),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'fetch-sources-failed-ctr',
+      _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(),
+      _mock_load_step_for_ctr(),
+      _successful_prejob_step_for_ctr(),
+      _successful_run_test_step_for_ctr(),
+      api.step_data(
+          'execution steps.identify sources under test.gsutil download metadata/sources.jsonpb',
+          retcode=1),
+      # It is possible the sources file will not exist in Google Storage.
+      # We should handle this case gracefully.
+      status='SUCCESS',
   )

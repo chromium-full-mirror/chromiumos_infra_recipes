@@ -12,6 +12,9 @@
       "@@@STEP_LOG_LINE@request@    \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
       "@@@STEP_LOG_LINE@request@        \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      {@@@",
+      "@@@STEP_LOG_LINE@request@        \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ],@@@",
       "@@@STEP_LOG_LINE@request@    \"provisionableLabels\": {@@@",
@@ -411,6 +414,9 @@
       "@@@STEP_LOG_LINE@request@  \"softwareDependencies\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -441,7 +447,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: run prejob.call `phosphorus`.prejob",
-    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostname\": \"fake_host\",\n  \"desiredProvisionableLabels\": {\n    \"label1\": \"value1\"\n  },\n  \"deadline\": \"2012-05-14T12:53:24Z\",\n  \"softwareDependencies\": [\n    {\n      \"chromeosBuild\": \"guybrush-release/R105-14989.97.0\"\n    },\n    {\n      \"chromeosBuildGcsBucket\": \"chromeos-image-archive\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_EXCEPTION@@@"
