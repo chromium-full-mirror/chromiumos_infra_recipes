@@ -27,9 +27,9 @@ def determine_cipd_and_git_targets(
   return (cipd_target, git_target)
 
 
-def get_git_prod_hash() -> common.GitHash:
-  """Get the git hash for the current prod ref."""
-  return cipd_version_to_githash(common.CipdRef('prod'))
+def get_git_prod_hash(prod_label: str) -> common.GitHash:
+  """Get the git hash for the specified prod ref."""
+  return cipd_version_to_githash(common.CipdRef(prod_label))
 
 
 def cipd_version_to_githash(version: common.CipdVersion) -> common.GitHash:

@@ -9,7 +9,10 @@ import argparse
 import os
 import subprocess
 import sys
+import typing
 from typing import List
+from typing import Optional
+from typing import Tuple
 import urllib.parse
 
 import tabulate
@@ -18,6 +21,7 @@ import bb
 import cipd
 import common
 import git
+import staging_checks
 
 # [VPYTHON:BEGIN]
 # wheel: <
@@ -29,31 +33,115 @@ import git
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
+class RecipeReleaseConfig(typing.NamedTuple):
+  """A tuple containing the project, builder and regex used to search."""
+  name: str
+  staging_checks: Tuple[staging_checks.StagingReCheck]
+  prod_cipd_label: str
+  longname: Optional[str]
+
+
+class RecipeRelease:
+
+  def __init__(self, config: RecipeReleaseConfig):
+    self.name = config.name
+    self.staging_checks = config.staging_checks
+    self._prod_cipd_label = config.prod_cipd_label
+    self._longname = config.longname
+
+  def prompt_about_setting_git_target(self, git_target: common.GitHash):
+    """Ask the user whether it's OK to change the git target. If not, exit."""
+    if input(f'Set {self._prod_cipd_label} to git @ {git_target}? (y/N): '
+            ).upper() != 'Y':
+      sys.exit(0)
+
+  def update_cipd_refs(self, cipd_target: common.CipdInstance,
+                       dry_run: bool = False):
+    """Set the prod ref and timestamped ref to the given cipd instance."""
+    prod_ref = common.CipdRef(self._prod_cipd_label)
+    timestamped_ref = common.CipdRef(
+        f'release_{self.name}_{common.get_timestamp("%Y/%m/%d-%H")}')
+    for ref in (prod_ref, timestamped_ref):
+      cmd = [
+          'cipd', 'set-ref', common.RECIPE_BUNDLE, f'-version={cipd_target}',
+          f'-ref={ref}'
+      ]
+      if dry_run:
+        print('Not actually running the following command:')
+        print('\t ', ' '.join(cmd))
+      else:
+        subprocess.run(cmd, check=True)
+
+  def print_email_link(self, pending_changes: List[git.Commit]):
+    """Show the user an email link to announce the new change."""
+    print()
+    print(
+        'Please click this link and send an email to chromeos-infra-releases!')
+    print()
+    print(self.get_email_link(pending_changes))
+
+  def get_email_link(self, pending_changes: List[git.Commit]) -> str:
+    """Create an email link to announce the new change."""
+    email_subject = f'Recipes Release - {common.get_timestamp()}'
+    release_str = ''
+    if self._longname:
+      release_str = f'(for {self._longname}) '
+    email_message = '\n'.join([
+        f'We\'ve deployed Recipes {release_str}to prod!',
+        '',
+        'Here is a summary of the changes:',
+        '',
+        tabulate.tabulate([
+            c.plain_strs(with_bullet=True)
+            for c in pending_changes
+            if not c.trivial
+        ], headers=[], tablefmt='plain'),
+    ])
+    url_params = urllib.parse.urlencode({
+        'view': 'cm',
+        'fs': 1,
+        'bcc': 'chromeos-infra-releases@google.com',
+        'to': 'chromeos-continuous-integration-team@google.com',
+        'su': email_subject,
+        'body': email_message,
+    })
+    url = f'https://mail.google.com/mail?{url_params}'
+    return url
+
+  def do_release_flow(self, options: argparse.Namespace):
+    # Figure out which hashes/instances to use.
+    git_prod = cipd.get_git_prod_hash(self._prod_cipd_label)
+    (cipd_target,
+     git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
+
+    # Prepare to update refs.
+    pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
+    report_pending_changes(pending_changes, options.show_instances,
+                           verbose=options.verbose)
+
+    bb.check_staging_builders(pending_changes, self.staging_checks,
+                              ignore_failures=options.ignore_staging_failures)
+    quit_early_if_no_pending_changes(pending_changes)
+    if not options.force:
+      self.prompt_about_setting_git_target(git_target)
+
+    # Update refs.
+    self.update_cipd_refs(cipd_target, dry_run=options.dry_run)
+
+    # We did it!
+    self.print_email_link(pending_changes)
+
+
+INFRA_RELASE = RecipeReleaseConfig('infra', staging_checks.STAGING_CHECKS_RE,
+                                   'prod', None)
+
+
 def main(argv: List[str]):
   options = parse_args(argv)
   setup()
 
-  # Figure out which hashes/instances to use.
-  git_prod = cipd.get_git_prod_hash()
-  (cipd_target,
-   git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
-
-  # Prepare to update refs.
-  pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
-  report_pending_changes(pending_changes, options.show_instances,
-                         verbose=options.verbose)
-
-  bb.check_staging_builders(pending_changes,
-                            ignore_failures=options.ignore_staging_failures)
-  quit_early_if_no_pending_changes(pending_changes)
-  if not options.force:
-    prompt_about_setting_git_target(git_target)
-
-  # Update refs.
-  update_cipd_refs(cipd_target, dry_run=options.dry_run)
-
-  # We did it!
-  print_email_link(pending_changes)
+  release = RecipeRelease(INFRA_RELASE)
+  release.do_release_flow(options)
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -122,63 +210,6 @@ def quit_early_if_no_pending_changes(pending_changes: List[git.Commit]):
   if not pending_changes:
     print('No changes pending. Exiting early.')
     sys.exit(0)
-
-
-def prompt_about_setting_git_target(git_target: common.GitHash):
-  """Ask the user whether it's OK to change the git target. If not, exit."""
-  if input(f'Set prod to git @ {git_target}? (y/N): ').upper() != 'Y':
-    sys.exit(0)
-
-
-def update_cipd_refs(cipd_target: common.CipdInstance, dry_run: bool = False):
-  """Set the prod ref and timestamped ref to the given cipd instance."""
-  prod_ref = common.CipdRef('prod')
-  timestamped_ref = common.CipdRef(
-      f'release_{common.get_timestamp("%Y/%m/%d-%H")}')
-  for ref in (prod_ref, timestamped_ref):
-    cmd = [
-        'cipd', 'set-ref', common.RECIPE_BUNDLE, f'-version={cipd_target}',
-        f'-ref={ref}'
-    ]
-    if dry_run:
-      print('Not actually running the following command:')
-      print('\t ', ' '.join(cmd))
-    else:
-      subprocess.run(cmd, check=True)
-
-
-def print_email_link(pending_changes: List[git.Commit]):
-  """Show the user an email link to announce the new change."""
-  print()
-  print('Please click this link and send an email to chromeos-infra-releases!')
-  print()
-  print(get_email_link(pending_changes))
-
-
-def get_email_link(pending_changes: List[git.Commit]) -> str:
-  """Create an email link to announce the new change."""
-  email_subject = f'Recipes Release - {common.get_timestamp()}'
-  email_message = '\n'.join([
-      'We\'ve deployed Recipes to prod!',
-      '',
-      'Here is a summary of the changes:',
-      '',
-      tabulate.tabulate([
-          c.plain_strs(with_bullet=True)
-          for c in pending_changes
-          if not c.trivial
-      ], headers=[], tablefmt='plain'),
-  ])
-  url_params = urllib.parse.urlencode({
-      'view': 'cm',
-      'fs': 1,
-      'bcc': 'chromeos-infra-releases@google.com',
-      'to': 'chromeos-continuous-integration-team@google.com',
-      'su': email_subject,
-      'body': email_message,
-  })
-  url = f'https://mail.google.com/mail?{url_params}'
-  return url
 
 
 if __name__ == '__main__':

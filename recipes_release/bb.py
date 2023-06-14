@@ -16,6 +16,7 @@ from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Tuple
 
 import cipd
 import common
@@ -90,12 +91,13 @@ def get_builder_link(builder: str) -> str:
 
 
 def check_staging_builders(changes: List[git.Commit],
+                           checks: Tuple[staging_checks.StagingReCheck],
                            ignore_failures: bool = False):
   """Check for failures in staging builders. Quit early if any problems."""
   print('=== Check staging status ===')
   print('Determining relevancy of each staging builder...')
   builders = []
-  for re_check in staging_checks.STAGING_CHECKS_RE:
+  for re_check in checks:
     builders.extend(
         return_builders_for_regex(re_check.project, re_check.bucket,
                                   re_check.regex))
@@ -118,7 +120,7 @@ def check_staging_builders(changes: List[git.Commit],
 
   baddies = []
   print('Looking for 5 consecutive successes in staging...')
-  for re_check in staging_checks.STAGING_CHECKS_RE:
+  for re_check in checks:
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
