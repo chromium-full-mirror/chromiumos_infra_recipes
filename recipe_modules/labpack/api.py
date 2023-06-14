@@ -142,7 +142,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     if model in common_config.enable_ile_de_france_config.allow_list.models:
       return True  # pragma: nocover
 
-    if model not in common_config.enable_ile_de_france_config.deny_list.models:
+    if model in common_config.enable_ile_de_france_config.deny_list.models:
       return False  # pragma: nocover
 
     return False  # pragma: nocover
