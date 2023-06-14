@@ -173,6 +173,7 @@ class ProtoDoctorRun:
     with self.m.step.nest(f'process branch {branch}'):
       self._setup_workspace(branch)
       self._wait_for_open_cls(branch)
+      self._abandon_stale_cls(branch)
       self._compile_chromite_protos(ref)
 
   def _setup_workspace(self, manifest_branch: str) -> None:
@@ -223,6 +224,20 @@ class ProtoDoctorRun:
           return
       # Timed out while polling.
       raise recipe_api.StepFailure('Timed out waiting for CQ to finish.')
+
+  def _abandon_stale_cls(self, branch: str) -> None:
+    """If there are any stale ProtoDoctor CLs on Gerrit, abandon them.
+
+    Generally, this method should be called after self._wait_for_open_cls().
+    Thus, any CLs abandoned here should not still be running CQ.
+    """
+    with self.m.step.nest('abandon old cls'):
+      stale_cls = self._get_open_proto_doctor_cls(branch)
+      message = (
+          'This CL is stale. It will be replaced by a newer CL. See the '
+          f'following ProtoDoctor build: {self.m.buildbucket.build_url()}')
+      for cl in stale_cls:
+        self.m.gerrit.abandon_change(cl, message=message)
 
   def _get_open_proto_doctor_cls(
       self, branch: str,
