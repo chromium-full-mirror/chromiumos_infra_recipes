@@ -312,18 +312,6 @@ def mock_version_file(version="14.0.40.1206", hashes=None, delete=None):
 
 def GenTests(api):
 
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_summary_text == expected)
-
   def properties_dict(extra_props=None):
     """Returns a dict of basic valid properties, updated with extra_props."""
     props = {
@@ -399,7 +387,7 @@ def GenTests(api):
   yield api.test(
       "nothing-to-do",
       setup_build([("foo", [])]),
-      api.post_process(StepSummaryEquals, "checking change 1",
+      api.post_process(post_process.StepSummaryEquals, "checking change 1",
                        "No FIT image changes found, quitting"),
   )
 

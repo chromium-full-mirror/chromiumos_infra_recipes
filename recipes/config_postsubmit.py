@@ -647,18 +647,6 @@ def GenTests(api):
   )
 
   # flattening stage tests
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + \
-          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_summary_text == expected)
 
   def mock_project_payloads(fname):
     return api.path.exists(
@@ -709,7 +697,7 @@ def GenTests(api):
       config_dlm_step_data(api),
       api.git.diff_check(True),
       api.post_process(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'Do flatten_configs and create CL' \
               '.processing chromeos/project/galaxy/milkyway',
           'skipping, not in allowed projects'),
@@ -759,7 +747,7 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       api.post_process(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'Do flatten_configs and create CL' \
               '.processing chromeos/project/galaxy/milkyway',
           "(does not exist)"),
@@ -800,7 +788,7 @@ def GenTests(api):
       mock_project_payloads("flattened.jsonproto"),
       api.git.diff_check(False),
       api.post_process(
-          StepSummaryEquals, 'Do aggregate_configs and create CL'
+          post_process.StepSummaryEquals, 'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.diffing to find changes',
           "No changes to commit"),

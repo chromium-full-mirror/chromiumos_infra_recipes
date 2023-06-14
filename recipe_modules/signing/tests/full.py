@@ -93,7 +93,7 @@ def GenTests(api: RecipeTestApi):
 
     Usage:
       yield TEST + \
-          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
+          api.post_process(StepMetaEquals, 'step-name', 'expected-text')
     """
     # Verify arrays same size.
     check(len(step_odict[step].step_summary_text) == len(expected))

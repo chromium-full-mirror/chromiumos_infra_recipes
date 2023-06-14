@@ -37,7 +37,7 @@ def GenTests(api):
 
     Usage:
       yield TEST + \
-          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
+          api.post_process(StepMetaEquals, 'step-name', 'expected-text')
     """
     check(step_odict[step].step_text == expected)
 

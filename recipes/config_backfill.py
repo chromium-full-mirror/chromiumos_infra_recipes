@@ -619,20 +619,6 @@ def GenTests(api):
                         status=common_pb2.SUCCESS, output=output))
     return r
 
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + api.post_process(
-          StepSummaryEquals, 'step-name', 'expected-text'
-      )
-    """
-    check(step_odict[step].step_summary_text == expected)
-
   yield api.test(
       'basic',
       api.properties(
@@ -850,7 +836,7 @@ def GenTests(api):
           stdout=api.raw_io.output_text(''),
       ),
       api.post_process(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'processing test_program/test_project',
           'not in manifest',
       ),
@@ -872,7 +858,7 @@ def GenTests(api):
               }]
           }),
       api.post_process(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'processing test_program/test_project',
           'not checked out',
       ),

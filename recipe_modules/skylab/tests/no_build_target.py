@@ -45,19 +45,6 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + \
-          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_summary_text == expected)
-
   require_step = functools.partial(api.post_check, post_process.MustRunRE)
 
   yield api.test(
@@ -69,7 +56,7 @@ def GenTests(api):
       }),
       require_step('.*configure test-builder'),
       api.post_check(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'schedule skylab tests v2.create test requests.configure test-builder',
           "Execution via container requested, but no container metadata for build target 'another_target'",
       ),

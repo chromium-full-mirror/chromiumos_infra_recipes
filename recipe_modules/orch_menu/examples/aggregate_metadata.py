@@ -120,19 +120,6 @@ def GenTests(api):
     """
     check(step_odict[step].logs[logkey] == expected)
 
-  def StepSummaryEquals(check, step_odict, step, expected):
-    """Check that the step's step_summary_text equals given value.
-
-    Args:
-      step (str) - The step to check the step_text of
-      expected (str) - The expected value of the step_text
-
-    Usage:
-      yield TEST + \
-          api.post_process(StepSummaryEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_summary_text == expected)
-
   # Convenience bindings for common test assertions
   require_step = functools.partial(api.post_check, post_process.MustRunRE)
   step_failed = functools.partial(api.post_check, post_process.StepFailure)
@@ -185,7 +172,7 @@ def GenTests(api):
       require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       api.post_check(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'aggregating metadata.container metadata.processing test-target-0',
           'no build-target set, skipping',
       ),
@@ -201,7 +188,7 @@ def GenTests(api):
       require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       api.post_check(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'aggregating metadata.container metadata.processing test-target-0',
           'no artifacts path, skipping',
       ),
@@ -249,7 +236,7 @@ def GenTests(api):
                   '.container metadata'
                   '.processing test-target-0'),
       api.post_check(
-          StepSummaryEquals,
+          post_process.StepSummaryEquals,
           'aggregating metadata.container metadata.processing test-target-0',
           'no metadata but build failed, ignoring.'),
   )
