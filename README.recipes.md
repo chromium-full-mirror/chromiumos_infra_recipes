@@ -127,6 +127,7 @@
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [binhost_lookup_service:examples/publish_binhost_data](#recipes-binhost_lookup_service_examples_publish_binhost_data) &mdash; Test the `publish binhost metadata` functionality of the module.
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
   * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
@@ -799,15 +800,38 @@ Returns:
 [DEPS](/recipe_modules/binhost_lookup_service/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [BinhostLookupServiceApi](/recipe_modules/binhost_lookup_service/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BinhostLookupServiceApi](/recipe_modules/binhost_lookup_service/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for operations related to the binhost lookup service.
 
-&mdash; **def [publish\_snapshot\_metadata](/recipe_modules/binhost_lookup_service/api.py#65)(self, snapshot_sha: str, snapshot_num: int, external: bool, buildbucket_id: int, raise_on_failure: bool=False):**
+&mdash; **def [publish\_binhost\_metadata](/recipe_modules/binhost_lookup_service/api.py#110)(self, build_target: common_pb2.BuildTarget, profile: common_pb2.Profile, snapshot_sha: str, gs_uri: str, gs_bucket_name: str, buildbucket_id: int, complete: bool, private: bool, raise_on_failure: bool=False):**
 
-Wrapper function to publish snapshot metadata.
+Publish binhost metadata to Cloud Pub/Sub.
 
-Provides additional exception handling and sets the step presentation data.
+Publish a Pub/Sub message to the binhost lookup service using the
+`cloud_pubsub` recipe module.
+
+Args:
+  build_target: The system Chrome OS is being built for, also known
+      as board.
+  profile: Name of the profile to use with the build_target.
+  snapshot_sha: Unique sha of the snapshot.
+  gs_uri: Location of the binhost object in google storage.
+  gs_bucket_name: Name of the google storage bucket which contains the
+      binhost.
+  buildbucket_id: Id of the postsubmit builder that created and
+      uploaded the binhost.
+  complete: Bool to indicate if this binhost contains all the binpkgs
+      specified in the packages metadata file.
+  private: Bool to indicate if the binhost is private.
+  raise_on_failure: Whether to raise an exception on failure.
+
+&mdash; **def [publish\_snapshot\_metadata](/recipe_modules/binhost_lookup_service/api.py#79)(self, snapshot_sha: str, snapshot_num: int, external: bool, buildbucket_id: int, raise_on_failure: bool=False):**
+
+Publish snapshot metadata to Cloud Pub/Sub.
+
+Publish a Pub/Sub message to the binhost lookup service using the
+`cloud_pubsub` recipe module.
 
 Args:
   snapshot_sha: Unique sha of the snapshot.
@@ -10371,6 +10395,14 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 
 &mdash; **def [RunSteps](/recipes/annealing.py#62)(api, properties):**
+### *recipes* / [binhost\_lookup\_service:examples/publish\_binhost\_data](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py)
+
+[DEPS](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#14): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test the `publish binhost metadata` functionality of the module.
+
+&mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#27)(api: RecipeApi, raise_on_failure):**
 ### *recipes* / [binhost\_lookup\_service:examples/publish\_snapshot\_data](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py)
 
 [DEPS](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#13): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -56,7 +56,9 @@ def GenTests(api: RecipeTestApi):
           **{
               '$chromeos/binhost_lookup_service': {
                   'pubsub_topic_id_update_snapshot_data':
-                      'test_topic_id_update_snapshot_data'
+                      'test_topic_id_update_snapshot_data',
+                  'pubsub_topic_id_update_binhost_data':
+                      'test_topic_id_update_binhost_data'
               }
           }),
       api.post_check(post_process.StepException,
@@ -75,7 +77,10 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$chromeos/binhost_lookup_service': {
-                  'pubsub_project_id': 'chromeos-prebuilts'
+                  'pubsub_project_id':
+                      'chromeos-prebuilts',
+                  'pubsub_topic_id_update_binhost_data':
+                      'test_topic_id_update_binhost_data'
               }
           }),
       api.post_check(post_process.StepException,

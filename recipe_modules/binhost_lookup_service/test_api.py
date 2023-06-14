@@ -22,5 +22,7 @@ class BinhostLookupServiceTestApi(recipe_test_api.RecipeTestApi):
             binhost_lookup_service_pb2.BinhostLookupServiceProperties(
                 pubsub_project_id='chromeos-prebuilts',
                 pubsub_topic_id_update_snapshot_data=(
-                    'test_topic_id_update_snapshot_data'))
+                    'test_topic_id_update_snapshot_data'),
+                pubsub_topic_id_update_binhost_data=(
+                    'test_topic_id_update_binhost_data'))
     })

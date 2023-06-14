@@ -12,4 +12,7 @@ message BinhostLookupServiceProperties {
 
   // The Cloud Pub/Sub topic to publish events to update snapshot data.
   string pubsub_topic_id_update_snapshot_data = 2;
+
+  // The Cloud Pub/Sub topic to publish events to update binhost data.
+  string pubsub_topic_id_update_binhost_data = 3;
 }
