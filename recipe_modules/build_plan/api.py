@@ -326,6 +326,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
             if not builder_config.general.critical.value:
               continue
 
+            # No need to retry previously-passed builds.
+            if builder in completed_builders:
+              chrome_log.append('{} already passed'.format(builder))
+              continue
+
             child_build_snapshot = internal_snapshot
             if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
               child_build_snapshot = external_snapshot

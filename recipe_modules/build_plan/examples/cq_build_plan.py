@@ -465,6 +465,10 @@ def GenTests(api):
               'atlas-cq',
               'arm64-generic-cq',
           ],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
           expected_experiments=['chromeos.build_plan.add_chrome_pupr_builders'],
           expected_additional_chrome_pupr_builders=[
               'atlas-cq',
@@ -492,11 +496,20 @@ def GenTests(api):
               },
           }, iteration=1),
       api.cros_relevance.simulated_run_build_planner(
-          necessary_builders=['eve-cq'],
-          skipped_builders=['atlas-cq', 'arm-generic-cq', 'arm64-generic-cq']),
+          necessary_builders=['eve-cq'], skipped_builders=[
+              'atlas-cq', 'arm-generic-cq', 'arm64-generic-cq',
+              'amd64-generic-slim-cq'
+          ]),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.post_check(post_process.LogContains,
+                     'filter additional chrome pupr builds',
+                     'additional builds',
+                     ['amd64-generic-slim-cq already passed']),
   )
 
   yield api.test(
