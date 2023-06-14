@@ -5,6 +5,8 @@
 
 from PB.chromite.api import sysroot
 
+from recipe_engine import post_process
+
 DEPS = [
     'recipe_engine/assertions',
     'cros_build_api',
@@ -26,21 +28,6 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def StepMetaEquals(check, step_odict, step, expected):
-    """Check that the step's step text equals given value.
-
-    Assumes order does not matter.
-
-    Args:
-      step (str) - The step to check the step text of.
-      expected (str) - The expected value of the step text.
-
-    Usage:
-      yield TEST + \
-          api.post_process(StepMetaEquals, 'step-name', 'expected-text')
-    """
-    check(step_odict[step].step_text == expected)
-
   yield api.test(
       'basic',
       api.step_data(
@@ -52,6 +39,6 @@ def GenTests(api):
       api.step_data(
           'install packages step.publish event.publish message (3).publish-message',
           retcode=1),
-      api.post_check(StepMetaEquals, 'install packages step',
+      api.post_check(post_process.StepTextEquals, 'install packages step',
                      'failed to publish pubsub message to analysis service'),
   )

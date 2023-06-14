@@ -11512,10 +11512,10 @@ Call the RunCopybot endpoint.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#40)(api):**
 ### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/publish_events_throws.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/publish_events_throws.py#18)(api):**
 ### *recipes* / [cros\_build\_api:tests/remove\_endpoints](/recipe_modules/cros_build_api/tests/remove_endpoints.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/remove_endpoints.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
