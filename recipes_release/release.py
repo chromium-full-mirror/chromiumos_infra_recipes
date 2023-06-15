@@ -40,6 +40,18 @@ class RecipeReleaseConfig(typing.NamedTuple):
   prod_cipd_label: str
   longname: Optional[str]
 
+# These variables describe config for the different recipes releases.
+# We have `infra`, which is most everything, and `release`, which is used
+# only by release builders.
+
+INFRA_RELEASE = RecipeReleaseConfig('infra', staging_checks.STAGING_CHECKS_RE,
+                                    'prod', None)
+# Not currently in use.
+# TODO(b/287276108): Support once release builders are transitioned.
+RELEASE_RELEASE = RecipeReleaseConfig('release',
+                                      staging_checks.STAGING_CHECKS_RE,
+                                      'release-prod', None)
+
 
 class RecipeRelease:
 
@@ -59,9 +71,12 @@ class RecipeRelease:
                        dry_run: bool = False):
     """Set the prod ref and timestamped ref to the given cipd instance."""
     prod_ref = common.CipdRef(self._prod_cipd_label)
+
     timestamped_ref = common.CipdRef(
         f'release_{self.name}_{common.get_timestamp("%Y/%m/%d-%H")}')
-    for ref in (prod_ref, timestamped_ref):
+    # TODO(b/287276108): Remove RELEASE_RELEASE.prod_cipd_label hardcode once
+    # that bundle is properly supported.
+    for ref in (prod_ref, timestamped_ref, RELEASE_RELEASE.prod_cipd_label):
       cmd = [
           'cipd', 'set-ref', common.RECIPE_BUNDLE, f'-version={cipd_target}',
           f'-ref={ref}'
@@ -132,15 +147,11 @@ class RecipeRelease:
     self.print_email_link(pending_changes)
 
 
-INFRA_RELASE = RecipeReleaseConfig('infra', staging_checks.STAGING_CHECKS_RE,
-                                   'prod', None)
-
-
 def main(argv: List[str]):
   options = parse_args(argv)
   setup()
 
-  release = RecipeRelease(INFRA_RELASE)
+  release = RecipeRelease(INFRA_RELEASE)
   release.do_release_flow(options)
 
 
