@@ -10,3 +10,4 @@ support/cipd-bin
 .idea/
 .coverage
 .total_coverage
+recipes_release/bin/cipd

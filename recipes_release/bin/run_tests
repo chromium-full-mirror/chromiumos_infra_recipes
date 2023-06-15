@@ -1,0 +1,24 @@
+#!/bin/bash
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Run unit tests.
+set -eu
+
+readonly bin_dir="$(readlink -e -- "$(dirname -- "$0")")"
+
+cd "${bin_dir}/.."
+
+find . -name "*.pyc" -delete
+
+# Install vpython from CIPD if it isn't already in path
+if [ "$(type -P vpdython)" == "" ]; then
+  cipd init bin/cipd --force  && cipd ensure -root bin/cipd \
+    -ensure-file bin/cipd_ensure_file
+fi
+
+# vpython must be in path
+PATH="$PATH:$(pwd)/bin/cipd"
+echo ""
+exec vpython runner.py "$@"
