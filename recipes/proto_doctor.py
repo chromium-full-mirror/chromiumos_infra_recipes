@@ -99,6 +99,13 @@ class ProtoDoctorRun:
     self.m = api
     self.properties = properties
 
+    # The ref currently being worked on.
+    # By setting this as an attribute, we avoid needing to pass it as a param
+    # into most functions. Normally it should be accessed by the @properties
+    # self.current_ref and self.current_branch, which will fail gracefully
+    # if self._current_ref is None.
+    self._current_ref: Optional[str] = None
+
   @property
   def _is_staging(self) -> bool:
     """Determine whether this is a staging build."""
@@ -118,6 +125,25 @@ class ProtoDoctorRun:
   def _workspace_path(self) -> config_types.Path:
     """Return the build's workspace path, where `repo` should be checked out."""
     return self.m.src_state.workspace_path
+
+  @property
+  def current_ref(self) -> str:
+    """Return the ref currently being worked on.
+
+    Raises:
+      AssertionError: If no branch is currently being worked on.
+    """
+    assert self._current_ref is not None
+    return self._current_ref
+
+  @property
+  def current_branch(self) -> str:
+    """Return the branch currently being worked on.
+
+    Raises:
+      AssertionError: If no branch is currently being worked on.
+    """
+    return self.m.git.extract_branch(self.current_ref)
 
   def run(self) -> None:
     """Run the main recipe logic.
@@ -164,39 +190,31 @@ class ProtoDoctorRun:
     self.m.step('setup workspace dir', ['mkdir', self._workspace_path])
 
   def _process_ref(self, ref: str) -> None:
-    """For a single ref, propagate infra/proto changes across the tree.
+    """For a single manifest branch, propagate proto changes across the tree.
 
     Args:
       ref: The git ref for the branch to work from, such as "refs/heads/main".
     """
-    branch = self.m.git.extract_branch(ref)
-    with self.m.step.nest(f'process branch {branch}'):
-      self._setup_workspace(branch)
-      self._wait_for_open_cls(branch)
-      self._abandon_stale_cls(branch)
-      self._compile_chromite_protos(ref)
+    self._current_ref = ref
+    with self.m.step.nest(f'process branch {self.current_branch}'):
+      self._setup_branch()
+      self._wait_for_open_cls()
+      self._abandon_stale_cls()
+      self._compile_chromite_protos()
+    self._current_ref = None
 
-  def _setup_workspace(self, manifest_branch: str) -> None:
-    """Check out necessary projects and create an SDK on the branch.
-
-    Args:
-      manifest_branch: The branch to check out on the manifests repo, such as
-        "main".
-    """
+  def _setup_branch(self) -> None:
+    """Check out necessary projects and create an SDK on the current branch."""
     with self.m.context(cwd=self._workspace_path):
       self.m.repo.init(
           manifest_url=self.m.src_state.internal_manifest.url,
-          manifest_branch=manifest_branch,
+          manifest_branch=self.current_branch,
       )
       self.m.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
       self.m.cros_sdk.create_chroot(replace=True, chroot_upgrade=False)
 
-  def _wait_for_open_cls(self, branch: str) -> None:
+  def _wait_for_open_cls(self) -> None:
     """Block until all open ProtoDoctor CLs on the branch are done with CQ.
-
-    Args:
-      branch: The name of the branch to query, such as 'main'. It's also OK to
-        pass in a ref, such as 'refs/heads/main'.
 
     Raises:
       StepFailure: If too much time passed while waiting for CLs to finish.
@@ -216,7 +234,7 @@ class ProtoDoctorRun:
 
     with self.m.step.nest('wait for open cls'):
       while elapsed_seconds() < timeout_secs:
-        if self._get_open_proto_doctor_cls(branch, only_with_active_cq=True):
+        if self._get_open_proto_doctor_cls(only_with_active_cq=True):
           # Some CLs are still running CQ. Keep polling.
           self.m.time.sleep(interval_secs)
         else:
@@ -225,14 +243,16 @@ class ProtoDoctorRun:
       # Timed out while polling.
       raise recipe_api.StepFailure('Timed out waiting for CQ to finish.')
 
-  def _abandon_stale_cls(self, branch: str) -> None:
+  def _abandon_stale_cls(self) -> None:
     """If there are any stale ProtoDoctor CLs on Gerrit, abandon them.
 
     Generally, this method should be called after self._wait_for_open_cls().
     Thus, any CLs abandoned here should not still be running CQ.
+
+    This method only affects CLs on the current branch.
     """
     with self.m.step.nest('abandon old cls'):
-      stale_cls = self._get_open_proto_doctor_cls(branch)
+      stale_cls = self._get_open_proto_doctor_cls()
       message = (
           'This CL is stale. It will be replaced by a newer CL. See the '
           f'following ProtoDoctor build: {self.m.buildbucket.build_url()}')
@@ -240,12 +260,11 @@ class ProtoDoctorRun:
         self.m.gerrit.abandon_change(cl, message=message)
 
   def _get_open_proto_doctor_cls(
-      self, branch: str,
+      self,
       only_with_active_cq: bool = False) -> List[bb_common_pb2.GerritChange]:
-    """Return a list of open ProtoDoctor CLs on the branch.
+    """Return a list of open ProtoDoctor CLs on the current branch.
 
     Args:
-      branch: The name of the branch to query, such as 'main'.
       only_with_active_cq: If True, only return a list of CLs that are currently
         active in CQ, whether CQ+1 or CQ+2.
     """
@@ -266,47 +285,44 @@ class ProtoDoctorRun:
         query_params = [
             ('owner', cl_owner),
             ('hashtag', HASHTAG),
-            ('branch', branch),
+            ('branch', self.current_branch),
         ]
         open_changes.extend(
             self.m.gerrit.query_changes(host=host, query_params=query_params,
                                         label_constraints=label_constraints))
     return open_changes
 
-  def _compile_chromite_protos(self, ref: str) -> None:
-    """Compile proto bindings in chromite/, and upload to Gerrit.
-
-    Args:
-      ref: The git ref for which protos are being compiled, such as
-        "refs/heads/main".
-    """
+  def _compile_chromite_protos(self) -> None:
+    """Compile proto bindings in chromite/, and upload to Gerrit."""
     with self.m.step.nest('compile chromite protos'):
       request = api_service.CompileProtoRequest()
       response = self.m.cros_build_api.ApiService.CompileProto(request)
       modified_paths = [f.path for f in response.modified_files]
       chromite_path = self._workspace_path.join('chromite')
       commit_subject = 'api: Automatically compile protos'
-      self._commit_and_upload(chromite_path, ref, modified_paths,
-                              commit_subject)
+      self._commit_and_upload(chromite_path, modified_paths, commit_subject)
 
-  def _commit_and_upload(self, project_path: config_types.Path, ref: str,
+  def _commit_and_upload(self, project_path: config_types.Path,
                          modified_paths: List[config_types.Path],
                          commit_subject: str) -> None:
     """Commit all code in the modified project, and upload it to Gerrit."""
     self._create_commit(project_path, modified_paths, commit_subject)
     if not self._is_staging:
-      self._push_to_cq(project_path, ref)
+      self._push_to_cq(project_path)
 
   def _create_commit(self, project_path: config_types.Path,
                      modified_paths: List[config_types.Path],
                      subject: str) -> None:
-    """Create a new branch and commit the modified files.
+    """Create a new (temporary) branch and commit the modified files.
+
+    Note: Although this creates a branch, it does not reset self._current_ref,
+    since it doesn't change which manifest branch is being worked from. The
+    caller should typically check back out the current_branch afterward.
 
     Args:
       repo_path: The local path to the repo project in which to commit.
       modified_paths: A list of modified files to commit within the project.
       subject: The first line to write in the new commit.
-      remote_branch: The remote branch to track, such as 'cros/main'.
     """
     with self.m.context(cwd=project_path):
       self.m.git.add(modified_paths)
@@ -321,7 +337,7 @@ class ProtoDoctorRun:
       ))
       self.m.git.commit(commit_message)
 
-  def _push_to_cq(self, project_path: config_types.Path, ref: str) -> None:
+  def _push_to_cq(self, project_path: config_types.Path) -> None:
     """Upload the local changes for the given project, and send to CQ.
 
     TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
@@ -329,12 +345,12 @@ class ProtoDoctorRun:
 
     Args:
       project_path: The local path to the repo project.
-      ref: The ref being worked on, such as "refs/heads/main".
     """
     assert not self._is_staging
     change = self.m.gerrit.create_change(project=project_path,
                                          reviewers=['gredelston@google.com'],
-                                         ref=ref, hashtags=[HASHTAG])
+                                         ref=self.current_ref,
+                                         hashtags=[HASHTAG])
     labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
     self.m.gerrit.set_change_labels_remote(change, labels)
 
