@@ -1811,7 +1811,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 tasks failed"
+      "humanReason": "1 tasks failed. Please file a go/cros-recipes-cq-fail if you believe the failures are unrelated to your change."
     },
     "name": "$result"
   }

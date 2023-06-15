@@ -409,7 +409,9 @@ def _analyze_swarming_results(api: RecipeApi, verifiers: Dict[str,
           fail_count, total_count - fail_count)
       presentation.status = api.step.FAILURE
 
-      raise StepFailure('{} tasks failed'.format(fail_count))
+      raise StepFailure(
+          '{} tasks failed. Please file a go/cros-recipes-cq-fail if you believe the failures are unrelated to your change.'
+          .format(fail_count))
     presentation.step_text = 'all tasks succeeded'
 
 
