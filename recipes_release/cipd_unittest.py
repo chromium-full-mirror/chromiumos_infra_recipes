@@ -3,8 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import subprocess
-from typing import List
 import unittest
 from unittest.mock import call
 from unittest.mock import MagicMock
@@ -12,6 +10,7 @@ from unittest.mock import patch
 
 import cipd
 import common
+import test_util
 
 CIPD_DESCRIBE_STDOUT = """Package:       infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes
   Instance ID:   jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC
@@ -28,26 +27,14 @@ CIPD_RESOLVE_STDOUT = """Packages:
 
 EXPECTED_RECIPE_BUNDLE = 'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes'
 
-
-def subprocess_stdout(stdout: str) -> subprocess.CompletedProcess:
-  return subprocess.CompletedProcess([], 0, stdout)
-
-
-SUBPROCESS_KWARGS = {
-    'text': True,
-    'capture_output': True,
-    'check': True,
-}
-
-
-def subprocess_assert_called_with(mock: MagicMock, args: List[str]):
-  mock.assert_called_with(args, **SUBPROCESS_KWARGS)
+subprocess_stdout = test_util.subprocess_stdout
+SUBPROCESS_KWARGS = test_util.SUBPROCESS_KWARGS
 
 
 class CipdVersionToGitHashTest(unittest.TestCase):
 
   @patch('cipd.subprocess.run')
-  def testSuccess_Ref(self, mock_subprocess_run: MagicMock):
+  def test_success_ref(self, mock_subprocess_run: MagicMock):
     mock_subprocess_run.return_value = subprocess_stdout(
         stdout=CIPD_DESCRIBE_STDOUT)
 
@@ -60,7 +47,7 @@ class CipdVersionToGitHashTest(unittest.TestCase):
         **SUBPROCESS_KWARGS)
 
   @patch('cipd.subprocess.run')
-  def testSuccess_Instance(self, mock_subprocess_run: MagicMock):
+  def test_success_instance(self, mock_subprocess_run: MagicMock):
     mock_subprocess_run.return_value = subprocess_stdout(
         stdout=CIPD_DESCRIBE_STDOUT)
 
@@ -76,7 +63,7 @@ class CipdVersionToGitHashTest(unittest.TestCase):
     ], **SUBPROCESS_KWARGS)
 
   @patch('cipd.subprocess.run')
-  def testFail_badStdout(self, mock_subprocess_run: MagicMock):
+  def test_fail_badstdout(self, mock_subprocess_run: MagicMock):
     mock_subprocess_run.return_value = subprocess_stdout(stdout='foo')
 
     with self.assertRaises(AssertionError):
@@ -90,7 +77,7 @@ class CipdVersionToGitHashTest(unittest.TestCase):
 class DetermineCipdAndGitTargetsTest(unittest.TestCase):
 
   @patch('cipd.subprocess.run')
-  def testSuccess_Instance(self, mock_subprocess_run: MagicMock):
+  def test_success_instance(self, mock_subprocess_run: MagicMock):
     mock_subprocess_run.side_effect = [
         subprocess_stdout(CIPD_DESCRIBE_STDOUT),
         subprocess_stdout(CIPD_RESOLVE_STDOUT),

@@ -11,7 +11,7 @@ class ReleaseTest(unittest.TestCase):
   def setUp(self):
     pass
 
-  def testRelease(self):
+  def test_release(self):
     pass
 
 

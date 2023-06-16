@@ -51,7 +51,6 @@ def _get_affected_recipes(newest_change: git.Commit, oldest_change: git.Commit,
 
     cmd = ['./recipes.py', 'analyze', input_file.name, output_file.name]
     subprocess.run(cmd, capture_output=True, check=True)
-
     data = json.loads(output_file.read())
 
   return data['recipes']
@@ -79,6 +78,31 @@ def get_builder_recipe(builder: str):
   builder_data = json.loads(p.stdout)
   return builder_data['buildbucket']['bbagent_args']['build']['input'][
       'properties']['recipe']
+
+
+def build_to_cipd_version(
+    build: Dict[str, Any]) -> Optional[common.CipdVersion]:
+  """Return the resolved recipes version used by the build.
+
+  In cases where there is no resolved recipes version, e.g. bbagent doesn't
+  start, return None.
+  """
+
+  try:
+    specs = build['infra']['buildbucket']['agent']['output']['resolvedData'][
+        'kitchen-checkout']['cipd']['specs']
+  except KeyError:
+    return None
+
+  recipes_version = None
+  for spec in specs:
+    if spec['package'] == common.RECIPE_BUNDLE:
+      recipes_version = spec['version']
+
+  if recipes_version is None:
+    return None
+
+  return recipes_version
 
 
 def get_builder_link(builder: str) -> str:
@@ -138,33 +162,6 @@ def check_staging_builders(changes: List[git.Commit],
       print('When you\'re certain staging is OK, you may use -s to continue.')
       sys.exit(1)
   print()
-
-
-def build_to_cipd_version(
-    build: Dict[str, Any]) -> Optional[common.CipdVersion]:
-  """Return the resolved recipes version used by the build.
-
-  In cases where there is no resolved recipes version, e.g. bbagent doesn't
-  start, return None.
-  """
-
-  try:
-    specs = build['infra']['buildbucket']['agent']['output']['resolvedData'][
-        'kitchen-checkout']['cipd']['specs']
-  except KeyError:
-    return None
-
-  recipes_version = None
-  for spec in specs:
-    if spec['package'] == common.RECIPE_BUNDLE:
-      recipes_version = spec['version']
-
-  if not recipes_version:
-    raise ValueError(
-        f"resolved recipes version not found for build {build['builder']['builder']}"
-    )
-
-  return recipes_version
 
 
 def check_recent_build_statuses(
