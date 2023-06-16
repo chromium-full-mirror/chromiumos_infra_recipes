@@ -35,6 +35,10 @@ class MetadataApi(recipe_api.RecipeApi):
     * test metadata
   """
 
+  def __init__(self, props, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.sources_gitiles_commit_override = props.sources_gitiles_commit_override
+
   class MetadataInfo(
       namedtuple('MetadataType', ['name', 'filename', 'msgtype'])):
     """Tuple to specify info about a supported metadata payload.

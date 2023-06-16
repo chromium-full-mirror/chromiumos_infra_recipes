@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf.json_format import MessageToDict
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1.common import GerritChange, GitilesCommit
 from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
@@ -37,7 +39,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def test_build(build_target, number_of_gerrit_changes):
+  def test_build(build_target, number_of_gerrit_changes, input_properties=None):
     gerrit_changes = [
         common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                 project='chromiumos/infra', change=12340 + i,
@@ -46,11 +48,10 @@ def GenTests(api):
     ]
 
     experiments = ['chromeos.build_menu.upload_sources']
-    return api.test_util.test_child_build(build_target, cq=True,
-                                          gerrit_changes=gerrit_changes,
-                                          git_repo=internal_git_repo,
-                                          git_ref=git_ref, revision=revision,
-                                          experiments=experiments).build
+    return api.test_util.test_child_build(
+        build_target, cq=True, gerrit_changes=gerrit_changes,
+        git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
+        experiments=experiments, input_properties=input_properties).build
 
   yield api.test(
       'no-artifacts-bucket',
@@ -61,15 +62,6 @@ def GenTests(api):
   yield api.test(
       'exp-not-enabled',
       api.test_util.test_child_build('atlas', cq=True).build,
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'public-target',
-      api.test_util.test_child_build(
-          'staging-amd64-generic', cq=True, git_repo=external_git_repo,
-          revision=revision, git_ref=git_ref,
-          experiments=['chromeos.build_menu.upload_sources']).build,
       api.post_process(post_process.DropExpectation),
   )
 
@@ -110,4 +102,38 @@ def GenTests(api):
       'more-than-ten-changes',
       test_build('staging-atlas', number_of_gerrit_changes=11),
       api.properties(TestProperties(expected_sources=expected_sources)),
+  )
+
+  gitiles_commit = GitilesCommit(project='chromiumos/manifest',
+                                 host='chromium.googlesource.com',
+                                 commit_hash=revision, ref=git_ref,
+                                 position=999)
+  expected_sources = Sources(gitiles_commit=gitiles_commit)
+  yield api.test(
+      'public-target-no-override',
+      api.test_util.test_child_build(
+          'amd64-generic', git_repo=external_git_repo, revision=revision,
+          git_ref=git_ref,
+          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.properties(TestProperties(expected_sources=expected_sources)),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  gitiles_commit = GitilesCommit(project='chromeos/test',
+                                 host='test.googlesource.com',
+                                 commit_hash='testtest', ref='test',
+                                 position=123)
+  expected_sources = Sources(gitiles_commit=gitiles_commit,
+                             changelists=gerrit_changes)
+  input_properties = {
+      '$chromeos/metadata': {
+          'sources_gitiles_commit_override': MessageToDict(gitiles_commit)
+      }
+  }
+  yield api.test(
+      'gitiles-commit-passed-in',
+      test_build('staging-atlas', number_of_gerrit_changes=10,
+                 input_properties=input_properties),
+      api.properties(TestProperties(expected_sources=expected_sources)),
+      api.post_process(post_process.DropExpectation),
   )

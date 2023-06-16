@@ -207,6 +207,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return self._is_postsubmit_orchestrator
 
   @property
+  def is_snapshot_orchestrator(self):
+    return self._is_snapshot_orchestrator
+
+  @property
   def chromium_src_ref_cl_tag(self):
     return self._chromium_src_ref_cl_tag
 
@@ -1370,7 +1374,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self.m.cros_test_proctor.builders_tested_in_this_run)
       # Add whether this builder was relevant.
       # This is only applicable to CQ and Snapshot.
-      if self.is_cq_orchestrator or self._is_snapshot_orchestrator:
+      if self.is_cq_orchestrator or self.is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
             b.builder.builder in self._relevant_child_builder_names)
       # If running unit tests async, add the time the child build was elegible

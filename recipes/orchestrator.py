@@ -34,6 +34,7 @@ DEPS = [
     'build_menu',
     'checkpoint',
     'cros_artifacts',
+    'cros_infra_config',
     'cros_lkgm',
     'cros_release',
     'cros_source',
@@ -112,9 +113,19 @@ def DoRunSteps(api: RecipeApi):
     api.cros_release.set_release_qs_account()
     extra_child_props['override_qs_account'] = api.skylab.qs_account
 
+  if (api.orch_menu.is_postsubmit_orchestrator or
+      api.orch_menu.is_snapshot_orchestrator or
+      api.orch_menu.is_cq_orchestrator):
+    if 'chromeos.build_menu.upload_sources' in api.cros_infra_config.experiments:
+      extra_child_props['$chromeos/metadata'] = {
+          'sources_gitiles_commit_override':
+              MessageToDict(api.build_menu.resultdb_gitiles_commit)
+      }
+
   async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
   if api.orch_menu.is_cq_orchestrator and async_unit_tests_enabled:
-    testable_builds = api.orch_menu.plan_and_wait_for_images()
+    testable_builds = api.orch_menu.plan_and_wait_for_images(
+        extra_child_props=extra_child_props)
     # Aggregate any metadata produced by the child builds into our own GS bucket
     metadata = api.orch_menu.aggregate_metadata(testable_builds)
   else:
@@ -426,4 +437,12 @@ def GenTests(api: RecipeTestApi):
       ),
       builder='cq-orchestrator',
       experiments=['chromeos.build_cq.async_unit_tests'],
+  )
+
+  # TODO(b/279631301): Remove after rollut in prod.
+  yield api.orch_menu.test(
+      'upload-sources-experiment',
+      data.ctp_normal,
+      builder='cq-orchestrator',
+      experiments=['chromeos.build_menu.upload_sources'],
   )

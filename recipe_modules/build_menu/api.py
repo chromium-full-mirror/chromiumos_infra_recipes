@@ -54,6 +54,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # there and install_packages.
     self._package_indexes = None
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
+    self._resultdb_gitiles_commit = None
 
     self._cl_affected_sysroot_packages = None
     # Installed packages can be a prereq for methods in other modules, such as
@@ -134,6 +135,27 @@ class BuildMenuApi(recipe_api.RecipeApi):
       raise RuntimeError('Tag is too long: \'{}\' (max 128)'.format(version))
 
     return version
+
+  @property
+  def resultdb_gitiles_commit(self) -> rdb_common_pb2.GitilesCommit():
+    """Return the GitilesCommit for Sources metadata.
+
+    The GitilesCommit is either passed in by the parent via input property when
+    the build was scheduled or can be derived after syncing the source.
+    """
+    if (self.m.metadata.sources_gitiles_commit_override !=
+        rdb_common_pb2.GitilesCommit()):
+      return self.m.metadata.sources_gitiles_commit_override
+
+    with self.m.context(cwd=self.m.src_state.build_manifest.path):
+      position = self.m.git_footers.position_num(
+          self.m.src_state.gitiles_commit.id, 999)
+
+    gitiles_commit = json_format.MessageToDict(self.m.src_state.gitiles_commit)
+    gitiles_commit['commit_hash'] = gitiles_commit.pop('id')
+    gitiles_commit['position'] = position
+    return json_format.ParseDict(gitiles_commit, rdb_common_pb2.GitilesCommit(),
+                                 ignore_unknown_fields=True)
 
   @property
   def gitiles_commit(self):
@@ -905,15 +927,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       if not config.artifacts.artifacts_gs_bucket:
         return None
 
-      # TODO(b/279631301): Gate in staging for now.
+      # TODO(b/279631301): Gate behind an experiment flag for now.
       if not ('chromeos.build_menu.upload_sources'
               in self.m.cros_infra_config.experiments):
-        return None
-
-      # TODO(b/279631301): Remove this restriction once we figure out how to pass
-      # internal manifest commit info to builders running public targets.
-      if (self.m.src_state.build_manifest.url !=
-          self.m.src_state.internal_manifest.url):
         return None
 
       # This is currently limited to CQ and Postsubmit builders.
@@ -921,17 +937,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
               in [BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT]):
         return None
 
-      with self.m.context(cwd=self.m.src_state.build_manifest.path):
-        position = self.m.git_footers.position_num(
-            self.m.src_state.gitiles_commit.id, 999)
-
-      gitiles_commit = json_format.MessageToDict(
-          self.m.src_state.gitiles_commit)
-      gitiles_commit['commit_hash'] = gitiles_commit.pop('id')
-      gitiles_commit['position'] = position
-      gitiles_commit = json_format.ParseDict(gitiles_commit,
-                                             rdb_common_pb2.GitilesCommit(),
-                                             ignore_unknown_fields=True)
+      gitiles_commit = self.resultdb_gitiles_commit
 
       changelists = [
           json_format.Parse(

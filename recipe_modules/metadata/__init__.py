@@ -4,11 +4,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.metadata.metadata import MetadataProperties
+
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'cros_build_api',
     'util',
 ]
+
+PROPERTIES = MetadataProperties
