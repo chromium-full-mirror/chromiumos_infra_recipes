@@ -92,6 +92,18 @@ def DocCheck(input_api, output_api):
   ])
 
 
+def ReleaseScriptUnitTestsCheck(input_api, output_api):
+  """Run ./recipes_release/bin/run_tests."""
+  return input_api.RunTests([
+      input_api.Command(
+          name='recipes_release/bin/run_tests',
+          cmd=['./recipes_release/bin/run_tests'],
+          kwargs={},
+          message=output_api.PresubmitError,
+      )
+  ])
+
+
 def CommitChecks(input_api, output_api):
   file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
   results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
@@ -111,6 +123,7 @@ def CommitChecks(input_api, output_api):
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
   results += FormatCheck(input_api, output_api)
+  results += ReleaseScriptUnitTestsCheck(input_api, output_api)
   return results
 
 
@@ -123,6 +136,7 @@ def UploadChecks(input_api, output_api):
   # we do not control.
   results += FormatCheck(input_api, output_api)
   results += DocCheck(input_api, output_api)
+  results += ReleaseScriptUnitTestsCheck(input_api, output_api)
   return results
 
 
