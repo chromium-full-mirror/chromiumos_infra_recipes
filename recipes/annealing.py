@@ -267,7 +267,7 @@ def RunSteps(api, properties):
               api.buildbucket.build.id)
           # Publish internal snapshot metadata.
           api.binhost_lookup_service.publish_snapshot_metadata(
-              external_snapshot_commit.id, snapshot_identifier, False,
+              internal_snapshot_commit.id, snapshot_identifier, False,
               api.buildbucket.build.id)
 
 
