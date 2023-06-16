@@ -21,4 +21,4 @@ fi
 # vpython must be in path
 PATH="$PATH:$(pwd)/bin/cipd"
 echo ""
-exec vpython runner.py "$@"
+exec vpython3 runner.py "$@"

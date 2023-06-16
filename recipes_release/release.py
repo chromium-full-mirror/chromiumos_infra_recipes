@@ -37,7 +37,7 @@ class RecipeReleaseConfig(typing.NamedTuple):
   """A tuple containing the project, builder and regex used to search."""
   name: str
   staging_checks: Tuple[staging_checks.StagingReCheck]
-  prod_cipd_label: str
+  prod_cipd_label: common.CipdRef
   longname: Optional[str]
 
 # These variables describe config for the different recipes releases.
@@ -45,12 +45,12 @@ class RecipeReleaseConfig(typing.NamedTuple):
 # only by release builders.
 
 INFRA_RELEASE = RecipeReleaseConfig('infra', staging_checks.STAGING_CHECKS_RE,
-                                    'prod', None)
+                                    common.CipdRef('prod'), None)
 # Not currently in use.
 # TODO(b/287276108): Support once release builders are transitioned.
 RELEASE_RELEASE = RecipeReleaseConfig('release',
                                       staging_checks.STAGING_CHECKS_RE,
-                                      'release-prod', None)
+                                      common.CipdRef('release-prod'), None)
 
 
 class RecipeRelease:
@@ -58,19 +58,19 @@ class RecipeRelease:
   def __init__(self, config: RecipeReleaseConfig):
     self.name = config.name
     self.staging_checks = config.staging_checks
-    self._prod_cipd_label = config.prod_cipd_label
+    self._prod_cipd_ref = config.prod_cipd_label
     self._longname = config.longname
 
   def prompt_about_setting_git_target(self, git_target: common.GitHash):
     """Ask the user whether it's OK to change the git target. If not, exit."""
-    if input(f'Set {self._prod_cipd_label} to git @ {git_target}? (y/N): '
-            ).upper() != 'Y':
+    if input(f'Set {self._prod_cipd_ref} to git @ {git_target}? (y/N): ').upper(
+    ) != 'Y':
       sys.exit(0)
 
   def update_cipd_refs(self, cipd_target: common.CipdInstance,
                        dry_run: bool = False):
     """Set the prod ref and timestamped ref to the given cipd instance."""
-    prod_ref = common.CipdRef(self._prod_cipd_label)
+    prod_ref = common.CipdRef(self._prod_cipd_ref)
 
     timestamped_ref = common.CipdRef(
         f'release_{self.name}_{common.get_timestamp("%Y/%m/%d-%H")}')
@@ -125,7 +125,7 @@ class RecipeRelease:
 
   def do_release_flow(self, options: argparse.Namespace):
     # Figure out which hashes/instances to use.
-    git_prod = cipd.get_git_prod_hash(self._prod_cipd_label)
+    git_prod = cipd.cipd_version_to_githash(self._prod_cipd_ref)
     (cipd_target,
      git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
 

@@ -13,23 +13,19 @@ from typing import Tuple
 import common
 
 
-def determine_cipd_and_git_targets(
-    instanceid: Optional[common.CipdInstance] = None
-) -> Tuple[common.CipdInstance, common.GitHash]:
-  """Find the target CIPD instance (if not provided) and Git hash."""
-  if instanceid:
-    git_target = cipd_version_to_githash(instanceid)
-    cipd_target = instanceid
-  else:
-    git_target = cipd_version_to_githash(common.CipdInstance('refs/heads/main'))
-    cipd_target = cipd_ref_to_instance_id(
-        common.CipdRef(f'git_revision:{git_target}'))
-  return (cipd_target, git_target)
+def _cipd_ref_to_instance_id(ref: common.CipdRef) -> common.CipdInstance:
+  """Find the instanceid associated with a recipes CIPD ref.
 
-
-def get_git_prod_hash(prod_label: str) -> common.GitHash:
-  """Get the git hash for the specified prod ref."""
-  return cipd_version_to_githash(common.CipdRef(prod_label))
+  Sample `cipd resolve` output:
+  Packages:
+  infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes:jSHBVU-ZzC8Pbi2hlc0r89wukZBQ9EYZKK7TX1zmboIC
+  """
+  p = subprocess.run(['cipd', 'resolve', '-version', ref, common.RECIPE_BUNDLE],
+                     capture_output=True, text=True, check=True)
+  stdout = [line.strip() for line in p.stdout.split('\n') if line]
+  instance_id = stdout[-1].split(':')[-1]
+  assert len(instance_id.split()) == 1, instance_id
+  return common.CipdInstance(instance_id)
 
 
 def cipd_version_to_githash(version: common.CipdVersion) -> common.GitHash:
@@ -58,11 +54,15 @@ def cipd_version_to_githash(version: common.CipdVersion) -> common.GitHash:
   return common.GitHash(githash)
 
 
-def cipd_ref_to_instance_id(ref: common.CipdRef) -> common.CipdInstance:
-  """Find the instanceid associated with a recipes CIPD ref."""
-  p = subprocess.run(['cipd', 'resolve', '-version', ref, common.RECIPE_BUNDLE],
-                     capture_output=True, text=True, check=True)
-  stdout = [line.strip() for line in p.stdout.split('\n') if line]
-  instance_id = stdout[-1].split(':')[-1]
-  assert len(instance_id.split()) == 1, instance_id
-  return common.CipdInstance(instance_id)
+def determine_cipd_and_git_targets(
+    instanceid: Optional[common.CipdInstance] = None
+) -> Tuple[common.CipdInstance, common.GitHash]:
+  """Find the target CIPD instance (if not provided) and Git hash."""
+  if instanceid:
+    git_target = cipd_version_to_githash(instanceid)
+    cipd_target = instanceid
+  else:
+    git_target = cipd_version_to_githash(common.CipdInstance('refs/heads/main'))
+    cipd_target = _cipd_ref_to_instance_id(
+        common.CipdRef(f'git_revision:{git_target}'))
+  return (cipd_target, git_target)
