@@ -103,7 +103,13 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot'
-      ), builder='release-main-orchestrator')
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.write commit message',
+          'commit_msg_tmp_2',
+          ['Cr-Commit-Position: refs/heads/main-release-snapshot@{#102}']),
+      builder='release-main-orchestrator')
 
   yield api.orch_menu.test(
       'commit-as-snapshot-branch',

@@ -29,6 +29,7 @@ DEPS = [
     'failures',
     'gerrit',
     'git',
+    'git_footers',
     'manifest_doctor',
     'paygen_orchestration',
     'repo',
