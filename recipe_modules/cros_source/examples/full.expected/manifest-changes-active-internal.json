@@ -70,7 +70,7 @@
       }
     },
     "name": "configure builder.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 556, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 557, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 556, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 557, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2980,7 +2980,7 @@
       }
     },
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 556, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 557, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 556, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 3}, {\"change_number\": 557, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5137,7 +5137,7 @@
       }
     },
     "name": "gerrit-fetch-changes (2)",
-    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 555, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",

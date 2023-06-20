@@ -338,6 +338,7 @@ class GerritApi(RecipeApi):
   def fetch_patch_sets(
       self, gerrit_changes: List[GerritChange], include_files: bool = False,
       include_commit_info: bool = False, include_messages: bool = False,
+      include_submittable: bool = False,
       test_output_data: Optional[Callable] = None) -> List[PatchSet]:
     """Fetch and return PatchSets from Gerrit.
 
@@ -346,6 +347,8 @@ class GerritApi(RecipeApi):
       include_files: If True, include information about changed files.
       include_commit_info: If True, include information about the commit.
       include_messages: If True, include messages attached to the commit.
+      include_submittable: If True, include information about possible
+       submission.
       test_output_data: Test output for gerrit-fetch-changes.
 
     Returns:
@@ -367,6 +370,7 @@ class GerritApi(RecipeApi):
         'include_files': include_files,
         'include_commit_info': include_commit_info,
         'include_messages': include_messages,
+        'include_submittable': include_submittable,
     }
     results = self._gerrit_fetch_changes(request, gerrit_changes,
                                          test_output_data=test_output_data)

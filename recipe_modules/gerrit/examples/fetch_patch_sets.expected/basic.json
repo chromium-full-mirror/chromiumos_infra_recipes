@@ -46,7 +46,7 @@
     ],
     "infra_step": true,
     "name": "test fetch_patch_sets.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -162,7 +162,7 @@
     ],
     "infra_step": true,
     "name": "test fetch_patch_sets_from_change.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -274,7 +274,7 @@
     ],
     "infra_step": true,
     "name": "test fetch_patch_sets_from_change.gerrit-fetch-changes (2)",
-    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -332,7 +332,7 @@
     ],
     "infra_step": true,
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -356,7 +356,7 @@
     ],
     "infra_step": true,
     "name": "test fetch_patch_sets_from_change missing.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"google.com\", \"patch_set\": 4}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"google.com\", \"patch_set\": 4}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -472,7 +472,7 @@
     ],
     "infra_step": true,
     "name": "test fetch_patch_sets without commit_info.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"example.com\", \"patch_set\": 3}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

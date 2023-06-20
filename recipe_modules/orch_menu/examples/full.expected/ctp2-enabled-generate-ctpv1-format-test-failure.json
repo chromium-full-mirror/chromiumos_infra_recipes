@@ -730,7 +730,7 @@
       }
     },
     "name": "set up orchestrator.configure builder.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -2304,7 +2304,7 @@
       }
     },
     "name": "run builds.check force relevance.get CL 1234 description.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -3064,7 +3064,7 @@
       }
     },
     "name": "check test planning v2 enabled.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -13586,7 +13586,7 @@
       }
     },
     "name": "clean up orchestrator.non-critical test check.check test planning v2 enabled.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1234, \"host\": \"chromium.googlesource.com\", \"patch_set\": 5}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",

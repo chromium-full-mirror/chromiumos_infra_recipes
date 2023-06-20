@@ -77,7 +77,7 @@
       }
     },
     "name": "get relevant patches.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -137,7 +137,7 @@
       }
     },
     "name": "get relevant patches.gerrit-fetch-changes (2)",
-    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -212,7 +212,7 @@
       }
     },
     "name": "configure builder.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": true, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2351,7 +2351,7 @@
       }
     },
     "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 1, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}, {\"change_number\": 2, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 2}], \"include_commit_info\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
