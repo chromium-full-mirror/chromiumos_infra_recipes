@@ -14608,7 +14608,7 @@ Raises:
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/test_recipes.py#418)(api: RecipeApi, properties: TestRecipesProperties):**
+&mdash; **def [RunSteps](/recipes/test_recipes.py#422)(api: RecipeApi, properties: TestRecipesProperties):**
 ### *recipes* / [test\_rules\_cros](/recipes/test_rules_cros.py)
 
 [DEPS](/recipes/test_rules_cros.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)

@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-chromite-postsubmit', 'staging-no-size', 'staging-release-triggerer']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-chromite-postsubmit', 'staging-no-size', 'staging-release-triggerer', 'staging-release-main-octopus']@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
   },
@@ -574,10 +574,11 @@
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 3 / 4 builders@@@",
+      "@@@STEP_TEXT@launched 4 / 5 builders@@@",
       "@@@STEP_LINK@staging-Annealing@https://example.swarmingserver.appspot.com/task?id=fake-id-1@@@",
       "@@@STEP_LINK@staging-no-size@https://example.swarmingserver.appspot.com/task?id=fake-id-3@@@",
-      "@@@STEP_LINK@staging-release-triggerer@https://example.swarmingserver.appspot.com/task?id=fake-id-4@@@"
+      "@@@STEP_LINK@staging-release-triggerer@https://example.swarmingserver.appspot.com/task?id=fake-id-4@@@",
+      "@@@STEP_LINK@staging-release-main-octopus@https://example.swarmingserver.appspot.com/task?id=fake-id-5@@@"
     ]
   },
   {
@@ -2287,6 +2288,529 @@
   },
   {
     "cmd": [],
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-release-main-octopus\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-main-octopus\"}, \"id\": \"5\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@staging-release-main-octopus@https://cr-buildbucket.appspot.com/build/5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "get-build",
+      "5"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led get-build",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        }@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "edit",
+      "-p",
+      "dry_run=true"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led edit",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"recipe\": \"build_release\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ],@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@            },@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@          {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"key\": \"test_recipes_task_id\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"value\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "edit",
+      "-p",
+      "skip_paygen=true"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led edit (2)",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"build_release\"\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ],@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@            },@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"skip_paygen\": true@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@          {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"key\": \"test_recipes_task_id\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"value\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "edit-recipe-bundle"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led edit-recipe-bundle",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"build_release\",\n            \"skip_paygen\": true\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"data\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  \"kitchen-checkout\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    \"cas\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      \"digest\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"size_bytes\": \"1337\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                }@@@",
+      "@@@STEP_LOG_LINE@proto.output@              },@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"purposes\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            }@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ],@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@            },@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"skip_paygen\": true@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@          {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"key\": \"test_recipes_task_id\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"value\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "edit-system",
+      "-p",
+      "20"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led edit-system",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"build_release\",\n            \"skip_paygen\": true\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"data\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  \"kitchen-checkout\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    \"cas\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      \"digest\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"size_bytes\": \"1337\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                }@@@",
+      "@@@STEP_LOG_LINE@proto.output@              },@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"purposes\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            }@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ],@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@            },@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"skip_paygen\": true@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@          {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"key\": \"test_recipes_task_id\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"value\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "edit",
+      "-name",
+      "staging-release-main-octopus 5"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led edit (3)",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"build_release\",\n            \"skip_paygen\": true\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@proto.output@{@@@",
+      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-main-octopus\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"5\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"data\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  \"kitchen-checkout\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    \"cas\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      \"digest\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                        \"size_bytes\": \"1337\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@                      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                    }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@                }@@@",
+      "@@@STEP_LOG_LINE@proto.output@              },@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"purposes\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            }@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@              {@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@              }@@@",
+      "@@@STEP_LOG_LINE@proto.output@            ],@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@              \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@            },@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"build_release\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"skip_paygen\": true@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        },@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@proto.output@          {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"key\": \"test_recipes_task_id\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"value\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          }@@@",
+      "@@@STEP_LOG_LINE@proto.output@        ]@@@",
+      "@@@STEP_LOG_LINE@proto.output@      }@@@",
+      "@@@STEP_LOG_LINE@proto.output@    },@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"staging-release-main-octopus 5\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@  }@@@",
+      "@@@STEP_LOG_LINE@proto.output@}@@@",
+      "@@@STEP_LOG_END@proto.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "led",
+      "launch"
+    ],
+    "cwd": "[CLEANUP]/recipes/src",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "analyze and launch builders.analyze and launch staging-release-main-octopus.led launch",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-main-octopus\"\n        },\n        \"id\": \"5\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ],\n            \"task_id\": \"fake-id-5\"\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"$recipe_engine/cq\": {\n              \"active\": true,\n              \"run_mode\": \"FULL_RUN\"\n            },\n            \"dry_run\": true,\n            \"recipe\": \"build_release\",\n            \"skip_paygen\": true\n          }\n        },\n        \"tags\": [\n          {\n            \"key\": \"test_recipes_task_id\",\n            \"value\": \"fake-task-id\"\n          }\n        ]\n      }\n    },\n    \"name\": \"staging-release-main-octopus 5\"\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"example.swarmingserver.appspot.com\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LINK@Swarming task@https://example.swarmingserver.appspot.com/task?id=fake-id-5@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "collect results"
   },
   {
@@ -2380,7 +2904,8 @@
       "json",
       "fake-id-1",
       "fake-id-3",
-      "fake-id-4"
+      "fake-id-4",
+      "fake-id-5"
     ],
     "cost": {
       "cpu": 100,
@@ -2470,6 +2995,28 @@
       "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
       "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"fake-id-4\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }, @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"fake-id-5\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"output\": \"hello world!\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"outputs\": [], @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"bot_id\": \"vm-123\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"cas_output_root\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"cas_instance\": \"projects/example-project/instances/default_instance\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"digest\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"hash\": \"24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca\", @@@",
+      "@@@STEP_LOG_LINE@json.output@          \"size_bytes\": \"73\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"duration\": 62.35, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"exit_code\": \"0\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"my_task_3\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultdb_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"invocation\": \"invocations/some-inv-name\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }, @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"state\": \"COMPLETED\", @@@",
+      "@@@STEP_LOG_LINE@json.output@      \"task_id\": \"fake-id-5\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
@@ -2479,9 +3026,12 @@
       "@@@STEP_LOG_END@task stdout+stderr: my_task_1@@@",
       "@@@STEP_LOG_LINE@task stdout+stderr: my_task_2@hello world!@@@",
       "@@@STEP_LOG_END@task stdout+stderr: my_task_2@@@",
+      "@@@STEP_LOG_LINE@task stdout+stderr: my_task_3@hello world!@@@",
+      "@@@STEP_LOG_END@task stdout+stderr: my_task_3@@@",
       "@@@STEP_LINK@task cas outputs: my_task_0@https://cas-viewer.appspot.com/projects/example-project/instances/default_instance/blobs/24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca/73/tree@@@",
       "@@@STEP_LINK@task cas outputs: my_task_1@https://cas-viewer.appspot.com/projects/example-project/instances/default_instance/blobs/24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca/73/tree@@@",
-      "@@@STEP_LINK@task cas outputs: my_task_2@https://cas-viewer.appspot.com/projects/example-project/instances/default_instance/blobs/24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca/73/tree@@@"
+      "@@@STEP_LINK@task cas outputs: my_task_2@https://cas-viewer.appspot.com/projects/example-project/instances/default_instance/blobs/24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca/73/tree@@@",
+      "@@@STEP_LINK@task cas outputs: my_task_3@https://cas-viewer.appspot.com/projects/example-project/instances/default_instance/blobs/24b2420bc49d8b8fdc1d011a163708927532b37dc9f91d7d8d6877e3a86559ca/73/tree@@@"
     ]
   },
   {

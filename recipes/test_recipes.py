@@ -265,6 +265,10 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
           if _bad_bot_size(swarm):
             led_result = led_result.then('edit', '-d', 'bot_size=large')
 
+          # Skip paygen on release builds since we launch paygen directly.
+          if recipe == 'build_release':
+            led_result = led_result.then('edit', '-p', 'skip_paygen=true')
+
           # Run the child task with priority=20, to put it ahead of actual
           # staging jobs.  We could run it with the dimension 'role=infra',
           # but there are no large role=infra bots.
@@ -621,6 +625,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-release-triggerer',
               'always_launch': True,
               'critical': True
+          }, {
+              'name': 'staging-release-main-octopus',
+              'always_launch': True,
+              'critical': True
           }])),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       # No builders are skipped
@@ -632,6 +640,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 3),
       buildbucket_search_and_get_build('staging-no-size', 'no_size_recipe', 4),
+      buildbucket_search_and_get_build('staging-release-main-octopus',
+                                       'build_release', 5),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
       recipe_analyze_test_data(builder='staging-no-size',
