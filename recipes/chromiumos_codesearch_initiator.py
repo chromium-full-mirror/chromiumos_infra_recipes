@@ -26,7 +26,6 @@ DEPS = [
 
 BUILDERS = [
     'amd64-generic-codesearch',
-    'arm-generic-codesearch',
     'arm64-generic-codesearch',
 ]
 

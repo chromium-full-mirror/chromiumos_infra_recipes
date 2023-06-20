@@ -54,19 +54,6 @@ SPEC = freeze({
             'sync_generated_files': True,
             'experimental': False,
         },
-        'arm-generic-codesearch': {
-            'board': 'arm-generic',
-            'corpus': 'chromium.googlesource.com/chromiumos/codesearch//main',
-            'packages': [
-                'virtual/target-chromium-os',
-                'virtual/target-chromium-os-dev',
-                'virtual/target-chromium-os-factory',
-                'virtual/target-chromium-os-factory-shim',
-                'virtual/target-chromium-os-test',
-            ],
-            'sync_generated_files': True,
-            'experimental': False,
-        },
         'arm64-generic-codesearch': {
             'board': 'arm64-generic',
             'corpus': 'chromium.googlesource.com/chromiumos/codesearch//main',
@@ -223,7 +210,7 @@ def RunSteps(api, codesearch_mirror_revision,
 
 # TODO(crbug/1284439): Add more tests.
 def GenTests(api):
-  for b in ('amd64', 'arm', 'arm64'):
+  for b in ('amd64', 'arm64'):
     yield api.test(
         'basic_%s' % b,
         api.buildbucket.generic_build(builder='%s-generic-codesearch' % b),
