@@ -13,16 +13,19 @@ from typing import List
 import common
 
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
+CHROMITE_PIN_COMMIT = re.compile(r'update chromite-HEAD version')
 
 
 class Commit:
 
-  def __init__(self, git_hash, username, message, date):
+  def __init__(self, git_hash, username, message, human_readable_commit_date,
+               commit_timestamp):
     self.hash = git_hash
     self.username = username
     self.message = message
     self.cipd_instance = None
-    self.date = date
+    self.human_readable_commit_date = human_readable_commit_date
+    self.commit_timestamp = commit_timestamp
 
   @property
   def short_hash(self):
@@ -31,6 +34,10 @@ class Commit:
   @property
   def trivial(self):
     return RE_TRIVIAL_COMMIT.match(self.message)
+
+  @property
+  def chromite_pin_uprev(self):
+    return CHROMITE_PIN_COMMIT.match(self.message)
 
   def get_cipd_instance(self) -> str:
     """Find the recipe bundle instance that contains up to this commit."""
@@ -63,7 +70,7 @@ class Commit:
       A list of strings for use with tabulate.
     """
     strs = [
-        f'{common.BOLDBLUE}{self.short_hash}', self.date,
+        f'{common.BOLDBLUE}{self.short_hash}', self.human_readable_commit_date,
         f'{common.BOLDGREEN}[{self.username}] ', f'{common.RESET}{self.message}'
     ]
     if show_instances:
@@ -92,9 +99,13 @@ class Commit:
       strs = ['*'] + strs
     return strs
 
+  def is_older_than(self, other_hash: str) -> bool:
+    """Return whether the change is older than another hash."""
+    return _is_older_than(self.hash, other_hash)
+
 
 @lru_cache(maxsize=None)
-def is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
+def _is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
   """Determines if one commit is older (i.e. is an ancestor) of the other."""
   cmd = ['git', 'merge-base', '--is-ancestor', maybe_older_hash, commit_hash]
   p = subprocess.run(cmd, capture_output=True, text=True)  #pylint: disable=subprocess-run-check
@@ -114,9 +125,7 @@ def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
   to_hash: The final git hash of the changelist.
   verbose: If False, exclude trivial recipe rolls.
   """
-  print('=== Checking for pending changes ===')
-  print('Here are the changes from the provided (or default main) environment:')
-  fmt = '%H|%al|%s|%cr'  # %H=commit, %al=user, %s=summary, %ch=commit date
+  fmt = '%H|%al|%s|%cr|%cI'  # %H=commit, %al=user, %s=summary, %cr=commit date, %cI=ISO 8061 commit timestamp
   cmd = [
       'git', 'log', '--graph', f'--pretty=format:{fmt}',
       f'{from_hash}..{to_hash}'
@@ -128,7 +137,9 @@ def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
   for line in lines:
     if not line:
       continue
-    commit_hash, commit_user, commit_message, commit_date = line.split('|')
+    commit_hash, commit_user, commit_message, commit_date, commit_timestamp = line.split(
+        '|')
     changes.append(
-        Commit(commit_hash, commit_user, commit_message, commit_date))
+        Commit(commit_hash, commit_user, commit_message, commit_date,
+               commit_timestamp))
   return changes

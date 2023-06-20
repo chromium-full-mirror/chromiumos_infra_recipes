@@ -128,12 +128,28 @@ class RecipeRelease:
 
     # Prepare to update refs.
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
+
+    if options.smart:
+      print('=== Determining maximum covered version ===')
+      maximum_releasable_instance = bb.determine_maximum_covered_instance(
+          pending_changes, self.staging_checks, verbose=options.verbose)
+      if not maximum_releasable_instance:
+        print('Could not find a covered version. Please rerun without --smart.')
+        sys.exit(0)
+      print(f'Picked {maximum_releasable_instance} for release.')
+      options.instanceid = maximum_releasable_instance
+      # Recalculate pending changes.
+      (cipd_target,
+       git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
+      pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod,
+                                                git_target)
+
     report_pending_changes(pending_changes, options.show_instances,
-                           verbose=options.verbose)
+                           show_all=options.show_all)
+    quit_early_if_no_pending_changes(pending_changes)
 
     bb.check_staging_builders(pending_changes, self.staging_checks,
                               ignore_failures=options.ignore_staging_failures)
-    quit_early_if_no_pending_changes(pending_changes)
     if not options.force:
       self.prompt_about_setting_git_target(git_target)
 
@@ -146,6 +162,10 @@ class RecipeRelease:
 
 def main(argv: List[str]):
   options = parse_args(argv)
+  if options.instanceid and options.smart:
+    print('Cannot use --smart and -i/--instanceid together.')
+    sys.exit(1)
+
   setup()
 
   print(f'=== Releasing recipes bundle "{options.bundle}" ===')
@@ -185,6 +205,15 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       '--bundle', choices=['infra', 'release'], default='infra',
       help='Bundles available for a prod push. `release` is release builders,'
       '`infra` is everything else (not including CTP). Default is `infra`.')
+  parser.add_argument(
+      '--show-all', action='store_true',
+      help='Show all pending changes, including trivial recipe rolls.')
+  parser.add_argument('-v', '--verbose', action='store_true',
+                      help='Increase level of logging.')
+  parser.add_argument(
+      '--smart', action='store_true',
+      help='Find the maximum instance that has been adequately covered in staging.'
+      'Currently in development, use at your own risk.')
   return parser.parse_args(args)
 
 
@@ -210,13 +239,15 @@ def print_cipd_versions_url():
 
 
 def report_pending_changes(pending_changes: List[git.Commit],
-                           show_instances: bool, verbose: bool):
+                           show_instances: bool, show_all: bool):
   """Pretty-print info about all the pending changes."""
-  if verbose:
-    print(' - Verbose specified, printing all changes')
+  print('=== Displaying pending changes ===')
+  print('Here are the changes from the provided (or default main) environment:')
+  if show_all:
+    print(' - --show-all specified, printing all changes')
   change_strs = []
   for pending_change in pending_changes:
-    if pending_change.trivial and not verbose:
+    if pending_change.trivial and not show_all:
       continue
     change_strs.append(pending_change.color_strs(show_instances=show_instances))
 

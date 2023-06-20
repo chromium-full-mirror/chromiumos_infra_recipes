@@ -3,8 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import defaultdict
 import copy
+from datetime import datetime, timedelta
 import json
+from typing import Dict
+from typing import List
 import unittest
 from unittest import mock
 from unittest.mock import call
@@ -12,7 +16,9 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import bb
+import common
 import git
+import staging_checks
 import test_util
 
 RECIPES_ANALYZE_OUTPUT = """{
@@ -39,8 +45,8 @@ class GetAffectedRecipesTest(unittest.TestCase):
     ]
     mock_tempfile.return_value.__enter__.return_value.read.return_value = RECIPES_ANALYZE_OUTPUT
 
-    newest_commit = git.Commit('12345', '', '', '')
-    oldest_commit = git.Commit('abcde', '', '', '')
+    newest_commit = git.Commit('12345', '', '', '', '')
+    oldest_commit = git.Commit('abcde', '', '', '', '')
     all_recipes = ['foo', 'bar', 'baz']
     affected_recipes = bb.get_affected_recipes(newest_commit, oldest_commit,
                                                all_recipes)
@@ -83,31 +89,37 @@ class GetBuilderRecipeTest(unittest.TestCase):
         **test_util.SUBPROCESS_KWARGS)
 
 
+def _build_data(cipd_version: common.CipdVersion, bbid: int = 800000) -> Dict:
+  return {
+      'id': bbid,
+      'infra': {
+          'buildbucket': {
+              'agent': {
+                  'output': {
+                      'resolvedData': {
+                          'kitchen-checkout': {
+                              'cipd': {
+                                  'specs': [{
+                                      'package':
+                                          'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
+                                      'version':
+                                          cipd_version
+                                  }]
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  }
+
+
 class GetBuildToCipdVersionTest(unittest.TestCase):
 
   def setUp(self):
-    self.build_data = {
-        'infra': {
-            'buildbucket': {
-                'agent': {
-                    'output': {
-                        'resolvedData': {
-                            'kitchen-checkout': {
-                                'cipd': {
-                                    'specs': [{
-                                        'package':
-                                            'infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes',
-                                        'version':
-                                            'aWEyswgHmB8rkXG1y4T3bazO8Ursei5wgNgvt0YJzIMC'
-                                    }]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    self.build_data = _build_data(
+        cipd_version='aWEyswgHmB8rkXG1y4T3bazO8Ursei5wgNgvt0YJzIMC')
 
   def test_success(self):
     self.assertEqual(
@@ -170,6 +182,181 @@ class ReturnBuildersForRegexTest(unittest.TestCase):
 
     mock_subprocess_run.assert_called_with(
         ('bb', 'builders', 'chromeos/staging'), **test_util.SUBPROCESS_KWARGS)
+
+
+class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
+
+  @patch('bb.get_affected_recipes')
+  @patch('bb.get_builder_recipe')
+  @patch('bb.cipd.cipd_version_to_githash')
+  @patch('bb.return_builders_for_regex')
+  @patch('bb._bb_ls')
+  def doTest(self, changes: List[git.Commit], build_data: Dict[str, List[Dict]],
+             cipd_instances_to_git_hashes: Dict[str, str],
+             affected_recipes: Dict[str,
+                                    List[str]], mock_subprocess_run: MagicMock,
+             mock_return_builders_for_regex: MagicMock,
+             mock_cipd_version_to_githash: MagicMock,
+             mock_get_builder_recipe: MagicMock,
+             mock_get_affected_recipes: MagicMock):
+
+    def get_builder_recipe(builder: str) -> str:
+      return {
+          'chromeos/staging/staging-Foo': 'foo',
+          'chromeos/staging/staging-Bar': 'bar',
+          'chromeos/staging/staging-Baz': 'baz',
+          'chromeos/staging/staging-NewBuilder': 'new_builder',
+      }[builder]
+
+    mock_get_builder_recipe.side_effect = get_builder_recipe
+
+    # Generate changes.
+    def is_older_than_mock(change_hash):
+      return lambda other_hash: int(other_hash) >= int(change_hash)
+
+    for i, _ in enumerate(changes):
+      changes[i].is_older_than = is_older_than_mock(changes[i].hash)
+      changes[i].get_cipd_instance = MagicMock(return_value=changes[i].hash)
+
+    # Some changes affect recipes.
+    def get_affected_recipes(change: git.Commit, *_) -> List[str]:
+      return affected_recipes[change.hash]
+
+    mock_get_affected_recipes.side_effect = get_affected_recipes
+
+    # These are the staging builders we care about.
+    checks = [
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Foo'),
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Bar'),
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Baz'),
+        staging_checks.StagingReCheck('chromeos', 'staging',
+                                      'staging-NewBuilder'),
+    ]
+    mock_return_builders_for_regex.side_effect = [
+        ['chromeos/staging/staging-Foo'],
+        ['chromeos/staging/staging-Bar'],
+        ['chromeos/staging/staging-Baz'],
+        ['chromeos/staging/staging-NewBuilder'],
+    ]
+
+    # These are the build results we get.
+    def bb_ls(*args):
+      for builder, data in build_data.items():
+        if builder in ' '.join(args):
+          return data
+      return []
+
+    mock_subprocess_run.side_effect = bb_ls
+
+    def cipd_version_to_githash(version: common.CipdVersion):
+      return cipd_instances_to_git_hashes[version]
+
+    mock_cipd_version_to_githash.side_effect = cipd_version_to_githash
+
+    return bb.determine_maximum_covered_instance(changes, checks)
+
+  def test_success(self):
+    changes = {}
+    for i in range(10):
+      change_hash = str(10000 + i * 10)
+      commit_timestamp = datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + timedelta(hours=i)
+      changes[change_hash] = git.Commit(f'{change_hash}', '', '', '',
+                                        commit_timestamp.isoformat())
+
+    changes['10070'].message = 'update chromite-HEAD version'
+    changes['10060'].message = 'Roll recipe dependencies (trivial).'
+
+    build_results = {
+        'staging-Foo': [
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('YYY'),
+            _build_data('ZZZ'),
+        ],
+        'staging-Bar': [
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('YYY'),
+            _build_data('YYY'),
+            _build_data('YYY'),
+            _build_data('ZZZ'),
+        ],
+        # < 5 results so should get ignored.
+        'staging-NewBuilder': [_build_data('XXX')]
+    }
+    instance_to_hash = {
+        'XXX': '10095',
+        'YYY': '10060',
+        'ZZZ': '9000',
+    }
+
+    # In this test, most changes affect every recipe.
+    affected_recipes = {
+        '10060': [],
+        # 10070 is a chromite pin uprev
+        '10070': [],
+    }
+    affected_recipes_dict = defaultdict(lambda: ['foo', 'bar', 'baz'],
+                                        affected_recipes)
+
+    instance = self.doTest(  # pylint: disable=no-value-for-parameter
+        list(changes.values()), build_results, instance_to_hash,
+        affected_recipes_dict)
+    # 10060 is releasable but is a trivial commit.
+    # 10070 would be releasable if we took the affected recipes
+    # at face value, but it's a chromite pin so we check all builders.
+    self.assertEqual(instance, '10050')
+
+  def test_success_noreleasable(self):
+    changes = {}
+    for i in range(10):
+      change_hash = str(10000 + i * 10)
+      commit_timestamp = datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + timedelta(hours=i)
+      changes[change_hash] = git.Commit(f'{change_hash}', '', '', '',
+                                        commit_timestamp.isoformat())
+
+    build_results = {
+        'staging-Foo': [
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('ZZZ'),
+            _build_data('ZZZ'),
+            _build_data('ZZZ'),
+        ],
+        'staging-Bar': [
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('YYY'),
+            _build_data('YYY'),
+            _build_data('YYY'),
+            _build_data('ZZZ'),
+        ],
+        # < 5 results so should get ignored.
+        'staging-NewBuilder': [_build_data('XXX')]
+    }
+    instance_to_hash = {
+        'XXX': '10095',
+        'YYY': '10060',
+        'ZZZ': '9000',
+    }
+
+    affected_recipes_dict = defaultdict(lambda: ['foo', 'bar', 'baz'])
+
+    instance = self.doTest(  # pylint: disable=no-value-for-parameter
+        list(changes.values()), build_results, instance_to_hash,
+        affected_recipes_dict)
+    # ZZZ is older than all changes and there are only four builds
+    # since ZZZ for staging-Foo.
+    self.assertIsNone(instance, '10050')
 
 
 if __name__ == '__main__':
