@@ -1,0 +1,6 @@
+# The `recipes` attribute controls which additional files are included in the
+# recipes bundle when running the `//recipes/recipes.py bundle` command. These
+# files will also be available to other repos' recipes when they pull in
+# depot_tools as a recipe dependency.
+
+*.version recipes

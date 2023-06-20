@@ -7,10 +7,15 @@ from PB.chromite.api import binhost
 from PB.chromiumos.common import BuildTarget
 from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
+from recipe_engine.post_process import MustRun, DropExpectation, \
+  StepCommandContains
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/file',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_build_api',
 ]
 
@@ -46,3 +51,22 @@ def GenTests(api):
               '$chromeos/analysis_service':
                   AnalysisServiceProperties(max_stdout_stderr_bytes=64)
           }))
+
+  yield api.test(
+      'reset-chromite',
+      api.buildbucket.ci_build(
+          builder='atlas-cq',
+          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
+          api.file.read_text('deadbeef')),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout'
+      ),
+      api.post_check(
+          StepCommandContains,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout',
+          ['deadbeef']),
+      api.post_process(DropExpectation),
+  )

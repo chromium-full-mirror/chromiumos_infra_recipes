@@ -13,6 +13,8 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'analysis_service',
+    'cros_infra_config',
+    'git',
     'portage',
     'src_state',
 ]

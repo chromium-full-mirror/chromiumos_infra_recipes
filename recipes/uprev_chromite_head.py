@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for uprev'ing chromite-head.version file for go/deployable-chromite"""
+"""Recipe for uprev'ing chromite-HEAD.version file for go/deployable-chromite"""
 
 from PB.recipes.chromeos.uprev_chromite_head import (UprevChromiteHeadProperties
                                                     )
@@ -41,7 +41,7 @@ def RunSteps(api: RecipeApi, properties) -> None:
     api.git.clone('https://chromium.googlesource.com/chromiumos/infra/recipes/',
                   depth=1)
     # 3. modify the version file.
-    version_file_name = f'{checkout}/infra/config/chromite-head.version'
+    version_file_name = f'{checkout}/infra/config/chromite-HEAD.version'
     api.file.write_text(
         'update chromite-HEAD version file',
         version_file_name,

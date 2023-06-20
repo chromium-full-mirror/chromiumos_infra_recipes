@@ -23,6 +23,13 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
 
+# By default, chromite-HEAD will bounce all calls it gets to the branched
+# chromite, so we use the chromite-HEAD checkout. To update a method or
+# service to use chromite-HEAD instead of branched chromite, see
+# go/cros-build:use-chromite-head.
+chromite_location = 'infra/chromite-HEAD'
+
+
 def _verify_proto_endpoint(
     service_stub: 'Stub',
     method: str) -> Tuple[str, descriptor.MethodDescriptor]:
@@ -278,6 +285,14 @@ class CrosBuildApiApi(RecipeApi):
     self._publish_emerge_stats_to_bq = properties.publish_emerge_stats_to_bq
     self._publish_emerge_stats_to_prop = properties.publish_emerge_stats_to_prop
 
+  def reset_checkout(self):
+    commit = self.m.file.read_text(
+        'read chromite version',
+        self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
+    with self.m.context(
+        cwd=self.m.src_state.workspace_path.join(chromite_location)):
+      self.m.git.checkout(commit.strip())
+
   @property
   def log_level(self) -> str:
     """Return the log level used when calling Build API."""
@@ -518,11 +533,14 @@ class CrosBuildApiApi(RecipeApi):
         cmd.append(str(tee_script))
         cmd.append(logfile_path)
 
-      # By default, chromite-HEAD will bounce all calls it gets to the branched
-      # chromite, so we use the chromite-HEAD checkout. To update a method or
-      # service to use chromite-HEAD instead of branched chromite, see
-      # go/cros-build:use-chromite-head.
-      chromite_location = 'infra/chromite-HEAD'
+      # Make sure the chromite checkout is at the right version.
+      # We do this before every call because there is no guarantee that another
+      # line of code doesn't redo the manifest checkout and blow away our set
+      # version.
+      if ('chromeos.cros_build_api.deployable_chromite'
+          in self.m.cros_infra_config.experiments):
+        self.reset_checkout()
+
       cmd.extend([
           self.m.src_state.workspace_path.join(
               f'{chromite_location}/bin/build_api'), '--input-json', input_path,
