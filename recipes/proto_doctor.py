@@ -372,21 +372,74 @@ class ProtoDoctorRun:
   def _push_to_cq(self, project: repo_api.ProjectInfo) -> None:
     """Upload the local changes for the given project, and send to CQ.
 
-    TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
-    actual reviewers based on who modified infra/proto, and use CQ+2.
+    TODO(b/282971123): Once we've confirmed that the generated CLs look OK, use
+    CQ+2.
 
     Args:
       project: The repo project containing a local commit to push.
     """
     assert not self._is_staging
+    ccs = self._get_ccs_for_project(project)
     change = self.m.gerrit.create_change(
         # Use the absolute project path to avoid any ambiguity.
         project=self._workspace_path.join(project.path),
-        reviewers=['gredelston@google.com'],
+        ccs=ccs,
         ref=self.current_ref,
         hashtags=[HASHTAG])
     labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
     self.m.gerrit.set_change_labels_remote(change, labels)
+
+  def _get_ccs_for_project(self, project: repo_api.ProjectInfo) -> List[str]:
+    """Return a list of Gerrit users to cc on a ProtoDoctor CL in the project.
+
+    This will be a list of users who have submitted .proto changes to the
+    infra/proto project on the checked-out branch more recently than the
+    infra/proto CL to which `project` was most recently updated on the branch.
+
+    If no ProtoDoctor CL has ever been merged onto the project+branch, just cc
+    the user who wrote the most recent infra/proto CL on the given branch.
+    """
+    # from_hash is the git commit hash in the infra/proto repo from which the
+    # most recent ProtoDoctor CL was generated.
+    # If no ProtoDoctor CL has ever been submitted on this project+branch, use
+    # HEAD~, so that we'll only see the most recent infra/proto commit.
+    # (Remember that HEAD~ is the commit immediately before HEAD.)
+    from_hash = self._get_most_recent_proto_hash(project) or 'HEAD~'
+
+    authors: bytes = self.m.easy.stdout_step(
+        'get infra/proto authors to cc',
+        [
+            'git',
+            'log',
+            '--pretty=format:"%aE"',  # Just print the email addresses.
+            f'{from_hash}..',  # All commits later than from_hash.
+            '**.proto',  # Only cc authors who modified .proto files.
+        ],
+        test_stdout=b'larry@google.com\nsergey@google.com')
+    authors: List[str] = authors.decode().strip().split('\n')
+    # Deduplicate, and ensure a deterministic order for testing.
+    return sorted(set(authors))
+
+  def _get_most_recent_proto_hash(
+      self, project: repo_api.ProjectInfo) -> Optional[str]:
+    """Get the proto hash from the latest ProtoDoctor CL on this project+branch.
+
+    This method queries Gerrit to find the most recent ProtoDoctor CL, and then
+    parses the commit message to find which infra/proto commit it used. There
+    should be a line like:
+      Proto-Commit: deadb33f
+
+    Returns:
+      The extracted commit hash of the latest ProtoDoctor CL in the given
+      project in the current branch. If no ProtoDoctor CL can be found, or if
+      the most recent CL's commit message does not contain the expected line,
+      then None.
+    """
+    # TODO(b:282975918): Implement this.
+    # Until then, always return None. This will cause _get_ccs_for_project() to
+    # return the most recent infra/proto committer, which is good enough to
+    # ship.
+    del project
 
 
 def GenTests(

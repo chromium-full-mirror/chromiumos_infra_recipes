@@ -1182,6 +1182,19 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=format:\"%aE\"",
+      "HEAD~..",
+      "**.proto"
+    ],
+    "name": "process branch main.compile chromite protos.get infra/proto authors to cc",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "process branch main.compile chromite protos.create gerrit change for [CLEANUP]/chromiumos_workspace/chromite",
     "~followup_annotations": [
@@ -1288,8 +1301,10 @@
       "upload",
       "--bypass-hooks",
       "--force",
-      "--reviewers",
-      "gredelston@google.com",
+      "--cc",
+      "larry@google.com",
+      "--cc",
+      "sergey@google.com",
       "--hashtag",
       "protodoctor",
       "--send-mail",
@@ -2308,6 +2323,19 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=format:\"%aE\"",
+      "HEAD~..",
+      "**.proto"
+    ],
+    "name": "process branch release-R100-14526.B.compile chromite protos.get infra/proto authors to cc",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "process branch release-R100-14526.B.compile chromite protos.create gerrit change for [CLEANUP]/chromiumos_workspace/chromite",
     "~followup_annotations": [
@@ -2414,8 +2442,10 @@
       "upload",
       "--bypass-hooks",
       "--force",
-      "--reviewers",
-      "gredelston@google.com",
+      "--cc",
+      "larry@google.com",
+      "--cc",
+      "sergey@google.com",
       "--hashtag",
       "protodoctor",
       "--send-mail",
