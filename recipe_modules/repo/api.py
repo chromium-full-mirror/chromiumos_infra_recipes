@@ -13,6 +13,7 @@ from collections import namedtuple
 import distutils.version
 import json
 import re
+from typing import Any, Dict, Optional, Union
 from xml.etree import cElementTree as ElementTree
 
 from google.protobuf.json_format import MessageToDict
@@ -551,18 +552,20 @@ class RepoApi(recipe_api.RecipeApi):
       infos.append(ProjectInfo(name, path, remote, branch, rrev))
     return infos
 
-  def project_info(self, project=None):
+  def project_info(self, project: Optional[Union[str, Path]] = None,
+                   **kwargs: Dict[str, Any]) -> 'ProjectInfo':
     """Use 'repo forall' to gather project information for one project.
 
     Args:
-      project (str|Path): Project name or path to return info for. If None, then
-      use the cwd as the path for the project.
+      project: Project name or path to return info for. If None, then use the
+        cwd as the path for the project.
+      kwargs: Additional keyword arguments to pass into self.project_infos.
 
     Returns:
       ProjectInfo: The request project info.
     """
     project = project or self.m.context.cwd
-    project_infos = self.project_infos(projects=[project])
+    project_infos = self.project_infos(projects=[project], **kwargs)
     assert len(set(project_infos)) == 1, 'expected one project'
     return project_infos[0]
 

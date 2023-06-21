@@ -26,6 +26,7 @@ from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.gerrit import api as gerrit_api
+from RECIPE_MODULES.chromeos.repo import api as repo_api
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -315,18 +316,23 @@ class ProtoDoctorRun:
       response = self.m.cros_build_api.ApiService.CompileProto(request)
       modified_paths = [f.path for f in response.modified_files]
       chromite_path = self._workspace_path.join('chromite')
+      with self.m.context(cwd=chromite_path):
+        chromite = self.m.repo.project_info(
+            # Use the absolute path to disambiguate from chromite-HEAD.
+            chromite_path,
+            test_data='chromiumos/chromite|chromite|cros|refs/heads/main|')
       commit_subject = 'api: Automatically compile protos'
-      self._commit_and_upload(chromite_path, modified_paths, commit_subject)
+      self._commit_and_upload(chromite, modified_paths, commit_subject)
 
-  def _commit_and_upload(self, project_path: config_types.Path,
+  def _commit_and_upload(self, project: repo_api.ProjectInfo,
                          modified_paths: List[config_types.Path],
                          commit_subject: str) -> None:
     """Commit all code in the modified project, and upload it to Gerrit."""
-    self._create_commit(project_path, modified_paths, commit_subject)
+    self._create_commit(project, modified_paths, commit_subject)
     if not self._is_staging:
-      self._push_to_cq(project_path)
+      self._push_to_cq(project)
 
-  def _create_commit(self, project_path: config_types.Path,
+  def _create_commit(self, project: repo_api.ProjectInfo,
                      modified_paths: List[config_types.Path],
                      subject: str) -> None:
     """Create a new (temporary) branch and commit the modified files.
@@ -336,11 +342,11 @@ class ProtoDoctorRun:
     caller should typically check back out the current_branch afterward.
 
     Args:
-      repo_path: The local path to the repo project in which to commit.
+      project: The repo project in which to commit.
       modified_paths: A list of modified files to commit within the project.
       subject: The first line to write in the new commit.
     """
-    with self.m.context(cwd=project_path):
+    with self.m.context(cwd=self._workspace_path.join(project.path)):
       self.m.git.add(modified_paths)
       message = self._create_commit_message(subject)
       self.m.git.commit(message)
@@ -362,20 +368,22 @@ class ProtoDoctorRun:
     return COMMIT_TEMPLATE.format(subject=subject, url=url,
                                   infra_proto_hash=infra_proto_hash)
 
-  def _push_to_cq(self, project_path: config_types.Path) -> None:
+  def _push_to_cq(self, project: repo_api.ProjectInfo) -> None:
     """Upload the local changes for the given project, and send to CQ.
 
     TODO(b/282971123): Once we've confirmed that the generated CLs look OK, set
     actual reviewers based on who modified infra/proto, and use CQ+2.
 
     Args:
-      project_path: The local path to the repo project.
+      project: The repo project containing a local commit to push.
     """
     assert not self._is_staging
-    change = self.m.gerrit.create_change(project=project_path,
-                                         reviewers=['gredelston@google.com'],
-                                         ref=self.current_ref,
-                                         hashtags=[HASHTAG])
+    change = self.m.gerrit.create_change(
+        # Use the absolute project path to avoid any ambiguity.
+        project=self._workspace_path.join(project.path),
+        reviewers=['gredelston@google.com'],
+        ref=self.current_ref,
+        hashtags=[HASHTAG])
     labels = {gerrit_api.Label.COMMIT_QUEUE: 1}
     self.m.gerrit.set_change_labels_remote(change, labels)
 
