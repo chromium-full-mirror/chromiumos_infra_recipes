@@ -347,6 +347,7 @@ class ProtoDoctorRun:
       subject: The first line to write in the new commit.
     """
     with self.m.context(cwd=self._workspace_path.join(project.path)):
+      self.m.repo.start('proto-doctor', [project.path])
       self.m.git.add(modified_paths)
       message = self._create_commit_message(subject)
       self.m.git.commit(message)

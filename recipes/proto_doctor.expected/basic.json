@@ -1092,6 +1092,28 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "proto-doctor",
+      "chromite"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/chromite",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "process branch main.compile chromite protos.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "git",
       "add",
       "[CLEANUP]/chromiumos_workspace/chromite/api/gen/some_file_pb2.py",
@@ -2192,6 +2214,28 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/chromite|chromite|cros|refs/heads/main|@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "proto-doctor",
+      "chromite"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/chromite",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "process branch release-R100-14526.B.compile chromite protos.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
