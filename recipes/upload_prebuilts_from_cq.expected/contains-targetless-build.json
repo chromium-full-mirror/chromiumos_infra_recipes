@@ -8,7 +8,7 @@
     "name": "search the last merged uprev CL",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@Found http://crrev.com/c/4567890@@@",
-      "@@@STEP_LOG_LINE@change@OrderedDict([('_number', 4567890), ('current_revision', '0123456789abcdef0123456789abcdef01234567'), ('host', 'chromium-review.googlesource.com'), ('id', 'chromiumos%2Foverlays%2Fchromiumos-overlay~main~I0123456789abcdef0123456789abcdef01234567'), ('project', 'chromiumos/overlays/chromiumos-overlay'), ('revisions', OrderedDict([('0123456789abcdef0123456789abcdef01234567', OrderedDict([('_number', 3)])), ('2222222222222222222222222222222222222222', OrderedDict([('_number', 2)]))])), ('submitted', '2023-01-01 00:00:00.000000000')])@@@",
+      "@@@STEP_LOG_LINE@change@{'_number': 4567890, 'current_revision': '0123456789abcdef0123456789abcdef01234567', 'host': 'chromium-review.googlesource.com', 'id': 'chromiumos%2Foverlays%2Fchromiumos-overlay~main~I0123456789abcdef0123456789abcdef01234567', 'project': 'chromiumos/overlays/chromiumos-overlay', 'revisions': {'0123456789abcdef0123456789abcdef01234567': {'_number': 3}, '2222222222222222222222222222222222222222': {'_number': 2}}, 'submitted': '2023-01-01 00:00:00.000000000'}@@@",
       "@@@STEP_LOG_END@change@@@"
     ]
   },
