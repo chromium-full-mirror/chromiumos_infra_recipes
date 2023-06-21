@@ -79,6 +79,22 @@ DEFAULT_OPEN_CL_POLL_TIMEOUT_SECS = 60 * 60  # 1 hour.
 # But checking hashtag + owner should be sufficient.
 HASHTAG = 'protodoctor'
 
+# COMMIT_TEMPLATE is a template for commit messages created by ProtoDoctor.
+# {subject} is a short (<=50 characters) description of the CL.
+# {url} is the buildbucket URL of the ProtoDoctor build that created the CL,
+# usually fetched via api.buildbucket.build_url().
+# {infra_proto_hash} is the commit hash in infra/proto that was used to generate
+# the change.
+COMMIT_TEMPLATE = '''{subject}
+
+This CL was automatically created by ProtoDoctor.
+{url}
+
+Proto-Commit: {infra_proto_hash}
+
+BUG=None
+TEST=CQ'''
+
 
 def RunSteps(api: recipe_api.RecipeApi,
              properties: proto_doctor_pb2.ProtoDoctorProperties) -> None:
@@ -326,16 +342,25 @@ class ProtoDoctorRun:
     """
     with self.m.context(cwd=project_path):
       self.m.git.add(modified_paths)
-      commit_message = '\n'.join((
-          subject,
-          '',
-          'This CL was automatically created by ProtoDoctor.',
-          self.m.buildbucket.build_url(),
-          '',
-          'BUG=None',
-          'TEST=CQ',
-      ))
-      self.m.git.commit(commit_message)
+      message = self._create_commit_message(subject)
+      self.m.git.commit(message)
+
+  def _create_commit_message(self, subject: str) -> str:
+    """Create and return a commit message for a new ProtoDoctor CL.
+
+    Args:
+      subject: The first line to write in the new commit.
+    """
+    url = self.m.buildbucket.build_url()
+    with self.m.context(cwd=self._workspace_path.join('infra', 'proto')):
+      infra_proto_hash = self.m.easy.stdout_step(
+          'get infra/proto commit hash',
+          ['git', 'rev-parse', 'HEAD'],
+          test_stdout=b'deadb33f',
+          infra_step=True,
+      ).decode().strip()
+    return COMMIT_TEMPLATE.format(subject=subject, url=url,
+                                  infra_proto_hash=infra_proto_hash)
 
   def _push_to_cq(self, project_path: config_types.Path) -> None:
     """Upload the local changes for the given project, and send to CQ.

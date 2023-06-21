@@ -1081,13 +1081,26 @@
   },
   {
     "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/proto",
+    "infra_step": true,
+    "name": "process branch main.compile chromite protos.get infra/proto commit hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "api: Automatically compile protos\n\nThis CL was automatically created by ProtoDoctor.\nhttps://cr-buildbucket.appspot.com/build/0\n\nBUG=None\nTEST=CQ",
+      "api: Automatically compile protos\n\nThis CL was automatically created by ProtoDoctor.\nhttps://cr-buildbucket.appspot.com/build/0\n\nProto-Commit: deadb33f\n\nBUG=None\nTEST=CQ",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/chromite",
@@ -1099,6 +1112,8 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@This CL was automatically created by ProtoDoctor.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Proto-Commit: deadb33f@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=CQ@@@",
@@ -2145,13 +2160,26 @@
   },
   {
     "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/proto",
+    "infra_step": true,
+    "name": "process branch release-R100-14526.B.compile chromite protos.get infra/proto commit hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "api: Automatically compile protos\n\nThis CL was automatically created by ProtoDoctor.\nhttps://cr-buildbucket.appspot.com/build/0\n\nBUG=None\nTEST=CQ",
+      "api: Automatically compile protos\n\nThis CL was automatically created by ProtoDoctor.\nhttps://cr-buildbucket.appspot.com/build/0\n\nProto-Commit: deadb33f\n\nBUG=None\nTEST=CQ",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/chromite",
@@ -2163,6 +2191,8 @@
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@This CL was automatically created by ProtoDoctor.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Proto-Commit: deadb33f@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=CQ@@@",
