@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget, Chroot, Profile
@@ -12,11 +14,13 @@ from recipe_engine import recipe_test_api
 from recipe_engine.recipe_api import Property
 
 DEPS = [
+    'binhost_lookup_service',
+    'cros_build_api',
+    'cros_prebuilts',
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
-    'binhost_lookup_service',
-    'cros_prebuilts',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -73,6 +77,32 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(upload_target_prebuilts=True),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-target-prebuilts-no-acls',
+      api.properties(upload_target_prebuilts=True, private=True),
+      api.cros_build_api.set_api_return(
+          'upload prebuilts', 'BinhostService/GetPrivatePrebuiltAclArgs',
+          json.dumps({'args': []}), step_name='read gs acls'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload prebuilts.get binhosts.call'),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-chrome-prebuilts-no-acls',
+      api.properties(upload_chrome_prebuilts=True, private=True),
+      api.cros_build_api.set_api_return(
+          'upload chrome prebuilts', 'BinhostService/GetPrivatePrebuiltAclArgs',
+          json.dumps({'args': []}), step_name='read gs acls'),
+      api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload chrome prebuilts.get binhosts.call'),
+      api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
   )
 

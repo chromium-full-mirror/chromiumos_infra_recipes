@@ -3309,7 +3309,7 @@ Args:
   uri (str): The new binhost URI.
   push_retries (int): Number of times to retry pushing the changes.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#629)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#647)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3323,7 +3323,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#600)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#618)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3333,7 +3333,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#531)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#555)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -11908,10 +11908,10 @@ Main test logic.
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_cq.py#26)(api):**
 ### *recipes* / [cros\_prebuilts:tests/upload\_prebuilts](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py)
 
-[DEPS](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#14): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#16): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#43)(api: recipe_api.RecipeApi, upload_target_prebuilts: bool, upload_devinstall_prebuilts: bool, upload_chrome_prebuilts: bool, private: bool, gs_bucket: str):**
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#47)(api: recipe_api.RecipeApi, upload_target_prebuilts: bool, upload_devinstall_prebuilts: bool, upload_chrome_prebuilts: bool, private: bool, gs_bucket: str):**
 ### *recipes* / [cros\_release:examples/buildspec](/recipe_modules/cros_release/examples/buildspec.py)
 
 [DEPS](/recipe_modules/cros_release/examples/buildspec.py#11): [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
