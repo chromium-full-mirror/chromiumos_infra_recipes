@@ -6,6 +6,7 @@
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import Profile
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
 
@@ -29,10 +30,14 @@ def RunSteps(api):
   target = BuildTarget(name='target')
 
   with api.build_menu.configure_builder():
-    api.cros_prebuilts.upload_target_prebuilts(target,
-                                               Sysroot(build_target=target),
-                                               Profile(), BuilderConfig.Id.CQ,
-                                               'prebuilts_gs_bucket')
+    api.cros_prebuilts.upload_target_prebuilts(
+        target,
+        Sysroot(build_target=target),
+        Chroot(path='/path/to/chroot', out_path='/path/to/out'),
+        Profile(),
+        BuilderConfig.Id.CQ,
+        'prebuilts_gs_bucket',
+    )
 
 
 def GenTests(api):

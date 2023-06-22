@@ -1651,6 +1651,10 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/path/to/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"/path/to/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"target\"@@@",
@@ -1684,7 +1688,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\",\n        \"location\": 2\n      }\n    },\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\",\n        \"location\": 2\n      }\n    }\n  ]\n}",
+      "{\n  \"uri\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\",\n    \"outPath\": \"/path/to/out\"\n  },\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"packageIndexFiles\": [\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/some/path/PackageIndex\",\n        \"location\": 2\n      }\n    },\n    {\n      \"path\": {\n        \"path\": \"[CLEANUP]/binhosts_tmp_1/diff/path/PackageIndex\",\n        \"location\": 2\n      }\n    }\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
@@ -1792,6 +1796,10 @@
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:32Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"prepareBinhostUploadsRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"uri\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/path/to/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"/path/to/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"name\": \"target\"@@@",
@@ -1831,7 +1839,7 @@
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIyoDE/QQQgMq17gEiBgjMgMT9BGLTARJXZ3M6Ly9wcmVidWlsdHNfZ3NfYnVja2V0L2JvYXJkL3RhcmdldC9jcS1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzIgoSCAoGdGFyZ2V0KjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIyoDE/QQQgMq17gEiBgjMgMT9BGL0ARJXZ3M6Ly9wcmVidWlsdHNfZ3NfYnVja2V0L2JvYXJkL3RhcmdldC9jcS1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzGh8KDy9wYXRoL3RvL2Nocm9vdDIML3BhdGgvdG8vb3V0IgoSCAoGdGFyZ2V0KjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1862,7 +1870,7 @@
       }
     },
     "name": "upload prebuilts.prepare binhost uploads.call chromite.api.BinhostService/PrepareBinhostUploads.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BGLTARJXZ3M6Ly9wcmVidWlsdHNfZ3NfYnVja2V0L2JvYXJkL3RhcmdldC9jcS1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzIgoSCAoGdGFyZ2V0KjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIyoDE/QQQgMq17gEiBgjMgMT9BGL0ARJXZ3M6Ly9wcmVidWlsdHNfZ3NfYnVja2V0L2JvYXJkL3RhcmdldC9jcS1SOTktMTIzNC41Ni4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0L3BhY2thZ2VzGh8KDy9wYXRoL3RvL2Nocm9vdDIML3BhdGgvdG8vb3V0IgoSCAoGdGFyZ2V0KjUKMwovW0NMRUFOVVBdL2Jpbmhvc3RzX3RtcF8xL3NvbWUvcGF0aC9QYWNrYWdlSW5kZXgQAio1CjMKL1tDTEVBTlVQXS9iaW5ob3N0c190bXBfMS9kaWZmL3BhdGgvUGFja2FnZUluZGV4EAJqJQoXW1NUQVJUX0RJUl0vdXBsb2Fkcy9kaXISCgoIZm9vLnRiejLQAtDsgNmu8bWSfNoCdXVwbG9hZCBwcmVidWlsdHN8cHJlcGFyZSBiaW5ob3N0IHVwbG9hZHN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvUHJlcGFyZUJpbmhvc3RVcGxvYWRzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2196,9 +2204,9 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 32, in RunSteps",
-      "    api.cros_prebuilts.upload_target_prebuilts(target,",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 557, in upload_target_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 33, in RunSteps",
+      "    api.cros_prebuilts.upload_target_prebuilts(",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 562, in upload_target_prebuilts",
       "    raise ValueError('CQ should not set the binhost.')",
       "ValueError('CQ should not set the binhost.')"
     ]

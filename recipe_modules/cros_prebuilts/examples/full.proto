@@ -36,4 +36,7 @@ message FullProperties {
   // value if the value is not "BuilderConfig.Id.TYPE_UNSPECIFIED".
   // The default value is BuilderConfig.Id.TYPE_UNSPECIFIED.
   chromiumos.BuilderConfig.Id.Type overridden_builder_config = 8;
+
+  // Chroot to work with.
+  chromiumos.Chroot chroot = 9;
 }

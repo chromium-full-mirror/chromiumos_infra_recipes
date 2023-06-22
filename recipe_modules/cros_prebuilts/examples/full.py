@@ -6,6 +6,7 @@
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import Profile
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import CrosPrebuiltsProperties
 from PB.recipe_modules.chromeos.cros_prebuilts.examples.full import FullProperties
@@ -44,6 +45,7 @@ def RunSteps(api, properties):
     builder_config = BuilderConfig.Id.POSTSUBMIT
   api.cros_prebuilts.upload_target_prebuilts(properties.build_target,
                                              properties.sysroot,
+                                             properties.chroot,
                                              properties.profile, builder_config,
                                              properties.gs_bucket,
                                              properties.private)
@@ -85,8 +87,9 @@ def GenTests(api):
     build_target = BuildTarget(name=target)
     test_props = FullProperties(
         build_target=build_target, sysroot=Sysroot(build_target=build_target),
-        private=private, gs_bucket=gs_bucket, profile=profile,
-        dirty_source=dirty_source,
+        chroot=Chroot(path='/path/to/chroot',
+                      out_path='/path/to/out'), private=private,
+        gs_bucket=gs_bucket, profile=profile, dirty_source=dirty_source,
         overridden_builder_config=overridden_builder_config)
     for x in expected_package_indexes:
       test_props.expected_package_indexes.add().CopyFrom(x)

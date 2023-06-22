@@ -14,6 +14,7 @@ from PB.chromite.api import binhost as binhost_pb
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import PackageIndexInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import Profile
@@ -322,11 +323,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
                 path=Path(path=str(dest), location=Path.OUTSIDE)))
       return package_index_files
 
-  def _prepare_binhost_uploads(self, sysroot, uri, package_index_files):
+  def _prepare_binhost_uploads(self, sysroot, chroot, uri, package_index_files):
     """Determine which prebuilt archives should be uploaded to the binhost.
 
     Args:
       sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+      chroot (chromiumos.common.Chroot): Chroot to work with.
       uri (str): URI where prebuilts will be uploaded.
       package_index_files (List[PackageIndex]): package index files to
           deduplicate the prebuilt list.
@@ -337,14 +339,15 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('prepare binhost uploads'):
       request = binhost_pb.PrepareBinhostUploadsRequest(
-          sysroot=sysroot, uri=uri, package_index_files=package_index_files)
+          sysroot=sysroot, uri=uri, package_index_files=package_index_files,
+          chroot=chroot)
       response = self.m.cros_build_api.BinhostService.PrepareBinhostUploads(
           request, infra_step=True)
       upload_root = self.m.path.abs_to_path(response.uploads_dir)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
-  def _prepare_devinstall_binhost_uploads(self, sysroot, uri):
+  def _prepare_devinstall_binhost_uploads(self, sysroot, uri, chroot):
     """Get the prebuilts from the build-api into a local directory.
 
     Args:
@@ -359,18 +362,19 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_root = self.m.path.mkdtemp(prefix='binhosts')
       request = binhost_pb.PrepareDevInstallBinhostUploadsRequest(
           sysroot=sysroot, uploads_dir=self.m.path.abspath(upload_root),
-          uri=uri)
+          uri=uri, chroot=chroot)
       response = self.m.cros_build_api.BinhostService.PrepareDevInstallBinhostUploads(
           request, infra_step=True)
       upload_paths = [ut.path for ut in response.upload_targets]
       return upload_root, upload_paths
 
-  def _prepare_chrome_binhost_uploads(self, sysroot: Sysroot,
+  def _prepare_chrome_binhost_uploads(self, sysroot: Sysroot, chroot: Chroot,
                                       uri: str) -> Tuple[Path, List[str]]:
     """Get the Chrome prebuilts that should be uploaded to the binhost.
 
     Args:
       sysroot: The sysroot whose prebuilts are being uploaded.
+      chroot: Chroot to work with.
       uri: URI where the prebuilts will be uploaded.
 
     Returns:
@@ -380,8 +384,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     with self.m.step.nest('prepare chrome binhost uploads'):
       upload_root = self.m.path.mkdtemp(prefix='binhosts')
       request = binhost_pb.PrepareChromeBinhostUploadsRequest(
-          sysroot=sysroot, uploads_dir=self.m.path.abspath(upload_root),
-          uri=uri)
+          sysroot=sysroot, chroot=chroot,
+          uploads_dir=self.m.path.abspath(upload_root), uri=uri)
       response = self.m.cros_build_api.BinhostService.PrepareChromeBinhostUploads(
           request, infra_step=True)
       upload_paths = [target.path for target in response.upload_targets]
@@ -502,8 +506,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       cmd.append(acl.arg)
       cmd.append(acl.value)
 
-  def upload_target_prebuilts(self, target, sysroot, profile, kind, gs_bucket,
-                              private=True):
+  def upload_target_prebuilts(self, target, sysroot, chroot, profile, kind,
+                              gs_bucket, private=True):
     """Upload binary prebuilts for the build target to Google Storage.
 
     Determines what to upload, uploads it, and points Portage to the upload URI.
@@ -512,6 +516,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     Args:
       target (BuildTarget): The build target to upload prebuilts for.
       sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+      chroot (chromiumos.common.Chroot): Chroot to work with.
       profile (chromiumos.Profile): The Profile, or None.
       kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
       gs_bucket (str): Google storage bucket to upload prebuilts to.
@@ -531,7 +536,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       package_index_files = self._get_binhosts(target, private)
       upload_root, upload_paths = self._prepare_binhost_uploads(
-          sysroot, upload_uri, package_index_files)
+          sysroot, chroot, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)
       step = self.m.step('set properties', cmd=None)
       step.presentation.properties['prebuilts_private'] = private
@@ -563,12 +568,13 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         self._upload_metadata(target, profile, kind, gs_bucket, acls,
                               upload_uri)
 
-  def upload_devinstall_prebuilts(self, target, sysroot, gs_bucket):
+  def upload_devinstall_prebuilts(self, target, sysroot, chroot, gs_bucket):
     """Upload binary devinstall prebuilts for build target to Google Storage.
 
     Args:
       target (BuildTarget): The build target to upload prebuilts for.
       sysroot (Sysroot): The sysroot whose prebuilts are being uploaded.
+      chroot (chromiumos.common.Chroot): Chroot to work with.
       kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
     """
     with self.m.step.nest('upload devinstall prebuilts') as presentation:
@@ -586,14 +592,14 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # Next, hit the build API to get the devinstall prebuilts copied to a
       # directory.
       upload_root, upload_paths = self._prepare_devinstall_binhost_uploads(
-          sysroot, upload_uri)
+          sysroot, upload_uri, chroot)
 
       # Finally, upload the prebuilts in the path up to gs.
       self._upload(upload_root, upload_paths, upload_uri, acls)
 
   def upload_chrome_prebuilts(self, target: BuildTarget, sysroot: Sysroot,
-                              kind: BuilderConfig.Id.Type, gs_bucket: str,
-                              private: bool) -> None:
+                              chroot: Chroot, kind: BuilderConfig.Id.Type,
+                              gs_bucket: str, private: bool) -> None:
     """Upload Chrome binary prebuilts for the build target to Google Storage.
 
     Args:
@@ -622,7 +628,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       # Get the upload targets from the build API.
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
       upload_root, upload_paths = self._prepare_chrome_binhost_uploads(
-          sysroot, upload_uri)
+          sysroot, chroot, upload_uri)
 
       # Upload the prebuilts in the path to gs.
       self._upload(upload_root, upload_paths, upload_uri, acls)

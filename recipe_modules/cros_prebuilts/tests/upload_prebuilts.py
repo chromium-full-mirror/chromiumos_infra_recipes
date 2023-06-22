@@ -5,7 +5,7 @@
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import BuildTarget, Profile
+from PB.chromiumos.common import BuildTarget, Chroot, Profile
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
@@ -43,17 +43,26 @@ def RunSteps(api: recipe_api.RecipeApi, upload_target_prebuilts: bool,
              private: bool, gs_bucket: str) -> None:
   target = BuildTarget(name='amd64-generic')
   sysroot = Sysroot(build_target=target)
+  chroot = Chroot(path='/path/to/chroot', out_path='/path/to/out')
   builder_config = BuilderConfig.Id.POSTSUBMIT
 
   if upload_target_prebuilts:
-    api.cros_prebuilts.upload_target_prebuilts(target, sysroot, Profile(),
+    api.cros_prebuilts.upload_target_prebuilts(
+        target,
+        sysroot,
+        chroot,
+        Profile(),
+        builder_config,
+        gs_bucket,
+        private,
+    )
+  if upload_devinstall_prebuilts:
+    api.cros_prebuilts.upload_devinstall_prebuilts(target, sysroot, chroot,
+                                                   gs_bucket)
+  if upload_chrome_prebuilts:
+    api.cros_prebuilts.upload_chrome_prebuilts(target, sysroot, chroot,
                                                builder_config, gs_bucket,
                                                private)
-  if upload_devinstall_prebuilts:
-    api.cros_prebuilts.upload_devinstall_prebuilts(target, sysroot, gs_bucket)
-  if upload_chrome_prebuilts:
-    api.cros_prebuilts.upload_chrome_prebuilts(target, sysroot, builder_config,
-                                               gs_bucket, private)
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):

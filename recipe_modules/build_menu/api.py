@@ -986,7 +986,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
-          self.build_target, self.sysroot, profile, config.id.type,
+          self.build_target, self.sysroot, self.chroot, profile, config.id.type,
           artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
@@ -1000,7 +1000,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     artifacts = config.artifacts
 
     self.m.cros_prebuilts.upload_devinstall_prebuilts(
-        self.build_target, self.sysroot,
+        self.build_target, self.sysroot, self.chroot,
         artifacts.devinstall_prebuilts_gs_bucket)
 
   def upload_chrome_prebuilts(self) -> None:
@@ -1009,7 +1009,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_chrome_prebuilts(
-          self.build_target, self.sysroot, self.config.id.type,
+          self.build_target, self.sysroot, self.chroot, self.config.id.type,
           artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
