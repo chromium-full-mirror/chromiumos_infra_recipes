@@ -1285,12 +1285,26 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
           _upload_to_resultdb(api, result, properties, interface, test_metadata)
       finally:
         with api.step.nest('post upload step (phosphorus)') as post_step:
-          if result is not None and not result.prejob_response.is_failure():
-            dut_state = api.labpack.execute_ile_de_france(
-                common_config=properties.common_config, dut_state=dut_state)
+          # Repair-requests need to be saved before verify the DUT.
+          repair_requests = []
+          # Could not find cases when result is present when pre-job failed,
+          # so add repair-request when result is not present or the state
+          # is faillure.
+          if result is not None:
+            if result.prejob_response.is_failure():
+              s_log(post_step, "summary",
+                    "ile-de-france: skipped as provision failed")
+              repair_requests.append('REPAIR_REQUEST_PROVISION')
+            else:
+              dut_state = api.labpack.execute_ile_de_france(
+                  common_config=properties.common_config, dut_state=dut_state)
           else:
-            s_log(post_step, "summary", "ile-de-france intentionally skipped")
-          interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+            s_log(post_step, "summary",
+                  "ile-de-france: skipped as results is None")
+            repair_requests.append('REPAIR_REQUEST_PROVISION')
+          s_log(post_step, "repair_requests", '%s' % repair_requests)
+          interface.save_and_seal_skylab_local_state(dut_state, test_metadata,
+                                                     repair_requests)
 
           publish_to_result_flow(api, properties.config,
                                  properties.request.parent_request_uid,

@@ -332,11 +332,13 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
             .harness.ssp_base_image_name,
             test_results_dir=os.path.join(results_dir, "autoserv_test")))
 
-  def save_and_seal_skylab_local_state(self, dut_state, metadata):
+  def save_and_seal_skylab_local_state(self, dut_state, metadata,
+                                       repair_requests=None):
     with self._api.step.nest('Phosphorus: save local DUT state'):
       self._api.phosphorus.save_and_seal_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts])
+          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          repair_requests=repair_requests)
 
   def save_skylab_local_state(self, dut_state, metadata):
     with self._api.step.nest(

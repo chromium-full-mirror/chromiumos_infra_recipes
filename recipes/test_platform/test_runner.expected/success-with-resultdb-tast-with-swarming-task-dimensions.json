@@ -2225,7 +2225,9 @@
     "cmd": [],
     "name": "execution steps.original_test.post upload step (phosphorus)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repair_requests@[]@@@",
+      "@@@STEP_LOG_END@repair_requests@@@"
     ]
   },
   {

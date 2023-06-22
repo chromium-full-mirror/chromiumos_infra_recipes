@@ -8406,7 +8406,7 @@ Returns:
 
 Module for issuing Phosphorus commands
 
-&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#235)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
+&mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#259)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
 Provisions a DUT with the given Chrome OS image and Parallels DLC.
 
@@ -8417,7 +8417,7 @@ Args:
   max_duration_sec (int): Maximum duration of the provision operation, in
     seconds. Defaults to two hours.
 
-&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#257)(self, dut_state):**
+&mdash; **def [build\_parallels\_image\_save](/recipe_modules/phosphorus/api.py#281)(self, dut_state):**
 
 Saves the given DUT state in UFS.
 
@@ -8457,11 +8457,11 @@ Run a prejob or a provision via `prejob` subcommand.
 Args:
   request: a PrejobRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#287)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/phosphorus/api.py#311)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#225)(self):**
+&mdash; **def [remove\_autotest\_results\_dir](/recipe_modules/phosphorus/api.py#249)(self):**
 
 Remove the autotest results directory.
 
@@ -8475,7 +8475,7 @@ Run a test via `run-test` subcommand.
 Args:
   request: a RunTestRequest.
 
-&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#198)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_and\_seal\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#203)(self, dut_state, dut_name, peer_duts, repair_requests=None):**
 
 Update the local DUT state file and seal the results directory.
 
@@ -8483,12 +8483,12 @@ Args:
   * dut_state: DUT state string (e.g. 'ready').
   * dut_name: Hostname of the primary DUT.
   * peer_duts: A list of hostnames for peer DUTs.
-
+  * repair_requests (array): Requests to enforce repair actions.
 
 Raises:
   * InfraFailure
 
-&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#185)(self, dut_state, dut_name, peer_duts):**
+&mdash; **def [save\_skylab\_local\_state](/recipe_modules/phosphorus/api.py#185)(self, dut_state, dut_name, peer_duts, repair_requests=None):**
 
 Update the local DUT state file.
 
@@ -8496,6 +8496,7 @@ Args:
   * dut_state: DUT state string (e.g. 'ready').
   * dut_name: Hostname of the primary DUT.
   * peer_duts: A list of hostnames for peer DUTs.
+  * repair_requests (array): Requests to enforce repair actions.
 
 Raises:
   * InfraFailure
@@ -14459,7 +14460,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1953)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#1967)(api, properties):**
 
 Entrypoint to the script
 
@@ -14484,7 +14485,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1714)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1728)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -14496,7 +14497,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1446)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1460)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -14512,7 +14513,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1360)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1374)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -14528,7 +14529,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1331)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1345)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -14539,7 +14540,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1907)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#1921)(api, properties):**
 
 Run test and upload results.
 
@@ -14576,7 +14577,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1786)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1800)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

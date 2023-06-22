@@ -187,12 +187,14 @@ class DUTInterface():  # pragma: no cover
     """
 
   @abstractmethod
-  def save_and_seal_skylab_local_state(self, dut_state, metadata):
+  def save_and_seal_skylab_local_state(self, dut_state, metadata,
+                                       repair_requests=None):
     """Save and seal skylab local state on DUT.
 
     Args:
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
+    * repair_requests (array): Requests to enforce repair actions.
     """
 
   @abstractmethod

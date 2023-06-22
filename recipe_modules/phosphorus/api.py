@@ -182,35 +182,58 @@ class PhosphorusCommand(recipe_api.RecipeApi):
       self._local_state_results_dir = result.results_dir
       return result
 
-  def save_skylab_local_state(self, dut_state, dut_name, peer_duts):
+  def save_skylab_local_state(self, dut_state, dut_name, peer_duts,
+                              repair_requests=None):
     """Update the local DUT state file.
 
     Args:
       * dut_state: DUT state string (e.g. 'ready').
       * dut_name: Hostname of the primary DUT.
       * peer_duts: A list of hostnames for peer DUTs.
+      * repair_requests (array): Requests to enforce repair actions.
 
     Raises:
       * InfraFailure
     """
-    return self._save_skylab_local_state(dut_state, dut_name, peer_duts, False)
+    return self._save_skylab_local_state(dut_state, dut_name,
+                                         peer_duts=peer_duts,
+                                         seal_results_dir=False,
+                                         repair_requests=repair_requests)
 
-  def save_and_seal_skylab_local_state(self, dut_state, dut_name, peer_duts):
+  def save_and_seal_skylab_local_state(self, dut_state, dut_name, peer_duts,
+                                       repair_requests=None):
     """Update the local DUT state file and seal the results directory.
 
     Args:
       * dut_state: DUT state string (e.g. 'ready').
       * dut_name: Hostname of the primary DUT.
       * peer_duts: A list of hostnames for peer DUTs.
-
+      * repair_requests (array): Requests to enforce repair actions.
 
     Raises:
       * InfraFailure
     """
-    return self._save_skylab_local_state(dut_state, dut_name, peer_duts, True)
+    return self._save_skylab_local_state(dut_state, dut_name,
+                                         peer_duts=peer_duts,
+                                         seal_results_dir=True,
+                                         repair_requests=repair_requests)
 
   def _save_skylab_local_state(self, dut_state, dut_name, peer_duts,
-                               seal_results_dir):
+                               seal_results_dir, repair_requests=None):
+    """Update the local DUT state, and repair-requests, and seal results dir.
+
+    Args:
+      * dut_state (str): DUT state string (e.g. 'ready').
+      * dut_name (str): Hostname of the primary DUT.
+      * peer_duts (array): A list of hostnames for peer DUTs.
+      * seal_results_dir (bool): Specify if result directory need to be sealed.
+      * repair_requests (array): Requests to enforce repair actions.
+
+    Raises:
+      * ValueError
+    """
+    if repair_requests is None:
+      repair_requests = []
     with self.m.context(infra_steps=True):
       if not self._local_state_results_dir:
         raise ValueError(
@@ -219,7 +242,8 @@ class PhosphorusCommand(recipe_api.RecipeApi):
                             dut_id=self._dut_id, dut_state=dut_state,
                             results_dir=self._local_state_results_dir,
                             seal_results_dir=seal_results_dir,
-                            peer_duts=peer_duts)
+                            peer_duts=peer_duts,
+                            repair_requests=repair_requests)
       self._run('save', request, SaveRequest)
 
   def remove_autotest_results_dir(self):

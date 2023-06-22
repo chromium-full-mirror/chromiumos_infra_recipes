@@ -1052,7 +1052,9 @@
     "cmd": [],
     "name": "execution steps.multi_test_2.post upload step (phosphorus)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repair_requests@[]@@@",
+      "@@@STEP_LOG_END@repair_requests@@@"
     ]
   },
   {

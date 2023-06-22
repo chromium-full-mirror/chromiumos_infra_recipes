@@ -336,12 +336,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
           peer_duts=[dut.hostname for dut in metadata.peer_duts])
 
-  def save_and_seal_skylab_local_state(self, dut_state, metadata):
+  def save_and_seal_skylab_local_state(self, dut_state, metadata,
+                                       repair_requests=None):
     """Save and seal skylab local state on DUT.
 
     Args:
     * dut_state (str): The desired state.
     * metadata (DUTTestMetadata): Input information relevant to one test.
+    * repair_requests (array): Requests to enforce repair actions.
     """
     if self._vm_is_vmtest():
       self._api.step('stub save local DUT state', ['echo', dut_state])
@@ -351,7 +353,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'CrosToolRunner: Phosphorus: save local DUT state'):
       self._api.phosphorus.save_and_seal_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts])
+          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          repair_requests=repair_requests)
 
   def fetch_crashes(self, metadata, max_duration_seconds):
     """Retrieves crash information in case of a crash.
