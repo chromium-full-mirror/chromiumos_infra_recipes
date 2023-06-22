@@ -75,18 +75,20 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
     presentation.step_text = "Created branch {}".format(branch_name)
     api.easy.set_properties_step(branch_name=branch_name)
 
-  with api.workspace_util.setup_workspace():
-    api.cros_source.ensure_synced_cache(projects=[
-        api.cros_release_config.LEGACY_CONFIG_PROJECT,
-        api.cros_release_config.CONFIG_PROJECT
-    ])
+  # Only update config if the branch was actually created.
+  if properties.branch_util_push:
+    with api.workspace_util.setup_workspace():
+      api.cros_source.ensure_synced_cache(projects=[
+          api.cros_release_config.LEGACY_CONFIG_PROJECT,
+          api.cros_release_config.CONFIG_PROJECT
+      ])
 
-    # Don't need to update config for stabilize branches from < R108,
-    # as this is only for `cros try` and `cros try` doesn't support
-    # builds < R108.
-    if properties.branch_info.type == Branch.RELEASE or is_108_or_greater(
-        properties.source_version):
-      api.cros_release_config.update_config(branch_name)
+      # Don't need to update config for stabilize branches from < R108,
+      # as this is only for `cros try` and `cros try` doesn't support
+      # builds < R108.
+      if properties.branch_info.type == Branch.RELEASE or is_108_or_greater(
+          properties.source_version):
+        api.cros_release_config.update_config(branch_name)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -103,8 +105,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'create branch from buildspec manifest 89/13729.0.0.xml',
           stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.properties(
-          BrancherProperties(source_version='R89-13729.0.0',
-                             branch_info=Branch(type=Branch.RELEASE))),
+          BrancherProperties(
+              source_version='R89-13729.0.0',
+              branch_info=Branch(type=Branch.RELEASE),
+              branch_util_push=True,
+          )),
       api.post_check(
           post_process.StepCommandContains, 'create branch.'
           'create branch from buildspec manifest 89/13729.0.0.xml',
@@ -125,7 +130,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               source_version='R89-13729.0.0',
               branch_info=Branch(type=Branch.STABILIZE,
                                  name='this should not be used anywhere',
-                                 descriptor="foo"))),
+                                 descriptor="foo"),
+              branch_util_push=True,
+          )),
       api.post_check(
           post_process.StepCommandContains, 'create branch.'
           'create branch from buildspec manifest 89/13729.0.0.xml', [
@@ -167,8 +174,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'good-branch-stablize-rubik-build',
       api.properties(
-          BrancherProperties(source_version='R109-15194.0.0',
-                             branch_info=Branch(type=Branch.STABILIZE))),
+          BrancherProperties(
+              source_version='R109-15194.0.0',
+              branch_info=Branch(type=Branch.STABILIZE),
+              branch_util_push=True,
+          )),
       api.step_data(
           'create branch'
           '.create branch from buildspec manifest 109/15194.0.0.xml',

@@ -65,7 +65,8 @@
       "--buildspec-manifest",
       "89/13729.0.0.xml",
       "--release",
-      "--skip-group-check"
+      "--skip-group-check",
+      "--push"
     ],
     "name": "create branch.create branch from buildspec manifest 89/13729.0.0.xml",
     "~followup_annotations": [

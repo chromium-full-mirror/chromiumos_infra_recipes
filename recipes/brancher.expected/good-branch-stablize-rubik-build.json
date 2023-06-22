@@ -65,7 +65,8 @@
       "--buildspec-manifest",
       "109/15194.0.0.xml",
       "--stabilize",
-      "--skip-group-check"
+      "--skip-group-check",
+      "--push"
     ],
     "name": "create branch.create branch from buildspec manifest 109/15194.0.0.xml",
     "~followup_annotations": [
