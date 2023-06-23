@@ -820,36 +820,36 @@ Args:
 [DEPS](/recipe_modules/bot_cost/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BotCostApi](/recipe_modules/bot_cost/api.py#50)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate the cost of running bots.
 
-&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#59)(self):**
+&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#60)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#72)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#73)(self):**
 
 Set build cost after running.
 
 Returns:
   A context that sets build_cost on exit.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#84)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#85)(self):**
 
 Set cq cost after running.
 
 Returns:
   A context that sets cq_run_cost on exit.
 
-&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#52)(self):**
+&mdash; **def [initialize](/recipe_modules/bot_cost/api.py#53)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#96)(self):**
+&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#97)(self):**
 
 Wrapper function to calculate and set the cost of creating the build.
 
 Calculate the cost of creating the build and set it as a build output
 property.
 
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#151)(self, child_builds: List[Build]=None):**
+&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#152)(self, child_builds: List[Build]=None):**
 
 Wrapper function to calculate and set the cost of the cq run.
 

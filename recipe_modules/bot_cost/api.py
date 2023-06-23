@@ -43,6 +43,7 @@ BOT_COST = {
     'n2-highcpu-64': 0.599,
     'n2d-standard-16': 0.18832,
     'n2d-highcpu-64': 0.30106,
+    'n2d-highmem-64': 0.55014,
 }
 
 
