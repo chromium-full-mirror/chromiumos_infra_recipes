@@ -44,13 +44,12 @@ class RecipeReleaseConfig(typing.NamedTuple):
 # We have `infra`, which is most everything, and `release`, which is used
 # only by release builders.
 
-INFRA_RELEASE = RecipeReleaseConfig('infra', staging_checks.STAGING_CHECKS_RE,
-                                    common.CipdRef('prod'), None)
-# Not currently in use.
-# TODO(b/287276108): Support once release builders are transitioned.
-RELEASE_RELEASE = RecipeReleaseConfig('release',
-                                      staging_checks.STAGING_CHECKS_RE,
-                                      common.CipdRef('release-prod'), None)
+INFRA_BUNDLE = RecipeReleaseConfig(
+    'infra', staging_checks.INFRA_BUNDLE_STAGING_CHECKS_RE,
+    common.CipdRef('prod'), None)
+RELEASE_BUNDLE = RecipeReleaseConfig(
+    'release', staging_checks.RELEASE_BUNDLE_STAGING_CHECKS_RE,
+    common.CipdRef('release-prod'), None)
 
 
 class RecipeRelease:
@@ -74,9 +73,7 @@ class RecipeRelease:
 
     timestamped_ref = common.CipdRef(
         f'release_{self.name}_{common.get_timestamp("%Y/%m/%d-%H")}')
-    # TODO(b/287276108): Remove RELEASE_RELEASE.prod_cipd_label hardcode once
-    # that bundle is properly supported.
-    for ref in (prod_ref, timestamped_ref, RELEASE_RELEASE.prod_cipd_label):
+    for ref in (prod_ref, timestamped_ref):
       cmd = [
           'cipd', 'set-ref', common.RECIPE_BUNDLE, f'-version={cipd_target}',
           f'-ref={ref}'
@@ -151,7 +148,13 @@ def main(argv: List[str]):
   options = parse_args(argv)
   setup()
 
-  release = RecipeRelease(INFRA_RELEASE)
+  print(f'=== Releasing recipes bundle "{options.bundle}" ===')
+  bundle_config = {
+      'infra': INFRA_BUNDLE,
+      'release': RELEASE_BUNDLE,
+  }[options.bundle]
+
+  release = RecipeRelease(bundle_config)
   release.do_release_flow(options)
 
 
@@ -178,6 +181,10 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   parser.add_argument(
       '-v', '--verbose', action='store_true',
       help='Print all pending changes, including trivial recipe rolls.')
+  parser.add_argument(
+      '--bundle', choices=['infra', 'release'], default='infra',
+      help='Bundles available for a prod push. `release` is release builders,'
+      '`infra` is everything else (not including CTP). Default is `infra`.')
   return parser.parse_args(args)
 
 

@@ -67,17 +67,7 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
-STAGING_CHECKS_RE = (
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption]),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption]),
-    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
-    # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
+INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
     StagingReCheck('chromeos', 'staging',
                    r'staging-amd64-generic-direct-tast-vm'),
@@ -92,11 +82,24 @@ STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
-    StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'staging-release-triggerer'),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
+)
+
+RELEASE_BUNDLE_STAGING_CHECKS_RE = (
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
+                   [image_builder_exemption]),
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
+                   [image_builder_exemption]),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
+    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
+    # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
 )
