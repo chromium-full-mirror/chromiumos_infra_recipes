@@ -3378,11 +3378,9 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#483)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#473)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
-
-Also creates the "BUILT_BY_RUBIK" sentinel file.
 
 Args:
   build_target (str): build target to include in the path.
@@ -3401,7 +3399,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#447)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#437)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3413,7 +3411,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#503)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#489)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3443,11 +3441,11 @@ been built.
 Args:
   override_qs_account: QS Account to use instead of whatever is configured.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#543)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#529)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#551)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#537)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
