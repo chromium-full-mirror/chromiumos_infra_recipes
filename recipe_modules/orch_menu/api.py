@@ -349,6 +349,18 @@ class OrchMenuApi(recipe_api.RecipeApi):
         if self.gerrit_changes:
           # Any changes we have must be submittable.
           self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
+          # If enabled, ensure all related changes are present
+          with self.m.failures.ignore_exceptions():
+            if ('chromeos.cros_infra_config.include_related'
+                in self.m.cros_infra_config.experiments):
+              with self.m.step.nest('find related CLs'):
+                all_related_changes = []
+                for change in self.gerrit_changes:
+                  # Note: this might include duplicates.
+                  all_related_changes.extend(
+                      self.m.gerrit.gerrit_related_changes(change))
+                self.m.easy.set_properties_step(
+                    related_changes=all_related_changes)
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()

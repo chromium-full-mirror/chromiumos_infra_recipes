@@ -909,9 +909,6 @@ class GerritApi(RecipeApi):
 
   def _ensure_gerrit_related_changes(self):
     """Ensure the gerrit_related_changes cli is installed."""
-    if self._related_changes_path:
-      return  # pragma: nocover
-
     with self.m.step.nest('ensure gerrit_related_changes'):
       with self.m.context(infra_steps=True):
         self._related_changes_cipd_package = (

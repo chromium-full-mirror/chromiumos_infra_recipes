@@ -6448,7 +6448,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#945)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#942)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -8015,11 +8015,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1368)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1380)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1208)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1220)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -8034,7 +8034,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#185)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1406)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1418)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -8052,7 +8052,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#165)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#359)(self, include_build_details=False, ignore_build_test_failures=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#371)(self, include_build_details=False, ignore_build_test_failures=False):**
 
 Create the correct return value for RunSteps.
 
@@ -8087,7 +8087,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#209)(self):**
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#714)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#726)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -8101,7 +8101,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1106)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1118)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -8119,7 +8119,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#674)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#686)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -8131,7 +8131,7 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#801)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#813)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
@@ -8140,11 +8140,11 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#221)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1031)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1043)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1038)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1050)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

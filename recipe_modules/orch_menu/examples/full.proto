@@ -37,4 +37,7 @@ message FullProperties {
 
   // Whether to skip paygen.
   bool skip_paygen = 9;
+
+  // Any experiments to include.
+  repeated string experiments = 10;
 }
