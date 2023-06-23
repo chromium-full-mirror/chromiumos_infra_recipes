@@ -21,7 +21,7 @@ cfg = {
   },
 }
 
-cfg["ile_de_france_selector"]["allow_list"]["models"] = sys.argv[1].split(',') if (len(sys.argv) > 1 and sys.argv[1]) else []
+cfg["allow_list"]["models"] = sys.argv[1].split(',') if (len(sys.argv) > 1 and sys.argv[1]) else []
 
 job = json.load(sys.stdin)
 
