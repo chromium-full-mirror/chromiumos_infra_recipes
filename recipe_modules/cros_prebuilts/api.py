@@ -215,7 +215,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
       commit = self.m.cros_infra_config.gitiles_commit
       target = build_target.name if build_target else 'Unknown'
-      profile = self._profile_or_default(profile)
 
       metadata = PackageIndexInfo(snapshot_sha=commit.id, profile=profile,
                                   snapshot_number=version.snapshot,
@@ -254,6 +253,29 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         self._add_acls(acls, cmd)
         cmd.append(uri)
         self.m.gsutil(cmd)
+
+  def _publish_binhost_metadata(self, build_target: BuildTarget,
+                                profile: Profile, gs_uri: str,
+                                gs_bucket_name: str, complete: bool,
+                                private: bool):
+    """Publish binhost metadata using the binhost_lookup_service module.
+
+    Args:
+      build_target: The system Chrome OS is being built for, also known
+        as board.
+      profile: Profile to use with the build_target.
+      gs_uri: Location of the binhost object in google storage.
+      gs_bucket_name: Name of the google storage bucket which contains the
+          binhost.
+      complete: Bool to indicate if this binhost contains all the binpkgs
+          specified in the packages metadata file.
+      private: Bool to indicate if the binhost is private.
+    """
+    with self.m.step.nest('publish binhost metadata'):
+      snapshot_sha = self.m.cros_infra_config.gitiles_commit.id
+      self.m.binhost_lookup_service.publish_binhost_metadata(
+          build_target, profile, snapshot_sha, gs_uri, gs_bucket_name,
+          self.m.buildbucket.build.id, complete, private)
 
   def _binhost_key(self, kind):
     """Return the binhost key for the given builder type.
@@ -563,10 +585,17 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
         self.set_binhost(target, private, binhost_key, upload_uri,
                          push_retries=3)
-
+      # Default to `base` profile when it is not explicitly specified.
+      profile = self._profile_or_default(profile)
       if self._enable_snapshot_prebuilts:
         self._upload_metadata(target, profile, kind, gs_bucket, acls,
                               upload_uri)
+
+      if ('chromeos.publish.to.binhost_lookup_service'
+          in self.m.cros_infra_config.experiments):
+        # Upload binhost metadata to the `binhost_lookup_service`.
+        self._publish_binhost_metadata(target, profile, upload_uri, gs_bucket,
+                                       True, private)
 
   def upload_devinstall_prebuilts(self, target, sysroot, chroot, gs_bucket):
     """Upload binary devinstall prebuilts for build target to Google Storage.

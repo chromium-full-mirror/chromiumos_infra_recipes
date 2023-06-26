@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/runtime',
     'recipe_engine/step',
     'recipe_engine/swarming',
+    'binhost_lookup_service',
     'cros_build_api',
     'cros_infra_config',
     'cros_source',

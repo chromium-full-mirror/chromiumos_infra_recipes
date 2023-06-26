@@ -13,7 +13,9 @@ from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'binhost_lookup_service',
     'cros_prebuilts',
 ]
 
@@ -117,3 +119,28 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
   )
+
+  # Binhost metadata is published to the binhost lookup service.
+  yield api.test(
+      'publish-binhost-metadata',
+      api.properties(
+          upload_target_prebuilts=True,
+          **api.binhost_lookup_service.input_properties,
+      ),
+      api.buildbucket.generic_build(
+          experiments=['chromeos.publish.to.binhost_lookup_service']),
+      api.post_check(post_process.StepSuccess,
+                     "upload prebuilts.publish binhost metadata"),
+      api.post_process(post_process.DropExpectation))
+
+  # Binhost metadata is not published when the
+  # `chromeos.publish.to.binhost_lookup_service` experiment is not enabled.
+  yield api.test(
+      'publish-binhost-metadata-does-not-run',
+      api.properties(
+          upload_target_prebuilts=True,
+          **api.binhost_lookup_service.input_properties,
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     "upload prebuilts.publish binhost metadata"),
+      api.post_process(post_process.DropExpectation))
