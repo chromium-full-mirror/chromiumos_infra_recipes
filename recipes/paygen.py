@@ -669,6 +669,41 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
+      'testing-not-model-specific',
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.properties(
+          PaygenProperties(
+              override_qs_account='custom_qs_account', requests=[
+                  dict(
+                      generation_request=api.paygen_testing
+                      .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                      autoupdate_test_configs=[
+                          AutoupdateTestConfig(src_version='123',
+                                               src_channel='canary-channel',
+                                               delta_type=common_pb2.OMAHA,
+                                               applicable_models=[]),
+                      ])
+              ])),
+      api.cros_storage.test_listing(
+          'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
+          full_payload_uri,
+      ),
+      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
+                    stdout=api.raw_io.output(payload_json_data)),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.MustRun,
+                     'testing paygen.buildbucket.schedule'),
+      api.post_check(
+          post_process.LogContains, 'testing paygen.buildbucket.schedule',
+          'request',
+          ['"key": "quota_account",', '"value": "custom_qs_account"']),
+      api.post_check(post_process.LogContains,
+                     'testing paygen.buildbucket.schedule', 'request',
+                     ['"key": "label-model",', '"value": "no-model-found"']),
+  )
+
+  yield api.test(
       'with-testing',
       api.gitiles.get_file(
           api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),

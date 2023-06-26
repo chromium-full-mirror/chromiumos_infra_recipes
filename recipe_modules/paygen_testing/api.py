@@ -664,7 +664,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
       # Pull the matching label-model field or 'no-model-found'.
       return next(
           iter([x for x in tags if x.startswith('label-model:')]),
-          'no-model-found')
+          'label-model:no-model-found')
 
     models = [_get_label_model_from_ptc(v) for k, v in tagged_requests.items()]
 
