@@ -21,11 +21,6 @@ def RunSteps(api):
   with api.orch_menu.setup_orchestrator():
     api.orch_menu.plan_and_run_children()
 
-    # Run tests so that the test runner doesn't get grumpy about unused mock
-    # step data from orch_menu.standard_test_data().
-    api.orch_menu.plan_and_run_tests()
-
-
 def GenTests(api):
 
   def schedule_build_step(builder_name):
@@ -33,7 +28,6 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'child-builds',
-      api.orch_menu.standard_test_data().ctp_normal,
       api.properties(**{
           '$chromeos/orch_menu': {
               'child_builds': ['amd64-generic-postsubmit',],

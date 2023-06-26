@@ -299,9 +299,6 @@ def GenTests(api: RecipeTestApi):
           }), builder='factory-corsola-15197.B-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
-  yield api.orch_menu.test('bisecting-orchestrator', data.ctp_normal,
-                           builder='bisecting-orchestrator')
-
   yield api.orch_menu.test('builds-with-history', data.ctp_normal, cq=True,
                            collect_builds=data.builds, with_history=True,
                            git_footers=[])
