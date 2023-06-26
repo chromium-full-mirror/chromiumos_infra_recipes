@@ -855,8 +855,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
               outpath, use_local_path=True)
           for dlc in dlc_local_paths:
-            _, dlc_basename = self.m.path.split(dlc)
-            paths_to_hash[dlc] = dlc_basename
+            paths_to_hash[dlc] = self.m.path.relpath(dlc, outpath)
 
           with self.m.step.nest("generate provenance"):
             for abspath, basepath in paths_to_hash.items():

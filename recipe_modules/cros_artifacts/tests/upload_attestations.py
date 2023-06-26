@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 import json
+import re
 
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common
@@ -148,6 +149,14 @@ def GenTests(api):
       api.post_process(
           post_process.DoesNotRun,
           'upload artifacts.generate provenance.snoop: report_gcs (3)'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs',
+          [re.compile(r'gs:\/\/.*\/fake\/dlc\.img')]),
+      api.post_process(
+          post_process.StepCommandContains,
+          'upload artifacts.generate provenance.snoop: report_gcs (2)',
+          [re.compile(r'gs:\/\/.*\/fake2\/dlc\.img')]),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
