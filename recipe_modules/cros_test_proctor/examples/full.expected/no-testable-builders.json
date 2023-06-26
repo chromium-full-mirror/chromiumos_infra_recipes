@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "run tests",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no builds to test@@@",
+      "@@@SET_BUILD_PROPERTY@no_tests_needed@true@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

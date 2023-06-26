@@ -173,6 +173,8 @@ def GenTests(api):
           bump_version=True, manifest_versions_branch='main', skip_paygen=True,
           schedule_public_build=True),
       builder='release-main-orchestrator',
+      collect_builds=api.orch_menu.orch_child_builds(
+          'release-main-orchestrator', '-release-main')[0],
       with_manifest_refs=True,
       with_history=True,
       bot_size='medium',
@@ -219,11 +221,16 @@ def GenTests(api):
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
+      collect_builds=api.orch_menu.orch_child_builds(
+          'release-main-orchestrator', '-release-main')[0],
       with_manifest_refs=True,
       with_history=True,
       bot_size='medium',
   )
 
+  child_build = build_pb2.Build(id=8922054662172514002, status='SUCCESS',
+                                builder={'builder': 'eve-release-main'})
+  child_build.input.properties['recipe'] = 'build_release'
   yield api.orch_menu.test(
       'release-orchestrator-retry-launch-tests',
       data.ctp_normal,
@@ -248,6 +255,10 @@ def GenTests(api):
       api.buildbucket.simulated_get_multi([
           child_build
       ], step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
+                                         ),
+      api.buildbucket.simulated_get_multi([
+          child_build
+      ], step_name='run builds.(RETRY-MODE) not retrying RUN_CHILDREN.buildbucket.get_multi'
                                          ),
       api.post_check(
           post_process.MustRun,
@@ -282,6 +293,10 @@ def GenTests(api):
                                 builder={'builder': 'octopus-release-main'})
   child_build.input.properties['recipe'] = 'build_release'
   child_builds.append(child_build)
+
+  eve_retry = build_pb2.Build(id=8922054662172514002, status='SUCCESS',
+                              builder={'builder': 'eve-release-main'})
+  eve_retry.input.properties['recipe'] = 'build_release'
 
   yield api.orch_menu.test(
       'release-orchestrator-retry-run-failed-children',
@@ -319,6 +334,8 @@ def GenTests(api):
           child_builds,
           step_name='RUNNING IN RETRY MODE.verify previous build.get child builder data'
       ),
+      api.buildbucket.simulated_get_multi([eve_retry],
+                                          step_name='run builds.get'),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.(RETRY-MODE) not retrying CREATE_BUILDSPEC'),
@@ -414,6 +431,8 @@ def GenTests(api):
           bump_version=True, manifest_versions_branch='main',
           schedule_public_build=True),
       builder='release-main-orchestrator',
+      collect_builds=api.orch_menu.orch_child_builds(
+          'release-main-orchestrator', '-release-main')[0],
       with_manifest_refs=True,
       with_history=True,
       bot_size='medium',
@@ -422,7 +441,6 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'staging-release-orchestrator',
-      data.ctp_normal,
       api.properties(
           FullProperties(
               is_release_orchestrator=True, use_extra_props=True,
@@ -446,7 +464,6 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'public-orchestrator',
-      data.ctp_normal,
       api.properties(
           **{
               "$chromeos/cros_source": {
@@ -467,7 +484,6 @@ def GenTests(api):
   # TODO(b/245326818): Add useful assertions
   yield api.orch_menu.test(
       'factory-orchestrator',
-      data.ctp_normal,
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test'),
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
@@ -477,13 +493,15 @@ def GenTests(api):
       bot_size='medium',
   )
 
+  collect, _ = api.orch_menu.orch_child_builds('postsubmit-orchestrator',
+                                               '-postsubmit')
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.DoesNotRun,
                      'set up orchestrator.read git footers'),
-      input_properties=orch_menu_properties(
+      collect_builds=collect, input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
       with_manifest_refs=True, with_history=True)
 
@@ -501,6 +519,7 @@ def GenTests(api):
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
           update_manifest_refs=dict(test='refs/heads/test')),
+      collect_builds=collect,
       with_manifest_refs=True,
       with_history=True,
       status='FAILURE',
@@ -523,6 +542,7 @@ def GenTests(api):
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
       status='FAILURE',
+      collect_builds=collect,
   )
 
   summary = '3 non-critical hw tests failed'
@@ -539,6 +559,7 @@ def GenTests(api):
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.SUCCESS,
                                                summary_markdown=summary))),
+      collect_builds=collect,
   )
 
   yield api.orch_menu.test(
@@ -588,7 +609,8 @@ def GenTests(api):
       history_builds=data.history_builds, with_history=True,
       with_manifest_refs=True)
 
-  collect, collect_after = api.orch_menu.cq_child_builds()
+  collect, collect_after = api.orch_menu.orch_child_builds(
+      'cq-orchestrator', '-cq')
   # Joins an inflight orchestrator run.
   yield api.orch_menu.test(
       'inflight-orchestrator', data.ctp_normal,
@@ -671,7 +693,8 @@ def GenTests(api):
       process_child=data.process_child, process_child_timeout=True,
       bucket='toolchain', builder='orderfile-generate-orchestrator')
 
-  collect, collect_after = api.orch_menu.cq_child_builds()
+  collect, collect_after = api.orch_menu.orch_child_builds(
+      'cq-orchestrator', '-cq')
   # Mark one critical child build as failed in each of the collect steps.
   # TODO(b/279016710): Get clarification on how we should treat unset
   # criticality (apparently cave-cq is not actually critical).
@@ -698,7 +721,8 @@ def GenTests(api):
       builder='cq-orchestrator',
   )
 
-  collect, collect_after = api.orch_menu.cq_child_builds()
+  collect, collect_after = api.orch_menu.orch_child_builds(
+      'cq-orchestrator', '-cq')
   # Mark one of the non-critical child builds as a failure.
   for b in collect_after:
     if b.builder.builder == 'coral-cq':
@@ -794,6 +818,8 @@ def GenTests(api):
           },
       ),
       data.ctp_normal,
+      collect_builds=api.orch_menu.orch_child_builds('postsubmit-orchestrator',
+                                                     '-postsubmit')[0],
       input_properties=input_props_with_generate_ctpv1_format,
       builder='postsubmit-orchestrator',
       with_manifest_refs=True,
@@ -846,6 +872,7 @@ def GenTests(api):
           'clean up orchestrator.non-critical test check.generate test plan'),
       input_properties=input_props_with_generate_ctpv1_format,
       builder='postsubmit-orchestrator',
+      collect_builds=data.builds,
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,

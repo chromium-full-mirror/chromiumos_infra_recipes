@@ -441,9 +441,13 @@ def GenTests(api: RecipeTestApi):
   )
 
   # TODO(b/279631301): Remove after rollut in prod.
+  collect, collect_after = api.orch_menu.orch_child_builds(
+      'cq-orchestrator', '-cq')
   yield api.orch_menu.test(
       'upload-sources-experiment',
       data.ctp_normal,
       builder='cq-orchestrator',
       experiments=['chromeos.build_menu.upload_sources'],
+      collect_builds=collect,
+      collect_after_builds=collect_after,
   )

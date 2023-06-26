@@ -54,8 +54,10 @@ def RunSteps(api, need_tests_builds_serialized, run_async, use_test_plan_v2):
   # Deserialized Build protos. The serialization is to get around the recipes
   # requirement that all properties be hashable, and proto messages are not
   # hashable.
-  need_tests_builds = map(build_pb2.Build.FromString,
-                          need_tests_builds_serialized)
+  need_tests_builds = [
+      build_pb2.Build.FromString(b) for b in need_tests_builds_serialized
+  ]
+
   gerrit_changes = []
   if need_tests_builds:
     gerrit_changes = api.src_state.gerrit_changes
@@ -312,6 +314,7 @@ def GenTests(api):
 
   yield api.test(
       'collect-vm-test-failures',
+      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
       api.step_data('run tests.collect tests.collect tast vm tests.wait',
                     retcode=1),
       api.post_check(post_process.MustRun,
@@ -321,4 +324,13 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'run tests.collect tests.get tast GCE tests'),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-testable-builders',
+      api.properties(need_tests_builds_serialized=serialize_builds([])),
+      api.post_process(post_process.StepTextEquals, 'run tests',
+                       'no builds to test'),
+      api.post_check(post_process.DoesNotRun, 'run tests.schedule tests'),
+      api.post_check(post_process.DoesNotRun, 'run tests.collect tests'),
   )

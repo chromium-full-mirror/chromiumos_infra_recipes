@@ -402,8 +402,16 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
   # TODO(b/279016710): This function could be generalized and allow overriding
   # of child build data.
-  def cq_child_builds(self) -> Tuple[List[Build], List[Build]]:
-    """Return a list of child builds that cq-orchestrator could run.
+  def orch_child_builds(
+      self, orchestrator_name: str,
+      child_builder_suffix: str) -> Tuple[List[Build], List[Build]]:
+    """Return a list of child builds that the given orchestrator could run.
+
+    Args:
+      orchestrator_name: The name of the orchestrator for which to get child
+          builds.
+      child_builder_suffix: The suffix added to the build target to get the full
+          child builder name (e.g. '-cq').
 
     Returns:
       Tuple containing:
@@ -424,7 +432,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     orch_config = None
     for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
-      if config.id.name == 'cq-orchestrator':
+      if config.id.name == orchestrator_name:
         orch_config = config
         break
     if not orch_config:
@@ -438,15 +446,19 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     # need to update the orch_menu.test() function with a new option that adds
     # test_data for scheduling the NO_COLLECT builds but not collecting them.
     for c in orch_config.orchestrator.child_specs:
-      target = c.name.split('-cq')[0]
+      target = c.name.split(child_builder_suffix)[0]
       if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
         collect_after_builds.append(
-            _child_build_msg(target, cq=True, build_id=start_build_id,
+            _child_build_msg(target,
+                             cq=orchestrator_name.endswith('cq-orchestrator'),
+                             builder_name=c.name, build_id=start_build_id,
                              critical='YES',
                              output_properties=dict(build_cost=10.0)))
       else:
         collect_builds.append(
-            _child_build_msg(target, cq=True, build_id=start_build_id,
+            _child_build_msg(target,
+                             cq=orchestrator_name.endswith('cq-orchestrator'),
+                             builder_name=c.name, build_id=start_build_id,
                              critical='YES',
                              output_properties=dict(build_cost=10.0)))
       start_build_id += 1

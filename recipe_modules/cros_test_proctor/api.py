@@ -221,6 +221,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[failures.Failure]: failures encountered running tests
     """
     with self.m.step.nest('run tests') as pres:
+      if not need_tests_builds:
+        pres.step_text = 'no builds to test'
+        pres.properties['no_tests_needed'] = True
+        return []
+
       with self.m.step.nest('schedule tests'):
         test_plan = self._get_test_plan(need_tests_builds, gerrit_changes,
                                         snapshot, use_test_plan_v2)
