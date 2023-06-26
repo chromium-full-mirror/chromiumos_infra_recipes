@@ -41,6 +41,7 @@ DEPS = [
     'cros_tags',
     'cros_test_plan_v2',
     'cros_try',
+    'easy',
     'exonerate',
     'orch_menu',
     'signing',
@@ -95,6 +96,9 @@ def DoRunSteps(api: RecipeApi):
         CrosRelevanceProperties(force_postsubmit_relevance=True))
 
   if api.orch_menu.chromium_src_ref_cl_tag:
+    # Added for debugging b/288286812. Remove after.
+    api.easy.set_properties_step(
+        set_chromium_src_ref=api.orch_menu.chromium_src_ref_cl_tag)
     extra_child_props[
         '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
 

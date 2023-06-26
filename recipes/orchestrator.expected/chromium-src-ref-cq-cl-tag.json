@@ -1784,6 +1784,13 @@
   },
   {
     "cmd": [],
+    "name": "set set_chromium_src_ref",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@set_chromium_src_ref@\"foo1234ref\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@3 new, 0 recycled@@@"
