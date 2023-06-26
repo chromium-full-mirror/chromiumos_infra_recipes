@@ -9233,11 +9233,34 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.get previous test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests.get previous test results.find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
+    ]
+  },
+  {
     "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Cros-Experiments"
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:35Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9252,10 +9275,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.schedule hardware tests.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "name": "run tests.schedule tests.schedule hardware tests.get previous test results.find matching builds.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

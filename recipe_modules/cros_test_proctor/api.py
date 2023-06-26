@@ -948,7 +948,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       The ExecuteResponses.tagged_response from the latest invocation.
     """
     previous_test_results = {}
-    if not (self.m.cq.active and self.m.skylab.direct_tast_testing_enabled()):
+    if not self.m.cq.active:
       return previous_test_results
 
     with self.m.step.nest('get previous test results') as presentation:

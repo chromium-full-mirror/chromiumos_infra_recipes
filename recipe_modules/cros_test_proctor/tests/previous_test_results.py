@@ -55,18 +55,7 @@ def GenTests(api):
           execute_responses()).decode('utf-8')
 
   yield api.test(
-      'not-elegible',
-      api.buildbucket.try_build(builder='cq-orchestrator'),
-      api.properties(
-          expected_execute_responses=json_format.MessageToJson(
-              ExecuteResponses())),
-      api.post_check(post_process.DoesNotRun, 'get previous test results'),
-      api.post_process(post_process.DropExpectation),
-      status='SUCCESS',
-  )
-
-  yield api.test(
-      'elegible',
+      'basic',
       api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
       api.cq(run_mode=api.cq.FULL_RUN),
