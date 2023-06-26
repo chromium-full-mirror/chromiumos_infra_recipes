@@ -126,7 +126,7 @@ class MetadataApi(recipe_api.RecipeApi):
     test_metadata = TestCaseMetadataList()
     for result_path in response.filepaths:
       recipes_path = self.m.util.proto_path_to_recipes_path(
-          proto_path=result_path.path, chroot_path=chroot)
+          proto_path=result_path.path)
       if mock_metadata_file:
         self.m.path.mock_add_file(recipes_path)
       if not self.m.path.exists(recipes_path):

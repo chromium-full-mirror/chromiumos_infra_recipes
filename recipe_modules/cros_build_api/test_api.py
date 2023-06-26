@@ -542,12 +542,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['UploadPrebuiltPackages'] = '{}'
     responses['BuildSdkToolchain'] = jsonify(generated_files=[
         {
-            'path': '/tmp/toolchain-pkgs/foo.tar.xz',
-            'location': 1,  # chromiumos.Path.Location.INSIDE
+            'path': '[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/foo.tar.xz',
+            'location': 2,  # chromiumos.Path.Location.OUTSIDE
         },
         {
-            'path': '/tmp/toolchain-pkgs/bar.tar.xz',
-            'location': 1,  # chromiumos.Path.Location.INSIDE
+            'path': '[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/bar.tar.xz',
+            'location': 2,  # chromiumos.Path.Location.OUTSIDE
         }
     ])
     return responses

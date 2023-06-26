@@ -10083,11 +10083,11 @@ Returns:
 
 Module providing importable utilities.
 
-#### **class [UtilApi](/recipe_modules/util/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [UtilApi](/recipe_modules/util/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Includable utilities.
 
-&mdash; **def [proto\_path\_to\_recipes\_path](/recipe_modules/util/api.py#20)(self, proto_path: common_pb2.Path, chroot_path: Optional[config_types.Path]=None):**
+&mdash; **def [proto\_path\_to\_recipes\_path](/recipe_modules/util/api.py#18)(self, proto_path: common_pb2.Path):**
 
 Return a config_types.Path equivalent to the common_pb2.Path.
 
@@ -10095,22 +10095,24 @@ Args:
   proto_path: A Path proto message, as might be returned by the build API.
     Must be absolute, and location must be specified as either INSIDE or
     OUTSIDE.
-  chroot_path: The path to the SDK checked out on this builder. Only
-    required when converting an INSIDE path. Normally this path is accessed
-    via self.m.cros_sdk.chroot_path. However, the `util` module
-    intentionally doesn't depend on any ChromeOS modules, so we can't fetch
-    it here.
 
 Raises:
   ValueError: If proto_path.location is OUTSIDE and proto_path.path is not
     relative to any recipe anchor point. See the path API for more info
     info about those anchor points. This exception is raised during
     self.m.path.abs_to_path().
-  ValueError: If proto_path.location is INSIDE and chroot_path is not given.
-  ValueError: If proto_path.location is INSIDE and proto_path.path is not
-    relative to '/'.
-  ValueError: If proto_path.location is not specified as either INSIDE or
-    OUTSIDE.
+  ValueError: If proto_path.location is INSIDE. Chroot paths are migrated
+    to different outside locations according to Chromite logic that is
+    subject to change. We deliberately do not replicate that logic here.
+    Instead, if a recipe needs to reference INSIDE paths returned by a build
+    API endpoint, the endpoint should be return OUTSIDE paths.
+    If you need to refactor in this way, consider using the build API's
+    ResultPath functionality for this. Add a ResultPath field to the
+    request message, and ensure that the endpoint runs inside the chroot
+    via either service_chroot_assert or method_chroot_assert. The API
+    router will automatically extract any Path (or repeated Path) fields
+    to the given ResultPath.
+  ValueError: If proto_path.location is not specified (i.e. NO_LOCATION).
 ### *recipe_modules* / [vmlab](/recipe_modules/vmlab)
 
 [DEPS](/recipe_modules/vmlab/__init__.py#8): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14944,7 +14946,7 @@ Basic tests for the urls recipe module.
 [DEPS](/recipe_modules/util/tests/proto_path_to_recipes_path.py#12): [cros\_sdk](#recipe_modules-cros_sdk), [util](#recipe_modules-util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/util/tests/proto_path_to_recipes_path.py#33)(api: recipe_api.RecipeApi, input_path: str, input_location: common_pb2.Path.Location, use_sdk_path: bool):**
+&mdash; **def [RunSteps](/recipe_modules/util/tests/proto_path_to_recipes_path.py#31)(api: recipe_api.RecipeApi, input_path: str, input_location: common_pb2.Path.Location):**
 ### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
 
 [DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -168,8 +168,7 @@ class BuildSDKRun:
     response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
     self._toolchain_tarball_paths = []
     for generated_file in response.generated_files:
-      path = self.m.util.proto_path_to_recipes_path(generated_file,
-                                                    self.m.cros_sdk.chroot_path)
+      path = self.m.util.proto_path_to_recipes_path(generated_file)
       self._toolchain_tarball_paths.append(path)
       self.m.path.mock_add_file(path)
 
@@ -182,7 +181,7 @@ class BuildSDKRun:
     request = sdk_pb2.BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
     response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
     self._sdk_tarball_path = self.m.util.proto_path_to_recipes_path(
-        response.sdk_tarball_path, self.m.cros_sdk.chroot_path)
+        response.sdk_tarball_path)
     self.m.path.mock_add_file(self._sdk_tarball_path)
 
   def _create_sdk_manifest(self) -> None:
@@ -205,7 +204,7 @@ class BuildSDKRun:
     )
     response = self.m.cros_build_api.SdkService.CreateManifestFromSdk(request)
     self._sdk_manifest_path = self.m.util.proto_path_to_recipes_path(
-        response.manifest_path, self.m.cros_sdk.chroot_path)
+        response.manifest_path)
     self.m.path.mock_add_file(self._sdk_manifest_path)
 
   def _upload_prebuilts(self) -> None:
