@@ -12,22 +12,19 @@ from typing import List, Optional
 
 from google.protobuf import json_format
 
-from PB.chromite.api.sdk import BuildPrebuiltsRequest
-from PB.chromite.api.sdk import BuildSdkTarballRequest
-from PB.chromite.api.sdk import BuildSdkToolchainRequest
-from PB.chromite.api.sdk import CreateManifestFromSdkRequest
+from PB.chromite.api import sdk as sdk_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
-from PB.recipes.chromeos.build_sdk import BuildSDKProperties
-from PB.recipe_modules.chromeos.pupr_local_uprev import pupr_local_uprev
-from RECIPE_MODULES.chromeos.cros_sdk.api import REMOTE_LATEST_SDK_URI
+from PB.recipes.chromeos import build_sdk as build_sdk_pb2
+from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
+                                                         pupr_local_uprev_pb2)
+from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
 
+from recipe_engine import config_types
 from recipe_engine import post_process
-from recipe_engine.config_types import Path
-from recipe_engine.recipe_api import InfraFailure
-from recipe_engine.recipe_api import RecipeApi
-from recipe_engine.recipe_test_api import RecipeTestApi
+from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -51,7 +48,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = BuildSDKProperties
+PROPERTIES = build_sdk_pb2.BuildSDKProperties
 
 # SDK_BUILD_TARGET is the name of the build target to build SDK packages for.
 SDK_BUILD_TARGET = 'amd64-host'
@@ -67,22 +64,24 @@ PREBUILTS_BUCKET = 'chromeos-prebuilt'
 THROW_AWAY_BUCKET = 'chromeos-throw-away-bucket'
 
 
-def RunSteps(api: RecipeApi, properties: BuildSDKProperties):
+def RunSteps(api: recipe_api.RecipeApi,
+             properties: build_sdk_pb2.BuildSDKProperties):
   BuildSDKRun(api, properties).run()
 
 
 class BuildSDKRun:
   """Class to encapsulate a single run of the SDK builder."""
 
-  def __init__(self, api: RecipeApi, properties: BuildSDKProperties):
+  def __init__(self, api: recipe_api.RecipeApi,
+               properties: build_sdk_pb2.BuildSDKProperties):
     """Initialize the builder run."""
     self.m = api
     self.properties = properties
 
     # Paths of built files. These will be set after build API calls.
-    self._sdk_tarball_path: Optional[Path] = None
-    self._sdk_manifest_path: Optional[Path] = None
-    self._toolchain_tarball_paths: Optional[List[Path]] = None
+    self._sdk_tarball_path: Optional[config_types.Path] = None
+    self._sdk_manifest_path: Optional[config_types.Path] = None
+    self._toolchain_tarball_paths: Optional[List[config_types.Path]] = None
 
     self.m.easy.set_properties_step(version=self.version)
 
@@ -146,7 +145,7 @@ class BuildSDKRun:
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
-    request = BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
+    request = sdk_pb2.BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
     self.m.cros_build_api.SdkService.BuildPrebuilts(request)
 
   def _build_toolchain(self) -> None:
@@ -155,7 +154,15 @@ class BuildSDKRun:
     This method sets the self._toolchain_tarball_paths attribute to a list
     of Paths of the generated toolchain tarballs.
     """
-    request = BuildSdkToolchainRequest(chroot=self.m.cros_sdk.chroot)
+    result_path: config_types.Path = self.m.path.mkdtemp()
+    request = sdk_pb2.BuildSdkToolchainRequest(
+        chroot=self.m.cros_sdk.chroot,
+        result_path=common_pb2.ResultPath(
+            path=common_pb2.Path(
+                path=self.m.path.abspath(result_path),
+                location=common_pb2.Path.Location.OUTSIDE,
+            )),
+    )
     if self.properties.use_llvm_next:
       request.use_flags.add(flag=LLVM_NEXT_USE_FLAG)
     response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
@@ -172,7 +179,7 @@ class BuildSDKRun:
     This method sets the self._sdk_tarball_path attribute to the Path of the
     generated tarball.
     """
-    request = BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
+    request = sdk_pb2.BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
     response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
     self._sdk_tarball_path = self.m.util.proto_path_to_recipes_path(
         response.sdk_tarball_path, self.m.cros_sdk.chroot_path)
@@ -185,7 +192,7 @@ class BuildSDKRun:
     generated manifest.
     """
     assert self._sdk_tarball_path is not None
-    request = CreateManifestFromSdkRequest(
+    request = sdk_pb2.CreateManifestFromSdkRequest(
         chroot=self.m.cros_sdk.chroot,
         sdk_path=common_pb2.Path(
             path=f'/build/{SDK_BUILD_TARGET}',
@@ -257,7 +264,8 @@ class BuildSDKRun:
       for local_path in self._toolchain_tarball_paths:
         self._upload_one_toolchain_prebuilt(local_path)
 
-  def _upload_one_toolchain_prebuilt(self, source_path: Path) -> None:
+  def _upload_one_toolchain_prebuilt(self,
+                                     source_path: config_types.Path) -> None:
     """Upload a single toolchain prebuilt tarball to Google Storage.
 
     The destination path typically looks like:
@@ -326,7 +334,7 @@ class BuildSDKRun:
       contents = self.m.cros_sdk.read_remote_latest_sdk_file()
       presentation.logs['existing file contents'] = contents
       contents_dict = self.m.key_value_store.parse_contents(
-          contents, source=REMOTE_LATEST_SDK_URI)
+          contents, source=cros_sdk_api.REMOTE_LATEST_SDK_URI)
       presentation.properties['old_LATEST_SDK'] = contents_dict.get(
           'LATEST_SDK', "None")
       presentation.properties[
@@ -351,7 +359,7 @@ class BuildSDKRun:
     """
     return THROW_AWAY_BUCKET if self.m.build_menu.is_staging else prod_bucket
 
-  def _gsutil_upload(self, source_path: Path, dest_bucket: str,
+  def _gsutil_upload(self, source_path: config_types.Path, dest_bucket: str,
                      dest_path: str) -> None:
     """Wrapper around self.m.gsutil.upload() with some common functionality.
 
@@ -377,7 +385,8 @@ class BuildSDKRun:
     # them. So currently I don't have a great way to test the case where we want
     # to upload a path that doesn't exist.
     if not self.m.path.exists(source_path):  # pragma: nocover
-      raise InfraFailure(f'Upload source "{source_path}" not found locally.')
+      raise recipe_api.InfraFailure(
+          f'Upload source "{source_path}" not found locally.')
     args = ['-a', 'public-read']
     if self.m.path.isdir(source_path):
       args.append('-r')
@@ -410,8 +419,8 @@ class BuildSDKRun:
         properties={
             '$chromeos/pupr_local_uprev':
                 json_format.MessageToDict(
-                    pupr_local_uprev.PuprLocalUprevProperties(
-                        sdk_uprev_spec=pupr_local_uprev.SdkUprevSpec(
+                    pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                        sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                             sdk_version=self.version,
                             toolchain_template=self._toolchain_tarball_template,
                         ))),
@@ -432,7 +441,7 @@ class BuildSDKRun:
     self.m.buildbucket.schedule([request], step_name='schedule uprev')
 
 
-def GenTests(api: RecipeTestApi):
+def GenTests(api: recipe_test_api.RecipeTestApi):
   # RE_GSUTIL is a regex that looks for a path ending in 'gsutil.py'.
   # This is useful for post_process.StepCommandContains, since we don't really
   # care about the full path to gsutil.py.
