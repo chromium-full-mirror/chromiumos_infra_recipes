@@ -2588,6 +2588,13 @@
   },
   {
     "cmd": [],
+    "name": "apply qs account overrides",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No qs account overrides were applied@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run tests",
     "~followup_annotations": [
       "@@@STEP_TEXT@3 critical test(s) failed@@@"

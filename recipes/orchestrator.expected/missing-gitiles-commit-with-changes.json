@@ -4557,6 +4557,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "apply qs account overrides",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No qs account overrides were applied@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -4576,8 +4583,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+    "name": "apply qs account overrides.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],

@@ -144,6 +144,7 @@ def GenTests(api):
   yield api.test(
       'unmanaged_qs_account',
       api.buildbucket.try_build('cq-orchestrator'),
-      api.git_footers.simulated_get_footers(['p0_cq_unmanaged b/123456789']),
+      api.git_footers.simulated_get_footers(['p0_cq_unmanaged b/123456789'],
+                                            'apply qs account overrides'),
       api.post_check(verify_qs_account_unmanaged, 'p0_cq_unmanaged'),
   )

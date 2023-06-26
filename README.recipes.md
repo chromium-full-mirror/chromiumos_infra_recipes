@@ -626,7 +626,7 @@
   * [skylab:examples/schedule_suites_direct_tast_testing](#recipes-skylab_examples_schedule_suites_direct_tast_testing)
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
-  * [skylab:tests/appy_qs_account_overrides](#recipes-skylab_tests_appy_qs_account_overrides)
+  * [skylab:tests/apply_qs_account_overrides](#recipes-skylab_tests_apply_qs_account_overrides)
   * [skylab:tests/direct_tast_testing_enabled](#recipes-skylab_tests_direct_tast_testing_enabled)
   * [skylab:tests/no_build_target](#recipes-skylab_tests_no_build_target)
   * [skylab:tests/tests_to_retry](#recipes-skylab_tests_tests_to_retry)
@@ -9307,13 +9307,13 @@ PUpr CL.
 Args:
   gerrit_changes: The gerrit changes applied to the build.
 
-&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#127)(self):**
+&mdash; **def [direct\_tast\_testing\_enabled](/recipe_modules/skylab/api.py#137)(self):**
 
-&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#115)(self, uht: UnitHwTest, tast_first_class: bool):**
+&mdash; **def [direct\_test\_retries\_elegible](/recipe_modules/skylab/api.py#125)(self, uht: UnitHwTest, tast_first_class: bool):**
 
 Returns whether the hw test is elegible for direct test retries.
 
-&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#99)(self):**
+&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#109)(self):**
 
 Returns the hw tests which ran as Tast first class in the last run.
 
@@ -9321,7 +9321,7 @@ Returns the hw tests which ran as Tast first class in the last run.
 
 Get the quota scheduler account the module is configured to use.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#171)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#181)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -9338,7 +9338,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#224)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#234)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -9363,7 +9363,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#496)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#506)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -14095,12 +14095,12 @@ Tests for sign_artifacts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/wait_on_suites_empty_arg.py#17)(api):**
-### *recipes* / [skylab:tests/appy\_qs\_account\_overrides](/recipe_modules/skylab/tests/appy_qs_account_overrides.py)
+### *recipes* / [skylab:tests/apply\_qs\_account\_overrides](/recipe_modules/skylab/tests/apply_qs_account_overrides.py)
 
-[DEPS](/recipe_modules/skylab/tests/appy_qs_account_overrides.py#10): [cros\_tags](#recipe_modules-cros_tags), [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/skylab/tests/apply_qs_account_overrides.py#10): [cros\_tags](#recipe_modules-cros_tags), [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/skylab/tests/appy_qs_account_overrides.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/skylab/tests/apply_qs_account_overrides.py#22)(api):**
 ### *recipes* / [skylab:tests/direct\_tast\_testing\_enabled](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py)
 
 [DEPS](/recipe_modules/skylab/tests/direct_tast_testing_enabled.py#11): [git\_footers](#recipe_modules-git_footers), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

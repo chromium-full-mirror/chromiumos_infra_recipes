@@ -1,6 +1,13 @@
 [
   {
     "cmd": [],
+    "name": "apply qs account overrides",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No qs account overrides were applied@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "schedule skylab tests v2",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@container metadata@{@@@",

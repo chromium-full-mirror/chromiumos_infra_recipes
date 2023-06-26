@@ -72,29 +72,39 @@ class SkylabApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes: The gerrit changes applied to the build.
     """
-    testing_override_values = self.m.git_footers.get_footer_values(
-        gerrit_changes, TESTING_OVERRIDE_FOOTER)
 
-    # Buganizer id must be at least 9 digits long.
-    regex = re.compile('^(?P<qs_account>' + self.QS_UNMANAGED_PATTERN +
-                       r')\s+b/\d{9,}\s*$')
+    with self.m.step.nest('apply qs account overrides') as presentation:
+      testing_override_values = self.m.git_footers.get_footer_values(
+          gerrit_changes, TESTING_OVERRIDE_FOOTER)
 
-    # Pick up only values matching the pattern.
-    qs_accounts = []
-    for testing_override_value in testing_override_values:
-      for match in [regex.search(testing_override_value)]:
-        if match:
-          qs_accounts.append(match.group('qs_account'))
+      # Buganizer id must be at least 9 digits long.
+      regex = re.compile('^(?P<qs_account>' + self.QS_UNMANAGED_PATTERN +
+                         r')\s+b/\d{9,}\s*$')
 
-    if qs_accounts:
-      qs_account = sorted(qs_accounts, reverse=True).pop()
-      self.set_qs_account(qs_account)
-    else:
+      # Pick up only values matching the pattern.
+      qs_accounts = []
+      for testing_override_value in testing_override_values:
+        for match in [regex.search(testing_override_value)]:
+          if match:
+            qs_accounts.append(match.group('qs_account'))
+
+      if qs_accounts:
+        qs_account = sorted(qs_accounts, reverse=True).pop()
+
       # Is the build tagged as overriding the PCQ quota scheduler account?
-      if self.m.cros_tags.has_entry('cq_cl_tag',
-                                    'pupr:chromeos-base/lacros-ash-atomic',
-                                    self.m.buildbucket.build.tags):
-        self.set_qs_account('pupr')
+      elif self.m.cros_tags.has_entry('cq_cl_tag',
+                                      'pupr:chromeos-base/lacros-ash-atomic',
+                                      self.m.buildbucket.build.tags):
+        qs_account = 'pupr'
+      else:
+        qs_account = None
+
+      if qs_account:
+        self.set_qs_account(qs_account)
+        presentation.step_text = 'Applied qs account overrides: {}'.format(
+            qs_account)
+      else:
+        presentation.step_text = 'No qs account overrides were applied'
 
   @property
   def last_run_tast_first_class_tests(self) -> List[str]:
