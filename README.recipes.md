@@ -14379,12 +14379,12 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 &mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api: RecipeApi):**
 ### *recipes* / [test\_manifest](/recipes/test_manifest.py)
 
-[DEPS](/recipes/test_manifest.py#16): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_manifest.py#17): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [deferrals](#recipe_modules-deferrals), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Verifies a repo manifest.
 
-&mdash; **def [RunSteps](/recipes/test_manifest.py#36)(api: RecipeApi, properties: TestManifestProperties):**
+&mdash; **def [RunSteps](/recipes/test_manifest.py#40)(api: RecipeApi, properties: TestManifestProperties):**
 ### *recipes* / [test\_new\_sdk](/recipes/test_new_sdk.py)
 
 [DEPS](/recipes/test_new_sdk.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

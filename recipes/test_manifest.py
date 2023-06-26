@@ -6,6 +6,7 @@
 """Verifies a repo manifest."""
 
 import contextlib
+import re
 
 from PB.chromiumos.branch import Branch
 from PB.recipes.chromeos.test_manifest import TestManifestProperties
@@ -19,10 +20,13 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'cros_branch',
     'cros_source',
+    'deferrals',
+    'gerrit',
     'git',
     'repo',
     'src_state',
@@ -48,7 +52,8 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
       api.cros_source.ensure_synced_cache()
       api.cros_source.sync_to_gitiles_commit(api.src_state.gitiles_commit)
       with api.context(cwd=api.src_state.workspace_path):
-        yield
+        with api.deferrals.raise_exceptions_at_end():
+          yield
 
   with _setup():
     gerrit_changes = api.src_state.gerrit_changes
@@ -61,6 +66,32 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
     if gerrit_changes:
       with api.step.nest('cherry-pick gerrit changes'):
         patch_sets = api.cros_source.apply_gerrit_changes(gerrit_changes)
+
+        # TODO(b/287692009): Remove when file additions are handled properly.
+        # Check for added files as this has the potential to cause an outage.
+        # Raise exception, but defer until the end so we can run other checks.
+        with api.deferrals.defer_exceptions():
+          with api.step.nest('check for new files') as pres:
+            for patch_set in patch_sets:
+              project_paths = api.cros_source.find_project_paths(
+                  patch_set.project, patch_set.branch)
+              for project_path in project_paths:
+                path = api.cros_source.workspace_path.join(project_path)
+                with api.context(cwd=path):
+                  head_commit = api.git.head_commit()
+                  git_show_cmd = [
+                      'git', 'show', '--pretty=oneline', '--name-status',
+                      head_commit
+                  ]
+                  result = api.step('show HEAD commit', git_show_cmd,
+                                    stdout=api.raw_io.output_text())
+                  pres.logs['show HEAD commit'] = str(result.stdout)
+                  for line in result.stdout.strip().splitlines():
+                    # An added file line starts with A followed by whitespace.
+                    if re.match(r'^A\s.*', line):
+                      raise api.step.StepFailure(
+                          'New files cannot currently be added to the manifest repo.'
+                      )
 
     with api.step.nest('get new project infos'):
       new_project_infos = dict(
@@ -77,7 +108,6 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
                    project_old_name,
                    new_project_infos[project_path],
                ))
-
 
     # If we get this far, we were successful in syncing to the manifest that was
     # provided by buildbucket (generally emtpy for CQ), or builder-config (if
@@ -138,10 +168,17 @@ def GenTests(api: RecipeTestApi):
           api.src_state.workspace_path.join(
               'src/chromiumos/manifest/default.xml')), *common_args)
 
+  head_commit_no_changes = '''
+M       README.md
+M       _something.xml'''
+
   yield api.test(
       'with-manifest-internal-changes',
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['chromeos/manifest-internal']),
+      api.override_step_data(
+          'cherry-pick gerrit changes.check for new files.show HEAD commit',
+          stdout=api.raw_io.output_text(head_commit_no_changes)),
       internal_exists, tests_internal, *common_args)
 
   yield api.test(
@@ -164,3 +201,22 @@ def GenTests(api: RecipeTestApi):
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
+
+  head_commit_changes = '''
+M       README.md
+A       _something.xml'''
+
+  yield api.test(
+      'manifest-file-added',
+      api.buildbucket.try_build(project='chromeos/manifest-internal'),
+      api.properties(test_branch_projects=['chromeos/manifest-internal']),
+      api.override_step_data(
+          'cherry-pick gerrit changes.check for new files.show HEAD commit',
+          stdout=api.raw_io.output_text(head_commit_changes)),
+      internal_exists,
+      tests_internal,
+      *common_args,
+      # Ensure we exercise the whole recipe, even if we find an added file.
+      api.post_check(post_process.MustRun, 'get current project infos'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE')
