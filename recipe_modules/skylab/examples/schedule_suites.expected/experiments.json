@@ -516,11 +516,27 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "schedule skylab tests v2.create test requests.configure test-board-release-main (3).find matching builds",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@matching builds@@@"
+    ]
+  },
+  {
     "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Cros-Experiments"
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"chromeos\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -535,10 +551,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "schedule skylab tests v2.create test requests.configure test-board-release-main (3).read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "name": "schedule skylab tests v2.create test requests.configure test-board-release-main (3).find matching builds.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

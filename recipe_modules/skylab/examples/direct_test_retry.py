@@ -97,7 +97,7 @@ def GenTests(api):
   build.output.properties['tast_first_class_tests'] = ['tast-first-class']
 
   yield api.test(
-      'enabled',
+      'basic',
       api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
       api.buildbucket.simulated_search_results(
@@ -112,22 +112,6 @@ def GenTests(api):
       ].logs['request'])),
       # Non-CFT test suites are not elegible for direct test retries during the
       # initial rollout.
-      api.post_check(lambda check, steps: check('tast.shard-0' not in steps[
-          'schedule skylab tests v2.create test requests.configure test-builder (3)'
-      ].logs['request'])),
-      api.post_check(lambda check, steps: check('tast.test1' not in steps[
-          'schedule skylab tests v2.create test requests.configure test-builder (3)'
-      ].logs['request'])),
-  )
-
-  yield api.test(
-      'not-enabled',
-      api.post_check(lambda check, steps: check('tast.test1' not in steps[
-          'schedule skylab tests v2.create test requests.configure test-builder'
-      ].logs['request'])),
-      api.post_check(lambda check, steps: check('tast.shard-0' not in steps[
-          'schedule skylab tests v2.create test requests.configure test-builder (2)'
-      ].logs['request'])),
       api.post_check(lambda check, steps: check('tast.shard-0' not in steps[
           'schedule skylab tests v2.create test requests.configure test-builder (3)'
       ].logs['request'])),
