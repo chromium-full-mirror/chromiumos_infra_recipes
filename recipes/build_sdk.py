@@ -411,7 +411,7 @@ class BuildSDKRun:
     if self.m.build_menu.is_staging:
       bucket, builder = 'staging', 'staging-chromiumos-sdk-pupr-generator'
     else:
-      bucket, builder = 'infra', 'chromiumos-sdk-pupr-generator'
+      bucket, builder = 'pupr', 'chromiumos-sdk-pupr-generator'
     request = self.m.buildbucket.schedule_request(
         builder=builder,
         bucket=bucket,
@@ -515,7 +515,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       # Prod builder should run prod PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
-          r'"bucket": "infra"',
+          r'"bucket": "pupr"',
           r'"builder": "chromiumos-sdk-pupr-generator"',
           r'"sdkVersion": "1970.01.01.000000"',
           r'"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
