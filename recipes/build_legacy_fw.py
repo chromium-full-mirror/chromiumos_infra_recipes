@@ -349,6 +349,8 @@ class FirmwareBuilder():
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
       root = self._chroot.join(sysroot.path.strip('/'), 'firmware')
+      config_dir = self._chroot.join(
+          sysroot.path.strip('/'), 'usr/share/chromeos-config/yaml')
 
       private_dirs = self.m.file.glob_paths(
           'glob private', root, '**/ec-private/fingerprint',
@@ -366,9 +368,20 @@ class FirmwareBuilder():
 
       chroot_path = lambda x: '/' + self.m.path.relpath(x, self._chroot)
       tarball = out_path.join(_FIRMWARE_TARBALL_NAME)
-      cmd = ['tar', 'cvjf', chroot_path(tarball), '-C', chroot_path(root)]
-      # The list of files is generally too long.
-      cmd.extend(['--null', '-T', '/dev/stdin'])
+      cmd = [
+          'tar',
+          'cvjf',
+          chroot_path(tarball),
+          '-C',
+          chroot_path(config_dir),
+          'config.yaml',
+          '-C',
+          chroot_path(root),
+          '--null',
+          '-T',
+          '/dev/stdin',
+      ]
+      # The list of files is generally too long for the command line.
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
       self.sdk_call('create tarball', cmd=cmd,
                     stdin=self.m.raw_io.input(data=file_list))
