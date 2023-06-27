@@ -1267,6 +1267,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
 
       # Write branch LATEST file, e.g. LATEST-main.
+      branch = 'main' if self.m.cros_source.is_tot else branch
       branch_file = 'LATEST-{}'.format(branch)
       with self.m.step.nest('write {}'.format(branch_file)) as presentation:
         branch_file_path = gs_base_path + branch_file
