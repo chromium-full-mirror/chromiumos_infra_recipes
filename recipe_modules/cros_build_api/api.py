@@ -18,6 +18,7 @@ from google.protobuf import reflection
 from google.protobuf import timestamp_pb2
 
 from PB.chromite.api import api as meta_api
+from PB.chromiumos import common as common_pb2
 from PB.recipe_modules.chromeos.cros_build_api import (cros_build_api as
                                                        cros_build_api_pb2)
 from recipe_engine.recipe_api import RecipeApi
@@ -404,10 +405,17 @@ class CrosBuildApiApi(RecipeApi):
       if failed_pkg.log_path.path:
         name = '%s/%s' % (failed_pkg.name.category,
                           failed_pkg.name.package_name)
-        content = self.m.file.read_raw(
-            'read log for %s' % name,
-            '%s%s' % (input_proto.chroot.path, failed_pkg.log_path.path),
-            'test data for %s log file' % name)
+        # Prior to R117, build API would return inside-chroot paths, so we
+        # translate them here.
+        # TODO(b/265885353): Remove INSIDE handling once old branches are dead.
+        if failed_pkg.log_path.location == common_pb2.Path.INSIDE:
+          log_path = '%s%s' % (input_proto.chroot.path,
+                               failed_pkg.log_path.path)
+        else:
+          log_path = failed_pkg.log_path.path
+
+        content = self.m.file.read_raw('read log for %s' % name, log_path,
+                                       'test data for %s log file' % name)
       logs.append((failed_pkg.name, content))
     return logs
 

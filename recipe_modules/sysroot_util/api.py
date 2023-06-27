@@ -22,9 +22,7 @@ from PB.chromite.api.sysroot import Profile as OldProfile
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
-from PB.chromiumos.common import IMAGE_TYPE_BASE
-from PB.chromiumos.common import IMAGE_TYPE_FACTORY
-from PB.chromiumos.common import ImageType
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from recipe_engine import recipe_api
@@ -46,7 +44,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
   def _image_type_to_fname(self, image_type):
     """Strip the IMAGE_TYPE_ prefix and provide a string image path."""
-    rep_name = re.sub('^IMAGE_TYPE_', '', ImageType.Name(image_type))
+    rep_name = re.sub('^IMAGE_TYPE_', '', common_pb2.ImageType.Name(image_type))
     return '/build/images/%s.bin' % rep_name.lower()
 
   def update_for_artifact_build(self, chroot, artifacts, force_relevance=False,
@@ -158,9 +156,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       flags = InstallToolchainRequest.Flags(compile_source=compile_source,
                                             toolchain_changed=toolchain_cls)
-      request = InstallToolchainRequest(sysroot=self.sysroot,
-                                        chroot=self.m.cros_sdk.chroot,
-                                        flags=flags)
+      request = InstallToolchainRequest(
+          sysroot=self.sysroot, chroot=self.m.cros_sdk.chroot, flags=flags,
+          result_path=common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=str(self.m.path.mkdtemp()),
+                  location=common_pb2.Path.OUTSIDE)))
       response = self.m.cros_build_api.SysrootService.InstallToolchain(
           request, response_lambda=response_lambda, timeout=timeout_sec,
           test_output_data=test_data)
@@ -208,7 +209,11 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 use_goma=self.m.cros_sdk.has_goma_config(),
                 toolchain_changed=toolchain_cls,
                 dryrun=dryrun), use_flags=config.build.use_flags,
-            goma_config=self.m.cros_sdk.goma_config())
+            goma_config=self.m.cros_sdk.goma_config(),
+            result_path=common_pb2.ResultPath(
+                path=common_pb2.Path(
+                    path=str(self.m.path.mkdtemp()),
+                    location=common_pb2.Path.OUTSIDE)))
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:
@@ -290,7 +295,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     """Build and validate images.
 
     Args:
-      image_types (list[ImageType]): Image types to build.
+      image_types (list[common_pb2.ImageType]): Image types to build.
       builder_path (str): Builder path in GS for artifacts.
       disable_rootfs_verification (bool): whether to disable rootfs verification.
       disk_layout (str): disk_layout to set, or empty for default.
@@ -342,7 +347,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       # previous Create call because the image doesn't have network access and
       # packages are attempting downloads when we're adding the netbook kernel.
       # In the future this should be rolled into the Create() call above.
-      if IMAGE_TYPE_FACTORY in image_types:
+      if common_pb2.IMAGE_TYPE_FACTORY in image_types:
         request = CreateNetbootRequest(chroot=self.m.cros_sdk.chroot,
                                        build_target=self.sysroot.build_target,
                                        factory_shim_path='')
@@ -383,9 +388,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                   'Estimated {} rootfs size {}.'.format(hr_delta, direction)
 
       to_test = [
-          image for image in response.images if image.type == IMAGE_TYPE_BASE
+          image for image in response.images
+          if image.type == common_pb2.IMAGE_TYPE_BASE
       ]
-      if IMAGE_TYPE_BASE not in image_types or not to_test:
+      if common_pb2.IMAGE_TYPE_BASE not in image_types or not to_test:
         # For now, as in legacy CQ, we only test base images. Images created
         # as a sideeffect (not explicitly requested in image_types) are not
         # tested.

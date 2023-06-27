@@ -22,10 +22,12 @@ def RunSteps(api):
           name=chromiumos.PackageInfo(category='foo',
                                       package_name='bar%d' % num,
                                       version='%d' % num),
+          # TODO(b/265885353): Remove INSIDE once old branches are dead.
           log_path=chromiumos.Path(
               path='/all/your/oopsie/are/belong/to/us/%d' % num,
-              location=chromiumos.Path.Location.INSIDE,
-          )) for num in range(60)
+              location=location))
+      for num in range(60)
+      for location in (chromiumos.Path.OUTSIDE, chromiumos.Path.INSIDE)
   ]
 
   failed_packages = api.cros_build_api.failed_pkg_logs(
@@ -44,8 +46,10 @@ def RunSteps(api):
                                       version='%d' % num),
           log_path=chromiumos.Path(
               path='',
-              location=chromiumos.Path.Location.INSIDE,
-          )) for num in range(60)
+              location=location,
+          ))
+      for num in range(60)
+      for location in (chromiumos.Path.OUTSIDE, chromiumos.Path.INSIDE)
   ]
 
   failed_packages = api.cros_build_api.failed_pkg_logs(

@@ -9,7 +9,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 from PB.chromite.api.test import BuildTargetUnitTestRequest
-from PB.chromiumos.common import BuildTarget
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 
@@ -55,11 +55,15 @@ def RunSteps(api: RecipeApi):
 
     with api.step.nest('run SDK package unit tests') as step:
       request = BuildTargetUnitTestRequest(
-          build_target=BuildTarget(name=None), chroot=api.cros_sdk.chroot,
-          package_blocklist=[], packages=[],
+          build_target=common_pb2.BuildTarget(name=None),
+          chroot=api.cros_sdk.chroot, package_blocklist=[], packages=[],
           flags=BuildTargetUnitTestRequest.Flags(
               code_coverage=False, empty_sysroot=False,
-              testable_packages_optional=False, filter_only_cros_workon=False))
+              testable_packages_optional=False, filter_only_cros_workon=False),
+          results_path=common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=str(api.path.mkdtemp()),
+                  location=common_pb2.Path.OUTSIDE)))
       response = api.cros_build_api.TestService.BuildTargetUnitTest(
           request, response_lambda=api.cros_build_api.failed_pkg_data_names,
           pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
