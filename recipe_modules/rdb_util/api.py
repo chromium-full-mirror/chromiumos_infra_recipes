@@ -53,3 +53,15 @@ class RDBUtilApi(recipe_api.RecipeApi):
     """
     variant_map = getattr(variant, 'def')
     return variant_map.get('build_target', '')
+
+  @staticmethod
+  def get_board_from_variant(variant: Variant) -> str:
+    """Get build_target info from Variant definition.
+
+    Args:
+      variant: Variant definition of the test.
+
+    Returns: build_target of the test or ''.
+    """
+    variant_map = getattr(variant, 'def')
+    return variant_map.get('board', '')

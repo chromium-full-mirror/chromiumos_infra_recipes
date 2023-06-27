@@ -602,6 +602,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           stat.test_id = failure_rate.test_id
           stat.build_target = self.m.rdb_util.get_build_target_from_variant(
               failure_rate.variant)
+          stat.board = self.m.rdb_util.get_board_from_variant(
+              failure_rate.variant)
           # Manual exoneration's configs remove the tast prefix from test names.
           tastless_name = self.m.exoneration_util.get_tastless_name(
               stat.test_id)

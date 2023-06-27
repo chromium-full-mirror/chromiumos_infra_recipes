@@ -62,6 +62,9 @@ message FailedTestStats {
   // Build target of the failure.
   string build_target = 2;
 
+  // Board the test ran on.
+  string board = 7;
+
   // Whether this test been manually exonerated.
   bool manually_exonerated = 3;
 

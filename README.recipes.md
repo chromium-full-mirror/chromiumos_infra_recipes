@@ -590,6 +590,7 @@
   * [pupr_local_uprev:tests/uprev_packages](#recipes-pupr_local_uprev_tests_uprev_packages) &mdash; Verify that uprev_packages() creates local uprev commits as expected.
   * [pupr_local_uprev:tests/uprev_sdk](#recipes-pupr_local_uprev_tests_uprev_sdk) &mdash; Verify that uprev_sdk() creates local uprev commits as expected.
   * [pvs_run_script](#recipes-pvs_run_script) &mdash; Recipe for running PVS-related scripts.
+  * [rdb_util:examples/get_board_from_variant](#recipes-rdb_util_examples_get_board_from_variant)
   * [rdb_util:examples/get_build_target_from_variant](#recipes-rdb_util_examples_get_build_target_from_variant)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config)
   * [rdb_util:examples/get_suite](#recipes-rdb_util_examples_get_suite)
@@ -5430,7 +5431,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#802)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#804)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5440,7 +5441,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#784)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#786)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5460,7 +5461,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#737)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#739)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5497,7 +5498,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#667)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#669)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5508,7 +5509,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#705)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#707)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -8804,6 +8805,15 @@ Return the checkout path where the build is processed.
 #### **class [RDBUtilApi](/recipe_modules/rdb_util/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with ResultDB.
+
+&emsp; **@staticmethod**<br>&mdash; **def [get\_board\_from\_variant](/recipe_modules/rdb_util/api.py#57)(variant: Variant):**
+
+Get build_target info from Variant definition.
+
+Args:
+  variant: Variant definition of the test.
+
+Returns: build_target of the test or ''.
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_from\_variant](/recipe_modules/rdb_util/api.py#45)(variant: Variant):**
 
@@ -13845,6 +13855,12 @@ Main test case logic.
 Recipe for running PVS-related scripts.
 
 &mdash; **def [RunSteps](/recipes/pvs_run_script.py#23)(api, properties):**
+### *recipes* / [rdb\_util:examples/get\_board\_from\_variant](/recipe_modules/rdb_util/examples/get_board_from_variant.py)
+
+[DEPS](/recipe_modules/rdb_util/examples/get_board_from_variant.py#10): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_board_from_variant.py#18)(api):**
 ### *recipes* / [rdb\_util:examples/get\_build\_target\_from\_variant](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#8): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
