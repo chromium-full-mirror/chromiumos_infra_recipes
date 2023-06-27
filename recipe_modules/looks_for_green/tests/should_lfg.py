@@ -3,8 +3,10 @@
 # found in the LICENSE file.
 
 from recipe_engine import post_process
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 
 from PB.chromiumos.common import GerritChange
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 from PB.recipe_modules.chromeos.looks_for_green.tests.test import ShouldLfgProperties
 
 DEPS = [
@@ -20,7 +22,6 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = ShouldLfgProperties
-
 
 one_gerrit_change = [
     GerritChange(
@@ -116,6 +117,8 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           ['True'],
           'check should look for green.check disallow looks for green'),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_DISALLOW),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -133,6 +136,8 @@ def GenTests(api):
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
           ['123456'], 'check should look for green.check if CL uses Cq-Depend'),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -163,6 +168,8 @@ def GenTests(api):
           related_output,
           'check should look for green.check if CL has related changes.Check for stacked change'
       ),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -179,6 +186,8 @@ def GenTests(api):
           [], 'check should look for green.check disallow looks for green'),
       api.step_data('check should look for green.git log',
                     api.raw_io.stream_output_text('commitsha1 commitsha2')),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -208,6 +217,8 @@ def GenTests(api):
       # Merge commit (multiple ancestors)
       api.step_data('check should look for green.git log (2)',
                     api.raw_io.stream_output_text('commitsha1 commitsha2')),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
       # Should not continue after finding a merge commit.
       api.post_check(post_process.DoesNotRun,
                      'check should look for green.git log (3)'),

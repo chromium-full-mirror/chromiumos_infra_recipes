@@ -43,6 +43,14 @@ enum LooksForGreenStatus {
   STATUS_RAN_OLDER = 2;
   // Couldn't find a green snapshot within the configured lookback period.
   STATUS_FOUND_NONE = 3;
+  // Skipped the LFG due to Cq-Depend.
+  STATUS_SKIPPED_CQ_DEPEND = 4;
+  // Skipped the LFG due to stacked changes.
+  STATUS_SKIPPED_STACKED_CHANGES = 5;
+  // Skipped the LFG due to disallow.
+  STATUS_SKIPPED_DISALLOW = 6;
+  // Skipped the LFG due to merge commit.
+  STATUS_SKIPPED_MERGE_COMMIT = 7;
 }
 
 message LooksForGreenStats {

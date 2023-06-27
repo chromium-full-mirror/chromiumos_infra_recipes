@@ -135,7 +135,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             self._should_lfg = False
             return self._should_lfg
           disallow = self.found_disallow_lfg_footer(gerrit_changes)
+          if disallow:
+            self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_DISALLOW
           has_merge_commit = self._has_merge_commit(gerrit_changes)
+          if has_merge_commit:
+            self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
           self._should_lfg = (
               exp_enabled and lfg_enabled and not disallow and
               not has_merge_commit)
@@ -149,6 +153,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
               if self.m.git_footers.get_footer_values(gerrit_changes,
                                                       'Cq-Depend'):
                 self._should_lfg = False
+                self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
                 should_lfg_log += '. Found Cq-Depend footer'
                 pres.logs['Cq-Depend footer'] = (
                     'Found Cq-Depend footer. Skipping'
@@ -160,12 +165,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                   gerrit_changes)
               if related:
                 self._should_lfg = False
+                self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES
                 should_lfg_log += '. Found relation chain'
                 pres.logs['Relation chain'] = (
                     f'Found CL {gerrit_change.change} is part of a relation chain with {num_related} changes. Skipping'
                     ' looks for green.')
           if not self._should_lfg:
             should_lfg_log += '. Using original snapshot.'
+            self.m.easy.set_properties_step(looks_for_green=self.stats)
           pres.logs['should_lfg'] = should_lfg_log
     return self._should_lfg
 
