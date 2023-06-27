@@ -5,10 +5,11 @@
 
 """Recipe that builds a ChromiumOS SDK and cross-compilers."""
 
+import contextlib
 import functools
 import os
 import re
-from typing import List, Optional
+from typing import Generator, List, Optional
 
 from google.protobuf import json_format
 
@@ -129,10 +130,8 @@ class BuildSDKRun:
 
   def run(self):
     """Run the main logic for this builder."""
-    with self.m.build_menu.configure_builder(missing_ok=True), \
-        self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True,
-                                                     replace=True,
-                                                     update_chroot=False):
+    # Determine which commit
+    with self._setup():
       self._build_sdk_packages()
       self._build_toolchain()
       self._create_sdk_tarball()
@@ -142,6 +141,19 @@ class BuildSDKRun:
       self._update_gs_latest_file()
       if self.properties.launch_pupr:
         self._schedule_uprev()
+
+  @contextlib.contextmanager
+  def _setup(self) -> Generator:
+    """Configure the builder and setup the workspace and chroot."""
+    commit = None
+    if self.properties.manifest_branch:
+      commit = self.m.src_state.external_manifest.as_gitiles_commit_proto
+      commit.ref = 'refs/heads/{}'.format(self.properties.manifest_branch)
+    with self.m.build_menu.configure_builder(missing_ok=True, commit=commit), \
+      self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True,
+                                                   replace=True,
+                                                   update_chroot=False):
+      yield
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -412,29 +424,34 @@ class BuildSDKRun:
       bucket, builder = 'staging', 'staging-chromiumos-sdk-pupr-generator'
     else:
       bucket, builder = 'pupr', 'chromiumos-sdk-pupr-generator'
+
+    # PUpr uses its GitilesTriggers to pick a branch policy, because originally
+    # PUpr was always triggered by gitiles changes. Today, it allows spoofing
+    # GitilesTriggers via input properties. The embedded ref is useful because
+    # it tells PUpr which branch to upload to.
+    # The repo and revision should be unnecessary.
+    if self.properties.manifest_branch:
+      upload_ref = f'refs/heads/{self.properties.manifest_branch}'
+    else:
+      upload_ref = 'refs/heads/main'
+    pupr_trigger = triggers_pb2.Trigger(
+        gitiles=triggers_pb2.GitilesTrigger(ref=upload_ref))
+
+    pupr_properties = {
+        '$chromeos/pupr_local_uprev':
+            json_format.MessageToDict(
+                pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                    sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
+                        sdk_version=self.version,
+                        toolchain_template=self._toolchain_tarball_template,
+                    ))),
+        'triggers': [json_format.MessageToDict(pupr_trigger)],
+    }
+
     request = self.m.buildbucket.schedule_request(
         builder=builder,
         bucket=bucket,
-        properties={
-            '$chromeos/pupr_local_uprev':
-                json_format.MessageToDict(
-                    pupr_local_uprev_pb2.PuprLocalUprevProperties(
-                        sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
-                            sdk_version=self.version,
-                            toolchain_template=self._toolchain_tarball_template,
-                        ))),
-            # PUpr uses its GitilesTriggers to pick a branch policy, because
-            # PUpr was originally always triggered by gitiles changes. Today, it
-            # allows spoofing GitilesTriggers via input properties.
-            # The ref is useful because it tells PUpr which branch to upload to.
-            # However, the repo and revision should be unnecessary.
-            'triggers': [
-                json_format.MessageToDict(
-                    triggers_pb2.Trigger(
-                        gitiles=triggers_pb2.GitilesTrigger(
-                            ref="refs/heads/main")))
-            ],
-        },
+        properties=pupr_properties,
         can_outlive_parent=True,
     )
     self.m.buildbucket.schedule([request], step_name='schedule uprev')
@@ -515,10 +532,10 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       # Prod builder should run prod PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
-          r'"bucket": "pupr"',
-          r'"builder": "chromiumos-sdk-pupr-generator"',
-          r'"sdkVersion": "1970.01.01.000000"',
-          r'"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
+          '"bucket": "pupr"', '"builder": "chromiumos-sdk-pupr-generator"',
+          '"sdkVersion": "1970.01.01.000000"',
+          '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
+          '"ref": "refs/heads/main'
       ]),
   )
 
@@ -610,5 +627,13 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'declare-version-in-properties',
       api.properties(version='my-cool-version'),
       api.post_check(post_process.PropertyEquals, 'version', 'my-cool-version'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.build_menu.test(
+      'build-on-branch',
+      api.properties(launch_pupr=True, manifest_branch='stabilize-1337.B'),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request',
+                     ['"ref": "refs/heads/stabilize-1337.B']),
       api.post_process(post_process.DropExpectation),
   )

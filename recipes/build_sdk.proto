@@ -25,4 +25,9 @@ message BuildSDKProperties {
   // and amd64-host prebuilt file.
   // If False, then the generated artifacts will not affect production at all.
   bool launch_pupr = 4;
+
+  // Which branch this build should checkout and build an SDK for.
+  // This also affects which branch the launched PUpr build will uprev on.
+  // Default: Check out the latest snapshot, and build an SDK for main.
+   string manifest_branch = 5;
 }
