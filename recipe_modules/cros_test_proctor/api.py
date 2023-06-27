@@ -917,9 +917,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         name = test.common.display_name
         status = 'SUCCESS' if name in passed_test_names else 'FAILURE'
         critical = test.common.critical and test.common.critical.value
+        board = test.skylab_board if isinstance(test,
+                                                HwTestCfg.HwTest) else None
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
-        result.append(dict(name=name, critical=critical, status=status))
+        result.append(
+            dict(name=name, board=board, critical=critical, status=status))
     return result
 
   def _with_props_for_child_build(self, properties):
