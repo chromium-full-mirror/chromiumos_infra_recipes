@@ -793,7 +793,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     if artifacts_info and artifacts_info.HasField('sysroot'):
       artifacts_info.sysroot.ignore_breakpad_symbol_generation_errors = ignore_breakpad_symbol_generation_errors
 
-    with self.m.step.nest(name) as presentation:
+    with self.m.cros_build_api.parallel_operations(), self.m.step.nest(
+        name) as presentation:
       outpath = self.m.path.mkdtemp(prefix='artifacts')
       func = private_bundle_func or self._bundle_artifacts
       try:

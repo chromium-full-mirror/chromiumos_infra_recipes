@@ -248,6 +248,7 @@
   * [cros_build_api:examples/full](#recipes-cros_build_api_examples_full)
   * [cros_build_api:examples/has_endpoint](#recipes-cros_build_api_examples_has_endpoint)
   * [cros_build_api:examples/ok_retcodes](#recipes-cros_build_api_examples_ok_retcodes)
+  * [cros_build_api:examples/parallel_operations](#recipes-cros_build_api_examples_parallel_operations)
   * [cros_build_api:examples/publish_events](#recipes-cros_build_api_examples_publish_events)
   * [cros_build_api:examples/set_api_return](#recipes-cros_build_api_examples_set_api_return)
   * [cros_build_api:examples/set_upreved_ebuilds](#recipes-cros_build_api_examples_set_upreved_ebuilds)
@@ -2264,7 +2265,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#1005)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#1006)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -2279,7 +2280,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1039)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1040)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -2308,14 +2309,14 @@ Args:
 Returns:
   Whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#982)(self, properties: List[UploadedArtifacts]):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#983)(self, properties: List[UploadedArtifacts]):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1059)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1060)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -2336,7 +2337,7 @@ Returns:
   is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1228)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1229)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -2349,7 +2350,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1196)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1197)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2419,7 +2420,7 @@ Args:
 Returns:
   (UploadedArtifacts) information about uploaded artifacts.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#936)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#937)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -2524,7 +2525,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#255)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#256)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -2541,7 +2542,7 @@ will "magically" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform some validation and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#339)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#358)(self, test_data=None):**
 
 Get the Build API version.
 
@@ -2553,7 +2554,7 @@ Args:
 Returns:
   The version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#449)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#468)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
 
 Call the build API with the given input proto.
 
@@ -2594,7 +2595,7 @@ Args:
 Returns:
   The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#392)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#411)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2608,7 +2609,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#363)(self, input_proto: message.Message, output_proto: message.Message):**
+&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#382)(self, input_proto: message.Message, output_proto: message.Message):**
 
 Function to cat log file and retrieve package name.
 
@@ -2624,7 +2625,7 @@ Args:
 Returns:
   A list of tuples (package_name, build_log).
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#421)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#440)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2637,7 +2638,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#638)(self, stub: 'Stub', method: str):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#658)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
@@ -2648,21 +2649,28 @@ Args:
 Returns:
   Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#272)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#273)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#335)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#354)(self, major=1, minor=0, bug=0):**
 
 Return whether the Build API version is at least major.minor.bug.
 
-&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#296)(self):**
+&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#315)(self):**
 
 Return the log level used when calling Build API.
 
-&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#288)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#290)(self):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#318)(self):**
+Sets up the build API for running operations in parallel.
+
+Since we check out the chromite commit before making calls, parallel calls
+can clobber each other, so this context does the checkout once.
+
+&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#307)(self):**
+
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#337)(self):**
 
 Return the version that this build API uses.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -11507,6 +11515,12 @@ Call the RunCopybot endpoint.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/ok_retcodes.py#18)(api):**
+### *recipes* / [cros\_build\_api:examples/parallel\_operations](/recipe_modules/cros_build_api/examples/parallel_operations.py)
+
+[DEPS](/recipe_modules/cros_build_api/examples/parallel_operations.py#11): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/parallel_operations.py#23)(api):**
 ### *recipes* / [cros\_build\_api:examples/publish\_events](/recipe_modules/cros_build_api/examples/publish_events.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/publish_events.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -13594,9 +13608,9 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 
 &mdash; **def [RunSteps](/recipes/paygen.py#67)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#271)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#273)(resp: GenerationResponse):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#211)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#213)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
@@ -13604,7 +13618,7 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#285)(api: RecipeApi, req: PaygenProperties.PaygenRequest, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#287)(api: RecipeApi, req: PaygenProperties.PaygenRequest, resp: GenerationResponse):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#11): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -102,91 +102,93 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
         max_concurrent_requests)
 
     # Iterate through every request.
-    with api.step.nest('running paygen operations in parallel') as pres:
+    with api.cros_build_api.parallel_operations():
+      with api.step.nest('running paygen operations in parallel') as pres:
 
-      # Function to do a single paygen, given a request object.
-      def do_a_paygen(req: PaygenProperties.PaygenRequest,
-                      tries: int) -> GenerationResponse:
-        """Generate a single payload, given a request object.
+        # Function to do a single paygen, given a request object.
+        def do_a_paygen(req: PaygenProperties.PaygenRequest,
+                        tries: int) -> GenerationResponse:
+          """Generate a single payload, given a request object.
 
-        Args:
-          req: the request object to generate for.
-          tries: the number try we're on.
+          Args:
+            req: the request object to generate for.
+            tries: the number try we're on.
 
-        Returns:
-          GenerationResponse from payload generation.
-        """
-        # Number of retries doesn't include the first try.
-        suffix = '' if tries == 1 else ' retry ({})'.format(tries - 1)
-        # Execute build api endpoint for paygen.
-        return api.cros_build_api.PayloadService.GeneratePayload(
-            req.generation_request,
-            name='making single payload{}'.format(suffix),
-            step_text=api.naming.get_generation_request_title(
-                MessageToDict(req).get('generationRequest', {})))
+          Returns:
+            GenerationResponse from payload generation.
+          """
+          # Number of retries doesn't include the first try.
+          suffix = '' if tries == 1 else ' retry ({})'.format(tries - 1)
+          # Execute build api endpoint for paygen.
+          return api.cros_build_api.PayloadService.GeneratePayload(
+              req.generation_request,
+              name='making single payload{}'.format(suffix),
+              step_text=api.naming.get_generation_request_title(
+                  MessageToDict(req).get('generationRequest', {})))
 
-      # Go through each request now and do paygen with our parallel runner.
-      for request in properties.requests:
-        pres.logs['request'] = MessageToJson(request)
+        # Go through each request now and do paygen with our parallel runner.
+        for request in properties.requests:
+          pres.logs['request'] = MessageToJson(request)
 
-        paygen_parallel_runner.run_function_async(
-            do_a_paygen, request, success_handler=lambda resp, req=request,
-            api=api: report_paygen_success_to_snoopy(api, req, resp)
-            if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
+          paygen_parallel_runner.run_function_async(
+              do_a_paygen, request, success_handler=lambda resp, req=request,
+              api=api: report_paygen_success_to_snoopy(api, req, resp)
+              if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
 
-    errors, total_retries = [], 0
-    failure_reasons = []
-    for paygen_response in paygen_parallel_runner.wait_for_and_get_responses():
+      errors, total_retries = [], 0
+      failure_reasons = []
+      for paygen_response in paygen_parallel_runner.wait_for_and_get_responses(
+      ):
 
-      response = paygen_response.resp
-      request = paygen_response.req
+        response = paygen_response.resp
+        request = paygen_response.req
 
-      total_retries += paygen_response.call_count - 1
+        total_retries += paygen_response.call_count - 1
 
-      # If an exception was thrown, add it to errors and move on to the next
-      # request.
-      if paygen_response.errored:
-        errors.append(paygen_response)
-        continue
-
-      if response.failure_reason:
-        failure_reason_str = 'UNSPECIFIED'
-        # Try converting from enum to string.
-        try:
-          failure_reason_str = GenerationResponse.FailureReason.Name(
-              response.failure_reason)
-        except:  #pylint: disable=bare-except
-          pass
-        failure_reasons.append({
-            'payload':
-                api.naming.get_generation_request_title(
-                    MessageToDict(request).get('generationRequest', {})),
-            'failure_reason':
-                failure_reason_str
-        })
-        # See go/rubik-must-paygen-minios for more info about minios skips.
-        if response.failure_reason in [
-            GenerationResponse.NOT_MINIOS_COMPATIBLE,
-            GenerationResponse.MINIOS_COUNT_MISMATCH
-        ]:
-          presentation.step_text = 'not compatible with miniOS, skipping'
+        # If an exception was thrown, add it to errors and move on to the next
+        # request.
+        if paygen_response.errored:
+          errors.append(paygen_response)
           continue
-        errors.append(
-            api.future_utils.create_custom_response(
-                request, StepFailure(response.failure_reason),
-                paygen_response.call_count))
 
-      artifacts = get_paygen_response_artifacts(response)
-      for artifact in artifacts:
-        report_payload = api.paygen_testing.create_paygen_build_report_payload(
-            request, artifact.remote_uri, artifact.version)
-        if report_payload:
-          payloads.append(report_payload)
+        if response.failure_reason:
+          failure_reason_str = 'UNSPECIFIED'
+          # Try converting from enum to string.
+          try:
+            failure_reason_str = GenerationResponse.FailureReason.Name(
+                response.failure_reason)
+          except:  #pylint: disable=bare-except
+            pass
+          failure_reasons.append({
+              'payload':
+                  api.naming.get_generation_request_title(
+                      MessageToDict(request).get('generationRequest', {})),
+              'failure_reason':
+                  failure_reason_str
+          })
+          # See go/rubik-must-paygen-minios for more info about minios skips.
+          if response.failure_reason in [
+              GenerationResponse.NOT_MINIOS_COMPATIBLE,
+              GenerationResponse.MINIOS_COUNT_MISMATCH
+          ]:
+            presentation.step_text = 'not compatible with miniOS, skipping'
+            continue
+          errors.append(
+              api.future_utils.create_custom_response(
+                  request, StepFailure(response.failure_reason),
+                  paygen_response.call_count))
 
-      test_configs = api.paygen_testing.set_up_paygen_test_configs(
-          request, artifacts)
-      if test_configs:
-        paygen_test_configs.extend(test_configs)
+        artifacts = get_paygen_response_artifacts(response)
+        for artifact in artifacts:
+          report_payload = api.paygen_testing.create_paygen_build_report_payload(
+              request, artifact.remote_uri, artifact.version)
+          if report_payload:
+            payloads.append(report_payload)
+
+        test_configs = api.paygen_testing.set_up_paygen_test_configs(
+            request, artifacts)
+        if test_configs:
+          paygen_test_configs.extend(test_configs)
 
     api.easy.set_properties_step(
         payloads=[MessageToDict(payload) for payload in payloads])

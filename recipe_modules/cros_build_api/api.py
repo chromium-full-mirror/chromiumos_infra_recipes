@@ -9,6 +9,7 @@ import functools
 import hashlib
 from typing import Any, Callable, List, Optional, Tuple
 
+import contextlib
 from google.protobuf import descriptor
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
@@ -284,6 +285,24 @@ class CrosBuildApiApi(RecipeApi):
     self._version = None
     self._publish_emerge_stats_to_bq = properties.publish_emerge_stats_to_bq
     self._publish_emerge_stats_to_prop = properties.publish_emerge_stats_to_prop
+    self._parallel_operations = False
+
+  @contextlib.contextmanager
+  def parallel_operations(self):
+    """Sets up the build API for running operations in parallel.
+
+    Since we check out the chromite commit before making calls, parallel calls
+    can clobber each other, so this context does the checkout once.
+    """
+    assert self._parallel_operations is False
+    self._parallel_operations = True
+    try:
+      if ('chromeos.cros_build_api.deployable_chromite'
+          in self.m.cros_infra_config.experiments):
+        self.reset_checkout()
+      yield
+    finally:
+      self._parallel_operations = False
 
   def reset_checkout(self):
     commit = self.m.file.read_text(
@@ -538,7 +557,8 @@ class CrosBuildApiApi(RecipeApi):
       # line of code doesn't redo the manifest checkout and blow away our set
       # version.
       if ('chromeos.cros_build_api.deployable_chromite'
-          in self.m.cros_infra_config.experiments):
+          in self.m.cros_infra_config.experiments
+         ) and not self._parallel_operations:
         self.reset_checkout()
 
       cmd.extend([
