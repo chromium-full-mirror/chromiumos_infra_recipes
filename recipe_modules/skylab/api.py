@@ -340,6 +340,11 @@ class SkylabApi(recipe_api.RecipeApi):
               key += "_{}".format(suiteReqCount[key])
             reqs[key] = json_format.MessageToDict(request)
 
+      # It is possible no reqs were actually added, e.g. if no containers are
+      # found. Exit early instead of scheduling a pointless CTP build.
+      if not reqs:
+        return []
+
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
       build = self.schedule_ctp_requests(tagged_requests=reqs,

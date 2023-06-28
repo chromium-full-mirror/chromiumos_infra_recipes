@@ -60,4 +60,8 @@ def GenTests(api):
           'schedule skylab tests v2.create test requests.configure test-builder',
           "Execution via container requested, but no container metadata for build target 'another_target'",
       ),
+      api.post_process(
+          post_process.DoesNotRun,
+          'schedule skylab tests v2.buildbucket.schedule',
+      ),
   )
