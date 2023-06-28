@@ -18,6 +18,7 @@ from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.recipes.chromeos import build_sdk as build_sdk_pb2
+from PB.recipes.chromeos import generator as generator_pb2
 from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
                                                          pupr_local_uprev_pb2)
 from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
@@ -447,6 +448,10 @@ class BuildSDKRun:
                     ))),
         'triggers': [json_format.MessageToDict(pupr_trigger)],
     }
+    if self.properties.pupr_branch_policy != generator_pb2.BranchPolicy():
+      pupr_properties['branch_policies'] = [
+          json_format.MessageToDict(self.properties.pupr_branch_policy)
+      ]
 
     request = self.m.buildbucket.schedule_request(
         builder=builder,
@@ -537,6 +542,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
           '"ref": "refs/heads/main'
       ]),
+      api.post_check(post_process.LogDoesNotContain, 'schedule uprev',
+                     'request', ['"branch_policies":']),
   )
 
   yield api.test(
@@ -635,5 +642,15 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(launch_pupr=True, manifest_branch='stabilize-1337.B'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
                      ['"ref": "refs/heads/stabilize-1337.B']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.build_menu.test(
+      'override-pupr-branch-policy',
+      api.properties(
+          launch_pupr=True, pupr_branch_policy=generator_pb2.BranchPolicy(
+              reviewers=[generator_pb2.Reviewer(email='sundar@google.com')])),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request',
+                     ['"branch_policies":', '"email": "sundar@google.com"']),
       api.post_process(post_process.DropExpectation),
   )
