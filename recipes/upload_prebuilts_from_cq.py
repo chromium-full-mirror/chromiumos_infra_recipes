@@ -26,6 +26,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import (
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
+                                                                triggers_pb2)
 
 from PB.recipes.chromeos.upload_prebuilts_from_cq import (
     UploadPrebuiltsFromCqProperties)
@@ -45,6 +47,7 @@ DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
     'gerrit': 'gerrit',
     'properties': 'recipe_engine/properties',
+    'scheduler': 'recipe_engine/scheduler',
     'step': 'recipe_engine/step',
     'time': 'recipe_engine/time',
 }
@@ -332,16 +335,33 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
       pres_search_cls.step_summary_text = 'Found no CL. Finishing.'
       return 'Found no CL'
 
+    gitiles_triggers = [
+        t for t in api.scheduler.triggers if t.HasField('gitiles')
+    ]
+    current_revision = change.get('current_revision')
+
+    pres_search_cls.logs['change'] = str(change)
+    pres_search_cls.logs['gitiles_triggers'] = str(gitiles_triggers)
+
+    # Interrupt the job, if the job is triggered by gitiles but the trigger is
+    # not the uprev commit.
+    # This logic is under testing so that works only on staging as for now.
+    if is_staging and len(gitiles_triggers) > 0:
+      triggered_from_correct_cl = any(
+          t.gitiles.revision == current_revision for t in gitiles_triggers)
+      if not triggered_from_correct_cl:
+        pres_search_cls.step_summary_text = \
+            "The trigger of this job isn't the latest uprev commit. Finishing."
+        return "The trigger isn't the latest uprev commit."
+
     change_num = change['_number']
     pres_search_cls.step_summary_text = \
         f'Found http://crrev.com/c/{change_num}'
-    pres_search_cls.logs['change'] = str(change)
 
   with api.step.nest('search the patchset') as presentation:
     if not 'revisions' in change or len(change['revisions']) == 0:
       raise StepFailure('no revisions in the change')
 
-    current_revision = change['current_revision']
     landed_patchset = change['revisions'][current_revision]['_number']
 
     prebuilt_entries = []
@@ -476,6 +496,22 @@ def GenTests(api: RecipeTestApi):
       'submitted':
           '2023-01-04 00:00:00.000000000',
   }
+
+  GITILES_TRIGGER_UPREV_COMMIT = triggers_pb2.Trigger(
+      id=str(CHANGE['_number']),
+      gitiles=triggers_pb2.GitilesTrigger(
+          repo=GERRIT_PROJECT,
+          revision=CHANGE['current_revision'],
+      ),
+  )
+
+  GITILES_TRIGGER_NON_UPREV_COMMIT = triggers_pb2.Trigger(
+      id='33333',
+      gitiles=triggers_pb2.GitilesTrigger(
+          repo=GERRIT_PROJECT,
+          revision="3333333333333333333333333333333333333333",
+      ),
+  )
 
   # Finished state of builder list: the all builds are finished.
   BUILDS = [
@@ -856,4 +892,35 @@ def GenTests(api: RecipeTestApi):
           post_process.SummaryMarkdown,
           'Updated 1 of 2 builders after 1 trials.\nInterrupted: maximum running time (1 sec) exceeded.'
       ),
+  )
+
+  yield api.build_menu.test(
+      'triggered-by-correct-uprev-commit',
+      api.gerrit.set_query_changes_response('search the last merged uprev CL',
+                                            [CHANGE], GERRIT_HOST_URL, 1),
+      api.gerrit.set_query_changes_response('search the last merged uprev CL',
+                                            [CHANGE], GERRIT_HOST_URL, 2),
+      api.buildbucket.simulated_search_results(
+          BUILDS,
+          step_name='search the patchset.patchset #2.buildbucket.search',
+      ),
+      api.scheduler(triggers=[GITILES_TRIGGER_UPREV_COMMIT]),
+      api.post_check(post_process.MustRun, 'search the prebuilts'),
+      api.post_check(post_process.MustRun, 'set BINHOSTs'),
+      api.post_check(post_process.SummaryMarkdown,
+                     'Updated all of 2 builders after 1 trials.'),
+      bucket='staging',
+  )
+
+  yield api.build_menu.test(
+      'triggered-by-non-uprev-commit',
+      api.gerrit.set_query_changes_response('search the last merged uprev CL',
+                                            [CHANGE], GERRIT_HOST_URL, 1),
+      api.gerrit.set_query_changes_response('search the last merged uprev CL',
+                                            [CHANGE], GERRIT_HOST_URL, 2),
+      api.scheduler(triggers=[GITILES_TRIGGER_NON_UPREV_COMMIT]),
+      api.post_check(post_process.DoesNotRun, 'search the prebuilts'),
+      api.post_check(post_process.SummaryMarkdown,
+                     "The trigger isn't the latest uprev commit."),
+      bucket='staging',
   )

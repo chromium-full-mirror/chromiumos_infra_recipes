@@ -9,7 +9,9 @@
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@Found http://crrev.com/c/4567891@@@",
       "@@@STEP_LOG_LINE@change@{'_number': 4567891, 'id': 'chromiumos%2Foverlays%2Fchromiumos-overlay~main~Ixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'submitted': '2023-01-02 00:00:00.000000000'}@@@",
-      "@@@STEP_LOG_END@change@@@"
+      "@@@STEP_LOG_END@change@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@[]@@@",
+      "@@@STEP_LOG_END@gitiles_triggers@@@"
     ]
   },
   {

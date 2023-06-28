@@ -14796,7 +14796,7 @@ Recipe for running tricium on CLs.
 &mdash; **def [RunSteps](/recipes/tricium.py#41)(api: RecipeApi):**
 ### *recipes* / [upload\_prebuilts\_from\_cq](/recipes/upload_prebuilts_from_cq.py)
 
-[DEPS](/recipes/upload_prebuilts_from_cq.py#38): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/upload_prebuilts_from_cq.py#40): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe that retrieves locations from google storage that the binpkgs are
@@ -14805,11 +14805,11 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#324)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#327)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#317)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#320)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
-&mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#139)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
+&mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#142)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
 Utility function to get the builds corresponding to the gerrit change.
 
@@ -14821,7 +14821,7 @@ Args:
 Returns:
   Builds of the gerrit change.
 
-&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#67)(api: RecipeApi):**
+&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#70)(api: RecipeApi):**
 
 Utility function to get the last merged change from Gerrit.
 
@@ -14834,7 +14834,7 @@ Args:
 Returns:
   GerritChange of the last marged uprev. Or None if not found.
 
-&mdash; **def [search\_prebuilts](/recipes/upload_prebuilts_from_cq.py#176)(api: RecipeApi, step_name: str, fetched_builds: Optional[List[build_pb2.Build]], gerrit_change: GerritChange, finished_build_targets: Set[str], is_staging: bool):**
+&mdash; **def [search\_prebuilts](/recipes/upload_prebuilts_from_cq.py#179)(api: RecipeApi, step_name: str, fetched_builds: Optional[List[build_pb2.Build]], gerrit_change: GerritChange, finished_build_targets: Set[str], is_staging: bool):**
 
 Utility function to get the prebuilts corresponding to the gerrit change.
 
@@ -14853,7 +14853,7 @@ Returns:
   - List of prebuilt entries that are added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#290)(api: RecipeApi, step_name: str, prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#293)(api: RecipeApi, step_name: str, prebuilt_entries: List[dict]):**
 
 Utility function to set the binhosts repeatedly.
 

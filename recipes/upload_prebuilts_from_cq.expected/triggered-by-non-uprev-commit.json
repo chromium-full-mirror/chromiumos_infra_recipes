@@ -7,10 +7,15 @@
     "cmd": [],
     "name": "search the last merged uprev CL",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Found http://crrev.com/c/4567890@@@",
+      "@@@STEP_SUMMARY_TEXT@The trigger of this job isn't the latest uprev commit. Finishing.@@@",
       "@@@STEP_LOG_LINE@change@{'_number': 4567890, 'current_revision': '0123456789abcdef0123456789abcdef01234567', 'host': 'chromium-review.googlesource.com', 'id': 'chromiumos%2Foverlays%2Fchromiumos-overlay~main~I0123456789abcdef0123456789abcdef01234567', 'project': 'chromiumos/overlays/chromiumos-overlay', 'revisions': {'0123456789abcdef0123456789abcdef01234567': {'_number': 3}, '2222222222222222222222222222222222222222': {'_number': 2}}, 'submitted': '2023-01-01 00:00:00.000000000'}@@@",
       "@@@STEP_LOG_END@change@@@",
-      "@@@STEP_LOG_LINE@gitiles_triggers@[]@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@[id: \"33333\"@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@gitiles {@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@  repo: \"chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@  revision: \"3333333333333333333333333333333333333333\"@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@}@@@",
+      "@@@STEP_LOG_LINE@gitiles_triggers@]@@@",
       "@@@STEP_LOG_END@gitiles_triggers@@@"
     ]
   },
@@ -50,7 +55,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -122,7 +127,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -157,98 +162,7 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "search the patchset",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@No patchset found. Exiting@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "search the patchset.patchset #2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "500",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"2\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "search the patchset.patchset #2.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:00Z\", \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "search the patchset.patchset #1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "500",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"gerritChanges\": [{\"change\": \"4567890\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"1\", \"project\": \"chromiumos/overlays/chromiumos-overlay\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "search the patchset.patchset #1.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
     "name": "$result",
-    "summaryMarkdown": "No patchset found on the last uprev CL"
+    "summaryMarkdown": "The trigger isn't the latest uprev commit."
   }
 ]
