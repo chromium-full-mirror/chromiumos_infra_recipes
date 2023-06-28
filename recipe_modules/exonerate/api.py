@@ -561,6 +561,37 @@ class ExonerateApi(recipe_api.RecipeApi):
     # analysis response is bad. 0 is the fallback in that case.
     return 0
 
+  def generate_failed_test_stats(
+      self, failure_rates: TestVariantFailureRateAnalysis) -> FailedTestStats:
+    """Returns FailedTestStats for the given LUCI Analysis failure rates."""
+    all_stats = []
+    for failure_rate in failure_rates:
+      stat = FailedTestStats()
+      stat.test_id = failure_rate.test_id
+      stat.build_target = self.m.rdb_util.get_build_target_from_variant(
+          failure_rate.variant)
+      stat.board = self.m.rdb_util.get_board_from_variant(failure_rate.variant)
+      # Manual exoneration's configs remove the tast prefix from test names.
+      tastless_name = self.m.exoneration_util.get_tastless_name(stat.test_id)
+      stat.manually_exonerated = self._is_test_name_exonerable(
+          tastless_name, stat.build_target)
+      stat.consistent_failure_count = (
+          self.get_consistent_failure_count_from_verdicts(
+              failure_rate.recent_verdicts))
+      stat.flaky_verdict_percent = (
+          self.get_flake_percent_from_interval_stats(
+              failure_rate.interval_stats))
+      flaky_verdicts = len(failure_rate.run_flaky_verdict_examples)
+      # This is Browser's current algorithm. Starting with this. Might change later.
+      consistently_failing = (
+          stat.consistent_failure_count >= self._consistent_failure_threshold)
+      was_flaky = (
+          flaky_verdicts >= self._flaky_verdict_threshold and
+          stat.flaky_verdict_percent >= self._flaky_percent_threshold)
+      stat.automatically_exonerated = consistently_failing or was_flaky
+      all_stats.append(stat)
+    return all_stats
+
   def auto_exoneration_analysis(self, fake_data: bool = False) -> bool:
     """Analyze failed tests to see if they can be exonerated.
 
@@ -595,35 +626,8 @@ class ExonerateApi(recipe_api.RecipeApi):
             test_variant_list)
         pres.logs['failure_rate'] = str(
             sorted(failure_rates, key=lambda x: x.test_id))
-        all_stats = []
-        for failure_rate in failure_rates:
-          stat = FailedTestStats()
-          stat.test_id = failure_rate.test_id
-          stat.build_target = self.m.rdb_util.get_build_target_from_variant(
-              failure_rate.variant)
-          stat.board = self.m.rdb_util.get_board_from_variant(
-              failure_rate.variant)
-          # Manual exoneration's configs remove the tast prefix from test names.
-          tastless_name = self.m.exoneration_util.get_tastless_name(
-              stat.test_id)
-          stat.manually_exonerated = self._is_test_name_exonerable(
-              tastless_name, stat.build_target)
-          stat.consistent_failure_count = (
-              self.get_consistent_failure_count_from_verdicts(
-                  failure_rate.recent_verdicts))
-          stat.flaky_verdict_percent = (
-              self.get_flake_percent_from_interval_stats(
-                  failure_rate.interval_stats))
-          flaky_verdicts = len(failure_rate.run_flaky_verdict_examples)
-          # This is Browser's current algorithm. Starting with this. Might change later.
-          consistently_failing = (
-              stat.consistent_failure_count >=
-              self._consistent_failure_threshold)
-          was_flaky = (
-              flaky_verdicts >= self._flaky_verdict_threshold and
-              stat.flaky_verdict_percent >= self._flaky_percent_threshold)
-          stat.automatically_exonerated = consistently_failing or was_flaky
-          all_stats.append(stat)
+
+        all_stats = self.generate_failed_test_stats(failure_rates)
 
         override_info = self.m.exoneration_util.override_calculation(
             all_stats, self._overall_autoex_limit,
