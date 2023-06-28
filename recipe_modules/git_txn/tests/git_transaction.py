@@ -19,8 +19,12 @@ def RunSteps(api):
   with api.context(cwd=api.src_state.workspace_path.join('src/project')):
     api.git_txn.update_ref('remote', lambda: None, ref='ref', retries=1)
     api.git_txn.update_ref('remote', lambda: False, ref='ref')
-    api.git_txn.update_ref_write_file('remote', 'Update file', 'file/path.txt',
-                                      'data', ref='ref')
+
+    # Normal run
+    api.git_txn.update_ref_write_files('remote', 'Update file',
+                                       [('file/path.txt', 'data')], ref='ref')
+    # Empty of lists
+    api.git_txn.update_ref_write_files('remote', 'Update file', [], ref='ref')
 
 
 def GenTests(api):

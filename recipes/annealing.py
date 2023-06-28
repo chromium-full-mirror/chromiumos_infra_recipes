@@ -406,8 +406,9 @@ def _publish_snapshot(api, repo_url, snapshot_ref, prior_commit, snapshot_file,
         commit_message += '%s: %s\n' % (key, val)
 
     if not dry_run:
-      api.git_txn.update_ref_write_file(repo_url, commit_message, snapshot_file,
-                                        snapshot_xml, ref=snapshot_ref)
+      api.git_txn.update_ref_write_files(repo_url, commit_message,
+                                         [(snapshot_file, snapshot_xml)],
+                                         ref=snapshot_ref)
     return _make_gitiles_commit(api, repo_url, 'refs/heads/%s' % snapshot_ref,
                                 api.git.head_commit())
 

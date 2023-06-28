@@ -176,11 +176,11 @@ def get_buildbucket_builds(api: RecipeApi, gerrit_change: GerritChange,
           builds))
 
 
-def search_prebuilts(api: RecipeApi, step_name: str,
-                     fetched_builds: Optional[List[build_pb2.Build]],
-                     gerrit_change: GerritChange,
-                     finished_build_targets: Set[str],
-                     is_staging: bool) -> Tuple[List[dict], List[str]]:
+def search_prebuilts(
+    api: RecipeApi, step_name: str,
+    fetched_builds: Optional[List[build_pb2.Build]],
+    gerrit_change: GerritChange, finished_build_targets: Set[str],
+    is_staging: bool) -> Tuple[List[dict], List[dict], List[str]]:
   """Utility function to get the prebuilts corresponding to the gerrit change.
 
   Args:
@@ -195,13 +195,15 @@ def search_prebuilts(api: RecipeApi, step_name: str,
 
   Returns:
     Tuple of the following 2 values:
-    - List of prebuilt entries that are added in this method
+    - List of public prebuilt entries added in this method
+    - List of private prebuilt entries added in this method
     - List of names of running builders
   """
 
   build_targets = set()
   debug_prebuilts_log = ''
-  prebuilt_entries = []
+  public_prebuilt_entries = []
+  private_prebuilt_entries = []
   running_builds = []
 
   with api.step.nest(step_name) as presentation:
@@ -259,19 +261,24 @@ def search_prebuilts(api: RecipeApi, step_name: str,
       build_targets.add(build_target.name)
       finished_build_targets.add(build_target.name)
 
-      prebuilt_entries.append({
-          'build_target':
-              build_target,
-          'build_end_time':
-              build.end_time,
-          'prebuilts_private':
-              prebuilts_private if prebuilts_private is not None else True,
-          'prebuilts_uri':
-              prebuilts_uri,
-      })
+      is_private = prebuilts_private if prebuilts_private is not None else True
+
+      entry = {
+          'build_target': build_target,
+          'build_end_time': build.end_time,
+          'prebuilts_private': is_private,
+          'prebuilts_uri': prebuilts_uri,
+      }
+
+      if entry['prebuilts_private']:
+        private_prebuilt_entries.append(entry)
+      else:
+        public_prebuilt_entries.append(entry)
 
     presentation.logs['debug_prebuilts_log'] = debug_prebuilts_log
-    presentation.logs['prebuilt_entries'] = str(prebuilt_entries)
+    presentation.logs['private_prebuilt_entries'] = str(
+        private_prebuilt_entries)
+    presentation.logs['public_prebuilt_entries'] = str(public_prebuilt_entries)
     # Sorting to make the result stable among different Python versions.
     presentation.logs['build_targets'] = str(sorted(build_targets))
     presentation.logs['running_builds'] = str(running_builds)
@@ -279,41 +286,101 @@ def search_prebuilts(api: RecipeApi, step_name: str,
     sorted_builds_len = len(sorted_builds)
     prebiously_updated_builds_len = (
         len(finished_build_targets) - len(build_targets))
-    prebuilt_entries_len = len(prebuilt_entries)
+    prebuilt_entries_len = (
+        len(public_prebuilt_entries) + len(private_prebuilt_entries))
     running_builds_len = len(running_builds)
-    presentation.step_summary_text = (
+    presentation.step_text = (
         f'Total {sorted_builds_len} builds:\n'
         f'- {prebiously_updated_builds_len} previously-updated builds\n'
         f'- {prebuilt_entries_len} succeeded builds with uploaded prebuilts\n'
         f'- {running_builds_len} running builds\n')
 
-  return prebuilt_entries, running_builds
+  return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhots(api: RecipeApi, step_name: str, prebuilt_entries: List[dict]):
+def set_binhots(api: RecipeApi, step_name: str, is_staging: bool,
+                public_prebuilt_entries: List[dict],
+                private_prebuilt_entries: List[dict]) -> None:
   """Utility function to set the binhosts repeatedly.
 
   Args:
     api: See RunSteps documentation.
     step_name: Name of the step of this process to be shown in the Luci UI.
-    prebuilt_entries: Prebuilts to be set the binhosts of.
+    public_prebuilt_entries: Public prebuilts to be set the binhosts of.
+    private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
   """
+  if not is_staging:
+    # Deprecated: OLD LOGIC, currently working on prod
+    # We will remove this soon after the new logic gets stabilized.
+    with api.step.nest(step_name) as presentation:
+      prebuilt_entries_len = len(public_prebuilt_entries)
+      presentation.step_summary_text = f'Set {prebuilt_entries_len} builds'
+      with api.cros_source.checkout_overlays_context(
+      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
+        # Processes public builders
+        with api.step.nest("Public binhosts") as presentation:
+          public_prebuilt_entries_len = len(public_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {public_prebuilt_entries_len} binhosts.')
+          for entry in public_prebuilt_entries:
+            build_target = entry['build_target']
+            with api.step.nest(f'update {build_target.name}'):
+              api.cros_prebuilts.set_binhost(
+                  build_target,
+                  entry['prebuilts_private'],
+                  binhost_pb.CQ_BINHOST,
+                  entry['prebuilts_uri'],
+                  push_retries=GIT_PUSH_MAX_RETRY_COUNT,
+              )
 
-  with api.step.nest(step_name) as presentation:
-    prebuilt_entries_len = len(prebuilt_entries)
-    presentation.step_summary_text = f'Set {prebuilt_entries_len} builds'
-    with api.cros_source.checkout_overlays_context(
-    ), api.build_menu.setup_workspace(cherry_pick_changes=True):
-      # TODO(b/277171567): Combine the CLs.
-      for entry in prebuilt_entries:
-        build_target = entry['build_target']
-        with api.step.nest(f'update {build_target.name}'):
-          api.cros_prebuilts.set_binhost(
-              build_target,
-              entry['prebuilts_private'],
-              binhost_pb.CQ_BINHOST,
-              entry['prebuilts_uri'],
-              push_retries=GIT_PUSH_MAX_RETRY_COUNT,
+        # Processes private builders
+        with api.step.nest("Private binhosts") as presentation:
+          private_prebuilt_entries_len = len(private_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {private_prebuilt_entries_len} binhosts.')
+          for entry in private_prebuilt_entries:
+            build_target = entry['build_target']
+            with api.step.nest(f'update {build_target.name}'):
+              api.cros_prebuilts.set_binhost(
+                  build_target,
+                  entry['prebuilts_private'],
+                  binhost_pb.CQ_BINHOST,
+                  entry['prebuilts_uri'],
+                  push_retries=GIT_PUSH_MAX_RETRY_COUNT,
+              )
+
+  else:
+    # Experimental: NEW LOGIC, currently working on staging
+    # We will use this logic on both prod and staging after it gets stabilized.
+    with api.step.nest(step_name):
+      with api.cros_source.checkout_overlays_context(
+      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
+        # Processes public builders
+        with api.step.nest("Public binhosts") as presentation:
+          public_prebuilt_entries_len = len(public_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {public_prebuilt_entries_len} binhosts.')
+          if public_prebuilt_entries_len > 0:
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        public_prebuilt_entries)),
+                private=False,
+                key=binhost_pb.CQ_BINHOST,
+            )
+
+      # Processes private builders
+      with api.step.nest("Private binhosts") as presentation:
+        private_prebuilt_entries_len = len(private_prebuilt_entries)
+        presentation.step_summary_text = (
+            f'Set {private_prebuilt_entries_len} binhosts.')
+        if private_prebuilt_entries_len > 0:
+          api.cros_prebuilts.set_binhosts(
+              binhosts=list(
+                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                      private_prebuilt_entries)),
+              private=True,
+              key=binhost_pb.CQ_BINHOST,
           )
 
 
@@ -364,7 +431,6 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     landed_patchset = change['revisions'][current_revision]['_number']
 
-    prebuilt_entries = []
     builds = []
 
     # Traverse the patchsets in reverse order to get the latest one with
@@ -400,15 +466,16 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   count = 1
   while True:
     name_suffix = "" if count == 1 else f" ({count})"
-    prebuilt_entries, running_builds = search_prebuilts(
-        api, 'search the prebuilts' + name_suffix, builds, gerrit_change,
-        finished_build_targets, is_staging)
+    public_prebuilt_entries, private_prebuilt_entries, running_builds = \
+        search_prebuilts(api, 'search the prebuilts' + name_suffix, builds,
+                         gerrit_change, finished_build_targets, is_staging)
     # Set None for 2nd runs and later to retrieve the latest builds.
     builds = None
 
-    if len(prebuilt_entries) > 0:
+    if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhots(api, 'set BINHOSTs' + name_suffix, prebuilt_entries)
+      set_binhots(api, 'set BINHOSTs' + name_suffix, is_staging,
+                  public_prebuilt_entries, private_prebuilt_entries)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
@@ -767,9 +834,12 @@ def GenTests(api: RecipeTestApi):
           step_name='search the patchset.patchset #2.buildbucket.search',
       ),
       api.post_check(post_process.MustRun, 'search the prebuilts'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs.update brya'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
                      'Updated all of 2 builders after 1 trials.'),
   )
@@ -785,9 +855,12 @@ def GenTests(api: RecipeTestApi):
           step_name='search the patchset.patchset #2.buildbucket.search',
       ),
       api.post_check(post_process.MustRun, 'search the prebuilts'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs.update brya'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
                      'Updated all of 2 builders after 1 trials.'),
       bucket='staging',
@@ -808,16 +881,19 @@ def GenTests(api: RecipeTestApi):
           step_name='search the prebuilts (2).buildbucket.search',
       ),
       api.post_check(post_process.MustRun, 'search the prebuilts'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs.update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs.update brya'),
+                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 120 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs (2).update amd64-generic'),
+                     'set BINHOSTs (2).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs (2).update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs (2).update brya'),
+                     'set BINHOSTs (2).Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
                      'Updated all of 2 builders after 2 trials.'),
   )
@@ -841,22 +917,26 @@ def GenTests(api: RecipeTestApi):
           step_name='search the prebuilts (3).buildbucket.search',
       ),
       api.post_check(post_process.MustRun, 'search the prebuilts'),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs.update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs.update brya'),
+                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 120 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs (2).update amd64-generic'),
+                     'set BINHOSTs (2).Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs (2).update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs (2).update brya'),
+                     'set BINHOSTs (2).Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 240 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs (3).update amd64-generic'),
+                     'set BINHOSTs (3).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs (3).update betty-pi-arc'),
-      api.post_check(post_process.DoesNotRun, 'set BINHOSTs (3).update brya'),
+                     'set BINHOSTs (3).Private binhosts.update betty-pi-arc'),
+      api.post_check(post_process.DoesNotRun,
+                     'set BINHOSTs (3).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
                      'Updated all of 2 builders after 3 trials.'),
   )
@@ -871,7 +951,8 @@ def GenTests(api: RecipeTestApi):
           BUILDS_INVALID,
           step_name='search the patchset.patchset #2.buildbucket.search',
       ),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.SummaryMarkdown,
                      'Updated all of 1 builders after 1 trials.'),
   )
@@ -887,7 +968,8 @@ def GenTests(api: RecipeTestApi):
           BUILDS_INTERMEDIATE,
           step_name='search the patchset.patchset #2.buildbucket.search',
       ),
-      api.post_check(post_process.MustRun, 'set BINHOSTs.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(
           post_process.SummaryMarkdown,
           'Updated 1 of 2 builders after 1 trials.\nInterrupted: maximum running time (1 sec) exceeded.'

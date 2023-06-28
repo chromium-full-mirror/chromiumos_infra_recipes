@@ -6257,16 +6257,23 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref",
+    "name": "upload prebuilts.update binhost conf file.create change",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_TEXT@Transaction aborted without failure.@@@"
     ]
   },
@@ -6289,9 +6296,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6316,9 +6323,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6341,9 +6348,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch (2)",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6370,9 +6377,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.try remove existing file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6400,16 +6407,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -6433,9 +6440,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git ls-files",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -6460,9 +6467,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git diff",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -6485,9 +6492,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.git checkout (2)",
+    "name": "upload prebuilts.update binhost conf file.create change.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

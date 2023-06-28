@@ -122,7 +122,7 @@ def GenTests(api):
     ret += api.post_check(check, 'upload prebuilts.update binhost conf file')
     if expect_commit:
       ret += api.step_data(
-          'upload prebuilts.update binhost conf file.'
+          'upload prebuilts.update binhost conf file.create change.'
           'update ref.gerrit transaction.diff check.git diff', retcode=1)
     return ret
 
@@ -142,11 +142,11 @@ def GenTests(api):
                         send_snapshot_prebuilts),
               api.post_check(
                   MustRun,
-                  'upload prebuilts.update binhost conf file.update ref'
-                  '.gerrit transaction'),
+                  'upload prebuilts.update binhost conf file.create change'
+                  '.update ref.gerrit transaction'),
               api.step_data(
-                  ('upload prebuilts.update binhost conf file.update ref'
-                   '.gerrit transaction.git push'),
+                  ('upload prebuilts.update binhost conf file.create change'
+                   '.update ref.gerrit transaction.git push'),
                   stderr=api.raw_io.output_text(
                       ('remote:   https://chromium-review.googlesource'
                        '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
@@ -155,17 +155,17 @@ def GenTests(api):
       'update-retry-exhaustion',
       test_data(upload_metadata=False),
       api.step_data(
-          'upload prebuilts.update binhost conf file.'
+          'upload prebuilts.update binhost conf file.create change.'
           'update ref.gerrit transaction.diff check.git diff', retcode=1),
       api.step_data(
-          'upload prebuilts.update binhost conf file.'
-          'update ref (2).gerrit transaction.diff check.git diff', retcode=1),
+          'upload prebuilts.update binhost conf file.create change (2).'
+          'update ref.gerrit transaction.diff check.git diff', retcode=1),
       api.step_data(
-          'upload prebuilts.update binhost conf file.'
-          'update ref (3).gerrit transaction.diff check.git diff', retcode=1),
+          'upload prebuilts.update binhost conf file.create change (3).'
+          'update ref.gerrit transaction.diff check.git diff', retcode=1),
       api.step_data(
-          'upload prebuilts.update binhost conf file.'
-          'update ref (4).gerrit transaction.diff check.git diff', retcode=1),
+          'upload prebuilts.update binhost conf file.create change (4).'
+          'update ref.gerrit transaction.diff check.git diff', retcode=1),
       api.post_check(StepException,
                      'upload prebuilts.update binhost conf file'),
       # TODO (b/275363240): audit this test.
@@ -175,13 +175,14 @@ def GenTests(api):
   yield api.test(
       'update-retry-not-called', test_data(),
       api.step_data(
-          ('upload prebuilts.update binhost conf file.update ref'
+          ('upload prebuilts.update binhost conf file.create change.update ref'
            '.gerrit transaction.git push'), stderr=api.raw_io.output_text(
                ('remote:   https://chromium-review.googlesource'
                 '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))),
       api.post_check(
           DoesNotRun,
-          'upload prebuilts.update binhost conf file.update ref (2)'))
+          'upload prebuilts.update binhost conf file.create change' +
+          '.update ref (2)'))
 
   yield api.test('disable-overlay-commits',
                  test_data(commit_overlay_binhost=False))

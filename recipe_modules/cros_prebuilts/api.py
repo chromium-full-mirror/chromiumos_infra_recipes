@@ -6,6 +6,7 @@
 """API for uploading CrOS prebuilts to Google Storage."""
 
 import os
+import datetime
 from typing import List, Tuple
 
 from google.protobuf import json_format
@@ -20,9 +21,14 @@ from PB.chromiumos.common import Path
 from PB.chromiumos.common import Profile
 from recipe_engine import recipe_api
 
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
+
 # The trailing / is for gsutil rsync.
 METADATA_GS_DIR_TMPL = 'gs://{gs_bucket}/snapshot/{snapshot}/{target}/{profile}/'
 METADATA_GS_FILE_TMPL = '{builder}-{build_id}-{kind}.json'
+
+GIT_PUSH_MAX_RETRY_COUNT = 3
 
 
 class CrosPrebuiltsApi(recipe_api.RecipeApi):
@@ -417,6 +423,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   def set_binhost(self, target, private, key, uri, push_retries):
     """Set the target's Portage binhost to point to the given URI.
 
+    DEPRICATED: this will be removed soon. please use set_binhosts instead.
+
     This function updates a conf file within the target's overlay, commits the
     change, and pushes it.
 
@@ -450,13 +458,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           # so we can checkout again after we push our updates.
           current_commit = self.m.git.head_commit()
 
-          # Staging doesn't have ACLs to push conf files to the real branch.
-          # Instead, use a branch with the last component named 'staging'
-          if self._use_staging_branch:
-            branch_parts = branch.split('/')
-            branch_parts[-1] = 'staging'
-            branch = '/'.join(branch_parts)
-
           # There are instances when, in between fetching from remote and then
           # commiting our changes, a different builder can commit its changes.
           # This can cause merging issues(see ex:http://shortn/_WtgjVa2ayK).
@@ -477,15 +478,145 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
             ]
 
             try:
-              self.m.git_txn.update_ref_write_file(project.remote,
-                                                   '\n'.join(lines),
-                                                   binhost_path, binhost_data,
-                                                   automerge=True, ref=branch)
-              self.m.git.checkout(current_commit)
+              with self.m.step.nest('create change'):
+                self.m.git_txn.update_ref_write_files(
+                    project.remote, '\n'.join(lines),
+                    [(binhost_path, binhost_data)], automerge=True, ref=branch)
+                self.m.git.checkout(current_commit)
               return
             except recipe_api.StepFailure as ex:
               if attempt == push_retries:
                 raise ex
+
+  def set_binhosts(self, binhosts: List[Tuple[BuildTarget, str]], private: bool,
+                   key: binhost_pb.BinhostKey) -> None:
+    """Set the target's Portage binhosts to point to the given URIs.
+
+    This function updates a conf file within the target's overlay, commits the
+    change, and pushes it.
+
+    Args:
+      binhosts: List of tuples of build targets and their new URIs.
+      private: Whether the target's binhost is private.
+      key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+    """
+
+    if len(binhosts) == 0:
+      raise recipe_api.StepFailure('binhosts must not be empty')
+
+    # In order to avoid any merge conflicts we first pull the latest changes
+    # from remote, update the conf flie locally, and then push the
+    # changes remotely.
+    binhost_path = self._get_binhost_path(binhosts[0][0], private, key)
+    project = self.m.repo.project_info(
+        project=self.m.path.dirname(binhost_path))
+    with self.m.context(
+        cwd=self.m.cros_source.workspace_path.join(project.path)):
+      branch = project.branch
+      if branch:
+        # The unit tests needs the ebuilds to be the same version we build them
+        # at. so after we pull the latest and commit our changes, we checkout
+        # the commit from which we started. Here we are saving the current
+        # commit so we can checkout again after we push our updates.
+        current_commit = self.m.git.head_commit()
+
+        # Staging doesn't have ACLs to push conf files to the real branch.
+        # Instead, use a branch with the last component named 'staging'
+        if self._use_staging_branch:
+          branch_parts = branch.split('/')
+          branch_parts[-1] = 'staging'
+          branch = '/'.join(branch_parts)
+
+        self.set_binhosts_retry(binhosts, private, key, project, branch)
+        self.m.git.checkout(current_commit)
+
+  # There are instances when, in between fetching from remote and
+  # then committing our changes, a different builder can commit its changes.
+  # This can cause merging issues (see ex: http://shortn/_WtgjVa2ayK).
+  # We can retry few times to avoid it.
+  @exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT,
+                     delay=datetime.timedelta(seconds=1))
+  def set_binhosts_retry(self, binhosts: List[Tuple[BuildTarget, str]],
+                         private: bool, key: binhost_pb.BinhostKey,
+                         target_project: ProjectInfo, branch: str) -> None:
+    """Utility method to update the target's Portage binhosts.
+
+    This function is intended to be called from set_binhosts.
+
+    Args:
+      binhosts: List of tuples of build targets and their new URIs.
+      private: Whether the target's binhost is private.
+      key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+      target_project: Project of the binhosts.
+      branch: branch name to update
+    """
+    if len(binhosts) == 0:
+      return
+
+    self.m.git.fetch_ref(target_project.remote, branch)
+    self.m.git.checkout('FETCH_HEAD', force=True)
+
+    commit_message = []
+    binhost_changes = []
+    for (target, uri) in binhosts:
+      with self.m.step.nest(f'update {target.name}') as presentation:
+        binhost_path = self._get_binhost_path(target, private, key)
+        presentation.logs['binhost_path'] = str(binhost_path)
+
+        # All binhosts must be in the same project.
+        current_project = self.m.repo.project_info(
+            project=self.m.path.dirname(binhost_path))
+        if target_project != current_project:
+          presentation.step_text = \
+              'The project is different from the first one.'
+          presentation.logs['project of this binhost'] = str(current_project)
+          presentation.logs['project of first binhost'] = str(target_project)
+          continue
+
+        request = binhost_pb.SetBinhostRequest(build_target=target,
+                                               private=private, key=key,
+                                               uri=uri,
+                                               max_uris=self._max_binhost_uris)
+        self.m.cros_build_api.BinhostService.SetBinhost(request,
+                                                        infra_step=True)
+        binhost_content = self.m.file.read_text('read binhost conf',
+                                                binhost_path)
+        binhost_changes.append((binhost_path, binhost_content))
+        commit_message.extend([
+            'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
+            'go/bbid/%s' % self._build_id,
+            '',
+        ])
+
+    with self.m.step.nest('create change') as presentation:
+      if len(binhost_changes) == 0:
+        presentation.step_text = 'No changes on binhosts'
+        return
+
+      self.m.git_txn.update_ref_write_files(target_project.remote,
+                                            '\n'.join(commit_message),
+                                            binhost_changes, automerge=True,
+                                            ref=branch)
+
+  def _get_binhost_path(self, build_target: BuildTarget, private: bool,
+                        key: binhost_pb.BinhostKey) -> str:
+    """Utility method to get the binhost path
+
+    Args:
+      build_target: build targets to get the binhost of.
+      private: Whether the target's binhost is private.
+      key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+
+    Returns:
+      Path of the binhost file.
+    """
+    path_request = binhost_pb.GetBinhostConfPathRequest(
+        build_target=build_target, private=private, key=key)
+    path_response = \
+        self.m.cros_build_api.BinhostService.GetBinhostConfPath(
+            path_request, infra_step=True)
+    binhost_path = self.m.path.abs_to_path(path_response.conf_path)
+    return binhost_path
 
   def _upload(self, root, paths, uri, acls):
     """Upload the paths within root to the GS URI.
@@ -602,8 +733,15 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         if BuilderConfig.Id.Type.Name(kind) == 'CQ':
           raise ValueError('CQ should not set the binhost.')
 
-        self.set_binhost(target, private, binhost_key, upload_uri,
-                         push_retries=3)
+        if self._use_staging_branch:
+          # Experimental: NEW LOGIC, currently working on staging
+          with self.m.step.nest('update binhost conf file'):
+            self.set_binhosts([(target, upload_uri)], private, binhost_key)
+        else:
+          # Deprecated: OLD LOGIC, currently working on prod
+          self.set_binhost(target, private, binhost_key, upload_uri,
+                           push_retries=3)
+
       # Default to `base` profile when it is not explicitly specified.
       profile = self._profile_or_default(profile)
       if self._enable_snapshot_prebuilts:

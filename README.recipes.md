@@ -315,6 +315,8 @@
   * [cros_lvfs_mirror:examples/full](#recipes-cros_lvfs_mirror_examples_full)
   * [cros_prebuilts:examples/full](#recipes-cros_prebuilts_examples_full)
   * [cros_prebuilts:tests/get_pkg_idx_info](#recipes-cros_prebuilts_tests_get_pkg_idx_info)
+  * [cros_prebuilts:tests/set_binhosts](#recipes-cros_prebuilts_tests_set_binhosts)
+  * [cros_prebuilts:tests/set_binhosts_internal](#recipes-cros_prebuilts_tests_set_binhosts_internal)
   * [cros_prebuilts:tests/upload_cq](#recipes-cros_prebuilts_tests_upload_cq)
   * [cros_prebuilts:tests/upload_prebuilts](#recipes-cros_prebuilts_tests_upload_prebuilts)
   * [cros_release:examples/buildspec](#recipes-cros_release_examples_buildspec)
@@ -3309,16 +3311,16 @@ Args:
 &mdash; **def [run](/recipe_modules/cros_lvfs_mirror/api.py#47)(self):**
 ### *recipe_modules* / [cros\_prebuilts](/recipe_modules/cros_prebuilts)
 
-[DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/cros_prebuilts/__init__.py#9): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API for uploading CrOS prebuilts to Google Storage.
 
-#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#162)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#168)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
 
 Return the PackageIndexInfo for this build.
 
@@ -3335,9 +3337,11 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#417)(self, target, private, key, uri, push_retries):**
+&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#423)(self, target, private, key, uri, push_retries):**
 
 Set the target's Portage binhost to point to the given URI.
+
+DEPRICATED: this will be removed soon. please use set_binhosts instead.
 
 This function updates a conf file within the target's overlay, commits the
 change, and pushes it.
@@ -3349,7 +3353,32 @@ Args:
   uri (str): The new binhost URI.
   push_retries (int): Number of times to retry pushing the changes.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#648)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#491)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
+
+Set the target's Portage binhosts to point to the given URIs.
+
+This function updates a conf file within the target's overlay, commits the
+change, and pushes it.
+
+Args:
+  binhosts: List of tuples of build targets and their new URIs.
+  private: Whether the target's binhost is private.
+  key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+
+&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#537)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
+
+Utility method to update the target's Portage binhosts.
+
+This function is intended to be called from set_binhosts.
+
+Args:
+  binhosts: List of tuples of build targets and their new URIs.
+  private: Whether the target's binhost is private.
+  key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+  target_project: Project of the binhosts.
+  branch: branch name to update
+
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#786)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3363,7 +3392,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#619)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#757)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3373,7 +3402,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#556)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#687)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -7247,11 +7276,11 @@ Returns:
 
 API for updating remote git repositories transactionally.
 
-#### **class [GitTxnApi](/recipe_modules/git_txn/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GitTxnApi](/recipe_modules/git_txn/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for executing git transactions.
 
-&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#145)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
+&mdash; **def [update\_ref](/recipe_modules/git_txn/api.py#148)(self, remote, update_callback, step_name='update ref', ref=None, dry_run=False, automerge=False, retries=3):**
 
 Transactionally update a remote git repository ref.
 
@@ -7284,25 +7313,25 @@ Args:
 Returns:
   bool: True if the transaction succeeded, false if it explicitly aborts.
 
-&mdash; **def [update\_ref\_write\_file](/recipe_modules/git_txn/api.py#188)(self, remote, message, dest, data, automerge=False, ref=None):**
+&mdash; **def [update\_ref\_write\_files](/recipe_modules/git_txn/api.py#191)(self, remote: str, message: str, changes: List[Tuple[(Path, str)]], automerge: bool=False, ref: Optional[str]=None):**
 
-Transactionally update a file in a remote git repository ref.
+Transactionally update files in a remote git repository ref.
 
 See 'self.update_ref'. Instead of running a callback, this will attempt to
-update the contents of a file.
+update the contents of files.
 
 Args:
-  remote (str): The remote repository to update.
-  message (str): The commit message to use.
-  dest (Path): The path of the file to write.
-  data (str): The data to write.
-  automerge (bool): Whether to use Gerrit's "auto-merge" feature.
-  ref (str): The remote ref to update. If it does not start with 'refs/' it
+  remote: The remote repository to update.
+  message: The commit message to use.
+  changes: List of the tuple of the file paths and the contents to write.
+  automerge: Whether to use Gerrit's "auto-merge" feature.
+  ref: The remote ref to update. If it does not start with 'refs/' it
       will be treated as a branch name. If not specified, the HEAD ref for
       the remote of the current repo project will be used.
 
 Returns:
-  bool: True if the transaction succeeded, false if the file didn't change.
+  bool: True if one or more files changed and the transaction succeeded,
+    false if no file changed and any transaction did not happen.
 
 Raises:
   TooManyAttempts: if the number of attempts exceeds |retries|.
@@ -12022,6 +12051,18 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/get_pkg_idx_info.py#29)(api, properties):**
+### *recipes* / [cros\_prebuilts:tests/set\_binhosts](/recipe_modules/cros_prebuilts/tests/set_binhosts.py)
+
+[DEPS](/recipe_modules/cros_prebuilts/tests/set_binhosts.py#9): [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/set_binhosts.py#18)(api):**
+### *recipes* / [cros\_prebuilts:tests/set\_binhosts\_internal](/recipe_modules/cros_prebuilts/tests/set_binhosts_internal.py)
+
+[DEPS](/recipe_modules/cros_prebuilts/tests/set_binhosts_internal.py#11): [cros\_prebuilts](#recipe_modules-cros_prebuilts)
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/set_binhosts_internal.py#18)(api):**
 ### *recipes* / [cros\_prebuilts:tests/upload\_cq](/recipe_modules/cros_prebuilts/tests/upload_cq.py)
 
 [DEPS](/recipe_modules/cros_prebuilts/tests/upload_cq.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14881,9 +14922,9 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#327)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#394)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#320)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#387)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
 &mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#142)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
@@ -14926,17 +14967,19 @@ Args:
 
 Returns:
   Tuple of the following 2 values:
-  - List of prebuilt entries that are added in this method
+  - List of public prebuilt entries added in this method
+  - List of private prebuilt entries added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#293)(api: RecipeApi, step_name: str, prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#301)(api: RecipeApi, step_name: str, is_staging: bool, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
 
 Utility function to set the binhosts repeatedly.
 
 Args:
   api: See RunSteps documentation.
   step_name: Name of the step of this process to be shown in the Luci UI.
-  prebuilt_entries: Prebuilts to be set the binhosts of.
+  public_prebuilt_entries: Public prebuilts to be set the binhosts of.
+  private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
 ### *recipes* / [uprev\_borealis\_deps](/recipes/uprev_borealis_deps.py)
 
 [DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

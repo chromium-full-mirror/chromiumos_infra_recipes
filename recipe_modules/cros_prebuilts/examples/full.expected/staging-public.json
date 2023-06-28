@@ -1239,19 +1239,26 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@binhost_path@[START_DIR]/BINHOST.conf@@@",
+      "@@@STEP_LOG_END@binhost_path@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": 1,@@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"maxUris\": 1@@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"conf_path\": \"[START_DIR]/BINHOST.conf\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1263,7 +1270,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
@@ -1280,9 +1287,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.write input file",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1294,7 +1301,7 @@
       "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.BinhostService/SetBinhost"
+      "chromite.api.BinhostService/GetBinhostConfPath"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "env_suffixes": {
@@ -1315,9 +1322,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call build API script",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1350,28 +1357,193 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.read output file",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.call response",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[START_DIR]",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]|src/[START_DIR]|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"maxUris\": 1@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"maxUris\": 1\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.BinhostService/SetBinhost"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:32Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:33.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:35Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:36.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
@@ -1384,17 +1556,17 @@
       "@@@STEP_LOG_LINE@published event@    \"outputFile\": \"[START_DIR]/BINHOST.conf\"@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|update binhost conf file|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload prebuilts|update binhost conf file|update amd64-generic|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIzIDE/QQiDAjNgMT9BBCAyrXuAXKBAQoPCg1hbWQ2NC1nZW5lcmljGAEiamdzOi8vc3RhZ2luZy1wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCa3VwbG9hZCBwcmVidWlsdHN8dXBkYXRlIGJpbmhvc3QgY29uZiBmaWxlfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIz4DE/QQiDAjQgMT9BBCAyrXuAXKBAQoPCg1hbWQ2NC1nZW5lcmljGAEiamdzOi8vc3RhZ2luZy1wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCgAF1cGxvYWQgcHJlYnVpbHRzfHVwZGF0ZSBiaW5ob3N0IGNvbmYgZmlsZXx1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1425,10 +1597,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAXKBAQoPCg1hbWQ2NC1nZW5lcmljGAEiamdzOi8vc3RhZ2luZy1wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCa3VwbG9hZCBwcmVidWlsdHN8dXBkYXRlIGJpbmhvc3QgY29uZiBmaWxlfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAXKBAQoPCg1hbWQ2NC1nZW5lcmljGAEiamdzOi8vc3RhZ2luZy1wcmVidWlsdC1idWNrZXQvYm9hcmQvYW1kNjQtZ2VuZXJpYy9wb3N0c3VibWl0LVI5OS0xMjM0LjU2LjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvcGFja2FnZXMoAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbQAtDsgNmu8bWSfNoCgAF1cGxvYWQgcHJlYnVpbHRzfHVwZGF0ZSBiaW5ob3N0IGNvbmYgZmlsZXx1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -1460,24 +1632,31 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.read binhost conf",
+    "name": "upload prebuilts.update binhost conf file.update amd64-generic.read binhost conf",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@BINHOST.conf@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref",
+    "name": "upload prebuilts.update binhost conf file.create change",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1499,9 +1678,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git branch",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1526,9 +1705,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git checkout",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git checkout",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1551,9 +1730,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git branch (2)",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git branch (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1580,9 +1759,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.try remove existing file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.try remove existing file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1610,16 +1789,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.write file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1643,9 +1822,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git ls-files",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check.git ls-files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -1670,9 +1849,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.diff check.git diff",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.diff check.git diff",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -1695,9 +1874,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git add",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git add",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1708,7 +1887,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Set POSTSUBMIT_BINHOST=gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184",
+      "Set POSTSUBMIT_BINHOST=gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.\ngo/bbid/8945511751514863184\n",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
@@ -1725,9 +1904,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.write commit message",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.write commit message",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Set POSTSUBMIT_BINHOST=gs://staging-prebuilt-bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-8945511751514863184/packages.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@go/bbid/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
@@ -1756,9 +1935,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git commit",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1783,18 +1962,18 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.git push",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@remote:   https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123 git_txn: test@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
@@ -1822,9 +2001,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.Retrieve service_account auth token",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -1852,9 +2031,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.Write auth token to temp file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -1884,16 +2063,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.submit CL 123",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/recipes/+/123@@@"
     ]
   },
@@ -1928,9 +2107,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123.repo forall",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.submit CL 123.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/recipes|src/chromiumos/infra/recipes|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -1963,9 +2142,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123.git_cl issue",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.submit CL 123.git_cl issue",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -1997,9 +2176,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.update ref.gerrit transaction.submit CL 123.git_cl land",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.submit CL 123.git_cl land",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
