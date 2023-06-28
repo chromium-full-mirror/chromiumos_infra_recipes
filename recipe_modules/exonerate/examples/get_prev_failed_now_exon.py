@@ -38,6 +38,7 @@ def RunSteps(api, dry_run_exonerate_retried_suites):
 
   hw_res = api.exonerate.get_failed_now_exonerable_hw_tests_results([])
   api.assertions.assertEqual(hw_res, [])
+  api.exonerate.clear_failed_tests()
 
 
 def GenTests(api):

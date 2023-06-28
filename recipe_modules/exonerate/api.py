@@ -28,8 +28,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 EXCLUDE_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/excludes'
-FailedTest = namedtuple(
-    'FailedTest', ['name', 'board', 'build_target', 'suite', 'test_config'])
+FailedTest = namedtuple('FailedTest', ['name', 'board', 'build_target'])
 DEFAULT_OVERALL_AUTOEX_LIMIT = 100
 DEFAULT_PER_TARGET_AUTOEX_LIMIT = 20
 DEFAULT_CONSISTENT_FAILURE_THRESHOLD = 6
@@ -115,6 +114,10 @@ class ExonerateApi(recipe_api.RecipeApi):
         'suites': set(s.name for s in excludes_cfg.exclude_suites),
     }
     self._configs_loaded = True
+
+  def clear_failed_tests(self):
+    """Clear failed_tests entries."""
+    self._failed_tests = set()
 
   def _add_log(self, line):
     """Add log line (str) to global list."""
@@ -238,7 +241,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           continue
         self._failed_tests.add(
             FailedTest(name=test_case.name, board=board,
-                       build_target=build_target, suite='', test_config=''))
+                       build_target=build_target))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -399,7 +402,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       test_name = test_case['name']
       self._failed_tests.add(
           FailedTest(name='tast.{}'.format(test_case['name']), board='',
-                     build_target=build_target, suite='', test_config=''))
+                     build_target=build_target))
       if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:
@@ -501,23 +504,20 @@ class ExonerateApi(recipe_api.RecipeApi):
     md_string += ', '.join(all_links)
     self.m.failures.set_exoneration_markdown(md_string)
 
-  def get_test_variant_dict(self, test_id: str, board: str, build_target: str,
-                            suite: str) -> dict:
+  def get_test_variant_dict(self, test_id: str, board: str,
+                            build_target: str) -> dict:
     """Create test_variant dict for LUCI Analysis from inputs.
 
     Args:
       test_id: Name of the test.
       board: Name of the board.
       build_target: Name of the build_target.
-      suite: Name of the suite.
 
     Returns: A dict that contains the test & variant info.
     """
     # VM tests don't have suite and board info.
     # test_config is out. b/270366935
     def_map = {'build_target': build_target}
-    if suite:
-      def_map['suite'] = suite
     if board:
       def_map['board'] = board
     return {'testId': test_id, 'variant': {'def': def_map}}
@@ -587,8 +587,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         for test in self._failed_tests:
           test_variant_list.append(
               self.get_test_variant_dict(test_id=test.name, board=test.board,
-                                         build_target=test.build_target,
-                                         suite=test.suite))
+                                         build_target=test.build_target))
         test_variant_list.sort(key=lambda x: x['testId'])
         # TODO(b/272052840): See if we need to skip auto exoneration.
 

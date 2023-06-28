@@ -58,7 +58,7 @@
     "cmd": [],
     "name": "Automated Exoneration Analysis (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test1', board='', build_target='betty', suite='', test_config='')]@@@",
+      "@@@STEP_LOG_LINE@failed_tests@[FailedTest(name='tast.test1', board='', build_target='betty')]@@@",
       "@@@STEP_LOG_END@failed_tests@@@",
       "@@@STEP_LOG_LINE@failure_rate@[test_id: \"tast.test1\"@@@",
       "@@@STEP_LOG_LINE@failure_rate@variant_hash: \"fake_variant_hash\"@@@",
