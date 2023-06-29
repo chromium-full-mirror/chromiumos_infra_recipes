@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildAp
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',

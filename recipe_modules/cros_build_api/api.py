@@ -275,6 +275,7 @@ class CrosBuildApiApi(RecipeApi):
     stubs = Stub.__subclasses__()
     for stub in stubs:
       setattr(self, stub.__name__, stub(self))
+    self._git_lock = self.m.futures.make_bounded_semaphore(1)
 
   def __init__(self, properties: cros_build_api_pb2.CrosBuildApiProperties,
                *args, **kwargs) -> None:
@@ -286,6 +287,7 @@ class CrosBuildApiApi(RecipeApi):
     self._publish_emerge_stats_to_bq = properties.publish_emerge_stats_to_bq
     self._publish_emerge_stats_to_prop = properties.publish_emerge_stats_to_prop
     self._parallel_operations = False
+    self._git_lock = None
 
   @contextlib.contextmanager
   def parallel_operations(self):
@@ -305,12 +307,13 @@ class CrosBuildApiApi(RecipeApi):
       self._parallel_operations = False
 
   def reset_checkout(self):
-    commit = self.m.file.read_text(
-        'read chromite version',
-        self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
-    with self.m.context(
-        cwd=self.m.src_state.workspace_path.join(chromite_location)):
-      self.m.git.checkout(commit.strip())
+    with self._git_lock:
+      commit = self.m.file.read_text(
+          'read chromite version',
+          self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
+      with self.m.context(
+          cwd=self.m.src_state.workspace_path.join(chromite_location)):
+        self.m.git.checkout(commit.strip())
 
   @property
   def log_level(self) -> str:
