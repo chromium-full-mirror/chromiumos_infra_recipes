@@ -285,16 +285,20 @@ class BuildSDKRun:
     where:
       ${YEAR} is the current four-digit year (ex. 2023).
       ${MONTH} is the current four-digit month (ex. 03).
-      ${TARGET} is the target architecture (ex. aarch64-cros-linux-gnu).
+      ${TARGET} is the target architecture (ex. i686-cros-linux-gnu).
       ${VERSION} is the SDK version (ex. 2023.03.14.159265).
+    For example:
+      gs://chromiumos-sdk/2023/03/i686-cros-linux-gnu-2023.03.14.159265.tar.xz
 
     Args:
       source_path: The local path to the toolchain file.
     """
     basename = self.m.path.basename(source_path)
     with self.m.step.nest(f'upload {basename}'):
+      target_architecture, ext = basename.split('.', 1)
+      dest_name = f'{target_architecture}-{self.version}.{ext}'
       dest_bucket = self._pick_bucket(SDK_BUCKET)
-      dest_path = os.path.join(self._toolchain_tarball_dir, basename)
+      dest_path = os.path.join(self._toolchain_tarball_dir, dest_name)
       self._gsutil_upload(source_path, dest_bucket, dest_path)
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
@@ -577,11 +581,15 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
-          ['gs://chromeos-throw-away-bucket/1970/01/foo.tar.xz']),
+          [
+              'gs://chromeos-throw-away-bucket/1970/01/foo-1970.01.01.000000.tar.xz'
+          ]),
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload',
-          ['gs://chromeos-throw-away-bucket/1970/01/bar.tar.xz']),
+          [
+              'gs://chromeos-throw-away-bucket/1970/01/bar-1970.01.01.000000.tar.xz'
+          ]),
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',

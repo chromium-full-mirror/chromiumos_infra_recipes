@@ -2345,14 +2345,14 @@
       "-a",
       "public-read",
       "[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/foo.tar.xz",
-      "gs://chromiumos-sdk/1970/01/foo.tar.xz"
+      "gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/foo.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz@@@"
     ]
   },
   {
@@ -2374,14 +2374,14 @@
       "-a",
       "public-read",
       "[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/bar.tar.xz",
-      "gs://chromiumos-sdk/1970/01/bar.tar.xz"
+      "gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/bar.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz@@@"
     ]
   },
   {
