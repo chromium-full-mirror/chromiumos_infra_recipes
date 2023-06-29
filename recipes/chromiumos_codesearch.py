@@ -103,6 +103,10 @@ def RunSteps(api, codesearch_mirror_revision,
   # Get infra/infra.
   cache_dir = api.path['cache'].join('builder')
   api.gclient.set_config('infra_superproject')
+
+  # The codesearch recipe module relies on checkout path to be set.
+  chromiumos_src_dir = api.cros_source.workspace_path.join('src')
+  api.path['checkout'] = chromiumos_src_dir
   with api.context(cwd=cache_dir):
     api.bot_update.ensure_checkout(set_output_commit=False)
 
@@ -154,9 +158,6 @@ def RunSteps(api, codesearch_mirror_revision,
             build_dir.join('compile_commands.json'),
         ] + list(packages))
 
-      # The codesearch recipe module relies on checkout path to be set.
-      chromiumos_src_dir = workspace.join('src')
-      api.path['checkout'] = chromiumos_src_dir
       api.codesearch.set_config(
           'chromiumos',
           PROJECT='chromiumos',
