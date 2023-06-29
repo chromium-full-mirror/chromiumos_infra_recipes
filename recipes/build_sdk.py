@@ -60,10 +60,11 @@ SDK_ARCH = 'amd64'
 # LLVM_NEXT_USE_FLAG is the name of the USE flag for llvm-next builds.
 LLVM_NEXT_USE_FLAG = 'llvm-next'
 
-# Google storage buckets for uploads: i.e., what comes after "gs://"
+# Google storage buckets for uploads: i.e., what comes after 'gs://'.
+# Both of these are for the production builder. The staging builder uploads to
+# staging buckets, which are identical but with a 'staging-' prefix.
 SDK_BUCKET = 'chromiumos-sdk'
 PREBUILTS_BUCKET = 'chromeos-prebuilt'
-THROW_AWAY_BUCKET = 'chromeos-throw-away-bucket'
 
 
 def RunSteps(api: recipe_api.RecipeApi,
@@ -359,13 +360,10 @@ class BuildSDKRun:
     return contents
 
   def _pick_bucket(self, prod_bucket: str) -> str:
-    """Return prod_bucket or THROW_AWAY_BUCKET based on staging status.
+    """Return a bucket for uploading based on whether this is a staging builder.
 
     The staging builder deliberately doesn't have write access to most buckets.
-    Thus, many upload steps should upload to THROW_AWAY_BUCKET in staging.
-
-    However, we shouldn't apply this 100% of the time, because we do want the
-    staging builder to upload to gs://chromeos-image-archive/.
+    Thus, the staging builder should upload to staging buckets instead.
 
     Args:
       prod_bucket: The bucket to return if this is a prod builder.
@@ -373,7 +371,9 @@ class BuildSDKRun:
     Returns:
       A bucket name (without the gs:// prefix).
     """
-    return THROW_AWAY_BUCKET if self.m.build_menu.is_staging else prod_bucket
+    if self.m.build_menu.is_staging:
+      return f'staging-{prod_bucket}'
+    return prod_bucket
 
   def _gsutil_upload(self, source_path: config_types.Path, dest_bucket: str,
                      dest_path: str) -> None:
@@ -385,9 +385,6 @@ class BuildSDKRun:
 
     Always uploads with the `public-read` canned ACL, since SDK artifacts can
     be used by anybody.
-
-    If the upload_to_staging_dir property is True, then the destination dir
-    will have "staging/" prepended.
 
     Args:
       source_path: Local filepath to upload.
@@ -409,8 +406,6 @@ class BuildSDKRun:
       multithreaded = True
     else:
       multithreaded = False
-    if self.properties.upload_to_staging_dir:
-      dest_path = os.path.join('staging', dest_path)
     self.m.gsutil.upload(
         str(source_path), dest_bucket, dest_path, args=args,
         multithreaded=multithreaded)
@@ -566,73 +561,39 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.build_menu.test(
       'staging',
       api.properties(launch_pupr=True),
-      # These steps should all upload to THROW_AWAY_BUCKET on staging builders.
-      # However, they should not upload to the /staging/ subdir.
+      # These steps should all upload to staging buckets.
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload host prebuilts.gsutil upload', [
-              'gs://chromeos-throw-away-bucket/host/amd64/amd64-host/chroot-1970.01.01.000000/packages'
+              'gs://staging-chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages'
           ]),
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload target prebuilts.gsutil upload', [
-              'gs://chromeos-throw-away-bucket/board/amd64-host/chroot-1970.01.01.000000/packages'
+              'gs://staging-chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages'
           ]),
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
-          [
-              'gs://chromeos-throw-away-bucket/1970/01/foo-1970.01.01.000000.tar.xz'
-          ]),
+          ['gs://staging-chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz']),
       api.post_check(
           post_process.StepCommandContains,
           'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload',
-          [
-              'gs://chromeos-throw-away-bucket/1970/01/bar-1970.01.01.000000.tar.xz'
-          ]),
+          ['gs://staging-chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz']),
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
-          ['gs://chromeos-throw-away-bucket/cros-sdk-1970.01.01.000000.tar.xz'
-          ]),
+          ['gs://staging-chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz']),
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
-              'gs://chromeos-throw-away-bucket/cros-sdk-1970.01.01.000000.tar.xz.Manifest'
+              'gs://staging-chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest'
           ]),
       # Staging builder should launch the staging PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
                      (r'"bucket": "staging"',
                       r'"builder": "staging-chromiumos-sdk-pupr-generator"')),
-      api.post_process(post_process.DropExpectation),
-      builder='staging-chromiumos-sdk',
-      bucket='staging',
-  )
-
-  yield api.test(
-      'upload-to-staging-dir',
-      api.properties(upload_to_staging_dir=True),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
-              "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
-              "gs://chromiumos-sdk/staging/cros-sdk-1970.01.01.000000.tar.xz"
-          ]),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.build_menu.test(
-      'staging-upload-to-staging-dir',
-      api.properties(upload_to_staging_dir=True),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
-              '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
-              'gs://chromeos-throw-away-bucket/staging/cros-sdk-1970.01.01.000000.tar.xz'
-          ]),
       api.post_process(post_process.DropExpectation),
       builder='staging-chromiumos-sdk',
       bucket='staging',
