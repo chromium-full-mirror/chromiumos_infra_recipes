@@ -427,20 +427,21 @@ class CrosBuildApiApi(RecipeApi):
     logs = []
     for failed_pkg in output_proto.failed_package_data:
       content = ''
-      if failed_pkg.log_path.path:
-        name = '%s/%s' % (failed_pkg.name.category,
-                          failed_pkg.name.package_name)
-        # Prior to R118, build API would return inside-chroot paths, so we
-        # translate them here.
-        # TODO(b/265885353): Remove INSIDE handling once old branches are dead.
-        if failed_pkg.log_path.location == common_pb2.Path.INSIDE:
-          log_path = '%s%s' % (input_proto.chroot.path,
-                               failed_pkg.log_path.path)
-        else:
-          log_path = failed_pkg.log_path.path
+      with self.m.failures.ignore_exceptions():
+        if failed_pkg.log_path.path:
+          name = '%s/%s' % (failed_pkg.name.category,
+                            failed_pkg.name.package_name)
+          # Prior to R118, build API would return inside-chroot paths, so we
+          # translate them here.
+          # TODO(b/265885353): Remove INSIDE handling once old branches are dead.
+          if failed_pkg.log_path.location == common_pb2.Path.INSIDE:
+            log_path = '%s%s' % (input_proto.chroot.path,
+                                 failed_pkg.log_path.path)
+          else:
+            log_path = failed_pkg.log_path.path
 
-        content = self.m.file.read_raw('read log for %s' % name, log_path,
-                                       'test data for %s log file' % name)
+          content = self.m.file.read_raw('read log for %s' % name, log_path,
+                                         'test data for %s log file' % name)
       logs.append((failed_pkg.name, content))
     return logs
 

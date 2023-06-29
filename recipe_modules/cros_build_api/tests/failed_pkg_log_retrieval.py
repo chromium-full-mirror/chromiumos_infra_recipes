@@ -11,6 +11,7 @@ from PB.chromiumos import common as chromiumos
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'cros_build_api',
 ]
@@ -64,6 +65,29 @@ def RunSteps(api):
     api.assertions.assertTrue(failed_packages[i][0] == pkg.name)
     api.assertions.assertTrue(failed_packages[i][1] == '')
 
+  # Failure to read file does not throw an exception.
+  packages = [
+      sysroot.FailedPackageData(
+          name=chromiumos.PackageInfo(category='test', package_name='package',
+                                      version='1'),
+          log_path=chromiumos.Path(
+              path='/all/your/oopsie/are/belong/to/us/1',
+              location=chromiumos.Path.Location.INSIDE,
+          ))
+  ]
+
+  failed_packages = api.cros_build_api.failed_pkg_logs(
+      sysroot.InstallToolchainRequest(),
+      sysroot.InstallPackagesResponse(failed_package_data=packages))
+
+  api.assertions.assertTrue(len(failed_packages) == len(packages))
+  for i, pkg in enumerate(packages):
+    api.assertions.assertTrue(failed_packages[i][0] == pkg.name)
+    api.assertions.assertTrue(failed_packages[i][1] == '')
+
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.step_data('read log for test/package', retcode=1),
+  )

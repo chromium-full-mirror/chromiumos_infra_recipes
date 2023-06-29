@@ -1680,6 +1680,38 @@
     "name": "read log for foo/bar59 (2)"
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "/all/your/oopsie/are/belong/to/us/1",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read log for test/package",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ignored exception",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('read log for test/package') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set caught_exceptions",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"InfraFailure(\\\"Infra Failure: Step('read log for test/package') (retcode: 1)\\\")\"}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
