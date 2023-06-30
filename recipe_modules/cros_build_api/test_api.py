@@ -597,6 +597,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             },
         ])
     ])
+    responses['SetupToolchains'] = jsonify()
     return responses
 
   test_version = cros_build_api.Version(1, 1, 0)

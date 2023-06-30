@@ -194,6 +194,7 @@ def RunSteps(api):
       'ToolchainService': {
           'PrepareForBuild': toolchain.PrepareForToolchainBuildResponse,
           'BundleArtifacts': toolchain.BundleToolchainResponse,
+          'SetupToolchains': toolchain.SetupToolchainsResponse,
       },
       'VersionService': {
           'Get': meta_api.VersionGetResponse,

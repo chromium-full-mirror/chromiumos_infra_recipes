@@ -8,7 +8,7 @@
 import collections
 import contextlib
 import re
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional
 
 from google.protobuf import json_format
 
@@ -18,6 +18,7 @@ from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import BuildTestServiceContainersRequest
+from PB.chromite.api.toolchain import SetupToolchainsRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
@@ -192,6 +193,20 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def dep_graph(self):
     return self._dep_graph
 
+  @property
+  def _build_targets_for_toolchain_setup(
+      self) -> Optional[List[common_pb2.BuildTarget]]:
+    """Return which build targets need toolchains, if any.
+
+    Returns:
+      For most image builds, [self.build_target], since we need toolchains to
+      build an image. But if this build has no build target (ex. chromite-cq),
+      then None to signify that we don't need to set up toolchains at all.
+    """
+    if not self.build_target.name or self._force_empty_toolchain_targets:
+      return None
+    return [self.build_target]
+
   # TODO(b/189363718): This function is catered towards the slim build use case.
   # Refactor so that it can be applied to other use cases. For example, the
   # decision to include reverse dependencies should come from the config.
@@ -352,7 +367,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
                    replace: bool = False, uprev_packages: bool = True,
-                   update: Optional[bool] = None) -> bool:
+                   update: Optional[bool] = None,
+                   setup_toolchains_if_no_update: bool = True) -> bool:
     """Setup the chroot for the builder.
 
     Args:
@@ -365,6 +381,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
       update: Whether to update the chroot after creating it (overriding the
         builder config). If not given, defer to the builder config. If the
         builder config also does not specify, default to True.
+      setup_toolchains_if_no_update: If True, and the function skips updating
+        the chroot (whether due to the `update` kwarg or due to the builder
+        config), then it will setup toolchains instead.
 
     Returns:
       Whether the build is relevant.
@@ -399,16 +418,43 @@ class BuildMenuApi(recipe_api.RecipeApi):
       if update is None:
         run_spec = config.update_chroot.run_spec
         update = run_spec != BuilderConfig.RunSpec.NO_RUN
+
       if update:
-        # Avoid passing empty BuildTarget message when we don't have one,
-        # e.g. chromite-cq.
-        tc_targets = [self.build_target] if self.build_target.name else None
-        tc_targets = None if self._force_empty_toolchain_targets else tc_targets
         self.m.cros_sdk.update_chroot(
-            toolchain_targets=tc_targets,
-            build_source=config.build.sdk_update.compile_source)
+            build_source=config.build.sdk_update.compile_source,
+            toolchain_targets=self._build_targets_for_toolchain_setup)
+      elif setup_toolchains_if_no_update:
+        # Normally, update_chroot takes care of toolchain setup. If we skipped
+        # update_chroot, make sure we still setup toolchains.
+        self.setup_toolchains()
 
     return relevance != Relevance.POINTLESS
+
+  def setup_toolchains(self) -> None:
+    """Setup toolchains on the builder.
+
+    ToolchainService.SetupToolchains was added in R117. If this function runs
+    on an older branch, then Chromite will not have the endpoint implementation,
+    so the build will fail. At time of writing, this function is not expected
+    to run on any branches older than that. If that changes, consider cherry-
+    picking SetupToolchains into your branch: https://crrev.com/c/4659850.
+
+    This is a noop if we have no build targets to setup.
+
+    Raises:
+      InfraFailure: If the endpoint is not available.
+    """
+    build_targets = self._build_targets_for_toolchain_setup
+    if not build_targets:
+      return
+    with self.m.step.nest('setup toolchains'):
+      if not self.m.cros_build_api.has_endpoint(
+          self.m.cros_build_api.ToolchainService, 'SetupToolchains'):
+        raise recipe_api.InfraFailure(
+            'Endpoint SetupToolchains() not present on branches older than '
+            'R117. Consider cherry-picking it in.')
+      request = SetupToolchainsRequest(chroot=self.chroot, boards=build_targets)
+      self.m.cros_build_api.ToolchainService.SetupToolchains(request)
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True):
     """Setup the sysroot for the builder and determine build relevance.
