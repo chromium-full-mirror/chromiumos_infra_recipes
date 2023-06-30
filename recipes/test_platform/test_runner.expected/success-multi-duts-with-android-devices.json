@@ -1201,8 +1201,6 @@
       "task_id:dummy-task-id0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
-      "-sources-file",
-      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "skylab-test-runner",
