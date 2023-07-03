@@ -979,6 +979,8 @@
       "test_suite:lacros_all_tast_tests",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",

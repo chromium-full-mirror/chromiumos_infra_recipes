@@ -347,8 +347,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         test_id_prefix=config.get('test_id_prefix', ''),
         test_location_base=config.get('test_location_base'),
         location_tags_file=config.get('location_tags_file'),
-        # TODO(b/274537649): Re-enable once assertion error gets addressed.
-        # sources_file=config.get('sources_file'),
+        sources_file=config.get('sources_file'),
         require_build_inv=True,
         exonerate_unexpected_pass=config.get('exonerate_unexpected_pass', True),
         include=config.get('include', False) or (realm != ''),

@@ -775,8 +775,8 @@ def _prepare_resultdb_sources_file(api, properties):
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * properties (TestRunnerProperties): Recipe input properties.
 
-  Returns: Path to file containing test source information, as a
-    JSONPB-serialized luci.resultdb.v1.Sources proto.
+  Returns: str: Path to file containing test source information. The file
+    will take the form of a JSONPB-serialized luci.resultdb.v1.Sources proto.
 
   Raises:
   * SourcesNotAvailableException. If the information is not available.
@@ -861,7 +861,7 @@ def _prepare_resultdb_sources_file(api, properties):
         api.file.write_proto('write sources proto', sources_local_path,
                              sources_proto, 'JSONPB')
 
-    return sources_local_path
+    return str(sources_local_path)
 
 
 def _upload_missing_tast_results(api, base_variant, base_tags,
@@ -1019,8 +1019,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
       # Capture the code sources which were tested.
       try:
-        config['sources_file'] = str(
-            _prepare_resultdb_sources_file(api, properties))
+        config['sources_file'] = _prepare_resultdb_sources_file(api, properties)
       except SourcesNotAvailableException:  # pragma: nocover
         pass
 
@@ -1103,7 +1102,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     # Capture the code sources which were tested.
     sources_file = None
     try:
-      sources_file = str(_prepare_resultdb_sources_file(api, properties))
+      sources_file = _prepare_resultdb_sources_file(api, properties)
     except SourcesNotAvailableException:  # pragma: nocover
       pass
 
