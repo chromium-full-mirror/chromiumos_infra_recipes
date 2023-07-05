@@ -15,10 +15,13 @@ from google.protobuf import json_format
 
 from PB.chromite.api import sdk as sdk_pb2
 from PB.chromiumos import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 from PB.recipes.chromeos import build_sdk as build_sdk_pb2
 from PB.recipes.chromeos import generator as generator_pb2
+from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
                                                          pupr_local_uprev_pb2)
 from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
@@ -67,9 +70,10 @@ SDK_BUCKET = 'chromiumos-sdk'
 PREBUILTS_BUCKET = 'chromeos-prebuilt'
 
 
-def RunSteps(api: recipe_api.RecipeApi,
-             properties: build_sdk_pb2.BuildSDKProperties):
-  BuildSDKRun(api, properties).run()
+def RunSteps(
+    api: recipe_api.RecipeApi,
+    properties: build_sdk_pb2.BuildSDKProperties) -> result_pb2.RawResult:
+  return BuildSDKRun(api, properties).run()
 
 
 class BuildSDKRun:
@@ -130,7 +134,7 @@ class BuildSDKRun:
     return os.path.join(self._toolchain_tarball_dir,
                         f'%(target)s-{self.version}.tar.xz')
 
-  def run(self):
+  def run(self) -> result_pb2.RawResult:
     """Run the main logic for this builder."""
     # Determine which commit
     with self._setup():
@@ -142,7 +146,9 @@ class BuildSDKRun:
       self._upload_sdk_tarball_and_manifest()
       self._update_gs_latest_file()
       if self.properties.launch_pupr:
-        self._schedule_uprev()
+        scheduled_pupr_build = self._schedule_uprev()
+        return self._create_build_result(scheduled_pupr_build)
+      return self._create_build_result(None)
 
   @contextlib.contextmanager
   def _setup(self) -> Generator:
@@ -410,7 +416,7 @@ class BuildSDKRun:
         str(source_path), dest_bucket, dest_path, args=args,
         multithreaded=multithreaded)
 
-  def _schedule_uprev(self) -> None:
+  def _schedule_uprev(self) -> build_pb2.Build:
     """Trigger a PUpr build to uprev to the newly-built SDK.
 
     The PUpr build should be staging if this build is staging, and prod if this
@@ -419,6 +425,9 @@ class BuildSDKRun:
     PUpr uses GitilesTriggers to pick a branch policy, because originally all
     uprevs were triggered by gitiles changes. Luckily, it provides a property
     for spoofing GitilesTriggers.
+
+    Returns:
+      A Build proto message for the scheduled build.
     """
     if self.m.build_menu.is_staging:
       bucket, builder = 'staging', 'staging-chromiumos-sdk-pupr-generator'
@@ -458,7 +467,34 @@ class BuildSDKRun:
         properties=pupr_properties,
         can_outlive_parent=True,
     )
-    self.m.buildbucket.schedule([request], step_name='schedule uprev')
+    builds = self.m.buildbucket.schedule([request], step_name='schedule uprev')
+    assert len(builds) == 1
+    return builds[0]
+
+  def _create_build_result(
+      self,
+      scheduled_pupr_build: Optional[build_pb2.Build]) -> result_pb2.RawResult:
+    """Return a RawResult summarizing this build_sdk build.
+
+    Args:
+      scheduled_pupr_build: If given, a proto message of the PUpr build that
+        this build launched.
+    """
+    summary_lines = []
+    sdk_gs_link = self._get_gs_link_to_sdk()
+    summary_lines.append(f'Built SDK version [{self.version}]({sdk_gs_link}).')
+    if scheduled_pupr_build is None:
+      summary_lines.append('SDK uprev builder not launched.')
+    else:
+      pupr_link = self.m.buildbucket.build_url(build_id=scheduled_pupr_build.id)
+      summary_lines.append(f'Launched SDK uprev build: {pupr_link}')
+    return result_pb2.RawResult(status=bb_common_pb2.SUCCESS,
+                                summary_markdown='\n'.join(summary_lines))
+
+  def _get_gs_link_to_sdk(self) -> str:
+    """Return a gs:// link to the built SDK tarball."""
+    bucket = self._pick_bucket(SDK_BUCKET)
+    return f'gs://{bucket}/cros-sdk-{self.version}.tar.xz'
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):

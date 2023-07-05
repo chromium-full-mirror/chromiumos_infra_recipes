@@ -2852,6 +2852,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Built SDK version [1970.01.01.000000](gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz).\nLaunched SDK uprev build: https://cr-buildbucket.appspot.com/build/8922054662172514000"
   }
 ]
