@@ -1479,6 +1479,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -1504,6 +1505,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -1529,6 +1531,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -1554,6 +1557,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2816,6 +2820,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2930,6 +2935,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3044,6 +3050,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3158,6 +3165,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3337,6 +3345,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3514,6 +3523,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3691,6 +3701,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3868,6 +3879,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -3975,6 +3987,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -4040,6 +4053,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/[CLEANUP]/chromiumos_workspace/src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -4105,6 +4119,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -4170,6 +4185,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "src/private-overlay",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"

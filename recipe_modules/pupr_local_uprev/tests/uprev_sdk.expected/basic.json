@@ -109,6 +109,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
       "[CLEANUP]/chromiumos_workspace/src/overlays/overlay-amd64-host/prebuilt.conf",
       "-c",

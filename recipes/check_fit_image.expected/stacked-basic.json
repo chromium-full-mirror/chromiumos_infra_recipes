@@ -1815,6 +1815,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "chromeos/overlays/baseboard-bar-private",
       "chromeos/overlays/baseboard-baz-private",
       "chromeos/overlays/baseboard-foo-private",
@@ -2021,6 +2022,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "chromeos/overlays/baseboard-foo-private",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2168,6 +2170,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "chromeos/overlays/baseboard-bar-private",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
@@ -2315,6 +2318,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "chromeos/overlays/baseboard-baz-private",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"

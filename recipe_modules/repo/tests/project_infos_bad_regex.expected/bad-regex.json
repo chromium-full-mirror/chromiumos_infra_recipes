@@ -3,6 +3,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "--regex",
       "some/bad/regex",
       "-c",

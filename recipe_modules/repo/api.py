@@ -522,6 +522,7 @@ class RepoApi(recipe_api.RecipeApi):
 
     cmd = []
     cmd += ['forall']
+    cmd += ['-v']
     cmd += ['--ignore-missing'] if ignore_missing else []
     cmd += (['--regex'] + regexes) if regexes is not None else []
     cmd += projects if projects is not None else []

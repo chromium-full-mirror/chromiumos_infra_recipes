@@ -321,6 +321,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/tmp_tmp_1/test1.ebuild",
       "[CLEANUP]/tmp_tmp_1/test2.ebuild",
       "-c",

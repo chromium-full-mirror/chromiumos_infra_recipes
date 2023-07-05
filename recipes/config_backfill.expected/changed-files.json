@@ -1248,6 +1248,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "--ignore-missing",
       "[CLEANUP]/chromiumos_workspace/src/project/test_program/test_project",
       "-c",

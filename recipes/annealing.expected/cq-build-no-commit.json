@@ -2623,6 +2623,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -4121,6 +4122,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
       "-c",
@@ -4202,6 +4204,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
+      "-v",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
       "-c",
