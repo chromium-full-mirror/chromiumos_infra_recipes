@@ -218,7 +218,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       upload_path = "/".join([
           api.buildbucket.builder_name,
           str(api.cros_version.version),
-          api.path.basename(tarball_path),
+          api.path.basename(tarball_path.path),
       ])
       # Upload the file to google storage (-n so we don't overwrite an
       # already existing file).
