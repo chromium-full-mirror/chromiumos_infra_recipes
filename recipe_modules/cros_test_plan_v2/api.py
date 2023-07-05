@@ -297,6 +297,29 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           text_format.MessageToString(p) for p in relevant_plans)
       return relevant_plans
 
+  def dirmd_update(self, table: str):
+    """Call test_plan chromeos-dirmd-update.
+
+    Args:
+      * table: BigQuery table to upload to, in the form
+        <project>.<dataset>.<table>. Required. The table will be created if it
+        doesn't already exist, and the schema will be updated if it doesn't
+        match the DirBQRow schema.
+    """
+    with self.m.step.nest('dirmd update'), self.m.context(infra_steps=True):
+      self._ensure_test_plan()
+
+      self.m.step('call test_plan', [
+          self._test_plan_path,
+          'chromeos-dirmd-update',
+          '-crossrcroot',
+          self.m.src_state.workspace_path,
+          '-table',
+          table,
+          '-loglevel',
+          'debug',
+      ])
+
   def _ensure_test_plan(self):
     """Ensure the test_plan cli is installed.
 

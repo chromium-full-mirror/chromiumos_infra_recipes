@@ -367,6 +367,7 @@
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
   * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
   * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible)
+  * [cros_test_plan_v2:examples/dirmd_update](#recipes-cros_test_plan_v2_examples_dirmd_update)
   * [cros_test_plan_v2:examples/disabled_on_changes](#recipes-cros_test_plan_v2_examples_disabled_on_changes)
   * [cros_test_plan_v2:examples/enabled_on_changes](#recipes-cros_test_plan_v2_examples_enabled_on_changes)
   * [cros_test_plan_v2:examples/fallback_to_default](#recipes-cros_test_plan_v2_examples_fallback_to_default)
@@ -397,6 +398,7 @@
   * [deferrals:tests/defer_exceptions_infra_fail](#recipes-deferrals_tests_defer_exceptions_infra_fail)
   * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught)
   * [dirmd:examples/full](#recipes-dirmd_examples_full)
+  * [dirmd_update](#recipes-dirmd_update)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dlc_utils:tests/get_dlc_artifacts](#recipes-dlc_utils_tests_get_dlc_artifacts) &mdash; Tests to verify dlc_utils.
   * [dlc_utils:tests/get_dlcs_in_path](#recipes-dlc_utils_tests_get_dlcs_in_path) &mdash; Tests to verify dlc_utils.
@@ -4657,12 +4659,22 @@ Returns:
 &mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#40)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 #### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#84)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
+
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#300)(self, table: str):**
+
+Call test_plan chromeos-dirmd-update.
+
+Args:
+  * table: BigQuery table to upload to, in the form
+    <project>.<dataset>.<table>. Required. The table will be created if it
+    doesn't already exist, and the schema will be updated if it doesn't
+    match the DirBQRow schema.
 
 &mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#125)(self, gerrit_changes):**
 
@@ -4673,7 +4685,7 @@ of this module's properties.
 
 &emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#110)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#467)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#490)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -4690,7 +4702,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#595)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#618)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the testplan Docker image to get a list of testable builders.
 
@@ -12252,6 +12264,12 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#27)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/dirmd\_update](/recipe_modules/cros_test_plan_v2/examples/dirmd_update.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/dirmd_update.py#7): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2)
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/dirmd_update.py#14)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/disabled\_on\_changes](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/disabled_on_changes.py#10): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12436,6 +12454,12 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/dirmd/examples/full.py#16)(api):**
+### *recipes* / [dirmd\_update](/recipes/dirmd_update.py)
+
+[DEPS](/recipes/dirmd_update.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [src\_state](#recipe_modules-src_state), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipes/dirmd_update.py#27)(api: RecipeApi, properties: DirmdUpdateProperties):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#6): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -1,0 +1,14 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.dirmd_update;
+
+message DirmdUpdateProperties {
+  // BigQuery table to upload to, in the form <project>.<dataset>.<table>.
+  // Required. The table will be created if it doesn't already exist, and the
+  // schema will be updated if it doesn't match the DirBQRow schema.
+  string table = 1;
+};

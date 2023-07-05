@@ -18,6 +18,7 @@ DEPS = [
     'cros_test_plan',
     'easy',
     'gerrit',
+    'src_state',
     'depot_tools/gitiles',
 ]
 
