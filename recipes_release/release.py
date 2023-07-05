@@ -199,9 +199,6 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   parser.add_argument('-s', '--ignore-staging-failures', action='store_true',
                       help='Release even if staging failures are present.')
   parser.add_argument(
-      '-v', '--verbose', action='store_true',
-      help='Print all pending changes, including trivial recipe rolls.')
-  parser.add_argument(
       '--bundle', choices=['infra', 'release'], default='infra',
       help='Bundles available for a prod push. `release` is release builders,'
       '`infra` is everything else (not including CTP). Default is `infra`.')
