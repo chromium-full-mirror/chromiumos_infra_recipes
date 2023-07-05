@@ -406,7 +406,11 @@ class BuildSDKRun:
     if not self.m.path.exists(source_path):  # pragma: nocover
       raise recipe_api.InfraFailure(
           f'Upload source "{source_path}" not found locally.')
-    args = ['-a', 'public-read']
+    args = []
+    # gs://staging-chromiumos-sdk has uniform bucket-level access = public-read.
+    # Trying to set ACLs via `gustil -a` gets an HTTP error.
+    if dest_bucket != 'staging-chromiumos-sdk':
+      args.extend(['-a', 'public-read'])
     if self.m.path.isdir(source_path):
       args.append('-r')
       multithreaded = True
@@ -625,6 +629,10 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
               'gs://staging-chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest'
           ]),
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
+          ['-a']),
       # Staging builder should launch the staging PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
