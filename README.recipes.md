@@ -595,6 +595,7 @@
   * [pvs_run_script](#recipes-pvs_run_script) &mdash; Recipe for running PVS-related scripts.
   * [rdb_util:examples/get_board_from_variant](#recipes-rdb_util_examples_get_board_from_variant)
   * [rdb_util:examples/get_build_target_from_variant](#recipes-rdb_util_examples_get_build_target_from_variant)
+  * [rdb_util:examples/get_model_from_variant](#recipes-rdb_util_examples_get_model_from_variant)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config)
   * [rdb_util:examples/get_suite](#recipes-rdb_util_examples_get_suite)
   * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
@@ -5388,7 +5389,7 @@ Returns:
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#603)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#604)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -5475,7 +5476,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#816)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#817)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5485,7 +5486,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#798)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#799)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5505,7 +5506,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#751)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#752)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5542,7 +5543,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#681)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#682)(self, hw_test_result):**
 
 Checks to see if hw result is exonerable.
 
@@ -5553,7 +5554,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#719)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#720)(self, vm_build):**
 
 Checks to see if the VM test is exonerable.
 
@@ -8852,12 +8853,12 @@ A module for util functions associated with ResultDB.
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_board\_from\_variant](/recipe_modules/rdb_util/api.py#57)(variant: Variant):**
 
-Get build_target info from Variant definition.
+Get board info from Variant definition.
 
 Args:
   variant: Variant definition of the test.
 
-Returns: build_target of the test or ''.
+Returns: board of the test or ''.
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_build\_target\_from\_variant](/recipe_modules/rdb_util/api.py#45)(variant: Variant):**
 
@@ -8867,6 +8868,15 @@ Args:
   variant: Variant definition of the test.
 
 Returns: build_target of the test or ''.
+
+&emsp; **@staticmethod**<br>&mdash; **def [get\_model\_from\_variant](/recipe_modules/rdb_util/api.py#69)(variant: Variant):**
+
+Get model info from Variant definition.
+
+Args:
+  variant: Variant definition of the test.
+
+Returns: model of the test or ''.
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_shardless\_test\_config](/recipe_modules/rdb_util/api.py#31)(test_config: str):**
 
@@ -13923,6 +13933,12 @@ Recipe for running PVS-related scripts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_build_target_from_variant.py#16)(api):**
+### *recipes* / [rdb\_util:examples/get\_model\_from\_variant](/recipe_modules/rdb_util/examples/get_model_from_variant.py)
+
+[DEPS](/recipe_modules/rdb_util/examples/get_model_from_variant.py#8): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_model_from_variant.py#16)(api):**
 ### *recipes* / [rdb\_util:examples/get\_shardless\_test\_config](/recipe_modules/rdb_util/examples/get_shardless_test_config.py)
 
 [DEPS](/recipe_modules/rdb_util/examples/get_shardless_test_config.py#6): [rdb\_util](#recipe_modules-rdb_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

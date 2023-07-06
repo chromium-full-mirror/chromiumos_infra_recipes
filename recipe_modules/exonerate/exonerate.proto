@@ -65,6 +65,9 @@ message FailedTestStats {
   // Board the test ran on.
   string board = 7;
 
+  // Model the test ran on if specifically requested.
+  string model = 8;
+
   // Whether this test been manually exonerated.
   bool manually_exonerated = 3;
 
