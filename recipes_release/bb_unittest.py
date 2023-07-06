@@ -45,16 +45,26 @@ class GetAffectedRecipesTest(unittest.TestCase):
     ]
     mock_tempfile.return_value.__enter__.return_value.read.return_value = RECIPES_ANALYZE_OUTPUT
 
-    newest_commit = git.Commit('12345', '', '', '', '')
-    oldest_commit = git.Commit('abcde', '', '', '', '')
+    # Pass in the wrong order, make sure we're correctly determining the newest
+    # and oldest commits.
+    commits = [
+        git.Commit('abcde', '', '', '',
+                   datetime.fromisoformat('2020-01-01T12:00:00+00:00')),
+        git.Commit('zzzzz', '', 'update chromite-HEAD version', '',
+                   datetime.fromisoformat('2020-01-02T12:00:00+00:00')),
+        git.Commit('12345', '', '', '',
+                   datetime.fromisoformat('2020-01-03T12:00:00+00:00'))
+    ]
     all_recipes = ['foo', 'bar', 'baz']
-    affected_recipes = bb.get_affected_recipes(newest_commit, oldest_commit,
-                                               all_recipes)
+    affected_recipes = bb.get_affected_recipes(commits, all_recipes)
     self.assertEqual(affected_recipes, ['bar'])
 
     mock_dump.assert_called_with(
         {
-            'files': ['recipe_modules/util/api.py', 'recipes/bar.py'],
+            'files': [
+                'recipe_modules/util/api.py', 'recipes/bar.py',
+                'recipe_modules/cros_build_api/api.py'
+            ],
             'recipes': ['bar', 'baz', 'foo'],
         }, mock.ANY)
     mock_subprocess_run.assert_has_calls([
@@ -219,8 +229,8 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
       changes[i].get_cipd_instance = MagicMock(return_value=changes[i].hash)
 
     # Some changes affect recipes.
-    def get_affected_recipes(change: git.Commit, *_) -> List[str]:
-      return affected_recipes[change.hash]
+    def get_affected_recipes(changes: List[git.Commit], *_) -> List[str]:
+      return affected_recipes[changes[0].hash]
 
     mock_get_affected_recipes.side_effect = get_affected_recipes
 
@@ -298,8 +308,10 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
     # In this test, most changes affect every recipe.
     affected_recipes = {
         '10060': [],
-        # 10070 is a chromite pin uprev
-        '10070': [],
+        # 10070 is a chromite pin uprev. affected_recipes will inject
+        # cros_build_api as a dependency and use that to determine affected
+        # recipes. In this case, declare `bar` to be relevant.
+        '10070': ['bar'],
     }
     affected_recipes_dict = defaultdict(lambda: ['foo', 'bar', 'baz'],
                                         affected_recipes)
@@ -308,8 +320,6 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
         list(changes.values()), build_results, instance_to_hash,
         affected_recipes_dict)
     # 10060 is releasable but is a trivial commit.
-    # 10070 would be releasable if we took the affected recipes
-    # at face value, but it's a chromite pin so we check all builders.
     self.assertEqual(instance, '10050')
 
   def test_success_noreleasable(self):

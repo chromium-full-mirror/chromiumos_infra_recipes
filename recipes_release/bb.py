@@ -29,16 +29,28 @@ MIN_BRANCH_MILESTONE = 113
 
 
 @lru_cache(maxsize=None)
-def _get_affected_recipes(newest_change: git.Commit, oldest_change: git.Commit,
+def _get_affected_recipes(changes: Tuple[git.Commit],
                           recipes: str) -> List[str]:
   """Internal (cachable) function for get_affected_recipes."""
   recipes = sorted(recipes.split(','))
+
+  changes = sorted(changes, key=lambda change: change.commit_timestamp,
+                   reverse=True)
+  newest_change = changes[0]
+  oldest_change = changes[-1]
 
   cmd = [
       'git', 'diff', '--name-only', newest_change.hash, f'{oldest_change.hash}~'
   ]
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
   affected_files = p.stdout.strip().split()
+
+  # Chromite Pin Uprevs return nothing for ./recipes.py analyze, so we
+  # need to manually set affected files.
+  for change in changes:
+    if change.chromite_pin_uprev:
+      affected_files.append('recipe_modules/cros_build_api/api.py')
+      break
 
   with tempfile.NamedTemporaryFile(mode='w') as input_file, \
         tempfile.NamedTemporaryFile() as output_file:
@@ -58,18 +70,16 @@ def _get_affected_recipes(newest_change: git.Commit, oldest_change: git.Commit,
   return data['recipes']
 
 
-def get_affected_recipes(newest_change: git.Commit, oldest_change: git.Commit,
+def get_affected_recipes(changes: List[git.Commit],
                          recipes: List[str]) -> List[str]:
   """Get the list of recipes affected by the given commits.
 
   Args:
-    newest_change: The most recent change being proposed for release.
-    oldest_change: The oldest change being proposed for release.
+    changes: The changes being propsed for release.
     recipes: List of recipes used by the staging builders. Required arg for
       `./recipes.py analyze`.
   """
-  return _get_affected_recipes(newest_change, oldest_change,
-                               ','.join(sorted(recipes)))
+  return _get_affected_recipes(tuple(changes), ','.join(sorted(recipes)))
 
 
 @lru_cache(maxsize=None)
@@ -135,7 +145,7 @@ def check_staging_builders(changes: List[git.Commit],
 
   relevant_builders = set()
   if changes:
-    affected_recipes = get_affected_recipes(changes[0], changes[-1],
+    affected_recipes = get_affected_recipes(changes,
                                             list(recipe_by_builder.values()))
     for builder, recipe in recipe_by_builder.items():
       if recipe in affected_recipes:
@@ -151,7 +161,7 @@ def check_staging_builders(changes: List[git.Commit],
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
       diff_fn = lambda change: get_affected_recipes(
-          change, change, list(recipe_by_builder.values()))
+          [change], list(recipe_by_builder.values()))
       if check_recent_build_statuses(builder, re_check.exemptions, changes,
                                      diff_fn):
         baddies.append(builder)
@@ -447,15 +457,13 @@ def determine_maximum_covered_instance(
     print_if_verbose(f'Considering commit {change.hash}')
 
     affected_recipes = get_affected_recipes(
-        change, change, list(set(recipe_by_builder.values())))
+        [change], list(set(recipe_by_builder.values())))
+    print_if_verbose(f'Affected recipes: {",".join(affected_recipes)}')
 
     missing_coverage = False
     for builder in builders:
       # Make sure we have sufficient coverage for all relevant builders.
-      # Chromite Pin Uprevs return nothing for ./recipes.py analyze, so we
-      # need to enforce coverage for all builders.
-      if not change.chromite_pin_uprev and recipe_by_builder[
-          builder] not in affected_recipes:
+      if recipe_by_builder[builder] not in affected_recipes:
         continue
       if change_coverage_per_build[builder][i] < REQUIRED_BUILDER_COUNT:
         print_if_verbose(
