@@ -65,11 +65,49 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  release_gitiles_commit = GitilesCommit(
+      project='chromeos/manifest-internal-snapshot',
+      host='chrome-internal.googlesource.com', commit_hash='ddd',
+      ref='release-main-snapshot', position=33)
+  expected_sources = Sources(gitiles_commit=release_gitiles_commit)
+
+  input_properties = {
+      '$chromeos/metadata': {
+          'sources_gitiles_commit_override':
+              MessageToDict(release_gitiles_commit)
+      }
+  }
+
   yield api.test(
       'staging-release',
       api.test_util.test_child_build(
           'staging-eve', builder_name='staging-eve-release-main',
+          input_properties=input_properties,
           experiments=['chromeos.build_menu.upload_sources']).build,
+      api.properties(TestProperties(expected_sources=expected_sources)),
+      api.post_check(post_process.MustRun, 'upload sources metadata'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'staging-release-no-commit',
+      api.test_util.test_child_build(
+          'staging-eve', builder_name='staging-eve-release-main',
+          git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
+          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.post_check(post_process.DoesNotRun, 'upload sources metadata'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'factory',
+      api.test_util.test_child_build(
+          'factory-corsola-15197.B-corsola',
+          builder_name='staging-factory-corsola-15197.B-corsola',
+          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.cros_infra_config.override_builder_configs_test_data(
+          api.cros_infra_config.builder_configs_test_data, ref='HEAD'),
+      api.post_check(post_process.DoesNotRun, 'upload sources metadata'),
       api.post_process(post_process.DropExpectation),
   )
 

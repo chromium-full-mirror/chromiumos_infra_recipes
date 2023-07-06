@@ -22,6 +22,7 @@ from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
+from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 
@@ -68,6 +69,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._buildspec = None
     self._dont_upload_to_manifest_versions = properties.dont_upload_to_manifest_versions
     self._commit_buildspec_as_snapshot = properties.commit_buildspec_as_snapshot
+    self._resultdb_gitiles_commit = None
     self._minios_unsupported = properties.minios_unsupported
     self._dynamic_qs_account = properties.dynamic_qs_account
 
@@ -79,6 +81,39 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   @buildspec.setter
   def buildspec(self, buildspec: ManifestLocation):
     self._buildspec = buildspec
+
+  @property
+  def resultdb_gitiles_commit(self) -> rdb_common_pb2.GitilesCommit():
+    """Return the gitiles commit used for ResultDB as created by this module, or None."""
+    return self._resultdb_gitiles_commit
+
+  def set_resultdb_gitiles_commit(
+      self,
+      repo_url: str,
+      repo_host: str,
+      project: str,
+      branch: str,
+      position: int,
+  ) -> None:
+    """Set the gitiles commit used for ResultDB.
+
+    Args:
+      repo_url: URL where the repo is hosted.
+      repo_host: The identity of the gitiles host.
+      project: Repository name on the host.
+      branch: Branch where commit was fetched.
+      position: Used to define a total order of commits on the ref.
+    """
+    commit_id = self.m.git.fetch_ref(repo_url, branch)
+    ref = f'refs/heads/{branch}'
+    gitiles_commit = json_format.MessageToDict(
+        common_pb2.GitilesCommit(host=repo_host, project=project, ref=ref,
+                                 id=commit_id))
+    gitiles_commit['commit_hash'] = gitiles_commit.pop('id')
+    gitiles_commit['position'] = position
+    self._resultdb_gitiles_commit = json_format.ParseDict(
+        gitiles_commit, rdb_common_pb2.GitilesCommit(),
+        ignore_unknown_fields=True)
 
   def check_channel_override(self):
     if self.m.cros_infra_config.should_override_release_channels:
@@ -175,6 +210,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     MANIFEST_VERSIONS_DRYRUN_BRANCH = 'release'
     MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH = 'staging-buildspec-snapshot'
+    MANIFEST_INTERNAL_SNAPSHOT_PROJECT = 'manifest-internal-snapshot'
+    MANIFEST_INTERNAL_HOST = 'chrome-internal.googlesource.com'
 
     def commit_to_remote(checkout, filename, commit_message, branch):
       self.m.git.add([filename])
@@ -267,7 +304,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                     orch_branch if orch_branch != 'main' else 'main-release')
 
               manifest_internal_checkout = self.m.path.mkdtemp(
-                  prefix='manifest-internal-snapshot')
+                  prefix=MANIFEST_INTERNAL_SNAPSHOT_PROJECT)
               with self.m.context(cwd=manifest_internal_checkout):
                 # Clone manifest-versions repo to current path.
                 with self.m.step.nest('clone manifest-internal'):
@@ -296,6 +333,16 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 with self.m.step.nest('commit to {}'.format(snapshot_branch)):
                   commit_to_remote(manifest_internal_checkout, 'snapshot.xml',
                                    commit_message, snapshot_branch)
+                # Set for use by orchestrator for build_menu.upload_sources.
+                self.set_resultdb_gitiles_commit(
+                    self.MANIFEST_INTERNAL_URL,
+                    MANIFEST_INTERNAL_HOST,
+                    MANIFEST_INTERNAL_SNAPSHOT_PROJECT,
+                    snapshot_branch,
+                    position,
+                )
+                presentation.logs['resultdb_gitiles_commit'] = str(
+                    self.resultdb_gitiles_commit)
 
         manifest_gs_path = ''
         if gs_location:

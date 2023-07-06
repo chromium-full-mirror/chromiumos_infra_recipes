@@ -142,11 +142,19 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """Return the GitilesCommit for Sources metadata.
 
     The GitilesCommit is either passed in by the parent via input property when
-    the build was scheduled or can be derived after syncing the source.
+    the build was scheduled or can be derived for non-release builders after
+    syncing the source.
     """
     if (self.m.metadata.sources_gitiles_commit_override !=
         rdb_common_pb2.GitilesCommit()):
       return self.m.metadata.sources_gitiles_commit_override
+
+    # We don't want to derive a release ResultDB commit because we pin and
+    # commit release buildspecs to a -snapshot branch rather than using the
+    # (potentially unpinned) manifest-internal commit.
+    config = self.config_or_default
+    if config and config.id.type == BuilderConfig.Id.RELEASE:
+      return rdb_common_pb2.GitilesCommit()
 
     with self.m.context(cwd=self.m.src_state.build_manifest.path):
       position = self.m.git_footers.position_num(
@@ -978,12 +986,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
               in self.m.cros_infra_config.experiments):
         return None
 
-      # This is currently limited to CQ and Postsubmit builders.
-      if not (config and config.id.type
-              in [BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT]):
+      # This is currently limited to CQ, Postsubmit, and Release builders.
+      if not (config and config.id.type in [
+          BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT,
+          BuilderConfig.Id.RELEASE
+      ]):
         return None
 
       gitiles_commit = self.resultdb_gitiles_commit
+
+      if gitiles_commit == rdb_common_pb2.GitilesCommit():
+        return None
 
       changelists = [
           json_format.Parse(

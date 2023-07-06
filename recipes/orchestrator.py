@@ -125,6 +125,12 @@ def DoRunSteps(api: RecipeApi):
           'sources_gitiles_commit_override':
               MessageToDict(api.build_menu.resultdb_gitiles_commit)
       }
+  if api.orch_menu.is_release_orchestrator and api.cros_release.resultdb_gitiles_commit:
+    if 'chromeos.build_menu.upload_sources' in api.cros_infra_config.experiments:
+      extra_child_props['$chromeos/metadata'] = {
+          'sources_gitiles_commit_override':
+              MessageToDict(api.cros_release.resultdb_gitiles_commit)
+      }
 
   async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
   if api.orch_menu.is_cq_orchestrator and async_unit_tests_enabled:
@@ -220,6 +226,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.post_check(post_process.MustRun, 'run tests'),
+      api.post_check(post_process.LogDoesNotContain,
+                     'run builds.schedule new builds.eve-release-main',
+                     'request',
+                     ['$chromeos/metadata', 'sources_gitiles_commit_override']),
       builder='release-main-orchestrator',
       with_history=True,
       collect_builds=data.builds,
@@ -440,7 +450,7 @@ def GenTests(api: RecipeTestApi):
       experiments=['chromeos.build_cq.async_unit_tests'],
   )
 
-  # TODO(b/279631301): Remove after rollut in prod.
+  # TODO(b/279631301): Remove after rollout in prod.
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')
   yield api.orch_menu.test(
@@ -450,4 +460,31 @@ def GenTests(api: RecipeTestApi):
       experiments=['chromeos.build_menu.upload_sources'],
       collect_builds=collect,
       collect_after_builds=collect_after,
+  )
+
+  yield api.orch_menu.test(
+      'release-commit-buildspec-upload-sources',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }),
+      api.post_check(post_process.LogContains,
+                     'run builds.schedule new builds.eve-release-main',
+                     'request',
+                     ['$chromeos/metadata', 'sources_gitiles_commit_override']),
+      builder='release-main-orchestrator',
+      # TODO(b/279631301): Remove experiment after rollout in prod.
+      experiments=['chromeos.build_menu.upload_sources'],
+  )
+
+  # TODO(b/279631301): Remove test after rollout in prod.
+  yield api.orch_menu.test(
+      'upload-sources-experiment-release-no-commit',
+      api.post_check(post_process.LogDoesNotContain,
+                     'run builds.schedule new builds.eve-release-main',
+                     'request',
+                     ['$chromeos/metadata', 'sources_gitiles_commit_override']),
+      builder='release-main-orchestrator',
+      experiments=['chromeos.build_menu.upload_sources'],
   )
