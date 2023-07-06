@@ -43,8 +43,9 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.exonerate.get_flake_percent_from_interval_stats([]), (0))
   variant = api.exonerate.get_test_variant_dict('test_name', 'board',
-                                                'build_target')
+                                                'build_target', 'model')
   api.assertions.assertEqual(variant['variant']['def']['board'], 'board')
+  api.assertions.assertEqual(variant['variant']['def']['model'], 'model')
 
 
 def GenTests(api):

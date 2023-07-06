@@ -28,7 +28,8 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
 EXCLUDE_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/excludes'
-FailedTest = namedtuple('FailedTest', ['name', 'board', 'build_target'])
+FailedTest = namedtuple('FailedTest',
+                        ['name', 'board', 'build_target', 'model'])
 DEFAULT_OVERALL_AUTOEX_LIMIT = 100
 DEFAULT_PER_TARGET_AUTOEX_LIMIT = 20
 DEFAULT_CONSISTENT_FAILURE_THRESHOLD = 6
@@ -209,7 +210,8 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return test_case
 
-  def _exonerate_hw_test_cases(self, test_cases, build_target, board):
+  def _exonerate_hw_test_cases(self, test_cases, build_target, board,
+                               model=None):
     """Exonerates [ExecuteResponse.TaskResult.TestCaseResult] based on configs.
 
     Args:
@@ -217,6 +219,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         conditionally exonerated.
       build_target(str): build_target that was tested.
       board(str): board on which the test was executed.
+      model(str): model on which the test was executed if explicitly requested.
 
     Returns: list of TestCaseResult changed based on the decision, new overall
       verdict of the tests.
@@ -241,7 +244,7 @@ class ExonerateApi(recipe_api.RecipeApi):
           continue
         self._failed_tests.add(
             FailedTest(name=test_case.name, board=board,
-                       build_target=build_target))
+                       build_target=build_target, model=model or ''))
         if test_name in self._exoneration_configs:
           new_test_case = self._exonerate_hw_testcase(test_case, build_target)
           new_test_cases.append(new_test_case)
@@ -255,7 +258,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       new_verdict = TaskState.VERDICT_PASSED
     return new_test_cases, new_verdict
 
-  def _exonerate_child_results(self, results, build_target, board):
+  def _exonerate_child_results(self, results, build_target, board, model=None):
     """Exonerates [ExecuteResponse.TaskResult] based on configs.
 
     Args:
@@ -263,6 +266,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         conditionally exonerated.
       build_target(str): build_target on which the test was executed.
       board(str): board on which the test was executed.
+      model(str): model on which the test was executed if explicitly requested.
 
     Returns: list of ExecuteResponse.TaskResult changed based on the decision,
       new overall status of the results.
@@ -280,7 +284,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       else:
         new_result = result
         new_test_cases, new_verdict = self._exonerate_hw_test_cases(
-            result.test_cases, build_target, board)
+            result.test_cases, build_target, board, model)
         new_result.ClearField("test_cases")
         new_result.test_cases.extend(new_test_cases)
         new_result.state.verdict = new_verdict
@@ -332,6 +336,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         else:
           build_target = skylab_res.task.unit.common.build_target.name
           board = skylab_res.task.test.skylab_board
+          model = skylab_res.task.test.skylab_model
           display_name = str(skylab_res.task.test.common.display_name)
           suite_name = self.m.rdb_util.get_suite(display_name)
           if self._excludes_enabled and suite_name in self._excludes['suites']:
@@ -340,7 +345,7 @@ class ExonerateApi(recipe_api.RecipeApi):
             new_test_results.append(skylab_res)
             continue
           new_child_results, new_status = self._exonerate_child_results(
-              skylab_res.child_results, build_target, board)
+              skylab_res.child_results, build_target, board, model)
           new_skylab_res = SkylabResult(task=skylab_res.task, status=new_status,
                                         child_results=new_child_results)
           new_test_results.append(new_skylab_res)
@@ -402,7 +407,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       test_name = test_case['name']
       self._failed_tests.add(
           FailedTest(name='tast.{}'.format(test_case['name']), board='',
-                     build_target=build_target))
+                     build_target=build_target, model=''))
       if test_name not in self._exoneration_configs:
         new_test_cases.append(test_case)
       else:
@@ -504,14 +509,15 @@ class ExonerateApi(recipe_api.RecipeApi):
     md_string += ', '.join(all_links)
     self.m.failures.set_exoneration_markdown(md_string)
 
-  def get_test_variant_dict(self, test_id: str, board: str,
-                            build_target: str) -> dict:
+  def get_test_variant_dict(self, test_id: str, board: str, build_target: str,
+                            model: str) -> dict:
     """Create test_variant dict for LUCI Analysis from inputs.
 
     Args:
       test_id: Name of the test.
       board: Name of the board.
       build_target: Name of the build_target.
+      model: Name of the model.
 
     Returns: A dict that contains the test & variant info.
     """
@@ -520,6 +526,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     def_map = {'build_target': build_target}
     if board:
       def_map['board'] = board
+    if model:
+      def_map['model'] = model
     return {'testId': test_id, 'variant': {'def': def_map}}
 
   def get_consistent_failure_count_from_verdicts(
@@ -618,7 +626,8 @@ class ExonerateApi(recipe_api.RecipeApi):
         for test in self._failed_tests:
           test_variant_list.append(
               self.get_test_variant_dict(test_id=test.name, board=test.board,
-                                         build_target=test.build_target))
+                                         build_target=test.build_target,
+                                         model=test.model))
         test_variant_list.sort(key=lambda x: x['testId'])
         # TODO(b/272052840): See if we need to skip auto exoneration.
 
