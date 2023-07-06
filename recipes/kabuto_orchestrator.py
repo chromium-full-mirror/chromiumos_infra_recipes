@@ -126,12 +126,9 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     shadercache_input_props['manifest_branch'] = manifest_branch
 
   ### Build Kabuto shadercaches on sandboxed builders
-  # TODO(b/284468396): change the below function call to use the proper bucket instead
-  # of defaulting to staging. Currently there is no difference for this builder between
-  # staging and prod so we can still do end to end tests with the staging builder.
-  shadercache_builds = _launch_builders(api, STAGING_BUCKET,
-                                        'build_kabuto_shadercache', True,
-                                        shard_count, shadercache_input_props,
+  shadercache_builds = _launch_builders(api, bucket, 'build_kabuto_shadercache',
+                                        api.build_menu.is_staging, shard_count,
+                                        shadercache_input_props,
                                         'shadercache build')
 
   # Combine the multiple outputs from the builders into a single list.
