@@ -225,6 +225,7 @@
   * [config_postsubmit](#recipes-config_postsubmit) &mdash; Run miscellaneous actions on project repos.
   * [cop](#recipes-cop) &mdash; Recipe for CoP: A CL validator based on Google Cloud Build.
   * [copybot](#recipes-copybot) &mdash; Recipe for Copybot.
+  * [cq_auto_retrier](#recipes-cq_auto_retrier) &mdash; Recipe for analyzing and retrying failed CQ runs.
   * [cq_fault_attribution:tests/comparison_snapshots_retrieval](#recipes-cq_fault_attribution_tests_comparison_snapshots_retrieval)
   * [cq_fault_attribution:tests/disabled_fault_attribution](#recipes-cq_fault_attribution_tests_disabled_fault_attribution)
   * [cq_fault_attribution:tests/no_comparison_snapshots_found](#recipes-cq_fault_attribution_tests_no_comparison_snapshots_found)
@@ -11422,6 +11423,12 @@ This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 &mdash; **def [run\_copybot](/recipes/copybot.py#39)(api: RecipeApi, properties: CopybotProperties):**
 
 Call the RunCopybot endpoint.
+### *recipes* / [cq\_auto\_retrier](/recipes/cq_auto_retrier.py)
+
+
+Recipe for analyzing and retrying failed CQ runs.
+
+&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#21)(api: RecipeApi):**
 ### *recipes* / [cq\_fault\_attribution:tests/comparison\_snapshots\_retrieval](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py)
 
 [DEPS](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#19): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
