@@ -1,0 +1,18 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_release_util.tests;
+
+message ReleaseBuilderNameProperties {
+  // Name of the build target.
+  string build_target = 1;
+  // Whether environment is staging.
+  bool is_staging = 2;
+  // Name of the builder branch.
+  string branch_name = 3;
+  // Expected name of the builder.
+  string expected_builder_name = 4;
+}

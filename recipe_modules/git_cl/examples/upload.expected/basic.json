@@ -19,7 +19,9 @@
       "--send-mail",
       "--target-branch",
       "HEAD",
-      "--cq-dry-run"
+      "--cq-dry-run",
+      "--message",
+      ""
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

@@ -4,8 +4,9 @@
 # found in the LICENSE file.
 from typing import Generator
 
+from PB.recipe_modules.chromeos.gcloud.tests.tests import \
+  TransactionallyUpdateRecoveryImageProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -19,17 +20,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'recovery_image': Property(default=None),
-    'expected_return': Property(default=None),
-}
+PROPERTIES = TransactionallyUpdateRecoveryImageProperties
 
 
-def RunSteps(api: RecipeApi, recovery_image: str, expected_return: str):
+def RunSteps(api: RecipeApi,
+             properties: TransactionallyUpdateRecoveryImageProperties):
   api.assertions.assertEqual(
-      expected_return,
-      api.gcloud.transactionally_update_recovery_image('image-123', 'chromeos',
-                                                       recovery_image))
+      properties.expected_return or None,
+      api.gcloud.transactionally_update_recovery_image(
+          'image-123', 'chromeos', properties.recovery_image))
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

@@ -4,11 +4,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.taskstate import TaskState
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -23,17 +21,16 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-PROPERTIES = {'dry_run_exonerate_retried_suites': Property(default=False)}
 
 
-def RunSteps(api, dry_run_exonerate_retried_suites):
+def RunSteps(api):
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
   api.exonerate.load_configs()
   result = api.exonerate.get_prev_failed_now_exonerable_test_results(
-      test_plan, dry_run_exonerate_retried_suites)
+      test_plan, api.properties['dry_run_exonerate_retried_suites'])
 
   # Just for dry_run_exonerate_retried_suites
-  if dry_run_exonerate_retried_suites:
+  if api.properties['dry_run_exonerate_retried_suites']:
     api.assertions.assertEqual(result, ([], []))
 
   hw_res = api.exonerate.get_failed_now_exonerable_hw_tests_results([])
@@ -44,7 +41,7 @@ def RunSteps(api, dry_run_exonerate_retried_suites):
 def GenTests(api):
 
   yield api.test(
-      'no_hist',
+      'no_hist', api.properties(dry_run_exonerate_retried_suites=False),
       api.buildbucket.simulated_search_results(
           [api.cros_history.empty_build_with_test_build_info('min_build')],
           step_name=('get previous failed and now exonerable suites'
@@ -56,9 +53,10 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
+          dry_run_exonerate_retried_suites=False, **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True)
+          }),
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
@@ -103,9 +101,10 @@ def GenTests(api):
   yield api.test(
       'filter-out-previously-exonerated',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
+          dry_run_exonerate_retried_suites=False, **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True)
+          }),
       api.buildbucket.simulated_search_results(
           [prev_orch],
           step_name=('get previous failed and now exonerable suites'
@@ -149,11 +148,10 @@ def GenTests(api):
   yield api.test(
       'basic_dry_run_exonerate_retried_suites',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
-      api.properties(
-          dry_run_exonerate_retried_suites=dry_run_exonerate_retried_suites),
+          dry_run_exonerate_retried_suites=dry_run_exonerate_retried_suites, **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True)
+          }),
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
@@ -193,9 +191,10 @@ def GenTests(api):
   yield api.test(
       'just_one_vm',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
+          dry_run_exonerate_retried_suites=False, **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True)
+          }),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_test_build_ids_properties(['1'], [])],
           step_name=('get previous failed and now exonerable suites'
@@ -218,9 +217,10 @@ def GenTests(api):
   yield api.test(
       'two_hw',
       api.properties(
-          **
-          {'$chromeos/exonerate': ExonerateProperties(
-              enable_exoneration=True)}),
+          dry_run_exonerate_retried_suites=False, **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True)
+          }),
       api.buildbucket.simulated_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])

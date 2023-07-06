@@ -5,20 +5,20 @@
 
 """Verify that create_uprev_cls() runs the expected process."""
 
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
-
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine import result
+from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
+  CreateUprevClsProperties
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -31,31 +31,27 @@ DEPS = [
     'src_state',
 ]
 
-PROPERTIES = {
-    'policy': Property(),
-    'existing_cls': Property(default=False),
-    'projects': Property(default=1),
-}
+PROPERTIES = CreateUprevClsProperties
 
 
-def RunSteps(api: recipe_api.RecipeApi, policy: any, existing_cls: bool,
-             projects: int):
-  if existing_cls:
+def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
+  if properties.existing_cls:
     branch_policy = BranchPolicy(pattern='.*', repl='',
                                  reviewers=[Reviewer(email='a@example.com')],
-                                 existing_cls_policy=policy)
+                                 existing_cls_policy=properties.policy)
   else:
     branch_policy = BranchPolicy(pattern='.*', repl='',
                                  reviewers=[Reviewer(email='a@example.com')],
-                                 no_existing_cls_policy=policy)
+                                 no_existing_cls_policy=properties.policy)
   path_ = [
       ProjectInfo(name=f'galaxy{i}', path=f'project{i}', remote='cros',
                   branch=api.src_state.workspace_path,
                   rrev=api.src_state.workspace_path)
-      for i in range(1, projects + 1)
+      for i in range(1, properties.projects + 1)
   ]
 
-  summary = api.pupr_gerrit_interface.create_uprev_cls(path_, [], existing_cls,
+  summary = api.pupr_gerrit_interface.create_uprev_cls(path_, [],
+                                                       properties.existing_cls,
                                                        branch_policy, 'a topic')
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
 
@@ -63,7 +59,7 @@ def RunSteps(api: recipe_api.RecipeApi, policy: any, existing_cls: bool,
 def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
-      'submit', api.properties(policy=SUBMIT),
+      'submit', api.properties(policy=SUBMIT, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -80,7 +76,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'dry-run', api.properties(policy=DRY_RUN),
+      'dry-run', api.properties(policy=DRY_RUN, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -126,7 +122,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'abandon', api.properties(policy=ABANDON),
+      'abandon', api.properties(policy=ABANDON, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),

@@ -5,17 +5,16 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
-  LooksForGreenStatus
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFaultAttributionApiProperties
-from PB.test_platform.taskstate import TaskState
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
+  LooksForGreenStatus
 from PB.test_platform.steps.execution import ExecuteResponse
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -27,9 +26,6 @@ DEPS = [
     'skylab_results',
 ]
 
-PROPERTIES = {
-    'should_use_lfg': Property(default=False),
-}
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -74,7 +70,7 @@ orch_snapshot_build = \
   build_pb2.Build(id=123, output=output, input=build_pb2.Build.Input())
 
 
-def RunSteps(api, should_use_lfg):
+def RunSteps(api):
   hw_test_failures = [
       SkylabResult(
           task=api.skylab_results.test_api.skylab_task(suite='suite1'),
@@ -91,7 +87,7 @@ def RunSteps(api, should_use_lfg):
         ref="refs/heads/snapshot")
   api.looks_for_green.stats.suggested.snap_commit_sha = LFG_COMMIT_SHA
 
-  if should_use_lfg:
+  if api.properties['should_use_lfg']:
     api.looks_for_green.stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
 
   api.cq_fault_attribution.set_cq_fault_attribute_properties(

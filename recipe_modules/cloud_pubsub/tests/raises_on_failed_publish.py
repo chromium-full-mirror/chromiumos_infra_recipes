@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/properties',
@@ -11,16 +10,12 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'raise_on_failed_publish':
-        Property(kind=bool, default=True, help='Should fail the build')
-}
 
-
-def RunSteps(api, raise_on_failed_publish):
+def RunSteps(api):
   api.cloud_pubsub.publish_message(
       project_id='chromeos-bot', topic_id='analysis-service-events',
-      data='Some test data', raise_on_failed_publish=raise_on_failed_publish)
+      data='Some test data',
+      raise_on_failed_publish=api.properties['raise_on_failed_publish'])
 
 
 def GenTests(api):
@@ -33,7 +28,8 @@ def GenTests(api):
     return sd
 
   yield api.test('fails-critical-publish',
-                 status='INFRA_FAILURE') + gimme_n_publish_failures(3)
+                 status='INFRA_FAILURE') + api.properties(
+                     raise_on_failed_publish=True) + gimme_n_publish_failures(3)
 
   # There won't be any exponential retries for a non critical publish.
   yield api.test('passes-non-critical-publish') + api.properties(

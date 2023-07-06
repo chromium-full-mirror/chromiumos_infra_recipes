@@ -4,8 +4,8 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-
-from recipe_engine.recipe_api import Property
+from PB.recipe_modules.chromeos.chrome.tests.is_chrome_pupr_atomic_uprev import \
+  IsChromePuprAtomicUprevProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -25,23 +25,18 @@ INTERNAL_GERRIT_HOST = 'chrome-internal-review.googlesource.com'
 CHANGE_NUM = 12345
 PROJECT_NAME = 'chromiumos/overlays/chromiumos-overlay'
 
-PROPERTIES = {
-    'expected_result':
-        Property(
-            help='Expected return value from is_chrome_pupr_atomic_uprev().',
-            default=True),
-    'gerrit_host':
-        Property(help='The host for the gerrit change.', default=GERRIT_HOST),
-}
+PROPERTIES = IsChromePuprAtomicUprevProperties
 
 
-def RunSteps(api, expected_result, gerrit_host):
+def RunSteps(api, properties):
+  gerrit_host = properties.gerrit_host or GERRIT_HOST
+
   gerrit_changes = [GerritChange(host=gerrit_host, change=CHANGE_NUM)]
 
   api.assertions.assertEqual(1, len(gerrit_changes))
 
   ret = api.chrome.is_chrome_pupr_atomic_uprev(gerrit_changes[0])
-  api.assertions.assertEqual(expected_result, ret)
+  api.assertions.assertEqual(properties.expected_result, ret)
 
 
 def GenTests(api):

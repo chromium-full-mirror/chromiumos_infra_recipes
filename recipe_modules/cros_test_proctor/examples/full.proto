@@ -1,0 +1,18 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_test_proctor.examples;
+
+import "go.chromium.org/luci/buildbucket/proto/build.proto";
+
+message FullProperties {
+  // List of serialized Build protos.
+  repeated buildbucket.v2.Build need_tests_builds = 1;
+  // Should we run the proctor in async mode.
+  bool run_async = 2;
+  // Should we use the v2 testplan tool.
+  bool use_test_plan_v2 = 3;
+}

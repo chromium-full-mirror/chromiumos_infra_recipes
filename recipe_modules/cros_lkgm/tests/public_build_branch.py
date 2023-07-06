@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_lkgm.tests.public_build_branch import \
+  PublicBuildBranchProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,17 +18,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'expected_ref':
-        Property(kind=str, help='The expected orchestrator gitiles ref.',
-                 default='refs/heads/main'),
-    'expected_builder':
-        Property(kind=str, help='The expected builder name.',
-                 default='public-main-orchestrator'),
-}
+PROPERTIES = PublicBuildBranchProperties
 
 
-def RunSteps(api, expected_ref, expected_builder):
+def RunSteps(api, properties):
+  expected_ref = properties.expected_ref or 'refs/heads/main'
+  expected_builder = properties.expected_builder or 'public-main-orchestrator'
+
   config = api.cros_infra_config.configure_builder()
 
   api.cros_release.create_buildspec(

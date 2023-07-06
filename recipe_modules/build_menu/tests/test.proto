@@ -14,3 +14,12 @@ message TestProperties {
   luci.resultdb.v1.Sources expected_sources = 1;
 
 }
+
+message SetupChrootProperties {
+  enum Update{
+    NONE = 0;
+    TRUE = 1;
+    FALSE = 2;
+  }
+  Update update_chroot = 1;
+}

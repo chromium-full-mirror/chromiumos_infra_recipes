@@ -7,7 +7,6 @@
 
 from PB.chromiumos import common as common_pb2
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -18,19 +17,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'raise_on_failure':
-        Property(kind=bool, default=False, help='Should fail the build')
-}
 
-
-def RunSteps(api: RecipeApi, raise_on_failure):
+def RunSteps(api: RecipeApi):
   with api.step.nest('test publish binhost metadata'):
     api.binhost_lookup_service.publish_binhost_metadata(
         build_target=common_pb2.BuildTarget(name="test_target"),
         profile=common_pb2.Profile(name="test_profile"), snapshot_sha="1",
         gs_uri="gs://test", gs_bucket_name="test_bucket", buildbucket_id=2,
-        complete=True, private=True, raise_on_failure=raise_on_failure)
+        complete=True, private=True,
+        raise_on_failure=api.properties['raise_on_failure'])
 
 
 def GenTests(api: RecipeTestApi):
@@ -38,7 +33,8 @@ def GenTests(api: RecipeTestApi):
   # Publish binhost metadata using the binhost_lookup_service module.
   yield api.test(
       'publish-binhost-metadata',
-      api.properties(**api.binhost_lookup_service.input_properties),
+      api.properties(raise_on_failure=False,
+                     **api.binhost_lookup_service.input_properties),
       api.post_check(
           post_process.StepSuccess, 'test publish binhost metadata.'
           'publish binhost metadata.publish message.publish-message'),
@@ -49,7 +45,8 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'publish-binhost-metadata-staging',
       api.buildbucket.generic_build(bucket='staging'),
-      api.properties(**api.binhost_lookup_service.input_properties),
+      api.properties(raise_on_failure=False,
+                     **api.binhost_lookup_service.input_properties),
       api.post_check(
           post_process.LogContains,
           'test publish binhost metadata.publish binhost metadata.'
@@ -70,7 +67,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'missing-required-property-project_id',
       api.properties(
-          **{
+          raise_on_failure=False, **{
               '$chromeos/binhost_lookup_service': {
                   'pubsub_topic_id_update_snapshot_data':
                       'test_topic_id_update_snapshot_data',
@@ -91,7 +88,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'missing-required-property-topic_binhost_data',
       api.properties(
-          **{
+          raise_on_failure=False, **{
               '$chromeos/binhost_lookup_service': {
                   'pubsub_project_id':
                       'chromeos-prebuilts',
@@ -110,6 +107,7 @@ def GenTests(api: RecipeTestApi):
   # Properties not passed but build still succeeds when
   # `raise_on_failure=False`.
   yield api.test('passes-non-critical-publish',
+                 api.properties(raise_on_failure=False),
                  api.post_process(post_process.DropExpectation))
 
   # Properties not passed so build fails when `raise_on_failure=True`.

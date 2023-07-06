@@ -6,7 +6,6 @@
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 from recipe_engine.post_process import DropExpectation
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,10 +17,8 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {'expected_tested_builders': Property(default=[])}
 
-
-def RunSteps(api, expected_tested_builders):
+def RunSteps(api):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
@@ -31,7 +28,7 @@ def RunSteps(api, expected_tested_builders):
                                            snapshot)
   api.assertions.assertCountEqual(
       api.cros_test_proctor.builders_tested_in_this_run,
-      expected_tested_builders)
+      api.properties['expected_tested_builders'])
 
 
 def GenTests(api):

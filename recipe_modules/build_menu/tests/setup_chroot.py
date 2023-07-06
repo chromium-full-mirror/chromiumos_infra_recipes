@@ -8,8 +8,9 @@
 from typing import Callable, Generator, Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.recipe_modules.chromeos.build_menu.tests.test import \
+  SetupChrootProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -22,15 +23,22 @@ DEPS = [
     'cros_infra_config',
 ]
 
-PROPERTIES = {'update_chroot': Property(kind=bool, default=None)}
+PROPERTIES = SetupChrootProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+UPDATE_DICT = {
+    SetupChrootProperties.Update.NONE: None,
+    SetupChrootProperties.Update.FALSE: False,
+    SetupChrootProperties.Update.TRUE: True,
+}
 
-def RunSteps(api: RecipeApi, update_chroot: Optional[bool]) -> None:
+
+def RunSteps(api: RecipeApi, properties: SetupChrootProperties) -> None:
   """Setup the chroot, like a builder might do."""
   with api.build_menu.configure_builder():
-    api.build_menu.setup_chroot(update=update_chroot)
+    update_bool = UPDATE_DICT[properties.update_chroot]
+    api.build_menu.setup_chroot(update=update_bool)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -41,7 +49,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       expect_update_sdk: bool,
       *args: TestData,
       expect_setup_toolchains: bool = None,
-      update_kwarg: Optional[bool] = None,
+      update_kwarg: SetupChrootProperties.Update = SetupChrootProperties.Update
+      .NONE,
       run_spec: BuilderConfig.RunSpec = (
           BuilderConfig.RunSpec.RUN_SPEC_UNSPECIFIED),
       build_target: Optional[str] = None,
@@ -120,15 +129,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       build_target='amd64-generic')
 
   yield _update_chroot_test_case('kwarg-specifies-update-chroot', True,
-                                 update_kwarg=True)
-  yield _update_chroot_test_case('kwarg-specifies-do-not-update-chroot', False,
-                                 update_kwarg=False)
+                                 update_kwarg=SetupChrootProperties.Update.TRUE)
+  yield _update_chroot_test_case(
+      'kwarg-specifies-do-not-update-chroot', False,
+      update_kwarg=SetupChrootProperties.Update.FALSE)
   yield _update_chroot_test_case('kwarg-update-chroot-overrides-builder-config',
-                                 True, update_kwarg=True,
+                                 True,
+                                 update_kwarg=SetupChrootProperties.Update.TRUE,
                                  run_spec=BuilderConfig.RunSpec.NO_RUN)
   yield _update_chroot_test_case(
       'kwarg-do-not-update-chroot-overrides-builder-config', False,
-      update_kwarg=False, run_spec=BuilderConfig.RunSpec.RUN)
+      update_kwarg=SetupChrootProperties.Update.FALSE,
+      run_spec=BuilderConfig.RunSpec.RUN)
 
   yield _update_chroot_test_case(
       'skip-update-chroot-but-no-toolchain-build-targets',

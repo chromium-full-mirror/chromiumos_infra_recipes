@@ -4,12 +4,8 @@
 # found in the LICENSE file.
 
 """Verify that method get_failure has error handling."""
-from typing import Any
-from typing import Dict
-from typing import Optional
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -22,17 +18,11 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'instructions': Property(default={}),
-    'expected': Property(default={}),
-}
 
-
-def RunSteps(api: RecipeApi, instructions: Dict[str, Any],
-             expected: Optional[str]):
+def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(
-      expected,
-      api.signing.get_failure(instructions),
+      api.properties['expected'],
+      api.signing.get_failure(api.properties['instructions']),
   )
 
 

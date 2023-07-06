@@ -5,8 +5,10 @@
 
 """Success workflow tests for the signing recipe module."""
 
+from PB.recipe_modules.chromeos.cros_debug.tests.pause_and_wait_for_signal import \
+  PauseAndWaitForSignalProperties
+
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,18 +22,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'exists': Property(None),
-    'override': Property(None),
-}
+PROPERTIES = PauseAndWaitForSignalProperties
 
 
-def RunSteps(api, exists, override):
+def RunSteps(api, properties):
   path = api.path.mkdtemp()
-  if exists:
+  if properties.exists:
     api.path.mock_add_paths(path.join('resume'))
   api.cros_debug.pause_and_wait_for_signal(
-      timeout=10, override_led_launch_only_staging=override,
+      timeout=10, override_led_launch_only_staging=properties.override,
       test_location_override=path)
 
 

@@ -4,14 +4,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
-
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from google.protobuf import timestamp_pb2
 
 from PB.chromiumos.builder_config import BuilderConfig
-
-from google.protobuf import timestamp_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_plan.examples.get_completed_builds import \
+  GetCompletedBuildsProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -23,20 +22,17 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'forced_rebuilds': Property(default=[]),
-    'expected_completed': Property(default=[])
-}
+PROPERTIES = GetCompletedBuildsProperties
 
 
-def RunSteps(api, forced_rebuilds, expected_completed):
+def RunSteps(api, properties):
   result = api.build_plan.get_completed_builds([
       BuilderConfig.Orchestrator.ChildSpec(name='atlas-cq'),
       BuilderConfig.Orchestrator.ChildSpec(name='amd64-generic-cq'),
-  ], forced_rebuilds)
+  ], properties.forced_rebuilds)
   actual_completed_builders = [build.builder.builder for build in result]
   api.assertions.assertEqual(
-      set(actual_completed_builders), set(expected_completed))
+      set(actual_completed_builders), set(properties.expected_completed))
 
 
 def GenTests(api):
@@ -62,7 +58,7 @@ def GenTests(api):
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{
-          'forced_rebuilds': set(),
+          'forced_rebuilds': [],
           'expected_completed': ['amd64-generic-cq']
       }))
 
@@ -72,7 +68,7 @@ def GenTests(api):
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{
-          'forced_rebuilds': {'all'},
+          'forced_rebuilds': ['all'],
           'expected_completed': []
       }))
 
@@ -82,6 +78,6 @@ def GenTests(api):
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{
-          'forced_rebuilds': {'amd64-generic-cq'},
+          'forced_rebuilds': ['amd64-generic-cq'],
           'expected_completed': []
       }))

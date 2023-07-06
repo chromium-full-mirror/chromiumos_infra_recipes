@@ -4,10 +4,11 @@
 # found in the LICENSE file.
 
 from PB.chromiumos import common as common_pb2
+from PB.recipe_modules.chromeos.util.tests.tests import \
+  ProtoPathToRecipesPathProperties
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,17 +21,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'input_path':
-        Property(kind=str, help='The path to use in the input proto path.'),
-    'input_location':
-        Property(kind=int, help='The location to use in the input proto path.'),
-}
+PROPERTIES = ProtoPathToRecipesPathProperties
 
 
-def RunSteps(api: recipe_api.RecipeApi, input_path: str,
-             input_location: common_pb2.Path.Location) -> None:
-  proto_path = common_pb2.Path(path=input_path, location=input_location)
+def RunSteps(api: recipe_api.RecipeApi,
+             properties: ProtoPathToRecipesPathProperties) -> None:
+  proto_path = common_pb2.Path(path=properties.input_path,
+                               location=properties.input_location)
   with api.step.nest('convert path') as presentation:
     result = api.util.proto_path_to_recipes_path(proto_path)
     presentation.step_text = api.path.abspath(result)

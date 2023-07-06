@@ -2,8 +2,10 @@
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+from PB.recipe_modules.chromeos.gcloud.tests.tests import \
+    CachePropertiesProperties
+
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -19,18 +21,16 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'recovery_snapshot': Property(default=None),
-    'mounted_snapshot': Property(default=None),
-}
+PROPERTIES = CachePropertiesProperties
 
 
-def RunSteps(api, recovery_snapshot, mounted_snapshot):
+def RunSteps(api, properties):
   api.gcloud.setup_cache_disk(cache_name='chromiumos', branch='main',
                               recipe_mount=True,
-                              recovery_snapshot=recovery_snapshot)
-  if mounted_snapshot:
-    api.assertions.assertEqual(api.gcloud.mounted_snapshot, mounted_snapshot)
+                              recovery_snapshot=properties.recovery_snapshot)
+  if properties.mounted_snapshot:
+    api.assertions.assertEqual(api.gcloud.mounted_snapshot,
+                               properties.mounted_snapshot)
   api.assertions.assertEqual(api.gcloud.branch, 'main')
 
 

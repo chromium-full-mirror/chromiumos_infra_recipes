@@ -9,11 +9,12 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
+from PB.recipe_modules.chromeos.cros_test_proctor.examples.full import \
+  FullProperties
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import (
     ProctorProperties)
 from PB.test_platform.taskstate import TaskState
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -35,40 +36,24 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'need_tests_builds_serialized':
-        Property(kind=list, help='List of serialized Build protos', default=[]),
-    'run_async':
-        Property(kind=bool, help='Should we run the proctor in async mode',
-                 default=False),
-    'use_test_plan_v2':
-        Property(kind=bool, help='Should we use the v2 testplan tool',
-                 default=False)
-}
+PROPERTIES = FullProperties
 
 
-def RunSteps(api, need_tests_builds_serialized, run_async, use_test_plan_v2):
+def RunSteps(api, properties):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
-  # Deserialized Build protos. The serialization is to get around the recipes
-  # requirement that all properties be hashable, and proto messages are not
-  # hashable.
-  need_tests_builds = [
-      build_pb2.Build.FromString(b) for b in need_tests_builds_serialized
-  ]
-
   gerrit_changes = []
-  if need_tests_builds:
+  if properties.need_tests_builds:
     gerrit_changes = api.src_state.gerrit_changes
 
   _ = api.cros_test_proctor.run_proctor(
-      need_tests_builds=need_tests_builds,
+      need_tests_builds=properties.need_tests_builds,
       snapshot=snapshot,
       gerrit_changes=gerrit_changes,
       enable_history=True,
-      run_async=run_async,
-      use_test_plan_v2=use_test_plan_v2,
+      run_async=properties.run_async,
+      use_test_plan_v2=properties.use_test_plan_v2,
   )
 
   _ = api.cros_test_proctor.test_summary
@@ -96,9 +81,6 @@ def GenTests(api):
     return api.test_util.test_build(
         cq=True, revision=snapshot, input_properties=BuildMenuProperties(
             build_target=BuildTarget(name=build_target))).message.input
-
-  def serialize_builds(builds):
-    return [build_pb2.Build.SerializeToString(b) for b in builds]
 
   cros_test_platforms = [
       build_pb2.Build(id=1234, builder={'builder': 'cros_test_platform'},
@@ -149,12 +131,11 @@ def GenTests(api):
     return api.buildbucket.build(build)
 
   yield api.test(
-      'tests-with-history',
-      cq_orchestrator_build_with_gerrit_change(),
+      'tests-with-history', cq_orchestrator_build_with_gerrit_change(),
       api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
-          need_tests_builds_serialized=serialize_builds([
+          FullProperties(need_tests_builds=[
               api.cros_history.build_with_passed_tests(
                   ['arm-generic/hw/bvt-cq'])
           ])),
@@ -179,7 +160,7 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
-          need_tests_builds_serialized=serialize_builds([
+          FullProperties(need_tests_builds=[
               api.cros_history.build_with_passed_tests(
                   ['arm-generic/hw/bvt-cq'])
           ])),
@@ -236,7 +217,7 @@ def GenTests(api):
 
   yield api.test(
       'multi-req-per-cros-test-platform',
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
+      api.properties(FullProperties(need_tests_builds=builds)),
       api.properties(**{'$chromeos/cros_test_proctor': ProctorProperties()}),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
@@ -274,7 +255,7 @@ def GenTests(api):
 
   yield api.test(
       'with-async-enabled',
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
+      api.properties(FullProperties(need_tests_builds=builds)),
       api.properties(run_async=True),
       api.buildbucket.simulated_schedule_output(
           ctp_response1, 'run tests.schedule tests.schedule hardware tests.'
@@ -286,8 +267,7 @@ def GenTests(api):
   yield api.test(
       'with-test-plan-v2', cq_orchestrator_build_with_gerrit_change(),
       api.properties(
-          need_tests_builds_serialized=serialize_builds(builds),
-          use_test_plan_v2=True, **{
+          FullProperties(need_tests_builds=builds, use_test_plan_v2=True), **{
               '$chromeos/cros_test_plan_v2': {
                   'migration_configs': [{
                       'host': 'chromium.googlesource.com',
@@ -314,7 +294,7 @@ def GenTests(api):
 
   yield api.test(
       'collect-vm-test-failures',
-      api.properties(need_tests_builds_serialized=serialize_builds(builds)),
+      api.properties(FullProperties(need_tests_builds=builds)),
       api.step_data('run tests.collect tests.collect tast vm tests.wait',
                     retcode=1),
       api.post_check(post_process.MustRun,
@@ -328,7 +308,7 @@ def GenTests(api):
 
   yield api.test(
       'no-testable-builders',
-      api.properties(need_tests_builds_serialized=serialize_builds([])),
+      api.properties(FullProperties(need_tests_builds=[])),
       api.post_process(post_process.StepTextEquals, 'run tests',
                        'no builds to test'),
       api.post_check(post_process.DoesNotRun, 'run tests.schedule tests'),

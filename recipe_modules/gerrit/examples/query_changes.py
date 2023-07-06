@@ -4,10 +4,9 @@
 # found in the LICENSE file.
 
 import copy
-from typing import Generator, List, Optional
+from typing import Generator
 
 from RECIPE_MODULES.chromeos.gerrit import api as gerrit_api
-
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
@@ -19,16 +18,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = {
-    'expected_change_numbers':
-        recipe_api.Property(help='The change IDs which the query should return.'
-                           ),
-    'label_constraints':
-        recipe_api.Property(
-            help='List of constraints that should be applied to returned changes.',
-            default=None)
-}
 
 gerrit_changes_json = [
     {
@@ -65,18 +54,42 @@ gerrit_changes_json_no_labels = copy.deepcopy(gerrit_changes_json)
 _ = [chg.pop('labels') for chg in gerrit_changes_json_no_labels]
 
 
-def RunSteps(api: recipe_api.RecipeApi, expected_change_numbers: List[int],
-             label_constraints: Optional[List[gerrit_api.LabelConstraint]]):
+require_cq_approved = gerrit_api.LabelConstraint(
+    label=gerrit_api.Label.COMMIT_QUEUE,
+    kind=gerrit_api.LabelConstraintKind.APPROVED)
+require_cq_unapproved = gerrit_api.LabelConstraint(
+    label=gerrit_api.Label.COMMIT_QUEUE,
+    kind=gerrit_api.LabelConstraintKind.UNAPPROVED)
+require_cq_nonzero = gerrit_api.LabelConstraint(
+    label=gerrit_api.Label.COMMIT_QUEUE,
+    kind=gerrit_api.LabelConstraintKind.ANY_NONZERO_VOTE)
+require_botcommit_approved = gerrit_api.LabelConstraint(
+    label=gerrit_api.Label.BOT_COMMIT,
+    kind=gerrit_api.LabelConstraintKind.APPROVED)
+bogus_constraint_type = gerrit_api.LabelConstraint(
+    label=gerrit_api.Label.COMMIT_QUEUE, kind=-1)
+constraint_dict = {
+    'require_cq_approved': [require_cq_approved],
+    'require_cq_unapproved': [require_cq_unapproved],
+    'require_cq_nonzero': [require_cq_nonzero],
+    'require_botcommit_approved': [require_botcommit_approved],
+    'bogus_constraint_type': [bogus_constraint_type],
+}
+
+
+def RunSteps(api: recipe_api.RecipeApi):
   """Main test logic: run query_changes() and assert about the output.
 
   The direct gerrit_client step results can be mocked in cases via
   GerritTestApi.set_query_changes_response(), but query_changes() runs
   additional logic to process the step output.
   """
-  changes = api.gerrit.query_changes('https://chromium-review.googlesource.com',
-                                     [('topic', 'pupr')], label_constraints)
+  changes = api.gerrit.query_changes(
+      'https://chromium-review.googlesource.com', [('topic', 'pupr')],
+      constraint_dict.get(api.properties['label_constraints']))
   actual_change_numbers = [change.change for change in changes]
   actual_change_numbers.sort()
+  expected_change_numbers = list(api.properties['expected_change_numbers'])
   expected_change_numbers.sort()
   api.assertions.assertListEqual(actual_change_numbers, expected_change_numbers)
 
@@ -86,27 +99,14 @@ def GenTests(
 ) -> Generator[recipe_test_api.TestData, None, None]:
   """Define test cases."""
   # Define constraints
-  require_cq_approved = gerrit_api.LabelConstraint(
-      label=gerrit_api.Label.COMMIT_QUEUE,
-      kind=gerrit_api.LabelConstraintKind.APPROVED)
-  require_cq_unapproved = gerrit_api.LabelConstraint(
-      label=gerrit_api.Label.COMMIT_QUEUE,
-      kind=gerrit_api.LabelConstraintKind.UNAPPROVED)
-  require_cq_nonzero = gerrit_api.LabelConstraint(
-      label=gerrit_api.Label.COMMIT_QUEUE,
-      kind=gerrit_api.LabelConstraintKind.ANY_NONZERO_VOTE)
-  require_botcommit_approved = gerrit_api.LabelConstraint(
-      label=gerrit_api.Label.BOT_COMMIT,
-      kind=gerrit_api.LabelConstraintKind.APPROVED)
-  bogus_constraint_type = gerrit_api.LabelConstraint(
-      label=gerrit_api.Label.COMMIT_QUEUE, kind=-1)
 
   yield api.test(
       'basic',
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json_no_labels,
           'https://chromium-review.googlesource.com'),
-      api.properties(expected_change_numbers=[91827, 91828]),
+      api.properties(expected_change_numbers=[91827, 91828],
+                     label_constraints=None),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -114,7 +114,7 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827],
-                     label_constraints=[require_cq_approved]),
+                     label_constraints='require_cq_approved'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -122,7 +122,7 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91828],
-                     label_constraints=[require_cq_unapproved]),
+                     label_constraints='require_cq_unapproved'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -130,7 +130,7 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[91827],
-                     label_constraints=[require_cq_nonzero]),
+                     label_constraints='require_cq_nonzero'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -140,7 +140,7 @@ def GenTests(
           '', gerrit_changes_json_no_labels,
           'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
-                     label_constraints=[require_cq_approved]),
+                     label_constraints='require_cq_approved'),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
       api.post_process(post_process.DropExpectation),
@@ -152,7 +152,7 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
-                     label_constraints=[require_botcommit_approved]),
+                     label_constraints='require_botcommit_approved'),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
       api.post_process(post_process.DropExpectation),
@@ -164,7 +164,7 @@ def GenTests(
       api.gerrit.set_query_changes_response(
           '', gerrit_changes_json, 'https://chromium-review.googlesource.com'),
       api.properties(expected_change_numbers=[],
-                     label_constraints=[bogus_constraint_type]),
+                     label_constraints='bogus_constraint_type'),
       api.post_check(post_process.StepFailure,
                      'query https://chromium-review.googlesource.com'),
       api.post_process(post_process.DropExpectation),

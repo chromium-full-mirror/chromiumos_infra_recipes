@@ -9,10 +9,11 @@ package_index, and generates then uploads a KZIP to GS.
 """
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipes.chromeos.chromiumos_codesearch import (
+    ChromiumosCodesearchProperties)
 from recipe_engine.engine_types import freeze
 from recipe_engine.post_process import DropExpectation
 from recipe_engine.post_process import PropertyEquals
-from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -70,25 +71,14 @@ SPEC = freeze({
     },
 })
 
-PROPERTIES = {
-    'codesearch_mirror_revision':
-        Property(
-            kind=str,
-            help='The revision for codesearch to use for kythe references.',
-            default=None),
-    'codesearch_mirror_revision_timestamp':
-        Property(
-            kind=str,
-            help='The commit timestamp of the revision for codesearch to use, '
-            'in seconds since the UNIX epoch.', default=None),
-    'manifest_hash':
-        Property(kind=str, help='The snapshot revision to sync to.',
-                 default=None),
-}
+PROPERTIES = ChromiumosCodesearchProperties
 
 
-def RunSteps(api, codesearch_mirror_revision,
-             codesearch_mirror_revision_timestamp, manifest_hash):
+def RunSteps(api, properties):
+  codesearch_mirror_revision = properties.codesearch_mirror_revision
+  codesearch_mirror_revision_timestamp = properties.codesearch_mirror_revision_timestamp
+  manifest_hash = properties.manifest_hash
+
   builder = api.buildbucket.build.builder.builder
   bot_config = SPEC.get('builders', {}).get(builder)
   assert bot_config is not None, ('Could not find builder %s in SPEC' % builder)

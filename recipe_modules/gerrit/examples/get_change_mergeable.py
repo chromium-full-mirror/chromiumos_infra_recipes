@@ -3,8 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.gerrit.examples.get_change_mergeable import \
+  GetChangeMergeableProperties
+
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,16 +16,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'expected': Property(help='Whether the change is mergeable'),
-    'remote': Property(help='The remote repository location')
-}
+PROPERTIES = GetChangeMergeableProperties
 
 
-def RunSteps(api, remote, expected):
+def RunSteps(api, properties):
   change_id = '1'
-  result = api.gerrit.get_change_mergeable(change_id, remote)
-  api.assertions.assertEqual(expected, result)
+  result = api.gerrit.get_change_mergeable(change_id, properties.remote)
+  api.assertions.assertEqual(properties.expected, result)
 
 
 def GenTests(api):

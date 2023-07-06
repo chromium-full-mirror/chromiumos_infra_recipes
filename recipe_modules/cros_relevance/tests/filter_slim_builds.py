@@ -7,8 +7,6 @@
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
@@ -18,18 +16,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'expected_builders': Property(default=['a-slim-cq', 'b-slim-cq', 'c-cq']),
-}
 
-
-def RunSteps(api, expected_builders):
+def RunSteps(api):
   builders = ['a-slim-cq', 'b-slim-cq', 'c-cq']
   gc = [
       bbcommon_pb2.GerritChange(change=123, host='cr.googlesource.com'),
   ]
   api.assertions.assertEqual(
-      api.cros_relevance._filter_slim_builders(builders, gc), expected_builders)
+      api.cros_relevance._filter_slim_builders(builders, gc),
+      list(api.properties['expected_builders']))
 
 
 def GenTests(api):

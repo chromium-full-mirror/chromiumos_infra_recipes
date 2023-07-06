@@ -4,12 +4,13 @@
 # found in the LICENSE file.
 
 """Verify that apply_retry_policy() runs the expected process."""
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
-
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import GerritChange
 from PB.chromiumos.common import PackageInfo
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange as LuciGerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import \
+    GerritChange as LuciGerritChange
+from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
+    ApplyRetryPolicyProperties
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
@@ -18,10 +19,10 @@ from PB.recipes.chromeos.generator import RETRY_LATEST_OR_LATEST_PINNED
 from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -37,15 +38,7 @@ DEPS = [
     'test_util',
 ]
 
-PROPERTIES = {
-    'existing_cls_policy': Property(),
-    'no_existing_cls_policy': Property(),
-    'retry_cl_policy': Property(),
-    'outdated_cls_policy': Property(),
-    'retry_only': Property(default=False),
-    'rebase_before_retry': Property(default=False),
-    'changes': Property(default=1),
-}
+PROPERTIES = ApplyRetryPolicyProperties
 
 BUILD_TARGETS = [BuildTarget(name='build-target')]
 PACKAGE_CHROME = PackageInfo(category='chromeos-base',
@@ -53,11 +46,9 @@ PACKAGE_CHROME = PackageInfo(category='chromeos-base',
 PACKAGES = [PACKAGE_CHROME]
 
 
-def RunSteps(api: recipe_api.RecipeApi, existing_cls_policy: any,
-             no_existing_cls_policy: any, retry_cl_policy: any,
-             outdated_cls_policy: any, retry_only: bool,
-             rebase_before_retry: bool, changes: int):
-  api.pupr_gerrit_interface.set_generator_attributes(rebase_before_retry)
+def RunSteps(api: recipe_api.RecipeApi, properties: ApplyRetryPolicyProperties):
+  api.pupr_gerrit_interface.set_generator_attributes(
+      properties.rebase_before_retry)
 
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
@@ -72,19 +63,19 @@ def RunSteps(api: recipe_api.RecipeApi, existing_cls_policy: any,
                           branch=f'{api.src_state.workspace_path}',
                           rrev=api.src_state.workspace_path)
           ],
-      }, 'topic') if changes > 0 else None
+      }, 'topic') if properties.changes > 0 else None
   api.pupr_gerrit_interface.apply_retry_policy(
       [
           GerritChange(host='chromium-review.googlesource.com', change=1234 + i)
-          for i in range(0, changes)
+          for i in range(0, properties.changes)
       ], mrm,
       BranchPolicy(pattern='.*', repl='',
-                   reviewers=[Reviewer(email='a@example.com')
-                             ], no_existing_cls_policy=no_existing_cls_policy,
-                   existing_cls_policy=existing_cls_policy,
-                   retry_cl_policy=retry_cl_policy,
-                   outdated_cls_policy=outdated_cls_policy), 'topic',
-      retry_only)
+                   reviewers=[Reviewer(email='a@example.com')],
+                   no_existing_cls_policy=properties.no_existing_cls_policy,
+                   existing_cls_policy=properties.existing_cls_policy,
+                   retry_cl_policy=properties.retry_cl_policy,
+                   outdated_cls_policy=properties.outdated_cls_policy), 'topic',
+      properties.retry_only)
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
@@ -101,7 +92,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(existing_cls_policy=SUBMIT,
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
+                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
       api.post_check(post_process.StepSuccess,
                      'apply retry policy RETRY_LATEST_PINNED'),
       api.post_process(post_process.DropExpectation))
@@ -112,7 +103,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT,
-                     rebase_before_retry=True),
+                     rebase_before_retry=True, changes=1),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED',
           'chromium-review.googlesource.com', 1234, 'current', False),
@@ -197,7 +188,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT,
-                     rebase_before_retry=True),
+                     rebase_before_retry=True, changes=1),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_PINNED',
           'chromium-review.googlesource.com', 1234, 'current', True),
@@ -247,7 +238,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT,
-                     rebase_before_retry=True),
+                     rebase_before_retry=True, changes=1),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
           'chromium-review.googlesource.com', 1234, 'current', True),
@@ -290,7 +281,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_OR_LATEST_PINNED,
                      outdated_cls_policy=OUTDATED_LEAVE_COMMENT,
-                     rebase_before_retry=True),
+                     rebase_before_retry=True, changes=1),
       api.gerrit.set_get_change_mergeable(
           'apply retry policy RETRY_LATEST_OR_LATEST_PINNED',
           'chromium-review.googlesource.com', 1234, 'current', False),
@@ -465,7 +456,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.properties(existing_cls_policy=SUBMIT,
                      no_existing_cls_policy=FULL_RUN,
                      retry_cl_policy=RETRY_LATEST_PINNED,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
+                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
       api.gerrit.set_gerrit_fetch_changes_response(
           'apply retry policy RETRY_LATEST_PINNED',
           gerrit_changes,
@@ -489,7 +480,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'no-retry',
       api.properties(existing_cls_policy=SUBMIT,
                      no_existing_cls_policy=FULL_RUN, retry_cl_policy=NO_RETRY,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
+                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT, changes=1),
       api.post_check(post_process.DoesNotRun, 'apply retry policy NO_RETRY'),
       api.post_process(post_process.DropExpectation))
 

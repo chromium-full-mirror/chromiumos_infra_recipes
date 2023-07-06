@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.gcloud.tests.setup_cache_disk import TestInputProperties
+from PB.recipe_modules.chromeos.gcloud.tests.tests import TestInputProperties
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure

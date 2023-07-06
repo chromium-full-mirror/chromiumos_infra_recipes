@@ -2,10 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
-from recipe_engine import post_process
-
 from PB.chromiumos.common import GerritChange
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,12 +13,10 @@ DEPS = [
     'looks_for_green',
 ]
 
-PROPERTIES = {'expected_disallow': Property(default=False)}
-
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api, expected_disallow):
+def RunSteps(api):
   gerrit_changes = [
       GerritChange(
           host="chromium-review.googlesource.com",
@@ -29,7 +25,7 @@ def RunSteps(api, expected_disallow):
   ]
 
   disallow = api.looks_for_green.found_disallow_lfg_footer(gerrit_changes)
-  api.assertions.assertEqual(expected_disallow, disallow)
+  api.assertions.assertEqual(api.properties['expected_disallow'], disallow)
 
 
 def GenTests(api):
@@ -43,6 +39,7 @@ def GenTests(api):
 
   yield api.test(
       'no-disallow-footer',
+      api.properties(expected_disallow=False),
       api.git_footers.simulated_get_footers([],
                                             'check disallow looks for green'),
       api.post_process(post_process.DropExpectation),
@@ -50,6 +47,7 @@ def GenTests(api):
 
   yield api.test(
       'false-disallow-footer',
+      api.properties(expected_disallow=False),
       api.git_footers.simulated_get_footers(['False'],
                                             'check disallow looks for green'),
       api.post_process(post_process.DropExpectation),

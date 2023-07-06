@@ -8,8 +8,9 @@ from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.build_plan.tests.cq_looks import \
+  CqLooksProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -33,16 +34,12 @@ ORIGINAL_EXTERNAL_SHA = 'externalSHA'
 MODIFIED_INTERNAL_SHA = 'i' * 40
 MODIFIED_EXTERNAL_SHA = 'e' * 40
 
-PROPERTIES = {
-    'expected_experiments': Property(default=[]),
-    'expected_internal_sha': Property(default=ORIGINAL_INTERNAL_SHA),
-    'expected_external_sha': Property(default=ORIGINAL_EXTERNAL_SHA),
-    'is_dry_run': Property(default=False),
-}
+PROPERTIES = CqLooksProperties
 
 
-def RunSteps(api, expected_experiments, expected_internal_sha,
-             expected_external_sha):
+def RunSteps(api, properties):
+  expected_internal_sha = properties.expected_internal_sha or ORIGINAL_INTERNAL_SHA
+  expected_external_sha = properties.expected_external_sha or ORIGINAL_EXTERNAL_SHA
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
   _, _, new_requests = api.build_plan.get_build_plan(
@@ -57,7 +54,7 @@ def RunSteps(api, expected_experiments, expected_internal_sha,
       for exp, enabled in new_requests[0].experiments.items()
       if enabled
   }
-  api.assertions.assertEqual({x: True for x in expected_experiments},
+  api.assertions.assertEqual({x: True for x in properties.expected_experiments},
                              enabled_experiments)
   for request in new_requests:
     if request.gitiles_commit.host == INTERNAL_HOST_URL:

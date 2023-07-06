@@ -3,12 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
+
+
+from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-
-from google.protobuf import timestamp_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -19,13 +19,10 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'expected_builder_names': Property(default=[]),
-}
 
 
-def RunSteps(api, expected_builder_names):
-  api.assertions.assertCountEqual(expected_builder_names,
+def RunSteps(api):
+  api.assertions.assertCountEqual(api.properties['expected_builder_names'],
                                   api.cros_history.get_test_failure_builders())
 
 

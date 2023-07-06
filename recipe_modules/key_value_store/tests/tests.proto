@@ -1,0 +1,20 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.key_value_store.tests;
+
+message ParseProperties {
+  string contents = 1;
+  string expected_json_str = 2;
+}
+
+message UpdateOneValueProperties {
+  string original_contents = 1;
+  string key = 2;
+  string new_value = 3;
+  string expected_new_contents = 4;
+  bool append_if_missing = 5;
+}

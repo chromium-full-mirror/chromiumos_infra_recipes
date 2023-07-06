@@ -5,8 +5,6 @@
 
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/file',
@@ -20,18 +18,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'is_chroot_usable': Property(default=False),
-}
-
-
 # pylint: disable=protected-access
-def RunSteps(api, is_chroot_usable):
+def RunSteps(api):
   with api.step.nest('is chroot usable') as parent_step:
     reuse = api.cros_sdk._is_chroot_usable(api.cros_sdk.sdk_cache_state,
                                            version=1,
                                            step_presentation=parent_step)
-    api.assertions.assertEqual(is_chroot_usable, reuse)
+    api.assertions.assertEqual(api.properties['is_chroot_usable'], reuse)
 
 
 def GenTests(api):
@@ -55,24 +48,27 @@ def GenTests(api):
       api.step_data(
           'is chroot usable.read sdk cache state json',
           api.file.read_proto(_sdk_cache_state_file(snapshot_hash=''))),
-      api.git.is_reachable(False))
+      api.properties(is_chroot_usable=False), api.git.is_reachable(False))
 
   yield api.test(
       'mismatch-version',
       api.step_data('is chroot usable.read sdk cache state json',
-                    api.file.read_proto(_sdk_cache_state_file(version=2))))
+                    api.file.read_proto(_sdk_cache_state_file(version=2))),
+      api.properties(is_chroot_usable=False))
 
   yield api.test(
       'mismatch-url',
       api.step_data(
           'is chroot usable.read sdk cache state json',
-          api.file.read_proto(_sdk_cache_state_file(manifest_url='other'))))
+          api.file.read_proto(_sdk_cache_state_file(manifest_url='other'))),
+      api.properties(is_chroot_usable=False))
 
   yield api.test(
       'mismatch-branch',
       api.step_data(
           'is chroot usable.read sdk cache state json',
-          api.file.read_proto(_sdk_cache_state_file(manifest_branch='other'))))
+          api.file.read_proto(_sdk_cache_state_file(manifest_branch='other'))),
+      api.properties(is_chroot_usable=False))
 
   yield api.test(
       'no-external-snapshot-commit',
@@ -83,7 +79,7 @@ def GenTests(api):
                   manifest_branch='snapshot',
                   manifest_url=api.src_state.external_manifest.url))),
       api.git_footers.simulated_get_footers([], 'is chroot usable'),
-      api.git.is_reachable(False))
+      api.git.is_reachable(False), api.properties(is_chroot_usable=False))
 
   yield api.test(
       'external-sdk-not-reusable-by-internal-build',
@@ -93,7 +89,7 @@ def GenTests(api):
               _sdk_cache_state_file(
                   manifest_branch='snapshot',
                   manifest_url=api.src_state.external_manifest.url))),
-      api.git.is_reachable(False))
+      api.git.is_reachable(False), api.properties(is_chroot_usable=False))
 
   yield api.test(
       'external-sdk-reusable-by-internal-build',
@@ -110,4 +106,4 @@ def GenTests(api):
       api.step_data(
           'is chroot usable.read sdk cache state json',
           api.file.read_proto(_sdk_cache_state_file(snapshot_hash='123\n'))),
-      api.git.is_reachable(False))
+      api.git.is_reachable(False), api.properties(is_chroot_usable=False))

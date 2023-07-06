@@ -1,0 +1,37 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.pupr_gerrit_interface.tests;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+import "recipes/chromeos/generator.proto";
+
+message ApplyRetryPolicyProperties {
+  recipes.chromeos.generator.SendToCqPolicy existing_cls_policy = 1;
+  recipes.chromeos.generator.SendToCqPolicy no_existing_cls_policy = 2;
+  recipes.chromeos.generator.RetryClPolicy retry_cl_policy = 3;
+  recipes.chromeos.generator.OutdatedClsPolicy outdated_cls_policy = 4;
+  bool retry_only = 5;
+  bool rebase_before_retry= 6;
+  int32 changes = 7;
+}
+
+message CreateUprevClsProperties {
+  recipes.chromeos.generator.SendToCqPolicy policy = 1;
+  bool existing_cls = 2;
+  int32 projects = 3;
+}
+
+message FindOpenUprevCLsProperties {
+  repeated buildbucket.v2.GerritChange expected_gerrit_changes = 1;
+}
+
+message HandleOutdatedChangesProperties {
+  recipes.chromeos.generator.OutdatedClsPolicy outdated_cls_policy = 1;
+  bool expected = 2;
+  bool retry_only = 3;
+  int32 changes = 4;
+}

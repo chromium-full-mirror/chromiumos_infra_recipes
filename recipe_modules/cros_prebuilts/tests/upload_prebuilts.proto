@@ -1,0 +1,20 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_prebuilts.tests;
+
+message UploadPrebuiltsProperties {
+  // Whether to upload build target prebuilts.
+  bool upload_target_prebuilts = 1;
+  // Whether to upload devinstall prebuilts.
+  bool upload_devinstall_prebuilts = 2;
+  // Whether to upload Chrome prebuilts.
+  bool upload_chrome_prebuilts = 3;
+  // Whether to upload using private ACLs.
+  bool private = 4;
+  // GS bucket used for uploads.
+  string gs_bucket = 5;
+}

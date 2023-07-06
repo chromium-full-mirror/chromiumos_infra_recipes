@@ -11,8 +11,9 @@ from PB.chromite.api.packages import UprevVersionedPackageRequest
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.pupr_local_uprev.tests.uprev_packages import \
+  UprevPackagesProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -29,13 +30,7 @@ DEPS = [
     'test_util',
 ]
 
-PROPERTIES = {
-    'additional_commit_message': Property(default=''),
-    'allow_partial_uprev': Property(default=False),
-    'with_package_chrome': Property(default=False),
-    'with_package_lacros': Property(default=False),
-    'expect_none_response': Property(default=False),
-}
+PROPERTIES = UprevPackagesProperties
 
 BUILD_TARGETS = [BuildTarget(name='build-target')]
 PACKAGE_CHROME = PackageInfo(category='chromeos-base',
@@ -47,12 +42,11 @@ TOPIC = 'cool_topic'
 VERSIONS = [UprevVersionedPackageRequest.GitRef()]
 
 
-def RunSteps(api: RecipeApi, additional_commit_message: str,
-             allow_partial_uprev: bool, expect_none_response: bool):
+def RunSteps(api: RecipeApi, properties: UprevPackagesProperties):
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
-      additional_commit_message=additional_commit_message,
-      allow_partial_uprev=allow_partial_uprev,
+      additional_commit_message=properties.additional_commit_message,
+      allow_partial_uprev=properties.allow_partial_uprev,
       packages=PACKAGES,
       build_targets=BUILD_TARGETS,
   )
@@ -61,7 +55,7 @@ def RunSteps(api: RecipeApi, additional_commit_message: str,
   ebuilds_by_project = api.pupr_local_uprev.uprev_packages(VERSIONS, TOPIC)
 
   # Assert
-  if expect_none_response:
+  if properties.expect_none_response:
     api.assertions.assertIsNone(ebuilds_by_project)
   else:
     api.assertions.assertIsNotNone(ebuilds_by_project)

@@ -1,4 +1,4 @@
-// Copyright 2022 The ChromiumOS Authors
+// Copyright 2023 The ChromiumOS Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,10 +6,20 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.gcloud.tests;
 
+message CachePropertiesProperties {
+  string recovery_snapshot = 1;
+  string mounted_snapshot = 2;
+}
+
 message TestInputProperties {
   // Whether or not we expect mounting the cache disk to fail.
   bool should_fail = 1;
 
   // Whether to expect a chromiumos- bot prefix instead of chromeos-.
   bool chromiumos_bot_prefix = 2;
+}
+
+message TransactionallyUpdateRecoveryImageProperties {
+  string recovery_image = 1;
+  string expected_return = 2;
 }

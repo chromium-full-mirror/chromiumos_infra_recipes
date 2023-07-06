@@ -5,7 +5,6 @@
 from typing import Generator
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -19,14 +18,11 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'version': Property(default=''),
-    'at_least': Property(default=False),
-}
 
-
-def RunSteps(api: RecipeApi, version: str, at_least: bool):
-  api.assertions.assertEqual(api.repo.version_at_least(version), at_least)
+def RunSteps(api: RecipeApi):
+  api.assertions.assertEqual(
+      api.repo.version_at_least(api.properties['version']),
+      api.properties['at_least'])
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

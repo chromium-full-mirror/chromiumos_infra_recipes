@@ -10,19 +10,11 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.recipe_modules.chromeos.cros_artifacts.tests.upload_attestations import \
+    UploadAttestationsProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
-PROPERTIES = {
-    'exclude_image_archives':
-        Property(
-            help='Whether to define the artifact_info with no IMAGE_ARCHIVES type.',
-            kind=bool, default=False),
-    'ignore_breakpad_symbol_generation_errors':
-        Property(
-            help="The value to pass to upload_artifacts's ignore_breakpad_symbol_generation_errors parameter",
-            kind=bool, default=False),
-}
+PROPERTIES = UploadAttestationsProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -35,8 +27,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api, exclude_image_archives,
-             ignore_breakpad_symbol_generation_errors):
+def RunSteps(api, properties):
   artifacts_info = common.ArtifactsByService(
       legacy=common.ArtifactsByService.Legacy(output_artifacts=[
           common.ArtifactsByService.Legacy.ArtifactInfo(artifact_types=[
@@ -74,7 +65,7 @@ def RunSteps(api, exclude_image_archives,
       ]),
   )
 
-  if exclude_image_archives:
+  if properties.exclude_image_archives:
     artifacts_info.legacy.Clear()
 
   api.cros_artifacts.upload_artifacts(
@@ -83,8 +74,8 @@ def RunSteps(api, exclude_image_archives,
       sysroot=Sysroot(path='/build/target',
                       build_target=BuildTarget(name='target')),
       report_to_spike=True, attestation_eligible=True,
-      ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors
-  )
+      ignore_breakpad_symbol_generation_errors=properties
+      .ignore_breakpad_symbol_generation_errors)
 
 
 def GenTests(api):

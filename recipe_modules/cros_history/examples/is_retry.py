@@ -2,8 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine.recipe_api import Property
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -13,16 +11,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {'is_retry': Property(default=False)}
 
-
-def RunSteps(api, is_retry):
-  api.assertions.assertEqual(api.cros_history.is_retry(), is_retry)
+def RunSteps(api):
+  api.assertions.assertEqual(api.cros_history.is_retry(),
+                             api.properties['is_retry'])
 
 
 def GenTests(api):
 
-  yield api.test('basic')
+  yield api.test('basic', api.properties(is_retry=False))
 
   yield api.test(
       'is-retry',

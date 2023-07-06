@@ -3,11 +3,9 @@
 # found in the LICENSE file.
 
 # pylint: disable=protected-access
-from typing import Tuple
 
 from PB.chromite.api.payload import GenerationRequest
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -20,39 +18,20 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    # Following the pattern from create_au_test_configs.py.
-    'max_batch_size':
-        Property(
-            kind=int,
-            help='Max batch size value.',
-            default=0,
-        ),
-    'paygen_requests':
-        Property(help='Tuple of serialized paygen requests for batching.',
-                 default=''),
-    'expected_batches':
-        Property(
-            help='Tuple of serialized paygen requests expected for the batches.',
-            default=''),
-}
 
-
-def RunSteps(api: RecipeApi, max_batch_size: int,
-             paygen_requests: Tuple[str, str],
-             expected_batches: Tuple[str, str]):
+def RunSteps(api: RecipeApi):
   # Handle test setup (object parsing and whatnot).
   with api.step.nest('deserialize paygen_requests'):
     requests = []
-    for request in paygen_requests:
+    for request in api.properties['paygen_requests']:
       gen_req = GenerationRequest()
       gen_req.ParseFromString(request)
       requests.append(
           api.paygen_orchestration._create_paygen_request_dict(gen_req))
-  if expected_batches:
+  if 'expected_batches' in api.properties:
     with api.step.nest('deserialize expected_batches'):
       batches = []
-      for expected_batch in expected_batches:
+      for expected_batch in api.properties['expected_batches']:
         single_requests = []
         for single_request in expected_batch:
           gen_req = GenerationRequest()
@@ -63,8 +42,9 @@ def RunSteps(api: RecipeApi, max_batch_size: int,
 
   # Execute test.
   with api.step.nest('run test'):
-    if max_batch_size:
-      api.paygen_orchestration._max_dlc_batch_size = max_batch_size
+    if 'max_batch_size' in api.properties:
+      api.paygen_orchestration._max_dlc_batch_size = api.properties[
+          'max_batch_size']
 
     actual_batches = api.paygen_orchestration._batch_paygen_request_dicts(
         requests)

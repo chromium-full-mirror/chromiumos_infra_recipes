@@ -1,0 +1,15 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.cros_artifacts.tests;
+
+message UploadAttestationsProperties {
+  // Whether to define the artifact_info with no IMAGE_ARCHIVES type.
+  bool exclude_image_archives = 1;
+  // The value to pass to upload_artifacts's
+  // ignore_breakpad_symbol_generation_errors parameter.
+  bool ignore_breakpad_symbol_generation_errors = 2;
+}

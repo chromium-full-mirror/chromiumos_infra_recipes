@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_release.tests.get_au_testing_models import \
+  GetAuTestingModelsProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -17,26 +18,14 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'fsi':
-        Property(
-            kind=bool,
-            help='Whether to get FSI-payload testing models.',
-            default=False,
-        ),
-    'expected_models':
-        Property(
-            kind=list,
-            help='List of models that should be returned by get_au_testing_models (not necessarily in the same order).',
-            default=None)
-}
+PROPERTIES = GetAuTestingModelsProperties
 BUILDER = 'octopus-release-main'
 
 
-def RunSteps(api, fsi, expected_models):
+def RunSteps(api, properties):
   api.buildbucket.build.builder.builder = BUILDER
-  actual_models = api.cros_release.get_au_testing_models(fsi)
-  api.assertions.assertCountEqual(actual_models, expected_models)
+  actual_models = api.cros_release.get_au_testing_models(properties.fsi)
+  api.assertions.assertCountEqual(actual_models, properties.expected_models)
 
 
 def GenTests(api):

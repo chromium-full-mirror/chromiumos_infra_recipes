@@ -8,6 +8,26 @@ package recipe_modules.chromeos.looks_for_green.tests;
 
 import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
+message CalcApproxSnapAgeHoursProperties {
+  int32 expected_approx_snap_age_hours = 1;
+  string test_start_str = 2;
+}
+
+message FindGreenSnapshotProperties {
+  bool expect_result = 1;
+  int32 expected_bbid = 2;
+  int32 expected_greenness = 3;
+  string expected_commit_sha = 4;
+  string expected_target_greenness = 5;
+  string latest_start = 6;
+}
+
+message GetLatestSnapshotGreennessProperties {
+  int32 expected_greenness = 1;
+  bool expected_is_snap_orch_green = 2;
+  bool expected_staging = 3;
+}
+
 message ShouldLfgProperties {
 
   // Whether a test is expected to LFG.

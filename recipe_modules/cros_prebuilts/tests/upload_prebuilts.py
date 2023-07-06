@@ -8,10 +8,11 @@ import json
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget, Chroot, Profile
+from PB.recipe_modules.chromeos.cros_prebuilts.tests.upload_prebuilts import \
+  UploadPrebuiltsProperties
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'binhost_lookup_service',
@@ -25,56 +26,40 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'upload_target_prebuilts':
-        Property(default=False, kind=bool,
-                 help='Whether to upload build target prebuilts.'),
-    'upload_devinstall_prebuilts':
-        Property(default=False, kind=bool,
-                 help='Whether to upload devinstall prebuilts.'),
-    'upload_chrome_prebuilts':
-        Property(default=False, kind=bool,
-                 help='Whether to upload Chrome prebuilts.'),
-    'private':
-        Property(default=False, kind=bool,
-                 help='Whether to upload using private ACLs.'),
-    'gs_bucket':
-        Property(default='test_bucket', kind=str,
-                 help='GS bucket used for uploads.'),
-}
+PROPERTIES = UploadPrebuiltsProperties
 
 
-def RunSteps(api: recipe_api.RecipeApi, upload_target_prebuilts: bool,
-             upload_devinstall_prebuilts: bool, upload_chrome_prebuilts: bool,
-             private: bool, gs_bucket: str) -> None:
+def RunSteps(api: recipe_api.RecipeApi, properties) -> None:
+
   target = BuildTarget(name='amd64-generic')
   sysroot = Sysroot(build_target=target)
   chroot = Chroot(path='/path/to/chroot', out_path='/path/to/out')
   builder_config = BuilderConfig.Id.POSTSUBMIT
 
-  if upload_target_prebuilts:
+  if properties.upload_target_prebuilts:
     api.cros_prebuilts.upload_target_prebuilts(
         target,
         sysroot,
         chroot,
         Profile(),
         builder_config,
-        gs_bucket,
-        private,
+        properties.gs_bucket,
+        properties.private,
     )
-  if upload_devinstall_prebuilts:
+  if properties.upload_devinstall_prebuilts:
     api.cros_prebuilts.upload_devinstall_prebuilts(target, sysroot, chroot,
-                                                   gs_bucket)
-  if upload_chrome_prebuilts:
+                                                   properties.gs_bucket)
+  if properties.upload_chrome_prebuilts:
     api.cros_prebuilts.upload_chrome_prebuilts(target, sysroot, chroot,
-                                               builder_config, gs_bucket,
-                                               private)
+                                               builder_config,
+                                               properties.gs_bucket,
+                                               properties.private)
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'upload-target-prebuilts',
-      api.properties(upload_target_prebuilts=True),
+      api.properties(upload_target_prebuilts=True, gs_bucket='test_bucket'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
       api.post_process(post_process.DropExpectation),
@@ -82,7 +67,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'upload-target-prebuilts-no-acls',
-      api.properties(upload_target_prebuilts=True, private=True),
+      api.properties(upload_target_prebuilts=True, gs_bucket='test_bucket',
+                     private=True),
       api.cros_build_api.set_api_return(
           'upload prebuilts', 'BinhostService/GetPrivatePrebuiltAclArgs',
           json.dumps({'args': []}), step_name='read gs acls'),
@@ -95,7 +81,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'upload-chrome-prebuilts-no-acls',
-      api.properties(upload_chrome_prebuilts=True, private=True),
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket',
+                     private=True),
       api.cros_build_api.set_api_return(
           'upload chrome prebuilts', 'BinhostService/GetPrivatePrebuiltAclArgs',
           json.dumps({'args': []}), step_name='read gs acls'),
@@ -108,7 +95,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'upload-devinstall-prebuilts',
-      api.properties(upload_devinstall_prebuilts=True),
+      api.properties(upload_devinstall_prebuilts=True, gs_bucket='test_bucket'),
       api.post_check(post_process.MustRun, 'upload devinstall prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
       api.post_process(post_process.DropExpectation),
@@ -124,7 +111,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'upload-chrome-prebuilts',
-      api.properties(upload_chrome_prebuilts=True),
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket'),
       api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
       api.post_check(post_process.DoesNotRun,
                      'upload chrome prebuilts.read gs acls'),
@@ -133,7 +120,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'upload-chrome-prebuilts-private-acls',
-      api.properties(upload_chrome_prebuilts=True, private=True),
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket',
+                     private=True),
       api.post_check(post_process.MustRun,
                      'upload chrome prebuilts.read gs acls'),
       api.post_process(post_process.DropExpectation),
@@ -155,6 +143,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'publish-binhost-metadata',
       api.properties(
           upload_target_prebuilts=True,
+          gs_bucket='test_bucket',
           **api.binhost_lookup_service.input_properties,
       ),
       api.buildbucket.generic_build(
@@ -169,6 +158,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       'publish-binhost-metadata-does-not-run',
       api.properties(
           upload_target_prebuilts=True,
+          gs_bucket='test_bucket',
           **api.binhost_lookup_service.input_properties,
       ),
       api.post_check(post_process.DoesNotRun,

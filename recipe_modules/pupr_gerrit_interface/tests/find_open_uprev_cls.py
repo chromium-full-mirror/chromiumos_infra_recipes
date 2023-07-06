@@ -8,12 +8,13 @@
 from typing import Generator
 from typing import List
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
+  FindOpenUprevCLsProperties
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
 from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 from RECIPE_MODULES.chromeos.pupr_gerrit_interface.api import HOSTS_REMOTES
 from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
-
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
@@ -27,10 +28,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'projects': recipe_api.Property(),
-    'expected_gerrit_changes_serialized': recipe_api.Property(),
-}
+PROPERTIES = FindOpenUprevCLsProperties
 
 CHROMIUM_HOST, CHROMIUM_REMOTE = HOSTS_REMOTES[0]
 CHROME_INTERNAL_HOST, CHROME_INTERNAL_REMOTE = HOSTS_REMOTES[1]
@@ -47,15 +45,14 @@ INTERNAL_PROJECT = ProjectInfo(name='my-internal-project',
 PUPR_TOPIC = 'my-topic'
 
 
-def RunSteps(api: recipe_api.RecipeApi, projects: List[ProjectInfo],
-             expected_gerrit_changes_serialized: List[bytes]):
+def RunSteps(api: recipe_api.RecipeApi, properties: FindOpenUprevCLsProperties):
   """Run the test logic."""
   # Arrange
   projects_by_remote = api.pupr_gerrit_interface.sort_projects_by_remote(
-      projects)
+      [CHROMIUM_PROJECT, INTERNAL_PROJECT])
   expected_gerrit_changes: List[GerritChange] = []
-  for serialized in expected_gerrit_changes_serialized:
-    expected_gerrit_changes.append(GerritChange.FromString(serialized))
+  for serialized in properties.expected_gerrit_changes:
+    expected_gerrit_changes.append(serialized)
 
   # Act
   open_changes = api.pupr_gerrit_interface.find_open_uprev_cls(
@@ -102,10 +99,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi
                                                         CHROMIUM_HOST_URL)
   INTERNAL_GERRIT_CHANGE = change_info_to_gerrit_change(
       INTERNAL_CHANGE_INFO, CHROME_INTERNAL_HOST_URL)
-  CHROMIUM_GERRIT_CHANGE_SER = GerritChange.SerializeToString(
-      CHROMIUM_GERRIT_CHANGE)
-  INTERNAL_GERRIT_CHANGE_SER = GerritChange.SerializeToString(
-      INTERNAL_GERRIT_CHANGE)
 
   def _set_query_changes_response(host: str, changes: List[ChangeInfo]
                                  ) -> recipe_test_api.TestData:
@@ -119,14 +112,12 @@ def GenTests(api: recipe_test_api.RecipeTestApi
       _set_query_changes_response(CHROMIUM_HOST, [CHROMIUM_CHANGE_INFO]),
       _set_query_changes_response(CHROME_INTERNAL_HOST, [INTERNAL_CHANGE_INFO]),
       api.properties(
-          projects=[CHROMIUM_PROJECT, INTERNAL_PROJECT],
-          expected_gerrit_changes_serialized=[
-              CHROMIUM_GERRIT_CHANGE_SER, INTERNAL_GERRIT_CHANGE_SER
-          ]), api.post_process(post_process.DropExpectation))
+          FindOpenUprevCLsProperties(expected_gerrit_changes=[
+              CHROMIUM_GERRIT_CHANGE, INTERNAL_GERRIT_CHANGE
+          ])), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'no-changes', _set_query_changes_response(CHROMIUM_HOST, []),
       _set_query_changes_response(CHROME_INTERNAL_HOST, []),
-      api.properties(projects=[CHROMIUM_PROJECT, INTERNAL_PROJECT],
-                     expected_gerrit_changes_serialized=[]),
+      api.properties(FindOpenUprevCLsProperties(expected_gerrit_changes=[])),
       api.post_process(post_process.DropExpectation))

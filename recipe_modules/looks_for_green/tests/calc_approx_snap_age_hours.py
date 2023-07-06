@@ -5,8 +5,9 @@
 
 import datetime
 
+from PB.recipe_modules.chromeos.looks_for_green.tests.test import \
+  CalcApproxSnapAgeHoursProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -16,10 +17,7 @@ DEPS = [
     'looks_for_green',
 ]
 
-PROPERTIES = {
-    'expected_approx_snap_age_hours': Property(default=0),
-    'test_start_str': Property(default='2021-02-19T00:00:00')
-}
+PROPERTIES = CalcApproxSnapAgeHoursProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -27,12 +25,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 TEST_SEED_TIME_SECONDS = 1613692800
 
 
-def RunSteps(api, expected_approx_snap_age_hours, test_start_str):
-  test_start_timestamp = datetime.datetime.fromisoformat(test_start_str)
+def RunSteps(api, properties):
+  test_start_timestamp = datetime.datetime.fromisoformat(
+      properties.test_start_str)
   # Test calc_approx_snap_age_hours
   approx_snap_age_hours = api.looks_for_green.calc_approx_snap_age_hours(
       test_start_timestamp)
-  api.assertions.assertEqual(expected_approx_snap_age_hours,
+  api.assertions.assertEqual(properties.expected_approx_snap_age_hours,
                              approx_snap_age_hours)
 
 

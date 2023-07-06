@@ -8,7 +8,6 @@
 from copy import deepcopy
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -18,10 +17,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = {
-    'signing_metadata': Property(default={}),
-}
 
 # Reduced versions of the signing metadata from these two builds:
 # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8779438015707186865/+/u/get_signed_build_metadata/parse_metadata/signed_build_metadata
@@ -82,8 +77,8 @@ _METADATA_STABLE = {
 }
 
 
-def RunSteps(api, signing_metadata):
-  api.mass_deploy.run_mass_deploy_generation(signing_metadata)
+def RunSteps(api):
+  api.mass_deploy.run_mass_deploy_generation(api.properties['signing_metadata'])
 
 
 def GenTests(api):

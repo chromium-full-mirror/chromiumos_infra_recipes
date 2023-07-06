@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from PB.go.chromium.org.luci.swarming.proto.api.swarming import StringPair
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -14,24 +13,17 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'keyvals':
-        Property(
-            help='Tuples of (key: str, value: str) to interpret as CrOS tags.'),
-    'check_key':
-        Property(help='Key to check in get_single_value.'),
-    'expected_value':
-        Property(help='Expected retval from get_single_value.')
-}
-
 DEFAULT_VALUE = 'default-value'
 
 
-def RunSteps(api, keyvals, check_key, expected_value):
-  string_pairs = [StringPair(key=k, value=v) for (k, v) in keyvals]
-  actual_value = api.cros_tags.get_single_value(check_key, tags=string_pairs,
+def RunSteps(api):
+  string_pairs = [
+      StringPair(key=k, value=v) for (k, v) in api.properties['keyvals']
+  ]
+  actual_value = api.cros_tags.get_single_value(api.properties['check_key'],
+                                                tags=string_pairs,
                                                 default=DEFAULT_VALUE)
-  api.assertions.assertEqual(actual_value, expected_value)
+  api.assertions.assertEqual(actual_value, api.properties['expected_value'])
 
 
 def GenTests(api):

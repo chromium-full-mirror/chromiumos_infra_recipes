@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,14 +14,9 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'expected_ref':
-        Property(kind=str, help='The expected orchestrator gitiles ref.',
-                 default='refs/heads/main')
-}
 
-
-def RunSteps(api, expected_ref):
+def RunSteps(api):
+  expected_ref = api.properties['expected_ref'] or 'refs/heads/main'
 
   commit = api.buildbucket.gitiles_commit
   config = api.cros_infra_config.configure_builder(commit=commit, changes=None)

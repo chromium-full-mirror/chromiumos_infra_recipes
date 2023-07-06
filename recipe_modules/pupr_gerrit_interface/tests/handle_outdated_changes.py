@@ -4,23 +4,22 @@
 # found in the LICENSE file.
 
 """Verify that handle_open_changes() runs the expected process."""
-from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
-
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import GerritChange
 from PB.chromiumos.common import PackageInfo
+from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
+  HandleOutdatedChangesProperties
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import FULL_RUN
-from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
 from PB.recipes.chromeos.generator import OUTDATED_LEAVE_COMMENT
 from PB.recipes.chromeos.generator import RETRY_LATEST_PINNED
 from PB.recipes.chromeos.generator import Reviewer
 from PB.recipes.chromeos.generator import SUBMIT
+from RECIPE_MODULES.chromeos.repo.api import ProjectInfo
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine.recipe_api import Property
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -36,12 +35,7 @@ DEPS = [
     'test_util',
 ]
 
-PROPERTIES = {
-    'outdated_cls_policy': Property(),
-    'expected': Property(default=True),
-    'retry_only': Property(default=False),
-    'changes': Property(default=1),
-}
+PROPERTIES = HandleOutdatedChangesProperties
 
 BUILD_TARGETS = [BuildTarget(name='build-target')]
 PACKAGE_CHROME = PackageInfo(category='chromeos-base',
@@ -49,8 +43,8 @@ PACKAGE_CHROME = PackageInfo(category='chromeos-base',
 PACKAGES = [PACKAGE_CHROME]
 
 
-def RunSteps(api: recipe_api.RecipeApi, outdated_cls_policy: any,
-             expected: bool, retry_only: bool, changes: int):
+def RunSteps(api: recipe_api.RecipeApi,
+             properties: HandleOutdatedChangesProperties):
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
       packages=PACKAGES,
@@ -64,25 +58,29 @@ def RunSteps(api: recipe_api.RecipeApi, outdated_cls_policy: any,
                           branch=f'{api.src_state.workspace_path}',
                           rrev=api.src_state.workspace_path)
           ]
-      }, 'topic') if changes > 0 else None
+      }, 'topic') if properties.changes > 0 else None
   api.assertions.assertEqual(
-      expected,
+      properties.expected,
       api.pupr_gerrit_interface.handle_outdated_changes(
           [
               GerritChange(host='chromium-review.googlesource.com',
-                           change=1234 + i) for i in range(0, changes)
+                           change=1234 + i)
+              for i in range(0, properties.changes)
           ], mrm,
           BranchPolicy(pattern='.*', repl='',
                        reviewers=[Reviewer(email='a@example.com')
                                  ], no_existing_cls_policy=FULL_RUN,
                        existing_cls_policy=SUBMIT,
                        retry_cl_policy=RETRY_LATEST_PINNED,
-                       outdated_cls_policy=outdated_cls_policy), retry_only))
+                       outdated_cls_policy=properties.outdated_cls_policy),
+          properties.retry_only))
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
-      'basic', api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
+      'basic',
+      api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, expected=True,
+                     changes=1),
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,
@@ -95,7 +93,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'outdated-abandon',
-      api.properties(outdated_cls_policy=OUTDATED_ABANDON, expected=False),
+      api.properties(outdated_cls_policy=OUTDATED_ABANDON, changes=1,
+                     expected=False),
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.DoesNotRun,
@@ -108,9 +107,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield api.test(
       'no-rebase',
-      api.properties(existing_cls_policy=SUBMIT,
-                     no_existing_cls_policy=FULL_RUN, retry_cl_policy=NO_RETRY,
-                     outdated_cls_policy=OUTDATED_LEAVE_COMMENT),
+      api.properties(outdated_cls_policy=OUTDATED_LEAVE_COMMENT, expected=True,
+                     changes=1),
       api.post_check(post_process.MustRun, 'outdated CLs'),
       api.post_check(
           post_process.MustRun,

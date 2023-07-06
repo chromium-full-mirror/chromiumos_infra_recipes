@@ -3,13 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
+  LooksForGreenStatus
+from PB.recipe_modules.chromeos.looks_for_green.tests.test import \
+  GetLatestSnapshotGreennessProperties
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,11 +22,7 @@ DEPS = [
     'looks_for_green',
 ]
 
-PROPERTIES = {
-    'expected_greenness': Property(default=0),
-    'expected_is_snap_orch_green': Property(default=True),
-    'expected_staging': Property(default=False)
-}
+PROPERTIES = GetLatestSnapshotGreennessProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -34,13 +32,14 @@ TEST_START_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613754627)
 TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 
-def RunSteps(api, expected_greenness, expected_is_snap_orch_green,
-             expected_staging):
+def RunSteps(api, properties):
   agg_greenness = api.looks_for_green.get_latest_snapshot_greenness()
-  api.assertions.assertEqual(expected_greenness, agg_greenness)
+  api.assertions.assertEqual(properties.expected_greenness, agg_greenness)
   is_snap_orch_green = api.looks_for_green.is_snap_orch_green()
-  api.assertions.assertEqual(expected_is_snap_orch_green, is_snap_orch_green)
-  api.assertions.assertEqual(expected_staging, api.cros_infra_config.is_staging)
+  api.assertions.assertEqual(properties.expected_is_snap_orch_green,
+                             is_snap_orch_green)
+  api.assertions.assertEqual(properties.expected_staging,
+                             api.cros_infra_config.is_staging)
 
 
 def GenTests(api):

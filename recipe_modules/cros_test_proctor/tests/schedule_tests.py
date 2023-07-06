@@ -6,12 +6,14 @@
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperties
+from PB.recipe_modules.chromeos.cros_test_proctor.proctor import \
+  ProctorProperties
+from PB.recipe_modules.chromeos.cros_test_proctor.tests.schedule_tests import \
+  ScheduleTestsProperties
 from recipe_engine.post_process import DropExpectation
 from recipe_engine.post_process import LogContains
 from recipe_engine.post_process import MustRun
 from recipe_engine.post_process import PropertyEquals
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -23,26 +25,19 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'passed_tests': Property(default=[]),
-    'is_retry': Property(default=False),
-    'previously_failed_now_exonerable_hw_suites': Property(default=[]),
-    'previously_failed_now_exonerable_vm_suites': Property(default=[]),
-}
+PROPERTIES = ScheduleTestsProperties
 
 
-def RunSteps(api, passed_tests, is_retry,
-             previously_failed_now_exonerable_hw_suites,
-             previously_failed_now_exonerable_vm_suites):
+def RunSteps(api, properties):
   snapshot = common_pb2.GitilesCommit(host='chrome-internal.googlesource.com',
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
   _ = api.cros_test_proctor.schedule_tests(
-      test_plan, list(set(passed_tests)),
-      previously_failed_now_exonerable_hw_suites,
-      previously_failed_now_exonerable_vm_suites, api.cros_test_proctor.timeout,
-      snapshot, is_retry=is_retry)
+      test_plan, list(set(properties.passed_tests)),
+      properties.previously_failed_now_exonerable_hw_suites,
+      properties.previously_failed_now_exonerable_vm_suites,
+      api.cros_test_proctor.timeout, snapshot, is_retry=properties.is_retry)
 
 
 def GenTests(api):
@@ -110,7 +105,8 @@ def GenTests(api):
   expected_tast_gce_test_names = []
   yield api.test(
       'retry',
-      api.properties(is_retry=True, passed_tests=passed_tests),
+      api.properties(
+          ScheduleTestsProperties(is_retry=True, passed_tests=passed_tests)),
       api.post_check(PropertyEquals, 'scheduled_hw_tests',
                      expected_hw_test_names),
       api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
@@ -156,7 +152,8 @@ def GenTests(api):
 
   yield api.test(
       'split-build-targets',
-      api.properties(is_retry=True, passed_tests=passed_tests),
+      api.properties(
+          ScheduleTestsProperties(is_retry=True, passed_tests=passed_tests)),
       api.properties(
           **{
               '$chromeos/cros_test_proctor':
@@ -178,9 +175,10 @@ def GenTests(api):
   yield api.test(
       'dont-run-now-exonerable-hw-tests',
       api.properties(
-          is_retry=True,
-          previously_failed_now_exonerable_hw_suites=previously_failed_now_exonerable_hw_suites
-      ),
+          ScheduleTestsProperties(
+              is_retry=True,
+              previously_failed_now_exonerable_hw_suites=previously_failed_now_exonerable_hw_suites
+          )),
       api.post_check(PropertyEquals, 'scheduled_hw_tests',
                      expected_hw_test_names),
       api.post_check(
@@ -197,9 +195,10 @@ def GenTests(api):
   yield api.test(
       'dont-run-now-exonerable-vm-tests',
       api.properties(
-          is_retry=True,
-          previously_failed_now_exonerable_vm_suites=previously_failed_now_exonerable_vm_suites
-      ),
+          ScheduleTestsProperties(
+              is_retry=True,
+              previously_failed_now_exonerable_vm_suites=previously_failed_now_exonerable_vm_suites
+          )),
       api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
                      expected_tast_vm_test_names),
       api.post_check(

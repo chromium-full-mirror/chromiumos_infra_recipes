@@ -4,8 +4,9 @@
 
 import json
 
+from PB.recipe_modules.chromeos.naming.tests.tests import \
+    GetGenerationRequestTitleProperties
 from PB.recipes.chromeos.paygen import PaygenProperties
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,20 +19,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PaygenRequest = PaygenProperties.PaygenRequest
 
-PROPERTIES = {
-    'serialized_paygen_request':
-        Property(kind=str, default=False, help='Serialized PaygenRequest.'),
-    'expected_url_title':
-        Property(
-            kind=str, default=False,
-            help='The URL title that should be generated for the request.'),
-}
+PROPERTIES = GetGenerationRequestTitleProperties
 
 
-def RunSteps(api, serialized_paygen_request, expected_url_title):
-  paygen_request_dict = json.loads(serialized_paygen_request)
+def RunSteps(api, properties):
+  paygen_request_dict = json.loads(properties.serialized_paygen_request)
   actual_title = api.naming.get_generation_request_title(paygen_request_dict)
-  api.assertions.assertEqual(actual_title, expected_url_title)
+  api.assertions.assertEqual(actual_title, properties.expected_url_title)
 
 
 def GenTests(api):

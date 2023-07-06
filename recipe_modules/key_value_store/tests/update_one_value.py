@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.key_value_store.tests.tests import \
+  UpdateOneValueProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -16,20 +17,15 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'original_contents': Property(),
-    'key': Property(),
-    'new_value': Property(),
-    'expected_new_contents': Property(default=''),
-    'append_if_missing': Property(default=False),
-}
+PROPERTIES = UpdateOneValueProperties
 
 
-def RunSteps(api: RecipeApi, original_contents: str, key: str, new_value: str,
-             expected_new_contents: str, append_if_missing: bool):
+def RunSteps(api: RecipeApi, properties: UpdateOneValueProperties):
   actual_new_contents = api.key_value_store.update_one_value(
-      original_contents, key, new_value, append_if_missing=append_if_missing)
-  api.assertions.assertEqual(expected_new_contents, actual_new_contents)
+      properties.original_contents, properties.key, properties.new_value,
+      append_if_missing=properties.append_if_missing)
+  api.assertions.assertEqual(properties.expected_new_contents,
+                             actual_new_contents)
 
 
 def GenTests(api: RecipeTestApi):

@@ -1,0 +1,23 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.naming.tests;
+
+import "recipes/chromeos/paygen.proto";
+
+message BuildUrlTitleProperties {
+  // PaygenRequests in the fake Paygen build.
+  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest paygen_requests = 1;
+  // The URL title that should be generated for the build.
+  string expected_url_title = 2;
+}
+
+message GetGenerationRequestTitleProperties {
+  // Serialized PaygenRequest.
+  string serialized_paygen_request = 1;
+  // The URL title that should be generated for the request.
+  string expected_url_title = 2;
+}

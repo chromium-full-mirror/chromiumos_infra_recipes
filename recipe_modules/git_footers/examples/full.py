@@ -6,7 +6,6 @@
 """Test git_footers calls."""
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,8 +14,6 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = {'invalid_cr_commit_position': Property(default=False)}
 
 DESCRIPTION_EXISTING = """
 This is a change where the footer in question already exists.
@@ -40,7 +37,7 @@ Change-Id: ffffffffffffffff
 """
 
 
-def RunSteps(api, invalid_cr_commit_position):
+def RunSteps(api):
   gerrit_change_a = GerritChange(
       host='chromium-review.googlesource.com',
       change=91827,
@@ -60,7 +57,7 @@ def RunSteps(api, invalid_cr_commit_position):
   api.git_footers.position_num('HEAD')
   api.git_footers.from_gerrit_change(gerrit_change_a)
 
-  if invalid_cr_commit_position:
+  if api.properties['invalid_cr_commit_position']:
     api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 1)
   else:
     api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 101)
@@ -103,7 +100,7 @@ def RunSteps(api, invalid_cr_commit_position):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.properties(invalid_cr_commit_position=False))
 
   yield api.test(
       'bad-cr-commit-position',

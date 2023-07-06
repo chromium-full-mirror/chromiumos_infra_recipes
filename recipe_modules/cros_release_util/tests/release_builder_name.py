@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.recipe_modules.chromeos.cros_release_util.tests.release_builder_name import \
+  ReleaseBuilderNameProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 
 DEPS = [
     'recipe_engine/assertions',
@@ -15,35 +16,16 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'build_target':
-        Property(
-            kind=str,
-            help='Name of the build target.',
-            default=None,
-        ),
-    'is_staging':
-        Property(
-            kind=bool,
-            help='Whether environment is staging.',
-            default=False,
-        ),
-    'branch_name':
-        Property(
-            kind=str,
-            help='Name of the builder branch.',
-            default='main',
-        ),
-    'expected_builder_name':
-        Property(kind=str, help='Expected name of the builder.', default=None)
-}
+PROPERTIES = ReleaseBuilderNameProperties
 
 
-def RunSteps(api, build_target, is_staging, branch_name, expected_builder_name):
+def RunSteps(api, properties):
+  branch_name = properties.branch_name or 'main'
+
   api.cros_source.test_api.manifest_branch = branch_name
   builder_name = api.cros_release_util.release_builder_name(
-      build_target, branch_name, is_staging)
-  api.assertions.assertEqual(expected_builder_name, builder_name)
+      properties.build_target, branch_name, properties.is_staging)
+  api.assertions.assertEqual(properties.expected_builder_name, builder_name)
 
 
 def GenTests(api):

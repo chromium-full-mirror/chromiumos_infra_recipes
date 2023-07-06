@@ -7,8 +7,9 @@ import collections
 import json
 from typing import Dict
 
+from PB.recipe_modules.chromeos.key_value_store.tests.tests import \
+  ParseProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -20,18 +21,13 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'contents': Property(),
-    # Recipe properties have to be serialized,
-    # so pass in the expected result as a stringified dict.
-    'expected_json_str': Property(default='{}'),
-}
+PROPERTIES = ParseProperties
 
 
-def RunSteps(api: RecipeApi, contents: str, expected_json_str: str):
+def RunSteps(api: RecipeApi, properties: ParseProperties):
   api.assertions.maxDiff = None
-  expected_json: Dict[str, str] = json.loads(expected_json_str)
-  actual_json = api.key_value_store.parse_contents(contents,
+  expected_json: Dict[str, str] = json.loads(properties.expected_json_str)
+  actual_json = api.key_value_store.parse_contents(properties.contents,
                                                    source='a cool file')
   api.assertions.assertEqual(expected_json, actual_json)
 
@@ -84,6 +80,7 @@ world!"
       api.properties(
           contents="""my_key='my value'
 Hey, how's it going?""",
+          expected_json_str='{}',
       ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
@@ -101,6 +98,7 @@ w
 o
 r
 l""",
+          expected_json_str='{}',
       ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
@@ -112,7 +110,10 @@ l""",
 
   yield api.test(
       'invalid-quote-char',
-      api.properties(contents="my_key=`my value`"),
+      api.properties(
+          contents="my_key=`my value`",
+          expected_json_str='{}',
+      ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
       api.post_check(post_process.SummaryMarkdown,

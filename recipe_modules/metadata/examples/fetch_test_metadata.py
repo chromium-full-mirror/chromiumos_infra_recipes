@@ -6,13 +6,11 @@
 
 from typing import Generator
 
-from recipe_engine.recipe_api import Property
+from PB.chromite.api.sysroot import Sysroot
+from PB.chromiumos.common import Chroot
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
-
-from PB.chromite.api.sysroot import Sysroot
-from PB.chromiumos.common import Chroot
 
 DEPS = [
     'recipe_engine/assertions',
@@ -21,30 +19,27 @@ DEPS = [
     'metadata',
 ]
 
-PROPERTIES = {
-    'valid_return': Property(kind=bool, default=True),
-    'file_exists': Property(kind=bool, default=True),
-}
-
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api: RecipeApi, valid_return: bool, file_exists: bool) -> None:
-  output = api.metadata.fetch_test_metadata(chroot=Chroot(), sysroot=Sysroot(),
-                                            mock_metadata_file=file_exists)
+def RunSteps(api: RecipeApi) -> None:
+  output = api.metadata.fetch_test_metadata(
+      chroot=Chroot(), sysroot=Sysroot(),
+      mock_metadata_file=api.properties['file_exists'])
 
-  if valid_return:
+  if api.properties['valid_return']:
     api.assertions.assertEqual(output, api.metadata.EXAMPLE_TEST_METADATA_LIST)
   else:
     api.assertions.assertIsNone(output)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
-  yield api.test('fetch-test-metadata-valid')
+  yield api.test('fetch-test-metadata-valid',
+                 api.properties(valid_return=True, file_exists=True))
   yield api.test(
       'fetch-test-metadata-no-endpoint',
       api.cros_build_api.remove_endpoints(['ArtifactsService/FetchMetadata']),
-      api.properties(valid_return=False),
+      api.properties(valid_return=False, file_exists=True),
   )
   yield api.test(
       'fetch-test-metadata-bad-file',

@@ -3,10 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from recipe_engine import post_process
-from recipe_engine.recipe_api import Property
-
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -16,18 +14,9 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PROPERTIES = {
-    'fatal':
-        Property(
-            kind=bool,
-            help='Whether the check_buildspec error should be fatal.',
-            default=False,
-        ),
-}
 
-
-def RunSteps(api, fatal):
-  api.cros_release.check_buildspec(fatal=fatal)
+def RunSteps(api):
+  api.cros_release.check_buildspec(fatal=api.properties['fatal'])
 
 
 def GenTests(api):
