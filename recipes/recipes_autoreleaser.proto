@@ -1,0 +1,16 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.recipes_autoreleaser;
+
+message RecipesAutoreleaserProperties {
+  // Bundle to release. At least one is required. See the --bundle arg on
+  // release.sh for details on available bundles.
+  repeated string bundles = 1;
+
+  // Actually push CIPD refs.
+  bool push = 2;
+}

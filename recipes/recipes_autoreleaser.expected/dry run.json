@@ -1,0 +1,32 @@
+[
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/infra/recipes",
+      ".",
+      "-v",
+      "--progress"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "git clone"
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/recipes/release.sh",
+      "--smart",
+      "--verbose",
+      "--show-instances",
+      "--bundle",
+      "infra",
+      "--dry-run"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "release bundle 'infra' (dry-run)"
+  },
+  {
+    "name": "$result"
+  }
+]
