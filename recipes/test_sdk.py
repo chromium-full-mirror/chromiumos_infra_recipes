@@ -50,6 +50,7 @@ def RunSteps(api: RecipeApi):
       relevant = api.cros_relevance.postsubmit_relevance_check(
           api.build_menu.gitiles_commit, dep_graph.sdk)
     if not relevant:
+      api.buildbucket.hide_current_build_in_gerrit()
       return RawResult(status=common.SUCCESS,
                        summary_markdown='build was pointless.')
 
