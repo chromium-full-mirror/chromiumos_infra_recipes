@@ -5,6 +5,7 @@
 **[Recipe Modules](#Recipe-Modules)**
   * [analysis_service](#recipe_modules-analysis_service)
   * [android](#recipe_modules-android)
+  * [auto_retry_util](#recipe_modules-auto_retry_util)
   * [binhost_lookup_service](#recipe_modules-binhost_lookup_service)
   * [bot_cost](#recipe_modules-bot_cost)
   * [bot_scaling](#recipe_modules-bot_scaling)
@@ -127,6 +128,7 @@
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
   * [binhost_lookup_service:examples/publish_binhost_data](#recipes-binhost_lookup_service_examples_publish_binhost_data) &mdash; Test the `publish binhost metadata` functionality of the module.
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
@@ -801,6 +803,16 @@ Args:
 
 Returns:
   List of modified files.
+### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
+
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+
+
+#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for util functions associated with the CQ auto retries.
+
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#16)(self):**
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
 
 [DEPS](/recipe_modules/binhost_lookup_service/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10476,6 +10488,12 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 
 &mdash; **def [RunSteps](/recipes/annealing.py#62)(api, properties):**
+### *recipes* / [auto\_retry\_util:tests/submission\_blocking\_builders](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py)
+
+[DEPS](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py#20)(api):**
 ### *recipes* / [binhost\_lookup\_service:examples/publish\_binhost\_data](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py)
 
 [DEPS](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#13): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
