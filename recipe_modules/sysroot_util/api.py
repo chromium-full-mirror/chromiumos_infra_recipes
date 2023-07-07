@@ -22,6 +22,7 @@ from PB.chromite.api.sysroot import Profile as OldProfile
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
+from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
@@ -202,18 +203,23 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       def _InstallPackagesRequest(dryrun=False):
         """Helper to make InstallPackagesRequest."""
         return InstallPackagesRequest(
-            chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
-            packages=packages, package_indexes=package_indexes,
+            chroot=self.m.cros_sdk.chroot,
+            sysroot=self.sysroot,
+            packages=packages,
+            package_indexes=package_indexes,
             flags=InstallPackagesRequest.Flags(
                 compile_source=install_packages.compile_source,
                 use_goma=self.m.cros_sdk.has_goma_config(),
-                toolchain_changed=toolchain_cls,
-                dryrun=dryrun), use_flags=config.build.use_flags,
+                toolchain_changed=toolchain_cls, dryrun=dryrun,
+                bazel=(install_packages.install_packages_orchestrator ==
+                       builder_config_pb2.BuilderConfig.BAZEL)),
+            use_flags=config.build.use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             result_path=common_pb2.ResultPath(
                 path=common_pb2.Path(
                     path=str(self.m.path.mkdtemp()),
-                    location=common_pb2.Path.OUTSIDE)))
+                    location=common_pb2.Path.OUTSIDE)),
+        )
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:

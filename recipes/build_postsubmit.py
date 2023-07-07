@@ -93,6 +93,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      # By default, use Portage as the build orchestrator for all build steps.
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'install packages.call chromite.api.SysrootService/InstallPackages',
+          'request', ['"bazel": true']),
+      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
+      # assert that this test case doesn't pass Bazel into the request.
+      # TODO(b/288434466): After enabling TestApi/BuildTargetUnitTest to use
+      # Bazel, assert that this test case doesn't pass Bazel into the request.
   )
 
   # Pointless postsubmit build.
@@ -234,4 +243,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }),
       api.post_check(post_process.DoesNotRun,
                      'upload prebuilts.update binhost conf file'),
+  )
+
+  # Build that uses Bazel for all its build steps.
+  yield api.build_menu.test(
+      'bazel',
+      api.post_check(
+          post_process.LogContains,
+          'install packages.call chromite.api.SysrootService/InstallPackages',
+          'request', ['"bazel": true']),
+      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
+      # assert that this test case passes Bazel into the request.
+      # TODO(b/288434466): After enabling TestApi/BuildTargetUnitTest to use
+      # Bazel, assert that this test case passes Bazel into the request.
+      builder_name='amd64-generic-bazel-postsubmit',
   )
