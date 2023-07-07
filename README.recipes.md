@@ -3590,7 +3590,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#515)(self, patch_sets):**
+&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#521)(self, patch_sets):**
 
 Returns the union of all paths in the list of patchsets.
 
@@ -3617,7 +3617,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#536)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#542)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 

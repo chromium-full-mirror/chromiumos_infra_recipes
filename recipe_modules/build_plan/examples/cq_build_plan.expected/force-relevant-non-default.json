@@ -726,7 +726,8 @@
       "@@@STEP_LOG_LINE@invalid builders@fake-cq@@@",
       "@@@STEP_LOG_END@invalid builders@@@",
       "@@@STEP_LOG_LINE@forced targets@eve-cq@@@",
-      "@@@STEP_LOG_END@forced targets@@@"
+      "@@@STEP_LOG_END@forced targets@@@",
+      "@@@SET_BUILD_PROPERTY@found_force_relevant_targets@[\"eve-cq\", \"fake-cq\"]@@@"
     ]
   },
   {

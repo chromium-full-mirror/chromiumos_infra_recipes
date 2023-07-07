@@ -467,6 +467,12 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           t for t in force_relevant_values if t != 'all')
       force_relevant_all = 'all' in force_relevant_values
 
+      # Output which builders were specifically forced relevant.
+      # This output property is read by the CQ auto retrier.
+      if force_relevant_builders:
+        pres.properties['found_force_relevant_targets'] = sorted(
+            force_relevant_builders)
+
       f_rel = set(
           cfg.id.name
           for cfg in configs

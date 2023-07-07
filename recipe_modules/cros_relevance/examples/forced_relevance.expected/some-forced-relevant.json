@@ -8,7 +8,8 @@
       "@@@STEP_LOG_END@found footer builders@@@",
       "@@@STEP_LOG_LINE@forced targets@example-target-2-cq@@@",
       "@@@STEP_LOG_LINE@forced targets@example-target-3-something@@@",
-      "@@@STEP_LOG_END@forced targets@@@"
+      "@@@STEP_LOG_END@forced targets@@@",
+      "@@@SET_BUILD_PROPERTY@found_force_relevant_targets@[\"example-target-2-cq\", \"example-target-3-something\"]@@@"
     ]
   },
   {
