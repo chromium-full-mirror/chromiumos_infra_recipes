@@ -46,10 +46,10 @@ class RecipeReleaseConfig(typing.NamedTuple):
 
 INFRA_BUNDLE = RecipeReleaseConfig(
     'infra', staging_checks.INFRA_BUNDLE_STAGING_CHECKS_RE,
-    common.CipdRef('prod'), None)
+    common.CipdRef('prod'), 'ChromeOS Infrastructure')
 RELEASE_BUNDLE = RecipeReleaseConfig(
     'release', staging_checks.RELEASE_BUNDLE_STAGING_CHECKS_RE,
-    common.CipdRef('release-prod'), None)
+    common.CipdRef('release-prod'), 'ChromeOS Release')
 
 
 class RecipeRelease:
