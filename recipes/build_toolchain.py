@@ -13,7 +13,9 @@ from typing import Generator
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import BuildSdkTarballRequest
 from PB.chromite.api.sdk import CreateBinhostCLsRequest
+from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.build_toolchain import BuildToolchainProperties
 from recipe_engine import post_process
@@ -36,11 +38,15 @@ DEPS = [
     "gerrit",
     "repo",
     "test_util",
+    "workspace_util",
 ]
 
 PROPERTIES = BuildToolchainProperties
 
 PYTHON_VERSION_COMPATIBILITY = "PY3"
+
+# The "board" that represents the host platform the SDK will be run on.
+SDK_BUILD_TARGET = "amd64-host"
 
 SDK_TARBALL_SUFFIX = ".tar.xz"
 
@@ -205,6 +211,20 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
     with api.step.nest("package SDK as tarball"):
       tarball_path = api.cros_build_api.SdkService.BuildSdkTarball(
           BuildSdkTarballRequest(chroot=api.cros_sdk.chroot)).sdk_tarball_path
+
+    with api.step.nest("create manifest from SDK"):
+      api.cros_build_api.SdkService.CreateManifestFromSdk(
+          CreateManifestFromSdkRequest(
+              chroot=api.cros_sdk.chroot,
+              sdk_path=common_pb2.Path(
+                  path=f"/build/{SDK_BUILD_TARGET}",
+                  location=common_pb2.Path.INSIDE,
+              ),
+              dest_dir=common_pb2.Path(
+                  path=str(api.workspace_util.workspace_path),
+                  location=common_pb2.Path.OUTSIDE,
+              ),
+          ))
 
     with api.step.nest("upload SDK tarball"):
       # Compute upload location.
@@ -522,6 +542,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "create manifest from SDK"),
       api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
@@ -540,6 +561,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "tag key CL"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "create manifest from SDK"),
       api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
@@ -557,6 +579,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "create manifest from SDK"),
       api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.MustRun, "upload prebuilt packages"),
       api.post_check(post_process.MustRun, "create binhost CLs"),
@@ -579,6 +602,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.DoesNotRun, "package SDK as tarball"),
+      api.post_check(post_process.DoesNotRun, "create manifest from SDK"),
       api.post_check(post_process.DoesNotRun, "upload SDK tarball"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
@@ -603,12 +627,33 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.DoesNotRun, "create manifest from SDK"),
       api.post_check(post_process.DoesNotRun, "upload SDK tarball"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
       api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
       api.build_menu.set_build_api_return("package SDK as tarball",
                                           "SdkService/BuildSdkTarball",
+                                          retcode=1),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )
+
+  yield api.build_menu.test(
+      "create_manifest-failed",
+      api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          "identify key CLs",
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ),
+      api.post_check(post_process.DoesNotRun, "upload SDK tarball"),
+      api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
+      api.post_check(post_process.DoesNotRun, "create binhost CLs"),
+      api.post_check(post_process.DoesNotRun, "cq-depend on binhost CLs"),
+      api.build_menu.set_build_api_return("create manifest from SDK",
+                                          "SdkService/CreateManifestFromSdk",
                                           retcode=1),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[single_change_with_trybots]),
@@ -627,6 +672,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, "identify key CLs"),
       api.post_check(post_process.MustRun, "build SDK packages"),
       api.post_check(post_process.MustRun, "package SDK as tarball"),
+      api.post_check(post_process.MustRun, "create manifest from SDK"),
       api.post_check(post_process.MustRun, "upload SDK tarball"),
       api.post_check(post_process.DoesNotRun, "upload prebuilt packages"),
       api.post_check(post_process.DoesNotRun, "create binhost CLs"),
