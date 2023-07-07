@@ -7,6 +7,7 @@ from collections import defaultdict
 import copy
 from datetime import datetime, timedelta
 import json
+from typing import Any
 from typing import Dict
 from typing import List
 import unittest
@@ -48,12 +49,15 @@ class GetAffectedRecipesTest(unittest.TestCase):
     # Pass in the wrong order, make sure we're correctly determining the newest
     # and oldest commits.
     commits = [
-        git.Commit('abcde', '', '', '',
-                   datetime.fromisoformat('2020-01-01T12:00:00+00:00')),
-        git.Commit('zzzzz', '', 'update chromite-HEAD version', '',
-                   datetime.fromisoformat('2020-01-02T12:00:00+00:00')),
-        git.Commit('12345', '', '', '',
-                   datetime.fromisoformat('2020-01-03T12:00:00+00:00'))
+        git.Commit(
+            'abcde', '', '', '',
+            datetime.fromisoformat('2020-01-01T12:00:00+00:00').isoformat()),
+        git.Commit(
+            'zzzzz', '', 'update chromite-HEAD version', '',
+            datetime.fromisoformat('2020-01-02T12:00:00+00:00').isoformat()),
+        git.Commit(
+            '12345', '', '', '',
+            datetime.fromisoformat('2020-01-03T12:00:00+00:00').isoformat())
     ]
     all_recipes = ['foo', 'bar', 'baz']
     affected_recipes = bb.get_affected_recipes(commits, all_recipes)
@@ -99,9 +103,13 @@ class GetBuilderRecipeTest(unittest.TestCase):
         **test_util.SUBPROCESS_KWARGS)
 
 
-def _build_data(cipd_version: common.CipdVersion, bbid: int = 800000) -> Dict:
+def _build_data(cipd_version: common.CipdVersion, bbid: int = 800000,
+                status: str = 'SUCCESS',
+                create_time: str = '2023-07-12T18:30:03.433569345Z') -> Dict:
   return {
       'id': bbid,
+      'status': status,
+      'createTime': create_time,
       'infra': {
           'buildbucket': {
               'agent': {
@@ -194,7 +202,127 @@ class ReturnBuildersForRegexTest(unittest.TestCase):
         ('bb', 'builders', 'chromeos/staging'), **test_util.SUBPROCESS_KWARGS)
 
 
+class CheckRecentBuildStatusesTest(unittest.TestCase):
+
+  def setUp(self):
+    bb.get_builds_after.cache_clear()
+    # Don't want messages printing to stdout if tests are passing.
+    # Comment out if debugging.
+    bb.print = MagicMock()
+
+  @patch('bb.cipd.cipd_version_to_githash')
+  @patch('bb.subprocess.run')
+  def do_test(self, build_data: List[Dict[str, Any]], expected_ret: bool,
+              mock_subprocess_run: MagicMock,
+              mock_cipd_version_to_githash: MagicMock):
+    mock_subprocess_run.return_value = test_util.subprocess_stdout('\n'.join(
+        [json.dumps(build) for build in build_data]))
+
+    def cipd_version_to_githash(version: common.CipdVersion):
+      return {
+          'XXX': '30000',
+          'YYY': '20500',
+          'ZZZ': '12000',
+      }[version]
+
+    mock_cipd_version_to_githash.side_effect = cipd_version_to_githash
+
+    # Changes are not in chronological order.
+    changes = [
+        git.Commit('10000', '', '', '', '2020-01-01T12:00:00+00:00'),
+        git.Commit('30000', '', '', '', '2020-01-03T12:00:00+00:00'),
+        git.Commit('20000', '', 'update chromite-HEAD version', '',
+                   '2020-01-02T12:00:00+00:00'),
+    ]
+
+    def is_older_than_mock(change_hash):
+      return lambda other_hash: int(other_hash) >= int(change_hash)
+
+    for i, _ in enumerate(changes):
+      changes[i].is_older_than = is_older_than_mock(changes[i].hash)
+
+    self.assertEqual(
+        bb.check_recent_build_statuses(
+            'chromeos/staging/staging-foo',
+            # Basic exemption exempting any build with bbid 1003.
+            [lambda build: build['id'] == 1003],
+            changes,
+        ),
+        expected_ret)
+    mock_subprocess_run.assert_called_with(
+        [
+            'bb',
+            'ls',
+            '-json',
+            '-predicate',
+            # Check that the most recent date (01/03) is used.
+            '{"builder": {"project": "chromeos", "bucket": "staging", "builder": "staging-foo"}, "status": "ENDED_MASK", "create_time": {"start_time": "2020-01-03T12:00:00+00:00"}}',
+            '-fields',
+            'id,status,create_time,infra,summary_markdown,cancellation_markdown',
+        ],
+        **test_util.SUBPROCESS_KWARGS)
+
+  def test_all_success(self):
+    build_data = [
+        _build_data('YYY', bbid=1000, status='SUCCESS',
+                    create_time='2020-01-03T13:00:00.000000000Z'),
+        _build_data('XXX', bbid=1001, status='SUCCESS',
+                    create_time='2020-01-03T14:00:00.000000000Z'),
+        _build_data('XXX', bbid=1002, status='SUCCESS',
+                    create_time='2020-01-03T15:00:00.000000000Z'),
+        _build_data('XXX', bbid=1003, status='FAILURE',
+                    create_time='2020-01-03T16:00:00.000000000Z'),
+        _build_data('XXX', bbid=1004, status='SUCCESS',
+                    create_time='2020-01-03T17:00:00.000000000Z'),
+        _build_data('XXX', bbid=1005, status='SUCCESS',
+                    create_time='2020-01-03T18:00:00.000000000Z'),
+        # First five builds were okay so this won't be looked at.
+        _build_data('XXX', bbid=1006, status='INFRA_FAILURE',
+                    create_time='2020-01-03T19:00:00.000000000Z'),
+    ]
+    self.do_test(build_data, False)  # pylint: disable=no-value-for-parameter
+
+  def test_insufficient(self):
+    # We don't have enough builds, so we fail even though they're all success.
+    build_data = [
+        # YYY predates the most recent change, so even though we have
+        # 5 builds only 4 are applicable.
+        _build_data('YYY', bbid=1000, status='SUCCESS',
+                    create_time='2020-01-03T13:00:00.000000000Z'),
+        _build_data('XXX', bbid=1001, status='SUCCESS',
+                    create_time='2020-01-03T14:00:00.000000000Z'),
+        _build_data('XXX', bbid=1002, status='SUCCESS',
+                    create_time='2020-01-03T15:00:00.000000000Z'),
+        _build_data('XXX', bbid=1003, status='SUCCESS',
+                    create_time='2020-01-03T16:00:00.000000000Z'),
+        _build_data('XXX', bbid=1004, status='SUCCESS',
+                    create_time='2020-01-03T17:00:00.000000000Z'),
+    ]
+    self.do_test(build_data, True)  # pylint: disable=no-value-for-parameter
+
+  def test_failure(self):
+    # We don't have enough consecutive successes.
+    build_data = [
+        _build_data('YYY', bbid=1000, status='SUCCESS',
+                    create_time='2020-01-03T13:00:00.000000000Z'),
+        _build_data('XXX', bbid=1001, status='SUCCESS',
+                    create_time='2020-01-03T14:00:00.000000000Z'),
+        _build_data('XXX', bbid=1002, status='SUCCESS',
+                    create_time='2020-01-03T15:00:00.000000000Z'),
+        _build_data('XXX', bbid=1003, status='SUCCESS',
+                    create_time='2020-01-03T16:00:00.000000000Z'),
+        _build_data('XXX', bbid=1004, status='INFRA_FAILURE',
+                    create_time='2020-01-03T17:00:00.000000000Z'),
+        _build_data('XXX', bbid=1005, status='SUCCESS',
+                    create_time='2020-01-03T18:00:00.000000000Z'),
+    ]
+    self.do_test(build_data, True)  # pylint: disable=no-value-for-parameter
+
+
 class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
+
+  def setUp(self):
+    bb.get_builds_after.cache_clear()
 
   @patch('bb.get_affected_recipes')
   @patch('bb.get_builder_recipe')
@@ -366,7 +494,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
         affected_recipes_dict)
     # ZZZ is older than all changes and there are only four builds
     # since ZZZ for staging-Foo.
-    self.assertIsNone(instance, '10050')
+    self.assertIsNone(instance)
 
 
 if __name__ == '__main__':

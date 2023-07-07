@@ -151,6 +151,11 @@ class RecipeRelease:
                            show_all=options.show_all)
     quit_early_if_no_pending_changes(pending_changes)
 
+    # Unless we explicitly care about trivial changes, drop all the changes
+    # that have landed since the last nontrivial change. They'll still get
+    # released but shouldn't influence our staging checks.
+    if not options.show_all:
+      pending_changes = git.trim_trivial_suffix(pending_changes)
     bb.check_staging_builders(pending_changes, self.staging_checks,
                               ignore_failures=options.ignore_staging_failures)
     if not options.force:
@@ -210,6 +215,8 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       help='Show all pending changes, including trivial recipe rolls.')
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Increase level of logging.')
+
+  # TODO(b/287276108): Change to --max-covered and --max-releasable.
   parser.add_argument(
       '--smart', action='store_true',
       help='Find the maximum instance that has been adequately covered in staging.'

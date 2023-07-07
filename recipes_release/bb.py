@@ -34,8 +34,7 @@ def _get_affected_recipes(changes: Tuple[git.Commit],
   """Internal (cachable) function for get_affected_recipes."""
   recipes = sorted(recipes.split(','))
 
-  changes = sorted(changes, key=lambda change: change.commit_timestamp,
-                   reverse=True)
+  changes = sorted(changes, reverse=True)
   newest_change = changes[0]
   oldest_change = changes[-1]
 
@@ -160,10 +159,7 @@ def check_staging_builders(changes: List[git.Commit],
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
-      diff_fn = lambda change: get_affected_recipes(
-          [change], list(recipe_by_builder.values()))
-      if check_recent_build_statuses(builder, re_check.exemptions, changes,
-                                     diff_fn):
+      if check_recent_build_statuses(builder, re_check.exemptions, changes):
         baddies.append(builder)
 
   if baddies:
@@ -182,15 +178,21 @@ def check_recent_build_statuses(
     builder: str,
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[git.Commit],
-    diff_fn: Callable[[git.Commit], List[str]],
+    num_builds_needed: int = 5,
 ) -> bool:
   """Check whether a single builder has had any recent non-successes."""
-  builds = _bb_ls('-status', 'ended', '-n', '5', '-A', builder)
+  builds = _get_builds_containing(
+      builder, max(pending_changes),
+      fields=('id', 'status', 'create_time', 'infra', 'summary_markdown',
+              'cancellation_markdown'))
+  # Sort oldest to newest.
+  # createTime is of the form "2023-07-14T17:00:03.592856413Z", so fine to sort
+  # by the raw string.
+  builds = sorted(builds, key=lambda build: build['createTime'])
 
   found_statuses = set()
-  githashes = []
-
-  for build in builds:
+  good_builds = 0
+  for build in builds[:num_builds_needed]:
     status = build['status']
     # Shouldn't be necessary because of `-status ended`, but better safe than
     # sorry.
@@ -204,67 +206,22 @@ def check_recent_build_statuses(
           status = 'OK_FAILURE'
 
     found_statuses.add(status)
-    cipd_version = build_to_cipd_version(build)
-    if cipd_version:
-      githashes.append(cipd.cipd_version_to_githash(cipd_version))
+    if status in ['SUCCESS', 'OK_FAILURE']:
+      good_builds += 1
 
-  if not found_statuses:
-    print(f'No runs recorded for: {builder}')
-    return True
-
-  if not githashes:
-    print(
-        f'No runs for builder {builder} had resolved recipes versions, likely due to infra failures'
-    )
-    return False
-
-  # Count the number of non-trivial changes since the last build.
-  most_recent_githash = githashes[0]
-  non_trivial_changes_since_most_recent_build = []
-  for change in pending_changes:
-    if change.is_older_than(most_recent_githash):
-      break
-
-    if not change.trivial:
-      non_trivial_changes_since_most_recent_build.append(change)
-
-  num_non_trivial_changes_since_most_recent_build = len(
-      non_trivial_changes_since_most_recent_build)
-
-  success = set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'})
+  success = good_builds == num_builds_needed
   success_str = f'{common.BOLDGREEN}Success{common.RESET}' if success else f'{common.BOLDRED}Non-success{common.RESET}'
-  status_str = f'{success_str}: {get_builder_link(builder)} --> {", ".join(sorted(list(found_statuses)))}'
 
-  relevant_changes = []
-  builder_recipe = get_builder_recipe(builder)
-  for change in non_trivial_changes_since_most_recent_build:
-    affected_files = diff_fn(change)
-    if builder_recipe in affected_files:
-      relevant_changes.append(change)
+  # Everything was a success, we just didn't have enough builds.
+  if set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'
+                                  }) and good_builds < num_builds_needed:
+    # TODO(b/287276108): Link to the specific build failures.
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} available.'
+  else:
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, only got {good_builds}. Statuses: {", ".join(sorted(list(found_statuses)))}'
+  status_str = f'{success_str}: {get_builder_link(builder)} --> {problem_str}'
 
-  # If there have been changes since the most recent build, add a line to the
-  # status.
-  if num_non_trivial_changes_since_most_recent_build:
-    changes_str = 'change' if num_non_trivial_changes_since_most_recent_build == 1 else 'changes'
-    relevant_str = f' ({len(relevant_changes)} relevant)'
-    status_str += f'\n  {num_non_trivial_changes_since_most_recent_build} {changes_str} since last build{relevant_str}, '
-
-    non_trivial_pending_changes = list(
-        filter(lambda c: not c.trivial, pending_changes))
-
-    # If a non-trivial change was included since the last release, print the
-    # last hash.
-    if num_non_trivial_changes_since_most_recent_build < len(
-        non_trivial_pending_changes):
-      status_str += (
-          'last built commit was '
-          f'{common.BOLDBLUE}{non_trivial_pending_changes[num_non_trivial_changes_since_most_recent_build].short_hash}{common.RESET}'
-      )
-    else:
-      status_str += 'builder has not been run since last release'
-
-  if not success or (num_non_trivial_changes_since_most_recent_build and
-                     relevant_changes):
+  if not success:
     print(status_str)
 
   return not success
@@ -307,6 +264,44 @@ def _bb_ls(*args) -> List[Dict]:
   return builds
 
 
+@lru_cache(maxsize=None)
+def get_builds_after(builder: str, change: git.Commit,
+                     fields: Tuple[str] = None) -> List[Dict]:
+  """Get all build results since the given change landed, sorted newest to oldest."""
+  project, bucket, builder_name = tuple(builder.split('/'))
+  predicate = {
+      'builder': {
+          'project': project,
+          'bucket': bucket,
+          'builder': builder_name,
+      },
+      'status': 'ENDED_MASK',
+      'create_time': {
+          'start_time': change.commit_timestamp,
+      },
+  }
+  args = ['-fields', ','.join(fields)] if fields else ['-A']
+  return _bb_ls('-predicate', json.dumps(predicate), *args)
+
+
+def _get_builds_containing(builder: str, change: git.Commit,
+                           fields: Tuple[str] = None) -> List[Dict]:
+  """Get all build results that ran with the given change, sorted newest to oldest."""
+  builds = get_builds_after(builder, change, fields=fields)
+  # Filter out builds missing a CIPD version, those aren't usable.
+  builds = list(
+      filter(lambda build: build_to_cipd_version(build) is not None, builds))
+
+  for i, build in enumerate(builds):
+    cipd_version = build_to_cipd_version(build)
+    githash = cipd.cipd_version_to_githash(cipd_version)
+    # If the change commit is older than the one the build ran, we've found our suffix
+    # of builds.
+    if change.hash == githash or change.is_older_than(githash):
+      return builds[i:]
+  return []
+
+
 def determine_maximum_covered_instance(
     changes: List[git.Commit], checks: Tuple[staging_checks.StagingReCheck],
     verbose: bool = False) -> common.CipdInstance:
@@ -346,10 +341,7 @@ def determine_maximum_covered_instance(
     recipe_by_builder[builder] = get_builder_recipe(builder)
 
   # `changes` is ordered newest to oldest.
-  # We can use commit_timestamp as a key even though it's a string
-  # since it's ISO8601.
-  changes = sorted(changes, key=lambda change: change.commit_timestamp,
-                   reverse=True)
+  changes = sorted(changes, reverse=True)
   change_coverage_per_build = defaultdict(lambda: {})
 
   def print_if_verbose(*args):
@@ -368,19 +360,7 @@ def determine_maximum_covered_instance(
       of builds covering changes[i].
     """
     # Get all build results since the oldest pending change.
-    project, bucket, builder_name = tuple(builder.split('/'))
-    predicate = {
-        'builder': {
-            'project': project,
-            'bucket': bucket,
-            'builder': builder_name,
-        },
-        'status': 'ENDED_MASK',
-        'create_time': {
-            'start_time': changes[-1].commit_timestamp,
-        },
-    }
-    builds = _bb_ls('-predicate', json.dumps(predicate), '-fields', 'infra')
+    builds = get_builds_after(builder, changes[-1], fields=('id', 'infra'))
 
     # If there are no builds for the builder at all, don't let that be a blocker.
     if len(builds) < REQUIRED_BUILDER_COUNT:

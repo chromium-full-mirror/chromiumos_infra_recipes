@@ -6,6 +6,7 @@
 """Code for dealing with commits / git."""
 
 from functools import lru_cache
+from functools import total_ordering
 import re
 import subprocess
 from typing import List
@@ -16,16 +17,28 @@ RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
 CHROMITE_PIN_COMMIT = re.compile(r'update chromite-HEAD version')
 
 
+@total_ordering
 class Commit:
 
   def __init__(self, git_hash, username, message, human_readable_commit_date,
-               commit_timestamp):
+               commit_timestamp: str):
     self.hash = git_hash
     self.username = username
     self.message = message
     self.cipd_instance = None
     self.human_readable_commit_date = human_readable_commit_date
     self.commit_timestamp = commit_timestamp
+
+  def __hash__(self):
+    return hash(self.hash)
+
+  def __eq__(self, other):
+    return self.hash == other.hash
+
+  def __lt__(self, other):
+    # We can use commit_timestamp as a key even though it's a string
+    # since it's ISO8601.
+    return self.commit_timestamp < other.commit_timestamp
 
   @property
   def short_hash(self):
@@ -143,3 +156,12 @@ def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
         Commit(commit_hash, commit_user, commit_message, commit_date,
                commit_timestamp))
   return changes
+
+
+def trim_trivial_suffix(changes: List[Commit]) -> List[Commit]:
+  """Remove any trivial commits that have landed since the last non-trivial commit."""
+  changes = sorted(changes, reverse=True)
+  for i, change in enumerate(changes):
+    if not change.trivial:
+      return changes[i:][::-1]
+  return []
