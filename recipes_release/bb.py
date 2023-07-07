@@ -173,6 +173,8 @@ def check_staging_builders(changes: List[git.Commit],
       print('Please address the failures in the above builders.')
       print('When you\'re certain staging is OK, you may use -s to continue.')
       sys.exit(1)
+  else:
+    print('Everything looks good!')
   print()
 
 

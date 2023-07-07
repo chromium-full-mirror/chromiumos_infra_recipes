@@ -128,6 +128,9 @@ class RecipeRelease:
 
     # Prepare to update refs.
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
+    if options.smart:
+      report_pending_changes(pending_changes, options.show_instances,
+                             show_all=options.show_all)
 
     if options.smart:
       print('=== Determining maximum covered version ===')
