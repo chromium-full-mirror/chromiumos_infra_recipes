@@ -11,7 +11,6 @@ from functools import lru_cache
 import json
 import re
 import subprocess
-import sys
 import tempfile
 from typing import Any
 from typing import Callable
@@ -127,10 +126,14 @@ def get_builder_link(builder: str) -> str:
 
 def check_staging_builders(changes: List[git.Commit],
                            checks: Tuple[staging_checks.StagingReCheck],
-                           ignore_failures: bool = False):
-  """Check for failures in staging builders. Quit early if any problems."""
-  print('=== Check staging status ===')
-  print('Determining relevancy of each staging builder...')
+                           log_messages: bool = False) -> List[str]:
+  """Check for failures in staging builders. Returns a list of bad builders."""
+
+  def print_if(*args, **kwargs):
+    if log_messages:
+      print(*args, **kwargs)
+
+  print_if('Determining relevancy of each staging builder...')
   builders = []
   for re_check in checks:
     builders.extend(
@@ -151,27 +154,21 @@ def check_staging_builders(changes: List[git.Commit],
         relevant_builders.add(builder)
     irrelevant_builders = set(builders) - relevant_builders
     if irrelevant_builders:
-      print('Irrelevant builders: ', ', '.join(sorted(irrelevant_builders)))
+      print_if('Irrelevant builders: ', ', '.join(sorted(irrelevant_builders)))
 
   baddies = []
-  print('Looking for 5 consecutive successes in staging...')
+  print_if('Looking for 5 consecutive successes in staging...')
   for re_check in checks:
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
-      if check_recent_build_statuses(builder, re_check.exemptions, changes):
+      not_ok, status_str = check_recent_build_statuses(builder,
+                                                       re_check.exemptions,
+                                                       changes)
+      if not_ok:
+        print_if(status_str)
         baddies.append(builder)
-
-  if baddies:
-    if ignore_failures:
-      print('Ignoring failures, as requested.')
-    else:
-      print('Please address the failures in the above builders.')
-      print('When you\'re certain staging is OK, you may use -s to continue.')
-      sys.exit(1)
-  else:
-    print('Everything looks good!')
-  print()
+  return baddies
 
 
 def check_recent_build_statuses(
@@ -179,8 +176,13 @@ def check_recent_build_statuses(
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[git.Commit],
     num_builds_needed: int = 5,
-) -> bool:
-  """Check whether a single builder has had any recent non-successes."""
+) -> Tuple[bool, str]:
+  """Check whether a single builder has had any recent non-successes.
+
+  Returns:
+    (bool) Whether there is an issue with the builder.
+    (str) An error string.
+  """
   builds = _get_builds_containing(
       builder, max(pending_changes),
       fields=('id', 'status', 'create_time', 'infra', 'summary_markdown',
@@ -190,8 +192,10 @@ def check_recent_build_statuses(
   # by the raw string.
   builds = sorted(builds, key=lambda build: build['createTime'])
 
-  found_statuses = set()
+  found_statuses = []
   good_builds = 0
+  bad_build_ids = []
+
   for build in builds[:num_builds_needed]:
     status = build['status']
     # Shouldn't be necessary because of `-status ended`, but better safe than
@@ -205,9 +209,11 @@ def check_recent_build_statuses(
         if exemption(build):
           status = 'OK_FAILURE'
 
-    found_statuses.add(status)
+    found_statuses.append(status)
     if status in ['SUCCESS', 'OK_FAILURE']:
       good_builds += 1
+    else:
+      bad_build_ids.append(f'go/bbid/{build["id"]}')
 
   success = good_builds == num_builds_needed
   success_str = f'{common.BOLDGREEN}Success{common.RESET}' if success else f'{common.BOLDRED}Non-success{common.RESET}'
@@ -215,16 +221,12 @@ def check_recent_build_statuses(
   # Everything was a success, we just didn't have enough builds.
   if set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'
                                   }) and good_builds < num_builds_needed:
-    # TODO(b/287276108): Link to the specific build failures.
     problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} available.'
   else:
-    problem_str = f'Needed {num_builds_needed} consecutive good builds, only got {good_builds}. Statuses: {", ".join(sorted(list(found_statuses)))}'
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, only got {good_builds}. Statuses: {", ".join(sorted(list(found_statuses)))} ({", ".join(bad_build_ids)})'
   status_str = f'{success_str}: {get_builder_link(builder)} --> {problem_str}'
 
-  if not success:
-    print(status_str)
-
-  return not success
+  return not success, status_str
 
 
 @lru_cache(maxsize=None)
@@ -304,6 +306,7 @@ def _get_builds_containing(builder: str, change: git.Commit,
 
 def determine_maximum_covered_instance(
     changes: List[git.Commit], checks: Tuple[staging_checks.StagingReCheck],
+    enforce_success: bool = False,
     verbose: bool = False) -> common.CipdInstance:
   """Determine the maximum covered recipes instance.
 
@@ -322,6 +325,8 @@ def determine_maximum_covered_instance(
   Args:
     changes: The changes pending release.
     checks: The staging checks used to qualify a release.
+    enforce_success: If set, will enforce that builds are successful rather
+      than just enforcing coverage.
     verbose: If set, more information is logged.
   Returns:
     The most recent CIPD instance that had adequate coverage in staging.
@@ -455,7 +460,11 @@ def determine_maximum_covered_instance(
         break
     if missing_coverage:
       break
-    print_if_verbose(f'Commit {change.hash} is releasable.')
+    print_if_verbose(f'Commit {change.hash} is covered.')
+    if enforce_success:
+      if check_staging_builders(changes[:i + 1], checks, log_messages=verbose):
+        break
+      print_if_verbose('Everything looks good!')
     last_covered_change = change
 
   if last_covered_change:

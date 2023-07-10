@@ -247,7 +247,7 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
             # Basic exemption exempting any build with bbid 1003.
             [lambda build: build['id'] == 1003],
             changes,
-        ),
+        )[0],
         expected_ret)
     mock_subprocess_run.assert_called_with(
         [

@@ -135,7 +135,8 @@ class RecipeRelease:
     if options.smart:
       print('=== Determining maximum covered version ===')
       maximum_releasable_instance = bb.determine_maximum_covered_instance(
-          pending_changes, self.staging_checks, verbose=options.verbose)
+          pending_changes, self.staging_checks, verbose=options.verbose,
+          enforce_success=options.max_releasable)
       if not maximum_releasable_instance:
         print('Could not find a covered version. Please rerun without --smart.')
         sys.exit(0)
@@ -156,8 +157,21 @@ class RecipeRelease:
     # released but shouldn't influence our staging checks.
     if not options.show_all:
       pending_changes = git.trim_trivial_suffix(pending_changes)
-    bb.check_staging_builders(pending_changes, self.staging_checks,
-                              ignore_failures=options.ignore_staging_failures)
+    print('=== Check staging status ===')
+    bad_builders = bb.check_staging_builders(pending_changes,
+                                             self.staging_checks,
+                                             log_messages=True)
+    if bad_builders:
+      if options.ignore_staging_failures:
+        print('Ignoring failures, as requested.')
+      else:
+        print('Please address the failures in the above builders.')
+        print('When you\'re certain staging is OK, you may use -s to continue.')
+        sys.exit(1)
+    else:
+      print('Everything looks good!')
+    print()
+
     if not options.force:
       self.prompt_about_setting_git_target(git_target)
 
@@ -220,6 +234,10 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   parser.add_argument(
       '--smart', action='store_true',
       help='Find the maximum instance that has been adequately covered in staging.'
+      'Currently in development, use at your own risk.')
+  parser.add_argument(
+      '--max-releasable', action='store_true',
+      help='Find the maximum instance that has sufficient successful results in staging.'
       'Currently in development, use at your own risk.')
   return parser.parse_args(args)
 
