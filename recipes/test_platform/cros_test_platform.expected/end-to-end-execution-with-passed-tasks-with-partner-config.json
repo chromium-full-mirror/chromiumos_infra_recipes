@@ -478,7 +478,7 @@
     "cmd": [],
     "name": "postprocess",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: Using Partner config@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: Postprocess disabled@@@"
     ]
   },
   {

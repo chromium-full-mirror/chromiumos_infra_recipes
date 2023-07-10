@@ -1088,11 +1088,13 @@ def _build_has_ancestor(api):
   return bool(api.buildbucket.build.ancestor_ids)
 
 
-def postprocess(api, requests, responses, skip_postprocess=False):
+# TODO(b/234080013): Restore the default value of False to
+# `skip_postprocess` once the logic works correctly.
+def postprocess(api, requests, responses, skip_postprocess=True):
   with api.step.nest('postprocess') as step:
     # For partner build configs, don't schedule cros_test_postprocess builds.
     if skip_postprocess:
-      step.presentation.step_summary_text = 'Skipped: Using Partner config'
+      step.presentation.step_summary_text = 'Skipped: Postprocess disabled'
       return
     for tag, response in sorted(responses.items()):
       request = requests[tag]
