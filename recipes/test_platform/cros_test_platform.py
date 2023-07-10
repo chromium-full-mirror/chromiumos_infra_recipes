@@ -6,9 +6,11 @@
 """Recipe for the ChromeOS Test Frontend."""
 
 import collections
+import csv
 import json
 import math
 import re
+from io import StringIO
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -1215,7 +1217,17 @@ def summarize(api, enumerations, responses, error_in_requests,
             log_step.logs[key + " execution logs"] = suite_execution_logs[key]
 
     for tag, response in sorted(responses.items()):
-      with api.step.nest('%s task results' % tag):
+      with api.step.nest('%s task results' % tag) as results_step:
+        if "totals" in suite_execution_logs:  # pragma: nocover
+          ioStringReader = StringIO(suite_execution_logs["totals"])
+          reader = csv.DictReader(ioStringReader)
+          for row in reader:
+            if row['suiteName'] == tag and row['exceededExecutionLimit'].lower(
+            ) == "true":
+              if row['exceptionGranted'].lower() == "true":
+                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded, but temporary exception granted."
+              else:
+                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded"
 
         if tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
