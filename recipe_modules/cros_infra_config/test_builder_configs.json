@@ -69,6 +69,142 @@
       }
     },
     {
+			"id": {
+				"name": "amd64-generic-asan-cq",
+				"type": "CQ",
+				"bucket": "cq"
+			},
+			"general": {
+				"critical": true,
+				"environment": "PRODUCTION",
+				"runWhen": {
+					"mode": "NO_RUN_ON_FILE_MATCH",
+					"filePatterns": [
+						"manifest-internal/_kernel_upstream.xml",
+						"src/overlays/overlay-amd64-host/prebuilt.conf",
+						"src/platform/ap-daemons/**",
+						"src/platform/ap/**",
+						"src/platform/cr50/**",
+						"src/platform/crosvm-upstream/**",
+						"src/platform/dev/src/chromiumos/**",
+						"src/platform/ec/**",
+						"src/platform/gdisp/**",
+						"src/platform/graphics/src/vm_perf_eval/**",
+						"src/platform/ish/**",
+						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/common/firmware/ti50/**",
+						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/bundles/cros/gscdevboard/**",
+						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/firmware/ti50/**",
+						"src/platform/tremplin/**",
+						"src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-dlc/**",
+						"src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-host-tools/**",
+						"src/third_party/autotest/files/**",
+						"src/third_party/chromiumos-overlay/chromeos-base/test-server/**",
+						"src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
+						"src/third_party/chromiumos-overlay/dev-util/cros-provision/**",
+						"src/third_party/chromiumos-overlay/dev-util/dut-server/**",
+						"src/third_party/chromiumos-overlay/dev-util/test-exec-server/**",
+						"src/third_party/chromiumos-overlay/dev-util/test-plan/**",
+						"src/third_party/coreboot/amd_blobs/**",
+						"src/third_party/hdctools/**",
+						"src/third_party/toolchain-utils/**",
+						"src/third_party/zephyr/**"
+					]
+				},
+				"sdkCacheVersion": 1,
+				"manifest": "PUBLIC"
+			},
+			"artifacts": {
+				"prebuilts": "NONE",
+				"prebuiltsGsBucket": "chromeos-prebuilt",
+				"artifactsGsBucket": "chromeos-image-archive",
+				"artifactsInfo": {
+					"legacy": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"IMAGE_ZIP",
+									"AUTOTEST_FILES",
+									"TAST_FILES",
+									"PINNED_GUEST_IMAGES",
+									"EBUILD_LOGS",
+									"FPMCU_UNITTESTS"
+								]
+							}
+						]
+					},
+					"toolchain": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"CLANG_CRASH_DIAGNOSES"
+								],
+								"gsLocations": [
+									"chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
+								]
+							}
+						]
+					},
+					"image": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"DLC_IMAGE"
+								]
+							},
+							{
+								"artifactTypes": [
+									"LICENSE_CREDITS"
+								]
+							}
+						]
+					},
+					"sysroot": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"DEBUG_SYMBOLS"
+								]
+							},
+							{
+								"artifactTypes": [
+									"BREAKPAD_DEBUG_SYMBOLS"
+								]
+							}
+						],
+						"ignoreBreakpadSymbolGenerationErrors": true
+					}
+				}
+			},
+			"chrome": {},
+			"build": {
+				"portageProfile": {
+					"profile": "asan"
+				},
+				"applyGerritChanges": true,
+				"installPackages": {
+					"runSpec": "RUN",
+					"dependencies": "ALL_DEPENDENCIES"
+				},
+				"buildImages": {
+					"imageTypes": [
+						"IMAGE_TYPE_TEST",
+						"IMAGE_TYPE_TEST_VM",
+						"IMAGE_TYPE_BASE"
+					],
+					"disableRootfsVerification": true,
+					"diskLayout": "16gb-rootfs",
+					"verifyImageSizeDelta": true
+				}
+			},
+			"unitTests": {
+				"ebuildsRunSpec": "RUN",
+				"dependencies": "CL_AFFECTED_DEPENDENCIES"
+			},
+			"updateChroot": {
+				"runSpec": "RUN"
+			}
+		},
+    {
       "id": {
         "name": "amd64-generic-postsubmit",
         "type": "POSTSUBMIT",

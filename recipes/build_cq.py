@@ -206,6 +206,19 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       experiments=['chromeos.build_cq.async_unit_tests'],
   )
 
+  # Build a change that has the ignore_breakpad_symbol_generation_errors set to
+  # true in the builder config. Even though the build succeeds, the False passed
+  # into api.build_menu.upload_artifacts should not override the True set in the
+  # builder config.
+  yield api.build_menu.test(
+      'ignore_breakpad_symbol_generation_errors',
+      api.post_check(
+          post_process.LogContains,
+          'upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get',
+          'request', ['"ignoreBreakpadSymbolGenerationErrors": true']),
+      api.post_process(post_process.DropExpectation), cq=True,
+      builder_name='amd64-generic-asan-cq', build_target='amd64-generic')
+
   # Test of "upload_prebuilts" flag.
   # CQ build on uprev CL, with uploading the prebuilts.
   yield api.build_menu.test(
