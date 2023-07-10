@@ -350,6 +350,7 @@ def _read_sysinfo_keyvals(api, sysinfo_file_paths):
     _read_crossystem_keyvals(api, os.path.join(path, 'crossystem'),
                              sysinfo_keyvals)
     _read_gsctool_keyvals(api, os.path.join(path, 'gsctool'), sysinfo_keyvals)
+    _read_servo_keyvals(api, os.path.join(path, 'servo'), sysinfo_keyvals)
   return sysinfo_keyvals
 
 
@@ -370,6 +371,42 @@ def _read_gsctool_keyvals(api, gsctool_file_path, sysinfo_keyvals):
         sysinfo_keyvals['gsc_ro'] = line.split(' ')[1]
       if line.startswith('RW '):
         sysinfo_keyvals['gsc_rw'] = line.split(' ')[1]
+  except (api.file.Error, FileNotFoundError):
+    api.step.active_result.presentation.status = api.step.WARNING
+
+
+def _read_servo_keyvals(api, servo_file_path, sysinfo_keyvals):
+  """Reads the contents of servo keyval file.
+
+  Example file contents:
+  ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af
+  servo_host_os_version=fizz-labstation-release/R114-15437.59.0
+  servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9
+  servo_type=servo_v4_with_servo_micro_and_ccd_cr50
+  servo_v4_version.root=servo_v4_v2.4.58-c37246f9c
+  servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43
+
+  Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * servo_file_path (string): The path to the servo file.
+  * sysinfo_keyvals (dict): Dict to add servo keyvals to.
+  """
+  try:
+    contents = api.file.read_text('read servo keyval file', servo_file_path,
+                                  test_data='').splitlines()
+    servo_versions = []
+    for line in contents:
+      items = line.split('=')
+      if len(items) < 2:
+        continue
+      if items[0] == 'servod_version':
+        sysinfo_keyvals['servod_version'] = items[1]
+      elif items[0] == 'servo_type':
+        sysinfo_keyvals['servo_type'] = items[1]
+      elif '_version' in items[0] and items[1] != 'None':
+        servo_versions.append(items[1])
+    if servo_versions:
+      sysinfo_keyvals['servo_versions'] = ','.join(servo_versions)
   except (api.file.Error, FileNotFoundError):
     api.step.active_result.presentation.status = api.step.WARNING
 
@@ -536,6 +573,12 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "bluetooth_sa"
     * builder_name: builder config name,
         e.g. "eve-release"
+    * servod_version:
+        e.g. "v1.0.1732-67007a28 2023-06-20 19:22:43"
+    * servo_type:
+        e.g. "servo_v4_with_servo_micro_and_ccd_cr50"
+    * servo_versions:
+        e.g. "servo_v4_v2.4.58-c37246f9c,servo_micro_v2.4.73-d771c18ba9"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -2116,6 +2159,19 @@ RO 0.0.38
 RW 0.24.13
     """))
 
+  def _servo_keyval_file_step_data():
+    return api.step_data(
+        'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+        '.read servo keyval file',
+        api.file.read_text("""
+ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af
+servo_host_os_version=fizz-labstation-release/R114-15437.59.0
+servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9
+servo_type=servo_v4_with_servo_micro_and_ccd_cr50
+servo_v4_version.root=servo_v4_v2.4.58-c37246f9c
+servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43
+    """))
+
   def _kernel_log_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
@@ -2864,6 +2920,18 @@ RO 0.0.38
 RW 0.24.13
     """))
 
+  def _servo_keyval_file_step_data_for_ctr():
+    return api.step_data(
+        'execution steps.read servo keyval file',
+        api.file.read_text("""
+ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af
+servo_host_os_version=fizz-labstation-release/R114-15437.59.0
+servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9
+servo_type=servo_v4_with_servo_micro_and_ccd_cr50
+servo_v4_version.root=servo_v4_v2.4.58-c37246f9c
+servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43
+    """))
+
   def _kernel_log_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read kernel log file',
@@ -3127,6 +3195,88 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   )
 
   yield api.test(
+      'no-parent-servo-keyval-file-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read servo keyval file',
+          api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'no-parent-and-child-servo-keyval-files-for-tauto',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+          }),
+      # Sets the test case so that it can use the test case name to find the
+      # child directory.
+      api.step_data(
+          'execution steps.original_test.Phosphorus: get test results.'
+          'call `phosphorus`.parse', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  Result(
+                      autotest_result=Result.Autotest(test_cases=[
+                          Result.Autotest.TestCase(
+                              name='pass_test_case_1',
+                              verdict=Result.Autotest.TestCase.VERDICT_PASS),
+                      ]),
+                  )))),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read servo keyval file',
+          api.file.read_text(errno_name='file does not exist')),
+      api.step_data(
+          'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
+          '.read servo keyval file (2)',
+          api.file.read_text(errno_name='file does not exist')),
+      _misc_properties(),
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Enables the ResultDB upload.
+      _tauto_test_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
       'no-parent-kernel-log-file-for-tauto',
       _set_build(
           bid=42, tags={
@@ -3275,6 +3425,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
       _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3328,6 +3479,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
       _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3375,6 +3527,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
       _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3409,6 +3562,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
       _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -3593,6 +3747,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _autotest_keyval_file_step_data(),
       _crossystem_keyval_file_step_data(),
       _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
       _kernel_log_file_step_data(),
       # Enables the ResultDB upload.
       _tast_test_result_file_step_data(),
@@ -4295,6 +4450,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _misc_properties(cft_is_enabled=True),
                  _crossystem_keyval_file_step_data_for_ctr(),
                  _gsctool_keyval_file_step_data_for_ctr(),
+                 _servo_keyval_file_step_data_for_ctr(),
                  _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
@@ -4304,6 +4460,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                  _misc_properties(cft_is_enabled=True),
                  _crossystem_keyval_file_step_data_for_ctr(),
                  _gsctool_keyval_file_step_data_for_ctr(),
+                 _servo_keyval_file_step_data_for_ctr(),
                  _kernel_log_file_step_data_for_ctr(),
                  _request_properties_for_ctr(), _mock_load_step_for_ctr(),
                  _successful_prejob_step_for_ctr(),
@@ -4320,6 +4477,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _misc_properties(cft_is_enabled=True, non_compliant_prejob_deadline=True),
       _crossystem_keyval_file_step_data_for_ctr(),
       _gsctool_keyval_file_step_data_for_ctr(),
+      _servo_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
       _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
       _successful_run_test_step_for_ctr())
@@ -4329,6 +4487,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _misc_properties(cft_is_enabled=True, use_result_publishing_limit=True),
       _crossystem_keyval_file_step_data_for_ctr(),
       _gsctool_keyval_file_step_data_for_ctr(),
+      _servo_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(), _request_properties_for_ctr(),
       _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
       _successful_run_test_step_for_ctr())
@@ -4339,6 +4498,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _misc_properties(cft_is_enabled=True),
       _crossystem_keyval_file_step_data_for_ctr(),
       _gsctool_keyval_file_step_data_for_ctr(),
+      _servo_keyval_file_step_data_for_ctr(),
       _kernel_log_file_step_data_for_ctr(),
       _request_properties_for_ctr(
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),

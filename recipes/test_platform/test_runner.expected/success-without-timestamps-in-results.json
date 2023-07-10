@@ -1022,6 +1022,36 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "dummy-results-dir/autoserv_test/sysinfo/servo",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read servo keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@servo@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "dummy-results-dir/autoserv_test/pass_test_case_1/sysinfo/uname",
       "/path/to/tmp/"
     ],
@@ -1102,6 +1132,36 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@gsctool@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/autoserv_test/pass_test_case_1/sysinfo/servo",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.original_test.Phosphorus: upload to resultdb.read servo keyval file (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@servo@@@"
     ]
   },
   {

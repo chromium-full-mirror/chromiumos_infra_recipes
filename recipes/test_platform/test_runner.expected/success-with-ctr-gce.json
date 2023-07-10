@@ -821,6 +821,44 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
+      "dummy-results-dir/subdir/sysinfo/servo",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read servo keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@servo@@@@",
+      "@@@STEP_LOG_LINE@servo@ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af@@@",
+      "@@@STEP_LOG_LINE@servo@servo_host_os_version=fizz-labstation-release/R114-15437.59.0@@@",
+      "@@@STEP_LOG_LINE@servo@servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9@@@",
+      "@@@STEP_LOG_LINE@servo@servo_type=servo_v4_with_servo_micro_and_ccd_cr50@@@",
+      "@@@STEP_LOG_LINE@servo@servo_v4_version.root=servo_v4_v2.4.58-c37246f9c@@@",
+      "@@@STEP_LOG_LINE@servo@servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43@@@",
+      "@@@STEP_LOG_LINE@servo@    @@@",
+      "@@@STEP_LOG_END@servo@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "dummy-results-dir/subdir/keyval",
       "/path/to/tmp/"
     ],
