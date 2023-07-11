@@ -1,10 +1,358 @@
 [
   {
     "cmd": [],
+    "name": "getting last snapshot greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ...@@@",
+      "@@@STEP_LOG_END@looking@@@",
+      "@@@STEP_LOG_LINE@timed out@Timed out trying to find greenness for snapshot for commit .@@@",
+      "@@@STEP_LOG_END@timed out@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.last snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@current snapshot@@@@",
+      "@@@STEP_LOG_END@current snapshot@@@",
+      "@@@STEP_LOG_LINE@last snapshot@@@@",
+      "@@@STEP_LOG_END@last snapshot@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.last snapshot.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 102",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (2)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 176",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (3)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 306",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (4)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 808",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (5)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1629",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (6)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 2951",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (7)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 6056",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (8)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 10082",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (9)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 24881",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search (10)",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=0, build_score=0, critical=False, relevant=False))])@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=-1, build_score=-1, critical=False, relevant=False))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.logging irrelevant build target greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@eve-kernelnext-not-relevant@Score: -1, Build score: -1@@@",
+      "@@@STEP_LOG_END@eve-kernelnext-not-relevant@@@"
     ]
   },
   {
@@ -12,7 +360,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"-1\", \"context\": \"IRRELEVANT\", \"metric\": \"-1\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
     ]
   },
   {

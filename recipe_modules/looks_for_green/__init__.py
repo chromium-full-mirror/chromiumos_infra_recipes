@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/step',
     'recipe_engine/time',
+    'buildbucket_stats',
     'cros_infra_config',
     'cros_source',
     'easy',

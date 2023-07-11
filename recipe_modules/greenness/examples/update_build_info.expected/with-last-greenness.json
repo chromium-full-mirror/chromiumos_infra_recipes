@@ -1,0 +1,92 @@
+[
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ababab...@@@",
+      "@@@STEP_LOG_END@looking@@@",
+      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-kernelnext-not-relevant', {'buildMetric': '100'}), ('eve-kernelnext', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_END@found@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.last snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@current snapshot@@@@",
+      "@@@STEP_LOG_END@current snapshot@@@",
+      "@@@STEP_LOG_LINE@last snapshot@ababab@@@",
+      "@@@STEP_LOG_END@last snapshot@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.last snapshot.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "id,input.gitiles_commit.id,output.properties,status",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"123\", \"input\": {\"gitilesCommit\": {\"id\": \"ababab\"}}, \"output\": {\"properties\": {\"greenness\": {\"aggregateMetric\": 98.0, \"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"78\", \"target\": \"eve-kernelnext-not-relevant\"}, {\"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext\"}]}}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=-1, build_score=100, critical=False, relevant=False))])@@@",
+      "@@@STEP_LOG_END@greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.logging irrelevant build target greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@eve-kernelnext-not-relevant@Score: -1, Build score: 100@@@",
+      "@@@STEP_LOG_END@eve-kernelnext-not-relevant@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.set greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"100\", \"context\": \"IRRELEVANT\", \"metric\": \"-1\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

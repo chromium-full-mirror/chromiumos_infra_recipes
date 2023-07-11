@@ -189,6 +189,7 @@
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
+  * [buildbucket_stats:tests/get_snapshot_greenness](#recipes-buildbucket_stats_tests_get_snapshot_greenness)
   * [builder_metadata:tests/get_models](#recipes-builder_metadata_tests_get_models) &mdash; Tests to verify builder_metadata.
   * [builder_metadata:tests/lookup_is_cached](#recipes-builder_metadata_tests_lookup_is_cached) &mdash; Tests to verify that builder_metadata is properly cached between invocations.
   * [builder_metadata:tests/no_install_packages](#recipes-builder_metadata_tests_no_install_packages) &mdash; Test to verify install_packages is called prior to look_up_builder_metadata.
@@ -1755,14 +1756,14 @@ Return:
   Handle which is used to set the step status.
 ### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
 
-[DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#53)(status_map: Dict[(str, int)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#64)(status_map: Dict[(str, int)]):**
 
 Return the demand for bots in a bot group.
 
@@ -1772,7 +1773,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#39)(self, bucket: str):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#50)(self, bucket: str):**
 
 Return the number of builds in the bucket and their statuses.
 
@@ -1782,7 +1783,7 @@ Args:
 Returns:
   Map of status to number of builds with that status in the bucket.
 
-&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#21)(self, bucket: str, status: common_pb2.Status):**
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#32)(self, bucket: str, status: common_pb2.Status):**
 
 Return the number of builds in the bucket with a specific status.
 
@@ -1792,6 +1793,18 @@ Args:
 
 Returns:
   The number of builds in the given bucket with given status.
+
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#109)(self, commit: str, pres: StepPresentation):**
+
+Returns snapshot run for specified commit, if found.
+
+&mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#27)(self):**
+
+&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#130)(self, list_value: struct_pb2.ListValue):**
+
+Reformat ListValue to a dictionary, using target as key.
+
+This makes buildbucket properties like targetGreenness easier to work with.
 ### *recipe_modules* / [builder\_metadata](/recipe_modules/builder_metadata)
 
 [DEPS](/recipe_modules/builder_metadata/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -7440,7 +7453,7 @@ Returns:
       log files. None is returned if there were no artifacts to process.
 ### *recipe_modules* / [greenness](/recipe_modules/greenness)
 
-[DEPS](/recipe_modules/greenness/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/greenness/__init__.py#8): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API providing a menu for calculating greenness metric.
@@ -7449,7 +7462,7 @@ API providing a menu for calculating greenness metric.
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#36)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#37)(self, target):**
 
 Returns the greenness metric for a specific target.
 
@@ -7459,17 +7472,28 @@ Args:
 Returns: Metric of the target or None if the target wasn't
 launched.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#32)(self):**
+&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#48)(self, target: str):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#122)(self):**
+Returns the targetGreenness from the last snapshot run for a
+specific target.
+
+Args:
+  target: Name of the build target.
+
+Returns: targetGreenness, or an empty OrderedDict if the target, its
+greenness, or the last snapshot wasn't found.
+
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#33)(self):**
+
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#154)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#129)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#161)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#54)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#78)(self, builds):**
 
 Update Grenness with build information.
 
@@ -7477,14 +7501,14 @@ Args:
   builds([Build]): Buildbucket.Build objects of builds that
   have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#75)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#107)(self, results):**
 
 Update Grenness with HW test information.
 
 Args:
   results([SkylabResult]): Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#104)(self, results):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#136)(self, results):**
 
 Update Grenness with VM test information.
 
@@ -7735,14 +7759,14 @@ Returns:
   see step.__call__
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
-[DEPS](/recipe_modules/looks_for_green/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/__init__.py#8): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 #### **class [LooksForGreenApi](/recipe_modules/looks_for_green/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#318)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#302)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -7752,13 +7776,13 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#347)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#331)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
 Optionally specify a latest_start time in UTC for builds.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#394)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#378)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -7768,7 +7792,7 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#285)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#269)(self):**
 
 Returns aggregate greenness of latest scored snapshot-orchestrator.
 
@@ -7783,7 +7807,7 @@ Returns:
   aggregate greenness for latest scored snapshot-orchestrator, or -1 if
   not found.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#376)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#360)(self):**
 
 Returns whether the latest scored snapshot-orchestrator greenness is
 
@@ -11041,6 +11065,12 @@ Builds and uploads the Chromium OS toolchain.
 
 
 &mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#19)(api):**
+### *recipes* / [buildbucket\_stats:tests/get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py)
+
+[DEPS](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#35)(api):**
 ### *recipes* / [builder\_metadata:tests/get\_models](/recipe_modules/builder_metadata/tests/get_models.py)
 
 [DEPS](/recipe_modules/builder_metadata/tests/get_models.py#10): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -13279,10 +13309,10 @@ Recipe that schedules jobs based on its triggers.
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#24)(api, properties):**
 ### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
 
-[DEPS](/recipe_modules/greenness/examples/update_build_info.py#6): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/greenness/examples/update_build_info.py#8): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#45)(api):**
 ### *recipes* / [greenness:examples/update\_hwtest\_info](/recipe_modules/greenness/examples/update_hwtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_hwtest_info.py#9): [greenness](#recipe_modules-greenness), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

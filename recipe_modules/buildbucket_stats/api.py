@@ -3,7 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import datetime
 from typing import Dict
+from collections import OrderedDict
+
+from google.protobuf import struct_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
@@ -11,12 +15,19 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import recipe_api
+from recipe_engine.engine_types import StepPresentation
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 DEMAND_STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
 
 
 class BuildbucketStatsApi(recipe_api.RecipeApi):
   """A module to get statistics from buildbucket."""
+
+  def initialize(self) -> None:
+    self._project = 'chromeos'
+    self._snapshot_bucket = 'staging' if self.m.cros_infra_config.is_staging else 'postsubmit'
+    self._snapshot_builder = 'staging-snapshot-orchestrator' if self.m.cros_infra_config.is_staging else 'snapshot-orchestrator'
 
   def get_build_count(self, bucket: str, status: common_pb2.Status) -> int:
     """Return the number of builds in the bucket with a specific status.
@@ -63,3 +74,73 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     return sum([
         status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
     ])
+
+  @exponential_retry(retries=9, delay=datetime.timedelta(seconds=90),
+                     condition=lambda e: repr(e) == 'AssertionError()')
+  def _get_snapshot_greenness(self, commit: str,
+                              predicate: builds_service_pb2.BuildPredicate,
+                              fields: frozenset) -> OrderedDict():
+    """Returns snapshot run for specified commit, if found.
+
+    Retries bb query with exponential backoff if we encounter AssertionError
+    for finding the desired snapshot or if the snapshot is not yet complete,
+    meaning greenness may not yet be populated.
+    """
+    results = self.m.buildbucket.search([predicate], fields=fields, timeout=60)
+    found_snapshot = False
+    output_props = None
+    for result in results:
+      if result.input.gitiles_commit.id == commit:
+        found_snapshot = True
+        # Ensure build greenness in last snapshot run is complete.
+        output_props = result.output.properties
+        assert 'greenness' in output_props.fields and 'targetGreenness' in output_props[
+            'greenness'].fields
+    # Ensure we found the snapshot run we're looking for.
+    assert found_snapshot
+    snapshot_greenness = self.reformat_target_dict(
+        output_props['greenness']['targetGreenness'])
+    # Remove metric, since we only wait for build to finish, not tests.
+    for v in snapshot_greenness.values():
+      if 'metric' in v:
+        del v['metric']
+    return OrderedDict(snapshot_greenness)
+
+  def get_snapshot_greenness(self, commit: str,
+                             pres: StepPresentation) -> OrderedDict():
+    """Returns snapshot run for specified commit, if found."""
+    pres.logs[
+        'looking'] = f'Trying to find greenness for snapshot for commit {commit}...'
+    fields = frozenset(
+        {'id', 'status', 'input.gitiles_commit.id', 'output.properties'})
+    predicate = builds_service_pb2.BuildPredicate()
+    predicate.builder.project = self._project
+    predicate.builder.bucket = self._snapshot_bucket
+    predicate.builder.builder = self._snapshot_builder
+    try:
+      greenness = self._get_snapshot_greenness(commit, predicate, fields)
+      pres.logs[
+          'found'] = f'Found greenness for snapshot for commit {commit}: {greenness}'
+    except AssertionError:
+      pres.logs[
+          'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
+      greenness = OrderedDict()
+    return greenness
+
+  def reformat_target_dict(
+      self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:
+    '''Reformat ListValue to a dictionary, using target as key.
+
+    This makes buildbucket properties like targetGreenness easier to work with.
+    '''
+    target_dict = {}
+    for target in list_value:
+      # Use build target as key.
+      if 'target' in target:
+        build_target = target['target']
+        target_dict[build_target] = {}
+        # Add other values.
+        for k, v in target.items():
+          if k != 'target':
+            target_dict[build_target][k] = v
+    return target_dict

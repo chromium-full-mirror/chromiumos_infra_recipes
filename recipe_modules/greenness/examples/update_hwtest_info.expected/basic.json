@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "logging irrelevant build target greenness"
+  },
+  {
+    "cmd": [],
     "name": "set greenness",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"60\", \"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"60\", \"target\": \"build_target_name\"}]}@@@"

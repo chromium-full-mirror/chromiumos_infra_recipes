@@ -3,16 +3,43 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'cros_tags',
     'greenness',
     'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+# Test data.
+BUILD_INPUT = build_pb2.Build.Input()
+BUILD_INPUT.gitiles_commit.id = 'ababab'
+BUILD_OUTPUT = build_pb2.Build.Output()
+BUILD_OUTPUT.properties['greenness'] = {
+    'aggregateMetric':
+        98,
+    'targetGreenness': [
+        {
+            "buildMetric": "100",
+            "metric": "78",
+            "target": "eve-kernelnext-not-relevant"
+        },
+        {
+            "context": "IRRELEVANT",
+            "target": "eve-kernelnext"
+        },
+    ]
+}
+LAST_SNAPSHOT = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                                output=BUILD_OUTPUT, input=BUILD_INPUT)
+LAST_SNAPSHOT2 = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                                 input=BUILD_INPUT)
 
 
 def RunSteps(api):
@@ -37,6 +64,10 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.greenness.greenness_dict['eve-kernelnext'].score, 100)
   api.assertions.assertEqual(api.greenness.get_greenness('eve'), None)
+  if api.properties['propagated_irrelevant_scores']:
+    api.assertions.assertEqual(
+        api.greenness.greenness_dict['eve-kernelnext-not-relevant'].build_score,
+        100)
   api.greenness.print_step()
 
 
@@ -45,4 +76,16 @@ def GenTests(api):
       'basic',
       api.properties(**{'$chromeos/greenness': {
           'publish_property': True
-      }}))
+      }}, propagated_irrelevant_scores=False))
+
+  yield api.test(
+      'with-last-greenness',
+      api.properties(**{'$chromeos/greenness': {
+          'publish_property': True
+      }}, propagated_irrelevant_scores=True),
+      api.buildbucket.simulated_search_results(
+          builds=[LAST_SNAPSHOT],
+          step_name='getting last snapshot greenness.buildbucket.search'),
+      api.step_data('getting last snapshot greenness.last snapshot.git log',
+                    api.raw_io.stream_output_text('ababab\n')),
+  )

@@ -5,6 +5,8 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/time',
+    'cros_infra_config',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
