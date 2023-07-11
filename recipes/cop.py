@@ -126,6 +126,33 @@ def _set_gerrit_review(api: RecipeApi, patch_set, body, name):
   return True
 
 
+def _get_overall_comment(log: str, log_url: str, build_passed: bool,
+                         log_url_set_in_review_comment: bool,
+                         hide_full_logs: bool) -> Optional[str]:
+  """Get the overall status comment. None if it should not be commented."""
+  comment = f'CoP Log URL: {log_url}'
+  if not hide_full_logs:
+    comment += f'\n{_wrap_log(log)}'
+
+  if not log_url_set_in_review_comment:
+    # We failed to comment the log URL when sending the Verified vote to Gerrit.
+    # The overall log should be commented for the log URL.
+    return comment
+  if build_passed:
+    # Don't comment if the build passed.
+    return None
+  if hide_full_logs:
+    # If hide_full_logs is set, the comment contains the log URL only,
+    # which should already be sent along with the Verified vote.
+    return None
+  return comment
+
+
+def _wrap_log(log: str) -> str:
+  """Wrap log in a markdown code block and limit the size."""
+  return f'```\n{log[-16000:]}\n```'
+
+
 def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
 
   with api.step.nest('validate properties') as presentation:
@@ -186,6 +213,8 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       presentation.step_text = 'Empty build: Exiting'
       return
 
+    cop_hide_full_logs = build_config.pop('CoP_hide_full_logs', False)
+
   with api.step.nest('launch build') as presentation:
     build_id, log_url = _launch_build(api, properties.project_name,
                                       build_config)
@@ -236,13 +265,16 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       presentation.step_text = 'Cannot comment or vote V %d.' % vote
 
   with api.step.nest('send Tricium comments') as presentation:
-    # Only send to overall status comment if overall build failed.
-    if not build_passed or not log_url_set_in_review_comment:
+    comment = _get_overall_comment(results['result']['log'],
+                                   results['result']['log_url'], build_passed,
+                                   log_url_set_in_review_comment,
+                                   cop_hide_full_logs)
+    if comment is not None:
       api.tricium.add_comment(f"CoP Result: {results['result']['status']}",
-                              results['result']['log'], '/PATCHSET_LEVEL')
+                              comment, '/PATCHSET_LEVEL')
     for step in results['steps']:
       name = f"CoP Step {step['id']} ({step['name']}): {step['status']}"
-      api.tricium.add_comment(name, step['log'], '/PATCHSET_LEVEL')
+      api.tricium.add_comment(name, _wrap_log(step['log']), '/PATCHSET_LEVEL')
     api.tricium.write_comments()
 
 
@@ -377,7 +409,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented and Voted',)),
-                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote', test_builder(gerrit_changes=change),
@@ -391,7 +423,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('send Vote to Gerrit.gerrit comment only',api.json.output({})),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented but unable to Vote',)),
-                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote-or-comment', test_builder(gerrit_changes=change),
@@ -405,7 +437,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('send Vote to Gerrit.gerrit comment only',retcode=1),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Cannot comment or vote',)),
-                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: SUCCESS', 'message': 'Soo good', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: SUCCESS', 'message': 'CoP Log URL: https://example.com/build/logs\n```\nSoo good\n```', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
@@ -446,6 +478,19 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
                  api.post_check(post_process.PropertyEquals,"change_type","tricium"),
-                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: FAILURE', 'message': 'Soo good', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run bye world): FAILURE', 'message': 'Hello World', 'path': '/PATCHSET_LEVEL'}]),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Result: FAILURE', 'message': 'CoP Log URL: https://example.com/build/logs\n```\nSoo good\n```', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run bye world): FAILURE', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
+                 api.post_process(post_process.DropExpectation)) + \
+                 api.properties(CopProperties(project_name='name'))
+
+  yield api.test('failure-run-hide-full-logs', test_builder(gerrit_changes=change),
+                 api.gerrit.set_gerrit_fetch_changes_response(
+                    'get change', change, gen_patch_sets()),
+                 api.step_data('check CoP.cop-fetch-file',stdout=api.raw_io.output(cop_file)),
+                 api.step_data('generate build config.generate_build_config.py',api.json.output({'CoP_hide_full_logs': True, **config_file})),
+                 api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
+                 api.step_data('fetch results.fetch_results.py',api.json.output(results)),
+                 api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
+                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run bye world): FAILURE', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))

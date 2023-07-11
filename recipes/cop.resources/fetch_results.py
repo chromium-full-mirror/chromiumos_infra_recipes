@@ -12,8 +12,6 @@ import json
 from google.cloud import storage
 from google.cloud.devtools import cloudbuild_v1
 
-MAX_COMMENT_SIZE = 16000
-
 
 def download_file(storage_client, gs_path):
   """Return a Google Cloud blob as a string, or None if the blob does not exist"""
@@ -85,29 +83,25 @@ def main(args):
   build = get_build_info(input_json['project'], input_json['build_id'])
   storage_client = storage.Client()
 
-  result_logs = get_result_logs(storage_client, build)
+  result_logs = get_result_logs(storage_client, build).rstrip()
 
   result = dict()
   result['result'] = {
-      'status':
-          build.Status(build.status).name,
-      'log':
-          f'CoP Log URL: {build.log_url}\n```\n{result_logs[-MAX_COMMENT_SIZE:].rstrip()}\n```',
-      'log_url':
-          build.log_url,
+      'status': build.Status(build.status).name,
+      'log': result_logs,
+      'log_url': build.log_url,
   }
   steps = list()
   for i, step in enumerate(build.steps):
     if not should_log_step(step):
       continue
     status = build.Status(step.status).name
-    log = get_step_logs(storage_client, build, i,
-                        result_logs)[-MAX_COMMENT_SIZE:].rstrip()
+    log = get_step_logs(storage_client, build, i, result_logs).rstrip()
     steps.append({
         'id': i,
         'name': step.id,
         'status': status,
-        'log': f'```\n{log}\n```'
+        'log': log,
     })
   result['steps'] = steps
 
