@@ -1225,7 +1225,7 @@ def summarize(api, enumerations, responses, error_in_requests,
             if row['suiteName'] == tag and row['exceededExecutionLimit'].lower(
             ) == "true":
               if row['exceptionGranted'].lower() == "true":
-                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded, but temporary exception granted."
+                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded, but exception granted. No action taken."
               else:
                 results_step.step_summary_text = "SuiteLimits: Execution limit exceeded"
 
