@@ -80,7 +80,7 @@
     "name": "check build results.build results.relevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@2 sbuild failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@2 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

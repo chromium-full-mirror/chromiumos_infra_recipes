@@ -11,7 +11,7 @@
     "name": "build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@3 sbuild failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@3 builds failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

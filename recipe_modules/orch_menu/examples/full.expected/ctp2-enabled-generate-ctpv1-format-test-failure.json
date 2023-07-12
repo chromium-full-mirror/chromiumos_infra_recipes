@@ -13443,7 +13443,7 @@
     "name": "check test results.hw test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@4 shw test failed, 0 succeeded@@@",
+      "@@@STEP_TEXT@4 hw tests failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

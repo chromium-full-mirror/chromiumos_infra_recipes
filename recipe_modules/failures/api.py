@@ -158,7 +158,7 @@ class FailuresApi(RecipeApi):
       if results.failures or non_critical_build_results.failures:
         s = 's' if len(failed_runs) > 1 else ''
         step_text = '{} {}{} failed, {} succeeded'.format(
-            len(failed_runs), s, kind, len(success_runs))
+            len(failed_runs), kind, s, len(success_runs))
         status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
       else:
         if build_detailed_kind:
