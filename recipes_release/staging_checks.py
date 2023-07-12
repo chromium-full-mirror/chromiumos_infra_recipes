@@ -24,6 +24,8 @@ class StagingReCheck(typing.NamedTuple):
   # {"id":"8782723488170713857","builder":{"project":"chromeos", ...
   # The output should be True if the failure can be ignored.
   exemptions: List[Callable[[Dict[str, Any]], bool]] = []
+  # Number of builds to check.
+  num_builds: int = 5
 
 
 def orchestrator_exemption(build: Dict[str, Any]) -> bool:
@@ -79,7 +81,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
     StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
         orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
-    ]),
+    ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
@@ -98,8 +100,9 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
                    r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
                    [image_builder_exemption]),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen'),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen', num_builds=15),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator',
+                   num_builds=15),
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
     # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),

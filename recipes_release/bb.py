@@ -157,14 +157,15 @@ def check_staging_builders(changes: List[git.Commit],
       print_if('Irrelevant builders: ', ', '.join(sorted(irrelevant_builders)))
 
   baddies = []
-  print_if('Looking for 5 consecutive successes in staging...')
+  print_if('Looking for consecutive successes in staging...')
   for re_check in checks:
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
       not_ok, status_str = check_recent_build_statuses(builder,
                                                        re_check.exemptions,
-                                                       changes)
+                                                       changes,
+                                                       re_check.num_builds)
       if not_ok:
         print_if(status_str)
         baddies.append(builder)
@@ -175,7 +176,7 @@ def check_recent_build_statuses(
     builder: str,
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[git.Commit],
-    num_builds_needed: int = 5,
+    num_builds_needed: int,
 ) -> Tuple[bool, str]:
   """Check whether a single builder has had any recent non-successes.
 
@@ -332,13 +333,12 @@ def determine_maximum_covered_instance(
     The most recent CIPD instance that had adequate coverage in staging.
   """
   builders = set()
+  num_builds_by_builder = {}
   for re_check in checks:
-    builders.update(
-        return_builders_for_regex(re_check.project, re_check.bucket,
-                                  re_check.regex))
-
-  # TODO(b/287276108): Remove N=5 hardcode.
-  REQUIRED_BUILDER_COUNT = 5
+    for builder in return_builders_for_regex(re_check.project, re_check.bucket,
+                                             re_check.regex):
+      builders.add(builder)
+      num_builds_by_builder[builder] = re_check.num_builds
 
   recipe_by_builder = {}
   # Recipes used by sentinel builders.
@@ -366,16 +366,16 @@ def determine_maximum_covered_instance(
     """
     # Get all build results since the oldest pending change.
     builds = get_builds_after(builder, changes[-1], fields=('id', 'infra'))
+    num_builds = num_builds_by_builder[builder]
 
     # If there are no builds for the builder at all, don't let that be a blocker.
-    if len(builds) < REQUIRED_BUILDER_COUNT:
-      if len(
-          _bb_ls('-fields', 'id', builder, '-n',
-                 str(REQUIRED_BUILDER_COUNT))) < REQUIRED_BUILDER_COUNT:
+    if len(builds) < num_builds:
+      if len(_bb_ls('-fields', 'id', builder, '-n',
+                    str(num_builds))) < num_builds:
         print_if_verbose(
-            f'<{REQUIRED_BUILDER_COUNT} build results for {builder}, it must be new. Skipping.'
+            f'<{num_builds} build results for {builder}, it must be new. Skipping.'
         )
-        return [REQUIRED_BUILDER_COUNT] * len(changes)
+        return [num_builds] * len(changes)
 
     print_if_verbose(
         f'Found {len(builds)} builds for {builder} since {changes[-1].hash}.')
@@ -400,7 +400,7 @@ def determine_maximum_covered_instance(
         continue
 
       # Stop looking once we have sufficient coverage to reduce runtime.
-      if change_coverage[change_pointer] >= REQUIRED_BUILDER_COUNT:
+      if change_coverage[change_pointer] >= num_builds:
         for j in range(change_pointer + 1, len(changes)):
           change_coverage[j] = change_coverage[change_pointer]
         break
@@ -452,9 +452,9 @@ def determine_maximum_covered_instance(
       # Make sure we have sufficient coverage for all relevant builders.
       if recipe_by_builder[builder] not in affected_recipes:
         continue
-      if change_coverage_per_build[builder][i] < REQUIRED_BUILDER_COUNT:
+      if change_coverage_per_build[builder][i] < num_builds_by_builder[builder]:
         print_if_verbose(
-            f'{change.hash} lacking coverage in {builder} ({change_coverage_per_build[builder][i]}/{REQUIRED_BUILDER_COUNT} builds).'
+            f'{change.hash} lacking coverage in {builder} ({change_coverage_per_build[builder][i]}/{num_builds_by_builder[builder]} builds).'
         )
         missing_coverage = True
         break
