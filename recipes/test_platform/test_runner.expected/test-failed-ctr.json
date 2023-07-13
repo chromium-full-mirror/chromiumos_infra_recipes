@@ -1334,7 +1334,7 @@
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/invocations/build:42\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -1359,14 +1359,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJy1kUGqwjAQhlFQMaBPuixv5T5NWxXBY3gBiWmIgSYTMmMfvYM39DK2oq7E1fNfDLP6vp8Z9stSNid5Jsiqs3PtwVaLYTqOWiL45IfN2DREaCxa8ItBeh2yvcGdEOoUwWlAThqJ12BQKHAOPNe+EWVelDzf8GIt8kf4m9GnWK22SXMiCj0WSVpfa8RMQQyZATC17nYnjhH+UP+vN70MnmIVn0zpZd2SVZjJEDAA3fXhZRZ36TfqLCds1B2+akvOZhCtsV2VQ09OPr7pBoX7htw=\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkMFKAzEQhrGgYqC17HHx5D2b3W1F6GPoA5SYDelAkgmZ2ZV9HN/UbGk9iSf/wzDM4fuGXzyJWmxYj4zNMIYwH2HYruq7bDVhrB7FWjykjBMQYNze1F8r8ebooJQ5ZQwWSbIllh4dKYMhYJQ2Tqpvu162L7Lbq/YS+ctY0u12r9V0Yk4LllhD9JaoMZhT4xCdt2UP6iPjJ9n/9dbvV6/JV6SO2s8MhhqdEiXksz39iNXZefkG4oRGc+mmnEbww2HfP9+L21LfMPdSrDGDg0I8Luzqz7K/Aff/eY4=\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@",
+      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/invocations/build:42@@@",
       "@@@STEP_LINK@Logs in Stainless@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@",
       "@@@STEP_FAILURE@@@"
     ]
