@@ -316,7 +316,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     assert len(parts) == 2, '%s would not split into bucket and path' % uri
     return parts[0], os.path.join(parts[1], binhost.package_index)
 
-  def _get_binhosts(self, target, private):
+  def _get_binhosts(self, target, chroot, private):
     """Download binhost files from google storage.
 
     Download binhost files from google storage and returns PackageInfo files
@@ -324,13 +324,14 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
     Args:
       target (BuildTarget): Build target getting binhosts for.
+      chroot (chromiumos.common.Chroot): Chroot to work with.
       private (bool): whether to include private binhosts.
 
     Returns:
       List[PackageInfo]: Package info files to deduplicate the prebuilt list.
     """
     with self.m.step.nest('get binhosts'):
-      request = binhost_pb.BinhostGetRequest(build_target=target,
+      request = binhost_pb.BinhostGetRequest(build_target=target, chroot=chroot,
                                              private=private)
       response = self.m.cros_build_api.BinhostService.Get(
           request, infra_step=True)
@@ -574,7 +575,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       acls = self._get_acls(private, target)
 
       upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
-      package_index_files = self._get_binhosts(target, private)
+      package_index_files = self._get_binhosts(target, chroot, private)
       upload_root, upload_paths = self._prepare_binhost_uploads(
           sysroot, chroot, upload_uri, package_index_files)
       self._upload(upload_root, upload_paths, upload_uri, acls)

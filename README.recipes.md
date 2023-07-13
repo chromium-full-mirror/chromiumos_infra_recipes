@@ -3319,7 +3319,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#416)(self, target, private, key, uri, push_retries):**
+&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#417)(self, target, private, key, uri, push_retries):**
 
 Set the target's Portage binhost to point to the given URI.
 
@@ -3333,7 +3333,7 @@ Args:
   uri (str): The new binhost URI.
   push_retries (int): Number of times to retry pushing the changes.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#647)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#648)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3347,7 +3347,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#618)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#619)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3357,7 +3357,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#555)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#556)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
