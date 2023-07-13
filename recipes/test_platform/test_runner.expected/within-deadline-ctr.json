@@ -637,6 +637,24 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execution steps.read autotest keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@keyval@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.identify sources under test",
     "~followup_annotations": [

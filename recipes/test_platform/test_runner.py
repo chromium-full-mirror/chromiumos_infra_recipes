@@ -307,17 +307,17 @@ def _populate_additional_info_for_autotest_result(test_metadata,
   return autotest_result
 
 
-def _read_autotest_keyval_file(api, base_dir):
+def _read_autotest_keyval_file(api, autotest_keyval_path):
   """Reads the contents of autotest keyval file.
 
   Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
-  * base_dir (string): The path of the base test results on the drone server.
+  * autotest_keyval_path (string): The path of the keyval file.
 
   Returns:
   * autotest_keyval_file (dict): Contents of the autotest keyval file.
   """
-  autotest_keyval_path = os.path.join(base_dir, 'autoserv_test', 'keyval')
+
   try:
     contents = api.file.read_text('read autotest keyval file',
                                   autotest_keyval_path,
@@ -994,7 +994,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
     # Autotest keyval file is created after test execution `interface.run_test()`
     # is done, so the file needs to be read after test execution.
     base_dir = interface.get_results_directory(test_metadata)
-    autotest_keyval_file = _read_autotest_keyval_file(api, base_dir)
+    autotest_keyval_path = os.path.join(base_dir, 'autoserv_test', 'keyval')
+    autotest_keyval_file = _read_autotest_keyval_file(api, autotest_keyval_path)
 
     # TODO(b/200703493): Reconcile Chromium and CrOS test uploads in CTP2.
     if (test_metadata.test.autotest.test_args and
@@ -1577,15 +1578,13 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
       # Skips reading the log files when the result_dir_path is empty. When
       # test/harness crashes, result_dir_path will be empty
       sysinfo_keyvals = {}
+      autotest_keyval_file = {}
       if results_dir:
         sysinfo_file_paths = [os.path.join(results_dir, 'sysinfo')]
         sysinfo_keyvals = _read_sysinfo_keyvals(api, sysinfo_file_paths)
-      autotest_keyvals = test_metadata.autotest_keyvals
-      # TODO(b/259569300): Provisioning error during CFT provisioning
-      # This prevents the validation of adding ash_versoin and lacros_version
-      # to RDB through the CFT route. For now, we will pass autotest_keyvals
-      # from the input test metadata to adhere to the interface.
-      autotest_keyval_file = autotest_keyvals
+        autotest_keyval_path = os.path.join(results_dir, 'keyval')
+        autotest_keyval_file = _read_autotest_keyval_file(
+            api, autotest_keyval_path)
 
       try:
         test_metadata.rdb_sources_file = _prepare_resultdb_sources_file(
