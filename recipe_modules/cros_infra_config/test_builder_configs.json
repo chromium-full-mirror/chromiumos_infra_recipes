@@ -3,6 +3,7 @@
     {
       "id": {
         "name": "amd64-generic-asan",
+        "type": "INFORMATIONAL",
         "bucket": "informational"
       },
       "general": {
@@ -25,7 +26,8 @@
         }
       },
       "artifacts": {
-        "prebuilts": "NONE",
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -61,11 +63,65 @@
               }
             ]
           }
-        }
+        },
+        "useCqPrebuilts": true
       },
       "unitTests": {
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-fuzzer",
+        "bucket": "informational"
+      },
+      "general": {
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "portageProfile": {
+          "profile": "fuzzer"
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "AUTOTEST_FILES",
+                  "IMAGE_ARCHIVES",
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FUZZER_SYSROOT"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        },
+        "useCqPrebuilts": true
       }
     },
     {

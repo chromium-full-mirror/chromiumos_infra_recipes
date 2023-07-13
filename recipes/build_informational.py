@@ -28,7 +28,8 @@ def RunSteps(api: RecipeApi):
       api.build_menu.setup_workspace_and_chroot():
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
     api.build_menu.bootstrap_sysroot(config)
-    api.build_menu.install_packages(config, env_info.packages)
+    if api.build_menu.install_packages(config, env_info.packages):
+      api.build_menu.upload_prebuilts(config)
     api.build_menu.build_and_test_images(config, include_version=True)
     api.build_menu.upload_artifacts(config)
 
@@ -36,7 +37,14 @@ def RunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.build_menu.test(
-      'basic', api.post_check(post_process.MustRun, 'build images'),
+      'basic', api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      builder='amd64-generic-fuzzer')
+
+  yield api.build_menu.test(
+      'upload prebuilts',
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       builder='amd64-generic-asan')
