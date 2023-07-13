@@ -3,21 +3,14 @@
 include chromiumos/chromite:/OWNERS.ci
 
 # Chrome OS SYD EngProd Team.
-abergman@google.com
-asadrieh@google.com
-benreich@google.com
-dkurian@google.com
-jinrongwu@google.com
-meiring@google.com
-mwarton@google.com
-shengjun@google.com
+include OWNERS.ci_apac
 
 # Additional members of Infra.
-nednguyen@chromium.org
+nednguyen@chromium.org #{LAST_RESORT_SUGGESTION}
 
 # Service accounts
-recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com
-chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com
+recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com #{LAST_RESORT_SUGGESTION}
+chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com #{LAST_RESORT_SUGGESTION}
 
 # Changes to subdirectories or modules cause machine-generated updates to
 # README.recipes.md, so exclude it from OWNERS enforcement.
