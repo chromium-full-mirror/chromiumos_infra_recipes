@@ -15,6 +15,18 @@
       "docker",
       "help"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "check docker install"
   },
   {
@@ -30,21 +42,19 @@
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clone kabuto.git clone",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "release-R114-15437.B"
-    ],
-    "cwd": "[CLEANUP]/borealis_tmp_1",
-    "infra_step": true,
-    "name": "clone kabuto.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -67,6 +77,18 @@
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "fetch kabuto payload.gsutil download",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -81,6 +103,18 @@
       "tools/kabuto/in/"
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "fetch kabuto payload.untar kabuto payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -90,9 +124,22 @@
     "cmd": [
       "./tools/kabuto/kabuto",
       "--gcs",
-      "--no-interactive"
+      "--no-interactive",
+      "--kabuto-config=tools/kabuto/in/staging/shard-staging-0/kabuto.json"
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "run kabuto"
   },
   {
@@ -107,6 +154,18 @@
       "tools/kabuto/logs/"
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload kabuto logs.bundle kabuto logs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -126,6 +185,18 @@
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "upload kabuto logs.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -145,6 +216,18 @@
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "Read updated_artifacts.json",
     "~followup_annotations": [
       "@@@STEP_LOG_END@updated_artifacts.json@@@"

@@ -13,6 +13,7 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -20,6 +21,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'depot_tools/gsutil',
+    'build_menu',
     'easy',
     'failures',
     'git',
@@ -116,6 +118,12 @@ def DoRunSteps(api: RecipeTestApi,
         shard_cmd_args = [
             f'--kabuto-config=tools/kabuto/in/prod/shard-{shard}/kabuto.json'
         ]
+        # The shard config directory is different depending on if we are
+        # doing a staging build or not (to avoid overwriting prod artifacts.)
+        if api.build_menu.is_staging:
+          shard_cmd_args = [
+              f'--kabuto-config=tools/kabuto/in/staging/shard-staging-{shard}/kabuto.json'
+          ]
         kabuto_cmd = kabuto_cmd + shard_cmd_args
       api.step('run kabuto', kabuto_cmd)
 
@@ -175,6 +183,22 @@ def GenTests(api: RecipeTestApi) -> None:
           [
               "./tools/kabuto/kabuto", "--gcs", "--no-interactive",
               "--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json"
+          ],
+      ),
+  )
+
+  props = good_props.copy()
+  props['shard'] = "0"
+  yield api.test(
+      'staging-shard',
+      api.properties(**props),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'run kabuto',
+          [
+              "./tools/kabuto/kabuto", "--gcs", "--no-interactive",
+              "--kabuto-config=tools/kabuto/in/staging/shard-staging-0/kabuto.json"
           ],
       ),
   )

@@ -1,6 +1,10 @@
 [
   {
     "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
       "@@@STEP_TEXT@all properties good@@@"
@@ -85,7 +89,7 @@
     "cmd": [
       "tar",
       "cvf",
-      "kabuto_logs_2012-05-14-125321.tar",
+      "kabuto_logs_2012-05-14-125323.tar",
       "tools/kabuto/logs/"
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
@@ -103,15 +107,15 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "kabuto_logs_2012-05-14-125321.tar",
-      "gs://kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125321.tar"
+      "kabuto_logs_2012-05-14-125323.tar",
+      "gs://kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125323.tar"
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
     "infra_step": true,
     "name": "upload kabuto logs.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125321.tar@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/kabuto_cache/test-recipe-payloads/logs/kabuto_logs_2012-05-14-125323.tar@@@"
     ]
   },
   {
