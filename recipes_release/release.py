@@ -84,23 +84,27 @@ class RecipeRelease:
       else:
         subprocess.run(cmd, check=True)
 
-  def print_email_link(self, pending_changes: List[git.Commit]):
+  def print_email_link(self, pending_changes: List[git.Commit], bbid: str):
     """Show the user an email link to announce the new change."""
     print()
     print(
         'Please click this link and send an email to chromeos-infra-releases!')
     print()
-    print(self.get_email_link(pending_changes))
+    print(self.get_email_link(pending_changes, bbid))
 
-  def get_email_link(self, pending_changes: List[git.Commit]) -> str:
+  def get_email_link(self, pending_changes: List[git.Commit], bbid: str) -> str:
     """Create an email link to announce the new change."""
     email_subject = f'Recipes Release - {common.get_timestamp()}'
     release_str = ''
     if self._longname:
       release_str = f'(for {self._longname}) '
-    email_message = '\n'.join([
+    email_lines = [
         f'We\'ve deployed Recipes {release_str}to prod!',
         '',
+    ]
+    if bbid:
+      email_lines += [f'Recipes deployed by go/bbid/{bbid}.', '']
+    email_lines += [
         'Here is a summary of the changes:',
         '',
         tabulate.tabulate([
@@ -108,7 +112,8 @@ class RecipeRelease:
             for c in pending_changes
             if not c.trivial
         ], headers=[], tablefmt='plain'),
-    ])
+    ]
+    email_message = '\n'.join(email_lines)
     url_params = urllib.parse.urlencode({
         'view': 'cm',
         'fs': 1,
@@ -179,7 +184,7 @@ class RecipeRelease:
     self.update_cipd_refs(cipd_target, dry_run=options.dry_run)
 
     # We did it!
-    self.print_email_link(pending_changes)
+    self.print_email_link(pending_changes, bbid=options.bbid)
 
 
 def main(argv: List[str]):
@@ -241,6 +246,8 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       '--max-releasable', action='store_true',
       help='Find the maximum instance that has sufficient successful results in staging.'
       'Currently in development, use at your own risk.')
+  parser.add_argument(
+      '--bbid', help='BBID of the invoking builder. Not for use by humans.')
   return parser.parse_args(args)
 
 
