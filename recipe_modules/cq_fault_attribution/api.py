@@ -38,9 +38,9 @@ PREDICATE_BUILDER_ID = BuilderID(project=PREDICATE_PROJECT,
                                  builder=PREDICATE_BUILDER)
 VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
   [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
-# Retrict snapshot retrieval to the last 4 hours (snapshot builds are
+# Restrict snapshot retrieval to the last 12 hours (snapshot builds are
 # kicked off every 30 mins)
-SNAPSHOT_RETRIEVAL_LIMIT = 8
+SNAPSHOT_RETRIEVAL_LIMIT = 24
 # Threshold used when marking a test as potentially flaky
 FLAKINESS_THRESHOLD = 2
 
@@ -58,9 +58,14 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     # target
     self._build_target_to_test_fault_attributes: Dict[
         str, List[FaultAttributionProperties]] = defaultdict(list)
-    # Map of (invocation_id, test_id, build_target) to a list of test_result(s)
-    self._invocation_properties_to_test_result_matrix: Dict[Tuple[
-        str, str, str], List[TestResult]] = defaultdict(list)
+    # Map of (test_id, build_target) to the latest completed test_result(s)
+    # across the comparison snapshots
+    self._test_properties_to_latest_test_result_matrix: Dict[Tuple[
+        str, str], List[TestResult]] = defaultdict(list)
+    # Map of (test_id, build_target) to the snapshot containing the latest
+    # results for the test.
+    self._test_properties_to_latest_snapshot_matrix: Dict[Tuple[
+        str, str], build_pb2.Build | None] = defaultdict(lambda: None)
     # Map of (build_target, test_id, failure_reason) to total occurrence count
     self._invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[
         str, str, str], int] = defaultdict(int)
@@ -117,33 +122,22 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         comparison_snapshots: Snapshots retrieved to be used for
           comparison.
       """
-    # Map of invocation IDs to invocations from snapshot builds that contain
-    # at least one test result.
-    invocation_id_to_invocation = dict(
-        filter(lambda invocation_items: invocation_items[1].test_results,
-               self._retrieve_rdb_test_results(comparison_snapshots).items()))
-
-    for comparison_snapshot in comparison_snapshots:
-      invocation_id = self._get_build_invocation_id(comparison_snapshot.id)
-      if invocation_id in invocation_id_to_invocation:
-        # The invocation produced test results, so we can use it to assign
-        # fault attributes.
-        self._set_comparison_matrices(invocation_id_to_invocation)
-        comparison_snapshot_properties = self._get_snapshot_properties_object(
-            comparison_snapshot)
-        flakiness_criteria_snapshot_properties = list(
-            map(self._get_snapshot_properties_object, comparison_snapshots))
-        with self.m.step.nest('set hw test fault attributes'):
-          self._set_hwtest_fault_attributes(
-              test_results.skylab, invocation_id,
-              comparison_snapshot_properties,
-              flakiness_criteria_snapshot_properties)
-        with self.m.step.nest('set vm & gce test fault attributes'):
-          self._set_vm_gce_test_fault_attributes(
-              test_results.tast_vm + test_results.tast_gce, invocation_id,
-              comparison_snapshot_properties,
-              flakiness_criteria_snapshot_properties)
-        break
+    if comparison_snapshots:
+      invocation_id_to_invocation = self._retrieve_rdb_test_results(
+          comparison_snapshots)
+      invocation_id_to_snapshot = \
+        {self._get_build_invocation_id(snapshot.id): snapshot for snapshot in comparison_snapshots}
+      self._set_comparison_matrices(invocation_id_to_invocation,
+                                    invocation_id_to_snapshot)
+      flakiness_criteria_snapshot_properties = list(
+          map(self._get_snapshot_properties_object, comparison_snapshots))
+      with self.m.step.nest('set hw test fault attributes'):
+        self._set_hwtest_fault_attributes(
+            test_results.skylab, flakiness_criteria_snapshot_properties)
+      with self.m.step.nest('set vm & gce test fault attributes'):
+        self._set_vm_gce_test_fault_attributes(
+            test_results.tast_vm + test_results.tast_gce,
+            flakiness_criteria_snapshot_properties)
 
     fault_attributed_build_targets = []
     for k, v in self._build_target_to_test_fault_attributes.items():
@@ -155,8 +149,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return fault_attributed_build_targets
 
   def _set_vm_gce_test_fault_attributes(
-      self, tests: List[build_pb2.Build], snapshot_build_invocation_id: str,
-      comparison_snapshot_properties: SnapshotProperties,
+      self, tests: List[build_pb2.Build],
       flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
     """ Creates and sets fault attribution properties for a vm and gce tests and
       appends the fault attribution instance to the fault attribute list for the
@@ -180,13 +173,11 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_id = test_case['name']
         failure_reason = test_case['humanReadableSummary']
         self._set_fault_attribution_properties(
-            build_target, test_id, failure_reason, snapshot_build_invocation_id,
-            comparison_snapshot_properties,
+            build_target, test_id, failure_reason,
             flakiness_criteria_snapshot_properties)
 
   def _set_hwtest_fault_attributes(
-      self, hw_test_results: SkylabResult, snapshot_build_invocation_id: str,
-      comparison_snapshot_properties: SnapshotProperties,
+      self, hw_test_results: SkylabResult,
       flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
     """ Creates and sets fault attribution properties for a HW test case and
       appends the fault attribution instance to the fault attribute list for the
@@ -220,13 +211,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           failure_reason = test_case.human_readable_summary
           self._set_fault_attribution_properties(
               build_target, test_id, failure_reason,
-              snapshot_build_invocation_id, comparison_snapshot_properties,
               flakiness_criteria_snapshot_properties, attempt)
 
   def _set_fault_attribution_properties(
       self, build_target: str, test_id: str, failure_reason: str,
-      snapshot_build_invocation_id: str,
-      comparison_snapshot_properties: SnapshotProperties,
       flakiness_criteria_snapshot_properties: List[SnapshotProperties],
       attempt=0):
     """ Makes the calls to set the fault attribution property for the test case,
@@ -237,22 +225,19 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       build_target: the build target this test ran for.
       test_id: The name of the test.
       failure_reason: The reason why the test failed.
-      snapshot_build_invocation_id: The invocation ID of the snapshot build
-          to be used for fault attribution comparisons.
-      comparison_snapshot_properties: Properties of the snapshot used for
-      flakiness_criteria_snapshot_properties: Properties of the snapshots used
-        for determining flakiness criteria.
       attempt: The attempt number of this test.
     """
     test_fault_attribute = FaultAttributionProperties()
     test_fault_attribute.test_name = test_id
     test_fault_attribute.attempt = attempt
-    test_fault_attribute.comparison_snapshot.CopyFrom(
-        comparison_snapshot_properties)
-    matrix_index = (snapshot_build_invocation_id, test_id, build_target)
+    matrix_index = (test_id, build_target)
+    comparison_snapshot = self._test_properties_to_latest_snapshot_matrix.get(
+        matrix_index)
+    if comparison_snapshot:
+      test_fault_attribute.comparison_snapshot.CopyFrom(
+          self._get_snapshot_properties_object(comparison_snapshot))
     snapshot_test_results = \
-      self._invocation_properties_to_test_result_matrix.get(
-          matrix_index, [])
+      self._test_properties_to_latest_test_result_matrix.get(matrix_index, [])
     self._set_test_case_failure_fault_attribution(failure_reason,
                                                   test_fault_attribute,
                                                   snapshot_test_results)
@@ -318,11 +303,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     else:
       test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
 
-  def _get_comparison_snapshots(
-      self, orch_snapshot: GitilesCommit) -> List[build_pb2.Build]:
+  def _get_comparison_snapshots(self, orch_snapshot: GitilesCommit) \
+      -> List[build_pb2.Build]:
     """Returns at most <SNAPSHOT_RETRIEVAL_LIMIT> snapshot builds
       ordered by start_time in descending order."""
-    fields = frozenset({'id', 'start_time', 'end_time', 'status'})
+    fields = frozenset(
+        {'id', 'create_time', 'start_time', 'end_time', 'status'})
 
     if self.m.looks_for_green.stats.status \
         == LooksForGreenStatus.STATUS_RAN_OLDER:
@@ -361,15 +347,13 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     previous_snapshot_builds = self.m.buildbucket.search(
         [predicate_for_previous_snapshot_builds],
         limit=SNAPSHOT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
-
-    completed_snapshot_builds = list(
-        filter(self._is_build_terminal_with_pass_or_fail,
-               previous_snapshot_builds))
-    ordered_completed_snapshot_builds = sorted(
-        completed_snapshot_builds, key=(lambda build: build.start_time.seconds),
+    started_snapshot_builds = list(
+        filter(self._has_build_started, previous_snapshot_builds))
+    ordered_snapshot_builds = sorted(
+        started_snapshot_builds, key=(lambda build: build.start_time.seconds),
         reverse=True)
 
-    return ordered_completed_snapshot_builds
+    return ordered_snapshot_builds
 
   def _retrieve_rdb_test_results(
       self, builds: List[build_pb2.Build]) -> Dict[str, Invocation]:
@@ -381,34 +365,52 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return self.m.resultdb.query(inv_ids=invocation_ids, limit=0,
                                  tr_fields=fields)
 
-  def _set_comparison_matrices(self,
-                               invocation_id_to_invocation: Dict[str,
-                                                                 Invocation]):
-    """Sets the _invocation_properties_to_test_result_matrix and
-      _invocation_properties_to_failure_reason_count_matrix matrices. Multiple
+  def _set_comparison_matrices(
+      self, invocation_id_to_invocation: Dict[str, Invocation],
+      invocation_id_to_snapshot: Dict[str, build_pb2.Build]):
+    """Sets the _test_properties_to_latest_test_result_matrix,
+      _test_properties_to_latest_snapshot_matrix and
+      _invocation_properties_to_failure_reason_count_matrix matrices to track
+      the latest executions for each encountered test. Multiple
       attempts for the same test on the same build target are treated as unique
       entries, as they have unique invocation IDs. """
-    for invocation_id, invocation in invocation_id_to_invocation.items():
+    # sort invocation_id_to_snapshot in order of descending snapshot build start
+    # times
+    invocation_id_and_snapshot_pairs = \
+      sorted(invocation_id_to_snapshot.items(),
+             key=(lambda element: element[1].start_time.seconds),
+             reverse=True)
+    for invocation_id, snapshot in invocation_id_and_snapshot_pairs:
+      invocation = invocation_id_to_invocation[invocation_id]
       for test_result in invocation.test_results:
         test_id = self._get_test_id_from_rdb_test_name(test_result.name)
         if not test_id:
           # Test name wasn't in the expected format. Skipping.
           continue
         build_target = getattr(test_result.variant, 'def')['build_target']
-        self._invocation_properties_to_test_result_matrix[(
-            invocation_id, test_id, build_target)].append(test_result)
+        matrix_index = (test_id, build_target)
+        # If we haven't identified any snapshot to get results from for this
+        # test, or if this is another attempt for the same test for an already
+        # identified snapshot, append the test results.
+        if matrix_index not in self._test_properties_to_latest_snapshot_matrix \
+          or self._test_properties_to_latest_snapshot_matrix[matrix_index] == snapshot:
+          self._test_properties_to_latest_test_result_matrix[
+              matrix_index].append(test_result)
+          self._test_properties_to_latest_snapshot_matrix[
+              matrix_index] = snapshot
 
-        failure_reason = test_result.failure_reason.primary_error_message
-        self._invocation_properties_to_failure_reason_count_matrix[(
-            build_target, test_id, failure_reason)] += 1
+        if test_result.status != TestStatus.PASS:
+          failure_reason = test_result.failure_reason.primary_error_message
+          self._invocation_properties_to_failure_reason_count_matrix[(
+              build_target, test_id, failure_reason)] += 1
 
   def _get_build_invocation_id(self, build_id: int) -> str:
     return 'build-{}'.format(build_id)
 
-  def _is_build_terminal_with_pass_or_fail(self,
-                                           build: build_pb2.Build) -> bool:
+  def _has_build_started(self, build: build_pb2.Build) -> bool:
     return (build.status == Status.SUCCESS or build.status == Status.FAILURE or
-            build.status == Status.INFRA_FAILURE)
+            build.status == Status.INFRA_FAILURE or
+            build.status == Status.STARTED)
 
   def _get_test_id_from_rdb_test_name(self, rdb_test_name: str) -> str:
     """Returns the test_id from a test_result name from rdb. rdb test names

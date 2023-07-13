@@ -14,7 +14,7 @@
       "-n",
       "1",
       "-fields",
-      "end_time,id,start_time,status",
+      "create_time,end_time,id,start_time,status",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/orchsnapshotcommitsha\"}]}"
     ],
@@ -23,7 +23,7 @@
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"123\", \"startTime\": \"2020-09-13T12:26:40Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"createTime\": \"2020-09-13T12:26:40Z\", \"id\": \"123\", \"startTime\": \"2020-09-13T12:26:40Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
     ]
@@ -37,20 +37,20 @@
       "-json",
       "-nopage",
       "-n",
-      "8",
+      "24",
       "-fields",
-      "end_time,id,start_time,status",
+      "create_time,end_time,id,start_time,status",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:01Z\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2020-09-13T12:26:41Z\"}}"
     ],
     "infra_step": true,
     "name": "set fault attributes.buildbucket.search (2)",
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2020-09-13T12:26:39Z\", \"id\": \"234\", \"startTime\": \"2020-09-13T12:26:39Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2020-09-13T12:26:38Z\", \"id\": \"345\", \"startTime\": \"2020-09-13T12:26:38Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2020-09-13T12:26:37Z\", \"id\": \"456\", \"startTime\": \"2020-09-13T12:26:37Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"createTime\": \"2020-09-13T12:26:39Z\", \"endTime\": \"2020-09-13T12:26:39Z\", \"id\": \"234\", \"startTime\": \"2020-09-13T12:26:39Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"createTime\": \"2020-09-13T12:26:38Z\", \"endTime\": \"2020-09-13T12:26:38Z\", \"id\": \"345\", \"startTime\": \"2020-09-13T12:26:38Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"createTime\": \"2020-09-13T12:26:37Z\", \"endTime\": \"2020-09-13T12:26:37Z\", \"id\": \"456\", \"startTime\": \"2020-09-13T12:26:37Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@234@https://cr-buildbucket.appspot.com/build/234@@@",
       "@@@STEP_LINK@345@https://cr-buildbucket.appspot.com/build/345@@@",
@@ -88,6 +88,7 @@
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-234\", \"testResult\": {\"expected\": true, \"failureReason\": {\"primaryErrorMessage\": \"Failed for an identical, existing reason.\"}, \"name\": \"invocations/build-234/tests/this.test.failed.for.an.identical.reason.in.the.snapshot/results/12345\", \"status\": \"FAIL\", \"variant\": {\"def\": {\"build_target\": \"scarlet\"}}}}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-234\", \"testResult\": {\"expected\": true, \"name\": \"invocations/build-234/tests/this.test.was.skipped.in.the.snapshot/results/12345\", \"status\": \"SKIP\", \"variant\": {\"def\": {\"build_target\": \"scarlet\"}}}}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-345\", \"testResult\": {\"expected\": true, \"failureReason\": {\"primaryErrorMessage\": \"flaked out for odd reasons\"}, \"name\": \"invocations/build-345/tests/this.test.is.flaky/results/12345\", \"status\": \"FAIL\", \"variant\": {\"def\": {\"build_target\": \"brya\"}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-345\", \"testResult\": {\"expected\": true, \"name\": \"invocations/build-234/tests/this.test.passed.in.the.snapshot.only/results/12345\", \"status\": \"FAIL\", \"variant\": {\"def\": {\"build_target\": \"brya\"}}}}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-456\", \"testResult\": {\"expected\": true, \"failureReason\": {\"primaryErrorMessage\": \"flaked out for odd reasons\"}, \"name\": \"invocations/build-456/tests/this.test.is.flaky/results/12345\", \"status\": \"FAIL\", \"variant\": {\"def\": {\"build_target\": \"brya\"}}}}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"invocationId\": \"build-456\", \"testResult\": {\"expected\": true, \"failureReason\": {\"primaryErrorMessage\": \"This failed twice\"}, \"name\": \"invocations/build-456/tests/this.test.is.flaky/results/12345\", \"status\": \"FAIL\", \"variant\": {\"def\": {\"build_target\": \"brya\"}}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -112,7 +113,7 @@
     "name": "set fault attributes.set test_failure_attributions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@test_failure_attributions@{\"testFailureAttributions\": [{\"buildTarget\": \"scarlet\", \"faultAttributes\": [{\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"this.test.was.skipped.in.the.snapshot\"}]}, {\"buildTarget\": \"brya\", \"faultAttributes\": [{\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.test.passed.in.the.snapshot.only\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"DIFFERING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.a.unique.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"likelyFlaky\": true, \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.test.is.flaky\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"this.test.was.skipped.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.vm.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"DIFFERING_FAILURE_FOUND\", \"testName\": \"this.vm.test.failed.for.a.unique.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.gce.test.passed.in.the.snapshot.only\"}]}]}@@@"
+      "@@@SET_BUILD_PROPERTY@test_failure_attributions@{\"testFailureAttributions\": [{\"buildTarget\": \"scarlet\", \"faultAttributes\": [{\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"this.test.was.skipped.in.the.snapshot\"}]}, {\"buildTarget\": \"brya\", \"faultAttributes\": [{\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.test.passed.in.the.snapshot.only\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"DIFFERING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.a.unique.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"likelyFlaky\": true, \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.test.is.flaky\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"this.test.was.skipped.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"MATCHING_FAILURE_FOUND\", \"testName\": \"this.vm.test.failed.for.an.identical.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"snapshotComparisonFaultAttribution\": \"DIFFERING_FAILURE_FOUND\", \"testName\": \"this.vm.test.failed.for.a.unique.reason.in.the.snapshot\"}, {\"comparisonSnapshot\": {\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, \"flakinessCriteriaSnapshots\": [{\"sourceBuildId\": \"234\", \"sourceCompletedUnixTimestamp\": \"1599999999\"}, {\"sourceBuildId\": \"345\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}, {\"sourceBuildId\": \"456\", \"sourceCompletedUnixTimestamp\": \"1599999997\"}], \"snapshotComparisonFaultAttribution\": \"SUCCESS_FOUND\", \"testName\": \"this.gce.test.passed.in.the.snapshot.only\"}]}]}@@@"
     ]
   },
   {

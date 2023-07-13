@@ -14,7 +14,7 @@
       "-n",
       "1",
       "-fields",
-      "end_time,id,start_time,status",
+      "create_time,end_time,id,start_time,status",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/lfgcommitsha\"}]}"
     ],
@@ -37,9 +37,9 @@
       "-json",
       "-nopage",
       "-n",
-      "8",
+      "24",
       "-fields",
-      "end_time,id,start_time,status",
+      "create_time,end_time,id,start_time,status",
       "-predicate",
       "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:01Z\"}}"
     ],

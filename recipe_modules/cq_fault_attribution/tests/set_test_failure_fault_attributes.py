@@ -138,6 +138,7 @@ snapshot_build_1 = \
   build_pb2.Build(
       id=get_build_id_from_invocation(snapshot_build_1_invocation_id),
       status=Status.SUCCESS,
+      create_time=timestamp_pb2.Timestamp(seconds=1600000000),
       start_time=timestamp_pb2.Timestamp(seconds=1600000000))
 snapshot_build_1_invocation = Invocation(test_results=[])
 
@@ -146,6 +147,7 @@ snapshot_build_2 = \
   build_pb2.Build(
       id=get_build_id_from_invocation(snapshot_build_2_invocation_id),
       status=Status.SUCCESS,
+      create_time=timestamp_pb2.Timestamp(seconds=1599999999),
       start_time=timestamp_pb2.Timestamp(seconds=1599999999),
       end_time=timestamp_pb2.Timestamp(seconds=1599999999))
 snapshot_2_brya_build_target_test_results = [
@@ -228,6 +230,7 @@ snapshot_build_3 \
   = build_pb2.Build(
     id=get_build_id_from_invocation(snapshot_build_3_invocation_id),
     status=Status.SUCCESS,
+    create_time=timestamp_pb2.Timestamp(seconds=1599999998),
     start_time=timestamp_pb2.Timestamp(seconds=1599999998),
     end_time=timestamp_pb2.Timestamp(seconds=1599999998))
 snapshot_3_brya_build_target_test_results = [
@@ -237,6 +240,13 @@ snapshot_3_brya_build_target_test_results = [
         variant=brya_variant, expected=True, status=TestStatus.FAIL,
         failure_reason=FailureReason(
             primary_error_message=FLAKY_FAILURE_REASON)),
+    # This same test exists in a newer snapshot (snapshot 2) as a passing test.
+    # We create an older instance with a different outcome to validate the
+    # newer one is used.
+    TestResult(
+        name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
+                                      PASSING_IN_SNAPSHOT_TEST_CASE_NAME),
+        variant=brya_variant, expected=True, status=TestStatus.FAIL),
 ]
 snapshot_build_3_invocation \
   = Invocation(test_results=snapshot_3_brya_build_target_test_results)
@@ -246,6 +256,7 @@ snapshot_build_4 \
   = build_pb2.Build(
     id=get_build_id_from_invocation(snapshot_build_4_invocation_id),
     status=Status.SUCCESS,
+    create_time=timestamp_pb2.Timestamp(seconds=1599999997),
     start_time=timestamp_pb2.Timestamp(seconds=1599999997),
     end_time=timestamp_pb2.Timestamp(seconds=1599999997))
 snapshot_4_brya_build_target_test_results = [
@@ -403,7 +414,7 @@ def RunSteps(api):
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        expected_snapshot_comparison_properties,
+        None,
         [])
   expected_brya_new_gce_test_failure = \
     create_expected_fault_attribute_properties(
@@ -512,8 +523,9 @@ def create_expected_fault_attribute_properties(
   expected_fault_attribute_properties.snapshot_comparison_fault_attribution = \
     snapshot_comparison_fault_attribution
   expected_fault_attribute_properties.likely_flaky = likely_flaky
-  expected_fault_attribute_properties.comparison_snapshot.CopyFrom(
-      expected_snapshot_comparison_properties)
+  if expected_snapshot_comparison_properties:
+    expected_fault_attribute_properties.comparison_snapshot.CopyFrom(
+        expected_snapshot_comparison_properties)
   expected_fault_attribute_properties.flakiness_criteria_snapshots.extend(
       flakiness_comparison_snapshots)
 

@@ -2246,11 +2246,11 @@ Initializes the module.
 A module for ascribing build and test failure attributes based on
 snapshot build comparisons.
 
-&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#73)(self):**
 
 Returns determined failure attributes
 
-&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#73)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#78)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
 
 Compares test failures between a snapshot and CQ build, and assigns
 failure attributes and a flakiness status to each failure if a comparison
@@ -11445,11 +11445,11 @@ Call the RunCopybot endpoint.
 [DEPS](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#29): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#276)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#287)(api):**
 
-&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#506)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#517)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
 
-&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#497)(source_build_id, source_completed_unix_timestamp):**
+&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#508)(source_build_id, source_completed_unix_timestamp):**
 
 &mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#72)(invocation_id: str):**
 
