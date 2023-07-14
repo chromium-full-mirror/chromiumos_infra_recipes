@@ -76,35 +76,6 @@
   },
   {
     "cmd": [],
-    "name": "check if project blah exists",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "blah"
-    ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "check if project blah exists.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@spooky phantom error@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@pinned-manifest.xml@<manifest></manifest>@@@",

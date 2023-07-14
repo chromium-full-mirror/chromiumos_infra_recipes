@@ -8988,7 +8988,7 @@ Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#718)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#719)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -9006,7 +9006,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#825)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#826)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -9014,7 +9014,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#676)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#677)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -9036,7 +9036,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#84)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#618)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#619)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -9054,7 +9054,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#906)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#907)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -9092,7 +9092,7 @@ Args:
 
 &mdash; **def [initialize](/recipe_modules/repo/api.py#73)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#645)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#646)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -9109,7 +9109,7 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#900)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#901)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
@@ -9160,7 +9160,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#80)(self):**
 
-&mdash; **def [report\_manifest\_branch\_state](/recipe_modules/repo/api.py#597)(self, projects=None, test_data='Repo: info', test_failure=False):**
+&mdash; **def [report\_manifest\_branch\_state](/recipe_modules/repo/api.py#598)(self, projects=None, test_data='Repo: info', test_failure=False):**
 
 Use 'repo info' to output manifest state to stdout.
 Args:
@@ -14042,10 +14042,10 @@ Instead, try to process the other projects, and THEN fail.
 &mdash; **def [WithretryTest](/recipe_modules/repo/examples/image_builder.py#105)(api, state_name, state, local_manifest):**
 ### *recipes* / [repo:examples/project\_infos](/recipe_modules/repo/examples/project_infos.py)
 
-[DEPS](/recipe_modules/repo/examples/project_infos.py#11): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/repo/examples/project_infos.py#9): [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#25)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/repo/examples/project_infos.py#23)(api, properties):**
 ### *recipes* / [repo:examples/version\_at\_least](/recipe_modules/repo/examples/version_at_least.py)
 
 [DEPS](/recipe_modules/repo/examples/version_at_least.py#12): [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

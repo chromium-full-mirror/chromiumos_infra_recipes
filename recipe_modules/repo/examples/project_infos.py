@@ -6,8 +6,6 @@
 from PB.recipe_modules.chromeos.repo.examples.project_infos import ProjectInfo
 from PB.recipe_modules.chromeos.repo.examples.project_infos import ProjectInfosProperties
 
-from recipe_engine.recipe_api import StepFailure
-
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/path',
@@ -32,10 +30,6 @@ def RunSteps(api, properties):
     infos = [api.repo.project_info(properties.projects[0])]
     api.assertions.assertTrue(api.repo.project_exists(properties.projects[0]))
     api.assertions.assertFalse(api.repo.project_exists('foo/bar'))
-    try:
-      api.assertions.assertFalse(api.repo.project_exists('blah'))
-    except StepFailure:
-      pass
   else:
     infos = api.repo.project_infos(
         projects=list(properties.projects), regexes=list(properties.regexes))
@@ -84,8 +78,6 @@ def GenTests(api):
               ])),
       api.step_data('check if project foo/bar exists.repo info',
                     stderr=api.raw_io.output_text('project foo/bar not found')),
-      api.step_data('check if project blah exists.repo info',
-                    stderr=api.raw_io.output_text('spooky phantom error')),
   )
 
   test_hash = '0123456789ABCDEFabcdef555555555555555555'
@@ -105,8 +97,6 @@ def GenTests(api):
               ])),
       api.step_data('check if project foo/bar exists.repo info',
                     stderr=api.raw_io.output_text('project foo/bar not found')),
-      api.step_data('check if project blah exists.repo info',
-                    stderr=api.raw_io.output_text('spooky phantom error')),
   )
 
   yield api.test(

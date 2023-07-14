@@ -582,17 +582,18 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('check if project {} exists'.format(project)):
       cmd = ['info', project]
       step_data = self._step(
-          cmd, stderr=self.m.raw_io.output_text(add_output_log=True),
-          ok_ret=[0, 1])
+          cmd, stderr=self.m.raw_io.output_text(add_output_log=True))
 
-      stderr = step_data.stderr
-      if stderr.strip():
-        errmsg = 'project {} not found'.format(project)
-        # Non-empty stderr
-        if errmsg not in stderr:
-          raise StepFailure('unexpected error: {}'.format(stderr))
-        return False
-      return True
+      # Consider a project found iff the string 'project {project} not found' is
+      # not in the stderr.
+      #
+      # Note that `repo info` will return 0 as an exit code even if the project
+      # is not found, so we don't use this to determine if it is found. Also,
+      # `repo info` may return non-empty stderr if the project is found, so we
+      # also don't use this to determine if it is found.
+      # TODO(b/272513582): Use something more robust, such as `repo forall`.
+      errmsg = 'project {} not found'.format(project)
+      return errmsg not in step_data.stderr
 
   def report_manifest_branch_state(self, projects=None, test_data='Repo: info',
                                    test_failure=False):
