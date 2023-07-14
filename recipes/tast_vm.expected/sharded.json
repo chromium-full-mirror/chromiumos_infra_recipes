@@ -72,7 +72,7 @@
       "@@@STEP_TEXT@<br/>extracted 1337 files - 50159.75 MB@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"extracted\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054, @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"bytes\": 50159747054,@@@",
       "@@@STEP_LOG_LINE@json.output@    \"filecount\": 1337@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

@@ -4,8 +4,8 @@
     "name": "upload test results to rdb",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@config@{@@@",
-      "@@@STEP_LOG_LINE@config@    \"base_tags\": [], @@@",
-      "@@@STEP_LOG_LINE@config@    \"result_file\": \"./path/to/results.json\", @@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [],@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"./path/to/results.json\",@@@",
       "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
@@ -51,7 +51,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",

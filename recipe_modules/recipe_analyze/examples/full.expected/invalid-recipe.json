@@ -10,7 +10,7 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"invalid_recipes\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"recipeA\", @@@",
+      "@@@STEP_LOG_LINE@json.output@    \"recipeA\",@@@",
       "@@@STEP_LOG_LINE@json.output@    \"recipeB\"@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",

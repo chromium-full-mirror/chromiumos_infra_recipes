@@ -39,7 +39,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\", @@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-latest----------\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/luci/swarming/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -64,11 +64,11 @@
     "name": "get bot count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\", @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"dead\": \"0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"maintenance\": \"0\", @@@",
-      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-26T23:38:02.383828\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"dead\": \"0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"maintenance\": \"0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-26T23:38:02.383828\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"quarantined\": \"0\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -94,7 +94,7 @@
     "name": "get task count query result",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -120,7 +120,7 @@
     "name": "get task count query result (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\", @@@",
+      "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
