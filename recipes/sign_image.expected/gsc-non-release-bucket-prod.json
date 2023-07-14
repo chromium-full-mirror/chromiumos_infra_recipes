@@ -63,7 +63,20 @@
     "cmd": [],
     "name": "upload gsc instructions",
     "~followup_annotations": [
-      "@@@STEP_TEXT@instructions uploaded@@@"
+      "@@@STEP_TEXT@instructions uploaded@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@[general]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@archive = ti50.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@board = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@type = gsc_firmware@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@milestone = RNone@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@version = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@versionrev = RNone-Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@[insns]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@channel = canary@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@keyset = ti50-accessory-premp@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@target = Unchanged@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@output_names = @CHIP@_@VERSION@_@TARGET@_@KEYSET@@@@",
+      "@@@STEP_LOG_END@ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions@@@"
     ]
   },
   {

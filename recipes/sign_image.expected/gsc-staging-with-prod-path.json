@@ -43,7 +43,20 @@
     "cmd": [],
     "name": "upload gsc instructions",
     "~followup_annotations": [
-      "@@@STEP_TEXT@instructions uploaded@@@"
+      "@@@STEP_TEXT@instructions uploaded@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@[general]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@archive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@board = board@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@type = gsc_firmware@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@milestone = RNone@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@version = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@versionrev = RNone-Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@[insns]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@channel = canary@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@keyset = cr50-accessory-mp@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@target = Unchanged@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@output_names = @CHIP@_@VERSION@_@TARGET@_@KEYSET@@@@",
+      "@@@STEP_LOG_END@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@@@"
     ]
   },
   {

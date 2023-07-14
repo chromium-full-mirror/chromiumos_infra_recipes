@@ -277,6 +277,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
 
     api.gsutil(['cp', local_insn, insn_path])
     presentation.step_text = 'instructions uploaded'
+    presentation.logs[insn_basename] = content
     api.easy.set_properties_step(instructions_file=insn_path)
 
   with api.step.nest('trigger gsc signing') as presentation:
