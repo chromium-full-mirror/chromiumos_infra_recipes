@@ -732,7 +732,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"manifest-internal-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/release-R108-15183.B-snapshot\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
@@ -1958,7 +1958,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"manifest-internal-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/release-R108-15183.B-snapshot\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
@@ -3299,7 +3299,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"manifest-internal-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/release-R108-15183.B-snapshot\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
@@ -4590,7 +4590,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"manifest-internal-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/release-R108-15183.B-snapshot\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
       "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",

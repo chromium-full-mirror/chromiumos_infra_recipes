@@ -211,6 +211,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     MANIFEST_VERSIONS_DRYRUN_BRANCH = 'release'
     MANIFEST_INTERNAL_DRYRUN_SNAPSHOT_BRANCH = 'staging-buildspec-snapshot'
     MANIFEST_INTERNAL_SNAPSHOT_PROJECT = 'manifest-internal-snapshot'
+    MANIFEST_INTERNAL_NAME = 'chromeos/manifest-internal'
     MANIFEST_INTERNAL_HOST = 'chrome-internal.googlesource.com'
 
     def commit_to_remote(checkout, filename, commit_message, branch):
@@ -337,7 +338,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 self.set_resultdb_gitiles_commit(
                     self.MANIFEST_INTERNAL_URL,
                     MANIFEST_INTERNAL_HOST,
-                    MANIFEST_INTERNAL_SNAPSHOT_PROJECT,
+                    MANIFEST_INTERNAL_NAME,
                     snapshot_branch,
                     position,
                 )
