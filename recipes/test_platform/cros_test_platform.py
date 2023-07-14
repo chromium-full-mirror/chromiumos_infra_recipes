@@ -436,10 +436,9 @@ def _enumerate_cft_tests(api, requests):
       tag_criteria = r.test_plan.tag_criteria
       test_suites = test_finder_result.test_suites
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
-        filtered_test_suites = _build_filtered_tests(api, r, test_suites,
-                                                     build_target)
-        if build_target == "volteer":  # pragma: nocover
-          test_suites = filtered_test_suites
+        if api.cq.active:
+          # DRY RUN
+          _ = _build_filtered_tests(api, r, test_suites, build_target)
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
       else:
@@ -2815,7 +2814,8 @@ def GenTests(api):
   )
 
   yield api.test(
-      'cft-suite-with-filtered-tests-with-passed-tasks',
+      'cq-cft-suite-with-filtered-tests-with-passed-tasks',
+      api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -2834,6 +2834,29 @@ def GenTests(api):
       _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_cft_filter_tests_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'cq-cft-suite-with-unfiltered-tests-with-passed-tasks',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=["beep", "boop"],
+                                               tag_excludes=["blap", "blop"]),
+                          total_shards=5)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
   )
 
