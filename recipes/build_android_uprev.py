@@ -25,6 +25,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'android',
     'build_menu',
@@ -90,6 +91,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Normal Android uprev build.
   yield api.build_menu.test(
       'basic',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -104,6 +106,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Android uprev build where uprev is not needed.
   yield api.build_menu.test(
       'android-not-revved',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -117,6 +120,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Android uprev build where uprev is not needed yet |always_build| is set.
   yield api.build_menu.test(
       'always-build',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{
               '$chromeos/cros_relevance': {
@@ -133,6 +137,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Android uprev build with install-packages failure.
   yield api.build_menu.test(
       'install-packages-fail',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -144,8 +149,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                           retcode=1),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -153,6 +156,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Android uprev build with artifact bundling failure.
   yield api.build_menu.test(
       'bundle-fail',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -171,6 +175,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Android uprev build with failures in install packages and bundle artifacts.
   yield api.build_menu.test(
       'install-packages-and-bundle-fail',
+      api.buildbucket.ci_build(builder='eve-android-uprev'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

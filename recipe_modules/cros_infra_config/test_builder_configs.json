@@ -1190,6 +1190,112 @@
         "dependencies": "ALL_DEPENDENCIES"
       }
     },
+		{
+			"id": {
+				"name": "eve-android-uprev",
+				"type": "POSTSUBMIT",
+				"bucket": "pupr"
+			},
+			"general": {
+				"critical": true,
+				"environment": "PRODUCTION",
+				"runWhen": {
+					"mode": "ALWAYS_RUN"
+				},
+				"sdkCacheVersion": 1,
+				"manifest": "PRIVATE",
+				"publishImageSizes": true
+			},
+			"artifacts": {
+				"prebuilts": "PRIVATE",
+				"prebuiltsGsBucket": "chromeos-prebuilt",
+				"artifactsGsBucket": "chromeos-image-archive",
+				"artifactsInfo": {
+					"legacy": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"IMAGE_ZIP",
+									"AUTOTEST_FILES",
+									"TAST_FILES",
+									"PINNED_GUEST_IMAGES",
+									"EBUILD_LOGS",
+									"TEST_UPDATE_PAYLOAD",
+									"FPMCU_UNITTESTS"
+								]
+							}
+						]
+					},
+					"toolchain": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"CLANG_CRASH_DIAGNOSES"
+								],
+								"gsLocations": [
+									"chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
+								]
+							}
+						]
+					},
+					"image": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"DLC_IMAGE"
+								]
+							},
+							{
+								"artifactTypes": [
+									"LICENSE_CREDITS"
+								]
+							}
+						]
+					},
+					"sysroot": {
+						"outputArtifacts": [
+							{
+								"artifactTypes": [
+									"DEBUG_SYMBOLS"
+								]
+							},
+							{
+								"artifactTypes": [
+									"BREAKPAD_DEBUG_SYMBOLS"
+								]
+							}
+						]
+					}
+				},
+				"useCqPrebuilts": true
+			},
+			"chrome": {
+				"internal": true
+			},
+			"build": {
+				"useFlags": [
+					{
+						"flag": "chrome_internal"
+					}
+				],
+				"installPackages": {
+					"runSpec": "RUN",
+					"dependencies": "ALL_DEPENDENCIES"
+				},
+				"buildImages": {
+					"imageTypes": [
+						"IMAGE_TYPE_TEST"
+					]
+				}
+			},
+			"unitTests": {
+				"ebuildsRunSpec": "NO_RUN",
+				"dependencies": "ALL_DEPENDENCIES"
+			},
+			"updateChroot": {
+				"runSpec": "RUN"
+			}
+		},
     {
       "id": {
         "name": "eve-cq",

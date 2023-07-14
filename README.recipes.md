@@ -10596,7 +10596,7 @@ Recipe for creating a new ChromeOS branch.
 &mdash; **def [RunSteps](/recipe_modules/breakpad/examples/no_symbols.py#18)(api):**
 ### *recipes* / [build\_android\_uprev](/recipes/build_android_uprev.py)
 
-[DEPS](/recipes/build_android_uprev.py#27): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_android_uprev.py#27): [android](#recipe_modules-android), [build\_menu](#recipe_modules-build_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Recipe for building a BuildTarget image for Android uprev.
@@ -10609,9 +10609,9 @@ for example:
   "android_version": "7444938"
 }
 
-&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#44)(api: RecipeApi, properties: AndroidUprevProperties, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#45)(api: RecipeApi, properties: AndroidUprevProperties, config: BuilderConfig):**
 
-&mdash; **def [RunSteps](/recipes/build_android_uprev.py#38)(api: RecipeApi, properties: AndroidUprevProperties):**
+&mdash; **def [RunSteps](/recipes/build_android_uprev.py#39)(api: RecipeApi, properties: AndroidUprevProperties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
