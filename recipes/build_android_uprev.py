@@ -64,9 +64,9 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
   raise_upload_failure = True
   try:
     if api.build_menu.install_packages(config, packages):
-      # We have no steps following build_and_test_images, so we don't need to
+      # We have no steps following build_images, so we don't need to
       # check the return value.
-      api.build_menu.build_and_test_images(config)
+      api.build_menu.build_images(config)
   except StepFailure:
     raise_upload_failure = False
     raise
@@ -97,7 +97,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       uprev_props,
       api.android.set_mark_stable_success(),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
   )
 
@@ -111,7 +111,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       uprev_props,
       api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
   )
 
@@ -128,7 +127,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       uprev_props,
       api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
   )
 
@@ -145,7 +143,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
@@ -164,7 +161,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       uprev_props,
       api.android.set_mark_stable_success(),
@@ -188,7 +184,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
