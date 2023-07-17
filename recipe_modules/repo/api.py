@@ -582,7 +582,10 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('check if project {} exists'.format(project)):
       cmd = ['info', project]
       step_data = self._step(
-          cmd, stderr=self.m.raw_io.output_text(add_output_log=True))
+          cmd,
+          stderr=self.m.raw_io.output_text(add_output_log=True),
+          ok_ret=[0, 1],
+      )
 
       # Consider a project found iff the string 'project {project} not found' is
       # not in the stderr.
