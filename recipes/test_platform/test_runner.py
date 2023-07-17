@@ -1628,6 +1628,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
         autotest_keyval_path = os.path.join(results_dir, 'keyval')
         autotest_keyval_file = _read_autotest_keyval_file(
             api, autotest_keyval_path)
+      autotest_keyval_file.update(test_metadata.autotest_keyvals)
 
       try:
         test_metadata.rdb_sources_file = _prepare_resultdb_sources_file(
