@@ -469,11 +469,28 @@ def GenTests(api: RecipeTestApi):
               'commit_buildspec_as_snapshot': True,
           },
       }),
-      api.post_check(post_process.LogContains,
+      # ToT should not set an override commit.
+      api.post_check(post_process.LogDoesNotContain,
                      'run builds.schedule new builds.eve-release-main',
                      'request',
                      ['$chromeos/metadata', 'sources_gitiles_commit_override']),
       builder='release-main-orchestrator',
+      # TODO(b/279631301): Remove experiment after rollout in prod.
+      experiments=['chromeos.build_menu.upload_sources'],
+  )
+
+  yield api.orch_menu.test(
+      'release-branch-commit-buildspec-upload-sources',
+      api.properties(**{
+          '$chromeos/cros_release': {
+              'commit_buildspec_as_snapshot': True,
+          },
+      }),
+      api.post_check(
+          post_process.LogContains,
+          'run builds.schedule new builds.kukui-release-R111-12345.B',
+          'request', ['$chromeos/metadata', 'sources_gitiles_commit_override']),
+      builder='release-R111-12345.B-orchestrator',
       # TODO(b/279631301): Remove experiment after rollout in prod.
       experiments=['chromeos.build_menu.upload_sources'],
   )

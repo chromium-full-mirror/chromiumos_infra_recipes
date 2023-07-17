@@ -13,6 +13,9 @@ message TestProperties {
   // The expected Sources message uploaded.
   luci.resultdb.v1.Sources expected_sources = 1;
 
+  // Manifest branch the builder is tracking.
+  string manifest_branch = 2;
+
 }
 
 message SetupChrootProperties {

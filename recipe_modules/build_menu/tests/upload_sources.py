@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/properties',
     'cros_infra_config',
     'build_menu',
+    'cros_source',
     'src_state',
     'test_util',
 ]
@@ -32,6 +33,7 @@ revision = 'c' * 40
 
 
 def RunSteps(api, properties):
+  api.cros_source.test_api.manifest_branch = properties.manifest_branch
   sources = api.build_menu.upload_sources(
       api.cros_infra_config.config) or Sources()
   api.assertions.assertEqual(sources, properties.expected_sources)
@@ -79,22 +81,25 @@ def GenTests(api):
   }
 
   yield api.test(
-      'staging-release',
+      'release-branch',
       api.test_util.test_child_build(
-          'staging-eve', builder_name='staging-eve-release-main',
-          input_properties=input_properties,
+          'kukui', builder_name='kukui-release-R111-12345.B',
+          input_properties=input_properties, git_repo=internal_git_repo,
+          git_ref='release-R111-12345.B', revision=revision,
           experiments=['chromeos.build_menu.upload_sources']).build,
-      api.properties(TestProperties(expected_sources=expected_sources)),
+      api.properties(
+          TestProperties(expected_sources=expected_sources,
+                         manifest_branch='release-R111-12345.B')),
       api.post_check(post_process.MustRun, 'upload sources metadata'),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
-      'staging-release-no-commit',
+      'release-no-commit',
       api.test_util.test_child_build(
-          'staging-eve', builder_name='staging-eve-release-main',
-          git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
+          'kukui', builder_name='kukui-release-R111-12345.B',
           experiments=['chromeos.build_menu.upload_sources']).build,
+      api.properties(TestProperties(manifest_branch='release-R111-12345.B')),
       api.post_check(post_process.DoesNotRun, 'upload sources metadata'),
       api.post_process(post_process.DropExpectation),
   )
@@ -140,6 +145,19 @@ def GenTests(api):
       'more-than-ten-changes',
       test_build('staging-atlas', number_of_gerrit_changes=11),
       api.properties(TestProperties(expected_sources=expected_sources)),
+  )
+
+  # Use annealing commit on ToT.
+  expected_sources = Sources(gitiles_commit=gitiles_commit)
+  yield api.test(
+      'release-tot',
+      api.test_util.test_child_build(
+          'kukui', builder_name='kukui-release-main',
+          git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
+          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.properties(TestProperties(expected_sources=expected_sources)),
+      api.post_check(post_process.MustRun, 'upload sources metadata'),
+      api.post_process(post_process.DropExpectation),
   )
 
   gitiles_commit = GitilesCommit(project='chromiumos/manifest',

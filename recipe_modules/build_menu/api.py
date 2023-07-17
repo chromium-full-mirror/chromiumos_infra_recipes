@@ -149,11 +149,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         rdb_common_pb2.GitilesCommit()):
       return self.m.metadata.sources_gitiles_commit_override
 
-    # We don't want to derive a release ResultDB commit because we pin and
-    # commit release buildspecs to a -snapshot branch rather than using the
-    # (potentially unpinned) manifest-internal commit.
+    # Don't derive a ResultDB commit for release branches. We pin and commit
+    # release buildspecs to a -snapshot branch rather than using the
+    # (potentially unpinned) manifest-internal commit. ToT release uses pinned
+    # annealing snapshots, so upload that for consistency with other ToT builds.
     config = self.config_or_default
-    if config and config.id.type == BuilderConfig.Id.RELEASE:
+    if config and config.id.type == BuilderConfig.Id.RELEASE and not self.m.cros_source.is_tot:
       return rdb_common_pb2.GitilesCommit()
 
     with self.m.context(cwd=self.m.src_state.build_manifest.path):

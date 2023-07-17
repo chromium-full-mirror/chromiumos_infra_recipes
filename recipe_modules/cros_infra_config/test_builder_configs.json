@@ -2389,6 +2389,138 @@
     },
     {
       "id": {
+        "name": "release-R111-12345.B-orchestrator",
+        "type": "RELEASE",
+        "bucket": "release"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R111-12345.B"
+        },
+        "child_specs": [
+          {
+            "name": "kukui-release-R111-12345.B",
+            "collectHandling": "COLLECT"
+          }
+        ]
+      }
+    },
+    {
+      "id": {
+        "name": "kukui-release-R111-12345.B",
+        "type": "RELEASE",
+        "bucket": "release"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R111-12345.B"
+        }
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          }
+        ],
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-releases-test",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS",
+                  "IMAGE_ARCHIVES"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "output_artifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS",
+                  "BREAKPAD_DEBUG_SYMBOLS",
+                  "SIMPLE_CHROME_SYSROOT",
+                  "CHROME_EBUILD_ENV"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+
+            ]
+          },
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true
+      },
+      "chrome": {
+        "internal": true
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
         "name": "betty-arc-r-release-main",
         "type": "RELEASE",
         "bucket": "release"

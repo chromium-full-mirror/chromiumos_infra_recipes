@@ -738,13 +738,7 @@
     "cmd": [],
     "name": "create buildspec.commit buildspec as snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/staging-buildspec-snapshot\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
-      "@@@STEP_LOG_END@resultdb_gitiles_commit@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1298,57 +1292,6 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-buildspec-snapshot:"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_1",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec.commit buildspec as snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_1",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec.commit buildspec as snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1973,13 +1916,7 @@
     "cmd": [],
     "name": "create buildspec (2).commit buildspec as snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/staging-buildspec-snapshot\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
-      "@@@STEP_LOG_END@resultdb_gitiles_commit@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2533,57 +2470,6 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-buildspec-snapshot:"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_2",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (2).commit buildspec as snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_2",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (2).commit buildspec as snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -3323,13 +3209,7 @@
     "cmd": [],
     "name": "create buildspec (3).commit buildspec as snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/staging-buildspec-snapshot\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
-      "@@@STEP_LOG_END@resultdb_gitiles_commit@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -3883,57 +3763,6 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-buildspec-snapshot:"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_3",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (3).commit buildspec as snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_3",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (3).commit buildspec as snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -4623,13 +4452,7 @@
     "cmd": [],
     "name": "create buildspec (4).commit buildspec as snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@host: \"chrome-internal.googlesource.com\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@ref: \"refs/heads/staging-buildspec-snapshot\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@commit_hash: \"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\"@@@",
-      "@@@STEP_LOG_LINE@resultdb_gitiles_commit@position: 102@@@",
-      "@@@STEP_LOG_END@resultdb_gitiles_commit@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -5183,57 +5006,6 @@
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-buildspec-snapshot:"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_4",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (4).commit buildspec as snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_4",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (4).commit buildspec as snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
