@@ -829,7 +829,7 @@ class GerritApi(RecipeApi):
         # TODO(b/278083716): Replace with exponential_retries decorator.
         for attempt in range(retries + 1):
           cmd = self.m.git_cl(
-              'land', ['-f', gerrit_change.change],
+              'land', ['-f', gerrit_change.change], add_output_log=True,
               stderr=self.m.raw_io.output_text(add_output_log=True),
               ok_ret='any')
           # Manually check the retcode so that we can capture stderr and filter

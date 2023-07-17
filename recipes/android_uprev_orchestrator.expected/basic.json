@@ -13998,6 +13998,7 @@
     "name": "commit and generate CL.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

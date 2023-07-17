@@ -7051,7 +7051,7 @@ API for working with git cl.
 
 A module for interacting with git cl.
 
-&mdash; **def [issues](/recipe_modules/git_cl/api.py#140)(self):**
+&mdash; **def [issues](/recipe_modules/git_cl/api.py#142)(self):**
 
 Run `git cl issue`.
 
@@ -7059,7 +7059,7 @@ Returns:
   dict: Map between ref and issue number, e.g.
     {'refs/heads/main': '3402394'}.
 
-&mdash; **def [status](/recipe_modules/git_cl/api.py#112)(self, field: str=None, fast: bool=False, issue: str=None, \*\*kwargs):**
+&mdash; **def [status](/recipe_modules/git_cl/api.py#114)(self, field: str=None, fast: bool=False, issue: str=None, \*\*kwargs):**
 
 Run `git cl status` with given arguments.
 
@@ -7072,7 +7072,7 @@ Args:
 Returns:
   The command output.
 
-&mdash; **def [upload](/recipe_modules/git_cl/api.py#42)(self, topic: Optional[str]=None, reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, hashtags: Optional[List[str]]=None, send_mail: bool=False, target_branch: Optional[str]=None, dry_run: bool=False, use_local_diff: bool=False, message: Optional[str]=None, \*\*kwargs):**
+&mdash; **def [upload](/recipe_modules/git_cl/api.py#44)(self, topic: Optional[str]=None, reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, hashtags: Optional[List[str]]=None, send_mail: bool=False, target_branch: Optional[str]=None, dry_run: bool=False, use_local_diff: bool=False, message: Optional[str]=None, \*\*kwargs):**
 
 Run `git cl upload`.
 

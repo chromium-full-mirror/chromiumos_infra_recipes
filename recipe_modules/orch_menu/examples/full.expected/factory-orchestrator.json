@@ -3577,6 +3577,7 @@
     "name": "set up orchestrator.bump version.commit chromeos/config/chromeos_version.sh.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -4467,6 +4468,7 @@
     "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

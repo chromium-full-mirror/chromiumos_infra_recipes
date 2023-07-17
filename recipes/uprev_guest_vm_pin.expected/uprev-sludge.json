@@ -2406,6 +2406,7 @@
     "name": "upreving pin for branch main.generate CL.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

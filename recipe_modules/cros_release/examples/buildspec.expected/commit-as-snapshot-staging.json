@@ -730,6 +730,7 @@
     "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1295,6 +1296,7 @@
     "name": "create buildspec.commit buildspec as snapshot.commit to staging-buildspec-snapshot.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1963,6 +1965,7 @@
     "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2528,6 +2531,7 @@
     "name": "create buildspec (2).commit buildspec as snapshot.commit to staging-buildspec-snapshot.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -3311,6 +3315,7 @@
     "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -3876,6 +3881,7 @@
     "name": "create buildspec (3).commit buildspec as snapshot.commit to staging-buildspec-snapshot.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -4609,6 +4615,7 @@
     "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0-8945511751514863184.xml to release.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -5174,6 +5181,7 @@
     "name": "create buildspec (4).commit buildspec as snapshot.commit to staging-buildspec-snapshot.submit CL 1.git_cl land",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },

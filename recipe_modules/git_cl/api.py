@@ -22,10 +22,12 @@ class GitClApi(recipe_api.RecipeApi):
     step_name = kwargs.pop('step_name', None)
     if step_name is not None:
       kwargs['name'] = step_name
+    add_output_log = kwargs.pop('add_output_log', False)
 
     with self.m.depot_tools.on_path():
-      return self.m.depot_tools_git_cl(*args, stdout=self.m.raw_io.output(),
-                                       **kwargs)
+      return self.m.depot_tools_git_cl(
+          *args, stdout=self.m.raw_io.output(add_output_log=add_output_log),
+          **kwargs)
 
   def __getattr__(self, name: str) -> Any:
     attr = getattr(self.m.depot_tools_git_cl, name)
