@@ -40,7 +40,7 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   """
 
   def __init__(self, interface, test_id, test, autotest_keyvals=None,
-               artifact_dir='', image_storage_server='', invocation_id=''):
+               artifact_dir='', image_storage_server=''):
     """Specific constructor for CrosToolRunner subclass of DUTTestMetadata
 
     Args:
@@ -48,11 +48,9 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     * test_id (str): The id for a specific test
     * test (skylab_test_runner.Request.Test): The actual test request.
     * image_storage_server (str): Image storage server info.
-    * invocation_id (str): Invocation id of the test run.
     """
     super().__init__(test_id=test_id, test=test, gs_url=interface.logs_gs_url(),
-                     image_storage_server=image_storage_server,
-                     invocation_id=invocation_id)
+                     image_storage_server=image_storage_server)
 
     self.artifact_dir = artifact_dir
     self.autotest_keyvals = autotest_keyvals
@@ -761,11 +759,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       interface.
     """
     artifact_dir = str(self._api.path.mkdtemp(self.ARTIFACT_DIR_PREFIX))
-    return CrosToolRunnerTestMetadata(
-        interface=self, test_id=test_id, test=test,
-        autotest_keyvals=autotest_keyvals, artifact_dir=artifact_dir,
-        image_storage_server=None,
-        invocation_id=self._api.cros_resultdb.current_invocation_id)
+    return CrosToolRunnerTestMetadata(interface=self, test_id=test_id,
+                                      test=test,
+                                      autotest_keyvals=autotest_keyvals,
+                                      artifact_dir=artifact_dir,
+                                      image_storage_server=None)
 
   def get_results_directory(self, metadata):
     """Retrieves the directory whereupon results are deposited.

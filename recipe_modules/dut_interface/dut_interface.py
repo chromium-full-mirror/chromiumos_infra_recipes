@@ -17,8 +17,7 @@ class DUTTestMetadata():  # pragma: no cover
 
   DUMMY_TEST_ID = 'original_test'
 
-  def __init__(self, test_id, test, gs_url, image_storage_server='',
-               invocation_id=''):
+  def __init__(self, test_id, test, gs_url, image_storage_server=''):
     """Holds metadata relevant to one specific test. Passable to DutInterface
 
     Args:
@@ -27,7 +26,6 @@ class DUTTestMetadata():  # pragma: no cover
     * gs_url (str): The url to google cloud storage for this test.
     * image_storage_server (str): The url for the image storage for the test.
         e.g. gs://chromeos-releases-test
-    * invocation_id (str): Invocation id of the test run.
     """
     self.test_id = test_id
     # TODO: Remove this once all tests have IDs
@@ -39,12 +37,11 @@ class DUTTestMetadata():  # pragma: no cover
     self.test = test
     self.gs_url = gs_url
     self.stainless_logs_url = self._parse_logs_url(self.gs_url, 'stainless')
-    self.testhaus_logs_url = self._parse_logs_url(self.gs_url, 'testhaus',
-                                                  invocation_id)
+    self.testhaus_logs_url = self._parse_logs_url(self.gs_url, 'testhaus')
     self.image_storage_server = image_storage_server
 
   @staticmethod
-  def _parse_logs_url(gs_dir, tool, invocation_id=''):
+  def _parse_logs_url(gs_dir, tool):
     """Return an equivalent tool URL for the given gs URL.
 
     Args:
@@ -53,7 +50,6 @@ class DUTTestMetadata():  # pragma: no cover
                   Supported values are:
                   * 'stainless'
                   * 'testhaus'
-    * invocation_id (str): The invocation id of the test run.
 
     Returns:
       str: URL to logs in the specified tool.
@@ -77,9 +73,7 @@ class DUTTestMetadata():  # pragma: no cover
     assert gs_dir.startswith(gs_prefix), '{} should start with {}'.format(
         gs_dir, gs_prefix)
 
-    logs_path = 'invocations/' + invocation_id if tool == 'testhaus' and invocation_id else gs_dir[
-        len(gs_prefix):]
-    return template_url.format(logs_path=logs_path)
+    return template_url.format(logs_path=gs_dir[len(gs_prefix):])
 
 
 class DUTInterface():  # pragma: no cover
