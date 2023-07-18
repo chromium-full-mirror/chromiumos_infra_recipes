@@ -438,7 +438,7 @@ def _enumerate_cft_tests(api, requests):
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
           # DRY RUN
-          _ = _build_filtered_tests(api, r, test_suites, build_target)
+          _ = _build_filtered_tests(api, r, test_suites, build_target, True)
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
       else:
@@ -468,7 +468,7 @@ def _enumerate_cft_tests(api, requests):
     return tagged_responses
 
 
-def _build_filtered_tests(api, r, test_suites, build_target):
+def _build_filtered_tests(api, r, test_suites, build_target, dryrun):
   """Create non-breaking step to filter out test cases.
 
   Args:
@@ -482,7 +482,8 @@ def _build_filtered_tests(api, r, test_suites, build_target):
     try:
       build_number_matches = _extract_build_numbers_from_request(r)
       milestone = next(iter(build_number_matches))
-      req = _ctr_test_filter(test_suites, build_target, milestone)
+      req = _ctr_test_filter(test_suites, build_target, milestone, dryrun,
+                             str(api.buildbucket.build.id))
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:
         step.presentation.logs["removed_tests"] = json.dumps(
@@ -717,7 +718,7 @@ def _shard_dependencies(shard):
   return list(deps)
 
 
-def _ctr_test_filter(test_suites, board, milestone):
+def _ctr_test_filter(test_suites, board, milestone, dryrun, bbid=None):
   """Build a CrosToolRunnerPreTestRequest.
 
   Args:
@@ -730,12 +731,11 @@ def _ctr_test_filter(test_suites, board, milestone):
 
   prp = pre_request.PassRatePolicy(pass_rate=96, min_runs=20,
                                    num_of_milestones=1, force_enabled_tests=[],
-                                   force_disabled_tests=[])
-  formattedProto = pre_request.FilterFlakyRequest(pass_rate_policy=prp,
-                                                  board=board,
-                                                  test_suites=test_suites,
-                                                  milestone=milestone,
-                                                  default_enabled=True)
+                                   force_disabled_tests=[], pass_rate_recent=98,
+                                   min_runs_recent=20, dryrun=dryrun)
+  formattedProto = pre_request.FilterFlakyRequest(
+      pass_rate_policy=prp, board=board, test_suites=test_suites,
+      milestone=milestone, default_enabled=True, bbid=bbid)
   return ctr.CrosToolRunnerPreTestRequest(request=formattedProto,
                                           container_metadata_key=board)
 

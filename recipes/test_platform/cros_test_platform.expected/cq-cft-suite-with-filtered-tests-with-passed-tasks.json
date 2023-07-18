@@ -395,7 +395,10 @@
       "@@@STEP_LOG_LINE@request@    \"passRatePolicy\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"passRate\": 96,@@@",
       "@@@STEP_LOG_LINE@request@      \"minRuns\": 20,@@@",
-      "@@@STEP_LOG_LINE@request@      \"numOfMilestones\": 1@@@",
+      "@@@STEP_LOG_LINE@request@      \"numOfMilestones\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@      \"passRateRecent\": 98,@@@",
+      "@@@STEP_LOG_LINE@request@      \"minRunsRecent\": 20,@@@",
+      "@@@STEP_LOG_LINE@request@      \"dryrun\": true@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"testSuites\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
@@ -417,7 +420,8 @@
       "@@@STEP_LOG_LINE@request@    ],@@@",
       "@@@STEP_LOG_LINE@request@    \"milestone\": \"108\",@@@",
       "@@@STEP_LOG_LINE@request@    \"board\": \"foo-build-target\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"defaultEnabled\": true@@@",
+      "@@@STEP_LOG_LINE@request@    \"defaultEnabled\": true,@@@",
+      "@@@STEP_LOG_LINE@request@    \"bbid\": \"0\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -467,7 +471,7 @@
     ],
     "infra_step": true,
     "name": "enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process",
-    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"passRatePolicy\": {\n      \"passRate\": 96,\n      \"minRuns\": 20,\n      \"numOfMilestones\": 1\n    },\n    \"testSuites\": [\n      {\n        \"testCases\": {\n          \"testCases\": [\n            {\n              \"id\": {\n                \"value\": \"foo-test\"\n              },\n              \"dependencies\": [\n                {\n                  \"value\": \"foo-dep:bar\"\n                }\n              ]\n            }\n          ]\n        }\n      }\n    ],\n    \"milestone\": \"108\",\n    \"board\": \"foo-build-target\",\n    \"defaultEnabled\": true\n  }\n}",
+    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"passRatePolicy\": {\n      \"passRate\": 96,\n      \"minRuns\": 20,\n      \"numOfMilestones\": 1,\n      \"passRateRecent\": 98,\n      \"minRunsRecent\": 20,\n      \"dryrun\": true\n    },\n    \"testSuites\": [\n      {\n        \"testCases\": {\n          \"testCases\": [\n            {\n              \"id\": {\n                \"value\": \"foo-test\"\n              },\n              \"dependencies\": [\n                {\n                  \"value\": \"foo-dep:bar\"\n                }\n              ]\n            }\n          ]\n        }\n      }\n    ],\n    \"milestone\": \"108\",\n    \"board\": \"foo-build-target\",\n    \"defaultEnabled\": true,\n    \"bbid\": \"0\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
