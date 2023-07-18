@@ -104,7 +104,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           self._cq_test_failure_attributes.test_failure_attributions.extend(
               fault_attributed_build_targets)
           self.m.easy.set_properties_step(
-              test_failure_attributions=self._cq_test_failure_attributes)
+              cq_fault_attributions=self._cq_test_failure_attributes)
       except self.m.step.StepFailure:
         # Orchestrator shouldn't fail due to failure in fault attribution.
         pres.logs['exception'] = traceback.format_exc()

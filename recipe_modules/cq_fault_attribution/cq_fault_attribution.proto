@@ -28,7 +28,7 @@ enum CqFailureAttribute {
 }
 
 message CqTestFailureFaultAttributionStats {
-  // Fault attributed tests gruped by build targets.
+  // Fault attributed tests grouped by build targets.
   repeated FaultAttributedBuildTarget test_failure_attributions = 1;
 }
 
@@ -36,7 +36,7 @@ message FaultAttributedBuildTarget {
   // Build target of the failure. e.g. brya
   string build_target = 1;
 
-  // All fault attributed tests under this buidl target.
+  // All fault attributed tests under this build target.
   repeated FaultAttributionProperties fault_attributes = 3;
 }
 

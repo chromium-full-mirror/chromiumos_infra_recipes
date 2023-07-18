@@ -501,8 +501,7 @@ def GenTests(api):
           step_name='set fault attributes.buildbucket.search (2)'),
       api.resultdb.query(inv_bundle=invocation_bundle,
                          step_name='set fault attributes.rdb query'),
-      api.post_process(post_process.PropertiesContain,
-                       'test_failure_attributions'))
+      api.post_process(post_process.PropertiesContain, 'cq_fault_attributions'))
 
 
 def create_expected_snapshot(source_build_id, source_completed_unix_timestamp):
