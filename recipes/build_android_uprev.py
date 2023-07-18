@@ -68,6 +68,7 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
       # We have no steps following build_images, so we don't need to
       # check the return value.
       api.build_menu.build_images(config)
+      api.build_menu.create_containers(builder_config=config)
   except StepFailure:
     raise_upload_failure = False
     raise
@@ -96,6 +97,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       uprev_props,
       api.android.set_mark_stable_success(),
       api.post_check(post_process.MustRun, 'build images'),
@@ -111,6 +122,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       uprev_props,
       api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.DoesNotRun, 'build images'),
@@ -128,6 +149,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               },
               'always_build': True,
           }),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       uprev_props,
       api.android.set_mark_stable_early_exit(),
       api.post_check(post_process.MustRun, 'build images'),
@@ -142,6 +173,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       uprev_props,
       api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
@@ -161,6 +202,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
@@ -180,6 +231,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'eve'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-android-uprev.{cros-version}-{bbid}'
+              }
+          }),
       uprev_props,
       api.android.set_mark_stable_success(),
       api.build_menu.set_build_api_return('install packages',
