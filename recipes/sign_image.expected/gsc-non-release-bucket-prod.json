@@ -161,7 +161,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "BUILD=8945511751514863184\\nBUILD_URL=https://cr-buildbucket.appspot.com/build/8945511751514863184\\nTIMESTAMP=2012-05-14 12:53:21 UTC\\nPARENT_BUILD=1234\\nPARENT_BUILD_URL=https://cr-buildbucket.appspot.com/build/1234\\n",
+      "BUILD=8945511751514863184\nBUILD_URL=https://cr-buildbucket.appspot.com/build/8945511751514863184\nTIMESTAMP=2012-05-14 12:53:21 UTC\nPARENT_BUILD=1234\nPARENT_BUILD_URL=https://cr-buildbucket.appspot.com/build/1234\n",
       "[CLEANUP]/50,firmware-ti50-postsubmit,R97-14299.0.0-55770-8832698563268919201,ti50.tar.bz2,ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions"
     ],
     "infra_step": true,

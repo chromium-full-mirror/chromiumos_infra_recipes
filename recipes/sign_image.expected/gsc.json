@@ -99,7 +99,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "BUILD=0\\nBUILD_URL=https://cr-buildbucket.appspot.com/build/0\\nTIMESTAMP=2012-05-14 12:53:21 UTC\\n",
+      "BUILD=0\nBUILD_URL=https://cr-buildbucket.appspot.com/build/0\nTIMESTAMP=2012-05-14 12:53:21 UTC\n",
       "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
     ],
     "infra_step": true,

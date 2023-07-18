@@ -132,17 +132,17 @@ def _get_trigger_file_contents(api: RecipeApi) -> str:
     A raw string of the file contents.
   """
   parent_build_id = api.cros_tags.get_single_value('parent_buildbucket_id')
-  contents = r'BUILD={build_id}\n' \
-             r'BUILD_URL={url}\n' \
-             r'TIMESTAMP={timestamp} UTC\n'
+  contents = ('BUILD={build_id}\n'
+              'BUILD_URL={url}\n'
+              'TIMESTAMP={timestamp} UTC\n')
   values = {
       'build_id': api.buildbucket.build.id,
       'url': api.buildbucket.build_url(),
       'timestamp': api.time.utcnow().strftime('%Y-%m-%d %H:%M:%S')
   }
   if parent_build_id:
-    contents += r'PARENT_BUILD={parent_build}\n' \
-                r'PARENT_BUILD_URL={parent_build_url}\n'
+    contents += ('PARENT_BUILD={parent_build}\n'
+                 'PARENT_BUILD_URL={parent_build_url}\n')
     values.update({
         'parent_build': parent_build_id,
         'parent_build_url': api.buildbucket.build_url(build_id=parent_build_id)
