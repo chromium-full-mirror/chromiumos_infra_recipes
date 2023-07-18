@@ -165,12 +165,16 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           endpoint = self._get_legacy_endpoint(artifact)
           response = artifacts.BundleResponse()
           if endpoint:
-            request = artifacts.BundleRequest(chroot=chroot, sysroot=sysroot,
-                                              build_target=sysroot.build_target,
-                                              output_dir=str(path))
+            request = artifacts.BundleRequest(
+                chroot=chroot, sysroot=sysroot,
+                build_target=sysroot.build_target, output_dir=str(path),
+                result_path=self._result_path(path))
             response = endpoint(request, infra_step=True)
 
-          files_by_artifact[name] = [art.path for art in response.artifacts]
+          files_by_artifact[name] = [
+              str(art.artifact_path.path) or art.path
+              for art in response.artifacts
+          ]
       return files_by_artifact
 
     futures = []
