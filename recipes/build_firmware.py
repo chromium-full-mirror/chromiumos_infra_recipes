@@ -50,6 +50,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildFirmwareProperties
 
+# Artifacts that don't need to be signed.
+SKIP_SIGNING_RE = re.compile(r'^(host_emulation|opentitan)-')
+
 
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
@@ -169,7 +172,10 @@ def RunSteps(api, properties):
                                          preserving_proto_field_name=True)
         bucket = 'staging' if api.build_menu.is_staging else 'release'
         builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
-        for artifact_name in uploaded_artifacts[2]['FIRMWARE_TARBALL']:
+        for artifact_name in [
+            a for a in uploaded_artifacts[2]['FIRMWARE_TARBALL']
+            if not SKIP_SIGNING_RE.match(a)
+        ]:
           archive = "gs://%s/%s/%s" % (uploaded_artifacts[0],
                                        uploaded_artifacts[1], artifact_name)
           sign_image_props["archive"] = archive

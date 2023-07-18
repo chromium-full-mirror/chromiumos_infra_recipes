@@ -10687,15 +10687,15 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 This recipe should only be used for ToT firmware builds and build_legacy_fw
 (which is not deprecated) should be used for branch firmware builds.
 
-&mdash; **def [CreateContainers](/recipes/build_firmware.py#75)(api, config):**
+&mdash; **def [CreateContainers](/recipes/build_firmware.py#78)(api, config):**
 
-&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#189)(api, location, config):**
+&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#195)(api, location, config):**
 
 Create directories and files of artifacts needed by Ti50 Tast tests.
 
-&mdash; **def [RunSteps](/recipes/build_firmware.py#97)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_firmware.py#100)(api, properties):**
 
-&mdash; **def [UploadTestResults](/recipes/build_firmware.py#54)(api, location, builder_name):**
+&mdash; **def [UploadTestResults](/recipes/build_firmware.py#57)(api, location, builder_name):**
 ### *recipes* / [build\_incremental](/recipes/build_incremental.py)
 
 [DEPS](/recipes/build_incremental.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
