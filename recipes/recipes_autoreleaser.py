@@ -49,8 +49,13 @@ def RunSteps(api: recipe_api.RecipeApi,
     for bundle in properties.bundles:
       step_name = f"release bundle '{bundle}'"
       args = [
-          release_script, '--smart', '--verbose', '--show-instances',
-          '--bundle', bundle
+          release_script,
+          '--max-releasable',
+          '--verbose',
+          '--show-instances',
+          '--bundle',
+          bundle,
+          '--yes',
       ]
 
       # TODO(b/287276108): Send emails from this recipe notifying the infra

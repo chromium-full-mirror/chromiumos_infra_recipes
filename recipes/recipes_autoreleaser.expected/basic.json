@@ -15,11 +15,12 @@
   {
     "cmd": [
       "[CLEANUP]/autorelease_tmp_1/release.sh",
-      "--smart",
+      "--max-releasable",
       "--verbose",
       "--show-instances",
       "--bundle",
-      "infra"
+      "infra",
+      "--yes"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
@@ -28,11 +29,12 @@
   {
     "cmd": [
       "[CLEANUP]/autorelease_tmp_1/release.sh",
-      "--smart",
+      "--max-releasable",
       "--verbose",
       "--show-instances",
       "--bundle",
-      "release"
+      "release",
+      "--yes"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
