@@ -4,7 +4,10 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/step',
     'cros_infra_config',
+    'cros_tags',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

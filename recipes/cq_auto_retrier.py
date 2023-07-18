@@ -12,14 +12,15 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
-DEPS = []
+DEPS = [
+    'auto_retry_util',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-# pylint: disable=unused-argument
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
-  pass
+  _ = api.auto_retry_util.cq_retry_candidates()
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
