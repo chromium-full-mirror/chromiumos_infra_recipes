@@ -8,13 +8,13 @@
       "-v",
       "--progress"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
     "name": "git clone"
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/recipes/release.sh",
+      "[CLEANUP]/autorelease_tmp_1/release.sh",
       "--smart",
       "--verbose",
       "--show-instances",
@@ -22,7 +22,7 @@
       "infra",
       "--dry-run"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
     "name": "release bundle 'infra' (dry-run)"
   },

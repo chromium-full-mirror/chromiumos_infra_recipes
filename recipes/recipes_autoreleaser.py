@@ -14,6 +14,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
@@ -40,9 +41,10 @@ def RunSteps(api: recipe_api.RecipeApi,
   # We only need to clone the recipes repo, so don't do a full ChromeOS
   # checkout. Clone into the workspace path so it'll get cleaned up after the
   # builder runs.
-  with api.context(cwd=api.src_state.workspace_path, infra_steps=True):
+  with api.context(
+      cwd=api.path.mkdtemp(prefix='autorelease'), infra_steps=True):
     _clone_recipes_repo(api)
-    release_script = api.context.cwd.join('recipes', 'release.sh')
+    release_script = api.context.cwd.join('release.sh')
 
     for bundle in properties.bundles:
       step_name = f"release bundle '{bundle}'"
