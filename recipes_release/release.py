@@ -172,7 +172,7 @@ class RecipeRelease:
       print('Everything looks good!')
     print()
 
-    if not options.force:
+    if not options.yes:
       self.prompt_about_setting_git_target(git_target)
 
     # Update refs.
@@ -206,8 +206,10 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       'Release recipes by moving the "prod" ref forward.')
   parser.add_argument('-d', '--dry-run', action='store_true',
                       help='Dry run: Don\'t actually change any cipd refs.')
-  parser.add_argument('-f', '--force', action='store_true',
-                      help='Bypass the prompt.')
+  parser.add_argument(
+      '-y', '--yes', action='store_true',
+      help='Answer yes to prompts, e.g. whether to update the CIPD ref after '
+      'checking staging results.')
   parser.add_argument(
       '-i', '--instanceid', type=common.CipdInstance,
       help='Release up to the commit specified by the instanceid. '
