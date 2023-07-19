@@ -25,11 +25,24 @@ class CTSResultsArchive(recipe_api.RecipeApi):
 
     @param d_dir: The results directory to process.
     """
+    # BUG(b/244294904, b/244297392): Some tags may not exist all the time; apply
+    # same workaround as https://crrev.com/c/3864300
+    model = self.m.cros_tags.get_single_value('label-model')
+    if not model:
+      model = self.m.cros_tags.get_single_value(
+          'label-model', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+    build = self.m.cros_tags.get_single_value('build')
+    if not build:
+      build = self.m.cros_tags.get_single_value('label-image')
+
     with self.m.step.nest('Archive CTS results') as step:
       json_input = {
           'dir': d_dir,
           'cts_results_gsurl': self._properties.cts_results_gsurl,
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
+          'build': build,
+          'model': model,
+          'parent_job_id': self.m.cros_tags.get_single_value('parent_task_id'),
       }
       step.logs['json_input'] = json.dumps(json_input, sort_keys=True)
       result = self.m.step(

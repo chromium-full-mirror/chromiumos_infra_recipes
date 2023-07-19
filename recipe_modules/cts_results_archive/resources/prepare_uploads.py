@@ -65,12 +65,14 @@ def main():
   opts = ap.parse_args()
 
   # Input format
+  # TODO(b/289421818): Validate also 'build' and 'model' once we are confident
+  # with the new approach.
   data = json.load(opts.json_input)
-  dir = data['dir']
-  cts_results_gsurl = data['cts_results_gsurl']
-  cts_apfe_gsurl = data['cts_apfe_gsurl']
+  for key in ('dir', 'cts_results_gsurl', 'cts_apfe_gsurl', 'parent_job_id'):
+    if not data.get(key):
+      raise ValueError('missing/invalid input field: ' + key)
 
-  instructions = _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl)
+  instructions = _prepare_uploads(data)
 
   # Output format
   json.dump(
@@ -88,7 +90,7 @@ def main():
   return 0
 
 
-def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
+def _prepare_uploads(data):
   """Prepare artifacts for CTS uploads.
 
     Upload testResult.xml.gz/test_result.xml.gz file to cts_results_bucket.
@@ -99,7 +101,7 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
         information.
     """
   instructions = []
-  for test_dir in glob.glob(os.path.join(dir, '*')):
+  for test_dir in glob.glob(os.path.join(data['dir'], '*')):
     cts_path = os.path.join(test_dir, 'cheets_CTS.*', 'results', '*',
                             TIMESTAMP_PATTERN)
     cts_v2_path = os.path.join(test_dir, 'cheets_CTS_*', 'results', '*',
@@ -118,40 +120,33 @@ def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
     ]:
       for path in glob.glob(result_path):
         instructions += _prepare_uploads_for_test(test_dir, path,
-                                                  result_pattern,
-                                                  cts_results_gsurl,
-                                                  cts_apfe_gsurl)
+                                                  result_pattern, data)
   return instructions
 
 
-def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
-                              apfe_gs_bucket):
+def _prepare_uploads_for_test(test_dir, path, result_pattern, data):
   instructions = []
+  apfe_gs_bucket = data['cts_apfe_gsurl']
+  result_gs_bucket = data['cts_results_gsurl']
+  build = data.get('build')
+  host_model_name = data.get('model')
+  parent_job_id = data['parent_job_id']
 
-  keyval = _parse_job_keyval(dir)
-  build = keyval.get('build')
-  host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
-  labels = unquote(host_keyval.get('labels'))
-  try:
-    host_model_name = re.search(r'model:(\w+)', labels).group(1)
-  except AttributeError:
-    logging.exception('Error in parsing %s/host_keyval/%s', dir,
-                      keyval.get('hostname'))
-    host_model_name = ''
-
-  # Perform minimal validation of the source directory.
-  if not host_model_name:
-    raise ValueError('Failed to determine model')
-  if not build:
-    raise ValueError('Failed to determine build')
-  if not host_keyval:
-    raise ValueError('Failed to determine DUT hostname')
+  if not build or not host_model_name:
+    # Fallback to keyval parsing.
+    # TODO(b/289421818): Remove once we're confident with the new approach.
+    try:
+      keyval = _parse_job_keyval(test_dir)
+      build = keyval['build']
+      host_keyval = _parse_host_keyval(test_dir, keyval['hostname'])
+      labels = unquote(host_keyval['labels'])
+      host_model_name = re.search(r'model:(\w+)', labels).group(1)
+    except Exception as e:
+      raise RuntimeError('Failed to determine build/model') from e
 
   if not _should_upload(build):
     # No need to upload current folder, return.
     return []
-
-  parent_job_id = str(keyval['parent_job_id'])
 
   job_id, package, timestamp = _parse_cts_job_results_file_path(path)
 

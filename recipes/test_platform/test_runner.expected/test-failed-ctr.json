@@ -1118,7 +1118,7 @@
     "name": "execution steps.post upload step (ctr).Archive CTS results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\"}@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"build\": null, \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": null, \"parent_job_id\": null}@@@",
       "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[{'destination': 'gs://fake-bucket/fake-folder', 'name': 'fake-instruction', 'source': 'local/directory/to/upload'}]@@@",
       "@@@STEP_LOG_END@instructions@@@"
@@ -1129,7 +1129,7 @@
       "python3",
       "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
       "--json-input",
-      "{\"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\"}",
+      "{\"build\": null, \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": null, \"parent_job_id\": null}",
       "--json-output",
       "/path/to/tmp/json"
     ],

@@ -7,9 +7,11 @@ from PB.recipe_modules.chromeos.cts_results_archive.cts_results_archive import \
 
 DEPS = [
     'depot_tools/gsutil',
+    'recipe_engine/buildbucket',
     'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/step',
+    'cros_tags',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
