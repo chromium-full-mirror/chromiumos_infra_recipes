@@ -339,16 +339,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           passed_test_names += auto_exonerated_gce_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
-      with self.m.step.nest('fault attribution'):
-        self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
-            test_results, snapshot, supports_fault_attribution)
-
       test_results = test_results._replace(skylab=auto_exonerated_hw_results +
                                            old_exonerated_hw_results)
       test_results = test_results._replace(tast_vm=auto_exonerated_vm_results +
                                            old_exonerated_vm_results)
       test_results = test_results._replace(tast_gce=auto_exonerated_gce_results)
       self.m.exonerate.populate_exoneration_markdown()
+
+      with self.m.step.nest('fault attribution'):
+        self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
+            test_results, snapshot, supports_fault_attribution)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
