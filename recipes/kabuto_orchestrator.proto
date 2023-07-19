@@ -17,4 +17,8 @@ message KabutoOrchestratorProperties {
   // Number of sharded shadercache builders to spin off.
   // Defaults to 1 if not provided.
   int32 shard_count = 3;
+
+  // Timeout (in hours) to wait for the shadercache builders to return.
+  // Defaults to 3 hours if not provided.
+  int32 shadercache_timeout = 4;
 }

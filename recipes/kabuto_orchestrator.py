@@ -35,8 +35,25 @@ STAGING_BUCKET = 'staging'
 
 def _launch_builders(api: RecipeApi, bucket: str, builder: str,
                      is_staging: bool, count=1, input_properties=None,
-                     step_name="") -> list:
-  """Launch builders using api.bitbucket.run and return the list of builds."""
+                     step_name="", timeout_hours=3) -> list:
+  """
+  Launch builders using api.bitbucket.run and return the list of builds.
+
+  Args:
+    api: Recipe API.
+    bucket: the bucket the builder resides in on LUCI.
+    builder: the name of the builder to launch.
+    is_staging: whether to run the staging version -- prepends 'staging-'
+                to the supplied builder name.
+    count: the number of these builders to launch (for sharding.)
+    input_properties: the input properties JSON to supply to the builder.
+    step_name: customize the name of the step. Defaults to the builder name.
+    timeout_hours: timeout (in hours) to wait on the launched builders
+                   to complete.
+
+  Returns:
+    A list of builds (results of api.buildbucket.run).
+  """
 
   # Use the builder name if the step name isn't defined.
   step_name = step_name if step_name else builder
@@ -59,7 +76,7 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str,
     # the job is complete..
     # 3 hour timeout since paygen builder is roughly 1h in execution time,
     # the default 1h timeout causes an INFRA_FAILURE.
-    builds = api.buildbucket.run(requests, timeout=60 * 60 * 3)
+    builds = api.buildbucket.run(requests, timeout=60 * 60 * timeout_hours)
 
     # Check for FAILURE or INFRA_FAILURE on the completed child builder.
     # Sets the appropriate status on the current step in the orchestrator
@@ -85,6 +102,8 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str,
 def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
+  # Default shadercache build timeout to 3 hours if not specified
+  shadercache_timeout = 3 if not properties.shadercache_timeout else properties.shadercache_timeout
 
   bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
@@ -129,7 +148,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   shadercache_builds = _launch_builders(api, bucket, 'build_kabuto_shadercache',
                                         api.build_menu.is_staging, shard_count,
                                         shadercache_input_props,
-                                        'shadercache build')
+                                        'shadercache build',
+                                        timeout_hours=shadercache_timeout)
 
   # Combine the multiple outputs from the builders into a single list.
   all_uprev_info = []
