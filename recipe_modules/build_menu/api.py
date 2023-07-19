@@ -727,6 +727,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         relevant_testable_packages = unit_tests.packages
         testable_packages_optional = False
         filter_only_cros_workon = False
+        bazel = unit_tests.unit_tests_orchestrator == BuilderConfig.BAZEL
         if (config.unit_tests.dependencies
             == BuilderConfig.CL_AFFECTED_DEPENDENCIES and
             not _has_manifest_changes(presentation)):
@@ -761,7 +762,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 rust_code_coverage=self._test_with_rust_code_coverage,
                 empty_sysroot=unit_tests.empty_sysroot,
                 testable_packages_optional=testable_packages_optional,
-                filter_only_cros_workon=filter_only_cros_workon))
+                filter_only_cros_workon=filter_only_cros_workon, bazel=bazel))
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             request,
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.

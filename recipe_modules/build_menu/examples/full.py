@@ -157,10 +157,27 @@ def GenTests(api):
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True)),
       api.post_check(post_process.DoesNotRun, 'postsubmit relevance check'),
+      api.build_menu.assert_step_uses_portage('install packages',
+                                              'SysrootService/InstallPackages'),
+      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
+      # assert that this test case doesn't pass Bazel into the request.
+      api.build_menu.assert_step_uses_portage(
+          'run ebuild tests', 'TestService/BuildTargetUnitTest'),
       input_properties={
           '$chromeos/build_menu': dict(artifact_build=True),
           '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
       },
+  )
+
+  yield api.build_menu.test(
+      'postsubmit-build-with-bazel',
+      api.build_menu.assert_step_uses_bazel('install packages',
+                                            'SysrootService/InstallPackages'),
+      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
+      # assert that this test case passes Bazel into the request.
+      api.build_menu.assert_step_uses_bazel('run ebuild tests',
+                                            'TestService/BuildTargetUnitTest'),
+      builder_name='amd64-generic-bazel-postsubmit',
   )
 
   yield api.build_menu.test(
