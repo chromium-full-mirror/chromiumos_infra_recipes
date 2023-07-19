@@ -5130,7 +5130,7 @@ Checks if ctpv2 is enabled for use.
 Returns: bool
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
 
-[DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [cros\_tags](#recipe_modules-cros_tags), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API to archive test results to CTS specific buckets
@@ -12524,10 +12524,10 @@ Tests for api.cros_version.Version.
 &mdash; **def [RunSteps](/recipe_modules/ctpv2/examples/full.py#18)(api):**
 ### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
 
-[DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cros\_tags](#recipe_modules-cros_tags), [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#16)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cts_results_archive/examples/full.py#18)(api):**
 ### *recipes* / [debug\_symbols:examples/full](/recipe_modules/debug_symbols/examples/full.py)
 
 [DEPS](/recipe_modules/debug_symbols/examples/full.py#5): [debug\_symbols](#recipe_modules-debug_symbols), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
