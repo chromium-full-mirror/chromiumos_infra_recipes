@@ -65,6 +65,7 @@ DEPS = [
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/time',
+    'ctpv2',
     'cros_history',
     'cros_resultdb',
     'cros_tags',
@@ -895,6 +896,11 @@ def RunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
+
+  if properties.ctpv2_request and api.ctpv2.is_enabled():  # pragma: nocover
+    # Use ctpv2 binary rather than the normal ctpv1 workflow.
+    api.ctpv2.execute_luciexe()
+    return
   _top_level_export_to_bigquery(api, properties.force_export)
   if api.cq.active:
     api.easy.set_properties_step(is_retry=api.cros_history.is_retry())
