@@ -9,6 +9,7 @@ package recipes.chromeos.test_platform.cros_test_platform;
 import "test_platform/request.proto";
 import "test_platform/steps/execution.proto";
 import "test_platform/config/config.proto";
+import "chromiumos/test/api/ctp2.proto";
 
 message CrosTestPlatformProperties {
   reserved 1;
@@ -67,4 +68,8 @@ message CrosTestPlatformProperties {
   // The following property used to determine the build configs are for
   // parnters. Defaults to false.
   bool partner_config = 12;
+
+  // New CTPv2 request. If this is provided, ctpv1 flow will be bypassed and
+  // CTPv2 binary will be invoked from recipes.
+  chromiumos.test.api.CTPv2Request ctpv2_request = 13;
 }
