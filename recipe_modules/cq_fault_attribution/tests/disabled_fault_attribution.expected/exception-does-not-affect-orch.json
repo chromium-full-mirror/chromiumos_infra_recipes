@@ -3,31 +3,6 @@
     "cmd": [],
     "name": "set fault attributes",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@exception@Traceback (most recent call last):@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[chromeos]/recipe_modules/cq_fault_attribution/api.py\", line 96, in set_cq_fault_attribute_properties@@@",
-      "@@@STEP_LOG_LINE@exception@    comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner@@@",
-      "@@@STEP_LOG_LINE@exception@    return func(*a, **kw)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[chromeos]/recipe_modules/cq_fault_attribution/api.py\", line 347, in _get_comparison_snapshots@@@",
-      "@@@STEP_LOG_LINE@exception@    previous_snapshot_builds = self.m.buildbucket.search(@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner@@@",
-      "@@@STEP_LOG_LINE@exception@    return func(*a, **kw)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_modules/buildbucket/api.py\", in search@@@",
-      "@@@STEP_LOG_LINE@exception@    step_result = self._run_bb(@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner@@@",
-      "@@@STEP_LOG_LINE@exception@    return func(*a, **kw)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_modules/buildbucket/api.py\", in _run_bb@@@",
-      "@@@STEP_LOG_LINE@exception@    return self.m.step(@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner@@@",
-      "@@@STEP_LOG_LINE@exception@    return func(*a, **kw)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_modules/step/api.py\", in __call__@@@",
-      "@@@STEP_LOG_LINE@exception@    return self._run_or_raise_step(@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_modules/step/api.py\", in _run_or_raise_step@@@",
-      "@@@STEP_LOG_LINE@exception@    return self._raise_on_disallowed_statuses(ret, allowed_statuses)@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[recipe_engine]/recipe_modules/step/api.py\", in _raise_on_disallowed_statuses@@@",
-      "@@@STEP_LOG_LINE@exception@    raise exc('.'.join(result.name_tokens), result)@@@",
-      "@@@STEP_LOG_LINE@exception@recipe_engine.recipe_api.InfraFailure: Infra Failure: Step('set fault attributes.buildbucket.search (2)') (retcode: 1)@@@",
-      "@@@STEP_LOG_END@exception@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -78,6 +53,21 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ignored exception",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('set fault attributes.buildbucket.search (2)') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set caught_exceptions",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"InfraFailure(\\\"Infra Failure: Step('set fault attributes.buildbucket.search (2)') (retcode: 1)\\\")\"}@@@"
     ]
   },
   {

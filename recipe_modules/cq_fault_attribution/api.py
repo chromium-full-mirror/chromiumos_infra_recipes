@@ -4,7 +4,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import re
-import traceback
 from typing import Any, Dict, List, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
@@ -87,11 +86,11 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_results: HW and VM test results.
         orch_snapshot: The manifest snapshot at the orchestrator level.
       """
-    with self.m.step.nest('set fault attributes') as pres:
-      if not self._enable_fault_attribution or not \
-          orch_supports_fault_attribution:
-        return self.cq_test_failure_attributes
-      try:
+    with self.m.failures.ignore_exceptions():
+      with self.m.step.nest('set fault attributes'):
+        if not self._enable_fault_attribution or not \
+            orch_supports_fault_attribution:
+          return self.cq_test_failure_attributes
         # Comparison snapshots ordered in descending order of start_time
         comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
         if not comparison_snapshots:
@@ -105,11 +104,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
               fault_attributed_build_targets)
           self.m.easy.set_properties_step(
               cq_fault_attributions=self._cq_test_failure_attributes)
-      except self.m.step.StepFailure:
-        # Orchestrator shouldn't fail due to failure in fault attribution.
-        pres.logs['exception'] = traceback.format_exc()
 
-      return self.cq_test_failure_attributes
+    return self.cq_test_failure_attributes
 
   def _get_cq_fault_attributes(
       self, test_results: MetaTestTuple,
