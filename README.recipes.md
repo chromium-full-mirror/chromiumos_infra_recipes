@@ -9739,51 +9739,52 @@ Args:
 
 API for various support functions for building.
 
-#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootUtilApi](/recipe_modules/sysroot_util/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for sysroot setup, manipulation, and use.
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#131)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/sysroot_util/api.py#132)(self, compile_source=False, response_lambda=None, timeout_sec='DEFAULT', test_data=None, name=None):**
 
 Bootstrap the sysroot by calling InstallToolchain.
 
 Args:
   compile_source (bool): Whether to compile from source.
   response_lambda (fn(output_proto)->str): A function that appends a string
-      to the build api response step. Used to make failure step names unique
-      across differing root causes.  Default:
-      cros_build_api.failed_pkg_data_names.
+    to the build api response step. Used to make failure step names unique
+    across differing root causes.  Default:
+    cros_build_api.failed_pkg_data_names.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   test_data (str): test response (JSON) from the
-      SysrootService/InstallToolchain call, or None to use the default in
-      cros_build_api/test_api.py.
+    SysrootService/InstallToolchain call, or None to use the default in
+    cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#296)(self, image_types, builder_path, disable_rootfs_verification, disk_layout, base_is_recovery=False, version=None, timeout_sec=((2 \* 60) \* 60), build_test_data=None, test_test_data=None, name=None, skip_image_tests=False, verify_image_size_delta=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#297)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: int=((2 \* 60) \* 60), build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
 
 Build and validate images.
 
 Args:
-  image_types (list[common_pb2.ImageType]): Image types to build.
-  builder_path (str): Builder path in GS for artifacts.
-  disable_rootfs_verification (bool): whether to disable rootfs verification.
-  disk_layout (str): disk_layout to set, or empty for default.
-  base_is_recovery (bool): copy the base image to recovery_image.bin.
-  version (str): version string to pass to build API, or None.
-  timeout_sec (int): Step timeout (in seconds).
-  build_test_data (str): test response (JSON) from the ImageService/Create
-      call, or None.
-  test_test_data (str): test response (JSON) from the ImageService/Test
-      call, or None.
-  name (str): Step name to use, or None for default name.
-  skip_image_tests (bool): Whether to skip tests of the built image via
-      ImageService/Test. Defaults to false.
-  verify_image_size_delta (bool): Whether to verify the image size delta.
+  image_types: Image types to build.
+  builder_path: Builder path in GS for artifacts.
+  disable_rootfs_verification: whether to disable rootfs verification.
+  disk_layout: disk_layout to set, or empty for default.
+  base_is_recovery: copy the base image to recovery_image.bin.
+  version: version string to pass to build API, or None.
+  timeout_sec: Step timeout (in seconds).
+  build_test_data: test response (JSON) from the ImageService/Create call,
+    call, or None.
+  test_test_data: test response (JSON) from the ImageService/Test call, or
+    None.
+  name: Step name to use, or None for default name.
+  skip_image_tests: Whether to skip tests of the built image via
+    ImageService/Test.
+  verify_image_size_delta: Whether to verify the image size delta.
+  bazel: Whether to use Bazel to build the images.
 
 Returns:
-  (Container[Image]): The images built during the stage.
+  The images built during the stage.
 
-&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#81)(self, build_target, profile=None, chroot_current=True, replace=True, package_indexes=None, timeout_sec='DEFAULT', use_cq_prebuilts: bool=False, test_data=None, name=None):**
+&mdash; **def [create\_sysroot](/recipe_modules/sysroot_util/api.py#82)(self, build_target, profile=None, chroot_current=True, replace=True, package_indexes=None, timeout_sec='DEFAULT', use_cq_prebuilts: bool=False, test_data=None, name=None):**
 
 Create the sysroot.
 
@@ -9791,22 +9792,22 @@ Args:
   build_target (BuildTarget): Which build_target to create a sysroot for.
   profile (chromiumos.Profile): The profile the sysroot is to use, or None.
   chroot_current (bool): Whether the chroot is current.  (If not, it will be
-      updated.
+    updated.
   replace (bool): Whether to replace an existing sysroot.
   package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
   timeout_sec (int): Step timeout (in seconds).  Default: None if a
-      toolchain change is detected, otherwise 10 minutes.
+    toolchain change is detected, otherwise 10 minutes.
   use_cq_prebuilts (bool): Whether to use CQ prebuilts.
   test_data (str): test response (JSON) from the SysrootService/Create
-      call, or None to generate a default response based on the input data.
+    call, or None to generate a default response based on the input data.
   name (str): Step name to use, or None for the default name.
 
 Returns:
   Sysroot
 
-&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#39)(self):**
+&mdash; **def [initialize](/recipe_modules/sysroot_util/api.py#40)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#172)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None, dryrun=False):**
+&mdash; **def [install\_packages](/recipe_modules/sysroot_util/api.py#173)(self, config, dep_graph, packages=None, artifact_build=False, package_indexes=None, timeout_sec='DEFAULT', name=None, dryrun=False):**
 
 Install packages (possibly fetching Chrome source).
 
@@ -9814,17 +9815,17 @@ Args:
   config (BuilderConfig): The builder config.
   dep_graph: The dependency graph from cros_relevance.get_dependency_graph.
   packages (list[PackageInfo]): list of packages to install.  Default: all
-      packages for the build_target.
+    packages for the build_target.
   artifact_build (bool): Whether to call update_for_artifact_build.
   package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
   timeout_sec (int): Step timeout, in seconds, or None for default.
   name (str): Step name to use, or None for default name.
   dryrun (bool): Whether to dryrun the step such that we calculate the
-      packages which would have been built, but do not install them.
+    packages which would have been built, but do not install them.
 
-&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [sysroot](/recipe_modules/sysroot_util/api.py#43)(self):**
 
-&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#51)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
+&mdash; **def [update\_for\_artifact\_build](/recipe_modules/sysroot_util/api.py#52)(self, chroot, artifacts, force_relevance=False, test_data=None, name=None):**
 
 Update ebuilds for artifact build.
 
@@ -9833,7 +9834,7 @@ Args:
   artifacts (BuilderConfig.Artifacts): Artifact Information
   force_relevance (bool): Whether to always claim relevant.
   test_data (str): test response (JSON) from the
-      ArtifactsService/BuildSetup call, or None.
+    ArtifactsService/BuildSetup call, or None.
   name (str): Step name to use, or None for default name.
 
 Returns:

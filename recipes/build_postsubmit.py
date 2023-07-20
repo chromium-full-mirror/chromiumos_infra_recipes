@@ -96,8 +96,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # By default, use Portage as the build orchestrator for all build steps.
       api.build_menu.assert_step_uses_portage('install packages',
                                               'SysrootService/InstallPackages'),
-      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
-      # assert that this test case doesn't pass Bazel into the request.
+      api.build_menu.assert_step_uses_portage('build images',
+                                              'ImageService/Create'),
       api.build_menu.assert_step_uses_portage(
           'run ebuild tests', 'TestService/BuildTargetUnitTest'),
   )
@@ -248,8 +248,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'bazel',
       api.build_menu.assert_step_uses_bazel('install packages',
                                             'SysrootService/InstallPackages'),
-      # TODO(b/288434466): After enabling ImageService/CreateImage to use Bazel,
-      # assert that this test case passes Bazel into the request.
+      api.build_menu.assert_step_uses_bazel('build images',
+                                            'ImageService/Create'),
       api.build_menu.assert_step_uses_bazel('run ebuild tests',
                                             'TestService/BuildTargetUnitTest'),
       builder_name='amd64-generic-bazel-postsubmit',

@@ -660,18 +660,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
     builder_path = self.m.cros_artifacts.artifacts_gs_path(
         config.id.name, self.build_target, config.id.type,
         template=self.m.cros_artifacts.gs_upload_path)
-
-    extra_kwargs = {'skip_image_tests': unit_tests.skip_image_tests}
-    if include_version:
-      version = self.m.cros_version.version
-      extra_kwargs['version'] = str(version.platform_version)
+    version = (
+        self.m.cros_version.version.platform_version
+        if include_version else None)
+    bazel = build_images.build_images_orchestrator == BuilderConfig.BAZEL
 
     self._built_images = self.m.sysroot_util.build_images(
         build_images.image_types, builder_path,
         build_images.disable_rootfs_verification, build_images.disk_layout,
-        build_images.base_is_recovery,
+        build_images.base_is_recovery, version=version,
+        skip_image_tests=unit_tests.skip_image_tests,
         verify_image_size_delta=build_images.verify_image_size_delta,
-        **extra_kwargs)
+        bazel=bazel)
 
   def unit_test_images(self, config=None):
     """Run ebuild tests.

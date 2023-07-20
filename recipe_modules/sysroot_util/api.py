@@ -6,6 +6,7 @@
 """API for various support functions for building."""
 
 import re
+from typing import Iterable, List, Optional
 
 from google.protobuf import json_format
 
@@ -57,7 +58,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       artifacts (BuilderConfig.Artifacts): Artifact Information
       force_relevance (bool): Whether to always claim relevant.
       test_data (str): test response (JSON) from the
-          ArtifactsService/BuildSetup call, or None.
+        ArtifactsService/BuildSetup call, or None.
       name (str): Step name to use, or None for default name.
 
     Returns:
@@ -87,14 +88,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       build_target (BuildTarget): Which build_target to create a sysroot for.
       profile (chromiumos.Profile): The profile the sysroot is to use, or None.
       chroot_current (bool): Whether the chroot is current.  (If not, it will be
-          updated.
+        updated.
       replace (bool): Whether to replace an existing sysroot.
       package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout (in seconds).  Default: None if a
-          toolchain change is detected, otherwise 10 minutes.
+        toolchain change is detected, otherwise 10 minutes.
       use_cq_prebuilts (bool): Whether to use CQ prebuilts.
       test_data (str): test response (JSON) from the SysrootService/Create
-          call, or None to generate a default response based on the input data.
+        call, or None to generate a default response based on the input data.
       name (str): Step name to use, or None for the default name.
 
     Returns:
@@ -135,13 +136,13 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     Args:
       compile_source (bool): Whether to compile from source.
       response_lambda (fn(output_proto)->str): A function that appends a string
-          to the build api response step. Used to make failure step names unique
-          across differing root causes.  Default:
-          cros_build_api.failed_pkg_data_names.
+        to the build api response step. Used to make failure step names unique
+        across differing root causes.  Default:
+        cros_build_api.failed_pkg_data_names.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       test_data (str): test response (JSON) from the
-          SysrootService/InstallToolchain call, or None to use the default in
-          cros_build_api/test_api.py.
+        SysrootService/InstallToolchain call, or None to use the default in
+        cros_build_api/test_api.py.
       name (str): Step name to use, or None for the default name.
     """
     # If no timeout was given, it is either unlimited, or 30 minutes.
@@ -178,13 +179,13 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       config (BuilderConfig): The builder config.
       dep_graph: The dependency graph from cros_relevance.get_dependency_graph.
       packages (list[PackageInfo]): list of packages to install.  Default: all
-          packages for the build_target.
+        packages for the build_target.
       artifact_build (bool): Whether to call update_for_artifact_build.
       package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (str): Step name to use, or None for default name.
       dryrun (bool): Whether to dryrun the step such that we calculate the
-          packages which would have been built, but do not install them.
+        packages which would have been built, but do not install them.
     """
     packages = packages or []
     package_indexes = package_indexes or []
@@ -293,32 +294,38 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.cros_sdk.set_chrome_root(None)
       self.m.failures.set_compile_failed_packages(presentation, pkgs)
 
-  def build_images(self, image_types, builder_path, disable_rootfs_verification,
-                   disk_layout, base_is_recovery=False, version=None,
-                   timeout_sec=2 * 60 * 60, build_test_data=None,
-                   test_test_data=None, name=None, skip_image_tests=False,
-                   verify_image_size_delta=False):
+  def build_images(self, image_types: List['common_pb2.ImageType'],
+                   builder_path: str, disable_rootfs_verification: bool,
+                   disk_layout: str, base_is_recovery: bool = False,
+                   version: Optional[str] = None,
+                   timeout_sec: int = 2 * 60 * 60,
+                   build_test_data: Optional[str] = None,
+                   test_test_data: Optional[str] = None,
+                   name: Optional[str] = None, skip_image_tests: bool = False,
+                   verify_image_size_delta: bool = False,
+                   bazel: bool = False) -> Iterable[Image]:
     """Build and validate images.
 
     Args:
-      image_types (list[common_pb2.ImageType]): Image types to build.
-      builder_path (str): Builder path in GS for artifacts.
-      disable_rootfs_verification (bool): whether to disable rootfs verification.
-      disk_layout (str): disk_layout to set, or empty for default.
-      base_is_recovery (bool): copy the base image to recovery_image.bin.
-      version (str): version string to pass to build API, or None.
-      timeout_sec (int): Step timeout (in seconds).
-      build_test_data (str): test response (JSON) from the ImageService/Create
-          call, or None.
-      test_test_data (str): test response (JSON) from the ImageService/Test
-          call, or None.
-      name (str): Step name to use, or None for default name.
-      skip_image_tests (bool): Whether to skip tests of the built image via
-          ImageService/Test. Defaults to false.
-      verify_image_size_delta (bool): Whether to verify the image size delta.
+      image_types: Image types to build.
+      builder_path: Builder path in GS for artifacts.
+      disable_rootfs_verification: whether to disable rootfs verification.
+      disk_layout: disk_layout to set, or empty for default.
+      base_is_recovery: copy the base image to recovery_image.bin.
+      version: version string to pass to build API, or None.
+      timeout_sec: Step timeout (in seconds).
+      build_test_data: test response (JSON) from the ImageService/Create call,
+        call, or None.
+      test_test_data: test response (JSON) from the ImageService/Test call, or
+        None.
+      name: Step name to use, or None for default name.
+      skip_image_tests: Whether to skip tests of the built image via
+        ImageService/Test.
+      verify_image_size_delta: Whether to verify the image size delta.
+      bazel: Whether to use Bazel to build the images.
 
     Returns:
-      (Container[Image]): The images built during the stage.
+      The images built during the stage.
     """
     if not image_types:
       return None
@@ -341,6 +348,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           disk_layout=disk_layout,
           base_is_recovery=base_is_recovery,
           version=version,
+          bazel=bazel,
       )
       response = self.m.cros_build_api.ImageService.Create(
           request, timeout=timeout_sec,
