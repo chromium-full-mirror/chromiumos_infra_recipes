@@ -55,6 +55,7 @@
   * [cros_tool_runner](#recipe_modules-cros_tool_runner)
   * [cros_try](#recipe_modules-cros_try) &mdash; API for working with `cros try`-initiated jobs.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
+  * [ctpv2](#recipe_modules-ctpv2)
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
   * [deferrals](#recipe_modules-deferrals) &mdash; API for deferring things (mainly failures).
@@ -393,6 +394,7 @@
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
+  * [ctpv2:examples/full](#recipes-ctpv2_examples_full)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
   * [deferrals:tests/defer_exceptions](#recipes-deferrals_tests_defer_exceptions)
@@ -5099,6 +5101,32 @@ Raises:
 &emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#49)(self):**
 
 The Version of the workspace checkout.
+### *recipe_modules* / [ctpv2](/recipe_modules/ctpv2)
+
+[DEPS](/recipe_modules/ctpv2/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+#### **class [Ctpv2Command](/recipe_modules/ctpv2/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for issuing ctpv2 commands
+
+&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#55)(self):**
+
+Return the CTPv2 CIPD package version (e.g. prod/staging/latest).
+
+&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#40)(self):**
+
+Ensure the ctpv2 CLI is installed.
+
+&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#28)(self):**
+
+Execute work via ctpv2 luciexe binary.
+
+&mdash; **def [is\_enabled](/recipe_modules/ctpv2/api.py#21)(self):**
+
+Checks if ctpv2 is enabled for use.
+
+Returns: bool
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
 
 [DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12480,6 +12508,12 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#19)(api):**
+### *recipes* / [ctpv2:examples/full](/recipe_modules/ctpv2/examples/full.py)
+
+[DEPS](/recipe_modules/ctpv2/examples/full.py#8): [ctpv2](#recipe_modules-ctpv2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/ctpv2/examples/full.py#18)(api):**
 ### *recipes* / [cts\_results\_archive:examples/full](/recipe_modules/cts_results_archive/examples/full.py)
 
 [DEPS](/recipe_modules/cts_results_archive/examples/full.py#8): [cts\_results\_archive](#recipe_modules-cts_results_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
