@@ -897,7 +897,8 @@ def RunSteps(api, properties):
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
 
-  if properties.ctpv2_request and api.ctpv2.is_enabled():  # pragma: nocover
+  if properties.HasField(
+      'ctpv2_request') and api.ctpv2.is_enabled():  # pragma: nocover
     # Use ctpv2 binary rather than the normal ctpv1 workflow.
     api.ctpv2.execute_luciexe()
     return
