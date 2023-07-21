@@ -292,7 +292,7 @@
     "name": "init sdk.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+      "@@@STEP_TEXT@found version: R117-98765.0.0-101@@@"
     ]
   },
   {
@@ -358,48 +358,6 @@
     "name": "init sdk.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "init sdk.link chroot in chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "name": "init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_chroot/chroot",
-      "[CLEANUP]/chromiumos_workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -659,120 +617,6 @@
     "name": "ls in chroot"
   },
   {
-    "cmd": [],
-    "name": "link chroot in workspace"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/workspace"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace.ensure workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_chroot/chroot",
-      "[CLEANUP]/workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace.link workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "link chroot in workspace (2)"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/workspace"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace (2).ensure workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[CLEANUP]/workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace (2).remove original chroot link",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CACHE]/cros_chroot/chroot",
-      "[CLEANUP]/workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "link chroot in workspace (2).link workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "unlink chroot in workspace"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[CLEANUP]/workspace/chroot"
-    ],
-    "infra_step": true,
-    "name": "unlink chroot in workspace.remove original chroot link",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "sudo",
       "-n",
@@ -908,13 +752,6 @@
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
       "@@@STEP_LOG_END@sdk_cache_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.unlink chroot in workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

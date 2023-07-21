@@ -492,10 +492,9 @@ class CrosSdkApi(RecipeApi):
 
     return self.chroot
 
-  # TODO(crbug.com/949721): Currently, chromite depends on the chroot
-  # living within the source tree. As a workaround, link the external
-  # chroot into the workspace to make it look legit. New chromite services
-  # should accept the chroot path as a parameter.
+  # TODO(b/187787264): On old branches, chromite may still depend on the chroot
+  # living within the source tree. As a workaround, link the external chroot
+  # into the workspace to make it look legit.
   def link_chroot(self, checkout_path, chroot_path=None):
     """Link the chroot to a chromiumos checkout.
 
@@ -503,6 +502,10 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to the checkout root.
       chroot_path (Path): Path to the chroot, or None for the default.
     """
+    # TODO(b/187787264): Remove when pre-M-117 branches are dead.
+    if self.m.cros_version.version.milestone >= 117:
+      return
+
     checkout_basename = self.m.path.basename(checkout_path)
     with self.m.step.nest('link chroot in %s' % checkout_basename):
       self.m.file.ensure_directory('ensure %s' % checkout_basename,
@@ -602,6 +605,10 @@ class CrosSdkApi(RecipeApi):
      Args:
       checkout_path (Path): Path to the checkout root.
     """
+    # TODO(b/187787264): Remove when pre-M-117 branches are dead.
+    if self.m.cros_version.version.milestone >= 117:
+      return
+
     checkout_basename = self.m.path.basename(checkout_path)
     with self.m.step.nest('unlink chroot in %s' % checkout_basename):
       chroot_link = checkout_path.join('chroot')

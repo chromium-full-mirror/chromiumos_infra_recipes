@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'cros_sdk',
+    'cros_version',
     'goma',
     'remoteexec',
     'workspace_util',
@@ -193,7 +194,20 @@ def GenTests(api):
   )
 
   yield api.test(
+      'no-chroot-link', api.cros_version.workspace_version('R117-98765.0.0'),
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.RBE_PROD,
+                  ),
+          }),
+      api.post_check(post_process.DoesNotRun,
+                     'link chroot in workspace.ensure workspace'))
+
+  yield api.test(
       'failed-step-destroy-chroot-tests',
+      api.cros_version.workspace_version('R113-45678.0.0'),
       api.properties(
           **{
               '$chromeos/goma':
