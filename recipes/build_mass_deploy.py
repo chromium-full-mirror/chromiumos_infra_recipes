@@ -12,6 +12,7 @@ from recipe_engine.recipe_api import StepFailure
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -19,6 +20,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_infra_config',
+    'failures',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -140,11 +142,23 @@ def _compress_and_upload_mass_deploy_image(api, output_dir, gs_bucket, gs_dir):
     # Construct path for new artifact, upload to GS.
     gs_path = api.path.join(gs_dir, zip_name)
     api.gsutil.upload(output_zip, gs_bucket, gs_path)
+    # Create provenance.
+    # TODO(b/292108614): Remove ignore_exceptions when stable.
+    with api.failures.ignore_exceptions():
+      if not api.cros_infra_config.is_staging:
+        file_hash = api.file.file_hash(output_zip, test_data='deadbeef')
+        gs_uri = 'gs://%s/%s' % (gs_bucket, gs_path)
+        api.bcid_reporter.report_gcs(file_hash, gs_uri)
 
 
 def RunSteps(api, properties):
   if not properties.input_image:
     raise StepFailure('`input_image` is required')
+
+  with api.failures.ignore_exceptions():
+    if not api.cros_infra_config.is_staging:
+      api.bcid_reporter.report_stage('start')
+      api.bcid_reporter.report_stage('fetch')
 
   dest_bucket = THROWAWAY_BUCKET if api.cros_infra_config.is_staging else RELEASE_BUCKET
 
@@ -157,14 +171,25 @@ def RunSteps(api, properties):
     output_dir = api.context.cwd.join('mass_deployable_image')
     api.step('create output dir', cmd=['mkdir', output_dir])
 
+    with api.failures.ignore_exceptions():
+      if not api.cros_infra_config.is_staging:
+        api.bcid_reporter.report_stage('compile')
+
     with api.step.nest('create mass deploy image'):
       output_image = _create_empty_image(api, output_dir, image_size)
       _run_automatic_install(api, installer_image, output_image)
 
+    with api.failures.ignore_exceptions():
+      if not api.cros_infra_config.is_staging:
+        api.bcid_reporter.report_stage('upload')
     # Path in gs that our input image came from: upload back to that.
     input_path = api.path.dirname(properties.input_image)
     _compress_and_upload_mass_deploy_image(api, output_dir, dest_bucket,
                                            input_path)
+
+    with api.failures.ignore_exceptions():
+      if not api.cros_infra_config.is_staging:
+        api.bcid_reporter.report_stage('upload-complete')
 
 
 def GenTests(api):
@@ -180,6 +205,8 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'upload mass deploy image.gsutil upload',
                      ['gs://chromeos-releases/foo/mass_deployable_image.zip']),
+      api.post_check(post_process.MustRun,
+                     'upload mass deploy image.snoop: report_gcs'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -195,6 +222,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'upload mass deploy image.gsutil upload',
           ['gs://chromeos-throw-away-bucket/foo/mass_deployable_image.zip']),
+      api.post_check(post_process.DoesNotRun,
+                     'upload mass deploy image.snoop: report_gcs'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test('no-input-image',
