@@ -163,14 +163,15 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       if build.critical == Trinary.NO or build.status == Status.SUCCESS:
         continue
       build_target = self.m.cros_infra_config.get_build_target_name(build)
-      prop_struct = build.output.properties['failed_test_cases']
-      test_failures = json_format.MessageToDict(prop_struct)
-      for test_case in test_failures:
-        test_id = test_case['name']
-        failure_reason = test_case['humanReadableSummary']
-        self._set_fault_attribution_properties(
-            build_target, test_id, failure_reason,
-            flakiness_criteria_snapshot_properties)
+      if 'failed_test_cases' in build.output.properties:
+        prop_struct = build.output.properties['failed_test_cases']
+        test_failures = json_format.MessageToDict(prop_struct)
+        for test_case in test_failures:
+          test_id = test_case['name']
+          failure_reason = test_case['humanReadableSummary']
+          self._set_fault_attribution_properties(
+              build_target, test_id, failure_reason,
+              flakiness_criteria_snapshot_properties)
 
   def _set_hwtest_fault_attributes(
       self, hw_test_results: SkylabResult,

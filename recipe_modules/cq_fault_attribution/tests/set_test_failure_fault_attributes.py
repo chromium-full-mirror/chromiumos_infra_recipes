@@ -346,6 +346,11 @@ def RunSteps(api):
                                      input=build_input,
                                      output=failed_gce_build_output)
 
+  failed_gce_build_missing_failed_test_cases = \
+    build_pb2.Build(status=common_pb2.Status.FAILURE,
+                                     input=build_input,
+                                     output=build_pb2.Build.Output())
+
   orch_snapshot = \
     GitilesCommit(
         host="chrome-internal.googlesource.com",
@@ -354,8 +359,10 @@ def RunSteps(api):
         ref="refs/heads/snapshot")
 
   fault_attributes = api.cq_fault_attribution.set_cq_fault_attribute_properties(
-      MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=vm_tests,
-                    tast_gce=[failed_gce_build]), orch_snapshot, True)
+      MetaTestTuple(
+          skylab=hw_tests, autotest_vm=[], tast_vm=vm_tests, tast_gce=[
+              failed_gce_build, failed_gce_build_missing_failed_test_cases
+          ]), orch_snapshot, True)
 
   expected_snapshot_comparison_properties = \
     create_expected_snapshot(
