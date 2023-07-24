@@ -25,6 +25,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.go.chromium.org.luci.common.proto.realms.realms_config import RealmsCfg
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
+from PB.chromiumos.test.api import pre_test_service as pre_request
 
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
@@ -344,6 +345,21 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         self.download_binproto('testingconfig/generated/vm_retry',
                                self.test_api.vm_retry_test_data,
                                message=SuiteRetryCfg()))
+
+  def get_test_filter_config(self):
+    """Download config files and return the extracted config protos.
+
+    Args:
+      mock_data: step_test_data for the exoneration config download step.
+      mock_excludes_data: step_test_data for the excludes config download step.
+
+    Returns: TestDisablementCfg object of the config.
+    """
+    return pre_request.FilterCfgs.FromString(  # pragma: no cover
+        self.download_binproto(
+            'testingconfig/generated/test_filters',
+            step_test_data=self.test_api.test_filter_test_data,
+            message=pre_request.FilterCfgs()))
 
   def get_dut_tracking_config(self):
     """Get TrackingPolicyCfg as defined in infra/config.

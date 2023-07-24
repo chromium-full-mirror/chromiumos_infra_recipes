@@ -18,6 +18,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto \
   import builder_common as builder_common_pb2
 from PB.testplans.test_retry import SuiteRetryCfg
+from PB.chromiumos.test.api import pre_test_service as pre_request
 
 
 class CrosInfraConfigTestApi(RecipeTestApi):
@@ -91,6 +92,12 @@ class CrosInfraConfigTestApi(RecipeTestApi):
     """A function for step_test_data to generate SuiteRetryCfg."""
     # Humans can edit the JSON file for test data, impl reads binary proto.
     return self._read_config('test_vm_retry_config.json', SuiteRetryCfg())
+
+  def test_filter_test_data(self) -> str:
+    """A function for step_test_data to generate SuiteRetryCfg."""
+    # Humans can edit the JSON file for test data, impl reads binary proto.
+    return self._read_config('test_test_filter_config.json',
+                             pre_request.FilterCfgs())  # pragma: no cover
 
   def dut_tracking_test_data(self) -> str:
     """A function for step_test_data to generate TrackingPolicyCfg."""

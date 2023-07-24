@@ -66,6 +66,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'ctpv2',
+    'cros_infra_config',
     'cros_history',
     'cros_resultdb',
     'cros_tags',
@@ -435,11 +436,16 @@ def _enumerate_cft_tests(api, requests):
 
       autotest_invocations = []
       tag_criteria = r.test_plan.tag_criteria
+
+      # Is singular in practice, even though its a list. This is because the
+      # test_finder_request is being built from 1 request (r).
+      # this needs to remain singular for downstream assumptions to work.
       test_suites = test_finder_result.test_suites
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
           # DRY RUN
-          _ = _build_filtered_tests(api, r, test_suites, build_target, True)
+          _ = _build_filtered_tests(api, r, test_suites, build_target, True,
+                                    suite_name)
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
       else:
@@ -469,13 +475,16 @@ def _enumerate_cft_tests(api, requests):
     return tagged_responses
 
 
-def _build_filtered_tests(api, r, test_suites, build_target, dryrun):
+def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
+                          suite_name):
   """Create non-breaking step to filter out test cases.
 
   Args:
     * r: test_platform.Request.
     * test_suites: List[test_suite]
     * build_target: board
+    * dryrun: bool
+    * suite_name: string
 
   Returns: List[test_suite]
   """
@@ -483,10 +492,19 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun):
     try:
       build_number_matches = _extract_build_numbers_from_request(r)
       milestone = next(iter(build_number_matches))
-      req = _ctr_test_filter(test_suites, build_target, milestone, dryrun,
-                             str(api.buildbucket.build.id))
+      cfg = api.cros_infra_config.get_test_filter_config()
+      step.presentation.logs["cfg_used"] = json_format.MessageToJson(cfg)
+
+      req = _ctr_test_filter(test_suites, build_target, milestone, dryrun, cfg,
+                             str(api.buildbucket.build.id), suite_name)
+      # If no req, do not call the service, just return with no filtering done.
+      # This will happen when a suite opts out.
+      if not req:  # pragma: no cover
+        return test_suites
+      step.presentation.logs["policy_used"] = json_format.MessageToJson(cfg)
+
       pre_test_resp = api.cros_tool_runner.pre_process(req)
-      if pre_test_resp.response.removed_tests:
+      if pre_test_resp.response.removed_tests:  # pragma: no cover
         step.presentation.logs["removed_tests"] = json.dumps(
             {
                 "removed": [
@@ -496,7 +514,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun):
       else:
         return test_suites
 
-      return pre_test_resp.response.test_suites
+      return pre_test_resp.response.test_suites  # pragma: no cover
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
       step.presentation.logs["Exception"] = json.dumps({"exception": str(e)},
@@ -719,23 +737,51 @@ def _shard_dependencies(shard):
   return list(deps)
 
 
-def _ctr_test_filter(test_suites, board, milestone, dryrun, bbid=None):
+def _ctr_test_filter(test_suites, board, milestone, dryrun, cfg, bbid=None,
+                     suite_name=""):
   """Build a CrosToolRunnerPreTestRequest.
 
   Args:
-    * request: List[TestSuite]
+    * test_suites: List[TestSuite]
     * board: board
     * milestone: string
+    * dryrun: bool, if the mode is being set as a dryrun from CTP.
+    * cfg: api.FilterCfgs
+    * bbid: str, bbid of the task
+    * suite_name: str, the current suite_name
 
   Returns: ctr.CrosToolRunnerPreTestRequest
   """
+  if not cfg:
+    return None  # pragma: no cover
 
-  prp = pre_request.PassRatePolicy(pass_rate=96, min_runs=20,
-                                   num_of_milestones=1, force_enabled_tests=[],
-                                   force_disabled_tests=[], pass_rate_recent=98,
-                                   min_runs_recent=20, dryrun=dryrun)
+  globalcfg = None
+  localcfg = None
+
+  # Loop through the cfg, and look for the first policy match.
+  for policy in cfg.filter_cfg:
+    if policy.test_suites == ["*"]:
+      globalcfg = policy.pass_rate_policy
+    else:
+      if suite_name in policy.test_suites:  # pragma: no cover
+        if policy.opt_out:
+          return None
+        localcfg = policy.pass_rate_policy
+        break
+
+  # If a policy is not found, use the global policy.
+  if not localcfg:
+    localcfg = globalcfg
+
+  # If for some reason there is no global found, its safer just to
+  # not filter at all
+  if not localcfg:
+    return None  # pragma: no cover
+
+  localcfg.dryrun = dryrun
+
   formattedProto = pre_request.FilterFlakyRequest(
-      pass_rate_policy=prp, board=board, test_suites=test_suites,
+      pass_rate_policy=localcfg, board=board, test_suites=test_suites,
       milestone=milestone, default_enabled=True, bbid=bbid)
   return ctr.CrosToolRunnerPreTestRequest(request=formattedProto,
                                           container_metadata_key=board)
@@ -1804,36 +1850,37 @@ def _generic_cft_enumerate_response(api):
    ]
 }'''))
 
-
-def _generic_cft_filter_tests_response(api):
-  return api.step_data(
-      'enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process',
-      stdout=api.raw_io.output('''
-{
-  "response": {
-    "testSuites": [
-      {
-        "test_cases":{
-            "test_cases":[
-               {
-                  "id":{
-                     "value":"foo-test"
-                  },
-                  "dependencies":[
-                     {
-                        "value":"foo-dep:bar"
-                     }
-                  ]
-               }
-            ]
-         }
-      }
-    ],
-    "removedTests": [
-      "foo-test-removed"
-    ]
-  }
-}'''))
+# Not currently used, but keeping it in a comment, as we might need to backfill
+# test data.
+# def _generic_cft_filter_tests_response(api):
+#   return api.step_data(
+#       'enumerate CFT tests.filter test cases.call `cros-tool-runner`.pre-process',
+#       stdout=api.raw_io.output('''
+# {
+#   "response": {
+#     "testSuites": [
+#       {
+#         "test_cases":{
+#             "test_cases":[
+#                {
+#                   "id":{
+#                      "value":"foo-test"
+#                   },
+#                   "dependencies":[
+#                      {
+#                         "value":"foo-dep:bar"
+#                      }
+#                   ]
+#                }
+#             ]
+#          }
+#       }
+#     ],
+#     "removedTests": [
+#       "foo-test-removed"
+#     ]
+#   }
+# }'''))
 
 
 def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
@@ -2840,7 +2887,6 @@ def GenTests(api):
               }),
       _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
-      _generic_cft_filter_tests_response(api),
       _generic_passing_execute_response(api),
   )
 
