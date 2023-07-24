@@ -126,7 +126,7 @@ class RecipeRelease:
 
     # Prepare to update refs.
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
-    if options.smart:
+    if options.max_covered or options.max_releasable:
       report_pending_changes(pending_changes, options.show_instances,
                              show_all=options.show_all)
 
@@ -135,16 +135,19 @@ class RecipeRelease:
     all_builds.initialize(self.staging_checks, pending_changes,
                           verbose=options.verbose)
 
-    if options.smart:
-      print('=== Determining maximum covered version ===')
-      maximum_releasable_instance = bb.determine_maximum_covered_instance(
+    if options.max_covered or options.max_releasable:
+      option = 'releasable' if options.max_releasable else 'covered'
+      print(f'=== Determining maximum {option} version ===')
+      selected_instance = bb.determine_maximum_covered_instance(
           all_builds, pending_changes, self.staging_checks,
           verbose=options.verbose, enforce_success=options.max_releasable)
-      if not maximum_releasable_instance:
-        print('Could not find a covered version. Please rerun without --smart.')
+      if not selected_instance:
+        print(
+            f'Could not find a {option} version. Please rerun without --max-{option}.'
+        )
         sys.exit(0)
-      print(f'Picked {maximum_releasable_instance} for release.')
-      options.instanceid = maximum_releasable_instance
+      print(f'Picked {selected_instance} for release.')
+      options.instanceid = selected_instance
       # Recalculate pending changes.
       (cipd_target,
        git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
@@ -187,9 +190,6 @@ class RecipeRelease:
 
 def main(argv: List[str]):
   options = parse_args(argv)
-  if options.instanceid and options.smart:
-    print('Cannot use --smart and -i/--instanceid together.')
-    sys.exit(1)
 
   setup()
 
@@ -214,12 +214,6 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       help='Answer yes to prompts, e.g. whether to update the CIPD ref after '
       'checking staging results.')
   parser.add_argument(
-      '-i', '--instanceid', type=common.CipdInstance,
-      help='Release up to the commit specified by the instanceid. '
-      'Instanceids are found at:\n'
-      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
-      'Click into an instance to see the commit attached to it.')
-  parser.add_argument(
       '--show-instances', action='store_true',
       help='Show the CIPD instance IDs built from each commit. '
       'Intended to inform -i/--instance-id usage.')
@@ -235,15 +229,22 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Increase level of logging.')
 
-  # TODO(b/287276108): Change to --max-covered and --max-releasable.
-  parser.add_argument(
-      '--smart', action='store_true',
+  mode_group = parser.add_mutually_exclusive_group()
+  mode_group.add_argument(
+      '-i', '--instanceid', type=common.CipdInstance,
+      help='Release up to the commit specified by the instanceid. '
+      'Instanceids are found at:\n'
+      'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
+      'Click into an instance to see the commit attached to it.')
+  mode_group.add_argument(
+      '--max-covered', action='store_true',
       help='Find the maximum instance that has been adequately covered in staging.'
-      'Currently in development, use at your own risk.')
-  parser.add_argument(
+  )
+  mode_group.add_argument(
       '--max-releasable', action='store_true',
       help='Find the maximum instance that has sufficient successful results in staging.'
-      'Currently in development, use at your own risk.')
+  )
+
   parser.add_argument(
       '--bbid', help='BBID of the invoking builder. Not for use by humans.')
   return parser.parse_args(args)
