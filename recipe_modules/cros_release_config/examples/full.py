@@ -62,9 +62,21 @@ BLOCK_3 = """builders {
 
 BLOCK_NEW = """builders {
   milestone {
-    number: %d
-    branch_name: "%s"
-  }%s
+    number: %(number)d
+    branch_name: "%(branch_name)s"
+  }%(expiration_block)s
+  android_branches {
+    key: "android-container-pi"
+    value: "git_pi-arc-m%(number)s"
+  }
+  android_branches {
+    key: "android-vm-rvc"
+    value: "git_rvc-arc-m%(number)s"
+  }
+  android_branches {
+    key: "android-vm-tm"
+    value: "git_tm-arc-m%(number)s"
+  }
 }
 """
 
@@ -85,7 +97,8 @@ def new_block(number, branch_name, expiration_date=None):
   expiration_block = ''
   if expiration_date:
     expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
-  return BLOCK_NEW % (number, branch_name, expiration_block)
+  return BLOCK_NEW % dict(number=number, branch_name=branch_name,
+                          expiration_block=expiration_block)
 
 
 # Return a block of config to be included in textpb expecations.

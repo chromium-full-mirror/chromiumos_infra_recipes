@@ -3609,9 +3609,9 @@ Raises:
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#50)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#131)(self, branch):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#136)(self, branch):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -12247,13 +12247,13 @@ Main test logic.
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#13): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_schedule](#recipe_modules-cros_schedule), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#134)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#147)(api, properties):**
 
 &mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#26)(\*blocks):**
 
-&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#84)(number, branch_name, expiration_date=None):**
+&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#96)(number, branch_name, expiration_date=None):**
 
-&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#92)(branch_name, expiration_date=None):**
+&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#105)(branch_name, expiration_date=None):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#8): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

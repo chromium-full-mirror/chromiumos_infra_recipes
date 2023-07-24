@@ -79,7 +79,6 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
   if properties.branch_util_push:
     with api.workspace_util.setup_workspace():
       api.cros_source.ensure_synced_cache(projects=[
-          api.cros_release_config.LEGACY_CONFIG_PROJECT,
           api.cros_release_config.CONFIG_PROJECT
       ])
 
