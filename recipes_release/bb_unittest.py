@@ -202,10 +202,121 @@ class ReturnBuildersForRegexTest(unittest.TestCase):
         ('bb', 'builders', 'chromeos/staging'), **test_util.SUBPROCESS_KWARGS)
 
 
+class BuildsTest(unittest.TestCase):
+
+  @patch('bb.return_builders_for_regex')
+  @patch('bb.subprocess.run')
+  def test_initialize(self, mock_subprocess_run: MagicMock,
+                      mock_return_builders_for_regex: MagicMock):
+
+    # Changes are not in chronological order.
+    changes = [
+        git.Commit('30000', '', '', '', '2020-01-03T12:00:00+00:00'),
+        git.Commit('10000', '', '', '', '2020-01-01T12:00:00+00:00'),
+        git.Commit('20000', '', 'update chromite-HEAD version', '',
+                   '2020-01-02T12:00:00+00:00'),
+    ]
+
+    # These are the staging builders we care about.
+    checks = [
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Foo'),
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Bar'),
+        staging_checks.StagingReCheck('chromeos', 'staging', 'staging-Baz'),
+    ]
+
+    def return_builders_for_regex(project: str, bucket: str,
+                                  regex: str) -> List[str]:
+      _, _ = project, bucket
+      return {
+          'staging-Foo': ['chromeos/staging/staging-Foo'],
+          'staging-Bar': ['chromeos/staging/staging-Bar'],
+          'staging-Baz': ['chromeos/staging/staging-Baz'],
+      }[regex]
+
+    mock_return_builders_for_regex.side_effect = return_builders_for_regex
+
+    all_builds = bb.Builds()
+    all_builds.initialize(checks, changes)
+    for builder in ['staging-Foo', 'staging-Bar', 'staging-Baz']:
+      mock_subprocess_run.assert_any_call(
+          [
+              'bb',
+              'ls',
+              '-json',
+              '-predicate',
+              # Check that the oldest change is used.
+              '{"builder": {"project": "chromeos", "bucket": "staging", "builder": "%s"}, "status": "ENDED_MASK", "create_time": {"start_time": "2020-01-01T12:00:00+00:00"}}'
+              % builder,
+              '-fields',
+              'id,status,create_time,infra,summary_markdown,cancellation_markdown',
+          ],
+          **test_util.SUBPROCESS_KWARGS)
+
+  @patch('bb.cipd.cipd_version_to_githash')
+  def test_success(self, mock_cipd_version_to_githash: MagicMock):
+    build_data = {
+        'chromeos/staging/staging-foo': [
+            _build_data('YYY', bbid=1000, status='SUCCESS',
+                        create_time='2020-01-03T13:00:00.000000000Z'),
+            _build_data('YYY', bbid=1001, status='SUCCESS',
+                        create_time='2020-01-03T14:00:00.000000000Z'),
+            _build_data('YYY', bbid=1002, status='SUCCESS',
+                        create_time='2020-01-03T15:00:00.000000000Z'),
+            _build_data('XXX', bbid=1003, status='SUCCESS',
+                        create_time='2020-01-03T16:00:00.000000000Z'),
+            _build_data('XXX', bbid=1004, status='INFRA_FAILURE',
+                        create_time='2020-01-03T17:00:00.000000000Z'),
+            _build_data('XXX', bbid=1005, status='SUCCESS',
+                        create_time='2020-01-03T18:00:00.000000000Z'),
+        ]
+    }
+    all_builds = bb.Builds()
+    all_builds.initialize_with_test_data(build_data)
+
+    def cipd_version_to_githash(version: common.CipdVersion):
+      return {
+          'XXX': '30000',
+          'YYY': '19500',
+      }[version]
+
+    mock_cipd_version_to_githash.side_effect = cipd_version_to_githash
+
+    def is_older_than_mock(change_hash):
+      return lambda other_hash: int(other_hash) >= int(change_hash)
+
+    change = git.Commit('20000', '', '', '', '2020-01-03T13:30:00+00:00')
+    change.is_older_than = is_older_than_mock(change.hash)
+
+    self.assertEqual(
+        all_builds.get_builds_after('chromeos/staging/staging-foo', change),
+        build_data['chromeos/staging/staging-foo'][1:])
+    self.assertEqual(
+        all_builds.get_builds_containing('chromeos/staging/staging-foo',
+                                         change),
+        build_data['chromeos/staging/staging-foo'][3:])
+
+    change = git.Commit('40000', '', '', '', '2020-01-03T15:30:00+00:00')
+    change.is_older_than = is_older_than_mock(change.hash)
+
+    self.assertEqual(
+        all_builds.get_builds_after('chromeos/staging/staging-foo', change),
+        build_data['chromeos/staging/staging-foo'][3:])
+    self.assertEqual(
+        all_builds.get_builds_containing('chromeos/staging/staging-foo',
+                                         change), [])
+
+    change = git.Commit('40000', '', '', '', '2020-01-03T18:30:00+00:00')
+    change.is_older_than = is_older_than_mock(change.hash)
+    self.assertEqual(
+        all_builds.get_builds_after('chromeos/staging/staging-foo', change), [])
+    self.assertEqual(
+        all_builds.get_builds_containing('chromeos/staging/staging-foo',
+                                         change), [])
+
+
 class CheckRecentBuildStatusesTest(unittest.TestCase):
 
   def setUp(self):
-    bb.get_builds_after.cache_clear()
     # Don't want messages printing to stdout if tests are passing.
     # Comment out if debugging.
     bb.print = MagicMock()
@@ -241,26 +352,19 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
     for i, _ in enumerate(changes):
       changes[i].is_older_than = is_older_than_mock(changes[i].hash)
 
+    all_builds = bb.Builds()
+    all_builds.initialize_with_test_data({
+        'chromeos/staging/staging-foo': build_data,
+    })
     self.assertEqual(
         bb.check_recent_build_statuses(
+            all_builds,
             'chromeos/staging/staging-foo',
             # Basic exemption exempting any build with bbid 1003.
             [lambda build: build['id'] == 1003],
             changes,
             5)[0],
         expected_ret)
-    mock_subprocess_run.assert_called_with(
-        [
-            'bb',
-            'ls',
-            '-json',
-            '-predicate',
-            # Check that the most recent date (01/03) is used.
-            '{"builder": {"project": "chromeos", "bucket": "staging", "builder": "staging-foo"}, "status": "ENDED_MASK", "create_time": {"start_time": "2020-01-03T12:00:00+00:00"}}',
-            '-fields',
-            'id,status,create_time,infra,summary_markdown,cancellation_markdown',
-        ],
-        **test_util.SUBPROCESS_KWARGS)
 
   def test_all_success(self):
     build_data = [
@@ -320,10 +424,6 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
 
 
 class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
-
-  def setUp(self):
-    bb.get_builds_after.cache_clear()
-
   @patch('bb.get_affected_recipes')
   @patch('bb.get_builder_recipe')
   @patch('bb.cipd.cipd_version_to_githash')
@@ -391,7 +491,9 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
 
     mock_cipd_version_to_githash.side_effect = cipd_version_to_githash
 
-    return bb.determine_maximum_covered_instance(changes, checks)
+    all_builds = bb.Builds()
+    all_builds.initialize_with_test_data(build_data)
+    return bb.determine_maximum_covered_instance(all_builds, changes, checks)
 
   def test_success(self):
     changes = {}
@@ -406,7 +508,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
     changes['10060'].message = 'Roll recipe dependencies (trivial).'
 
     build_results = {
-        'staging-Foo': [
+        'chromeos/staging/staging-Foo': [
             _build_data('XXX'),
             _build_data('XXX'),
             _build_data('XXX'),
@@ -415,7 +517,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
             _build_data('YYY'),
             _build_data('ZZZ'),
         ],
-        'staging-Bar': [
+        'chromeos/staging/staging-Bar': [
             _build_data('XXX'),
             _build_data('XXX'),
             _build_data('XXX'),
@@ -425,7 +527,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
             _build_data('ZZZ'),
         ],
         # < 5 results so should get ignored.
-        'staging-NewBuilder': [_build_data('XXX')]
+        'chromeos/staging/staging-NewBuilder': [_build_data('XXX')]
     }
     instance_to_hash = {
         'XXX': '10095',
@@ -460,7 +562,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
                                         commit_timestamp.isoformat())
 
     build_results = {
-        'staging-Foo': [
+        'chromeos/staging/staging-Foo': [
             _build_data('XXX'),
             _build_data('XXX'),
             _build_data('XXX'),
@@ -469,7 +571,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
             _build_data('ZZZ'),
             _build_data('ZZZ'),
         ],
-        'staging-Bar': [
+        'chromeos/staging/staging-Bar': [
             _build_data('XXX'),
             _build_data('XXX'),
             _build_data('XXX'),
@@ -479,7 +581,7 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
             _build_data('ZZZ'),
         ],
         # < 5 results so should get ignored.
-        'staging-NewBuilder': [_build_data('XXX')]
+        'chromeos/staging/staging-NewBuilder': [_build_data('XXX')]
     }
     instance_to_hash = {
         'XXX': '10095',

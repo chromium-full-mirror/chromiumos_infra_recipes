@@ -5,6 +5,7 @@
 
 """Code for dealing with commits / git."""
 
+from datetime import datetime
 from functools import lru_cache
 from functools import total_ordering
 import re
@@ -27,7 +28,7 @@ class Commit:
     self.message = message
     self.cipd_instance = None
     self.human_readable_commit_date = human_readable_commit_date
-    self.commit_timestamp = commit_timestamp
+    self.commit_timestamp = datetime.fromisoformat(commit_timestamp)
 
   def __hash__(self):
     return hash(self.hash)

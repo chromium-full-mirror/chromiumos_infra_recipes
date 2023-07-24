@@ -12,6 +12,7 @@ from typing import Any
 from typing import Callable
 from typing import Dict
 from typing import List
+from typing import Tuple
 
 
 class StagingReCheck(typing.NamedTuple):
@@ -26,6 +27,16 @@ class StagingReCheck(typing.NamedTuple):
   exemptions: List[Callable[[Dict[str, Any]], bool]] = []
   # Number of builds to check.
   num_builds: int = 5
+
+  @property
+  def name(self) -> Tuple[str]:
+    return (self.project, self.bucket, self.regex)
+
+  def __eq__(self, other):
+    return self.name == other.name
+
+  def __hash__(self):
+    return hash(self.name)
 
 
 def orchestrator_exemption(build: Dict[str, Any]) -> bool:

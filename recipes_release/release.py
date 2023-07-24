@@ -130,11 +130,16 @@ class RecipeRelease:
       report_pending_changes(pending_changes, options.show_instances,
                              show_all=options.show_all)
 
+    print('=== Fetching build results ===')
+    all_builds = bb.Builds()
+    all_builds.initialize(self.staging_checks, pending_changes,
+                          verbose=options.verbose)
+
     if options.smart:
       print('=== Determining maximum covered version ===')
       maximum_releasable_instance = bb.determine_maximum_covered_instance(
-          pending_changes, self.staging_checks, verbose=options.verbose,
-          enforce_success=options.max_releasable)
+          all_builds, pending_changes, self.staging_checks,
+          verbose=options.verbose, enforce_success=options.max_releasable)
       if not maximum_releasable_instance:
         print('Could not find a covered version. Please rerun without --smart.')
         sys.exit(0)
@@ -156,7 +161,7 @@ class RecipeRelease:
     if not options.show_all:
       pending_changes = git.trim_trivial_suffix(pending_changes)
     print('=== Check staging status ===')
-    bad_builders = bb.check_staging_builders(pending_changes,
+    bad_builders = bb.check_staging_builders(all_builds, pending_changes,
                                              self.staging_checks,
                                              log_messages=True)
     if bad_builders:

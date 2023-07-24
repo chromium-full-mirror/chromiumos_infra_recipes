@@ -19,6 +19,8 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from dateutil import parser
+
 import cipd
 import common
 import git
@@ -124,7 +126,136 @@ def get_builder_link(builder: str) -> str:
   return f'https://ci.chromium.org/p/chromeos/builders/staging/{builder_name}'
 
 
-def check_staging_builders(changes: List[git.Commit],
+def return_builders_for_regex(project: str, bucket: str,
+                              regex: str) -> List[str]:
+  """Return the list of builders matching a certain regex."""
+  r = re.compile(regex)
+  cmd = ('bb', 'builders', '/'.join((project, bucket)))
+  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+  ret = []
+  for line in p.stdout.split('\n'):
+    if not line:
+      continue
+    builder = line.strip().split('/')[-1]
+    match = r.fullmatch(builder)
+    if match:
+      gd = match.groupdict()
+      if 'milestone' in gd and int(gd['milestone']) < MIN_BRANCH_MILESTONE:
+        continue
+      ret.append(line.strip())
+  return ret
+
+
+def _bb_ls(*args) -> List[Dict]:
+  cmd = ['bb', 'ls', '-json'] + list(args)
+  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+  builds = []
+  for line in p.stdout.split('\n'):
+    if not line:
+      continue
+    builds.append(json.loads(line))
+  return builds
+
+
+Build = Dict[str, Any]
+
+
+class Builds:
+  """Stores all the relevant builds for all the relevant builders."""
+
+  def __init__(self):
+    # Maps 'builder' name to list of builds.
+    self._data: Dict[str, List[Build]] = {}
+
+  def _parse_build_timestamps(self):
+    for builder in self._data.keys():
+      for i, build in enumerate(self._data[builder]):
+        self._data[builder][i]['createTime'] = parser.parse(build['createTime'])
+
+  def initialize(self, checks: Tuple[staging_checks.StagingReCheck],
+                 changes: List[git.Commit], verbose: bool = False):
+    earliest_change = min(changes)
+
+    builders = []
+    for re_check in checks:
+      builders.extend(
+          return_builders_for_regex(re_check.project, re_check.bucket,
+                                    re_check.regex))
+    results = {}
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+      for builder, builds in zip(
+          builders,
+          executor.map(
+              lambda builder: self._get_builds_after_change(
+                  builder, earliest_change), builders)):
+        # Collect results.
+        results[builder] = builds
+        if verbose:
+          print(
+              f'Found {len(results[builder])} builds for {builder} since {earliest_change.hash}.'
+          )
+
+    self._data = results
+    self._parse_build_timestamps()
+
+  def initialize_with_test_data(self, data: Dict[str, List[Build]]):
+    self._data = data
+    self._parse_build_timestamps()
+
+  def _get_builds_after_change(self, builder: str,
+                               change: git.Commit) -> List[Build]:
+    project, bucket, builder_name = tuple(builder.split('/'))
+    predicate = {
+        'builder': {
+            'project': project,
+            'bucket': bucket,
+            'builder': builder_name,
+        },
+        'status': 'ENDED_MASK',
+        'create_time': {
+            'start_time': change.commit_timestamp.isoformat(),
+        },
+    }
+    fields = ('id', 'status', 'create_time', 'infra', 'summary_markdown',
+              'cancellation_markdown')
+    args = ['-fields', ','.join(fields)]
+    return _bb_ls('-predicate', json.dumps(predicate), *args)
+
+  def get_builds_for(self, builder: str) -> List[Build]:
+    """Get all build results for the given builder."""
+    return self._data.get(builder, [])
+
+  def get_builds_after(self, builder: str, change: git.Commit):
+    """Get all build results since the given change landed, sorted oldest to newest."""
+    builds = self.get_builds_for(builder)
+    # Sorts oldest to newest.
+    builds = sorted(builds, key=lambda build: build['createTime'])
+
+    for i, build in enumerate(builds):
+      if build['createTime'] >= change.commit_timestamp:
+        return builds[i:]
+    return []
+
+  def get_builds_containing(self, builder: str, change: git.Commit):
+    """Get all build results that ran with the given change, sorted oldest to newest."""
+    # Sort builds oldest to newest.
+    builds = self.get_builds_after(builder, change)
+    # Filter out builds missing a CIPD version, those aren't usable.
+    builds = list(
+        filter(lambda build: build_to_cipd_version(build) is not None, builds))
+
+    for i, build in enumerate(builds):
+      cipd_version = build_to_cipd_version(build)
+      githash = cipd.cipd_version_to_githash(cipd_version)
+      # If the change commit is older than the one the build ran, we've found our suffix
+      # of builds.
+      if change.hash == githash or change.is_older_than(githash):
+        return builds[i:]
+    return []
+
+
+def check_staging_builders(all_builds: Builds, changes: List[git.Commit],
                            checks: Tuple[staging_checks.StagingReCheck],
                            log_messages: bool = False) -> List[str]:
   """Check for failures in staging builders. Returns a list of bad builders."""
@@ -162,7 +293,7 @@ def check_staging_builders(changes: List[git.Commit],
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
-      not_ok, status_str = check_recent_build_statuses(builder,
+      not_ok, status_str = check_recent_build_statuses(all_builds, builder,
                                                        re_check.exemptions,
                                                        changes,
                                                        re_check.num_builds)
@@ -173,6 +304,7 @@ def check_staging_builders(changes: List[git.Commit],
 
 
 def check_recent_build_statuses(
+    all_builds: Builds,
     builder: str,
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[git.Commit],
@@ -184,10 +316,7 @@ def check_recent_build_statuses(
     (bool) Whether there is an issue with the builder.
     (str) An error string.
   """
-  builds = _get_builds_containing(
-      builder, max(pending_changes),
-      fields=('id', 'status', 'create_time', 'infra', 'summary_markdown',
-              'cancellation_markdown'))
+  builds = all_builds.get_builds_containing(builder, max(pending_changes))
   # Sort oldest to newest.
   # createTime is of the form "2023-07-14T17:00:03.592856413Z", so fine to sort
   # by the raw string.
@@ -230,84 +359,9 @@ def check_recent_build_statuses(
   return not success, status_str
 
 
-@lru_cache(maxsize=None)
-def _call_bb_builders(cmd):
-  return subprocess.run(cmd, capture_output=True, text=True, check=True)
-
-
-def return_builders_for_regex(project: str, bucket: str,
-                              regex: str) -> List[str]:
-  """Return the list of builders matching a certain regex."""
-  r = re.compile(regex)
-  cmd = ('bb', 'builders', '/'.join((project, bucket)))
-  p = _call_bb_builders(cmd)
-
-  ret = []
-  for line in p.stdout.split('\n'):
-    if not line:
-      continue
-    builder = line.strip().split('/')[-1]
-    s = r.fullmatch(builder)
-    if s:
-      gd = s.groupdict()
-      if 'milestone' in gd and int(gd['milestone']) < MIN_BRANCH_MILESTONE:
-        continue
-      ret.append(line.strip())
-  return ret
-
-
-def _bb_ls(*args) -> List[Dict]:
-  cmd = ['bb', 'ls', '-json'] + list(args)
-  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
-  builds = []
-  for line in p.stdout.split('\n'):
-    if not line:
-      continue
-    builds.append(json.loads(line))
-  return builds
-
-
-@lru_cache(maxsize=None)
-def get_builds_after(builder: str, change: git.Commit,
-                     fields: Tuple[str] = None) -> List[Dict]:
-  """Get all build results since the given change landed, sorted newest to oldest."""
-  project, bucket, builder_name = tuple(builder.split('/'))
-  predicate = {
-      'builder': {
-          'project': project,
-          'bucket': bucket,
-          'builder': builder_name,
-      },
-      'status': 'ENDED_MASK',
-      'create_time': {
-          'start_time': change.commit_timestamp,
-      },
-  }
-  args = ['-fields', ','.join(fields)] if fields else ['-A']
-  return _bb_ls('-predicate', json.dumps(predicate), *args)
-
-
-def _get_builds_containing(builder: str, change: git.Commit,
-                           fields: Tuple[str] = None) -> List[Dict]:
-  """Get all build results that ran with the given change, sorted newest to oldest."""
-  builds = get_builds_after(builder, change, fields=fields)
-  # Filter out builds missing a CIPD version, those aren't usable.
-  builds = list(
-      filter(lambda build: build_to_cipd_version(build) is not None, builds))
-
-  for i, build in enumerate(builds):
-    cipd_version = build_to_cipd_version(build)
-    githash = cipd.cipd_version_to_githash(cipd_version)
-    # If the change commit is older than the one the build ran, we've found our suffix
-    # of builds.
-    if change.hash == githash or change.is_older_than(githash):
-      return builds[i:]
-  return []
-
-
 def determine_maximum_covered_instance(
-    changes: List[git.Commit], checks: Tuple[staging_checks.StagingReCheck],
-    enforce_success: bool = False,
+    all_builds: Builds, changes: List[git.Commit],
+    checks: Tuple[staging_checks.StagingReCheck], enforce_success: bool = False,
     verbose: bool = False) -> common.CipdInstance:
   """Determine the maximum covered recipes instance.
 
@@ -348,6 +402,7 @@ def determine_maximum_covered_instance(
   # `changes` is ordered newest to oldest.
   changes = sorted(changes, reverse=True)
   change_coverage_per_build = defaultdict(lambda: {})
+  earliest_change = min(changes)
 
   def print_if_verbose(*args):
     if verbose:
@@ -365,7 +420,7 @@ def determine_maximum_covered_instance(
       of builds covering changes[i].
     """
     # Get all build results since the oldest pending change.
-    builds = get_builds_after(builder, changes[-1], fields=('id', 'infra'))
+    builds = all_builds.get_builds_after(builder, earliest_change)
     num_builds = num_builds_by_builder[builder]
 
     # If there are no builds for the builder at all, don't let that be a blocker.
@@ -378,7 +433,8 @@ def determine_maximum_covered_instance(
         return [num_builds] * len(changes)
 
     print_if_verbose(
-        f'Found {len(builds)} builds for {builder} since {changes[-1].hash}.')
+        f'Found {len(builds)} builds for {builder} since {earliest_change.hash}.'
+    )
 
     # change_coverage contains the number of builds that ran each change.
     change_coverage = [0] * len(changes)
@@ -390,7 +446,8 @@ def determine_maximum_covered_instance(
     # Otherwise, advance the change pointer until we reach a change that was covered by this buuld.
     change_pointer = 0
     build_pointer = 0
-    # `bb ls` are ordered newest to oldest.
+    # Step through builds newest to oldest.
+    builds = sorted(builds, key=lambda build: build['createTime'], reverse=True)
     while build_pointer < len(builds):
       build = builds[build_pointer]
       cipd_version = build_to_cipd_version(build)
@@ -462,7 +519,8 @@ def determine_maximum_covered_instance(
       break
     print_if_verbose(f'Commit {change.hash} is covered.')
     if enforce_success:
-      if check_staging_builders(changes[:i + 1], checks, log_messages=verbose):
+      if check_staging_builders(all_builds, changes[:i + 1], checks,
+                                log_messages=verbose):
         break
       print_if_verbose('Everything looks good!')
     last_covered_change = change
