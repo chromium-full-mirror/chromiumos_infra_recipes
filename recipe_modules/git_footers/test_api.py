@@ -12,6 +12,7 @@ class GitFootersTestApi(recipe_test_api.RecipeTestApi):
   """Generates test data for GitFootersApi."""
 
   test_position_num = 101
+  test_position_ref = 'refs/heads/main'
 
   def step_data(self, name, *args, **kwargs):
     return super().step_data(name, stdout=self.m.raw_io.output('\n'.join(args)),

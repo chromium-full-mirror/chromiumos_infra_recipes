@@ -318,8 +318,21 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 self.m.file.write_raw('write snapshot.xml', manifest_path,
                                       manifest_data)
 
-                position = self.m.git_footers.position_num(
-                    'refs/heads/{}'.format(snapshot_branch)) + 1
+                position_ref = 'refs/heads/{}'.format(snapshot_branch)
+                # The -snapshot manifest-internal branches inherit from one
+                # another through the normal branching process.
+                # If branch B inherits from branch A, the last commit on
+                # branch B will have position number 'refs/heads/A{#X}'.
+                # position_num will report X. However, Gerrit will reject this
+                # because it's expecting 'refs/heads/B{#1}'.
+                # Basically, we need to restart the count if the last position
+                # ref is not the same as our current branch.
+                previous_position_ref = self.m.git_footers.position_ref(
+                    position_ref)
+                if previous_position_ref != position_ref:
+                  position = 1
+                else:
+                  position = self.m.git_footers.position_num(position_ref) + 1
                 commit_lines = [
                     'Update snapshot.xml to {}'.format(buildspec_filename),
                     '',

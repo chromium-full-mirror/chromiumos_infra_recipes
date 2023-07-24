@@ -61,6 +61,8 @@ def RunSteps(api):
     api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 1)
   else:
     api.assertions.assertEqual(api.git_footers.position_num('HEAD'), 101)
+    api.assertions.assertEqual(
+        api.git_footers.position_ref('HEAD'), 'refs/heads/main')
 
   api.assertions.assertTrue(api.git_footers.test_api.step_data('foo', 'bar'))
   api.assertions.assertTrue(

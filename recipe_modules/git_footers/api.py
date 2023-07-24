@@ -96,6 +96,29 @@ class GitFootersApi(recipe_api.RecipeApi):
           self.test_api.step_test_data_factory('%s:%s' % (ref, key)))
     return self(*args, **kwargs)
 
+  def position_ref(self, ref, test_position_ref=None, **kwargs):
+    """Return the footer ref for Cr-Commit-Position.
+
+    Args:
+      ref (str): The git ref.
+      test_position_ref (int): The test value.  step_test_data, if given, will
+        override this.
+      **kwargs (dict): positional parameters for self.__call__()
+
+    Returns:
+      str: The position ref for the ref.
+    """
+    test_position_ref = (
+        self.test_api.test_position_ref
+        if test_position_ref is None else test_position_ref)
+    kwargs.setdefault(
+        'step_test_data',
+        self.test_api.step_test_data_factory(str(test_position_ref)))
+    output = self(ref, '--position-ref', **kwargs)
+
+    assert len(output) == 1, 'expected exactly one Cr-Commit-Position footer'
+    return output[0].strip()
+
   def position_num(self, ref, test_position_num=None, **kwargs):
     """Return the footer value for Cr-Commit-Position.
 

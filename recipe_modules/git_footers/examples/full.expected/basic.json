@@ -160,12 +160,11 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Change-Id"
+      "HEAD",
+      "--position-ref"
     ],
     "infra_step": true,
-    "name": "read git footers (6)",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+    "name": "read git footers (6)"
   },
   {
     "cmd": [
@@ -176,6 +175,17 @@
     ],
     "infra_step": true,
     "name": "read git footers (7)",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Change-Id"
+    ],
+    "infra_step": true,
+    "name": "read git footers (8)",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {

@@ -3460,7 +3460,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#522)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#535)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3468,7 +3468,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#458)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#471)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3481,7 +3481,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#486)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#499)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3493,7 +3493,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#538)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#551)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3516,7 +3516,7 @@ Return:
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#377)(self, override_qs_account: str=None):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#390)(self, override_qs_account: str=None):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3527,11 +3527,11 @@ been built.
 Args:
   override_qs_account: QS Account to use instead of whatever is configured.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#578)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#591)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#586)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#599)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
@@ -7194,7 +7194,7 @@ Args:
 Returns:
   list[str]: All matching footer values, or None
 
-&mdash; **def [edit\_add\_change\_description](/recipe_modules/git_footers/api.py#126)(self, change_message, footer, footer_text):**
+&mdash; **def [edit\_add\_change\_description](/recipe_modules/git_footers/api.py#149)(self, change_message, footer, footer_text):**
 
 Edit or add the given footer to the change_message.
 
@@ -7248,7 +7248,7 @@ Args:
 Returns:
   list[str]: The footer value(s) found in the ref's commit message.
 
-&mdash; **def [get\_footer\_values](/recipe_modules/git_footers/api.py#158)(self, gerrit_changes: List[common_pb2.GerritChange], key: str, \*\*kwargs):**
+&mdash; **def [get\_footer\_values](/recipe_modules/git_footers/api.py#181)(self, gerrit_changes: List[common_pb2.GerritChange], key: str, \*\*kwargs):**
 
 Gets a list of values from a footer.
 
@@ -7263,7 +7263,7 @@ Args:
 Returns:
   values: A set of values found for the given key.  May be empty.
 
-&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#99)(self, ref, test_position_num=None, \*\*kwargs):**
+&mdash; **def [position\_num](/recipe_modules/git_footers/api.py#122)(self, ref, test_position_num=None, \*\*kwargs):**
 
 Return the footer value for Cr-Commit-Position.
 
@@ -7275,6 +7275,19 @@ Args:
 
 Returns:
   list[str]: The position number for the ref.
+
+&mdash; **def [position\_ref](/recipe_modules/git_footers/api.py#99)(self, ref, test_position_ref=None, \*\*kwargs):**
+
+Return the footer ref for Cr-Commit-Position.
+
+Args:
+  ref (str): The git ref.
+  test_position_ref (int): The test value.  step_test_data, if given, will
+    override this.
+  **kwargs (dict): positional parameters for self.__call__()
+
+Returns:
+  str: The position ref for the ref.
 ### *recipe_modules* / [git\_txn](/recipe_modules/git_txn)
 
 [DEPS](/recipe_modules/git_txn/__init__.py#5): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12100,10 +12113,10 @@ Main test logic.
 &mdash; **def [RunSteps](/recipe_modules/cros_prebuilts/tests/upload_prebuilts.py#32)(api: recipe_api.RecipeApi, properties):**
 ### *recipes* / [cros\_release:examples/buildspec](/recipe_modules/cros_release/examples/buildspec.py)
 
-[DEPS](/recipe_modules/cros_release/examples/buildspec.py#11): [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release/examples/buildspec.py#11): [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/buildspec.py#28)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/buildspec.py#29)(api, properties):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release/examples/full.py#17): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

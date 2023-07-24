@@ -12,6 +12,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'build_reporting',
     'cros_release',
     'cros_source',
@@ -100,6 +101,9 @@ def GenTests(api):
               },
               'manifest_branch': 'snapshot',
           }), api.git.diff_check(True),
+      api.override_step_data(
+          'create buildspec.commit buildspec as snapshot.read git footers',
+          stdout=api.raw_io.output('refs/heads/main-release-snapshot')),
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot'
@@ -119,11 +123,24 @@ def GenTests(api):
                   'commit_buildspec_as_snapshot': True,
               },
               'manifest_branch': 'release-R108-15183.B',
-          }), api.git.diff_check(True),
+          }),
+      api.git.diff_check(True),
+      # We must have just branched, the previous commit was for main-release-snapshot.
+      # Counter should reset to 1.
+      api.override_step_data(
+          'create buildspec.commit buildspec as snapshot.read git footers',
+          stdout=api.raw_io.output('refs/heads/main-release-snapshot')),
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot'
-      ), builder='release-R108-15183.B-orchestrator')
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.write commit message',
+          'commit_msg_tmp_2',
+          ['Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#1}'
+          ]),
+      builder='release-R108-15183.B-orchestrator')
 
   yield api.orch_menu.test(
       'commit-as-snapshot-staging',
