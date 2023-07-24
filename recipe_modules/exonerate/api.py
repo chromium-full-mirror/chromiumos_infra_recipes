@@ -572,6 +572,8 @@ class ExonerateApi(recipe_api.RecipeApi):
   def generate_failed_test_stats(
       self, failure_rates: TestVariantFailureRateAnalysis) -> FailedTestStats:
     """Returns FailedTestStats for the given LUCI Analysis failure rates."""
+    if not self._configs_loaded:
+      self.load_configs()
     all_stats = []
     for failure_rate in failure_rates:
       stat = FailedTestStats()
