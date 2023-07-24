@@ -513,13 +513,6 @@ class CrosBuildApiApi(RecipeApi):
         logs), where failed_package is the category-package for a package that
         failed, and logs is the corresponding build logs contents.
       step_text: text to put on the step for the call.
-      use_chromite_head: Whether to use chromite-HEAD instead of the
-        default branched chromite. Intended for use in the new signing flow.
-        Note: There are some instances where the build API makes other calls
-        within the build API. This will NOT work with that flow, and thus
-        should ONLY be used with calls that do not make other calls. It also
-        shouldn't be used in conjunction with calls not using chromite-HEAD
-        if you're expecting state to carry across the calls.
       retcode_fn: Called with the return code from Build API. This is useful for
         when the return code is 2 (RETURN_CODE_UNSUCCESSFUL_RESPONSE_AVAILABLE).
 
