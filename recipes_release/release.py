@@ -23,13 +23,6 @@ import common
 import git
 import staging_checks
 
-# [VPYTHON:BEGIN]
-# wheel: <
-#   name: "infra/python/wheels/tabulate-py3"
-#   version: "version:0.8.10"
-# >
-# [VPYTHON:END]
-
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
 
 

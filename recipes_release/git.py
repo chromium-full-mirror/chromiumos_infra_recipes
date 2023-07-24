@@ -91,7 +91,7 @@ class Commit:
 
     return strs
 
-  def plain_strs(self, with_bullet: bool = False) -> str:
+  def plain_strs(self) -> List[str]:
     """Return plain strings for each field of the Commit.
 
     Intended for use with the tabulate library, which takes a list of lists and
@@ -101,16 +101,10 @@ class Commit:
     print(tabulate([c.plain_strs() for c in commits]))
     ```
 
-    Args:
-      with_bullet: If true, prefix with a '*'.
-
     Returns:
       A list of strings for use with tabulate.
     """
-    strs = [self.short_hash, f'[{self.username}]', self.message]
-    if with_bullet:
-      strs = ['*'] + strs
-    return strs
+    return [self.short_hash, f'[{self.username}]', self.message]
 
   def is_older_than(self, other_hash: str) -> bool:
     """Return whether the change is older than another hash."""
