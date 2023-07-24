@@ -30,6 +30,7 @@ BOT_COST = {
     'g1-small': .00771,
     'e2-medium': 0.010051,
     'e2-small': 0.005025,
+    'e2-standard-2': 0.020102,
     'e2-standard-4': 0.040204,
     'e2-standard-8': 0.080408,
     'e2-standard-16': 0.160816,
