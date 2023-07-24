@@ -129,6 +129,7 @@
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [auto_retry_util:tests/analyze_build_failures](#recipes-auto_retry_util_tests_analyze_build_failures)
   * [auto_retry_util:tests/cq_retry_candidates](#recipes-auto_retry_util_tests_cq_retry_candidates)
   * [auto_retry_util:tests/current_cq_orchs_with_retryable_statuses](#recipes-auto_retry_util_tests_current_cq_orchs_with_retryable_statuses)
   * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
@@ -823,7 +824,9 @@ Returns:
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#101)(self):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#67)(self, cq_run: build_pb2.Build):**
+
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#165)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -10608,6 +10611,12 @@ The annealing builders run in serial and do the following:
   * push metadata for e.g. Goldeneye, findit
 
 &mdash; **def [RunSteps](/recipes/annealing.py#62)(api, properties):**
+### *recipes* / [auto\_retry\_util:tests/analyze\_build\_failures](/recipe_modules/auto_retry_util/tests/analyze_build_failures.py)
+
+[DEPS](/recipe_modules/auto_retry_util/tests/analyze_build_failures.py#10): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/analyze_build_failures.py#22)(api):**
 ### *recipes* / [auto\_retry\_util:tests/cq\_retry\_candidates](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11591,12 +11600,12 @@ This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 Call the RunCopybot endpoint.
 ### *recipes* / [cq\_auto\_retrier](/recipes/cq_auto_retrier.py)
 
-[DEPS](/recipes/cq_auto_retrier.py#15): [auto\_retry\_util](#recipe_modules-auto_retry_util)
+[DEPS](/recipes/cq_auto_retrier.py#15): [auto\_retry\_util](#recipe_modules-auto_retry_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for analyzing and retrying failed CQ runs.
 
-&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#22)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#25)(api: RecipeApi):**
 ### *recipes* / [cq\_fault\_attribution:tests/comparison\_snapshots\_retrieval](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py)
 
 [DEPS](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#19): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -13,15 +13,32 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/buildbucket',
+    'recipe_engine/step',
     'auto_retry_util',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
-  _ = api.auto_retry_util.cq_retry_candidates()
+  builds = api.auto_retry_util.cq_retry_candidates()
+  with api.step.nest('analyzing candidates'):
+    for b in builds:
+      _, _, _ = api.auto_retry_util.analyze_build_failures(b)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
-  yield api.test('basic',)
+
+  cq_orchs = [
+      api.test_util.test_orchestrator(cq=True, status='FAILURE', build_id=1111,
+                                      create_time=1111).message,
+      api.test_util.test_orchestrator(cq=True, status='FAILURE', build_id=1112,
+                                      create_time=1112).message,
+  ]
+  yield api.test(
+      'basic',
+      api.buildbucket.simulated_search_results(
+          cq_orchs, 'query for cq-orchestrators.buildbucket.search'),
+  )
