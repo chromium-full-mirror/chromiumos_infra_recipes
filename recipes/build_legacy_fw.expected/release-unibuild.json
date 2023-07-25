@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "checking attestation eligibility",
     "~followup_annotations": [
-      "@@@STEP_TEXT@fw-atlas-postsubmit NOT attestation eligible@@@"
+      "@@@STEP_TEXT@firmware-ti50-postsubmit is attestation eligible@@@"
     ]
   },
   {
@@ -32,11 +32,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -49,6 +48,93 @@
     ]
   },
   {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/reporter",
+      "-ensure-file",
+      "infra/tools/security/provenance_broker/${platform} git_revision:d3cf3b0144447a77fd79c84fe8500dfe993ef602",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "checking attestation eligibility.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:d3c\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/security/provenance_broker/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "start",
+      "-recipe",
+      "build_legacy_fw",
+      "-pid",
+      "12345"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "checking attestation eligibility.snoop: report_stage",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "compile"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "snoop: report_stage"
+  },
+  {
     "cmd": [],
     "name": "configure builder"
   },
@@ -58,16 +144,10 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder config@id {@@@",
-      "@@@STEP_LOG_LINE@builder config@  name: \"fw-atlas-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  type: POSTSUBMIT@@@",
-      "@@@STEP_LOG_LINE@builder config@  bucket: \"postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_LINE@builder config@general {@@@",
-      "@@@STEP_LOG_LINE@builder config@  firmware_location: PLATFORM_EC@@@",
+      "@@@STEP_LOG_LINE@builder config@  name: \"firmware-ti50-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder config@  bucket: \"firmware\"@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@artifacts {@@@",
-      "@@@STEP_LOG_LINE@builder config@  prebuilts: PRIVATE@@@",
-      "@@@STEP_LOG_LINE@builder config@  prebuilts_gs_bucket: \"chromeos-prebuilt\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_gs_bucket: \"chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@builder config@  artifacts_info {@@@",
       "@@@STEP_LOG_LINE@builder config@    firmware {@@@",
@@ -78,20 +158,7 @@
       "@@@STEP_LOG_LINE@builder config@      }@@@",
       "@@@STEP_LOG_LINE@builder config@    }@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_LINE@builder config@build {@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"-cros-debug\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  use_flags {@@@",
-      "@@@STEP_LOG_LINE@builder config@    flag: \"chromeless_tty\"@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
-      "@@@STEP_LOG_LINE@builder config@  install_packages {@@@",
-      "@@@STEP_LOG_LINE@builder config@    compile_source: true@@@",
-      "@@@STEP_LOG_LINE@builder config@  }@@@",
+      "@@@STEP_LOG_LINE@builder config@  attestation_eligible: true@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
     ]
@@ -127,11 +194,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -160,11 +226,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -240,11 +305,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -291,11 +355,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -327,11 +390,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -371,11 +433,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -415,11 +476,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -467,11 +527,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -505,11 +564,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -535,11 +593,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -565,11 +622,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -593,11 +649,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -623,11 +678,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -657,11 +711,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -686,11 +739,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -724,11 +776,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -768,11 +819,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -798,11 +848,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -828,11 +877,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -858,11 +906,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -887,25 +934,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "metadata setup.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -916,14 +961,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -938,11 +982,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -962,11 +1005,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -993,11 +1035,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1023,11 +1064,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1053,11 +1093,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1083,11 +1122,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1119,11 +1157,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1161,11 +1198,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1201,11 +1237,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1241,11 +1276,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1266,11 +1300,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1298,11 +1331,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1330,11 +1362,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1360,11 +1391,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1404,11 +1434,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1451,11 +1480,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1494,11 +1522,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1541,11 +1568,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1588,11 +1614,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1647,11 +1672,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1676,11 +1700,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1710,11 +1733,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1735,11 +1757,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1772,11 +1793,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1803,11 +1823,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1845,11 +1864,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1888,11 +1906,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1935,11 +1952,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1993,11 +2009,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2035,11 +2050,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2073,11 +2087,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2106,11 +2119,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2131,11 +2143,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2157,11 +2168,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2208,11 +2218,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2231,7 +2240,7 @@
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/cros_mark_as_stable",
       "commit",
       "--drop_file",
-      "[CLEANUP]/tmp_tmp_2",
+      "[CLEANUP]/tmp_tmp_1",
       "--all",
       "--boards=target",
       "--buildroot",
@@ -2242,11 +2251,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2265,18 +2273,17 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_2",
+      "[CLEANUP]/tmp_tmp_1",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2301,11 +2308,10 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2318,9 +2324,89 @@
   },
   {
     "cmd": [],
-    "name": "upload metadata",
+    "name": "bump version"
+  },
+  {
+    "cmd": [],
+    "name": "bump version.ensure version_bumper",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/version_bumper",
+      "-ensure-file",
+      "chromiumos/infra/version_bumper/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.ensure version_bumper.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/version_bumper/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/version_bumper/version_bumper",
+      "bump-version",
+      "--chromiumos_overlay_repo",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+      "--bump_from_branch_name",
+      "firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.go version_bumper",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.read updated version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found version: R109-15236.0.0-101@@@"
     ]
   },
   {
@@ -2331,18 +2417,1669 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    },\n    \"boards\": [\n        \"target\"\n    ],\n    \"bot-config\": \"fw-atlas-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"fw-atlas-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"time\": {\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.read updated version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.read updated version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "firmware-board-9999.B-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.read updated version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.read updated version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "firmware-board-9999.B-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.read updated version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R109-15236.0.0-101\"@@@",
+      "@@@SET_BUILD_PROPERTY@full_version@\"R109-15236.0.0\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "chromeos/config/chromeos_version.sh"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Increment to version R109-15236.0.0-101\n\nGenerated by firmware-ti50-postsubmit.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_version/bump_version",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Increment to version R109-15236.0.0-101@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by firmware-ti50-postsubmit.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_version/bump_version@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "--set-upstream-to=cros/firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.check if project chromiumos/overlays/chromiumos-overlay exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "chromiumos/overlays/chromiumos-overlay"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.check if project chromiumos/overlays/chromiumos-overlay exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromiumos/overlays/chromiumos-overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays/chromiumos-overlay|src/chromiumos/overlays/chromiumos-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "firmware-board-9999.B",
+      "/firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--target-branch",
+      "refs/heads/firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.create gerrit change for chromiumos/overlays/chromiumos-overlay.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Verified\": 1}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.submit CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.submit CL 1.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "land",
+      "-f",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.submit CL 1.git_cl land",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "firmware-board-9999.B:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~1..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "reset",
+      "--hard",
+      "cros/firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.reset to remote branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@found version: R109-15236.0.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "firmware-board-9999.B-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "firmware-board-9999.B-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "manifest",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.create pinned manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.clone manifest-versions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "--branch",
+      "master",
+      "--single-branch",
+      "--depth",
+      "1",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-versions",
+      "."
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.clone manifest-versions.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/109"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.ensure [CLEANUP]/manifest-versions_tmp_1/buildspecs/109 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/109/15236.0.0.xml"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.write buildspecs/109/15236.0.0.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "buildspecs/109/15236.0.0.xml"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Add buildspecs/109/15236.0.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/0\nCr-Automation-Id: cros_release/create_buildspec\n",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Add buildspecs/109/15236.0.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/0@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.check if project [CLEANUP]/manifest-versions_tmp_1 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-versions_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.check if project [CLEANUP]/manifest-versions_tmp_1 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-versions_tmp_1",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-versions_tmp_1|src/[CLEANUP]/manifest-versions_tmp_1|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git remote",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "branch",
+      "master",
+      "/master"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git branch (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--send-mail",
+      "--target-branch",
+      "refs/heads/master"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "-r"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.set labels on CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_1/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Verified\": 1}}",
+      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.submit CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/manifest-versions_tmp_1/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.submit CL 1.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "land",
+      "-f",
+      "1"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/109/15236.0.0.xml to master.submit CL 1.git_cl land",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.upload buildspecs/109/15236.0.0.xml to gs://chromeos-manifest-versions/buildspecs/109/15236.0.0.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/manifest-versions_tmp_1/buildspecs/109/15236.0.0.xml",
+      "gs://chromeos-manifest-versions/buildspecs/109/15236.0.0.xml"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.upload buildspecs/109/15236.0.0.xml to gs://chromeos-manifest-versions/buildspecs/109/15236.0.0.xml.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-manifest-versions/buildspecs/109/15236.0.0.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.ensure manifest_doctor",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd",
+      "-ensure-file",
+      "chromiumos/infra/manifest_doctor/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.ensure manifest_doctor.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/manifest_doctor/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/manifest_doctor",
+      "public-buildspec",
+      "--paths",
+      "buildspecs/109/15236.0.0.xml",
+      "--push"
+    ],
+    "cwd": "[CLEANUP]/manifest-versions_tmp_1",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.create external buildspec gs://chromiumos-manifest-versions/buildspecs/109/15236.0.0.xml",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.set buildspec_gs_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@buildspec_gs_uri@\"gs://chromeos-manifest-versions/buildspecs/109/15236.0.0.xml\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload metadata",
+    "~followup_annotations": [
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    },\n    \"boards\": [\n        \"target\"\n    ],\n    \"bot-config\": \"firmware-ti50-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 0,\n    \"builder-name\": \"firmware-ti50-postsubmit\",\n    \"builder_type\": \"firmware\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"time\": {\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2358,13 +4095,13 @@
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@        \"target\"@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    ],@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"bot-config\": \"firmware-ti50-postsubmit\",@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"branch\": \"firmware-board-9999.B\",@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"build-number\": 0,@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"build_id\": 0,@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"buildbucket_id\": 8945511751514863184,@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder-name\": \"fw-atlas-postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"buildbucket_id\": 0,@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder-name\": \"firmware-ti50-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"firmware\",@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"child-configs\": [],@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"master_build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"metadata-version\": \"2\",@@@",
@@ -2392,17 +4129,16 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2433,11 +4169,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2464,11 +4199,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2495,11 +4229,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2525,11 +4258,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2556,11 +4288,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2576,8 +4307,6 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
       "--delete",
       "--create"
     ],
@@ -2596,11 +4325,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2609,94 +4337,11 @@
     "name": "init SDK"
   },
   {
-    "cmd": [],
-    "name": "link chroot in chromiumos_workspace"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0777",
-      "[CLEANUP]/chromiumos_workspace"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "link chroot in chromiumos_workspace.ensure chromiumos_workspace",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "symlink",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "[CLEANUP]/chromiumos_workspace/chroot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "./update_chroot",
       "--toolchain_boards",
@@ -2717,11 +4362,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2738,9 +4382,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "../platform/ec/util/getversion.sh"
     ],
@@ -2758,11 +4400,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2804,9 +4445,7 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "setup_board",
       "--board=target",
@@ -2828,11 +4467,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2848,15 +4486,12 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "build_packages",
       "--board=target",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade",
-      "--nousepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],
@@ -2874,11 +4509,10 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2893,9 +4527,11 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@"
+      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
+      "@@@STEP_LOG_END@report_to_spike@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@"
     ]
   },
   {
@@ -2915,7 +4551,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bundle_tmp_1"
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2929,11 +4565,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2952,7 +4587,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "glob",
-      "[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
       "**/ec-private/fingerprint"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2967,11 +4602,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -2980,7 +4614,7 @@
     "name": "upload artifacts.create firmware archive.glob private",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@glob@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/foo/ec-private/fingerprint@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint@@@",
       "@@@STEP_LOG_END@glob@@@"
     ]
   },
@@ -2992,7 +4626,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "listdir",
-      "[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware",
       "--recursive"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3007,11 +4641,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3020,8 +4653,8 @@
     "name": "upload artifacts.create firmware archive.list files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/bar/file@@@",
-      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/tmp_tmp_1/chroot/build/target/firmware/foo/ec-private/fingerprint/bar@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/bar/file@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/foo/ec-private/fingerprint/bar@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },
@@ -3030,13 +4663,14 @@
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
-      "USE=chrome_internal -cros-debug chromeless_tty",
+      "USE=",
       "--",
       "tar",
       "cvjf",
       "/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
+      "-C",
+      "/build/target/usr/share/chromeos-config/yaml",
+      "config.yaml",
       "-C",
       "/build/target/firmware",
       "--null",
@@ -3058,11 +4692,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3098,11 +4731,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3121,7 +4753,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
       "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3136,11 +4768,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3174,11 +4805,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3212,7 +4842,59 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.Find DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[CLEANUP]/artifacts_tmp_1/dlc",
+      "--recursive"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.Find DLCs.list local DLCs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload artifacts.generate provenance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -3229,7 +4911,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3243,11 +4925,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3264,7 +4945,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R109-15236.0.0-101-\"}@@@"
     ]
   },
   {
@@ -3272,8 +4953,8 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target@@@"
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target@@@"
     ]
   },
   {
@@ -3287,8 +4968,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target/firmware_from_source.tar.bz2",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target/"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target/firmware_from_source.tar.bz2",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3302,11 +4983,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3329,8 +5009,8 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target/"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target/firmware_metadata.jsonpb",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3344,11 +5024,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3365,7 +5044,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"target/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/fw-atlas-postsubmit-firmware/R109-15236.0.0/target\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"target/firmware_from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"target/firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R109-15236.0.0/target\"}]}@@@"
     ]
   },
   {
@@ -3375,13 +5054,12 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/pushimage",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/target",
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/target",
       "--yes",
       "--board=target",
       "--version=R109-15236.0.0",
       "--buildroot",
       "[CLEANUP]/chromiumos_workspace",
-      "-n",
       "--sign-types",
       "firmware",
       "accessory_rwsig",
@@ -3399,11 +5077,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3415,16 +5092,10 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "unlink chroot in chromiumos_workspace"
-  },
-  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/cros_sdk",
       "--log-level",
       "debug",
-      "--chroot",
-      "[CLEANUP]/tmp_tmp_1/chroot",
       "--delete"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3442,11 +5113,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3468,25 +5138,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "finalize metadata.buildbucket.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -3497,14 +5165,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -3517,25 +5184,23 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "finalize metadata.buildbucket.get (2)",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8945511751514863184\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -3546,14 +5211,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8945511751514863184@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {
@@ -3561,7 +5225,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json@@@"
     ]
   },
   {
@@ -3572,17 +5236,16 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"target\": {}\n    },\n    \"boards\": [\n        \"target\"\n    ],\n    \"bot-config\": \"fw-atlas-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"fw-atlas-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"target\": {}\n    },\n    \"boards\": [\n        \"target\"\n    ],\n    \"bot-config\": \"firmware-ti50-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 0,\n    \"builder-name\": \"firmware-ti50-postsubmit\",\n    \"builder_type\": \"firmware\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3598,13 +5261,13 @@
       "@@@STEP_LOG_LINE@metadata.json@    \"boards\": [@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"target\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    ],@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"fw-atlas-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"bot-config\": \"firmware-ti50-postsubmit\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"branch\": \"firmware-board-9999.B\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build-number\": 0,@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0,@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184,@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"fw-atlas-postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 0,@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"firmware-ti50-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"firmware\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [],@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\",@@@",
@@ -3659,16 +5322,15 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R109-15236.0.0-101-/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3699,11 +5361,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3724,11 +5385,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3747,11 +5407,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3772,11 +5431,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:firmware"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -3791,14 +5449,34 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0005@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
     ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "upload-complete"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
     "name": "set suite_scheduling",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@suite_scheduling@\"False\"@@@"
+      "@@@SET_BUILD_PROPERTY@suite_scheduling@\"True\"@@@"
     ]
   },
   {

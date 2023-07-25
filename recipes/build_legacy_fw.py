@@ -372,15 +372,20 @@ class FirmwareBuilder():
           'tar',
           'cvjf',
           chroot_path(tarball),
-          '-C',
-          chroot_path(config_dir),
-          'config.yaml',
+      ]
+      if self.m.path.exists(config_dir):
+        cmd.extend([
+            '-C',
+            chroot_path(config_dir),
+            'config.yaml',
+        ])
+      cmd.extend([
           '-C',
           chroot_path(root),
           '--null',
           '-T',
           '/dev/stdin',
-      ]
+      ])
       # The list of files is generally too long for the command line.
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
       self.sdk_call('create tarball', cmd=cmd,
@@ -601,6 +606,58 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-releases']),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'upload artifacts.create firmware archive.create tarball',
+                     [
+                         "-C",
+                         "/build/target/usr/share/chromeos-config/yaml",
+                         "config.yaml",
+                     ]),
+      input_properties=dict(
+          bump_version=True, set_suite_scheduling=True,
+          buildspec_gs_path='gs://chromeos-manifest-versions/buildspecs/'))
+
+  yield test(
+      'release-unibuild',
+      exists('chroot', 'build', 'target', 'usr', 'share', 'chromeos-config',
+             'yaml', 'config.yaml'),
+      api.cros_infra_config.use_custom_builder_config(
+          BuilderConfig(
+              id=BuilderConfig.Id(name='firmware-ti50-postsubmit',
+                                  bucket='firmware'),
+              artifacts=BuilderConfig.Artifacts(
+                  attestation_eligible=True,
+                  artifacts_gs_bucket="chromeos-image-archive",
+                  artifacts_info=common_pb2.ArtifactsByService(
+                      firmware=common_pb2.ArtifactsByService
+                      .Firmware(output_artifacts=[
+                          common_pb2.ArtifactsByService.Firmware.ArtifactInfo(
+                              artifact_types=[
+                                  'FIRMWARE_TARBALL', 'FIRMWARE_TARBALL_INFO'
+                              ], gs_locations=[
+                                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}'
+                              ])
+                      ])))), step_name='checking attestation eligibility'),
+      api.post_check(post_process.MustRun, 'upload artifacts.bundle tarball'),
+      api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(post_process.StepTextEquals, 'bump version', ''),
+      api.post_check(post_process.MustRun, 'create buildspec'),
+      api.post_check(post_process.MustRun, 'snoop: report_stage'),
+      suite_scheduling(True),
+      api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['build_packages']),
+      api.post_check(post_process.StepCommandContains,
+                     'build target.install packages', ['--withdebugsymbols']),
+      api.post_check(post_process.StepCommandContains,
+                     'push image.call pushimage',
+                     ['--dest-bucket=gs://chromeos-releases']),
+      api.post_check(post_process.StepCommandContains,
+                     'upload artifacts.create firmware archive.create tarball',
+                     [
+                         "-C",
+                         "/build/target/usr/share/chromeos-config/yaml",
+                         "config.yaml",
+                     ]),
       input_properties=dict(
           bump_version=True, set_suite_scheduling=True,
           buildspec_gs_path='gs://chromeos-manifest-versions/buildspecs/'))
