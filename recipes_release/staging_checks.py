@@ -71,14 +71,15 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
 
 
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
-    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess'),
+    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-amd64-generic-direct-tast-vm'),
     StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
-                   [image_builder_exemption]),
+                   [image_builder_exemption], num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
     StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
-    StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator'),
+    StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator',
+                   num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
         orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
     ], num_builds=20),
