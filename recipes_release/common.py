@@ -9,6 +9,16 @@ import os
 import subprocess
 import typing
 
+RET_CODE_SUCCESS = 0
+# This is the error code that the argparser will system exit with.
+RET_CODE_COMMAND_ERROR = 2
+RET_CODE_OK_NO_RELEASE = 10
+RET_CODE_OK_NO_CHANGES = 11
+RET_CODE_OK_STAGING_FAILURES = 12
+RET_CODE_NO_COVERED = 20
+RET_CODE_NO_RELEASABLE = 21
+RET_CODE_INTERNAL_ERROR = 99
+
 RECIPE_BUNDLE = os.path.join('infra', 'recipe_bundles',
                              'chromium.googlesource.com', 'chromiumos', 'infra',
                              'recipes')

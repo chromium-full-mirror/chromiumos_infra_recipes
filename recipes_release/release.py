@@ -9,6 +9,7 @@ import argparse
 import os
 import subprocess
 import sys
+import traceback
 import typing
 from typing import List
 from typing import Tuple
@@ -56,7 +57,7 @@ class RecipeRelease:
     """Ask the user whether it's OK to change the git target. If not, exit."""
     if input(f'Set {self._prod_cipd_ref} to git @ {git_target}? (y/N): ').upper(
     ) != 'Y':
-      sys.exit(0)
+      sys.exit(common.RET_CODE_OK_NO_RELEASE)
 
   def update_cipd_refs(self, cipd_target: common.CipdInstance,
                        dry_run: bool = False):
@@ -111,7 +112,8 @@ class RecipeRelease:
         print(
             f'Could not find a {option} version. Please rerun without --max-{option}.'
         )
-        sys.exit(0)
+        sys.exit(common.RET_CODE_NO_RELEASABLE if options
+                 .max_releasable else common.RET_CODE_NO_COVERED)
       print(f'Picked {selected_instance} for release.')
       options.instanceid = selected_instance
       # Recalculate pending changes.
@@ -139,7 +141,7 @@ class RecipeRelease:
       else:
         print('Please address the failures in the above builders.')
         print('When you\'re certain staging is OK, you may use -s to continue.')
-        sys.exit(1)
+        sys.exit(common.RET_CODE_OK_STAGING_FAILURES)
     else:
       print('Everything looks good!')
     print()
@@ -174,16 +176,21 @@ class RecipeRelease:
 def main(argv: List[str]):
   options = parse_args(argv)
 
-  setup()
+  try:
+    setup()
 
-  print(f'=== Releasing recipes bundle "{options.bundle}" ===')
-  bundle_config = {
-      'infra': INFRA_BUNDLE,
-      'release': RELEASE_BUNDLE,
-  }[options.bundle]
+    print(f'=== Releasing recipes bundle "{options.bundle}" ===')
+    bundle_config = {
+        'infra': INFRA_BUNDLE,
+        'release': RELEASE_BUNDLE,
+    }[options.bundle]
 
-  release = RecipeRelease(bundle_config)
-  release.do_release_flow(options)
+    release = RecipeRelease(bundle_config)
+    release.do_release_flow(options)
+  except Exception:  #pylint: disable=broad-except
+    print(traceback.format_exc())
+    sys.exit(common.RET_CODE_INTERNAL_ERROR)
+  sys.exit(common.RET_CODE_SUCCESS)
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -316,7 +323,7 @@ def quit_early_if_no_pending_changes(pending_changes: List[git.Commit]):
   """If there are no pending changes, exit gracefully."""
   if not pending_changes:
     print('No changes pending. Exiting early.')
-    sys.exit(0)
+    sys.exit(common.RET_CODE_OK_NO_CHANGES)
 
 
 if __name__ == '__main__':

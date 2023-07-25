@@ -4,3 +4,4 @@
 # found in the LICENSE file.
 
 ./recipes_release/release.py "$@"
+exit $?
