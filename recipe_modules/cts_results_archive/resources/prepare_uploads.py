@@ -66,12 +66,11 @@ def main():
 
   # Input format
   data = json.load(opts.json_input)
-  for key in ('dir', 'cts_results_gsurl', 'cts_apfe_gsurl', 'build', 'model',
-              'parent_job_id'):
-    if not data.get(key):
-      raise ValueError('missing/invalid input field: ' + key)
+  dir = data['dir']
+  cts_results_gsurl = data['cts_results_gsurl']
+  cts_apfe_gsurl = data['cts_apfe_gsurl']
 
-  instructions = _prepare_uploads(data)
+  instructions = _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl)
 
   # Output format
   json.dump(
@@ -89,7 +88,7 @@ def main():
   return 0
 
 
-def _prepare_uploads(data):
+def _prepare_uploads(dir, cts_results_gsurl, cts_apfe_gsurl):
   """Prepare artifacts for CTS uploads.
 
     Upload testResult.xml.gz/test_result.xml.gz file to cts_results_bucket.
@@ -100,7 +99,7 @@ def _prepare_uploads(data):
         information.
     """
   instructions = []
-  for test_dir in glob.glob(os.path.join(data['dir'], '*')):
+  for test_dir in glob.glob(os.path.join(dir, '*')):
     cts_path = os.path.join(test_dir, 'cheets_CTS.*', 'results', '*',
                             TIMESTAMP_PATTERN)
     cts_v2_path = os.path.join(test_dir, 'cheets_CTS_*', 'results', '*',
@@ -118,21 +117,41 @@ def _prepare_uploads(data):
         (sts_v2_path, CTS_V2_RESULT_PATTERN)
     ]:
       for path in glob.glob(result_path):
-        instructions += _prepare_uploads_for_test(path, result_pattern, data)
+        instructions += _prepare_uploads_for_test(test_dir, path,
+                                                  result_pattern,
+                                                  cts_results_gsurl,
+                                                  cts_apfe_gsurl)
   return instructions
 
 
-def _prepare_uploads_for_test(path, result_pattern, data):
+def _prepare_uploads_for_test(dir, path, result_pattern, result_gs_bucket,
+                              apfe_gs_bucket):
   instructions = []
-  apfe_gs_bucket = data['cts_apfe_gsurl']
-  result_gs_bucket = data['cts_results_gsurl']
-  build = data['build']
-  host_model_name = data['model']
-  parent_job_id = data['parent_job_id']
+
+  keyval = _parse_job_keyval(dir)
+  build = keyval.get('build')
+  host_keyval = _parse_host_keyval(dir, keyval.get('hostname'))
+  labels = unquote(host_keyval.get('labels'))
+  try:
+    host_model_name = re.search(r'model:(\w+)', labels).group(1)
+  except AttributeError:
+    logging.exception('Error in parsing %s/host_keyval/%s', dir,
+                      keyval.get('hostname'))
+    host_model_name = ''
+
+  # Perform minimal validation of the source directory.
+  if not host_model_name:
+    raise ValueError('Failed to determine model')
+  if not build:
+    raise ValueError('Failed to determine build')
+  if not host_keyval:
+    raise ValueError('Failed to determine DUT hostname')
 
   if not _should_upload(build):
     # No need to upload current folder, return.
     return []
+
+  parent_job_id = str(keyval['parent_job_id'])
 
   job_id, package, timestamp = _parse_cts_job_results_file_path(path)
 
@@ -257,6 +276,105 @@ def _parse_cts_job_results_file_path(path):
   timestamp = folders[-1]
 
   return job_id, cts_package, timestamp
+
+
+def _parse_job_keyval(job_dir):
+  """Parse a file of keyvals.
+
+    @param job_dir: The string directory name of the associated job.
+    @return A dictionary representing the keyvals.
+    """
+  # The "real" job dir may be higher up in the directory tree.
+  job_dir = _find_toplevel_job_dir(job_dir)
+  if not job_dir:
+    raise ValueError('Failed to find job_dir from %s' % job_dir)
+  keyval_path = os.path.join(job_dir, 'keyval')
+  if not os.path.isfile(keyval_path):
+    raise ValueError('Failed to find keyval file at %s' % keyval_path)
+  return _read_keyval(keyval_path)
+
+
+def _find_toplevel_job_dir(start_dir):
+  """ Starting from start_dir and moving upwards, find the top-level
+    of the job results dir. We can't just assume that it corresponds to
+    the actual job.dir, because job.dir may just be a subdir of the "real"
+    job dir that autoserv was launched with. Returns None if it can't find
+    a top-level dir.
+    @param start_dir: starting directing for the upward search"""
+  job_dir = start_dir
+  while not os.path.exists(os.path.join(job_dir, ".autoserv_execute")):
+    if job_dir in ('/', ''):
+      return None
+    job_dir = os.path.dirname(job_dir)
+  return job_dir
+
+
+def _read_keyval(path):
+  """
+    Read a key-value pair format file into a dictionary, and return it.
+    Takes either a filename or directory name as input. If it's a
+    directory name, we assume you want the file to be called keyval.
+
+    @param path: Full path of the file to read from.
+    """
+  pattern = r'^([-\.\w]+)=(.*)$'
+  keyval = {}
+  f = open(path)
+  for line in f:
+    line = re.sub('#.*', '', line).rstrip()
+    if not line:
+      continue
+    match = re.match(pattern, line)
+    if match:
+      key = match.group(1)
+      value = match.group(2)
+      if re.search('^\d+$', value):
+        value = int(value)
+      elif re.search('^(\d+\.)?\d+$', value):
+        value = float(value)
+      keyval[key] = value
+    else:
+      raise ValueError('Invalid format line: %s' % line)
+  f.close()
+  return keyval
+
+
+def _parse_host_keyval(job_dir, hostname):
+  """
+    Parse host keyvals.
+
+    @param job_dir: The string directory name of the associated job.
+    @param hostname: The string hostname.
+
+    @return A dictionary representing the host keyvals.
+
+    @raises HostKeyvalError if the host keyval is not found.
+
+    """
+  hostinfo_path = os.path.join(job_dir, 'host_info_store', hostname + '.store')
+  if not os.path.exists(hostinfo_path):
+    raise HostKeyvalError('Host keyval not found')
+
+  labels = _deserialize_labels_from_host_info(hostinfo_path)
+  label_string = ','.join(el.replace(':', '%3A') for el in labels)
+  return {
+      'labels': label_string,
+      'platform': _first_label_value_for(labels, 'model'),
+  }
+
+
+def _first_label_value_for(labels, key):
+  key = key + ':'
+  for l in labels:
+    if l.startswith(key):
+      return l[len(key):]
+  return ''
+
+
+def _deserialize_labels_from_host_info(path):
+  with open(path, 'r') as f:
+    info = json.load(f)
+  return info['labels']
 
 
 if __name__ == '__main__':

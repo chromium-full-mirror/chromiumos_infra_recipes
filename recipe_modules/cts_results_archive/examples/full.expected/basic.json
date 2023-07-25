@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "Archive CTS results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json_input@{\"build\": \"fake-board-release/R11-123.45\", \"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\", \"model\": \"fake-model\", \"parent_job_id\": \"deadbeef\"}@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\"}@@@",
       "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[{'destination': 'gs://fake-bucket/fake-folder', 'name': 'fake-instruction', 'source': 'local/directory/to/upload'}]@@@",
       "@@@STEP_LOG_END@instructions@@@"
@@ -14,23 +14,11 @@
       "python3",
       "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
       "--json-input",
-      "{\"build\": \"fake-board-release/R11-123.45\", \"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\", \"model\": \"fake-model\", \"parent_job_id\": \"deadbeef\"}",
+      "{\"cts_apfe_gsurl\": \"gs://fake/apfe\", \"cts_results_gsurl\": \"gs://fake/results\", \"dir\": \"source_dir\"}",
       "--json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "Archive CTS results.prepare uploads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -69,18 +57,6 @@
       "gs://fake-bucket/fake-folder"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"

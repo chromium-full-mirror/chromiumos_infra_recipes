@@ -30,9 +30,6 @@ class CTSResultsArchive(recipe_api.RecipeApi):
           'dir': d_dir,
           'cts_results_gsurl': self._properties.cts_results_gsurl,
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
-          'build': self.m.cros_tags.get_single_value('build'),
-          'model': self.m.cros_tags.get_single_value('label-model'),
-          'parent_job_id': self.m.cros_tags.get_single_value('parent_task_id'),
       }
       step.logs['json_input'] = json.dumps(json_input, sort_keys=True)
       result = self.m.step(
