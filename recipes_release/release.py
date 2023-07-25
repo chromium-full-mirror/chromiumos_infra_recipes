@@ -11,9 +11,7 @@ import subprocess
 import sys
 import typing
 from typing import List
-from typing import Optional
 from typing import Tuple
-import urllib.parse
 
 import tabulate
 
@@ -21,6 +19,7 @@ import bb
 import cipd
 import common
 import git
+import gmail
 import staging_checks
 
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -31,7 +30,7 @@ class RecipeReleaseConfig(typing.NamedTuple):
   name: str
   staging_checks: Tuple[staging_checks.StagingReCheck]
   prod_cipd_label: common.CipdRef
-  longname: Optional[str]
+  longname: str
 
 # These variables describe config for the different recipes releases.
 # We have `infra`, which is most everything, and `release`, which is used
@@ -76,47 +75,6 @@ class RecipeRelease:
         print('\t ', ' '.join(cmd))
       else:
         subprocess.run(cmd, check=True)
-
-  def print_email_link(self, pending_changes: List[git.Commit], bbid: str):
-    """Show the user an email link to announce the new change."""
-    print()
-    print(
-        'Please click this link and send an email to chromeos-infra-releases!')
-    print()
-    print(self.get_email_link(pending_changes, bbid))
-
-  def get_email_link(self, pending_changes: List[git.Commit], bbid: str) -> str:
-    """Create an email link to announce the new change."""
-    email_subject = f'Recipes Release - {common.get_timestamp()}'
-    release_str = ''
-    if self._longname:
-      release_str = f'(for {self._longname}) '
-    email_lines = [
-        f'We\'ve deployed Recipes {release_str}to prod!',
-        '',
-    ]
-    if bbid:
-      email_lines += [f'Recipes deployed by go/bbid/{bbid}.', '']
-    email_lines += [
-        'Here is a summary of the changes:',
-        '',
-        tabulate.tabulate([
-            c.plain_strs(with_bullet=True)
-            for c in pending_changes
-            if not c.trivial
-        ], headers=[], tablefmt='plain'),
-    ]
-    email_message = '\n'.join(email_lines)
-    url_params = urllib.parse.urlencode({
-        'view': 'cm',
-        'fs': 1,
-        'bcc': 'chromeos-infra-releases@google.com',
-        'to': 'chromeos-continuous-integration-team@google.com',
-        'su': email_subject,
-        'body': email_message,
-    })
-    url = f'https://mail.google.com/mail?{url_params}'
-    return url
 
   def do_release_flow(self, options: argparse.Namespace):
     # Figure out which hashes/instances to use.
@@ -178,14 +136,30 @@ class RecipeRelease:
       print('Everything looks good!')
     print()
 
-    if not options.yes:
+    # In dry run mode, don't bother asking for confirmation (no actions will be
+    # taken anyway).
+    if not options.yes and not options.dry_run:
       self.prompt_about_setting_git_target(git_target)
 
     # Update refs.
     self.update_cipd_refs(cipd_target, dry_run=options.dry_run)
 
-    # We did it!
-    self.print_email_link(pending_changes, bbid=options.bbid)
+    # Send the email announcement or produce a link for a human to send it.
+    gm_client = gmail.GmailAnnouncer(
+        pending_changes,
+        self._longname,
+        options.recipients,
+        options.bccs,
+        options.gmail_api_quota_project,
+        options.bbid,
+    )
+    if options.send_email:
+      gm_client.send_email()
+      print(f'\nSent an announcement email to {",".join(options.recipients)}!')
+    else:
+      print(
+          f'\nPlease click this link and send an email to {",".join(options.recipients)}!\n'
+          + gm_client.get_email_link())
 
 
 def main(argv: List[str]):
@@ -243,10 +217,52 @@ def parse_args(args: List[str]) -> argparse.Namespace:
   mode_group.add_argument(
       '--max-releasable', action='store_true',
       help='Find the maximum instance that has sufficient successful results in staging.'
+      'Currently in development, use at your own risk.')
+
+  email_group = parser.add_argument_group(
+      'email',
+      description='On success, the script will print a link for the caller to '
+      'send an email announcing the release.',
+  )
+  email_group.add_argument(
+      '--send-email',
+      action='store_true',
+      help='Send the email via the Gmail API instead of just printing a link '
+      'for the caller to send it. Authenication is done by calling `luci-auth '
+      'token`, so the caller must be logged into `luci-auth` with the required '
+      'scopes. Login command: `luci-auth login -scopes '
+      f'{" ".join(gmail.REQUIRED_SCOPES)}`',
+  )
+  email_group.add_argument(
+      '--recipients',
+      type=str,
+      nargs='+',
+      metavar='EMAIL',
+      default=['chromeos-continuous-integration-team@google.com'],
+      help='Email addresses to send the announcement to.',
+  )
+  email_group.add_argument(
+      '--bccs',
+      type=str,
+      nargs='*',
+      metavar='EMAIL',
+      default=['chromeos-infra-releases@google.com'],
+      help='Email addresses to bcc on the announcement. May be empty.',
+  )
+  email_group.add_argument(
+      '--gmail-api-quota-project',
+      type=str,
+      default='chromeos-bot',
+      help='Cloud project to use with the Gmail API. Only used if --send-email '
+      'is set.',
+  )
+  email_group.add_argument(
+      '--bbid',
+      type=str,
+      help='BBID of the invoking builder, which will be included in '
+      'the announcement email. Not for use by humans.',
   )
 
-  parser.add_argument(
-      '--bbid', help='BBID of the invoking builder. Not for use by humans.')
   return parser.parse_args(args)
 
 

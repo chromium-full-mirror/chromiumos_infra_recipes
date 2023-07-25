@@ -23,7 +23,7 @@ class TestGmailAnnouncer(unittest.TestCase):
     # diff limit.
     self.maxDiff = None
 
-    pending_changes = [
+    self._pending_changes = [
         git.Commit(
             '123',
             'author@gmail.com',
@@ -41,7 +41,7 @@ class TestGmailAnnouncer(unittest.TestCase):
     ]
 
     self._announcer = gmail.GmailAnnouncer(
-        pending_changes=pending_changes,
+        pending_changes=self._pending_changes,
         bundle_longname='test bundle',
         recipients=[
             'recipes-announce1@gmail.com', 'recipes-announce2@gmail.com'
@@ -75,6 +75,32 @@ Here is a summary of the changes:
         'view': ['cm']
     }
     self.assertDictEqual(expected_query_dict, query_dict)
+
+  @mock.patch.object(subprocess, 'run', autospec=True)
+  def test_bbid_set(self, subprocess_mock):
+    announcer_with_bbid = gmail.GmailAnnouncer(
+        pending_changes=self._pending_changes,
+        bundle_longname='test bundle',
+        recipients=[
+            'recipes-announce1@gmail.com', 'recipes-announce2@gmail.com'
+        ],
+        bccs=['recipes-bcc1@gmail.com', 'recipes-bcc2@gmail.com'],
+        quota_project='test-cloud-project',
+        bbid='123',
+    )
+    subprocess_mock.return_value = test_util.subprocess_stdout(
+        'Mon Jul 24 08:29:35 PM UTC 2023')
+
+    url_components = urllib.parse.urlparse(announcer_with_bbid.get_email_link())
+    query_dict = urllib.parse.parse_qs(url_components.query)
+    expectedBodySubstring = '''
+We've deployed Recipes (for test bundle) to prod!
+
+Recipes deployed by go/bbid/123.
+
+Here is a summary of the changes:
+'''
+    self.assertIn(expectedBodySubstring, query_dict['body'][0])
 
   @mock.patch.object(googleapiclient.discovery, 'build', autospec=True)
   @mock.patch.object(subprocess, 'run', autospec=True)

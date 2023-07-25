@@ -24,13 +24,13 @@ def _get_subject():
 # Template for the body of the announcement email.
 _MESSAGE_TEMPLATE = '''
 We've deployed Recipes (for {bundle_longname}) to prod!
-
+{bbid_message}
 Here is a summary of the changes:
 
 {change_table}
 '''
 
-_REQUIRED_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+REQUIRED_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
 
 class LuciAuthError(Exception):
@@ -51,6 +51,7 @@ class GmailAnnouncer:
       recipients: List[str],
       bccs: List[str],
       quota_project: Optional[str] = None,
+      bbid: Optional[str] = None,
   ):
     """Initialize the GmailAnnouncer based on a set of pending changes.
 
@@ -63,12 +64,16 @@ class GmailAnnouncer:
       quota_project: Cloud quota project to used when sending emails through the
         Gmail API. Not needed if the announcer is just producing a link to send
         the email.
+      bbid: BBID of the invoking builder, which will be included in the
+        announcement email. Not for use by humans.
     """
     # Formatting the table should be fast, do it in __init__.
     change_table = tabulate.tabulate(
         [['*'] + c.plain_strs() for c in pending_changes if not c.trivial],
         headers=[], tablefmt='plain')
+    bbid_message = f'\nRecipes deployed by go/bbid/{bbid}.\n' if bbid else ''
     self._message = _MESSAGE_TEMPLATE.format(bundle_longname=bundle_longname,
+                                             bbid_message=bbid_message,
                                              change_table=change_table)
     self._recipients = recipients
     self._bccs = bccs
@@ -123,13 +128,13 @@ class GmailAnnouncer:
 
     try:
       token_proc = subprocess.run(
-          ['luci-auth', 'token', '-scopes', ' '.join(_REQUIRED_SCOPES)],
+          ['luci-auth', 'token', '-scopes', ' '.join(REQUIRED_SCOPES)],
           check=True, stdout=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
       raise LuciAuthError(
           'The following scopes are required to send emails with the Gmail API: '
-          f'{_REQUIRED_SCOPES}. Please log in with `luci-auth login -scopes '
-          f'{" ".join(_REQUIRED_SCOPES)}`.') from e
+          f'{REQUIRED_SCOPES}. Please log in with `luci-auth login -scopes '
+          f'{" ".join(REQUIRED_SCOPES)}`.') from e
 
     token = token_proc.stdout
     return google.oauth2.credentials.Credentials(token).with_quota_project(
