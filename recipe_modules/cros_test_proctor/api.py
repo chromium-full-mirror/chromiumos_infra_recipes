@@ -915,6 +915,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """
     result = []
     for unit in units:
+      build_target = unit.common.build_target.name
+      builder_name = unit.common.builder_name
       for test in tests_func(cfg_func(unit)):
         name = test.common.display_name
         status = 'SUCCESS' if name in passed_test_names else 'FAILURE'
@@ -924,7 +926,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
         result.append(
-            dict(name=name, board=board, critical=critical, status=status))
+            dict(name=name, board=board, builder_name=builder_name,
+                 build_target=build_target, critical=critical, status=status))
     return result
 
   def _with_props_for_child_build(self, properties):
