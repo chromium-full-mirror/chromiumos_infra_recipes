@@ -33,6 +33,10 @@ Here is a summary of the changes:
 _REQUIRED_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
 
+class LuciAuthError(Exception):
+  """Raised when luci-auth isn't logged in with required scopes."""
+
+
 class GmailAnnouncer:
   """Builds emails to announce a recipes release.
 
@@ -117,10 +121,16 @@ class GmailAnnouncer:
     if not self._quota_project:
       raise ValueError('quota_project must be set')
 
-    # TODO(b/287276108): Produce a clear error message when not logged in.
-    token_proc = subprocess.run(
-        ['luci-auth', 'token', '-scopes', ' '.join(_REQUIRED_SCOPES)],
-        check=True, stdout=subprocess.PIPE)
+    try:
+      token_proc = subprocess.run(
+          ['luci-auth', 'token', '-scopes', ' '.join(_REQUIRED_SCOPES)],
+          check=True, stdout=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+      raise LuciAuthError(
+          'The following scopes are required to send emails with the Gmail API: '
+          f'{_REQUIRED_SCOPES}. Please log in with `luci-auth login -scopes '
+          f'{" ".join(_REQUIRED_SCOPES)}`.') from e
+
     token = token_proc.stdout
     return google.oauth2.credentials.Credentials(token).with_quota_project(
         self._quota_project)

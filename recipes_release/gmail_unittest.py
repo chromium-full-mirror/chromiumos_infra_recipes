@@ -106,3 +106,16 @@ Subject: Recipes Release - Mon Jul 24 08:29:35 PM UTC 2023
 
     message = base64.b64decode(send_mock.call_args[1]['body']['raw']).decode()
     self.assertEqual(message, expected_message)
+
+  @mock.patch.object(subprocess, 'run', autospec=True)
+  def test_luci_auth_error(self, subprocess_mock):
+    subprocess_mock.side_effect = subprocess.CalledProcessError(
+        1, ['luci-auth', 'token', '-scopes', 'newscope'])
+
+    with self.assertRaisesRegex(
+        gmail.LuciAuthError,
+        'The following scopes are required to send emails with the Gmail API: '
+        r"\['https://www.googleapis.com/auth/gmail.send'\]. Please log in with "
+        '`luci-auth login -scopes https://www.googleapis.com/auth/gmail.send`.'
+    ):
+      self._announcer.send_email()
