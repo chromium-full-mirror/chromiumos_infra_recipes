@@ -61,7 +61,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 102",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -92,7 +99,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 176",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -123,7 +137,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 306",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -154,7 +175,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 808",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -185,7 +213,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 1629",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (5)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -216,7 +251,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 2951",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (6)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -247,7 +289,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 6056",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (7)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (7)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -278,7 +327,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 10082",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (8)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (8)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -309,7 +365,14 @@
   },
   {
     "cmd": [],
-    "name": "getting last snapshot greenness.sleep 24881",
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (9)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (9)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -336,6 +399,20 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (10)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.sleep 1800 (10)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

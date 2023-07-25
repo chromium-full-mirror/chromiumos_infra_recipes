@@ -38,8 +38,6 @@ BUILD_OUTPUT.properties['greenness'] = {
 }
 LAST_SNAPSHOT = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                                 output=BUILD_OUTPUT, input=BUILD_INPUT)
-LAST_SNAPSHOT2 = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
-                                 input=BUILD_INPUT)
 
 
 def RunSteps(api):

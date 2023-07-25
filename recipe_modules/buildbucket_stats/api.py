@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import datetime
 from typing import Dict
 from collections import OrderedDict
 
@@ -16,7 +15,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
-from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 DEMAND_STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
 
@@ -75,36 +73,41 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
     ])
 
-  @exponential_retry(retries=9, delay=datetime.timedelta(seconds=90),
-                     condition=lambda e: repr(e) == 'AssertionError()')
   def _get_snapshot_greenness(self, commit: str,
                               predicate: builds_service_pb2.BuildPredicate,
-                              fields: frozenset) -> OrderedDict():
+                              fields: frozenset,
+                              pres: StepPresentation) -> OrderedDict():
     """Returns snapshot run for specified commit, if found.
 
-    Retries bb query with exponential backoff if we encounter AssertionError
-    for finding the desired snapshot or if the snapshot is not yet complete,
-    meaning greenness may not yet be populated.
+    Retries bb query every half hour for up to 5 hours if we don't find the
+    snapshot or build greenness is not yet set.
     """
-    results = self.m.buildbucket.search([predicate], fields=fields, timeout=60)
-    found_snapshot = False
-    output_props = None
-    for result in results:
-      if result.input.gitiles_commit.id == commit:
-        found_snapshot = True
-        # Ensure build greenness in last snapshot run is complete.
-        output_props = result.output.properties
-        assert 'greenness' in output_props.fields and 'targetGreenness' in output_props[
-            'greenness'].fields
-    # Ensure we found the snapshot run we're looking for.
-    assert found_snapshot
-    snapshot_greenness = self.reformat_target_dict(
-        output_props['greenness']['targetGreenness'])
-    # Remove metric, since we only wait for build to finish, not tests.
-    for v in snapshot_greenness.values():
-      if 'metric' in v:
-        del v['metric']
-    return OrderedDict(snapshot_greenness)
+    # Up to 10 30-minutes sleeps for a total wait of up to 5 hours.
+    for _ in range(10):
+      results = self.m.buildbucket.search([predicate], fields=fields,
+                                          timeout=60)
+      for result in results:
+        if result.input.gitiles_commit.id == commit:
+          # Ensure build greenness in last snapshot run is complete.
+          output_props = result.output.properties
+          if 'greenness' in output_props.fields and 'targetGreenness' in output_props[
+              'greenness'].fields:
+            snapshot_greenness = OrderedDict(
+                self.reformat_target_dict(
+                    output_props['greenness']['targetGreenness']))
+            # Remove metric, since we only wait for build to finish, not tests.
+            for v in snapshot_greenness.values():
+              if 'metric' in v:
+                del v['metric']
+            pres.logs[
+                'found'] = f'Found greenness for snapshot for commit {commit}: {snapshot_greenness}'
+            return snapshot_greenness
+      # Wait 30 mins and check again for snapshot with build greennness.
+      self.m.step.empty('sleeping 30 minutes before checking again')
+      self.m.time.sleep(30 * 60)
+    pres.logs[
+        'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
+    return OrderedDict()
 
   def get_snapshot_greenness(self, commit: str,
                              pres: StepPresentation) -> OrderedDict():
@@ -117,15 +120,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     predicate.builder.project = self._project
     predicate.builder.bucket = self._snapshot_bucket
     predicate.builder.builder = self._snapshot_builder
-    try:
-      greenness = self._get_snapshot_greenness(commit, predicate, fields)
-      pres.logs[
-          'found'] = f'Found greenness for snapshot for commit {commit}: {greenness}'
-    except AssertionError:
-      pres.logs[
-          'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
-      greenness = OrderedDict()
-    return greenness
+    return self._get_snapshot_greenness(commit, predicate, fields, pres)
 
   def reformat_target_dict(
       self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:

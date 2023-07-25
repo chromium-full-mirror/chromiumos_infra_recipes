@@ -1770,14 +1770,14 @@ Return:
   Handle which is used to set the step status.
 ### *recipe_modules* / [buildbucket\_stats](/recipe_modules/buildbucket_stats)
 
-[DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#64)(status_map: Dict[(str, int)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#62)(status_map: Dict[(str, int)]):**
 
 Return the demand for bots in a bot group.
 
@@ -1787,7 +1787,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#50)(self, bucket: str):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#48)(self, bucket: str):**
 
 Return the number of builds in the bucket and their statuses.
 
@@ -1797,7 +1797,7 @@ Args:
 Returns:
   Map of status to number of builds with that status in the bucket.
 
-&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#32)(self, bucket: str, status: common_pb2.Status):**
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#30)(self, bucket: str, status: common_pb2.Status):**
 
 Return the number of builds in the bucket with a specific status.
 
@@ -1808,13 +1808,13 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#109)(self, commit: str, pres: StepPresentation):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#112)(self, commit: str, pres: StepPresentation):**
 
 Returns snapshot run for specified commit, if found.
 
-&mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#27)(self):**
+&mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#25)(self):**
 
-&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#130)(self, list_value: struct_pb2.ListValue):**
+&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#125)(self, list_value: struct_pb2.ListValue):**
 
 Reformat ListValue to a dictionary, using target as key.
 
@@ -13375,7 +13375,7 @@ Recipe that schedules jobs based on its triggers.
 [DEPS](/recipe_modules/greenness/examples/update_build_info.py#8): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#45)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_build_info.py#43)(api):**
 ### *recipes* / [greenness:examples/update\_hwtest\_info](/recipe_modules/greenness/examples/update_hwtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_hwtest_info.py#9): [greenness](#recipe_modules-greenness), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
