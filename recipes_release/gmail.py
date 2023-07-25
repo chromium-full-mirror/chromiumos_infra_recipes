@@ -32,6 +32,24 @@ class LuciAuthError(Exception):
   """Raised when luci-auth isn't logged in with required scopes."""
 
 
+def get_token_from_luci_auth() -> bytes:
+  """Call luci-auth to get a token with the required scopes.
+
+  This function is used internally by the GmailAnnouncer class, and is also made
+  public so callers can check early whether the user is logged in with the
+  required scopes.
+  """
+  try:
+    return subprocess.run(
+        ['luci-auth', 'token', '-scopes', ' '.join(REQUIRED_SCOPES)],
+        check=True, stdout=subprocess.PIPE).stdout
+  except subprocess.CalledProcessError as e:
+    raise LuciAuthError(
+        'The following scopes are required to send emails with the Gmail API: '
+        f'{REQUIRED_SCOPES}. Please log in with `luci-auth login -scopes '
+        f'{" ".join(REQUIRED_SCOPES)}`.') from e
+
+
 class GmailAnnouncer:
   """Builds emails to announce a recipes release.
 
@@ -106,8 +124,13 @@ class GmailAnnouncer:
     API. The caller must be logged in with `luci-auth` with the appropriate
     scopes.
     """
-    service = googleapiclient.discovery.build(
-        'gmail', 'v1', credentials=self._creds_from_luci())
+    if not self._quota_project:
+      raise ValueError('quota_project must be set')
+
+    creds = google.oauth2.credentials.Credentials(
+        get_token_from_luci_auth()).with_quota_project(self._quota_project)
+
+    service = googleapiclient.discovery.build('gmail', 'v1', credentials=creds)
 
     message = email.message.EmailMessage()
     message.set_content(self._message)
@@ -120,26 +143,3 @@ class GmailAnnouncer:
     create_message = {'raw': encoded_message}
 
     service.users().messages().send(userId="me", body=create_message).execute()
-
-  def _creds_from_luci(self) -> google.oauth2.credentials.Credentials:
-    """Call `luci-auth token` to build Credentials.
-
-    Note that this will fail if the caller is not logged in with the required
-    scopes.
-    """
-    if not self._quota_project:
-      raise ValueError('quota_project must be set')
-
-    try:
-      token_proc = subprocess.run(
-          ['luci-auth', 'token', '-scopes', ' '.join(REQUIRED_SCOPES)],
-          check=True, stdout=subprocess.PIPE)
-    except subprocess.CalledProcessError as e:
-      raise LuciAuthError(
-          'The following scopes are required to send emails with the Gmail API: '
-          f'{REQUIRED_SCOPES}. Please log in with `luci-auth login -scopes '
-          f'{" ".join(REQUIRED_SCOPES)}`.') from e
-
-    token = token_proc.stdout
-    return google.oauth2.credentials.Credentials(token).with_quota_project(
-        self._quota_project)

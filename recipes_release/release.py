@@ -77,6 +77,14 @@ class RecipeRelease:
         subprocess.run(cmd, check=True)
 
   def do_release_flow(self, options: argparse.Namespace):
+    if options.send_email:
+      # If send_email is set, check early to see if we are logged into luci-auth
+      # with the appropriate scopes. This way, the user will find out if they
+      # aren't logged in early, instead of after the entire script is run.
+      # get_token_from_luci_auth returns a token, but we don't actually use it,
+      # we just want to see if it fails.
+      gmail.get_token_from_luci_auth()
+
     # Figure out which hashes/instances to use.
     git_prod = cipd.cipd_version_to_githash(self._prod_cipd_ref)
     (cipd_target,

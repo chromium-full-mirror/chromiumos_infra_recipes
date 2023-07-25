@@ -166,4 +166,9 @@ Subject: Recipes Release - Mon Jul 24 08:29:35 PM UTC 2023
         r"\['https://www.googleapis.com/auth/gmail.send'\]. Please log in with "
         '`luci-auth login -scopes https://www.googleapis.com/auth/gmail.send`.'
     ):
-      self._announcer.send_email()
+      gmail.get_token_from_luci_auth()
+
+  @mock.patch.object(subprocess, 'run', autospec=True)
+  def test_get_token_from_luci_auth(self, subprocess_mock):
+    subprocess_mock.return_value = test_util.subprocess_stdout('luciauthtoken')
+    self.assertEqual(gmail.get_token_from_luci_auth(), 'luciauthtoken')
