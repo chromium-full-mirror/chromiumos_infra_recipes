@@ -147,11 +147,12 @@ class RecipeRelease:
     # Send the email announcement or produce a link for a human to send it.
     gm_client = gmail.GmailAnnouncer(
         pending_changes,
-        self._longname,
-        options.recipients,
-        options.bccs,
-        options.gmail_api_quota_project,
-        options.bbid,
+        bundle_longname=self._longname,
+        recipients=options.recipients,
+        bccs=options.bccs,
+        dry_run=options.dry_run,
+        quota_project=options.gmail_api_quota_project,
+        bbid=options.bbid,
     )
     if options.send_email:
       gm_client.send_email()

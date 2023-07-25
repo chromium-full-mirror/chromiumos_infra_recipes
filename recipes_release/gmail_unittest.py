@@ -102,6 +102,28 @@ Here is a summary of the changes:
 '''
     self.assertIn(expectedBodySubstring, query_dict['body'][0])
 
+  @mock.patch.object(subprocess, 'run', autospec=True)
+  def test_dry_run(self, subprocess_mock):
+    announcer_with_dry_run = gmail.GmailAnnouncer(
+        pending_changes=self._pending_changes,
+        bundle_longname='test bundle',
+        recipients=[
+            'recipes-announce1@gmail.com', 'recipes-announce2@gmail.com'
+        ],
+        bccs=['recipes-bcc1@gmail.com', 'recipes-bcc2@gmail.com'],
+        quota_project='test-cloud-project',
+        dry_run=True,
+    )
+    subprocess_mock.return_value = test_util.subprocess_stdout(
+        'Mon Jul 24 08:29:35 PM UTC 2023')
+
+    url_components = urllib.parse.urlparse(
+        announcer_with_dry_run.get_email_link())
+    query_dict = urllib.parse.parse_qs(url_components.query)
+    self.assertEqual(
+        '[DRY RUN] Recipes Release - Mon Jul 24 08:29:35 PM UTC 2023',
+        query_dict['su'][0])
+
   @mock.patch.object(googleapiclient.discovery, 'build', autospec=True)
   @mock.patch.object(subprocess, 'run', autospec=True)
   def test_send_email(self, subprocess_mock, discovery_mock):

@@ -16,11 +16,6 @@ import common
 import git
 
 
-def _get_subject():
-  """Return a subject for the announcement email."""
-  return f'Recipes Release - {common.get_timestamp()}'
-
-
 # Template for the body of the announcement email.
 _MESSAGE_TEMPLATE = '''
 We've deployed Recipes (for {bundle_longname}) to prod!
@@ -50,6 +45,7 @@ class GmailAnnouncer:
       bundle_longname: str,
       recipients: List[str],
       bccs: List[str],
+      dry_run: bool = False,
       quota_project: Optional[str] = None,
       bbid: Optional[str] = None,
   ):
@@ -61,6 +57,9 @@ class GmailAnnouncer:
       bundle_longname: Human-readable name of the Recipes bundle being released.
       recipients: Email addresses to send the announcement to.
       bccs: Email addresses to bcc on the announcement.
+      dry_run: Whether the changes are actually being released, affects the
+        subject of the email. Similar to pending_changes, announcer does nothing
+        to check whether the changes are actually being released.
       quota_project: Cloud quota project to used when sending emails through the
         Gmail API. Not needed if the announcer is just producing a link to send
         the email.
@@ -76,8 +75,13 @@ class GmailAnnouncer:
                                              bbid_message=bbid_message,
                                              change_table=change_table)
     self._recipients = recipients
+    self._dry_run = dry_run
     self._bccs = bccs
     self._quota_project = quota_project
+
+  def _get_subject(self):
+    """Return a subject for the announcement email."""
+    return f'{"[DRY RUN] " if self._dry_run else ""}Recipes Release - {common.get_timestamp()}'
 
   def get_email_link(self) -> str:
     """Get a link to send the announcement email.
@@ -90,7 +94,7 @@ class GmailAnnouncer:
         'fs': 1,
         'bcc': ','.join(self._bccs),
         'to': ','.join(self._recipients),
-        'su': _get_subject(),
+        'su': self._get_subject(),
         'body': self._message,
     })
     return f'https://mail.google.com/mail?{url_params}'
@@ -109,7 +113,7 @@ class GmailAnnouncer:
     message.set_content(self._message)
     message['To'] = self._recipients
     message['Bcc'] = self._bccs
-    message['Subject'] = _get_subject()
+    message['Subject'] = self._get_subject()
 
     encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
