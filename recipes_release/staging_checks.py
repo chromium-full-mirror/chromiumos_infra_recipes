@@ -85,7 +85,6 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor'),
-    StagingReCheck('chromeos', 'staging', r'staging-release-triggerer'),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
@@ -104,6 +103,8 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator',
                    num_builds=15),
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
+    StagingReCheck('chromeos', 'staging', r'staging-release-triggerer',
+                   num_builds=3),
     # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
 )
