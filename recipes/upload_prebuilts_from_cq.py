@@ -369,19 +369,19 @@ def set_binhots(api: RecipeApi, step_name: str, is_staging: bool,
                 key=binhost_pb.CQ_BINHOST,
             )
 
-      # Processes private builders
-      with api.step.nest("Private binhosts") as presentation:
-        private_prebuilt_entries_len = len(private_prebuilt_entries)
-        presentation.step_summary_text = (
-            f'Set {private_prebuilt_entries_len} binhosts.')
-        if private_prebuilt_entries_len > 0:
-          api.cros_prebuilts.set_binhosts(
-              binhosts=list(
-                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                      private_prebuilt_entries)),
-              private=True,
-              key=binhost_pb.CQ_BINHOST,
-          )
+        # Processes private builders
+        with api.step.nest("Private binhosts") as presentation:
+          private_prebuilt_entries_len = len(private_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {private_prebuilt_entries_len} binhosts.')
+          if private_prebuilt_entries_len > 0:
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        private_prebuilt_entries)),
+                private=True,
+                key=binhost_pb.CQ_BINHOST,
+            )
 
 
 def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
