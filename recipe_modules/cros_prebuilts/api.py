@@ -7,7 +7,7 @@
 
 import os
 import datetime
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -54,21 +54,25 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """Return a default profile if there is no profile."""
     return profile if profile and profile.name else Profile(name='base')
 
-  def _prebuilts_uri(self, target, kind, gs_bucket):
-    """Determine the GS URI to upload prebuilts.
+  def _prebuilts_uri(self, target: BuildTarget, kind: BuilderConfig.Id.Type,
+                     gs_bucket: str, profile: Optional[Profile] = None) -> str:
+    """Determine the GS URI to upload prebuilts to.
 
     Args:
-      target (BuildTarget): The build target.
-      kind (BuilderConfig.Id.Type): The kind of prebuilts, e.g. POSTSUBMIT
-      gs_bucket (str): Google storage bucket to upload prebuilts to.
+      target: The build target.
+      kind: The kind of prebuilts, e.g. POSTSUBMIT
+      gs_bucket: Google storage bucket to upload prebuilts to.
+      profile: The Profile, or None for the default "base" profile.
 
     Returns:
       The full GS URI in which to upload prebuilts.
     """
-    label = BuilderConfig.Id.Type.Name(kind).lower()
+    target_label = target.name
+    if profile is not None and profile.name and profile.name != 'base':
+      target_label = f'{target_label}-{profile.name}'
+    kind_label = BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.version
-    return 'gs://%s/board/%s/%s-%s-%s/packages' % (
-        gs_bucket, target.name, label, version, self._build_id)
+    return f'gs://{gs_bucket}/board/{target_label}/{kind_label}-{version}-{self._build_id}/packages'
 
   def _devinstall_prebuilts_uri(self, target, gs_bucket, staging=False):
     """Determine the GS URI to upload devinstall prebuilts.
@@ -710,13 +714,16 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       self._upload(upload_root, upload_paths, upload_uri, acls)
 
   def upload_chrome_prebuilts(self, target: BuildTarget, sysroot: Sysroot,
-                              chroot: Chroot, kind: BuilderConfig.Id.Type,
-                              gs_bucket: str, private: bool) -> None:
+                              chroot: Chroot, profile: Optional[Profile],
+                              kind: BuilderConfig.Id.Type, gs_bucket: str,
+                              private: bool) -> None:
     """Upload Chrome binary prebuilts for the build target to Google Storage.
 
     Args:
       target: The build target to upload prebuilts for.
       sysroot: The sysroot whose prebuilts are being uploaded.
+      chroot: Chroot to work with.
+      profile: The Profile, or None.
       kind: Kind of prebuilts to upload.
       gs_bucket: Google storage bucket to upload prebuilts to.
       private: Whether or not the target prebuilts are private.
@@ -732,7 +739,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       acls = self._get_acls(private, target)
 
       # Get the upload targets from the build API.
-      upload_uri = self._prebuilts_uri(target, kind, gs_bucket)
+      upload_uri = self._prebuilts_uri(target, kind, gs_bucket, profile)
       upload_root, upload_paths = self._prepare_chrome_binhost_uploads(
           sysroot, chroot, upload_uri)
 

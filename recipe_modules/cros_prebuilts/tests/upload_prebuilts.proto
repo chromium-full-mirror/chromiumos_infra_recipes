@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_prebuilts.tests;
 
+import "chromiumos/common.proto";
+
 message UploadPrebuiltsProperties {
   // Whether to upload build target prebuilts.
   bool upload_target_prebuilts = 1;
@@ -17,4 +19,6 @@ message UploadPrebuiltsProperties {
   bool private = 4;
   // GS bucket used for uploads.
   string gs_bucket = 5;
+  // The name of the profile to use.
+  chromiumos.Profile profile = 6;
 }

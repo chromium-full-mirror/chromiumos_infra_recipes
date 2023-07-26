@@ -41,7 +41,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties) -> None:
         target,
         sysroot,
         chroot,
-        Profile(),
+        properties.profile,
         builder_config,
         properties.gs_bucket,
         properties.private,
@@ -51,6 +51,7 @@ def RunSteps(api: recipe_api.RecipeApi, properties) -> None:
                                                    properties.gs_bucket)
   if properties.upload_chrome_prebuilts:
     api.cros_prebuilts.upload_chrome_prebuilts(target, sysroot, chroot,
+                                               properties.profile,
                                                builder_config,
                                                properties.gs_bucket,
                                                properties.private)
@@ -60,6 +61,34 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'upload-target-prebuilts',
       api.properties(upload_target_prebuilts=True, gs_bucket='test_bucket'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-target-prebuilts-with-profile',
+      api.properties(upload_target_prebuilts=True, gs_bucket='test_bucket',
+                     profile=Profile(name='some_profile')),
+      # A profile is not supported yet on target prebuilts.
+      api.post_check(
+          post_process.PropertyEquals, 'prebuilts_uri',
+          'gs://test_bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-led_fake-task-id/packages'
+      ),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-target-prebuilts-without-profile',
+      api.properties(upload_target_prebuilts=True, gs_bucket='test_bucket',
+                     profile=Profile()),
+      # A profile is not supported yet on target prebuilts.
+      api.post_check(
+          post_process.PropertyEquals, 'prebuilts_uri',
+          'gs://test_bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-led_fake-task-id/packages'
+      ),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.read gs acls'),
       api.post_process(post_process.DropExpectation),
@@ -115,6 +144,51 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
       api.post_check(post_process.DoesNotRun,
                      'upload chrome prebuilts.read gs acls'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-chrome-prebuilts-with-profile',
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket',
+                     profile=Profile(name='some_profile')),
+      api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload chrome prebuilts.read gs acls'),
+      # URI should contain the profile suffix.
+      api.post_check(
+          post_process.PropertyEquals, 'prebuilts_uri',
+          'gs://test_bucket/board/amd64-generic-some_profile/postsubmit-R99-1234.56.0-101-led_fake-task-id/packages'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-chrome-prebuilts-with-base-profile',
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket',
+                     profile=Profile(name='base')),
+      api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload chrome prebuilts.read gs acls'),
+      # URI should not contain the profile suffix.
+      api.post_check(
+          post_process.PropertyEquals, 'prebuilts_uri',
+          'gs://test_bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-led_fake-task-id/packages'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-chrome-prebuilts-without-profile',
+      api.properties(upload_chrome_prebuilts=True, gs_bucket='test_bucket',
+                     profile=Profile(name='')),
+      api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload chrome prebuilts.read gs acls'),
+      # URI should not contain the profile suffix.
+      api.post_check(
+          post_process.PropertyEquals, 'prebuilts_uri',
+          'gs://test_bucket/board/amd64-generic/postsubmit-R99-1234.56.0-101-led_fake-task-id/packages'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

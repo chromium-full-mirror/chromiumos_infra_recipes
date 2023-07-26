@@ -27,6 +27,12 @@ from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from recipe_engine import recipe_api
 
+
+def _get_profile(config: BuilderConfig) -> common_pb2.Profile:
+  # TODO(b/187793272): config.build.portage_profile is migrating.
+  return common_pb2.Profile(name=config.build.portage_profile.profile)
+
+
 class BuildMenuApi(recipe_api.RecipeApi):
   """A module with steps used by image builders.
 
@@ -1037,8 +1043,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = config or self.config
     artifacts = config.artifacts
 
-    # TODO(crbug/1112425): config.build.portage_profile is migrating.
-    profile = common_pb2.Profile(name=config.build.portage_profile.profile)
+    profile = _get_profile(config)
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_target_prebuilts(
@@ -1059,14 +1064,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.build_target, self.sysroot, self.chroot,
         artifacts.devinstall_prebuilts_gs_bucket)
 
-  def upload_chrome_prebuilts(self) -> None:
-    """Upload Chrome prebuilts from the build."""
+  def upload_chrome_prebuilts(self,
+                              config: Optional[BuilderConfig] = None) -> None:
+    """Upload Chrome prebuilts from the build.
+
+    Args:
+      config: The Builder Config for the build, or None.
+    """
+    config = config or self.config
     artifacts = self.config.artifacts
+
+    profile = _get_profile(config)
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if prebuilt_target in self.UPLOADABLE_PREBUILTS:
       self.m.cros_prebuilts.upload_chrome_prebuilts(
-          self.build_target, self.sysroot, self.chroot, self.config.id.type,
-          artifacts.prebuilts_gs_bucket,
+          self.build_target, self.sysroot, self.chroot, profile,
+          self.config.id.type, artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
 
   def publish_latest_files(self, gs_bucket, gs_path):

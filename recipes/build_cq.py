@@ -112,7 +112,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
 
         if upload:
           with api.step.nest('do upload'):
-            api.build_menu.upload_chrome_prebuilts()
+            api.build_menu.upload_chrome_prebuilts(config)
 
       test_containers_runner = api.future_utils.create_parallel_runner()
       test_containers_runner.run_function_async(
