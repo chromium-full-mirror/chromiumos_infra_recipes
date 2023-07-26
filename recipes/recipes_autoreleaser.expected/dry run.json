@@ -21,11 +21,6 @@
       "--bundle",
       "infra",
       "--yes",
-      "--send-email",
-      "--recipients",
-      "team1@google.com team2@google.com",
-      "--bccs",
-      "",
       "--dry-run"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",

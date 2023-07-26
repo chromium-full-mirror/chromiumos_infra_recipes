@@ -20,12 +20,7 @@
       "--show-instances",
       "--bundle",
       "infra",
-      "--yes",
-      "--send-email",
-      "--recipients",
-      "team1@google.com team2@google.com",
-      "--bccs",
-      "team3@google.com"
+      "--yes"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
@@ -39,12 +34,7 @@
       "--show-instances",
       "--bundle",
       "release",
-      "--yes",
-      "--send-email",
-      "--recipients",
-      "team1@google.com team2@google.com",
-      "--bccs",
-      "team3@google.com"
+      "--yes"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,

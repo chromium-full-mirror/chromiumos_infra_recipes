@@ -38,9 +38,6 @@ def RunSteps(api: recipe_api.RecipeApi,
   if not properties.bundles:
     raise ValueError('At least one bundle must be set')
 
-  if not properties.recipients:
-    raise ValueError('At least one recipient must be set')
-
   # We only need to clone the recipes repo, so don't do a full ChromeOS
   # checkout. Clone into the workspace path so it'll get cleaned up after the
   # builder runs.
@@ -59,18 +56,14 @@ def RunSteps(api: recipe_api.RecipeApi,
           '--bundle',
           bundle,
           '--yes',
-          '--send-email',
-          '--recipients',
-          ' '.join(properties.recipients),
-          '--bccs',
-          ' '.join(properties.bccs),
       ]
 
+      # TODO(b/287276108): Send emails from this recipe notifying the infra
+      # team of the status of the release or dry run.
       if not properties.push:
         args.append('--dry-run')
         step_name += ' (dry-run)'
 
-      # TODO(b/287276108): Handle different error codes from the release script.
       api.step(
           step_name,
           args,
@@ -83,8 +76,6 @@ def GenTests(api):
       api.properties(
           bundles=['infra', 'release'],
           push=True,
-          recipients=['team1@google.com', 'team2@google.com'],
-          bccs=['team3@google.com'],
       ),
   )
 
@@ -93,20 +84,12 @@ def GenTests(api):
       api.properties(
           bundles=['infra'],
           push=False,
-          recipients=['team1@google.com', 'team2@google.com'],
       ),
   )
 
   yield api.test(
       'no bundles',
       api.properties(bundles=[]),
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'no recipients',
-      api.properties(bundles=['infra'], recipients=[]),
       api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
   )
