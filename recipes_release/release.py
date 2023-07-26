@@ -93,11 +93,10 @@ class RecipeRelease:
 
     # Prepare to update refs.
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
-    if options.max_covered or options.max_releasable:
-      report_pending_changes(pending_changes, options.show_instances,
-                             show_all=options.show_all)
+    report_pending_changes(pending_changes, options.show_instances,
+                           show_all=options.show_all)
 
-    print('=== Fetching build results ===')
+    print('=== Fetching build results, this may take a minute... ===')
     all_builds = bb.Builds()
     all_builds.initialize(self.staging_checks, pending_changes,
                           verbose=options.verbose)
@@ -121,9 +120,9 @@ class RecipeRelease:
        git_target) = cipd.determine_cipd_and_git_targets(options.instanceid)
       pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod,
                                                 git_target)
+      report_pending_changes(pending_changes, options.show_instances,
+                             show_all=options.show_all)
 
-    report_pending_changes(pending_changes, options.show_instances,
-                           show_all=options.show_all)
     quit_early_if_no_pending_changes(pending_changes)
 
     # Unless we explicitly care about trivial changes, drop all the changes

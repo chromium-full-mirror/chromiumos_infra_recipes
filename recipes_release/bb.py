@@ -126,6 +126,7 @@ def get_builder_link(builder: str) -> str:
   return f'https://ci.chromium.org/p/chromeos/builders/staging/{builder_name}'
 
 
+@lru_cache(maxsize=None)
 def return_builders_for_regex(project: str, bucket: str,
                               regex: str) -> List[str]:
   """Return the list of builders matching a certain regex."""
