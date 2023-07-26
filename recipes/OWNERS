@@ -3,6 +3,7 @@ per-file build_incremental.*=file:/OWNERS.build
 per-file presubmit_cq.*=file:/OWNERS.build
 per-file presubmit_tests.*=file:/OWNERS.build
 per-file regen_build_cache.*=file:/OWNERS.build
+per-file upload_prebuilts_from_cq.*=file:/OWNERS.build
 
 per-file lvfs_mirror.py=file:/recipe_modules/cros_lvfs_mirror/OWNERS
 
