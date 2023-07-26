@@ -84,7 +84,9 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     """
     # Up to 10 30-minutes sleeps for a total wait of up to 5 hours.
     for _ in range(10):
-      results = self.m.buildbucket.search([predicate], fields=fields,
+      # Requesting 10 builds as that is more than enough. The default limit of 1000
+      # crashes recipes. b/293312317
+      results = self.m.buildbucket.search([predicate], limit=10, fields=fields,
                                           timeout=60)
       for result in results:
         if result.input.gitiles_commit.id == commit:

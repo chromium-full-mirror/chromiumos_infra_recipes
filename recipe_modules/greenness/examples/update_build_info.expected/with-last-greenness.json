@@ -44,7 +44,7 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "10",
       "-fields",
       "id,input.gitiles_commit.id,output.properties,status",
       "-predicate",

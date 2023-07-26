@@ -1811,13 +1811,13 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#112)(self, commit: str, pres: StepPresentation):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#114)(self, commit: str, pres: StepPresentation):**
 
 Returns snapshot run for specified commit, if found.
 
 &mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#25)(self):**
 
-&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#125)(self, list_value: struct_pb2.ListValue):**
+&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#127)(self, list_value: struct_pb2.ListValue):**
 
 Reformat ListValue to a dictionary, using target as key.
 
