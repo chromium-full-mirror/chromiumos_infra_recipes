@@ -13,4 +13,11 @@ message RecipesAutoreleaserProperties {
 
   // Actually push CIPD refs.
   bool push = 2;
+
+  // Email addresses to send the announcement to. Must contain at least one
+  // address.
+  repeated string recipients = 3;
+
+  // Email addresses to bcc on the announcement. May be empty.
+  repeated string bccs = 4;
 }
