@@ -6,12 +6,13 @@
 """API for working with CrOS source."""
 import datetime
 from collections import defaultdict
+from collections import OrderedDict
 from collections import namedtuple
 import contextlib
 import copy
 import multiprocessing
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, OrderedDict as OrderedDict_type
 
 from google.protobuf.json_format import MessageToDict
 
@@ -1741,3 +1742,51 @@ class CrosSourceApi(RecipeApi):
       self.m.git.merge(current_branch, 'Resolve uprev conflict\n')
     self.m.git.push(project.remote, 'HEAD:{}'.format(ref), dry_run=dry_run,
                     capture_stdout=True, retry=False, name=step_name)
+
+  def related_changes_to_apply(
+      self, gerrit_changes: List[bb_common_pb2.GerritChange],
+      all_related_changes: OrderedDict_type[str, Dict[str, Any]]
+  ) -> OrderedDict_type[str, Dict[str, Any]]:
+    """Based on what is already included, figure out which related changes are implicitly depended on by gerrit_changes.
+
+    Note that only related changes that precede the changes in gerrit_changes
+    will be applied. Related changes that follow a change in gerrit_changes
+    will not be applied unless explicitly included.
+
+    Args:
+      gerrit_changes: Changes to apply for the builder.
+      all_related_changes: All related changes for all gerrit_changes. May
+        include duplicates.
+
+    Returns:
+      De-duplicated changes that are implicitly depended on by gerrit_changes
+        in a relation chain, but not already included in gerrit_changes.
+    """
+    with self.m.step.nest('evaluating related changes') as pres:
+      pres.logs['gerrit changes'] = str(gerrit_changes)
+      log = ''
+      already_applied_ids = set()
+      related_changes_to_apply = OrderedDict()
+      for change_id, related in all_related_changes.items():
+        to_apply = []
+        # Related changes are listed from newest to oldest, but we want to
+        # start with oldest.
+        related.reverse()
+        for rel in related:
+          change_num = rel['_change_number']
+          if change_num not in already_applied_ids:
+            to_apply.append(rel)
+            already_applied_ids.add(change_num)
+          else:
+            log += f'Skipping {rel} which is already included.'
+          # Once we reach the change that's actually included with the builder,
+          # stop traversing related changes so we include related changes lower
+          # in a stack, but not related changes higher in a stack unless
+          # explicitly included.
+          if change_id == rel['_change_number']:
+            break
+        if len(to_apply) > 1:
+          related_changes_to_apply[change_id] = to_apply
+      pres.logs['skips'] = log
+      pres.logs['related changes to apply'] = str(related_changes_to_apply)
+      return related_changes_to_apply

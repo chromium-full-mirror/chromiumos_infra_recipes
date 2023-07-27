@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import contextlib
 from collections import defaultdict
+from collections import OrderedDict
 from collections import namedtuple
 
 from google.protobuf import json_format
@@ -354,13 +355,18 @@ class OrchMenuApi(recipe_api.RecipeApi):
             if ('chromeos.cros_infra_config.include_related'
                 in self.m.cros_infra_config.experiments):
               with self.m.step.nest('find related CLs'):
-                all_related_changes = []
+                all_related_changes = OrderedDict()
                 for change in self.gerrit_changes:
                   # Note: this might include duplicates.
-                  all_related_changes.extend(
-                      self.m.gerrit.gerrit_related_changes(change))
+                  all_related_changes[
+                      change.change] = self.m.gerrit.gerrit_related_changes(
+                          change)
                 self.m.easy.set_properties_step(
                     related_changes=all_related_changes)
+                to_apply = self.m.cros_source.related_changes_to_apply(
+                    self.gerrit_changes, all_related_changes)
+                self.m.easy.set_properties_step(
+                    related_changes_to_apply=to_apply)
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()

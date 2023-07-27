@@ -884,9 +884,17 @@ def GenTests(api):
 
   RELATED_OUTPUT = {
       'related': [{
-          "_change_number": "321"
+          "_change_number": "123456",
+          "_revision_number": "7",
+          "project": "chromeos/manifest-internal"
       }, {
-          "_change_number": "432"
+          "_change_number": "321",
+          "_revision_number": "1",
+          "project": "sample"
+      }, {
+          "_change_number": "432",
+          "_revision_number": "2",
+          "project": "sample"
       }]
   }
 
@@ -905,6 +913,8 @@ def GenTests(api):
                                             step_name='find related CLs'),
       api.post_check(post_process.MustRun,
                      'find related CLs.set related_changes'),
+      api.post_check(post_process.MustRun,
+                     'find related CLs.set related_changes_to_apply'),
       api.post_process(post_process.DropExpectation), cq=True,
       collect_builds=collect, history_builds=data.history_builds,
       collect_after_builds=collect_after, with_history=True, git_footers=[],
