@@ -14224,12 +14224,12 @@ Recipe for running PVS-related scripts.
 &mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#11)(api):**
 ### *recipes* / [recipes\_autoreleaser](/recipes/recipes_autoreleaser.py)
 
-[DEPS](/recipes/recipes_autoreleaser.py#15): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/recipes_autoreleaser.py#16): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Release recipes by running the release.sh script in infra/recipes.
 
-&mdash; **def [RunSteps](/recipes/recipes_autoreleaser.py#36)(api: recipe_api.RecipeApi, properties: RecipesAutoreleaserProperties):**
+&mdash; **def [RunSteps](/recipes/recipes_autoreleaser.py#39)(api: recipe_api.RecipeApi, properties: RecipesAutoreleaserProperties):**
 ### *recipes* / [regen\_build\_cache](/recipes/regen_build_cache.py)
 
 [DEPS](/recipes/regen_build_cache.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [deferrals](#recipe_modules-deferrals), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

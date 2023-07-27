@@ -13,17 +13,7 @@
     "name": "git clone"
   },
   {
-    "cmd": [
-      "[CLEANUP]/autorelease_tmp_1/release.sh",
-      "--max-releasable",
-      "--verbose",
-      "--show-instances",
-      "--bundle",
-      "infra",
-      "--yes"
-    ],
-    "cwd": "[CLEANUP]/autorelease_tmp_1",
-    "infra_step": true,
+    "cmd": [],
     "name": "release bundle 'infra'"
   },
   {
@@ -33,12 +23,51 @@
       "--verbose",
       "--show-instances",
       "--bundle",
-      "release",
-      "--yes"
+      "infra",
+      "--yes",
+      "--result-out",
+      "[CLEANUP]/result_jsonpb_tmp_1"
     ],
     "cwd": "[CLEANUP]/autorelease_tmp_1",
     "infra_step": true,
-    "name": "release bundle 'release'"
+    "name": "release bundle 'infra'.run release.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/result_jsonpb_tmp_1",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/autorelease_tmp_1",
+    "infra_step": true,
+    "name": "release bundle 'infra'.read result jsonproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@{@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@  \"announcementEmail\": {@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@    \"subject\": \"We released infra\",@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@    \"body\": \"Released commits 1, 2, and 3\"@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@  }@@@",
+      "@@@STEP_LOG_LINE@result_jsonpb_tmp_1@}@@@",
+      "@@@STEP_LOG_END@result_jsonpb_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "release bundle 'infra'.set email properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@body@\"Released commits 1, 2, and 3\"@@@",
+      "@@@SET_BUILD_PROPERTY@subject@\"We released infra\"@@@"
+    ]
   },
   {
     "name": "$result"
