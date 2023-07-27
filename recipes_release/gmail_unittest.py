@@ -172,3 +172,10 @@ Subject: Recipes Release - Mon Jul 24 08:29:35 PM UTC 2023
   def test_get_token_from_luci_auth(self, subprocess_mock):
     subprocess_mock.return_value = test_util.subprocess_stdout('luciauthtoken')
     self.assertEqual(gmail.get_token_from_luci_auth(), 'luciauthtoken')
+
+  @mock.patch.object(subprocess, 'run', autospec=True)
+  def test_get_subject(self, subprocess_mock):
+    subprocess_mock.return_value = test_util.subprocess_stdout(
+        'Mon Jul 24 08:29:35 PM UTC 2023')
+    self.assertEqual(self._announcer.get_subject(),
+                     'Recipes Release - Mon Jul 24 08:29:35 PM UTC 2023')

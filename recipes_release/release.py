@@ -7,6 +7,7 @@
 
 import argparse
 import os
+import pathlib
 import subprocess
 import sys
 import traceback
@@ -14,6 +15,7 @@ import typing
 from typing import List
 from typing import Tuple
 
+from google.protobuf import json_format
 import tabulate
 
 import bb
@@ -21,6 +23,7 @@ import cipd
 import common
 import git
 import gmail
+from protos.recipes_autoreleaser import ReleaseResult  #pylint: disable=no-name-in-module
 import staging_checks
 
 RECIPES_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -77,7 +80,7 @@ class RecipeRelease:
       else:
         subprocess.run(cmd, check=True)
 
-  def do_release_flow(self, options: argparse.Namespace):
+  def do_release_flow(self, options: argparse.Namespace) -> ReleaseResult:
     if options.send_email:
       # If send_email is set, check early to see if we are logged into luci-auth
       # with the appropriate scopes. This way, the user will find out if they
@@ -95,6 +98,8 @@ class RecipeRelease:
     pending_changes = git.get_pending_changes(RECIPES_DIR, git_prod, git_target)
     report_pending_changes(pending_changes, options.show_instances,
                            show_all=options.show_all)
+
+    quit_early_if_no_pending_changes(pending_changes)
 
     print('=== Fetching build results, this may take a minute... ===')
     all_builds = bb.Builds()
@@ -171,6 +176,12 @@ class RecipeRelease:
           f'\nPlease click this link and send an email to {",".join(options.recipients)}!\n'
           + gm_client.get_email_link())
 
+    return ReleaseResult(
+        announcement_email=ReleaseResult.AnnouncementEmail(
+            subject=gm_client.get_subject(),
+            body=gm_client.body,
+        ))
+
 
 def main(argv: List[str]):
   options = parse_args(argv)
@@ -185,7 +196,9 @@ def main(argv: List[str]):
     }[options.bundle]
 
     release = RecipeRelease(bundle_config)
-    release.do_release_flow(options)
+    result = release.do_release_flow(options)
+    if options.result_out:
+      options.result_out.write_text(json_format.MessageToJson(result))
   except Exception:  #pylint: disable=broad-except
     print(traceback.format_exc())
     sys.exit(common.RET_CODE_INTERNAL_ERROR)
@@ -217,6 +230,18 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       help='Show all pending changes, including trivial recipe rolls.')
   parser.add_argument('-v', '--verbose', action='store_true',
                       help='Increase level of logging.')
+  parser.add_argument(
+      '--result-out',
+      type=pathlib.Path,
+      required=False,
+      metavar='PATH',
+      help='Path to write a recipes.chromeos.recipes_autoreleaser.'
+      'ReleaseResult jsonproto to. This is used so the release script can '
+      'commuicate results in a structured format to other programs calling it; '
+      'in general humans should not need to set this arg, as the same info '
+      'is displayed on stdout/err. Note that this may not be written in some '
+      'error cases.',
+  )
 
   mode_group = parser.add_mutually_exclusive_group()
   mode_group.add_argument(

@@ -89,17 +89,21 @@ class GmailAnnouncer:
         [['*'] + c.plain_strs() for c in pending_changes if not c.trivial],
         headers=[], tablefmt='plain')
     bbid_message = f'\nRecipes deployed by go/bbid/{bbid}.\n' if bbid else ''
-    self._message = _MESSAGE_TEMPLATE.format(bundle_longname=bundle_longname,
-                                             bbid_message=bbid_message,
-                                             change_table=change_table)
+    self._body = _MESSAGE_TEMPLATE.format(bundle_longname=bundle_longname,
+                                          bbid_message=bbid_message,
+                                          change_table=change_table)
     self._recipients = recipients
     self._dry_run = dry_run
     self._bccs = bccs
     self._quota_project = quota_project
 
-  def _get_subject(self):
+  def get_subject(self):
     """Return a subject for the announcement email."""
     return f'{"[DRY RUN] " if self._dry_run else ""}Recipes Release - {common.get_timestamp()}'
+
+  @property
+  def body(self):
+    return self._body
 
   def get_email_link(self) -> str:
     """Get a link to send the announcement email.
@@ -112,8 +116,8 @@ class GmailAnnouncer:
         'fs': 1,
         'bcc': ','.join(self._bccs),
         'to': ','.join(self._recipients),
-        'su': self._get_subject(),
-        'body': self._message,
+        'su': self.get_subject(),
+        'body': self._body,
     })
     return f'https://mail.google.com/mail?{url_params}'
 
@@ -133,10 +137,10 @@ class GmailAnnouncer:
     service = googleapiclient.discovery.build('gmail', 'v1', credentials=creds)
 
     message = email.message.EmailMessage()
-    message.set_content(self._message)
+    message.set_content(self._body)
     message['To'] = self._recipients
     message['Bcc'] = self._bccs
-    message['Subject'] = self._get_subject()
+    message['Subject'] = self.get_subject()
 
     encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 

@@ -7,7 +7,8 @@ from subprocess2 import CalledProcessError
 
 USE_PYTHON3 = True
 
-UNLINTABLE_FILES = set(['recipes.py'])
+UNLINTABLE_FILES = set(
+    ['recipes.py', 'recipes_release/protos/recipes_autoreleaser.py'])
 
 
 def PylintCheck(input_api, output_api):
@@ -52,7 +53,8 @@ def FormatCheck(input_api, output_api):
   _, out = git_cl.RunGitWithCode(cmd, suppress_stderr=True)
   for line in out.splitlines():
     if line.startswith('--- ') or line.startswith('+++ '):
-      if not ' recipes.py\t' in line:
+      if not (' recipes.py\t' in line or
+              ' recipes_release/protos/recipes_autoreleaser.py\t' in line):
         bad_format = True
         break
 
