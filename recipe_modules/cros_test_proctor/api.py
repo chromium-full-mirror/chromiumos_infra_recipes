@@ -441,7 +441,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     for test_unit in hw_test_units:
       filtered_hw_test = []
       for hw_test in test_unit.hw_test_cfg.hw_test:
-        if hw_test.suite in self._snapshot_hw_test_allowlist:
+        if (hw_test.suite in self._snapshot_hw_test_allowlist and
+            hw_test.common.critical.value is True):
           filtered_hw_test.append(hw_test)
 
       if filtered_hw_test:

@@ -118,6 +118,7 @@ def GenTests(api):
   # Snapshot-orchestrator should only run non-informational VM tests and HW
   # tests in SNAPSHOT_HWTEST_SUITES.
   expected_hw_test_names = [
+      'htarget.hw.bvt-cq',
       'htarget.hw.bvt-inline',
   ]
   expected_tast_vm_test_names = [
@@ -131,6 +132,13 @@ def GenTests(api):
       'snapshot-filter',
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='snapshot-orchestrator'),
+      api.properties(
+          **{
+              '$chromeos/cros_test_proctor':
+                  ProctorProperties(snapshot_hw_test_allowlist=[
+                      'bvt-cq', 'bvt-inline', 'some-suite'
+                  ]),
+          }),
       api.post_check(PropertyEquals, 'scheduled_hw_tests',
                      expected_hw_test_names),
       api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
