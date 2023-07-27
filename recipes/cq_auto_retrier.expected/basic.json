@@ -65,11 +65,29 @@
     "name": "analyzing candidates.analyzing 1112",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build link@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.analyzing build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@0 success, 0 retryable, 0 outstanding@@@",
       "@@@STEP_LOG_END@successful_builders@@@",
       "@@@STEP_LOG_END@retryable_failure_builders@@@",
-      "@@@STEP_LOG_END@outstanding_failure_builders@@@",
-      "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
+      "@@@STEP_LOG_END@outstanding_failure_builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.analyzing test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@0 success, 0 retryable, 0 outstanding@@@",
+      "@@@STEP_LOG_END@successful_test_suite_names@@@",
+      "@@@STEP_LOG_END@retryable_test_suite_names@@@",
+      "@@@STEP_LOG_END@outstanding_failure_test_suite_names@@@"
     ]
   },
   {

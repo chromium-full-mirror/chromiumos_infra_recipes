@@ -130,6 +130,7 @@
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
   * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
   * [auto_retry_util:tests/analyze_build_failures](#recipes-auto_retry_util_tests_analyze_build_failures)
+  * [auto_retry_util:tests/analyze_test_results](#recipes-auto_retry_util_tests_analyze_test_results)
   * [auto_retry_util:tests/cq_retry_candidates](#recipes-auto_retry_util_tests_cq_retry_candidates)
   * [auto_retry_util:tests/current_cq_orchs_with_retryable_statuses](#recipes-auto_retry_util_tests_current_cq_orchs_with_retryable_statuses)
   * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
@@ -826,7 +827,19 @@ A module for util functions associated with the CQ auto retries.
 
 &mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#67)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#165)(self):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#99)(self, cq_run: build_pb2.Build):**
+
+Returns a list of test suite names grouped by retryable status.
+
+Args:
+  cq_run: The cq-orchestrator for which to analyze the test results.
+
+Returns:
+  A tuple containing 3 lists of test suite names grouped by whether the
+      suite was successful, failed but is retryable, or failed and is not
+      retriable.
+
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#214)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -10617,6 +10630,12 @@ The annealing builders run in serial and do the following:
 
 
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/analyze_build_failures.py#22)(api):**
+### *recipes* / [auto\_retry\_util:tests/analyze\_test\_results](/recipe_modules/auto_retry_util/tests/analyze_test_results.py)
+
+[DEPS](/recipe_modules/auto_retry_util/tests/analyze_test_results.py#10): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/analyze_test_results.py#22)(api):**
 ### *recipes* / [auto\_retry\_util:tests/cq\_retry\_candidates](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -66,7 +66,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
   def analyze_build_failures(
       self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str], List[str]]:
-    with self.m.step.nest('analyzing %d' % cq_run.id) as pres:
+    with self.m.step.nest('analyzing build results') as pres:
       retryable_failure_builders = []
       outstanding_failure_builders = []
 
@@ -84,8 +84,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           if b not in retryable_failure_builders
       ]
 
-      pres.links[str(
-          cq_run.id)] = self.m.buildbucket.build_url(build_id=cq_run.id)
       pres.step_text = '%d success, %d retryable, %d outstanding' % (
           len(successful_builders), len(retryable_failure_builders),
           len(outstanding_failure_builders))
@@ -97,6 +95,57 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return (successful_builders, retryable_failure_builders,
             outstanding_failure_builders)
+
+  def analyze_test_results(
+      self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str], List[str]]:
+    """Returns a list of test suite names grouped by retryable status.
+
+    Args:
+      cq_run: The cq-orchestrator for which to analyze the test results.
+
+    Returns:
+      A tuple containing 3 lists of test suite names grouped by whether the
+          suite was successful, failed but is retryable, or failed and is not
+          retriable.
+    """
+    with self.m.step.nest('analyzing test results') as pres:
+
+      output_dict = json_format.MessageToDict(cq_run.output.properties)
+      test_summary = output_dict.get('test_summary', [])
+
+      successful_test_suite_names = []
+      retryable_test_suite_names = []
+      outstanding_failure_test_suite_names = []
+
+      # Failures on builders that are no longer blocking CQ submission are now
+      # retryable.
+      active_cq_verifiers = self._submission_blocking_builders(cq_run)
+      for t in test_summary:
+        name = t.get('name')
+        status = t.get('status')
+        critical = t.get('critical')
+        # TODO(b/291769254): Remove fallback to parsing the name a few days
+        # after https://crrev.com/c/4718546 is deployed to prod.
+        builder_name = t.get('builder_name', t.get('name', '').split('.')[0])
+
+        if status == 'SUCCESS' or not critical:
+          successful_test_suite_names.append(name)
+        elif builder_name not in active_cq_verifiers:
+          retryable_test_suite_names.append(name)
+        else:
+          outstanding_failure_test_suite_names.append(name)
+
+      pres.step_text = '%d success, %d retryable, %d outstanding' % (
+          len(successful_test_suite_names), len(retryable_test_suite_names),
+          len(outstanding_failure_test_suite_names))
+      pres.logs['successful_test_suite_names'] = sorted(
+          successful_test_suite_names)
+      pres.logs['retryable_test_suite_names'] = sorted(
+          retryable_test_suite_names)
+      pres.logs['outstanding_failure_test_suite_names'] = sorted(
+          outstanding_failure_test_suite_names)
+      return (successful_test_suite_names, retryable_test_suite_names,
+              outstanding_failure_test_suite_names)
 
   def _submission_blocking_builders(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns the names of builders which block submission for this CQ run.

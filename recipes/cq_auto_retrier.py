@@ -26,7 +26,10 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   builds = api.auto_retry_util.cq_retry_candidates()
   with api.step.nest('analyzing candidates'):
     for b in builds:
-      _, _, _ = api.auto_retry_util.analyze_build_failures(b)
+      with api.step.nest('analyzing %d' % b.id) as pres:
+        pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
+        _, _, _ = api.auto_retry_util.analyze_build_failures(b)
+        _, _, _ = api.auto_retry_util.analyze_test_results(b)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

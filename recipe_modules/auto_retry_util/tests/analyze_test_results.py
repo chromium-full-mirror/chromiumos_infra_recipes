@@ -1,0 +1,81 @@
+# -*- coding: utf-8 -*-
+# Copyright 2023 The ChromiumOS Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+from recipe_engine import post_process
+
+from PB.chromiumos.builder_config import BuilderConfigs
+
+DEPS = [
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
+    'auto_retry_util',
+    'cros_infra_config',
+    'test_util',
+]
+
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+
+def RunSteps(api):
+  success, retryable, outstanding = api.auto_retry_util.analyze_test_results(
+      api.buildbucket.build)
+  expected_success = api.properties['expected_success']
+  expected_retryable = api.properties['expected_retryable']
+  expected_outstanding = api.properties['expected_outstanding']
+  api.assertions.assertCountEqual(success, expected_success)
+  api.assertions.assertCountEqual(retryable, expected_retryable)
+  api.assertions.assertCountEqual(outstanding, expected_outstanding)
+
+
+def GenTests(api):
+
+  configs = BuilderConfigs()
+  orch = configs.builder_configs.add()
+  orch.id.name = 'cq-orchestrator'
+  orch.orchestrator.child_specs.add().name = 'builder1'
+  orch.orchestrator.child_specs.add().name = 'builder2'
+
+  test_summary = [
+      {
+          'builder_name': 'builder1',
+          'status': 'SUCCESS',
+          'critical': True,
+          'name': 'builder1.hw.suite'
+      },
+      # No builder_name, fallsback to parsing name.
+      {
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'builder2.tast_vm.suite'
+      },
+      # Non-critical counts as success.
+      {
+          'builder_name': 'builder2',
+          'status': 'FAILURE',
+          'critical': False,
+          'name': 'builder2.tast_vm.non_crit_suite'
+      },
+      # Builder no longer a CQ verifier.
+      {
+          'builder_name': 'builder3',
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'builder3.tast_gce.suite'
+      },
+  ]
+  yield api.test(
+      'removed-verifier',
+      api.test_util.test_orchestrator(output_properties={
+          'test_summary': test_summary
+      }).build,
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=[
+              'builder1.hw.suite', 'builder2.tast_vm.non_crit_suite'
+          ], expected_retryable=['builder3.tast_gce.suite'],
+          expected_outstanding=['builder2.tast_vm.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
