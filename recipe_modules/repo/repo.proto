@@ -7,8 +7,7 @@ message RepoProperties {
   // Feature flag: toggle the source cache health feature
   bool disable_source_cache_health = 1;
 
-  // Anti-feature flag: rm .repo/manifests and .repo/manifests.git.
-  bool remove_manifests_git = 2;
+  reserved 2;
 
   // Whether to disable verification of repo.  This allows testing of repo
   // changes before they are tagged.

@@ -56,40 +56,6 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/ensure/.repo/manifests"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/ensure/.repo/manifests.git"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests.git",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--manifest-url",
@@ -126,40 +92,6 @@
     "cwd": "[CLEANUP]/ensure",
     "infra_step": true,
     "name": "ensure synced checkout.sleep 10 min, try repo again",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/ensure/.repo/manifests"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "rmtree",
-      "[CLEANUP]/ensure/.repo/manifests.git"
-    ],
-    "cwd": "[CLEANUP]/ensure",
-    "infra_step": true,
-    "name": "ensure synced checkout.remove .repo/manifests.git (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

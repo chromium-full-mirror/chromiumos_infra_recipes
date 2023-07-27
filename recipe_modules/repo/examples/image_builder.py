@@ -221,8 +221,8 @@ def GenTests(api):
           }}),
       api.post_check(post_process.StepCommandContains,
                      'ensure synced checkout.repo init',
-                     ['--repo-url=%s' % default_override]),
+                     [f'--repo-url={default_override}']),
       api.post_check(post_process.StepCommandContains,
                      'sync to snapshot.repo init',
-                     ['--repo-url=%s' % default_override]),
+                     [f'--repo-url={default_override}']),
   )

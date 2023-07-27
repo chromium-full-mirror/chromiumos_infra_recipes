@@ -4,7 +4,6 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "--regex",
       "galaxy",
       "other",
       "-c",

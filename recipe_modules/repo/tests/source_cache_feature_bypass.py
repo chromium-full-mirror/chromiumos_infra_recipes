@@ -9,7 +9,6 @@
 from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 
 DEPS = [
-    'recipe_engine/assertions',
     'recipe_engine/path',
     'recipe_engine/properties',
     'repo',
@@ -20,7 +19,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   init_opts = {'manifest_branch': 'snapshot'}
-  api.assertions.assertFalse(api.repo.disable_source_cache_health)
   api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
                                   'http://manifest_url', init_opts=init_opts)
 
