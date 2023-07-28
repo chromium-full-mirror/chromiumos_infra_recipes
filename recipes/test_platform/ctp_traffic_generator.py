@@ -263,7 +263,9 @@ def GenTests(api):
               'ctp_replay_max_runtime': 70 * 60,
               'ctp_num_replay_builds': 3,
               'ctp_builder': 'cros_test_platform-foo_env',
-              '$chromeos/skylab': dict(ctp_builder='cros_test_platform-foo_env')
+              '$chromeos/skylab': {
+                  'ctp_builder': 'cros_test_platform-foo_env'
+              }
           }),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,
@@ -281,7 +283,9 @@ def GenTests(api):
               'ctp_replay_max_runtime': 70 * 60,
               'ctp_num_replay_builds': 3,
               'ctp_builder': 'cros_test_platform-dev',
-              '$chromeos/skylab': dict(ctp_builder='cros_test_platform-dev')
+              '$chromeos/skylab': {
+                  'ctp_builder': 'cros_test_platform-dev'
+              }
           }),
       api.buildbucket.simulated_search_results(
           green_ctp_builds,

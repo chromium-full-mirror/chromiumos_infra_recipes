@@ -67,11 +67,13 @@ def GenTests(api):
     return api.test_util.test_child_build(build_target, **kwargs).build
 
   def goma_artifacts(with_goma=False):
-    ret = dict(events=[{
-        "name": "fake_package-path/fake-package-name-0.0.1-r2",
-        "durationMilliseconds": "1523",
-        "timestampMilliseconds": "1580481610805"
-    }])
+    ret = {
+        'events': [{
+            "name": "fake_package-path/fake-package-name-0.0.1-r2",
+            "durationMilliseconds": "1523",
+            "timestampMilliseconds": "1580481610805"
+        }]
+    }
     if with_goma:
       ret['gomaArtifacts'] = {
           "counterzFile":
@@ -157,7 +159,9 @@ def GenTests(api):
       'sdk-test-build',
       test_build(
           cq=True, input_properties={
-              '$chromeos/cros_sdk': dict(force_off_toolchain_changed=True)
+              '$chromeos/cros_sdk': {
+                  'force_off_toolchain_changed': True
+              },
           }))
 
   yield api.test('artifact-build', test_build(),
@@ -195,37 +199,39 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'install packages', 'SysrootService/InstallPackages',
           json.dumps(
-              dict(failedPackageData=[{
-                  "name": {
-                      "category": "chromeos-base",
-                      "packageName": "thislongpackagenameomg",
-                      "version": "0.0.1-r199",
-                  },
-                  "log_path": {
-                      "path": "/all/your/package/are/belong/to/us",
-                      "location": 1,
-                  },
-              }, {
-                  "name": {
-                      "category": "safari-base",
-                      "packageName": "thisotherexceedinglylongpackage",
-                      "version": "0.0.1-r129",
-                  },
-                  "log_path": {
-                      "path": "/all/your/ebuild/are/belong/to/us",
-                      "location": 1,
-                  },
-              }, {
-                  "name": {
-                      "category": "edge-base",
-                      "packageName": "shortpackagename",
-                      "version": "0.0.1-r197",
-                  },
-                  "log_path": {
-                      "path": "/all/your/overlay/are/belong/to/us",
-                      "location": 1,
-                  },
-              }]), sort_keys=True)),
+              {
+                  'failedPackageData': [{
+                      "name": {
+                          "category": "chromeos-base",
+                          "packageName": "thislongpackagenameomg",
+                          "version": "0.0.1-r199",
+                      },
+                      "log_path": {
+                          "path": "/all/your/package/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }, {
+                      "name": {
+                          "category": "safari-base",
+                          "packageName": "thisotherexceedinglylongpackage",
+                          "version": "0.0.1-r129",
+                      },
+                      "log_path": {
+                          "path": "/all/your/ebuild/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }, {
+                      "name": {
+                          "category": "edge-base",
+                          "packageName": "shortpackagename",
+                          "version": "0.0.1-r197",
+                      },
+                      "log_path": {
+                          "path": "/all/your/overlay/are/belong/to/us",
+                          "location": 1,
+                      },
+                  }]
+              }, sort_keys=True)),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )

@@ -31,8 +31,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   fit.
   """
   INSTRUCTIONS = [
-      "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
-      "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions"
+      'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
+      'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions'
   ]
 
   def path(self, subpath: str) -> str:
@@ -95,7 +95,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def artifact_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ArtifactsService."""
-    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
+    _uploaded_path = lambda name: {'path': self.path(name), 'location': 2}
 
     ret = {
         'FetchMetadata':
@@ -106,21 +106,28 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 }
             }]),
         'FetchPinnedGuestImageUris':
-            jsonify(pinned_images=[
-                dict(filename='filename', uri='https://example.com/filename')
-            ]),
+            jsonify(pinned_images=[{
+                'filename': 'filename',
+                'uri': 'https://example.com/filename'
+            }]),
         'BuildSetup':
-            jsonify(build_relevance="UNKNOWN"),
+            jsonify(build_relevance='UNKNOWN'),
         'Get':
             jsonify(
-                artifacts=dict(
-                    legacy=dict(artifacts=[
-                        dict(artifact_type="EBUILD_LOGS",
-                             paths=[_uploaded_path('log.tar.gz')])
-                    ]), toolchain=dict(artifacts=[
-                        dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE",
-                             paths=[_uploaded_path('orderfile')])
-                    ]))),
+                artifacts={
+                    'legacy': {
+                        'artifacts': [{
+                            'artifact_type': 'EBUILD_LOGS',
+                            'paths': [_uploaded_path('log.tar.gz')]
+                        }]
+                    },
+                    'toolchain': {
+                        'artifacts': [{
+                            'artifact_type': 'UNVERIFIED_CHROME_LLVM_ORDERFILE',
+                            'paths': [_uploaded_path('orderfile')]
+                        }]
+                    }
+                }),
     }
     # Legacy, migrating to Get.
     bundle_response = jsonify(artifacts=[{
@@ -205,10 +212,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['GetBuildDependencyGraph'] = jsonify(
         dep_graph={
             'package_deps': [{
-                "dependency_packages": [{
-                    "category": "chromeos-base",
-                    "package_name": "chrome-icu",
-                    "version": "1-r52"
+                'dependency_packages': [{
+                    'category': 'chromeos-base',
+                    'package_name': 'chrome-icu',
+                    'version': '1-r52'
                 }],
                 'dependency_source_paths': [{
                     'path': 'some/source/dir',
@@ -226,14 +233,14 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['List'] = jsonify(
         package_deps=[
             {
-                "category": "chromeos-base",
-                "package_name": "chrome-icu",
-                "version": "1-r52"
+                'category': 'chromeos-base',
+                'package_name': 'chrome-icu',
+                'version': '1-r52'
             },
             {
-                "category": "chromeos-base",
-                "package_name": "arc-setup",
-                "version": "1-r123"
+                'category': 'chromeos-base',
+                'package_name': 'arc-setup',
+                'version': '1-r123'
             },
         ],
     )
@@ -242,46 +249,56 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def firmware_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for FirmwareService."""
-    _uploaded_path = lambda name: dict(path=self.path(name), location=2)
+    _uploaded_path = lambda name: {'path': self.path(name), 'location': 2}
 
     responses = {
         'BuildAllFirmware':
             jsonify(
-                metrics=dict(value=[
-                    # Sample of typical ti50 size
-                    dict(
-                        fw_section=[
-                            dict(
-                                region="total-image-size",
-                                used=432012,
-                                track_on_gerrit=True,
-                            ),
-                        ], platform_name="dauntless", target_name="ti50"),
-                    # Sample of typical EC size
-                    dict(
-                        fw_section=[
-                            dict(
-                                region="RW_FLASH",
-                                used=1234,
-                                total=3456,
-                                track_on_gerrit=True,
-                            ),
-                        ], platform_name="volteer", target_name="eldrid")
-                ])),
+                metrics={
+                    'value': [
+                        # Sample of typical ti50 size
+                        {
+                            'fw_section': [{
+                                'region': 'total-image-size',
+                                'used': 432012,
+                                'track_on_gerrit': True,
+                            },],
+                            'platform_name': 'dauntless',
+                            'target_name': 'ti50'
+                        },
+                        # Sample of typical EC size
+                        {
+                            'fw_section': [{
+                                'region': 'RW_FLASH',
+                                'used': 1234,
+                                'total': 3456,
+                                'track_on_gerrit': True,
+                            },],
+                            'platform_name': 'volteer',
+                            'target_name': 'eldrid'
+                        }
+                    ]
+                }),
         'TestAllFirmware':
             jsonify(
                 # TODO(b/177907747): Provide sample data.
             ),
         'BundleFirmwareArtifacts':
             jsonify(
-                artifacts=dict(artifacts=[
-                    dict(artifact_type="FIRMWARE_TARBALL",
-                         location="PLATFORM_EC",
-                         paths=[_uploaded_path('from_source.tar.bz2')]),
-                    dict(artifact_type="FIRMWARE_TARBALL_INFO",
-                         location="PLATFORM_EC",
-                         paths=[_uploaded_path('fw_metadata.json')])
-                ]),
+                artifacts={
+                    'artifacts': [
+                        {
+                            'artifact_type': 'FIRMWARE_TARBALL',
+                            'location': 'PLATFORM_EC',
+                            'paths': [_uploaded_path('from_source.tar.bz2')]
+                        },
+                        {
+                            'artifact_type': 'FIRMWARE_TARBALL_INFO',
+                            'location': 'PLATFORM_EC',
+                            'paths': [_uploaded_path('fw_metadata.json')],
+                        },
+                    ]
+                },
             )
     }
     return responses
@@ -308,7 +325,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
 
     responses['PushImage'] = jsonify(
         instructions=[{
-            "instructions_file_path": file_name
+            'instructions_file_path': file_name
         } for file_name in CrosBuildApiTestApi.INSTRUCTIONS],
     )
     responses['Test'] = jsonify(success=True)
@@ -395,7 +412,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         include_method_service=False)
     for service, responses_by_method in responses_by_service.items():
       for method in responses_by_method.keys():
-        methods.append({'method': "chromite.api.%s/%s" % (service, method)})
+        methods.append({'method': 'chromite.api.%s/%s' % (service, method)})
     methods.append({'method': 'chromite.api.MethodService/Get'})
     responses = {}
     responses['Get'] = jsonify(methods=methods,)
@@ -412,14 +429,15 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['Uprev'] = jsonify(version='1.2.3',
                                  modified_ebuilds=modified_ebuilds)
-    responses['UprevVersionedPackage'] = jsonify(responses=[
-        dict(
-            version='1.2.3',
-            additional_commit_info='additional info to be rendered on uprev cl.',
-            modified_ebuilds=modified_ebuilds)
-    ])
-    responses['RevBumpChrome'] = jsonify(
-        responses=[dict(version='1.2.3', modified_ebuilds=modified_ebuilds)])
+    responses['UprevVersionedPackage'] = jsonify(responses=[{
+        'version': '1.2.3',
+        'additional_commit_info': 'additional info to be rendered on uprev cl.',
+        'modified_ebuilds': modified_ebuilds,
+    }])
+    responses['RevBumpChrome'] = jsonify(responses=[{
+        'version': '1.2.3',
+        'modified_ebuilds': modified_ebuilds
+    }])
     return responses
 
   @property
@@ -468,7 +486,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['HasPrebuilt'] = jsonify(has_prebuilt=False)
     responses['NeedsChromeSource'] = jsonify(
         needs_chrome_source=True,
-        reasons=["LOCAL_UPREV", "NO_PREBUILT"],
+        reasons=['LOCAL_UPREV', 'NO_PREBUILT'],
     )
     default_modified_ebuilds = [
         'src/overlay/foo.ebuild',
@@ -589,14 +607,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def toolchain_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ToolchainService."""
     responses = {}
-    responses['PrepareForBuild'] = jsonify(build_relevance="UNKNOWN")
-    responses['BundleArtifacts'] = jsonify(artifacts_info=[
-        dict(artifact_type="UNVERIFIED_CHROME_LLVM_ORDERFILE", artifacts=[
-            {
-                'path': 'my_output_artifact'
-            },
-        ])
-    ])
+    responses['PrepareForBuild'] = jsonify(build_relevance='UNKNOWN')
+    responses['BundleArtifacts'] = jsonify(artifacts_info=[{
+        'artifact_type': 'UNVERIFIED_CHROME_LLVM_ORDERFILE',
+        'artifacts': [{
+            'path': 'my_output_artifact',
+        },]
+    }])
     responses['SetupToolchains'] = jsonify()
     return responses
 

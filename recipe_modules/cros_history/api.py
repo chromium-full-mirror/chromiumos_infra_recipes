@@ -66,7 +66,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       If an Annealing build is found, then a proto message of that build.
       Otherwise, None.
     """
-    tags = self.m.cros_tags.tags(**dict(published_snapshot_id=snapshot_id))
+    tags = self.m.cros_tags.tags(published_snapshot_id=snapshot_id)
     # Not searching based on builder because we want to find both Annealing
     # staging-Annealing builds. Tags are indexed by Buildbucket so this
     # should be fast.

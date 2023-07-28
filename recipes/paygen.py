@@ -339,8 +339,11 @@ def GenTests(api: RecipeTestApi):
       retry: int = 0) -> TestData:
     suffix = '' if not retry else ' retry ({})'.format(retry)
     data = json.dumps(
-        dict(success=is_success, versioned_artifacts=versioned_artifacts,
-             failure_reason=failure_reason), sort_keys=True)
+        {
+            'success': is_success,
+            'versioned_artifacts': versioned_artifacts,
+            'failure_reason': failure_reason,
+        }, sort_keys=True)
     return api.cros_build_api.set_api_return(
         parent_step_name='doing paygen.running paygen operations in parallel',
         step_name='making single payload{}'.format(suffix), data=data,
@@ -354,8 +357,12 @@ def GenTests(api: RecipeTestApi):
       retry: int = 0) -> TestData:
     suffix = '' if not retry else ' retry ({})'.format(retry)
     data = json.dumps(
-        dict(success=is_success, local_path=local_path, remote_uri=remote_uri,
-             failure_reason=failure_reason), sort_keys=True)
+        {
+            'success': is_success,
+            'local_path': local_path,
+            'remote_uri': remote_uri,
+            'failure_reason': failure_reason,
+        }, sort_keys=True)
     return api.cros_build_api.set_api_return(
         parent_step_name='doing paygen.running paygen operations in parallel',
         step_name='making single payload{}'.format(suffix), data=data,
@@ -393,20 +400,21 @@ def GenTests(api: RecipeTestApi):
       'dryrun',
       api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
       api.properties(
-          PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ])
-          ]), **{
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+              'autoupdate_test_configs': [
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax']),
+              ],
+          }]), **{
               "$chromeos/cros_infra_config":
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_payload_response(
-          api,
-          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
+          api, versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
+          }]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
@@ -434,19 +442,22 @@ def GenTests(api: RecipeTestApi):
       test_builder(gerrit_changes=changes),
       api.properties(
           PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+              {
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  'autoupdate_test_configs': [
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
-                  ])
+                  ]
+              },
           ]), **{
               "$chromeos/cros_infra_config":
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_payload_response(
-          api,
-          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
+          api, versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
+          }]),
       api.post_check(post_process.MustRun,
                      'initialization.checkout gerrit change'),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -463,12 +474,14 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
       api.properties(
           PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+              {
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  'autoupdate_test_configs': [
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
-                  ])
+                  ]
+              },
           ]), **{
               "$chromeos/cros_infra_config":
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
@@ -488,26 +501,35 @@ def GenTests(api: RecipeTestApi):
       'multiple-dryruns',
       api.properties(
           PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUEST_FULL_DLC[0], autoupdate_test_configs=[
+              {
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                  'autoupdate_test_configs': [
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
-                  ]),
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  autoupdate_test_configs=[
+                  ]
+              },
+              {
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
+                  'autoupdate_test_configs': [
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                            applicable_models=['woomax'])
-                  ])
+                  ]
+              },
           ])),
       generate_payload_response(
           api, versioned_artifacts=[
-              dict(version=1, local_path='/tmp/aohiwdadoi/delta.bin',
-                   remote_uri=full_payload_uri),
-              dict(version=2, local_path='/tmp/aohiwdadoi/delta.bin',
-                   remote_uri=f'{full_payload_uri}2')
+              {
+                  'version': 1,
+                  'local_path': '/tmp/aohiwdadoi/delta.bin',
+                  'remote_uri': full_payload_uri,
+              },
+              {
+                  'version': 2,
+                  'local_path': '/tmp/aohiwdadoi/delta.bin',
+                  'remote_uri': f'{full_payload_uri}2',
+              },
           ]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
@@ -544,24 +566,27 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(
               requests=[
-                  dict(
-                      generation_request=api.paygen_testing
-                      .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                      autoupdate_test_configs=[
+                  {
+                      'generation_request':
+                          api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      'autoupdate_test_configs': [
                           AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                                applicable_models=['woomax'])
-                      ]),
-                  dict(
-                      generation_request=api.paygen_testing
-                      .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                      autoupdate_test_configs=[
+                      ]
+                  },
+                  {
+                      'generation_request':
+                          api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
+                      'autoupdate_test_configs': [
                           AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                                applicable_models=['woomax'])
-                      ])
+                      ]
+                  },
               ], max_concurrent_requests=1)),
       generate_payload_response(
-          api,
-          versioned_artifacts=[dict(local_path='/tmp/aohiwdadoi/delta.bin')]),
+          api, versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
+          }]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -582,10 +607,10 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'failed-paygen',
       api.properties(
-          PaygenProperties(requests=[
-              dict(generation_request=api.paygen_testing
-                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+          }])),
       # Our current set of failure reasons are all non-fatal minios exceptions,
       # pass bogus non-zero failure_reason for coverage.
       generate_payload_response(api, is_success=False, retcode=2,
@@ -603,10 +628,10 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'failed-paygen-exception',
       api.properties(
-          PaygenProperties(requests=[
-              dict(generation_request=api.paygen_testing
-                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+          }])),
       generate_payload_response(api, is_success=False, retcode=3,
                                 failure_reason=2),
       generate_payload_response(api, is_success=False, retcode=3,
@@ -620,10 +645,10 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'failed-minios',
       api.properties(
-          PaygenProperties(requests=[
-              dict(generation_request=api.paygen_testing
-                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+          }])),
       generate_payload_response(
           api, is_success=False, retcode=2,
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
@@ -639,10 +664,10 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'failed-minios-partition-mismatch',
       api.properties(
-          PaygenProperties(requests=[
-              dict(generation_request=api.paygen_testing
-                   .EXAMPLE_GEN_REQUEST_FULL_DLC[0])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+          }])),
       generate_payload_response(
           api, is_success=False, retcode=2,
           failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
@@ -658,10 +683,10 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'no-testing',
       api.properties(
-          PaygenProperties(requests=[
-              dict(generation_request=api.paygen_testing
-                   .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
+          }])),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -676,17 +701,16 @@ def GenTests(api: RecipeTestApi):
           api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.properties(
           PaygenProperties(
-              override_qs_account='custom_qs_account', requests=[
-                  dict(
-                      generation_request=api.paygen_testing
-                      .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-                      autoupdate_test_configs=[
-                          AutoupdateTestConfig(src_version='123',
-                                               src_channel='canary-channel',
-                                               delta_type=common_pb2.OMAHA,
-                                               applicable_models=[]),
-                      ])
-              ])),
+              override_qs_account='custom_qs_account', requests=[{
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                  'autoupdate_test_configs': [
+                      AutoupdateTestConfig(src_version='123',
+                                           src_channel='canary-channel',
+                                           delta_type=common_pb2.OMAHA,
+                                           applicable_models=[]),
+                  ],
+              }])),
       api.cros_storage.test_listing(
           'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
           full_payload_uri,
@@ -712,10 +736,10 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(
               override_qs_account='custom_qs_account', requests=[
-                  dict(
-                      generation_request=api.paygen_testing
-                      .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-                      autoupdate_test_configs=[
+                  {
+                      'generation_request':
+                          api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+                      'autoupdate_test_configs': [
                           AutoupdateTestConfig(src_version='123',
                                                src_channel='canary-channel',
                                                delta_type=common_pb2.OMAHA,
@@ -728,7 +752,8 @@ def GenTests(api: RecipeTestApi):
                                                src_channel='canary-channel',
                                                delta_type=common_pb2.OMAHA,
                                                applicable_models=['other']),
-                      ])
+                      ]
+                  },
               ])),
       api.cros_storage.test_listing(
           'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
@@ -773,14 +798,14 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'mismatched-payload-and-testing-config',
       api.properties(
-          PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUESTS_DELTA_N2N[0], autoupdate_test_configs=[
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
+              'autoupdate_test_configs': [
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax'])
+              ]
+          }])),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -793,14 +818,14 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'mistmatch-non-test-payload-with-testing-config',
       api.properties(
-          PaygenProperties(requests=[
-              dict(
-                  generation_request=api.paygen_testing
-                  .EXAMPLE_GEN_REQUEST_DELTA_DLC[0], autoupdate_test_configs=[
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ])
-          ])),
+          PaygenProperties(requests=[{
+              'generation_request':
+                  api.paygen_testing.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
+              'autoupdate_test_configs': [
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax'])
+              ]
+          }])),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
       api.post_check(post_process.MustRun, 'doing paygen'),

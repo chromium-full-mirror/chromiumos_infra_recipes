@@ -82,6 +82,8 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       },
   )

@@ -10,9 +10,10 @@ import collections
 import contextlib
 import operator
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ImageType
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -20,6 +21,7 @@ from PB.recipe_engine import result as result_pb2
 
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
+from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 
@@ -619,20 +621,20 @@ class FailuresApi(RecipeApi):
       with self.m.step.nest(name) as new_step:
         yield new_step
 
-  def update_non_critical_build_failures(self, failures, fresh_builder_configs,
-                                         presentation=None):
+  def update_non_critical_build_failures(self, failures: List[Failure],
+                                         fresh_builder_configs: Dict[str, BuilderConfig],
+                                         presentation: Optional[StepPresentation] = None) -> List[Failure]:
     """If builders are now non-critical or removed, failures are non-fatal.
 
     Args:
-      failures (list[Failure]): All failures encountered during execution.
-      fresh_builder_configs (dict(str, BuilderConfig)): name to builder config
-          for all BuilderConfigs that should have criticality checked.
-      presentation (StepPresentation): Parent step presentation.  If None, a
-          StepPresentation will be created.
+      failures: All failures encountered during execution.
+      fresh_builder_configs: name to builder config for all BuilderConfigs that
+        for all BuilderConfigs that should have criticality checked.
+      presentation: Parent step presentation.  If None, a StepPresentation will
+        be created.
 
     Returns:
-      updated_failures (list[Failure]): The list of Failures with 'fatal'
-          statuses possibly updated.
+      The list of Failures with 'fatal' statuses possibly updated.
     """
     updated_failures = []
     new_non_critical_builds = []
@@ -656,20 +658,20 @@ class FailuresApi(RecipeApi):
         pres.logs['new non-critical builders'] = new_non_critical_builds
     return updated_failures
 
-  def update_non_critical_test_failures(self, failures, test_plan_summary,
-                                        presentation=None):
+  def update_non_critical_test_failures(self, failures: List[Failure],
+                                        test_plan_summary: Dict[str, bool],
+                                        presentation: Optional[StepPresentation] = None) -> List[Failure]:
     """If tests are now non-critical, failures are non-fatal.
 
     Args:
-      failures (list[Failure]): All failures encountered during execution.
-      test_plan_summary (dict{string: bool}): Map of test display name to
-        criticality against which to check test failures.
-      presentation (StepPresentation): Parent step presentation.  If None, a
-          StepPresentation will be created.
+      failures: All failures encountered during execution.
+      test_plan_summary: Map of test display name to criticality against which
+        to check test failures.
+      presentation: Parent step presentation.  If None, a StepPresentation will
+        be created.
 
     Returns:
-      updated_failures (list[Failure]): The list of Failures with 'fatal'
-        statuses possibly updated.
+      The list of Failures with 'fatal' statuses possibly updated.
     """
     updated_failures = []
     new_non_critical_tests = []

@@ -171,7 +171,9 @@ def GenTests(api):
   yield api.test(
       'with-disable-repo-verify',
       api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED),
-      api.properties(**{'$chromeos/repo': dict(disable_repo_verify=True)}),
+      api.properties(**{'$chromeos/repo': {
+          'disable_repo_verify': True
+      }}),
       api.post_check(post_process.StepCommandContains,
                      'ensure synced checkout.repo init', ['--no-repo-verify']),
       api.post_check(
@@ -211,7 +213,9 @@ def GenTests(api):
       'with-default-repo-url',
       api.repo.repo_current_state(RepoState.STATE_UNSPECIFIED),
       api.properties(
-          **{'$chromeos/repo': dict(default_repo_url=default_override)}),
+          **{'$chromeos/repo': {
+              'default_repo_url': default_override
+          }}),
       api.post_check(post_process.StepCommandContains,
                      'ensure synced checkout.repo init',
                      ['--repo-url=%s' % default_override]),

@@ -137,10 +137,11 @@ def GenTests(api):
           git_ref='refs/heads/BRANCH',
           expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
-              ref='refs/heads/BRANCH', id='BRANCH-HEAD-SHA'),
-          input_properties={
-              '$chromeos/cros_infra_config': dict(honor_gitiles_commit_ref=True)
-          }))
+              ref='refs/heads/BRANCH', id='BRANCH-HEAD-SHA'), input_properties={
+                  '$chromeos/cros_infra_config': {
+                      'honor_gitiles_commit_ref': True
+                  }
+              }))
 
   yield api.test(
       'fixes-manifest-project',
@@ -149,10 +150,12 @@ def GenTests(api):
           git_repo='https://chromium.googlesource.com/chromium/src',
           git_ref='refs/tags/93.0.4552.0',
           expected_gitiles_commit=common_pb2.GitilesCommit(
-              host=i_manifest.host, project=i_manifest.project, ref='', id=''),
-          input_properties={
-              '$chromeos/cros_infra_config': dict(honor_gitiles_commit_ref=True)
-          }))
+              host=i_manifest.host, project=i_manifest.project, ref='',
+              id=''), input_properties={
+                  '$chromeos/cros_infra_config': {
+                      'honor_gitiles_commit_ref': True
+                  }
+              }))
 
   yield api.test(
       'fixes-manifest-project-choose-branch',
@@ -162,10 +165,12 @@ def GenTests(api):
           git_ref='refs/tags/93.0.4552.0',
           expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
-              ref='refs/heads/snapshot', id='snapshot-HEAD-SHA'),
-          input_properties={
-              '$chromeos/cros_infra_config': dict(honor_gitiles_commit_ref=True)
-          }))
+              ref='refs/heads/snapshot',
+              id='snapshot-HEAD-SHA'), input_properties={
+                  '$chromeos/cros_infra_config': {
+                      'honor_gitiles_commit_ref': True
+                  }
+              }))
 
   yield api.test(
       'follow-gitiles-commit-ref-main',
@@ -174,10 +179,12 @@ def GenTests(api):
           git_ref='refs/heads/main',
           expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
-              ref=i_manifest.ref, id='%s-HEAD-SHA' % i_manifest.branch),
-          input_properties={
-              '$chromeos/cros_infra_config': dict(honor_gitiles_commit_ref=True)
-          }))
+              ref=i_manifest.ref,
+              id='%s-HEAD-SHA' % i_manifest.branch), input_properties={
+                  '$chromeos/cros_infra_config': {
+                      'honor_gitiles_commit_ref': True
+                  }
+              }))
 
   yield api.test(
       'public-has-no-commit-and-no-changes',

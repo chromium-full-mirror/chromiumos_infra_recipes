@@ -36,6 +36,7 @@ def GenTests(api):
 
   yield api.test(
       'with-force_long_timeouts',
-      api.properties(**{'$chromeos/cros_sdk': dict(force_long_timeouts=True)},
-                     expected_long_timeouts=True),
+      api.properties(**{'$chromeos/cros_sdk': {
+          'force_long_timeouts': True
+      }}, expected_long_timeouts=True),
       api.post_process(post_process.DropExpectation))

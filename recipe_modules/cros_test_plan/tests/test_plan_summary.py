@@ -34,8 +34,9 @@ def RunSteps(api):
       .tast_gce_test_cfg.tast_gce_test[0],
   ]
 
-  expected_summary = dict((test.common.display_name, test.common.critical)
-                          for test in expected_tests)
+  expected_summary = {
+      test.common.display_name: test.common.critical for test in expected_tests
+  }
 
   actual_summary = api.cros_test_plan.get_test_plan_summary(
       api.cros_test_plan.test_api.generate_test_plan_response)

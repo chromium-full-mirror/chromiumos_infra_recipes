@@ -23,10 +23,12 @@ def RunSteps(api):
       BuilderConfig.Id.POSTSUBMIT,
       'artifacts_gs_bucket',
       artifacts_info=common.ArtifactsByService(
-          legacy=dict(output_artifacts=[
-              dict(
-                  artifact_types=[common.ArtifactsByService.Legacy.EBUILD_LOGS])
-          ])),
+          legacy={
+              'output_artifacts': [{
+                  'artifact_types':
+                      [common.ArtifactsByService.Legacy.EBUILD_LOGS],
+              }]
+          }),
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
                               build_target=target),

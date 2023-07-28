@@ -29,7 +29,7 @@ def extract_coverage_info(segments):
   Returns:
     A tuple (lines, uncovered_blocks).
     lines (dict): A mapping from line number to how many executions the line is.
-    uncovered_blocks(dict(list)): A mapping from line number to a list of
+    uncovered_blocks(Dict[list]): A mapping from line number to a list of
         sub-line blocks where the code is not covered. A block is represented by
         two integers [start_column, end_column].
   """

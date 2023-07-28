@@ -189,12 +189,17 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'success', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
-          'get project info', data=[
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/main', upstream='refs/heads/main'),
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
-          ]),
+          'get project info', data=[{
+              'project': 'chromium/src',
+              'remote': 'cros-internal',
+              'rrev': 'refs/heads/main',
+              'upstream': 'refs/heads/main',
+          }, {
+              'project': 'chromium/src',
+              'remote': 'cros-internal',
+              'rrev': 'refs/heads/foo',
+              'upstream': 'refs/heads/foo',
+          }]),
       api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
                                                    value_dict))
 
@@ -202,8 +207,12 @@ def GenTests(api: RecipeTestApi):
       'no-matching-project', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+              {
+                  'project': 'chromium/src',
+                  'remote': 'cros-internal',
+                  'rrev': 'refs/heads/foo',
+                  'upstream': 'refs/heads/foo',
+              },
           ]), api.post_check(post_process.StepFailure, 'get project info'))
 
   value_dict = {
@@ -226,10 +235,18 @@ def GenTests(api: RecipeTestApi):
       'success-release-branch', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/main', upstream='refs/heads/main'),
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+              {
+                  'project': 'chromium/src',
+                  'remote': 'cros-internal',
+                  'rrev': 'refs/heads/main',
+                  'upstream': 'refs/heads/main',
+              },
+              {
+                  'project': 'chromium/src',
+                  'remote': 'cros-internal',
+                  'rrev': 'refs/heads/foo',
+                  'upstream': 'refs/heads/foo',
+              },
           ]),
       api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
                                                    value_dict))
@@ -254,10 +271,18 @@ def GenTests(api: RecipeTestApi):
       'success-release-branch-extended', test_builder(gerrit_changes=changes),
       api.repo.project_infos_step_data(
           'get project info', data=[
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/main', upstream='refs/heads/main'),
-              dict(project='chromium/src', remote='cros-internal',
-                   rrev='refs/heads/foo', upstream='refs/heads/foo'),
+              {
+                  'project': 'chromium/src',
+                  'remote': 'cros-internal',
+                  'rrev': 'refs/heads/main',
+                  'upstream': 'refs/heads/main',
+              },
+              {
+                  'project': 'chromium/src',
+                  'remote': 'cros-internal',
+                  'rrev': 'refs/heads/foo',
+                  'upstream': 'refs/heads/foo',
+              },
           ]),
       api.gerrit.set_gerrit_fetch_changes_response('configure builder', changes,
                                                    value_dict))

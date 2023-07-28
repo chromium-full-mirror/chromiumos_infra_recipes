@@ -141,8 +141,9 @@ def GenTests(api):
     test_data = None
     for b in builds:
       build_test_data = api.buildbucket.simulated_schedule_output(
-          BatchResponse(responses=[dict(schedule_build=b)]),
-          'run builds.schedule new builds.%s' % b.builder.builder)
+          BatchResponse(responses=[{
+              'schedule_build': b
+          }]), 'run builds.schedule new builds.%s' % b.builder.builder)
       if not test_data:
         test_data = build_test_data
       else:

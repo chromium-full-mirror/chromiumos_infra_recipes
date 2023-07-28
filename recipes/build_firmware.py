@@ -343,7 +343,7 @@ def GenTests(api):
   def test(name, *args, **kwargs):
     status = kwargs.pop('status', 'SUCCESS')
     kwargs.setdefault('builder', 'fw-ec-postsubmit')
-    kwargs.setdefault('input_properties', dict(firmware_location=1))
+    kwargs.setdefault('input_properties', {'firmware_location': 1})
     build = api.test_util.test_child_build(None, **kwargs).build
     return api.test(name, build, *args, status=status)
 
@@ -356,9 +356,8 @@ def GenTests(api):
                                   'snoop: report_stage'), cq=True,
              builder='fw-ec-cq')
 
-  yield test(
-      'zephyr-cq', cq=True, builder='fw-ec-cq',
-      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
+  yield test('zephyr-cq', cq=True, builder='fw-ec-cq',
+             input_properties={'firmware_location': common_pb2.PLATFORM_ZEPHYR})
 
   sdk_pin_path = 'src/platform/ti50/sdk-version'
   yield test(
@@ -368,18 +367,18 @@ def GenTests(api):
           .format(sdk_pin_path), api.file.read_text('2022.01.20.073008\n')),
       api.post_check(post_process.DoesNotRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
-      cq=True, builder='firmware-ti50-cq', input_properties=dict(
-          firmware_location=3,
-          chromiumos_sdk_pin_file=sdk_pin_path,
-      ))
+      cq=True, builder='firmware-ti50-cq', input_properties={
+          'firmware_location': 3,
+          'chromiumos_sdk_pin_file': sdk_pin_path,
+      })
 
   yield test(
       'firmware-ti50-postsubmit',
       api.post_process(post_process.DropExpectation),
-      builder='firmware-ti50-postsubmit', input_properties=dict(
-          firmware_location=3,
-          chromiumos_sdk_pin_file=sdk_pin_path,
-      ))
+      builder='firmware-ti50-postsubmit', input_properties={
+          'firmware_location': 3,
+          'chromiumos_sdk_pin_file': sdk_pin_path,
+      })
 
   yield test(
       'upload-fail',
@@ -395,7 +394,9 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           retcode=1),
       api.post_check(post_process.DoesNotRun, 'schedule signing build'),
-      input_properties=(dict(firmware_location=1)),
+      input_properties=({
+          'firmware_location': 1
+      }),
       status='INFRA_FAILURE',
   )
 
@@ -403,7 +404,9 @@ def GenTests(api):
       'fw-test-fail',
       api.step_data('test firmware.call build API script', retcode=1),
       api.post_check(post_process.MustRun, 'Upload EC Firmware test results'),
-      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)),
+      input_properties=({
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR
+      }),
       status='FAILURE',
   )
 
@@ -416,27 +419,29 @@ def GenTests(api):
           ['Failed to upload test results'],
       ),
       api.post_check(post_process.StepFailure,
-                     'Upload EC Firmware test results.run'),
-      input_properties=(dict(firmware_location=common_pb2.PLATFORM_ZEPHYR)))
+                     'Upload EC Firmware test results.run'), input_properties=({
+                         'firmware_location': common_pb2.PLATFORM_ZEPHYR
+                     }))
 
   yield test(
       'signing-invocation',
       api.post_check(post_process.MustRun, 'schedule signing build'),
-      builder='fw-ec-postsubmit', input_properties=(dict(
-          firmware_location=1,
-          signing_allowed_builder_names=['fw-ec-postsubmit'],
-          sign_image_properties=get_signing_image_props_for_test(),
-      )))
+      builder='fw-ec-postsubmit', input_properties={
+          'firmware_location': 1,
+          'signing_allowed_builder_names': ['fw-ec-postsubmit'],
+          'sign_image_properties': get_signing_image_props_for_test(),
+      })
 
   yield test(
       'staging-signing-invocation',
       api.post_check(post_process.MustRun, 'schedule signing build'),
-      builder='fw-ec-postsubmit', bucket='staging', input_properties=(dict(
-          firmware_location=1,
-          signing_allowed_builder_names=['fw-ec-postsubmit'],
-          sign_image_properties=get_signing_image_props_for_test(
-              is_staging=True),
-      )))
+      builder='fw-ec-postsubmit', bucket='staging', input_properties={
+          'firmware_location':
+              1,
+          'signing_allowed_builder_names': ['fw-ec-postsubmit'],
+          'sign_image_properties':
+              get_signing_image_props_for_test(is_staging=True),
+      })
 
   yield test('output-binary-sizes',
              api.post_check(post_process.MustRun, 'output binary sizes'),
@@ -447,19 +452,18 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
-      ), builder='amd64-generic-postsubmit', input_properties=dict(
-          **{
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic-postsubmit',
-                  },
-                  'container_version_format':
-                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+      ), builder='amd64-generic-postsubmit', input_properties={
+          '$chromeos/build_menu': {
+              'build_target': {
+                  'name': 'amd64-generic-postsubmit',
               },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              }
-          }))
+              'container_version_format':
+                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }
+      })
 
   yield test(
       'create test containers exception',
@@ -470,19 +474,18 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepTextContains, 'Create test containers',
                      ['Failed to create containers']),
-      builder='amd64-generic-postsubmit', input_properties=dict(
-          **{
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic-postsubmit',
-                  },
-                  'container_version_format':
-                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+      builder='amd64-generic-postsubmit', input_properties={
+          '$chromeos/build_menu': {
+              'build_target': {
+                  'name': 'amd64-generic-postsubmit',
               },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              }
-          }))
+              'container_version_format':
+                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }
+      })
 
   yield test(
       'create tast artifacts',
@@ -495,38 +498,36 @@ def GenTests(api):
           stdout=api.raw_io.output_text(
               'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
           )), builder='amd64-generic-postsubmit',
-      input_properties=dict(
-          **{
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic-postsubmit',
-                  },
-                  'container_version_format':
-                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+      input_properties={
+          '$chromeos/build_menu': {
+              'build_target': {
+                  'name': 'amd64-generic-postsubmit',
               },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              },
-              'firmware_location': common_pb2.PLATFORM_TI50
-          }))
+              'container_version_format':
+                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          'firmware_location': common_pb2.PLATFORM_TI50
+      })
 
   yield test(
       'create tast artifacts missing tar files',
       api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
-      builder='amd64-generic-postsubmit', input_properties=dict(
-          **{
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic-postsubmit',
-                  },
-                  'container_version_format':
-                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+      builder='amd64-generic-postsubmit', input_properties={
+          '$chromeos/build_menu': {
+              'build_target': {
+                  'name': 'amd64-generic-postsubmit',
               },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              },
-              'firmware_location': common_pb2.PLATFORM_TI50
-          }))
+              'container_version_format':
+                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          'firmware_location': common_pb2.PLATFORM_TI50
+      })
 
   yield test(
       'create tast artifacts archive missing json and bin files',
@@ -541,17 +542,16 @@ def GenTests(api):
           )),
       api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
                     retcode=2), builder='amd64-generic-postsubmit',
-      input_properties=dict(
-          **{
-              '$chromeos/build_menu': {
-                  'build_target': {
-                      'name': 'amd64-generic-postsubmit',
-                  },
-                  'container_version_format':
-                      "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+      input_properties={
+          '$chromeos/build_menu': {
+              'build_target': {
+                  'name': 'amd64-generic-postsubmit',
               },
-              '$chromeos/cros_relevance': {
-                  'force_postsubmit_relevance': True
-              },
-              'firmware_location': common_pb2.PLATFORM_TI50
-          }))
+              'container_version_format':
+                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          'firmware_location': common_pb2.PLATFORM_TI50
+      })

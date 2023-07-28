@@ -33,8 +33,16 @@ def _get_values_dict():
               '_number': 1,
               'ref': 'refs/change/foo',
               'files': {
-                  'foo.rs': dict(status='A', size_delta=0, size=0),
-                  'bar.txt': dict(status='A', size_delta=0, size=0),
+                  'foo.rs': {
+                      'status': 'A',
+                      'size_delta': 0,
+                      'size': 0
+                  },
+                  'bar.txt': {
+                      'status': 'A',
+                      'size_delta': 0,
+                      'size': 0
+                  },
               }
           }
       },
@@ -47,8 +55,16 @@ def _get_values_dict():
               '_number': 2,
               'ref': 'refs/change/foo',
               'files': {
-                  'foo.rs': dict(status='A', size_delta=0, size=0),
-                  'bar.txt': dict(status='A', size_delta=0, size=0),
+                  'foo.rs': {
+                      'status': 'A',
+                      'size_delta': 0,
+                      'size': 0
+                  },
+                  'bar.txt': {
+                      'status': 'A',
+                      'size_delta': 0,
+                      'size': 0
+                  },
               }
           }
       }

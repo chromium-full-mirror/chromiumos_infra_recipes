@@ -97,8 +97,11 @@ def new_block(number, branch_name, expiration_date=None):
   expiration_block = ''
   if expiration_date:
     expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
-  return BLOCK_NEW % dict(number=number, branch_name=branch_name,
-                          expiration_block=expiration_block)
+  return BLOCK_NEW % {
+      'number': number,
+      'branch_name': branch_name,
+      'expiration_block': expiration_block,
+  }
 
 
 # Return a block of config to be included in textpb expecations.

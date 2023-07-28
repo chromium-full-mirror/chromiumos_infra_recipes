@@ -518,8 +518,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           self.gitiles_commit, dep_graph.target)
       # Adding relevance to tags to help cros_fleet and others search for
       # latest postsubmit image. See b/205142684.
-      self.m.cros_tags.add_tags_to_current_build(**dict(
-          relevance='{}relevant'.format('' if relevant else 'not ')))
+      self.m.cros_tags.add_tags_to_current_build(
+          **{'relevance': '{}relevant'.format('' if relevant else 'not ')})
     elif config.id.type == BuilderConfig.Id.CQ:
       # In the cases where force_relevant is True:
       # 1. input_properties.force_relevant_build is True, and/or

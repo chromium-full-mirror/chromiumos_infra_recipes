@@ -69,11 +69,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     return api.test(
         name,
         api.repo.project_infos_step_data('commit uprev', data=[
-            dict(project='overlay'),
+            {
+                'project': 'overlay'
+            },
         ], iteration=1),
         api.repo.project_infos_step_data(
             'commit uprev', data=[
-                dict(project='private-overlay', remote='cros-internal'),
+                {
+                    'project': 'private-overlay',
+                    'remote': 'cros-internal'
+                },
             ], iteration=2), *args, **kwargs)
 
   yield _with_repo_infos(

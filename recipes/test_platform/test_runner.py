@@ -254,14 +254,15 @@ def set_output_properties(api, result):
 
 
 def _collect_tests_for_phosphorus(request):
-  """Collects tests from Request into one dictionary
+  """Collects tests from Request into one dictionary.
 
     Args:
     * request (Request): skylab_test_runner request instance.
 
-    Returns: dictionary of skylab_test_runner.Request.Test instances
+    Returns:
+      dictionary of skylab_test_runner.Request.Test instances
   """
-  tests = dict(request.tests.items())
+  tests = dict(request.tests)
   if request.HasField('test'):
     tests[_DUMMY_TEST_ID] = request.test
   return tests

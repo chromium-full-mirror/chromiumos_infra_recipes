@@ -38,11 +38,13 @@ class dotdict(dict):
 
 def RunSteps(api: RecipeApi, properties: SetUpPaygenTestRequest):
   api.paygen_testing.set_up_paygen_test_configs(properties, [
-      dotdict(
-          dict(
-              local_path='/path/path.json', remote_uri=(
-                  'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
-                  'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')))
+      dotdict({
+          'local_path':
+              '/path/path.json',
+          'remote_uri':
+              ('gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
+               'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
+      })
   ])
 
 

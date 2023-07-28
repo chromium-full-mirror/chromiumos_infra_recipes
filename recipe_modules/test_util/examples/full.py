@@ -106,8 +106,9 @@ def GenTests(api):
   yield api.test(
       'child-with-properties-dict',
       api.test_util.test_child_build(
-          'amd64-generic',
-          input_properties=dict(force_relevant_build=True)).build,
+          'amd64-generic', input_properties={
+              'force_relevant_build': True
+          }).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
@@ -132,8 +133,11 @@ def GenTests(api):
   yield api.test(
       'with-properties-dict',
       api.test_util.test_build(
-          builder='amd64-generic-postsubmit',
-          input_properties=dict(build_target=dict(name='amd64-generic'))).build,
+          builder='amd64-generic-postsubmit', input_properties={
+              'build_target': {
+                  'name': 'amd64-generic'
+              }
+          }).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',

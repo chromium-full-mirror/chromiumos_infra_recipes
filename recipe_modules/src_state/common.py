@@ -15,11 +15,14 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 WORKSPACE = 'chromiumos_workspace'
 
 _project_info = namedtuple('project_info', ['host', 'project', 'relpath'])
-_manifests = dict(
-    internal=_project_info('chrome-internal.googlesource.com',
-                           'chromeos/manifest-internal', 'manifest-internal'),
-    external=_project_info('chromium.googlesource.com', 'chromiumos/manifest',
-                           'manifest'))
+_manifests = {
+    'internal':
+        _project_info('chrome-internal.googlesource.com',
+                      'chromeos/manifest-internal', 'manifest-internal'),
+    'external':
+        _project_info('chromium.googlesource.com', 'chromiumos/manifest',
+                      'manifest')
+}
 
 default_branch = 'main'
 default_ref = 'refs/heads/{}'.format(default_branch)

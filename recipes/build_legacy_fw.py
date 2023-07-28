@@ -138,7 +138,7 @@ class FirmwareBuilder():
     kwargs.setdefault('infra_step', True)
     # Tell chromite that this is an official build, so that chromeos_version.sh
     # reports the same version as cros_version.
-    with self.m.context(env=dict(CHROMEOS_OFFICIAL='1')):
+    with self.m.context(env={'CHROMEOS_OFFICIAL': '1'}):
       return self.m.step(name, command, **kwargs)
 
   def _is_after(self, version_str):
@@ -171,15 +171,19 @@ class FirmwareBuilder():
               buildspec_gs_path=self.properties.buildspec_gs_path)
         self._bcs_version = self.m.cros_version.version
 
-        entries = dict(
-            boards=self._boards, version=dict(
-                with_snapshot=str(self._bcs_version),
-                full=self._bcs_version.legacy_version,
-                milestone=self._bcs_version.milestone,
-                platform=self._bcs_version.platform_version))
-        # Today's board-metadata may include firmware versions, though that is
-        # unpopulated for many (if not all) of the current firmware builders.
-        entries['board-metadata'] = {x: {} for x in self._boards}
+        entries = {
+            'boards': self._boards,
+            'version': {
+                'with_snapshot': str(self._bcs_version),
+                'full': self._bcs_version.legacy_version,
+                'milestone': self._bcs_version.milestone,
+                'platform': self._bcs_version.platform_version,
+            },
+            # Today's board-metadata may include firmware versions, though that
+            # is unpopulated for many (if not all) of the current firmware
+            # builders.
+            'board-metadata': {x: {} for x in self._boards},
+        }
         self.m.metadata_json.add_entries(**entries)
         self.m.metadata_json.upload_to_gs(config, targets, partial=True)
 
@@ -248,10 +252,16 @@ class FirmwareBuilder():
       for info in self.m.repo.project_infos(
           projects=['chromiumos/chromite'],
           test_data=self.m.repo.test_api.project_infos_test_data(data=[
-              dict(project=_CHROMITE_PROJECT, path='chromite',
-                   upstream='refs/heads/firmware-target-99999.B'),
-              dict(project=_CHROMITE_PROJECT, path='infra/chromite-HEAD',
-                   upstream='refs/heads/main'),
+              {
+                  'project': _CHROMITE_PROJECT,
+                  'path': 'chromite',
+                  'upstream': 'refs/heads/firmware-target-99999.B',
+              },
+              {
+                  'project': _CHROMITE_PROJECT,
+                  'path': 'infra/chromite-HEAD',
+                  'upstream': 'refs/heads/main',
+              },
           ])):
         if info.branch_name == 'main':
           self._tot_chromite = workspace.join(info.path)
@@ -555,8 +565,10 @@ def GenTests(api):
     kwargs.setdefault('builder',
                       'fw-atlas-{}'.format('cq' if cq else 'postsubmit'))
     kwargs.setdefault('revision', None)
-    input_props = dict(firmware_location=1,
-                       manifest_branch='firmware-board-9999.B')
+    input_props = {
+        'firmware_location': 1,
+        'manifest_branch': 'firmware-board-9999.B'
+    }
     input_props.update(**kwargs.get('input_properties', {}))
     targets = kwargs.pop('build_targets', None)
     if targets:
@@ -613,9 +625,11 @@ def GenTests(api):
                          "/build/target/usr/share/chromeos-config/yaml",
                          "config.yaml",
                      ]),
-      input_properties=dict(
-          bump_version=True, set_suite_scheduling=True,
-          buildspec_gs_path='gs://chromeos-manifest-versions/buildspecs/'))
+      input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+      })
 
   yield test(
       'release-unibuild',
@@ -658,9 +672,11 @@ def GenTests(api):
                          "/build/target/usr/share/chromeos-config/yaml",
                          "config.yaml",
                      ]),
-      input_properties=dict(
-          bump_version=True, set_suite_scheduling=True,
-          buildspec_gs_path='gs://chromeos-manifest-versions/buildspecs/'))
+      input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+      })
 
   yield test(
       'staging-release',
@@ -678,9 +694,11 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-throw-away-bucket']),
-      bucket='staging', input_properties=dict(
-          bump_version=True, set_suite_scheduling=True,
-          buildspec_gs_path='gs://chromeos-manifest-versions/staging/'))
+      bucket='staging', input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/staging/',
+      })
 
   yield test(
       'old-staging-release',
@@ -697,8 +715,10 @@ def GenTests(api):
                      'push image.call pushimage', ['-n']),
       api.post_check(StepCommandLacks, 'push image.call pushimage',
                      ['--dest-bucket=gs://chromeos-throw-away-bucket']),
-      bucket='staging', version='R39-6301.202.44',
-      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+      bucket='staging', version='R39-6301.202.44', input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True,
+      })
 
   yield test(
       'postsubmit',
@@ -739,10 +759,10 @@ def GenTests(api):
       api.post_check(StepCommandLacks, 'build target.install packages',
                      '--withdebugsymbols'),
       api.repo.project_infos_step_data(
-          'uprev packages', data=[
-              dict(project='chromiumos/chromite',
-                   upstream='refs/heads/firmware-target-6301.202.B')
-          ]), suite_scheduling(False), version='R39-6301.202.44')
+          'uprev packages', data=[{
+              'project': 'chromiumos/chromite',
+              'upstream': 'refs/heads/firmware-target-6301.202.B'
+          }]), suite_scheduling(False), version='R39-6301.202.44')
 
   yield test(
       'cq',
@@ -759,17 +779,21 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(post_process.MustRun, 'bump version'),
       api.post_check(post_process.DoesNotRun, 'create buildspec'),
-      suite_scheduling(False), cq=True,
-      input_properties=dict(bump_version=True, set_suite_scheduling=True))
+      suite_scheduling(False), cq=True, input_properties={
+          'bump_version': True,
+          'set_suite_scheduling': True
+      })
 
   yield test(
       'two-targets',
       api.post_check(post_process.MustRun, 'board1.build board1.setup board'),
       api.post_check(post_process.MustRun, 'board2.build board2.setup board'),
       api.post_check(post_process.DoesNotRun, 'bump version'),
-      suite_scheduling(False),
-      build_targets=[dict(name='board1'),
-                     dict(name='board2')])
+      suite_scheduling(False), build_targets=[{
+          'name': 'board1'
+      }, {
+          'name': 'board2'
+      }])
 
   yield test(
       'no-firmware',
@@ -796,8 +820,11 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'board1.push image'),
       api.post_check(post_process.StepSuccess, 'board2.upload artifacts'),
       api.post_check(post_process.MustRun, 'board2.push image'),
-      build_targets=[dict(name='board1'),
-                     dict(name='board2')],
+      build_targets=[{
+          'name': 'board1'
+      }, {
+          'name': 'board2'
+      }],
       status='FAILURE',
   )
 

@@ -23,10 +23,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def _patch_set_from_dict(changes):
-  return [
-      PatchSet(collections.defaultdict(str, dict(revision_info={}, **change)))
-      for change in changes
-  ]
+  patch_sets = []
+  for change in changes:
+    change_copy = collections.defaultdict(str, change)
+    change_copy.setdefault('revision_info', {})
+    patch_sets.append(PatchSet(change_copy))
+  return patch_sets
 
 
 def RunSteps(api):

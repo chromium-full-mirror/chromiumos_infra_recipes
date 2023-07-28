@@ -70,7 +70,7 @@ def patch_yaml(base_yaml, user_yaml):
     A parse Google Cloud configuration yaml file, obtained by merging the
     base_yaml and user_yaml, following the aforementioned rules.
   """
-  patched_yaml = dict()
+  patched_yaml = {}
   for key in base_yaml.keys():
     if key == 'steps':
       patched_yaml['steps'] = base_yaml['steps'] + user_yaml['steps']

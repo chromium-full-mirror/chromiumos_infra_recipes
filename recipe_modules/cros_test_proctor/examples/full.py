@@ -88,10 +88,12 @@ def GenTests(api):
       build_pb2.Build(id=4321, builder={'builder': 'cros_test_platform'},
                       status=common_pb2.SUCCESS),
   ]
-  ctp_response1 = builds_service_pb2.BatchResponse(
-      responses=[dict(schedule_build=cros_test_platforms[0])])
-  ctp_response2 = builds_service_pb2.BatchResponse(
-      responses=[dict(schedule_build=cros_test_platforms[1])])
+  ctp_response1 = builds_service_pb2.BatchResponse(responses=[{
+      'schedule_build': cros_test_platforms[0]
+  }])
+  ctp_response2 = builds_service_pb2.BatchResponse(responses=[{
+      'schedule_build': cros_test_platforms[1]
+  }])
 
   hw_tests = [
       api.skylab_results.test_with_multi_response(

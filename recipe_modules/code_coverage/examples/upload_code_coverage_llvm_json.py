@@ -48,8 +48,10 @@ def GenTests(api):
       ),
       cq=True,
       input_properties={
-          '$chromeos/code_coverage':
-              dict(project='chromiumos/platform2', cq_builder=True)
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2',
+              'cq_builder': True,
+          }
       },
   )
 
@@ -61,8 +63,10 @@ def GenTests(api):
       ),
       cq=True,
       input_properties={
-          '$chromeos/code_coverage':
-              dict(project='chromiumos/platform2', cq_builder=True)
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2',
+              'cq_builder': True,
+          }
       },
   )
 
@@ -82,8 +86,12 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2'),
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2'
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       },
   )
 
@@ -95,10 +103,13 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/cros_relevance':
-              dict(force_postsubmit_relevance=True),
-          '$chromeos/code_coverage':
-              dict(project='chromiumos/platform2', coverage_env='autopush')
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2',
+              'coverage_env': 'autopush',
+          }
       },
   )
 
@@ -110,10 +121,13 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/cros_relevance':
-              dict(force_postsubmit_relevance=True),
-          '$chromeos/code_coverage':
-              dict(project='chromiumos/platform2', skip_chromium_upload=True)
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2',
+              'skip_chromium_upload': True,
+          }
       },
   )
 
@@ -125,7 +139,11 @@ def GenTests(api):
       ),
       cq=False,
       input_properties={
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
-          '$chromeos/code_coverage': dict(project='chromiumos/platform2')
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
+          '$chromeos/code_coverage': {
+              'project': 'chromiumos/platform2'
+          }
       },
   )

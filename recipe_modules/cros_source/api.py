@@ -8,6 +8,7 @@ import datetime
 from collections import defaultdict
 from collections import namedtuple
 import contextlib
+import copy
 import multiprocessing
 import re
 from typing import Any, Dict, List, Optional
@@ -27,18 +28,30 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 # Default sync options for syncing the named cache.
-DEFAULT_CACHE_SYNC_OPTS = dict(current_branch=True, detach=True,
-                               force_sync=True, jobs=8, no_tags=True,
-                               optimized_fetch=True, retry_fetches=8,
-                               timeout=3600, force_remove_dirty=True,
-                               prune=True)
+DEFAULT_CACHE_SYNC_OPTS = {
+    'current_branch': True,
+    'detach': True,
+    'force_sync': True,
+    'jobs': 8,
+    'no_tags': True,
+    'optimized_fetch': True,
+    'retry_fetches': 8,
+    'timeout': 3600,
+    'force_remove_dirty': True,
+    'prune': True,
+}
 
-STAGING_INIT_OPTS = dict(repo_branch='main')
+STAGING_INIT_OPTS = {'repo_branch': 'main'}
 
 # Default options for checking out a branch.
-DEFAULT_CHECKOUT_SYNC_OPTS = dict(current_branch=True, force_sync=True, jobs=8,
-                                  optimized_fetch=True, retry_fetches=8,
-                                  timeout=10800)
+DEFAULT_CHECKOUT_SYNC_OPTS = {
+    'current_branch': True,
+    'force_sync': True,
+    'jobs': 8,
+    'optimized_fetch': True,
+    'retry_fetches': 8,
+    'timeout': 10800,
+}
 
 # Manifest repositories that sync_to_pinned_manifest is allowed to pull from.
 ALLOWED_MANIFEST_SOURCES = [
@@ -348,8 +361,11 @@ class CrosSourceApi(RecipeApi):
 
       # If there is no commit id, fetch the current commit id for the reference.
       if not commit.id:
-        test_data = dict(
-            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
+        test_data = {
+            'branch': {
+                'revision': '%s-HEAD-SHA' % commit.ref.split('/')[-1],
+            }
+        }
         commit.id = self.m.gitiles.fetch_revision(commit.host, commit.project,
                                                   commit.ref,
                                                   test_output_data=test_data)
@@ -447,8 +463,10 @@ class CrosSourceApi(RecipeApi):
         gitiles_commit if gitiles_commit.host else
         self.m.src_state.internal_manifest.as_gitiles_commit_proto)
     if cache_path == self.workspace_path:
-      self._sync_target = dict(call='ensure_synced_cache',
-                               commit=MessageToDict(gitiles_commit))
+      self._sync_target = {
+          'call': 'ensure_synced_cache',
+          'commit': MessageToDict(gitiles_commit),
+      }
 
     init_opts = init_opts or {}
     # Initialize the cache on the branch given from configure_builder or the
@@ -462,12 +480,15 @@ class CrosSourceApi(RecipeApi):
     if is_staging:
       init_opts.update(STAGING_INIT_OPTS)
       # Allow forcing the released version of repo on staging.
-      init_opts.update(
-          dict(repo_branch=None
-              ) if 'chromeos.cros_source.use_released_repo_on_staging' in
-          self.m.cros_infra_config.experiments else {})
-    sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, **(sync_opts or {}))
-    sync_opts['jobs'] = self._determine_sync_jobs()
+      if ('chromeos.cros_source.use_released_repo_on_staging'
+          in self.m.cros_infra_config.experiments):
+        init_opts['repo_branch'] = None
+
+    tmp_sync_opts = copy.deepcopy(DEFAULT_CACHE_SYNC_OPTS)
+    tmp_sync_opts.update(sync_opts or {})
+    tmp_sync_opts['jobs'] = self._determine_sync_jobs()
+    sync_opts = tmp_sync_opts
+
     local_manifests = init_opts.get('local_manifests')
     groups = init_opts.get('groups')
     verbose = init_opts.get('verbose', True)
@@ -613,8 +634,8 @@ class CrosSourceApi(RecipeApi):
     self.ensure_synced_cache(cache_path_override=self.workspace_path,
                              manifest_url=working_manifest.url,
                              is_staging=is_staging,
-                             init_opts=dict(manifest_branch=branch or None),
-                             sync_opts=dict(current_branch=False),
+                             init_opts={'manifest_branch': branch or None
+                                       }, sync_opts={'current_branch': False},
                              projects=projects)
 
     # If the commit uses a ref other than the manifest's ref, switch to that.
@@ -622,8 +643,10 @@ class CrosSourceApi(RecipeApi):
     # some release branch (such as "release-R88-13597.B").
     if commit.ref != working_manifest.ref:
       self._manifest_branch = branch
-    self._sync_target = dict(call='checkout_manifests',
-                             commit=MessageToDict(commit))
+    self._sync_target = {
+        'call': 'checkout_manifests',
+        'commit': MessageToDict(commit)
+    }
     with self.m.context(cwd=working_manifest.path):
       # If we have an ID in the ref, make that HEAD.
       if commit.id:
@@ -706,13 +729,13 @@ class CrosSourceApi(RecipeApi):
       my_init_opts['projects'] = projects
       self.m.repo.init(manifest_url, **my_init_opts)
 
-      my_sync_opts = dict(**DEFAULT_CHECKOUT_SYNC_OPTS)
+      my_sync_opts = copy.deepcopy(DEFAULT_CHECKOUT_SYNC_OPTS)
       my_sync_opts['jobs'] = self._determine_sync_jobs()
       my_sync_opts.update(sync_opts or {})
       my_sync_opts['projects'] = projects
       self.m.repo.sync(**my_sync_opts)
       self._manifest_branch = manifest_branch
-      self._sync_target = dict(call='checkout_branch', branch=manifest_branch)
+      self._sync_target = {'call': 'checkout_branch', 'branch': manifest_branch}
 
       # TODO(crbug/1168649): Create partial manifest if projects is not None.
       if not projects:
@@ -722,8 +745,10 @@ class CrosSourceApi(RecipeApi):
 
   def checkout_tip_of_tree(self):
     """Check out the tip-of-tree in the workspace."""
-    self._sync_target = dict(call='checkout_tip_of_tree',
-                             branch=self.m.src_state.internal_manifest.branch)
+    self._sync_target = {
+        'call': 'checkout_tip_of_tree',
+        'branch': self.m.src_state.internal_manifest.branch
+    }
     self.ensure_synced_cache(manifest_branch_override='main')
 
   def fetch_snapshot_shas(self, count=7 * 24 * 2):
@@ -763,12 +788,15 @@ class CrosSourceApi(RecipeApi):
       sync_path = self.cache_path
       manifest = self.m.src_state.internal_manifest
 
-      init_opts = dict(verbose=verbose, manifest_branch=manifest_branch)
+      init_opts = {'verbose': verbose, 'manifest_branch': manifest_branch}
       if is_staging:
         init_opts.update(STAGING_INIT_OPTS)
-      sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, verbose=verbose,
-                       retry_fetches=retry_fetches)
-      sync_opts['jobs'] = self._determine_sync_jobs()
+      sync_opts = copy.deepcopy(DEFAULT_CACHE_SYNC_OPTS)
+      sync_opts.update({
+          'verbose': verbose,
+          'retry_fetches': retry_fetches,
+          'jobs': self._determine_sync_jobs(),
+      })
 
       if not self.m.repo.ensure_synced_checkout(
           sync_path, manifest.url, init_opts=init_opts, sync_opts=sync_opts,
@@ -952,15 +980,19 @@ class CrosSourceApi(RecipeApi):
                               i_branch == manifests.intern.branch else i_branch)
       branch = e_branch if external else i_branch
 
-      branches_dict = dict(manifest_branch=branch)
-      branches_dict.update({} if e_branch == i_branch else dict(
-          external_manifest_branch=e_branch, internal_manifest_branch=i_branch))
+      branches_dict = {'manifest_branch': branch}
+      branches_dict.update({
+          'external_manifest_branch': e_branch,
+          'internal_manifest_branch': i_branch,
+      } if e_branch != i_branch else {})
       self.m.easy.set_properties_step(**branches_dict)
 
       # Now we know what branch we need to be on, and we need the manifest
       # repo(s) to be on that branch so that the CLs will apply.
-      self.checkout_branch(manifests.build.url, branch,
-                           sync_opts=dict(current_branch=True, detach=True))
+      self.checkout_branch(manifests.build.url, branch, sync_opts={
+          'current_branch': True,
+          'detach': True
+      })
 
       _changes_mirrored_file = lambda p, ext: any((
           n.dest if ext else n.src) in x.file_infos for x in p for n in self.
@@ -1081,16 +1113,23 @@ class CrosSourceApi(RecipeApi):
       # This also means that the build manifest directory will be reset to the
       # unpatched version, which we will fix momentarily.
       with self.m.step.nest('get patched manifest'):
-        init_opts = dict(manifest_branch=branch, manifest_name=default_file)
-        sync_opts = dict(DEFAULT_CACHE_SYNC_OPTS, manifest_name=default_file,
-                         current_branch=True, no_tags=False, retry_fetches=2,
-                         detach=False, force_sync=True, no_manifest_update=True)
-        sync_opts['jobs'] = self._determine_sync_jobs()
+        init_opts = {'manifest_branch': branch, 'manifest_name': default_file}
+        sync_opts = copy.deepcopy(DEFAULT_CACHE_SYNC_OPTS)
+        sync_opts.update({
+            'manifest_name': default_file,
+            'current_branch': True,
+            'no_tags': False,
+            'retry_fetches': 2,
+            'detach': False,
+            'force_sync': True,
+            'no_manifest_update': True,
+            'jobs': self._determine_sync_jobs()
+        })
 
         manifest_url = 'file://%s' % new_dir
         if not self.m.repo.ensure_synced_checkout(
-            self.workspace_path, manifest_url, init_opts=dict(init_opts),
-            sync_opts=dict(sync_opts)):
+            self.workspace_path, manifest_url, init_opts=init_opts,
+            sync_opts=sync_opts):
           raise InfraFailure('failed to sync checkout')
 
       # 4. Move the manifest directory (or both) back to the correct position.
@@ -1111,7 +1150,10 @@ class CrosSourceApi(RecipeApi):
       self._pinned_manifest = final
       pres.logs['patched-manifest.xml'] = final
 
-      self._sync_target = dict(call='_apply_manifest_patch_sets', branch=branch)
+      self._sync_target = {
+          'call': '_apply_manifest_patch_sets',
+          'branch': branch
+      }
 
   def _partition_patches(self, patch_sets):
     """Partition the manifest patches.
@@ -1341,25 +1383,34 @@ class CrosSourceApi(RecipeApi):
             step_test_data=step_test_data, accept_statuses=[200],
             timeout=self.test_api.gitiles_timeout_seconds)
 
-        self._sync_target = dict(call='sync_to_manifest',
-                                 manifest_url=manifest_url,
-                                 manifest_path=manifest_path,
-                                 manifest_branch=manifest_branch)
+        self._sync_target = {
+            'call': 'sync_to_manifest',
+            'manifest_url': manifest_url,
+            'manifest_path': manifest_path,
+            'manifest_branch': manifest_branch,
+        }
       else:
         manifest_xml = self.m.gsutil.cat(
             manifest_gs_path, stdout=self.m.raw_io.output_text(),
             step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
                 testdata)).stdout.strip()
-        self._sync_target = dict(
-            call='sync_to_manifest',
-            manifest_gs_path=manifest_gs_path,
-        )
+        self._sync_target = {
+            'call': 'sync_to_manifest',
+            'manifest_gs_path': manifest_gs_path
+        }
 
       manifest_relpath = self.m.repo.create_tmp_manifest(manifest_xml)
-      init_opts = dict(manifest_name=manifest_relpath,
-                       manifest_branch=manifest_branch)
-      sync_opts = dict(detach=True, optimized_fetch=True, retry_fetches=8,
-                       force_sync=True, manifest_name=manifest_relpath)
+      init_opts = {
+          'manifest_name': manifest_relpath,
+          'manifest_branch': manifest_branch,
+      }
+      sync_opts = {
+          'detach': True,
+          'optimized_fetch': True,
+          'retry_fetches': 8,
+          'force_sync': True,
+          'manifest_name': manifest_relpath,
+      }
       sync_opts.update(kwargs)
 
       if not self.m.repo.ensure_synced_checkout(
@@ -1386,12 +1437,15 @@ class CrosSourceApi(RecipeApi):
     with self.m.step.nest('sync to gitiles commit'), self.m.context(
         cwd=self.workspace_path, infra_steps=True):
       self._manifest_branch = self._gitiles_branch(gitiles_commit.ref)
-      self._sync_target = dict(call='sync_snapshot',
-                               commit=MessageToDict(gitiles_commit))
+      self._sync_target = {
+          'call': 'sync_snapshot',
+          'commit': MessageToDict(gitiles_commit),
+      }
       projects = kwargs.get('projects', None)
       snapshot_xml = self._get_manifest(gitiles_commit, projects=projects)
       # Force_sync to ensure that we get the snapshot that we want.
-      sync_opts = dict(detach=True, **DEFAULT_CHECKOUT_SYNC_OPTS)
+      sync_opts = {'detach': True}
+      sync_opts.update(DEFAULT_CHECKOUT_SYNC_OPTS)
       sync_opts['jobs'] = self._determine_sync_jobs()
       if gitiles_commit.ref not in ('refs/heads/snapshot', 'refs/heads/main',
                                     'refs/heads/staging-snapshot'):

@@ -29,65 +29,112 @@ def _get_values_dict(api):
   return {
       # Negative value so that we get the default values, but can verify them
       # easily.
-      -91827:
-          dict(
-              status='NEW',
-              created='2017-01-30 13:11:20.000000000',
-              updated='2017-02-01 13:11:20.000000000',
-              submitted='2017-02-02 13:11:20.000000000',
-              change_id='Ideadbeef',
-              current_revision='f000' * 10,
-              patch_set=1,
-              project='chromium/src',
-              has_review_started=False,
-              branch=api.src_state.default_branch,
-              subject='Change title',
-              topic='Change topic',
-              message='\n'.join(
-                  ['a quick description', '', 'Change-Id: deadbeef', '']),
-              url='https://chromium.googlesource.com/chromium/src',
-              ref='refs/changes/27/91827/1',
-              files={'my/fake/file': dict(status='A', size_delta=0, size=0)},
-              hashtags=[],
-              messages=[],
-              _display_id='chromium:91827',
-              _display_url='https://chromium-review.googlesource.com/c/91827',
-              _short_host='chromium',
-              _patch_set=1,
-              _host='chromium-review.googlesource.com',
-          ),
-      2:
-          dict(
-              status='OLD',
-              created='2020-08-01 11:11:11.000000000',
-              updated='2020-08-02 12:12:22.000000000',
-              submitted='2020-08-02 12:12:22.000000000',
-              change_id='Ib767aac2',
-              current_revision='b000' * 10,
-              patch_set=3,
-              project='new-project',
-              has_review_started=True,
-              branch='release',
-              subject='Different title',
-              topic='topic2',
-              message='\n'.join(
-                  ['Different title', '', 'Change-Id: Ib767aac2', '']),
-              url='https://example.com/project-path',
-              ref='refs/something/02/2/3',
-              files={'their/fake/file': dict(status='A', size_delta=0, size=0)},
-              hashtags=["foo", "bar"],
-              messages=[{
-                  'id': "1",
-                  "message": "hello!"
-              }, {
-                  'id': "2",
-                  "message": "goodbye."
-              }],
-              _display_id='example.com:2',
-              _display_url='https://example.com/c/2',
-              _short_host='example.com',
-              _host='example.com',
-          )
+      -91827: {
+          'status':
+              'NEW',
+          'created':
+              '2017-01-30 13:11:20.000000000',
+          'updated':
+              '2017-02-01 13:11:20.000000000',
+          'submitted':
+              '2017-02-02 13:11:20.000000000',
+          'change_id':
+              'Ideadbeef',
+          'current_revision':
+              'f000' * 10,
+          'patch_set':
+              1,
+          'project':
+              'chromium/src',
+          'has_review_started':
+              False,
+          'branch':
+              api.src_state.default_branch,
+          'subject':
+              'Change title',
+          'topic':
+              'Change topic',
+          'message':
+              '\n'.join(['a quick description', '', 'Change-Id: deadbeef', '']),
+          'url':
+              'https://chromium.googlesource.com/chromium/src',
+          'ref':
+              'refs/changes/27/91827/1',
+          'files': {
+              'my/fake/file': {
+                  'status': 'A',
+                  'size_delta': 0,
+                  'size': 0
+              },
+          },
+          'hashtags': [],
+          'messages': [],
+          '_display_id':
+              'chromium:91827',
+          '_display_url':
+              'https://chromium-review.googlesource.com/c/91827',
+          '_short_host':
+              'chromium',
+          '_patch_set':
+              1,
+          '_host':
+              'chromium-review.googlesource.com',
+      },
+      2: {
+          'status':
+              'OLD',
+          'created':
+              '2020-08-01 11:11:11.000000000',
+          'updated':
+              '2020-08-02 12:12:22.000000000',
+          'submitted':
+              '2020-08-02 12:12:22.000000000',
+          'change_id':
+              'Ib767aac2',
+          'current_revision':
+              'b000' * 10,
+          'patch_set':
+              3,
+          'project':
+              'new-project',
+          'has_review_started':
+              True,
+          'branch':
+              'release',
+          'subject':
+              'Different title',
+          'topic':
+              'topic2',
+          'message':
+              '\n'.join(['Different title', '', 'Change-Id: Ib767aac2', '']),
+          'url':
+              'https://example.com/project-path',
+          'ref':
+              'refs/something/02/2/3',
+          'files': {
+              'their/fake/file': {
+                  'status': 'A',
+                  'size_delta': 0,
+                  'size': 0
+              },
+          },
+          'hashtags': ["foo", "bar"],
+          'messages': [{
+              'id': "1",
+              "message": "hello!"
+          }, {
+              'id': "2",
+              "message": "goodbye."
+          }],
+          '_display_id':
+              'example.com:2',
+          '_display_url':
+              'https://example.com/c/2',
+          '_short_host':
+              'example.com',
+          '_host':
+              'example.com',
+      }
   }
 
 

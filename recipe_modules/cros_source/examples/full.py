@@ -93,7 +93,7 @@ def GenTests(api):
                     '2d72510e447ab60a9728aeea2362d8be2cbd7789:snapshot.xml')
   yield api.cros_source.test(
       'sync-to-branch', manifest_branch,
-      api.step_data(sync_step_name, api.json.output(dict(value=''))), cq=False,
+      api.step_data(sync_step_name, api.json.output({'value': ''})), cq=False,
       git_ref='refs/heads/release-R87-13505.B')
 
   yield api.cros_source.test(
@@ -153,19 +153,31 @@ def GenTests(api):
 
   def _gerrit_return(changes, name='', values_dict=None):
     values_dict = values_dict or {
-        555:
-            dict(branch=api.src_state.default_branch,
-                 files={'full.xml': dict(status='M', size_delta=0, size=0)}),
-        556:
-            dict(branch='main')
+        555: {
+            'branch': api.src_state.default_branch,
+            'files': {
+                'full.xml': {
+                    'status': 'M',
+                    'size_delta': 0,
+                    'size': 0,
+                }
+            },
+        },
+        556: {
+            'branch': 'main'
+        },
     }
     return api.gerrit.set_gerrit_fetch_changes_response(name, changes,
                                                         values_dict)
 
   def _project_data(manifest, branch_override=None):
-    return dict(project=manifest.project, path=manifest.relpath,
-                remote=manifest.remote, rrev=branch_override or manifest.ref,
-                upstream=branch_override or manifest.ref)
+    return {
+        'project': manifest.project,
+        'path': manifest.relpath,
+        'remote': manifest.remote,
+        'rrev': branch_override or manifest.ref,
+        'upstream': branch_override or manifest.ref,
+    }
 
   yield api.cros_source.test(
       'empty-change-to-full.xml', manifest_branch, _gerrit_return(changes),
@@ -173,9 +185,11 @@ def GenTests(api):
           'patch manifest.checkout branch {}.ensure manifest is pinned'.format(
               api.src_state.default_branch), data=[
                   _project_data(api.src_state.internal_manifest),
-                  _project_data(api.src_state.external_manifest),
-                  dict(project='project', path='chromeos/project',
-                       remote='cros-internal')
+                  _project_data(api.src_state.external_manifest), {
+                      'project': 'project',
+                      'path': 'chromeos/project',
+                      'remote': 'cros-internal'
+                  }
               ]),
       api.repo.project_infos_step_data(
           'patch manifest.chromeos/manifest-internal: apply gerrit patch sets',
@@ -250,7 +264,9 @@ def GenTests(api):
   yield api.cros_source.test(
       'internal-change-no-external-branch', manifest_branch,
       _gerrit_return([_manifest_change(api.src_state.internal_manifest)],
-                     values_dict={555: dict(branch='other')}),
+                     values_dict={555: {
+                         'branch': 'other'
+                     }}),
       api.post_check(post_process.MustRun,
                      'patch manifest.checkout branch other'),
       api.post_check(post_process.MustRun,
@@ -266,7 +282,9 @@ def GenTests(api):
   yield api.cros_source.test(
       'manifest-changes-multi-branch',
       manifest_branch,
-      _gerrit_return(changes, values_dict={556: dict(branch='other')}),
+      _gerrit_return(changes, values_dict={556: {
+          'branch': 'other'
+      }}),
       cq=True,
       git_repo=api.src_state.external_manifest.url,
       gerrit_changes=changes,
@@ -278,11 +296,16 @@ def GenTests(api):
       manifest_branch,
       _gerrit_return(
           changes, values_dict={
-              556:
-                  dict(
-                      branch='main', files={
-                          'full.xml': dict(status='M', size_delta=0, size=0)
-                      })
+              556: {
+                  'branch': 'main',
+                  'files': {
+                      'full.xml': {
+                          'status': 'M',
+                          'size_delta': 0,
+                          'size': 0,
+                      }
+                  }
+              }
           }),
       cq=True,
       git_repo=api.src_state.external_manifest.url,
@@ -292,8 +315,9 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'manifest-changes-external-not-changed', manifest_branch,
-      _gerrit_return(changes, values_dict={555: dict(branch='main')}), cq=True,
-      git_repo=api.src_state.external_manifest.url,
+      _gerrit_return(changes, values_dict={555: {
+          'branch': 'main'
+      }}), cq=True, git_repo=api.src_state.external_manifest.url,
       gerrit_changes=[_manifest_change(api.src_state.internal_manifest)])
 
   manifest_internal_url = (
@@ -343,3 +367,11 @@ def GenTests(api):
               manifest_gs_path='gs://chromeos-manifest-versions/release/91/13818.0.0.xml'
           ),
       ))
+
+  yield api.cros_source.test(
+      'use-released-repo-on-staging',
+      manifest_branch,
+      api.post_process(post_process.DropExpectation),
+      bucket='staging',
+      experiments=['chromeos.cros_source.use_released_repo_on_staging'],
+  )

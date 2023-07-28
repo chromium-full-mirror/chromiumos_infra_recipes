@@ -381,8 +381,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   })
 
   project_info = [
-      dict(project='fake-project', path='src/foo',
-           upstream='refs/heads/fake-branch')
+      {
+          'project': 'fake-project',
+          'path': 'src/foo',
+          'upstream': 'refs/heads/fake-branch',
+      },
   ]
 
   def BuildTestArgs(**kwargs: Any) -> Dict[str, Any]:

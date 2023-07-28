@@ -14,7 +14,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  init_opts = dict(manifest_branch='snapshot')
+  init_opts = {'manifest_branch': 'snapshot'}
   checkout_path = api.path['cleanup'].join('ensure')
   repo_state_path = checkout_path.join('.recipes_state.json')
   api.path.mock_add_paths(repo_state_path)

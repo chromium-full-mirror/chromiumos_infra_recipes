@@ -153,7 +153,9 @@ def GenTests(api):
           api.file.read_raw(
               content=PointlessBuildCheckResponse().SerializeToString())),
       api.properties(
-          **{'$chromeos/cros_sdk': dict(force_off_toolchain_changed=True)}),
+          **{'$chromeos/cros_sdk': {
+              'force_off_toolchain_changed': True
+          }}),
       api.properties(
           TestInputProperties(
               gerrit_changes=[common_pb2.GerritChange(change=1234)])))

@@ -34,8 +34,9 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         If not passed in, or if any fields are empty, defaults will be set.
     """
     project = gerrit_change.project if gerrit_change else ''
-    values = dict(project=project or 'chromium/src')
-    values.update(values_dict or {})
+    values = {'project': project or 'chromium/src'}
+    if values_dict is not None:
+      values.update(values_dict)
     change_number = request['change_number']
     resp = request.copy()
     resp['info'] = {
@@ -109,19 +110,22 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       iteration: Which call this applies to for this step/endpoint.
     """
     iteration_str = '' if iteration == 1 else f' ({iteration})'
-    respList = []
+    resp_list = []
     for change in changes:
-      request = dict(host=change.host, change_number=change.change,
-                     patch_set=change.patchset)
-      values = dict(project=change.project) if change.project else {}
+      request = {
+          'host': change.host,
+          'change_number': change.change,
+          'patch_set': change.patchset,
+      }
+      values = {'project': change.project} if change.project else {}
       values.update(values_dict.get(change.change, {}))
-      respList.append(
+      resp_list.append(
           self._test_fetch_changes_response(request, change, values))
 
-    respDict = dict(changes=respList)
+    resp_dict = {'changes': resp_list}
     prefix = f'{step_name}.' if step_name else ''
     step_name = f'{prefix}gerrit-fetch-changes{iteration_str}'
-    return self.step_data(step_name, stdout=self.m.json.output(respDict))
+    return self.step_data(step_name, stdout=self.m.json.output(resp_dict))
 
   def set_query_changes_response(self, step_name: str,
                                  changes: List[ChangeInfo], host_url: str,
@@ -164,10 +168,9 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     url = 'https://%s/changes/%s/revisions/%s/mergeable' % (
         gerrit_host, change_num, revision)
     step_name = '%scurl %s%s' % (prefix, url, iteration)
-    if value is None:
-      values = dict()
-    else:
-      values = dict(mergeable=value)
+    values = {}
+    if value is not None:
+      values['mergeable'] = value
     return self.override_step_data(
         step_name,
         stdout=self.m.raw_io.output(')]}\'\n' + self.m.json.dumps(values)))

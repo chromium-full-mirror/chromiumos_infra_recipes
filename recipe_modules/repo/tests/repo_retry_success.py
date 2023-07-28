@@ -13,7 +13,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  init_opts = dict(manifest_branch='snapshot')
+  init_opts = {'manifest_branch': 'snapshot'}
   api.repo.ensure_synced_checkout(api.path['cleanup'].join('ensure'),
                                   'http://manifest_url', init_opts=init_opts)
 

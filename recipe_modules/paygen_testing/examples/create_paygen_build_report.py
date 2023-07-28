@@ -39,35 +39,37 @@ def RunSteps(api: RecipeApi):
   api.assertions.maxDiff = None
   build_report = [
       api.paygen_testing.create_paygen_build_report_payload(
-          dotdict(
-              dict(
-                  generation_request=GenerationRequest(
+          dotdict({
+              'generation_request':
+                  GenerationRequest(
                       tgt_signed_image=SignedImage(
-                          build=Build(channel='canary-channel'))))),
-          'gs://path/to/standard/payload'),
+                          build=Build(channel='canary-channel')))
+          }), 'gs://path/to/standard/payload'),
       api.paygen_testing.create_paygen_build_report_payload(
-          dotdict(
-              dict(
-                  generation_request=GenerationRequest(
+          dotdict({
+              'generation_request':
+                  GenerationRequest(
                       tgt_unsigned_image=UnsignedImage(
-                          build=Build(channel='dev-channel'))))), None),
+                          build=Build(channel='dev-channel')))
+          }), None),
       api.paygen_testing.create_paygen_build_report_payload(
           build_pb2.Build(status="FAILURE"), None),
       api.paygen_testing.create_paygen_build_report_payload(
-          dotdict(
-              dict(
-                  generation_request=GenerationRequest(
+          dotdict({
+              'generation_request':
+                  GenerationRequest(
                       tgt_unsigned_image=UnsignedImage(
-                          build=Build(
-                              channel='stable-channel')), minios=True))),
-          'gs://path/to/minios/payload'),
+                          build=Build(channel='stable-channel')),
+                      minios=True,
+                  ),
+          }), 'gs://path/to/minios/payload'),
       api.paygen_testing.create_paygen_build_report_payload(
-          dotdict(
-              dict(
-                  generation_request=GenerationRequest(
+          dotdict({
+              'generation_request':
+                  GenerationRequest(
                       tgt_dlc_image=DLCImage(
-                          build=Build(channel='beta-channel'), dlc_id='dlc')))),
-          'gs://path/to/dlc/payload', 1),
+                          build=Build(channel='beta-channel'), dlc_id='dlc'))
+          }), 'gs://path/to/dlc/payload', 1),
   ]
 
   expected_build_report = [

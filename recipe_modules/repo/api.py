@@ -517,8 +517,9 @@ class RepoApi(recipe_api.RecipeApi):
       list[ProjectInfo]: Requested project infos.
     """
     if test_data is None:
-      test_data = self.test_api.project_infos_test_data(
-          [dict(project=p) for p in projects or self.test_api.test_projects])
+      test_data = self.test_api.project_infos_test_data([{
+          'project': p
+      } for p in (projects or self.test_api.test_projects)])
     step_test_data = lambda: self.m.raw_io.test_api.stream_output_text(test_data
                                                                       )
 
@@ -1018,8 +1019,10 @@ class RepoApi(recipe_api.RecipeApi):
     with self.m.step.nest('ensure synced checkout') as presentation:
       self.m.file.ensure_directory('ensure root path', root_path)
       with self.m.context(cwd=root_path, infra_steps=True):
-        init_opts = dict(init_opts or {}, projects=projects)
-        sync_opts = dict(sync_opts or {}, projects=projects)
+        init_opts = init_opts or {}
+        init_opts['projects'] = projects
+        sync_opts = sync_opts or {}
+        sync_opts['projects'] = projects
         manifest_name = init_opts.get('manifest_name')
         # The same value must be passed in both sets of options.
         assert manifest_name == sync_opts.get('manifest_name')

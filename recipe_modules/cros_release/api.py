@@ -151,15 +151,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             # Don't want to look at ourselves which is necessarily a match.
             if build.id == self.m.buildbucket.build.id:
               continue
-            bs = dict(
-                dict(
-                    dict(build.input.properties).get(
-                        '$chromeos/cros_source',
-                        {})).get('syncToManifest',
-                                 {})).get('manifestGsPath', None)
-            if bs == buildspec.manifest_gs_path:
+            build_buildspec = json_format.MessageToDict(
+                build.input.properties).get('$chromeos/cros_source', {}).get(
+                    'syncToManifest', {}).get('manifestGsPath', None)
+            if build_buildspec == buildspec.manifest_gs_path:
               err = 'build {} already exists for buildspec {}. see go/cros-try for instructions on retrying.'.format(
-                  build.id, bs)
+                  build.id, build_buildspec)
               presentation.step_text = err
               presentation.status = self.m.step.FAILURE
               if fatal:
@@ -177,11 +174,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             # Don't want to look at ourselves which is necessarily a match.
             if build.id == self.m.buildbucket.build.id:
               continue
-            original_build_bbid = dict(
-                dict(build.input.properties).get('$chromeos/checkpoint',
-                                                 {})).get(
-                                                     'original_build_bbid',
-                                                     None)
+            original_build_bbid = json_format.MessageToDict(
+                build.input.properties).get('$chromeos/checkpoint',
+                                            {}).get('original_build_bbid', None)
             # go/cros-try should prevent this, which means this retry must have
             # been launched out of band. Fail.
             if str(retry_bbid) == str(original_build_bbid):

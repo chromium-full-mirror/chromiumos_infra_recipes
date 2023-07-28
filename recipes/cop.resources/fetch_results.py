@@ -85,7 +85,7 @@ def main(args):
 
   result_logs = get_result_logs(storage_client, build).rstrip()
 
-  result = dict()
+  result = {}
   result['result'] = {
       'status': build.Status(build.status).name,
       'log': result_logs,

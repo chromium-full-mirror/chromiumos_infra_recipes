@@ -5,10 +5,9 @@
 
 """API for uploading CrOS build artifacts to Google Storage."""
 
-from typing import List
-
 import collections
 import time
+from typing import Dict, List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -20,6 +19,7 @@ from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 
+from recipe_engine import config_types
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -182,24 +182,29 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       futures.append(self.m.futures.spawn(_bundle_legacy_artifact, artifact))
     return futures
 
-  def _bundle_infra_artifacts(self, _chroot, _sysroot, outpath, artifact_types,
-                              _artifact_profile_info, semaphore):
+  def _bundle_infra_artifacts(
+      self, chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
+      outpath: config_types.Path,
+      artifact_types: List['BuilderConfig.Artifacts.ArtifactTypes'],
+      artifact_profile_info: common_pb2.ArtifactProfileInfo,
+      semaphore) -> Dict[str, List[str]]:
     """Bundle infra artifacts.
 
     Batch handler for infra artifact types.
 
     Args:
-      _chroot (Chroot): The chroot to use.
-      _sysroot (Sysroot): The sysroot to use.
-      outpath (Path): Path to write bundled artifacts to.
-      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
-      _artifact_profile_info (ArtifactProfileInfo): profile information.
+      chroot: The chroot to use.
+      sysroot: The sysroot to use.
+      outpath: Path to write bundled artifacts to.
+      artifact_types: Artifact types to bundle.
+      artifact_profile_info: profile information.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
-          artifact bundling calls.
+        artifact bundling calls.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+      A dict mapping artifact names to their absolute paths.
     """
+    del chroot, sysroot, artifact_profile_info  # Unused.
     with semaphore:
       files_by_artifact = {}
       if ArtifactsByService.Infra.ArtifactType.BUILD_MANIFEST in artifact_types:
@@ -216,10 +221,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
   @staticmethod
   def _prepare_unknown(
-      _chroot: common_pb2.Chroot, _sysroot: ArtifactsByService.Sysroot,
-      _artifact_types: List['BuilderConfig.Artifacts.ArtifactTypes'],
-      _input_artifacts: List[BuilderConfig.Artifacts.InputArtifactInfo],
-      _artifact_profile_info: common_pb2.ArtifactProfileInfo,
+      chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
+      artifact_types: List['BuilderConfig.Artifacts.ArtifactTypes'],
+      input_artifacts: List[BuilderConfig.Artifacts.InputArtifactInfo],
+      artifact_profile_info: common_pb2.ArtifactProfileInfo,
       test_data: str) -> artifacts.BuildSetupResponse:
     """Declare the build necessity UNKNOWN from this artifact's perspective.
 
@@ -227,17 +232,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     prepare step.  It returns "UNKNOWN".
 
     Args:
-      _chroot: The chroot to use, or None if not yet created.
-      _sysroot: The sysroot to use, or None if not yet created.
-      _artifact_types: Artifact types to bundle.
-      _input_artifacts: Where to find input artifacts.
-      _artifact_profile_info: profile information.
+      chroot: The chroot to use, or None if not yet created.
+      sysroot: The sysroot to use, or None if not yet created.
+      artifact_types: Artifact types to bundle.
+      input_artifacts: Where to find input artifacts.
+      artifact_profile_info: profile information.
       test_data: JSON data to use for build API calls.
 
     Returns:
       UNKNOWN.
     """
-    del test_data
+    del (chroot, sysroot, artifact_types, input_artifacts,
+         artifact_profile_info, test_data)  # Unused.
     return artifacts.BuildSetupResponse.UNKNOWN
 
   def _prepare_toolchain(self, chroot, sysroot, artifact_types, input_artifacts,
@@ -264,23 +270,27 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         req, infra_step=True, test_output_data=test_data)
     return resp.build_relevance
 
-  def _bundle_toolchain(self, chroot, sysroot, path, artifact_types,
-                        artifact_profile_info, semaphore):
+  def _bundle_toolchain(
+      self, chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
+      path: config_types.Path,
+      artifact_types: List['BuilderConfig.Artifacts.ArtifactTypes'],
+      artifact_profile_info: common_pb2.ArtifactProfileInfo,
+      semaphore) -> Dict[str, List[str]]:
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
 
     Args:
-      chroot (Chroot): The chroot to use.
-      sysroot (Sysroot): The sysroot to use.
-      path (Path): Path to write bundled artifacts to.
-      artifact_types (list[ArtifactTypes]): Artifact types to bundle.
-      artifact_profile_info (ArtifactProfileInfo): profile information.
+      chroot: The chroot to use.
+      sysroot: The sysroot to use.
+      path: Path to write bundled artifacts to.
+      artifact_types: Artifact types to bundle.
+      artifact_profile_info: profile information.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+      A dict mapping artifact names to their absolute paths.
     """
     with semaphore:
       req = toolchain.BundleToolchainRequest(sysroot=sysroot, chroot=chroot,
@@ -297,21 +307,23 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         ret[artifact_name] = artifact_files
       return ret
 
-  def _bundle_firmware(self, chroot, path, artifact_info, semaphore):
+  def _bundle_firmware(self, chroot: common_pb2.Chroot, path: config_types.Path,
+                       artifact_info: ArtifactsByService.Firmware,
+                       semaphore) -> Dict[str, List[str]]:
     """Bundle toolchain artifacts.
 
     Batch handler for toolchain artifact types.
 
     Args:
-      chroot (Chroot): The chroot to use.
-      sysroot (Sysroot): The sysroot to use.
-      path (Path): Path to write bundled artifacts to.
-      artifact_info (ArtifactsByService.Firmware): firmware artifact info.
+      chroot: The chroot to use.
+      sysroot: The sysroot to use.
+      path: Path to write bundled artifacts to.
+      artifact_info: Firmware artifact info.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
 
     Returns:
-      dict(artifact_name: list(artifact paths)).  Paths are absolute.
+      A dict mapping artifact names to their absolute paths.
     """
     with semaphore:
       ret = {}
@@ -330,23 +342,27 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           ret[artifact_name] = artifact_files
       return ret
 
-  def _bundle_artifacts(self, chroot, sysroot, artifacts_info, outpath,
-                        test_data=None):
+  def _bundle_artifacts(
+      self, chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
+      artifacts_info: ArtifactsByService, outpath: config_types.Path,
+      test_data: Optional[str] = None
+  ) -> Tuple[Dict[str, List[str]], List[str]]:
     """Defer to the build API to bundle the given artifact.
 
     Args:
-      chroot (Chroot): chroot to use
-      sysroot (Sysroot): sysroot to use
-      artifacts_info (ArtifactsByService): artifact information.
-      outpath (Path): Path to output artifact bundles.
-      test_data (str): Some data for this step to return when running under
-          simulation.  The string "@@DIR@@" is replaced with the output_dir
-          path throughout.
+      chroot: chroot to use
+      sysroot: sysroot to use
+      artifacts_info: artifact information.
+      outpath: Path to output artifact bundles.
+      test_data: Some data for this step to return when running under
+        simulation.  The string "@@DIR@@" is replaced with the output_dir
+        path throughout.
 
     Returns:
-      dict(str: list[str]): Artifact name, list of artifact file paths
-          relative to |outpath|.
-      list(str): List of artifacts that failed to generate.
+      A tuple (files_by_artifact, failed_artifacts), where:
+      * files_by_artifact is a dict mapping artifact names to a list of paths
+        to those artifacts, relative to |outpath|.
+      * failed_artifacts is a list of artifact types that failed to generate.
     """
     semaphore = self.m.futures.make_bounded_semaphore(
         self._max_concurrent_bundling_requests)
@@ -364,20 +380,20 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     files_by_artifact = {}
     failed_artifacts = []
-    for f in self.m.futures.iwait(futures):
-      ex = f.exception()
+    for future in self.m.futures.iwait(futures):
+      ex = future.exception()
       if ex:
         raise ex
 
       # The _bundle_artifacts_by_service function already returns the
       # artifacts in the correct form.
-      if f.name == 'bundle by service':
-        results, failures = f.result()
+      if future.name == 'bundle by service':
+        results, failures = future.result()
         files_by_artifact.update(results)
         failed_artifacts.extend(failures)
         continue
 
-      for artifact, files in f.result().items():
+      for artifact, files in future.result().items():
         files_by_artifact[artifact] = [
             self.m.path.relpath(x, outpath) for x in files
         ]
@@ -390,25 +406,29 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     return common_pb2.ResultPath(
         path=common_pb2.Path(path=str(path), location=location))
 
-  def _bundle_artifacts_by_service(self, chroot, sysroot, artifacts_info,
-                                   outpath, test_data, semaphore):
+  def _bundle_artifacts_by_service(
+      self, chroot: common_pb2.Chroot, sysroot: ArtifactsByService.Sysroot,
+      artifacts_info: ArtifactsByService, outpath: config_types.Path,
+      test_data: Optional[str],
+      semaphore) -> Tuple[Dict[str, List[str]], List[str]]:
     """Defer to the build API to bundle the given artifact.
 
     Args:
-      chroot (Chroot): chroot to use
-      sysroot (Sysroot): sysroot to use
-      artifacts_info (ArtifactsByService): artifact information.
-      outpath (Path): Path to output artifact bundles.
-      test_data (str): Some data for this step to return when running under
+      chroot: chroot to use
+      sysroot: sysroot to use
+      artifacts_info: artifact information.
+      outpath: Path to output artifact bundles.
+      test_data: Some data for this step to return when running under
           simulation.  The string "@@DIR@@" is replaced with the output_dir
           path throughout.
       semaphore (BoundedSemaphore): Semaphore to use to limit concurrency of
           artifact bundling calls.
 
     Returns:
-      dict(str: list[str]): Artifact name, list of artifact file paths
-          relative to |outpath|.
-      list(str): List of artifact types that failed to generate.
+      A tuple (files_by_artifact, failed_artifacts), where:
+      * files_by_artifact is a dict mapping artifact names to a list of paths
+        to those artifacts, relative to |outpath|.
+      * failed_artifacts is a list of artifact types that failed to generate.
     """
     with self.m.step.nest('call artifacts service') as presentation:
       with semaphore:
@@ -420,8 +440,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                                    artifact_info=artifacts_info,
                                    result_path=self._result_path(outpath))
 
-        test_data = None if not test_data else test_data.replace(
-            '@@DIR@@', str(outpath))
+        if test_data:
+          test_data = test_data.replace('@@DIR@@', str(outpath))
         resp = service.Get(req, infra_step=True, test_output_data=test_data)
 
         # Create files_by_artifact.
@@ -1004,7 +1024,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     Args:
       uploaded_artifacts (UploadedArtifacts): The uploaded artifacts
     """
-    these_artifacts = dict(uploaded_artifacts._asdict().items())
+    these_artifacts = uploaded_artifacts._asdict()
     self.m.easy.set_properties_step(artifacts=these_artifacts,
                                     step_name='output artifact GS paths')
 

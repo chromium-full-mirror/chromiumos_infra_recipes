@@ -55,9 +55,16 @@ def RunSteps(api, properties):
       A PatchSet.
     """
     project = 'chromiumos/overlays/chromiumos-overlay'
-    return PatchSet(
-        dict(host='test', info=dict(project=project), patch_set='3',
-             revision_info=dict(files={f: {} for f in files})))
+    return PatchSet({
+        'host': 'test',
+        'info': {
+            'project': project
+        },
+        'patch_set': '3',
+        'revision_info': {
+            'files': {f: {} for f in files}
+        }
+    })
 
   chroot = Chroot()
   build_target = BuildTarget(name='target')

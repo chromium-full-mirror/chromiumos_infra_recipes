@@ -49,7 +49,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       input_dict = MessageToDict(input_dict, preserving_proto_field_name=True)
     kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
     if build_target_name:
-      build_target = dict(name=build_target_name)
+      build_target = {'name': build_target_name}
       # We may already have build_menu properties.  Passing build_target_name
       # overrides the value in any input properties we received.
       input_dict.setdefault('$chromeos/build_menu', {})

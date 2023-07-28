@@ -60,17 +60,17 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
             for b in builds_status.testable_builds
             if 'artifacts' in b.output.properties and
             'gs_bucket' in art_property(b)))
-    input_artifacts = [
-        dict(artifact_types=[ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY],
-             gs_locations=locs)
-    ]
+    input_artifacts = [{
+        'artifact_types': [ArtifactsByService.Toolchain.CHROME_DEBUG_BINARY,],
+        'gs_locations': locs,
+    }]
 
     if locs:
       # Schedule and wait for any process_child builder.
       api.orch_menu.schedule_wait_build(
           properties.process_child,
           await_completion=True,
-          properties=dict(input_artifacts=input_artifacts),
+          properties={'input_artifacts': input_artifacts},
           check_failures=True,
           step_name='run {}'.format(properties.process_child),
           timeout_sec=4 * 60 * 60,
@@ -83,10 +83,15 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
 def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data(
-      extra_output_properties=dict(
-          artifacts=dict(
-              files_by_artifact={"CHROME_DEBUG_BINARY": ["chrome.debug.bz2"]},
-              gs_bucket="chromeos-image-archive", gs_path="GS_PATH/DIR")))
+      extra_output_properties={
+          'artifacts': {
+              'files_by_artifact': {
+                  'CHROME_DEBUG_BINARY': ['chrome.debug.bz2']
+              },
+              'gs_bucket': 'chromeos-image-archive',
+              'gs_path': 'GS_PATH/DIR'
+          }
+      })
 
   yield api.orch_menu.test('basic', data.ctp_normal,
                            with_history=True, collect_builds=data.builds)

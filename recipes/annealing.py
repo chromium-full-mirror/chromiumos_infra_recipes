@@ -112,7 +112,7 @@ def RunSteps(api, properties):
               if commit.ref.startswith('refs/heads/') else commit.ref)
           api.cros_source.ensure_synced_cache(
               cache_path_override=workspace_path, is_staging=is_staging,
-              init_opts=dict(manifest_branch=branch))
+              init_opts={'manifest_branch': branch})
           api.cros_source.sync_to_gitiles_commit(commit)
           prior_internal = api.git.fetch_refs(internal_manifest.url, commit.id,
                                               count=2)[-1]
@@ -240,8 +240,8 @@ def RunSteps(api, properties):
             footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
         external_snapshot_ref = external_snapshot_commit.id
         # Add snapshot commit id to tags so that they can be queried for.
-        api.cros_tags.add_tags_to_current_build(**dict(
-            published_snapshot_id=external_snapshot_commit.id))
+        api.cros_tags.add_tags_to_current_build(
+            **{'published_snapshot_id': external_snapshot_commit.id})
 
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
@@ -255,8 +255,8 @@ def RunSteps(api, properties):
         # Set output.properties.commit, this will also set the commit as the
         # build output.
         api.src_state.gitiles_commit = internal_snapshot_commit
-        api.cros_tags.add_tags_to_current_build(**dict(
-            published_snapshot_id=internal_snapshot_commit.id))
+        api.cros_tags.add_tags_to_current_build(
+            **{'published_snapshot_id': internal_snapshot_commit.id})
 
       if ('chromeos.publish.to.binhost_lookup_service'
           in api.buildbucket.build.input.experiments):

@@ -27,7 +27,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.step_data('my-tool', stdout=api.json.output(dict(output='data'))),
+      api.step_data('my-tool', stdout=api.json.output({'output': 'data'})),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -38,7 +38,7 @@ def GenTests(api):
           bucket='release',
           builder='staging-release-main-orchestrator',
       ),
-      api.step_data('my-tool', stdout=api.json.output(dict(output='data'))),
+      api.step_data('my-tool', stdout=api.json.output({'output': 'data'})),
       api.post_check(post_process.StepCommandContains,
                      'ensure support CIPD package.ensure_installed',
                      ['chromiumos/infra/support/${platform} staging']),
@@ -49,12 +49,12 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "$chromeos/support": {
-                  "support_cipd_package": "chromiumos/infra/support_foo",
-                  "support_cipd_ref": "bar"
+              '$chromeos/support': {
+                  'support_cipd_package': 'chromiumos/infra/support_foo',
+                  'support_cipd_ref': 'bar'
               }
           }),
-      api.step_data('my-tool', stdout=api.json.output(dict(output='data'))),
+      api.step_data('my-tool', stdout=api.json.output({'output': 'data'})),
       api.post_check(post_process.StepCommandContains,
                      'ensure support CIPD package.ensure_installed',
                      ['chromiumos/infra/support_foo bar']),

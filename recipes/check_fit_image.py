@@ -123,7 +123,7 @@ def RunSteps(api, properties):
 
     projects = sorted(list({gc.project for gc in gerrit_changes}))
 
-    verbose = dict(verbose=True)
+    verbose = {'verbose': True}
     api.cros_source.ensure_synced_cache(
         init_opts=verbose,
         sync_opts=verbose,

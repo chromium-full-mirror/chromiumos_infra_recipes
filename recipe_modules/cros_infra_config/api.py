@@ -5,7 +5,7 @@
 
 import datetime
 import typing
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
@@ -19,6 +19,7 @@ from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import UseFlag
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.chromiumos.dut_tracking import TrackingPolicyCfg
+from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
@@ -288,7 +289,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       raise LookupError('No BuilderConfig for builder {}'.format(builder_name))
     return config
 
-  def safe_get_builder_configs(self, builder_names):
+  def safe_get_builder_configs(
+      self, builder_names: List[str]) -> Dict[str, BuilderConfig]:
     """Gets the BuilderConfigs for the specified builder names from HEAD.
 
     The returned dict will not contain key/values for builder names that could
@@ -299,7 +301,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         against BuilderConfig id.name.
 
     Returns:
-      dict(str, BuilderConfig) of found BuilderConfigs.
+      Dict mapping builder names to found BuilderConfigs.
     """
     builder_configs = {}
     for name in builder_names:
@@ -462,8 +464,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     if commit and commit.ref and not commit.id:
       # If there is no commit id, fetch the current commit id for the reference.
       if not commit.id:
-        test_data = dict(
-            branch=dict(revision='%s-HEAD-SHA' % commit.ref.split('/')[-1]))
+        test_data = {
+            'branch': {
+                'revision': '%s-HEAD-SHA' % commit.ref.split('/')[-1],
+            },
+        }
         commit.id = self.m.gitiles.fetch_revision(commit.host, commit.project,
                                                   commit.ref,
                                                   test_output_data=test_data)
@@ -545,9 +550,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
-      easy_props = dict(recipes_git_revision=self.package_git_revision)
-      easy_props.update(
-          {'experiments': self.experiments} if self.experiments else {})
+      easy_props = {'recipes_git_revision': self.package_git_revision}
+      if self.experiments:
+        easy_props['experiments'] = self.experiments
       self.m.easy.set_properties_step(**easy_props)
 
       # If a config_ref is given, we want to use it even if we are not on
@@ -623,15 +628,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     target = self.get_build_target(build=build)
     return target.name if target and target.name else None
 
-  def build_target_dict(self, builds):
+  def build_target_dict(self, builds: List[Build]) -> Dict[str, Build]:
     """Take a list of builds and return a map of build_target names to build.
 
     This function will omit any builds that don't define input build targets.
 
     Args:
-      builds (list[Build]): builds to extract build_target.name set from.
+      builds: builds to extract build_target.name set from.
 
-    Returns: a dict(str, Build) of build_target names.
+    Returns:
+      A dict mapping build target names to builds.
     """
     build_targets = {self.get_build_target_name(b): b for b in builds}
     build_targets.pop(None, None)

@@ -98,20 +98,16 @@ def RunSteps(api: RecipeApi,
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   props = api.properties(
-      build_target=dict(name='board'),
-      build_payload=dict(
-          artifacts_gs_bucket='artifacts-bucket',
-          artifacts_gs_path='artifacts-path',
-      ),
-      expressions=['expr'],
-      gce_metadata=dict(
-          project='project',
-          zone='zone',
-          machine_type='machine-type',
-          network='network',
-          subnet='subnet',
-      ),
-  )
+      build_target={'name': 'board'}, build_payload={
+          'artifacts_gs_bucket': 'artifacts-bucket',
+          'artifacts_gs_path': 'artifacts-path',
+      }, expressions=['expr'], gce_metadata={
+          'project': 'project',
+          'zone': 'zone',
+          'machine_type': 'machine-type',
+          'network': 'network',
+          'subnet': 'subnet',
+      })
 
   yield api.test('basic', props, api.buildbucket.generic_build())
 

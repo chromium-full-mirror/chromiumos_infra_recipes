@@ -55,8 +55,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # what repos are checked out.
       api.repo.project_infos_step_data(
           'successful apply changes.apply gerrit patch sets', [
-              dict(project='chromiumos/config', path='src/config'),
-              dict(project='privateproject1')
+              {
+                  'project': 'chromiumos/config',
+                  'path': 'src/config'
+              },
+              {
+                  'project': 'privateproject1'
+              },
           ]),
       # privateproject2 was not checked out, so it's change is discarded
       api.post_process(
@@ -83,8 +88,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'error: project chromiumos/config not found'),
       ),
       api.repo.project_infos_step_data(
-          'successful apply changes.apply gerrit patch sets',
-          [dict(project='privateproject3')]),
+          'successful apply changes.apply gerrit patch sets', [{
+              'project': 'privateproject3'
+          }]),
       # All changes were discarded.
       api.post_process(
           post_process.StepTextEquals,

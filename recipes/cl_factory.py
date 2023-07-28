@@ -83,9 +83,10 @@ def RunSteps(api: RecipeApi, properties: ClFactoryProperties) -> None:
     # projects from properties.repo_regexes.
     sync_projects = [gc.project for gc in gerrit_changes]
     api.cros_source.ensure_synced_cache(
-        cache_path_override=api.cros_source.workspace_path,
-        init_opts=dict(reference=api.cros_source.cache_path, verbose=True),
-        sync_opts=dict(verbose=True), projects=sync_projects)
+        cache_path_override=api.cros_source.workspace_path, init_opts={
+            'reference': api.cros_source.cache_path,
+            'verbose': True
+        }, sync_opts={'verbose': True}, projects=sync_projects)
     api.cros_source.checkout_tip_of_tree()
 
     with api.context(cwd=api.cros_source.workspace_path):
@@ -483,7 +484,7 @@ TEST=CQ
 
   def forall_data(*projects):
     """Returns a generator for project_infos_step_data."""
-    return (dict(project=p) for p in projects)
+    return ({'project': p} for p in projects)
 
   def no_git_diff_step_data(project):
     step_name = 'generate project change lists.working on project {}.git status'

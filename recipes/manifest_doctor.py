@@ -154,11 +154,18 @@ def GenTests(api: RecipeTestApi):
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
-              dict(project='chromeos/program/galaxy',
-                   path='src/program/galaxy'),
-              dict(project='chromeos/project/galaxy/milkyway',
-                   path='src/project/galaxy/milkyway'),
-              dict(project='chromeos/foo', path='src/foo'),
+              {
+                  'project': 'chromeos/program/galaxy',
+                  'path': 'src/program/galaxy',
+              },
+              {
+                  'project': 'chromeos/project/galaxy/milkyway',
+                  'path': 'src/project/galaxy/milkyway',
+              },
+              {
+                  'project': 'chromeos/foo',
+                  'path': 'src/foo',
+              },
           ]),
       api.post_check(post_process.StepCommandContains,
                      'create external buildspecs.run manifest_doctor',
@@ -208,11 +215,18 @@ def GenTests(api: RecipeTestApi):
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
-              dict(project='chromeos/program/galaxy',
-                   path='src/program/galaxy'),
-              dict(project='chromeos/project/galaxy/milkyway',
-                   path='src/project/galaxy/milkyway'),
-              dict(project='chromeos/foo', path='src/foo'),
+              {
+                  'project': 'chromeos/program/galaxy',
+                  'path': 'src/program/galaxy',
+              },
+              {
+                  'project': 'chromeos/project/galaxy/milkyway',
+                  'path': 'src/project/galaxy/milkyway',
+              },
+              {
+                  'project': 'chromeos/foo',
+                  'path': 'src/foo',
+              },
           ]),
       api.post_check(
           post_process.StepCommandContains,

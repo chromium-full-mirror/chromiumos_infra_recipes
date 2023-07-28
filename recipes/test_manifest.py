@@ -59,8 +59,7 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
     gerrit_changes = api.src_state.gerrit_changes
 
     with api.step.nest('get current project infos'):
-      old_project_infos = dict(
-          (p.path, p.name) for p in api.repo.project_infos())
+      old_project_infos = {p.path: p.name for p in api.repo.project_infos()}
 
     patch_sets = []
     if gerrit_changes:
@@ -94,8 +93,7 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
                       )
 
     with api.step.nest('get new project infos'):
-      new_project_infos = dict(
-          (p.path, p.name) for p in api.repo.project_infos())
+      new_project_infos = {p.path: p.name for p in api.repo.project_infos()}
     with api.step.nest('test b/260600258 name change'):
       for project_path, project_old_name in old_project_infos.items():
         if project_path in new_project_infos and new_project_infos[
@@ -196,7 +194,10 @@ M       _something.xml'''
       *common_args,
       api.repo.project_infos_step_data(
           'get new project infos', data=[
-              dict(project='new-project-c', path='src/project-c'),
+              {
+                  'project': 'new-project-c',
+                  'path': 'src/project-c'
+              },
           ]),
       # TODO (b/275363240): audit this test.
       status='FAILURE',

@@ -37,9 +37,16 @@ def RunSteps(api: RecipeApi, properties: TestProperties):
       A patch set.
     """
     project = 'chromeos/overlays/project-cheets-private'
-    return PatchSet(
-        dict(host='test', info=dict(project=project), patch_set='3',
-             revision_info=dict(files={f: {} for f in files})))
+    return PatchSet({
+        'host': 'test',
+        'info': {
+            'project': project
+        },
+        'patch_set': 3,
+        'revision_info': {
+            'files': {f: {} for f in files}
+        }
+    })
 
   chroot = Chroot()
   sysroot = Sysroot(build_target=BuildTarget(name='build_target'))

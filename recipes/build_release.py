@@ -95,7 +95,7 @@ def RunSteps(api, properties):
         pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
 
   #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
-  with api.context(env=dict(CHROMEOS_OFFICIAL='1')):
+  with api.context(env={'CHROMEOS_OFFICIAL': '1'}):
     with api.build_reporting.publish_to_gs():
       with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
                                               raise_on_failed_publish=True):

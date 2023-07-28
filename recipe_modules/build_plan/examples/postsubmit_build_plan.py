@@ -47,7 +47,7 @@ def GenTests(api):
       build_pb2.Build(id=8922054662172514005,
                       builder={'builder': 'amd64-generic-postsubmit'},
                       status=common_pb2.SUCCESS,
-                      input=dict(properties=struct_pb2.Struct())),  # no bt
+                      input={'properties': struct_pb2.Struct()}),  # no bt
       build_pb2.Build(id=8922054662172514004,
                       builder={'builder': 'amd64-generic-postsubmit'},
                       status=common_pb2.SCHEDULED,

@@ -926,9 +926,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                                 HwTestCfg.HwTest) else None
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
-        result.append(
-            dict(name=name, board=board, builder_name=builder_name,
-                 build_target=build_target, critical=critical, status=status))
+        result.append({
+            'name': name,
+            'board': board,
+            'builder_name': builder_name,
+            'build_target': build_target,
+            'critical': critical,
+            'status': status,
+        })
     return result
 
   def _with_props_for_child_build(self, properties):

@@ -132,8 +132,9 @@ def GenTests(api):
       api.properties(**api.test_util.build_menu_properties(
           build_target_name='cloudready-release-R90-13816.B')),
       input_properties={
-          '$chromeos/cros_artifacts':
-              dict(gs_upload_path='{target}-release/{version}')
+          '$chromeos/cros_artifacts': {
+              'gs_upload_path': '{target}-release/{version}',
+          },
       }, build_target='cloudready-release-R90-13816.B', bucket='release')
 
   # Release build with devinstall prebuilts.
@@ -144,8 +145,9 @@ def GenTests(api):
       api.properties(FullProperties(upload_devinstall_prebuilts=True)),
       api.post_check(post_process.MustRun, 'upload devinstall prebuilts'),
       input_properties={
-          '$chromeos/cros_artifacts':
-              dict(gs_upload_path='{target}-release/{version}')
+          '$chromeos/cros_artifacts': {
+              'gs_upload_path': '{target}-release/{version}',
+          },
       }, build_target='cloudready-release-R90-13816.B', bucket='release')
 
   # Run the other tests that we only run in the module.
@@ -164,8 +166,12 @@ def GenTests(api):
       api.build_menu.assert_step_uses_portage(
           'run ebuild tests', 'TestService/BuildTargetUnitTest'),
       input_properties={
-          '$chromeos/build_menu': dict(artifact_build=True),
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True),
+          '$chromeos/build_menu': {
+              'artifact_build': True
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       },
   )
 
@@ -195,7 +201,9 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'has-no-artifacts', input_properties={
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       }, build_target='arm-generic')
 
   yield api.build_menu.test(
@@ -214,8 +222,9 @@ def GenTests(api):
       api.properties(FullProperties(upload_prebuilts=True)),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       input_properties={
-          '$chromeos/build_menu':
-              dict(override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
+          '$chromeos/build_menu': {
+              'override_prebuilts_config': BuilderConfig.Artifacts.PUBLIC
+          },
       }, cq=True)
 
   # Ensure CQ does not upload the prebuilts if the prebuilt target is NONE.
@@ -225,8 +234,9 @@ def GenTests(api):
       api.properties(FullProperties(upload_prebuilts=True)),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       input_properties={
-          '$chromeos/build_menu':
-              dict(override_prebuilts_config=BuilderConfig.Artifacts.NONE),
+          '$chromeos/build_menu': {
+              'override_prebuilts_config': BuilderConfig.Artifacts.NONE,
+          },
       }, cq=True)
 
   yield api.build_menu.test(
@@ -234,8 +244,9 @@ def GenTests(api):
       api.properties(FullProperties(upload_chrome_prebuilts=True)),
       api.post_check(post_process.MustRun, 'upload chrome prebuilts'),
       input_properties={
-          '$chromeos/build_menu':
-              dict(override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
+          '$chromeos/build_menu': {
+              'override_prebuilts_config': BuilderConfig.Artifacts.PUBLIC,
+          }
       }, cq=True)
 
   yield api.build_menu.test(
@@ -243,13 +254,16 @@ def GenTests(api):
       api.properties(
           FullProperties(artifact_build=True, upload_prebuilts=True,
                          publish_image_sizes=True)), input_properties={
-                             '$chromeos/build_menu':
-                                 dict(artifact_build=True),
-                             '$chromeos/cros_relevance':
-                                 dict(force_postsubmit_relevance=True),
-                             '$chromeos/cros_prebuilts':
-                                 dict(enable_snapshot_prebuilts=True,
-                                      send_snapshot_prebuilts=1)
+                             '$chromeos/build_menu': {
+                                 'artifact_build': True
+                             },
+                             '$chromeos/cros_relevance': {
+                                 'force_postsubmit_relevance': True
+                             },
+                             '$chromeos/cros_prebuilts': {
+                                 'enable_snapshot_prebuilts': True,
+                                 'send_snapshot_prebuilts': 1,
+                             },
                          })
 
   for forced in False, True:
@@ -264,8 +278,10 @@ def GenTests(api):
                 ])), build_target='chell', bucket='toolchain',
         builder='orderfile-generate-toolchain', artifact_pointless=True,
         input_properties={
-            '$chromeos/build_menu':
-                dict(artifact_build=True, force_relevant_build=forced)
+            '$chromeos/build_menu': {
+                'artifact_build': True,
+                'force_relevant_build': forced,
+            },
         })
 
   yield api.build_menu.test(
@@ -276,7 +292,9 @@ def GenTests(api):
   yield api.build_menu.test(
       'no-sysroot', api.properties(FullProperties(no_sysroot=True)),
       input_properties=({
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       }))
 
   yield api.build_menu.test(
@@ -286,7 +304,9 @@ def GenTests(api):
           'chromeos.build_menu.chrome_sync',
       ]), api.post_check(post_process.StepSuccess, 'sync chrome source async'),
       api.post_process(post_process.DropExpectation), input_properties=({
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       }))
 
   yield api.build_menu.test(
@@ -305,8 +325,12 @@ def GenTests(api):
   yield api.build_menu.test(
       'code-coverage-build', builder='sarien-code-coverage-postsubmit',
       build_target='sarien', input_properties={
-          '$chromeos/build_menu': dict(test_with_code_coverage=True),
-          '$chromeos/cros_relevance': dict(force_postsubmit_relevance=True)
+          '$chromeos/build_menu': {
+              'test_with_code_coverage': True
+          },
+          '$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          },
       })
 
   # Cq build with bad container version string, should throw exception
@@ -452,14 +476,15 @@ def GenTests(api):
       'ebuild-tests-manifest-change',
       api.buildbucket.try_build(builder='cave-slim-cq',
                                 gerrit_changes=gerrit_changes),
-      api.repo.project_infos_step_data('run ebuild tests.get affected paths', [
-          dict(project='chromeos/manifest-internal', path='manifest-internal')
-      ]),
+      api.repo.project_infos_step_data('run ebuild tests.get affected paths', [{
+          'project': 'chromeos/manifest-internal',
+          'path': 'manifest-internal'
+      }]),
       api.repo.project_infos_step_data(
-          'run ebuild tests (2).get affected paths', [
-              dict(project='chromeos/manifest-internal',
-                   path='manifest-internal')
-          ]),
+          'run ebuild tests (2).get affected paths', [{
+              'project': 'chromeos/manifest-internal',
+              'path': 'manifest-internal'
+          }]),
       api.gerrit.set_gerrit_fetch_changes_response(
           'cherry-pick gerrit changes', gerrit_changes, {
               1235: {

@@ -176,7 +176,8 @@ def GenTests(api):
       'all input changes discarded',
       api.buildbucket.build(build_message),
       api.repo.project_infos_step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets',
-          [dict(project='otherproject')]),
+          'cherry-pick gerrit changes.apply gerrit patch sets', [{
+              'project': 'otherproject'
+          }]),
       api.post_process(post_process.DropExpectation),
   )

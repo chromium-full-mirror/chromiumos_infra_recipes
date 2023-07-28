@@ -105,8 +105,9 @@ def GenTests(api: RecipeTestApi):
       'triggers',
       api.test_util.test_build(
           input_properties={
-              '$recipe_engine/scheduler':
-                  dict(triggers=[MessageToDict(x) for x in triggers])
+              '$recipe_engine/scheduler': {
+                  'triggers': [MessageToDict(x) for x in triggers]
+              }
           }).build,
       api.properties(
           GitilesTriggererProperties(

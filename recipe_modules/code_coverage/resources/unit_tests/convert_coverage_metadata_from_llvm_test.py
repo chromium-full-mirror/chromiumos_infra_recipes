@@ -93,8 +93,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
         [7, 2, 0, False, False],
     ]
 
-    expected_line_data = dict([(1, 1), (2, 1), (3, 1), (4, 1), (5, 0), (6, 0),
-                               (7, 0)])
+    expected_line_data = {1: 1, 2: 1, 3: 1, 4: 1, 5: 0, 6: 0, 7: 0}
     expected_block_data = {2: [[18, 24]], 4: [[4, -1]]}
     line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)
@@ -103,7 +102,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
   def test_parse_exported_coverage_json_one_line(self):
     segments = [[1, 12, 1, True, True], [1, 25, 0, False, False]]
 
-    expected_line_data = dict([(1, 1)])
+    expected_line_data = {1: 1}
     expected_block_data = {}
     line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)
@@ -114,7 +113,7 @@ class GenerateCoverageMetadataTest(unittest.TestCase):
                 [8, 1, 0, True, False], [8, 5, 0, True, True],
                 [8, 14, 0, True, False], [10, 2, 0, False, False]]
 
-    expected_line_data = dict([(3, 0), (4, 0), (8, 0), (9, 0), (10, 0)])
+    expected_line_data = {3: 0, 4: 0, 8: 0, 9: 0, 10: 0}
     expected_block_data = {}
     line_data, block_data = converter.extract_coverage_info(segments)
     self.assertDictEqual(expected_line_data, line_data)

@@ -540,14 +540,19 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
         api.repo.project_infos_step_data(
             'commit uprev',
             data=[
-                dict(project='overlay'),
+                {
+                    'project': 'overlay'
+                },
             ],
             iteration=1,
         ),
         api.repo.project_infos_step_data(
             'commit uprev',
             data=[
-                dict(project='private-overlay', remote='cros-internal'),
+                {
+                    'project': 'private-overlay',
+                    'remote': 'cros-internal'
+                },
             ],
             iteration=2,
         ),
@@ -706,16 +711,16 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       # Only one changed project.
       api.repo.project_infos_step_data(
           'commit uprev',
-          data=[
-              dict(project='overlay'),
-          ],
+          data=[{
+              'project': 'overlay'
+          }],
           iteration=1,
       ),
       api.repo.project_infos_step_data(
           'commit uprev',
-          data=[
-              dict(project='overlay'),
-          ],
+          data=[{
+              'project': 'overlay'
+          }],
           iteration=2,
       ),
       api.scheduler(triggers=[chromite_gitiles_trigger]),

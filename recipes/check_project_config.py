@@ -201,8 +201,9 @@ def GenTests(api):
     project_config_cq_build.
     """
     return api.repo.project_infos_step_data(
-        'cherry-pick gerrit changes.apply gerrit patch sets',
-        [dict(project='project1')])
+        'cherry-pick gerrit changes.apply gerrit patch sets', [{
+            'project': 'project1'
+        }])
 
   def check_constraints_with_output():
     """Returns StepData for a check constraints step with stdout."""

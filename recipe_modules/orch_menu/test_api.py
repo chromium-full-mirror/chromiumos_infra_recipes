@@ -151,8 +151,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       process_name = 'run {}'.format(process_child.builder.builder)
       args.append(
           self.m.buildbucket.simulated_schedule_output(
-              BatchResponse(responses=[dict(schedule_build=process_child)]),
-              '{}.buildbucket.schedule'.format(process_name)))
+              BatchResponse(responses=[{
+                  'schedule_build': process_child
+              }]), '{}.buildbucket.schedule'.format(process_name)))
       if process_child_timeout:
         args.extend([
             self.step_data('{}.collect.wait'.format(process_name), retcode=1),
@@ -167,8 +168,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     if follow_on_orch:
       args.append(
           self.m.buildbucket.simulated_schedule_output(
-              BatchResponse(responses=[dict(schedule_build=follow_on_orch)]),
-              'run follow on orchestrator.buildbucket.schedule')
+              BatchResponse(responses=[{
+                  'schedule_build': follow_on_orch
+              }]), 'run follow on orchestrator.buildbucket.schedule')
       )  # pragma: nocover
       args.append(
           self.m.buildbucket.simulated_collect_output(
@@ -182,11 +184,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                                     with_history=False,
                                     max_build_failure_ratio=0.0):
     """Return the default properties for the module."""
-    ret = dict(stagger_children_seconds=10)
+    ret = {'stagger_children_seconds': 10}
     if with_manifest_refs:
-      ret['update_manifest_refs'] = dict(
-          build='refs/heads/stable', start='refs/heads/postsubmit',
-          max_build_failure_ratio=max_build_failure_ratio)
+      ret['update_manifest_refs'] = {
+          'build': 'refs/heads/stable',
+          'start': 'refs/heads/postsubmit',
+          'max_build_failure_ratio': max_build_failure_ratio,
+      }
     if with_history:
       ret.update(enable_history=True, assert_singleton=True)
     return ret
@@ -265,7 +269,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         _child_build_msg(
             'amd64-generic', cq=True, build_id=8922054662172514000,
             critical='YES',
-            output_properties=_output_properties(dict(build_cost=10.0))),
+            output_properties=_output_properties({'build_cost': 10.0})),
         _child_build_msg('arm-generic', cq=True, build_id=8922054662172514001,
                          status='STARTED', critical='YES',
                          output_properties=_output_properties()),
@@ -328,11 +332,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     def _ctp_sched_resp(build_id):
       return BatchResponse(responses=[
-          dict(
-              schedule_build=self.m.test_util.test_build(
-                  build_id=build_id, bucket='testplatform',
-                  builder='cros_test_platform', bot_size=None,
-                  status='SUCCESS').message)
+          {
+              'schedule_build':
+                  self.m.test_util.test_build(
+                      build_id=build_id, bucket='testplatform',
+                      builder='cros_test_platform', bot_size=None,
+                      status='SUCCESS').message
+          },
       ])
 
     id1 = 1234
@@ -382,8 +388,9 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     # The only things we care about are output.properties.name and status.
     vm_test_build = lambda x: self.m.test_util.test_build(
-        builder='vmtest', status='SUCCESS', revision=None,
-        output_properties=dict(name=x)).message
+        builder='vmtest', status='SUCCESS', revision=None, output_properties={
+            'name': x
+        }).message
 
     ctp_normal += self.m.buildbucket.simulated_collect_output(
         [vm_test_build('vm-test')],
@@ -453,14 +460,14 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                              cq=orchestrator_name.endswith('cq-orchestrator'),
                              builder_name=c.name, build_id=start_build_id,
                              critical='YES',
-                             output_properties=dict(build_cost=10.0)))
+                             output_properties={'build_cost': 10.0}))
       else:
         collect_builds.append(
             _child_build_msg(target,
                              cq=orchestrator_name.endswith('cq-orchestrator'),
                              builder_name=c.name, build_id=start_build_id,
                              critical='YES',
-                             output_properties=dict(build_cost=10.0)))
+                             output_properties={'build_cost': 10.0}))
       start_build_id += 1
 
     return collect_builds, collect_after_builds

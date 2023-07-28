@@ -140,8 +140,9 @@ def GenTests(api: RecipeTestApi):
     project_config_cq_build.
     """
     return api.repo.project_infos_step_data(
-        'cherry-pick gerrit changes.apply gerrit patch sets',
-        [dict(project='project1')])
+        'cherry-pick gerrit changes.apply gerrit patch sets', [{
+            'project': 'project1'
+        }])
 
   def presubmit_with_output() -> TestData:
     """Returns StepData for a presubmit step with stdout."""

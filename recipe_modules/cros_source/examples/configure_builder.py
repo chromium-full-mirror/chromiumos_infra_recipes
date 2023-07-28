@@ -74,21 +74,30 @@ def GenTests(api):
 
   yield api.cros_source.test(
       'change-on-branch', manifest_branch, props(ref=ref, cid=revision),
-      _gerrit_return([change1], values_dict={555: dict(branch=branch)}),
-      gerrit_changes=[change1], revision=None)
+      _gerrit_return([change1], values_dict={555: {
+          'branch': branch
+      }}), gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-two-branches', manifest_branch, props(ref=ref, cid=revision),
       _gerrit_return([change1, change2], values_dict={
-          555: dict(branch=branch),
-          556: dict(branch=branch + '-main')
+          555: {
+              'branch': branch
+          },
+          556: {
+              'branch': f'{branch}-main'
+          },
       }), gerrit_changes=[change1, change2], revision=None)
 
   yield api.cros_source.test(
       'change-on-diff-branches', manifest_branch, props(ref=ref, cid=revision),
       _gerrit_return([change1, change2], values_dict={
-          555: dict(branch=branch),
-          556: dict(branch='firmware-other-999.B')
+          555: {
+              'branch': branch
+          },
+          556: {
+              'branch': 'firmware-other-999.B'
+          },
       }), gerrit_changes=[change1, change2], revision=None)
 
   yield api.cros_source.test(
@@ -110,12 +119,13 @@ def GenTests(api):
   yield api.cros_source.test(
       'change-on-release-branch', manifest_branch,
       props(ref=R90_ref, cid=R90_revision),
-      _gerrit_return([change1], values_dict={555: dict(branch=R90_branch)}),
-      gerrit_changes=[change1], revision=None)
+      _gerrit_return([change1], values_dict={555: {
+          'branch': R90_branch
+      }}), gerrit_changes=[change1], revision=None)
 
   yield api.cros_source.test(
       'change-on-stabilize-branch', manifest_branch,
       props(ref=stabilize_ref, cid=stabilize_revision),
-      _gerrit_return([change1],
-                     values_dict={555: dict(branch=stabilize_branch)}),
-      gerrit_changes=[change1], revision=None)
+      _gerrit_return([change1], values_dict={555: {
+          'branch': stabilize_branch
+      }}), gerrit_changes=[change1], revision=None)

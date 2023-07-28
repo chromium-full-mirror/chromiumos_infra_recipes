@@ -61,16 +61,19 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       step_test_data for the step.
     """
-    data = ([dict(project=p) for p in self.test_projects]
-            if data is None else data)
+    if data is None:
+      data = [{'project': p} for p in self.test_projects]
 
     def _generate(x):
       p = x['project']
       default_ref = self.m.src_state.default_ref
-      return dict(project=p, path=x.get('path', 'src/%s' % p),
-                  rrev=x.get('rrev', default_ref),
-                  upstream=x.get('upstream',
-                                 default_ref), remote=x.get('remote', 'cros'))
+      return {
+          'project': p,
+          'path': x.get('path', f'src/{p}'),
+          'rrev': x.get('rrev', default_ref),
+          'upstream': x.get('upstream', default_ref),
+          'remote': x.get('remote', 'cros'),
+      }
 
     return '\n'.join(
         '{project}|{path}|{remote}|{rrev}|{upstream}'.format(**_generate(x))

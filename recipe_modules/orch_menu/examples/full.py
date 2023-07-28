@@ -138,7 +138,7 @@ def GenTests(api):
                     retcode=1),
       api.step_data('update manifest ref refs/heads/test.git push (3)',
                     retcode=1), input_properties=orch_menu_properties(
-                        update_manifest_refs=dict(test='refs/heads/test')),
+                        update_manifest_refs={'test': 'refs/heads/test'}),
       builder='postsubmit-orchestrator', with_manifest_refs=True,
       collect_builds=data.builds, with_history=True)
 
@@ -169,7 +169,7 @@ def GenTests(api):
               '--push'
           ]),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True,
           schedule_public_build=True),
@@ -218,7 +218,7 @@ def GenTests(api):
           post_process.DoesNotRun,
           'set up orchestrator.(RETRY-MODE) not retrying RUN_CHILDREN'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
@@ -267,7 +267,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'run builds.(RETRY-MODE) not retrying RUN_CHILDREN'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True,
           schedule_public_build=True),
@@ -348,7 +348,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      '(RETRY-MODE) previously successful builds'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
@@ -398,7 +398,7 @@ def GenTests(api):
       ),
       api.post_process(post_process.DropExpectation),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True),
       builder='release-main-orchestrator',
@@ -427,7 +427,7 @@ def GenTests(api):
           'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
       ),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main',
           schedule_public_build=True),
@@ -455,7 +455,7 @@ def GenTests(api):
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', 'dry-run only'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'), bump_version=True,
+          update_manifest_refs={'test': 'refs/heads/test'}, bump_version=True,
           schedule_public_build=True),
       builder='staging-release-main-orchestrator',
       with_manifest_refs=True,
@@ -486,7 +486,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'factory-orchestrator',
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test'),
+          update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main'),
       builder='factory-corsola-15197.B-orchestrator',
@@ -503,7 +503,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'set up orchestrator.read git footers'),
       collect_builds=collect, input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test')),
+          update_manifest_refs={'test': 'refs/heads/test'}),
       with_manifest_refs=True, with_history=True)
 
   summary = ('3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
@@ -519,7 +519,7 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(test='refs/heads/test')),
+          update_manifest_refs={'test': 'refs/heads/test'}),
       collect_builds=collect,
       with_manifest_refs=True,
       with_history=True,
@@ -567,7 +567,7 @@ def GenTests(api):
       'bad-ref',
       api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(start='missing-ref-heads')),
+          update_manifest_refs={'start': 'missing-ref-heads'}),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -576,7 +576,7 @@ def GenTests(api):
       'bad-failure-ratio',
       api.properties(FullProperties(expect_missing_config=True)),
       input_properties=orch_menu_properties(
-          update_manifest_refs=dict(max_build_failure_ratio=1.1)),
+          update_manifest_refs={'max_build_failure_ratio': 1.1}),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
@@ -756,7 +756,7 @@ def GenTests(api):
       collect_builds=data.builds)
 
   input_props = orch_menu_properties(
-      update_manifest_refs=dict(test='refs/heads/test'))
+      update_manifest_refs={'test': 'refs/heads/test'})
   input_props.update({
       '$chromeos/cros_test_plan_v2': {
           'migration_configs': [{

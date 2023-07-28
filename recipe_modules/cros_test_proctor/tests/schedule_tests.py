@@ -63,7 +63,7 @@ def GenTests(api):
     build = api.buildbucket.ci_build_message()
     build.input.properties['name'] = name
     api.buildbucket.build(build)
-    tast_vm_test_build_responses.append(dict(schedule_build=build))
+    tast_vm_test_build_responses.append({'schedule_build': build})
   tast_vm_test_response = builds_service_pb2.BatchResponse(
       responses=tast_vm_test_build_responses)
 
@@ -72,7 +72,7 @@ def GenTests(api):
     build = api.buildbucket.ci_build_message()
     build.input.properties['name'] = name
     api.buildbucket.build(build)
-    tast_gce_test_build_responses.append(dict(schedule_build=build))
+    tast_gce_test_build_responses.append({'schedule_build': build})
   tast_gce_test_response = builds_service_pb2.BatchResponse(
       responses=tast_gce_test_build_responses)
 
