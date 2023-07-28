@@ -855,7 +855,9 @@ def _prepare_resultdb_sources_file(api, properties):
     else:
       software_dependencies = properties.request.prejob.software_dependencies
       chromeos_build = None
-      chromeos_build_gcs_bucket = None
+
+      # Default to chromeos-image-archive bucket, unless otherwise specified.
+      chromeos_build_gcs_bucket = 'chromeos-image-archive'
       if software_dependencies:
         for dep in software_dependencies:
           if dep.WhichOneof('dep') == 'chromeos_build':
@@ -866,7 +868,8 @@ def _prepare_resultdb_sources_file(api, properties):
             # Custom Lacros build, or custom firmware.
             is_dirty_provision = True
 
-      if chromeos_build is None or chromeos_build_gcs_bucket is None:  # pragma: nocover
+      if chromeos_build is None:  # pragma: nocover
+        step.step_text = 'Chrome OS build not found in request'
         raise SourcesNotAvailableException(
             'Chrome OS build not found in request')
       build_url = 'gs://{}/{}'.format(chromeos_build_gcs_bucket, chromeos_build)
