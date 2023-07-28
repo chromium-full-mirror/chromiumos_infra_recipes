@@ -352,9 +352,9 @@ def check_recent_build_statuses(
   # Everything was a success, we just didn't have enough builds.
   if set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'
                                   }) and good_builds < num_builds_needed:
-    problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} available.'
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} (good) builds available.'
   else:
-    problem_str = f'Needed {num_builds_needed} consecutive good builds, only got {good_builds}. Statuses: {", ".join(sorted(list(found_statuses)))} ({", ".join(bad_build_ids)})'
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, found failures. Statuses: {", ".join(sorted(list(found_statuses)))} ({", ".join(bad_build_ids)})'
   status_str = f'{success_str}: {get_builder_link(builder)} --> {problem_str}'
 
   return not success, status_str
@@ -494,6 +494,7 @@ def determine_maximum_covered_instance(
   changes = changes[::-1]
 
   last_covered_change = None
+  affected_recipes = set()
   for i, change in enumerate(changes):
     # Less confusing for humans if we don't use a trivial change for release.
     if change.trivial:
@@ -501,9 +502,13 @@ def determine_maximum_covered_instance(
 
     print_if_verbose(f'Considering commit {change.hash}')
 
-    affected_recipes = get_affected_recipes(
+    affected_recipes_by_this_change = get_affected_recipes(
         [change], list(set(recipe_by_builder.values())))
-    print_if_verbose(f'Affected recipes: {",".join(affected_recipes)}')
+    affected_recipes.update(set(affected_recipes_by_this_change))
+    print_if_verbose(
+        f'Affected recipes: {",".join(affected_recipes_by_this_change)}')
+    print_if_verbose(
+        f'Affected recipes (cumulative): {",".join(affected_recipes)}')
 
     missing_coverage = False
     for builder in builders:
