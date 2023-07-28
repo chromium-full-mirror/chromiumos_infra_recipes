@@ -510,6 +510,12 @@ def determine_maximum_covered_instance(
     print_if_verbose(
         f'Affected recipes (cumulative): {",".join(affected_recipes)}')
 
+    # Can't release a change that doesn't have an associated instance.
+    # Still want to update affected_recipes, so do that before exiting.
+    if change.get_cipd_instance() == git.MISSING_INSTANCE:
+      print_if_verbose('Change has no associated CIPD instance, skipping...')
+      continue
+
     missing_coverage = False
     for builder in builders:
       # Make sure we have sufficient coverage for all relevant builders.

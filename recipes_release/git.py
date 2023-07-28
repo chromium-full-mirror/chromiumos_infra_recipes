@@ -16,6 +16,7 @@ import common
 
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
 CHROMITE_PIN_COMMIT = re.compile(r'update chromite-HEAD version')
+MISSING_INSTANCE = '---------COULD_NOT_FIND_INSTANCE--------'
 
 
 @total_ordering
@@ -55,14 +56,7 @@ class Commit:
 
   def get_cipd_instance(self) -> str:
     """Find the recipe bundle instance that contains up to this commit."""
-    tag = f'git_revision:{self.hash}'
-    cmd = ['cipd', 'search', common.RECIPE_BUNDLE, '-tag', tag]
-    p = subprocess.run(cmd, capture_output=True, text=True, check=True)
-
-    for line in [line.strip() for line in p.stdout.split('\n')]:
-      if line.startswith(common.RECIPE_BUNDLE):
-        return line.split(':')[1]
-    return '---------COULD_NOT_FIND_INSTANCE--------'
+    return _get_cipd_instance(self)
 
   def set_cipd_instance(self, instanceid: common.CipdInstance):
     self.cipd_instance = instanceid
@@ -110,6 +104,19 @@ class Commit:
   def is_older_than(self, other_hash: str) -> bool:
     """Return whether the change is older than another hash."""
     return _is_older_than(self.hash, other_hash)
+
+
+@lru_cache(maxsize=None)
+def _get_cipd_instance(commit: Commit) -> str:
+  """Find the recipe bundle instance that contains up to this commit."""
+  tag = f'git_revision:{commit.hash}'
+  cmd = ['cipd', 'search', common.RECIPE_BUNDLE, '-tag', tag]
+  p = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+  for line in [line.strip() for line in p.stdout.split('\n')]:
+    if line.startswith(common.RECIPE_BUNDLE):
+      return line.split(':')[1]
+  return MISSING_INSTANCE
 
 
 @lru_cache(maxsize=None)
