@@ -7534,62 +7534,60 @@ Returns:
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#37)(self, target):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#41)(self, target: str):**
 
-Returns the greenness metric for a specific target.
+Get the greenness metric for a specific target.
 
 Args:
-  target (str): Name of the target.
+  target: Name of the target.
 
 Returns: Metric of the target or None if the target wasn't
-launched.
+  launched.
 
-&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#48)(self, target: str):**
+&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#52)(self, target: str):**
 
-Returns the targetGreenness from the last snapshot run for a
-specific target.
+Get the targetGreenness from the last snapshot run for a given target.
 
 Args:
   target: Name of the build target.
 
 Returns: targetGreenness, or an empty OrderedDict if the target, its
-greenness, or the last snapshot wasn't found.
+  greenness, or the last snapshot wasn't found.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#37)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#154)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#158)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#161)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#165)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#78)(self, builds):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#83)(self, builds: List[build_pb2.Build]):**
 
-Update Grenness with build information.
-
-Args:
-  builds([Build]): Buildbucket.Build objects of builds that
-  have completed.
-
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#107)(self, results):**
-
-Update Grenness with HW test information.
+Update greenness with build information.
 
 Args:
-  results([SkylabResult]): Results of the HW test runs.
+  builds: List of builds that have completed.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#136)(self, results):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#111)(self, results: List[SkylabResult]):**
 
-Update Grenness with VM test information.
+Update greenness with HW test information.
 
 Args:
-  results([build_pb2.Build]): Builds of the VM test runs.
+  results: Results of the HW test runs.
+
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#140)(self, results: List[build_pb2.Build]):**
+
+Update greenness with VM test information.
+
+Args:
+  results: Builds of the VM test runs.
 ### *recipe_modules* / [gs\_step\_logging](/recipe_modules/gs_step_logging)
 
 [DEPS](/recipe_modules/gs_step_logging/__init__.py#6): [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
