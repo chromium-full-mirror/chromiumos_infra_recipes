@@ -1231,10 +1231,10 @@
       "init",
       "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "--groups",
-      "all",
       "--manifest-branch",
       "snapshot",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

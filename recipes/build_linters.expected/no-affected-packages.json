@@ -1264,10 +1264,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "snapshot",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

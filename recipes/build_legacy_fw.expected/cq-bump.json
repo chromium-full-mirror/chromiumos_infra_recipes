@@ -1249,10 +1249,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "firmware-board-9999.B",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

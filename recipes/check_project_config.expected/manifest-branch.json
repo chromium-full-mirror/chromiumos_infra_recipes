@@ -506,8 +506,6 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "release-R123",
       "--groups",

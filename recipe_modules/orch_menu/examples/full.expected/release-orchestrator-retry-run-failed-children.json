@@ -1316,10 +1316,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "main",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

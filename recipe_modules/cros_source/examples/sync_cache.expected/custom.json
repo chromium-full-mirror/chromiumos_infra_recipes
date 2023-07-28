@@ -999,10 +999,10 @@
       "init",
       "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "--groups",
-      "all",
       "--manifest-branch",
       "release-R90-13816.B",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

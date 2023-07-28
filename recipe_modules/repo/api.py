@@ -211,14 +211,16 @@ class RepoApi(recipe_api.RecipeApi):
     """
     _ = projects
     verify_repo = not self._disable_repo_verify
-    cmd = ['init', '--manifest-url', manifest_url, '--groups', 'all']
+    cmd = ['init', '--manifest-url', manifest_url]
     if manifest_branch:
       cmd += ['--manifest-branch', manifest_branch]
     if reference is not None:
       cmd += ['--reference', reference]
-    if groups is not None:
+    if groups:
       assert not isinstance(groups, str)
       cmd += ['--groups', ','.join(groups)]
+    else:
+      cmd += ['--groups', 'all']
     if depth is not None:
       cmd += ['--depth', '%d' % depth]
 

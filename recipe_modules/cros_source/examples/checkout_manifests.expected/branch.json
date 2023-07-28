@@ -1004,10 +1004,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "release-R88-13597.B",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],

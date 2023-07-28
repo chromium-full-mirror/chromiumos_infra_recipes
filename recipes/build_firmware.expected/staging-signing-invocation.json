@@ -1099,10 +1099,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "staging-snapshot",
+      "--groups",
+      "all",
       "--repo-rev=main",
       "--verbose"
     ],

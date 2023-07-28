@@ -82,10 +82,10 @@
       "init",
       "--manifest-url",
       "http://manifest_url",
-      "--groups",
-      "all",
       "--manifest-branch",
       "snapshot",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--no-repo-verify",
       "--verbose"

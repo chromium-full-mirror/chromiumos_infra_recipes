@@ -506,8 +506,6 @@
       "init",
       "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "--groups",
-      "all",
       "--manifest-branch",
       "release-R123",
       "--groups",

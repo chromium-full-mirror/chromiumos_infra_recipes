@@ -1247,10 +1247,10 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--groups",
-      "all",
       "--manifest-branch",
       "release-R89-13729.B",
+      "--groups",
+      "all",
       "--repo-rev=stable",
       "--verbose"
     ],
