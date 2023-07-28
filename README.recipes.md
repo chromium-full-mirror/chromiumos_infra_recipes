@@ -134,6 +134,7 @@
   * [auto_retry_util:tests/cq_retry_candidates](#recipes-auto_retry_util_tests_cq_retry_candidates)
   * [auto_retry_util:tests/current_cq_orchs_with_retryable_statuses](#recipes-auto_retry_util_tests_current_cq_orchs_with_retryable_statuses)
   * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
+  * [auto_retry_util:tests/test_variant_exoneration_analysis](#recipes-auto_retry_util_tests_test_variant_exoneration_analysis)
   * [binhost_lookup_service:examples/publish_binhost_data](#recipes-binhost_lookup_service_examples_publish_binhost_data) &mdash; Test the `publish binhost metadata` functionality of the module.
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
@@ -818,16 +819,16 @@ Returns:
   List of modified files.
 ### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
 
-[DEPS](/recipe_modules/auto_retry_util/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#67)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#69)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#99)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#101)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -839,7 +840,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retriable.
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#214)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#216)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -848,7 +849,25 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build status is in RETRYABLE_STATUSES.
   * The build is the latest cq attempt for the CLs under test.
 
-&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#31)(self):**
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#33)(self):**
+
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#226)(self, cq_run: build_pb2.Build):**
+
+Runs auto exoneration analysis and returns categorized FailedTestStats.
+
+Uses the FailedTestStats reported in the output properties of the
+cq-orchestrator to query LUCI analysis for updated exoneration status of the
+failed test cases in a build.
+
+Note: A test which was previously exonerated will not be updated such that
+it is no longer exonerated for the CQ run.
+
+Args:
+  cq_run: The cq-orchestrator for which to retrieve updated FailedTestStats.
+
+Returns:
+  A tuple containing 3 lists of FailedTestStats grouped by whether the test
+      variant is previously exonerated, newly exonerated, or not exonerated.
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
 
 [DEPS](/recipe_modules/binhost_lookup_service/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10654,6 +10673,12 @@ The annealing builders run in serial and do the following:
 
 
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py#20)(api):**
+### *recipes* / [auto\_retry\_util:tests/test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/tests/test_variant_exoneration_analysis.py)
+
+[DEPS](/recipe_modules/auto_retry_util/tests/test_variant_exoneration_analysis.py#13): [auto\_retry\_util](#recipe_modules-auto_retry_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/test_variant_exoneration_analysis.py#25)(api):**
 ### *recipes* / [binhost\_lookup\_service:examples/publish\_binhost\_data](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py)
 
 [DEPS](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#13): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

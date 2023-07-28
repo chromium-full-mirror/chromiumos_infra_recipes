@@ -91,6 +91,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.exoneration analysis",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@skipping: no test variant failures@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

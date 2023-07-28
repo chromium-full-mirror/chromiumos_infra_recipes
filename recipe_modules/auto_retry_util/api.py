@@ -13,6 +13,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
+from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 
 from recipe_engine import recipe_api
 
@@ -220,3 +222,86 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       * The build is the latest cq attempt for the CLs under test.
     """
     return self._get_current_cq_orchs_with_retryable_statuses()
+
+  def test_variant_exoneration_analysis(
+      self, cq_run: build_pb2.Build
+  ) -> Tuple[List[FailedTestStats], List[FailedTestStats],
+             List[FailedTestStats]]:
+    """Runs auto exoneration analysis and returns categorized FailedTestStats.
+
+    Uses the FailedTestStats reported in the output properties of the
+    cq-orchestrator to query LUCI analysis for updated exoneration status of the
+    failed test cases in a build.
+
+    Note: A test which was previously exonerated will not be updated such that
+    it is no longer exonerated for the CQ run.
+
+    Args:
+      cq_run: The cq-orchestrator for which to retrieve updated FailedTestStats.
+
+    Returns:
+      A tuple containing 3 lists of FailedTestStats grouped by whether the test
+          variant is previously exonerated, newly exonerated, or not exonerated.
+    """
+
+    def _categorize_stats(stats):
+      exonerated = []
+      not_exonerated = []
+      for t in stats:
+        if t.manually_exonerated or t.automatically_exonerated:
+          exonerated.append(t)
+        else:
+          not_exonerated.append(t)
+      return exonerated, not_exonerated
+
+    with self.m.step.nest('exoneration analysis') as pres:
+      output_dict = json_format.MessageToDict(cq_run.output.properties)
+      stats = output_dict.get('failed_test_stats', {})
+      overall_stats = json_format.ParseDict(stats, OverallTestStats())
+
+      newly_exonerated_stats = []
+      previously_exonerated_stats, outstanding_failure_stats = _categorize_stats(
+          overall_stats.failed_tests)
+
+      # Exit early if there are no outstanding test variant failures or
+      # exoneration was overridden.
+      if len(overall_stats.failed_tests) == 0:
+        pres.step_text = 'skipping: no test variant failures'
+        return (previously_exonerated_stats, newly_exonerated_stats,
+                outstanding_failure_stats)
+      if overall_stats.override_info.override_reason:
+        pres.step_text = 'skipping: overridden by guardrails'
+        return (previously_exonerated_stats, newly_exonerated_stats,
+                outstanding_failure_stats)
+      if all(t.manually_exonerated or t.automatically_exonerated
+             for t in overall_stats.failed_tests):
+        pres.step_text = 'skipping: no outstanding failures'
+        return (previously_exonerated_stats, newly_exonerated_stats,
+                outstanding_failure_stats)
+
+      # Only update the failed test stats for test variants which were not already
+      # exonerated.
+      # This is done to prevent a test variant which was previously exonerated
+      # reporting back that it is no longer exonerable based on recent runs. This
+      # might no longer be a concern once exoneration takes into account commit
+      # position.
+      variants = [
+          self.m.exonerate.get_test_variant_dict(test_id=t.test_id,
+                                                 board=t.board,
+                                                 build_target=t.build_target,
+                                                 model=t.model)
+          for t in outstanding_failure_stats
+      ]
+      failure_rates = self.m.exoneration_util.query_failure_rate(variants)
+      # TODO(b/291768475): Check that new exonerations do not exceed guardrails.
+      updated_stats = self.m.exonerate.generate_failed_test_stats(failure_rates)
+
+      newly_exonerated_stats, outstanding_failure_stats = _categorize_stats(
+          updated_stats)
+
+      pres.step_text = '%d previously exonerated, %d newly exonerated, %d outstanding' % (
+          len(previously_exonerated_stats), len(newly_exonerated_stats),
+          len(outstanding_failure_stats))
+
+      return (previously_exonerated_stats, newly_exonerated_stats,
+              outstanding_failure_stats)

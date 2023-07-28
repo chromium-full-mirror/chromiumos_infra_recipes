@@ -30,6 +30,9 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
         _, _, _ = api.auto_retry_util.analyze_build_failures(b)
         _, _, _ = api.auto_retry_util.analyze_test_results(b)
+        # TODO(b/291768475): Try exonerating suites using the updated
+        # exoneration configs.
+        _, _, _ = api.auto_retry_util.test_variant_exoneration_analysis(b)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
