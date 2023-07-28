@@ -10444,7 +10444,7 @@ API for various support functions for building.
 
 A module workspace setup and manipulation.
 
-&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#109)(self, changes: Optional[List[GerritChange]]=None, name: str='cherry-pick gerrit changes', ignore_missing_projects: bool=False):**
+&mdash; **def [apply\_changes](/recipe_modules/workspace_util/api.py#119)(self, changes: Optional[List[GerritChange]]=None, name: str='cherry-pick gerrit changes', ignore_missing_projects: bool=False):**
 
 Apply gerrit changes.
 
@@ -10459,7 +10459,7 @@ Args:
     because of Cq-Depend grouping); the changes will be discarded instead
     of failing during application.
 
-&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#139)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
+&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#149)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -10471,7 +10471,7 @@ Args:
   change: Change to check out.
   name: Step name.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#157)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#167)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
 
 Check for toolchain changes.
 
@@ -10518,7 +10518,7 @@ Args:
 Yields:
   A context manager which syncs the workspace path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#212)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#222)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
 
 Return a context with manifest groups checked out to cwd.
 

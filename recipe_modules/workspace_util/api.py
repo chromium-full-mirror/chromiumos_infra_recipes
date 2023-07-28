@@ -87,20 +87,30 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     """
     assert self.m.cros_infra_config.is_configured, 'builder not configured'
     commit = commit or self.m.src_state.gitiles_commit
-
     manifest_url = self.m.src_state.build_manifest.url
-    sync_args = dict(manifest_url=manifest_url, is_staging=staging,
-                     gitiles_commit=commit, projects=projects)
+    init_opts = {}
+
     branch = commit.ref.split('/', 2)[-1]
-    on_branch = not branch in ('', 'main', 'snapshot', 'staging-snapshot')
+    on_branch = branch not in ('', 'main', 'snapshot', 'staging-snapshot')
     if on_branch:
-      sync_args['init_opts'] = dict(manifest_branch=branch)
-      sync_args['projects'] = [self.m.src_state.build_manifest.project]
+      init_opts['manifest_branch'] = branch
+      ensure_synced_cache_projects = [self.m.src_state.build_manifest.project]
+    else:
+      ensure_synced_cache_projects = projects
 
     if on_branch or self.m.src_state.manifest_name != 'internal':
-      sync_args['cache_path_override'] = self.m.cros_source.workspace_path
+      cache_path_override = self.m.cros_source.workspace_path
+    else:
+      cache_path_override = None
 
-    self.m.cros_source.ensure_synced_cache(**sync_args)
+    self.m.cros_source.ensure_synced_cache(
+        manifest_url=manifest_url,
+        is_staging=staging,
+        gitiles_commit=commit,
+        projects=ensure_synced_cache_projects,
+        cache_path_override=cache_path_override,
+        init_opts=init_opts,
+    )
 
     with self.m.context(cwd=self.m.cros_source.workspace_path):
       self.m.cros_source.sync_checkout(commit, manifest_url, projects=projects)
