@@ -7578,29 +7578,29 @@ Returns: targetGreenness, or an empty OrderedDict if the target, its
 
 &emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#37)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#158)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#161)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#165)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#168)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#83)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#94)(self, builds: List[build_pb2.Build]):**
 
 Update greenness with build information.
 
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#111)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#122)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#140)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#147)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 

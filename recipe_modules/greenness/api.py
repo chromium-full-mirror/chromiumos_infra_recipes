@@ -72,13 +72,24 @@ class GreennessApi(recipe_api.RecipeApi):
               commit=last_snapshot, pres=pres)
     return self._last_greenness_dict.get(target, collections.OrderedDict())
 
-  def _is_excluded(self, builder_name: str) -> bool:
+  def _is_excluded(self, builder_name: str, exclude_list: List[str]) -> bool:
     """Determine if the builder is an excluded variant."""
-    for variant in EXCLUDE_VARIANTS:
+    for variant in exclude_list:
       if variant in builder_name:
         return True
 
     return False
+
+  def _get_build_score_for_tests(self,
+                                 greenness_dict: OrderedDict[str,
+                                                             GreennessTuple],
+                                 build_target: str) -> int:
+    """Get the build score when updating tests info."""
+    try:
+      return greenness_dict[build_target].build_score
+    except KeyError:
+      # If build_score isn't populated, assume 100 since we made it to tests.
+      return 100
 
   def update_build_info(self, builds: List[build_pb2.Build]) -> None:
     """Update greenness with build information.
@@ -88,7 +99,7 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     for build in builds:
       bt = str(self.m.cros_infra_config.get_build_target_name(build))
-      if self._is_excluded(build.builder.builder):
+      if self._is_excluded(build.builder.builder, EXCLUDE_VARIANTS):
         continue
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
@@ -118,7 +129,7 @@ class GreennessApi(recipe_api.RecipeApi):
     for res in results:
       # Only count if test suite was critical.
       if res.task.test.common.critical.value:
-        bt = res.task.unit.common.build_target.name
+        bt = str(res.task.unit.common.build_target.name)
         test_cases = [
             r.state.verdict == TaskState.VERDICT_PASSED
             for r in res.child_results
@@ -129,13 +140,9 @@ class GreennessApi(recipe_api.RecipeApi):
     for bt, test_cases in hwtest_dict.items():
       if test_cases:
         score = int(sum(test_cases) * 100 / len(test_cases))
-        # If build_score isn't populated, assume 100 since we made it to tests.
-        try:
-          build_score = self._greenness_dict[str(bt)].build_score
-        except KeyError:
-          build_score = 100
-        self._greenness_dict[str(bt)] = GreennessTuple(score, build_score, True,
-                                                       True)
+        build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
+        self._greenness_dict[bt] = GreennessTuple(score, build_score, True,
+                                                  True)
 
   def update_vmtest_info(self, results: List[build_pb2.Build]) -> None:
     """Update greenness with VM test information.
@@ -144,16 +151,12 @@ class GreennessApi(recipe_api.RecipeApi):
       results: Builds of the VM test runs.
     """
     for res in results:
-      bt = self.m.cros_infra_config.get_build_target_name(build=res)
+      bt = str(self.m.cros_infra_config.get_build_target_name(res))
       if 'greenness' in res.output.properties:
-        greenness = res.output.properties['greenness']
-        # If build_score isn't populated, assume 100 since we made it to tests.
-        try:
-          build_score = self._greenness_dict[str(bt)].build_score
-        except KeyError:
-          build_score = 100
-        self._greenness_dict[str(bt)] = GreennessTuple(
-            int(greenness), build_score, True, True)
+        greenness = int(res.output.properties['greenness'])
+        build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
+        self._greenness_dict[bt] = GreennessTuple(greenness, build_score, True,
+                                                  True)
 
   def print_step(self) -> None:
     """Print comprehensive greenness info in a step."""
