@@ -6,19 +6,7 @@
 				"minRuns": 20,
 				"numOfMilestones": 1,
 				"passRateRecent": 98,
-				"minRunsRecent": 50,
-				"testconfigs": [
-					{
-						"test": "example.Fail",
-						"board": [
-							"*"
-						],
-						"disabled": true,
-						"bugs": [
-							"b/1234"
-						]
-					}
-				]
+				"minRunsRecent": 50
 			},
 			"testSuites": [
 				"*"
