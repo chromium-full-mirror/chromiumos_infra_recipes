@@ -231,18 +231,21 @@ class GreennessApi(recipe_api.RecipeApi):
         target_greenness.build_metric = green_tuple.build_score
         if not green_tuple.relevant:
           target_greenness.context = AggregateGreenness.Greenness.IRRELEVANT
-        # TODO(b/280496682): Also publish scores for critical irrelevant targets.
         with self.m.failures.ignore_exceptions():
           if not green_tuple.relevant:
             pres.logs[
                 bt] = f'Score: {green_tuple.score}, Build score: {green_tuple.build_score}'
-        if green_tuple.critical and green_tuple.relevant:
-          critical_build_scores.append(green_tuple.build_score)
-          critical_scores.append(green_tuple.score)
+        if green_tuple.critical:
+          # Irrelevant build scores are propagated forward; -1 if not found.
+          if green_tuple.relevant or green_tuple.build_score != -1:
+            critical_build_scores.append(green_tuple.build_score)
+          if green_tuple.relevant:
+            critical_scores.append(green_tuple.score)
 
     if critical_scores:
       agg_greenness.aggregate_metric = int(
           sum(critical_scores) / len(critical_scores))
+    if critical_build_scores:
       agg_greenness.aggregate_build_metric = int(
           sum(critical_build_scores) / len(critical_build_scores))
     self.m.easy.set_properties_step(greenness=agg_greenness)

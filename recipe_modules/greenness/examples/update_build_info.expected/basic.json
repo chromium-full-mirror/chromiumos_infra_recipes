@@ -419,7 +419,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=-1, build_score=-1, critical=False, relevant=False))])@@@",
+      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=-1, build_score=-1, critical=True, relevant=False))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]
   },
@@ -437,7 +437,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"-1\", \"context\": \"IRRELEVANT\", \"metric\": \"-1\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"-1\", \"context\": \"IRRELEVANT\", \"metric\": \"-1\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
     ]
   },
   {
