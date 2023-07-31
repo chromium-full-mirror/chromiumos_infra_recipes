@@ -193,7 +193,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history, run_async=False, container_metadata=None,
                   require_stable_devices=False, use_test_plan_v2=False,
-                  supports_fault_attribution=False):
+                  supports_fault_attribution=False,
+                  build_target_critical_allowlist=None):
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the Chrome OS infra test platform via recipes.
@@ -217,6 +218,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         platform v1 compatibility mode. The v2 testplan tool will return
         GenerateTestPlanResponse protos, so it is interchangable with the v1
         testplan tool.
+      build_target_critical_allowlist: If set (including empty list), only the
+        build targets specified can have tests run as critical. If None,
+        criticality will not be modified for any build targets.
     Returns
       list[failures.Failure]: failures encountered running tests
     """
@@ -260,6 +264,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             run_async=run_async,
             container_metadata=container_metadata,
             require_stable_devices=require_stable_devices,
+            build_target_critical_allowlist=build_target_critical_allowlist,
         )
       if run_async:
         return []
@@ -490,7 +495,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                      previously_failed_now_exonerable_hw_suites,
                      previously_failed_now_exonerable_vm_suites, timeout,
                      snapshot=None, is_retry=False, run_async=False,
-                     container_metadata=None, require_stable_devices=False):
+                     container_metadata=None, require_stable_devices=False,
+                     build_target_critical_allowlist=None):
     """Schedule all tests from the test_plan.
 
     Args:
@@ -512,6 +518,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         images used for test execution.
       require_stable_devices (bool): whether to only run on devices with
         label-device-stable: True
+      build_target_critical_allowlist: If set (including empty list), only the
+        build targets specified can have tests run as critical. If None,
+        criticality will not be modified for any build targets.
 
     Returns:
       MetaTestTuple of lists of the tests scheduled.
@@ -538,6 +547,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         container_metadata=container_metadata,
         require_stable_devices=require_stable_devices,
         task_per_build_target=self._skylab_task_per_build_target,
+        build_target_critical_allowlist=build_target_critical_allowlist,
     )
     tast_vm_tests = self._schedule_tast_vm_tests(
         test_plan, passed_tests, previously_failed_now_exonerable_vm_suites,
@@ -625,12 +635,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_results.tast_gce).failures
     return failures
 
-  def _schedule_skylab_tests(self, test_plan, passed_tests,
-                             previously_failed_now_exonerable_hw_suites,
-                             timeout, is_retry=False, run_async=False,
-                             container_metadata=None,
-                             require_stable_devices=False,
-                             task_per_build_target=False):
+  def _schedule_skylab_tests(
+      self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites,
+      timeout, is_retry=False, run_async=False, container_metadata=None,
+      require_stable_devices=False, task_per_build_target=False,
+      build_target_critical_allowlist=None):
     """Schedule skylab tests from the test_plan.
 
     Args:
@@ -650,6 +659,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           label-device-stable: True
       task_per_build_target (bool): Should we schedule a unique invocation
           of cros_test_platform per build target.
+      build_target_critical_allowlist: If set (including empty list), only the
+        build targets specified can have tests run as critical. If None,
+        criticality will not be modified for any build targets.
 
     Returns:
       list[SkylabTask] of the tests scheduled.
@@ -703,6 +715,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   name=None if test_build_target == _ALL_BUILD_TARGETS else
                   test_build_target,
                   previous_results=previous_test_results,
+                  build_target_critical_allowlist=build_target_critical_allowlist,
               ))
       self.m.easy.set_properties_step(
           hw_test_build_targets=len(hw_build_targets))

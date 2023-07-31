@@ -183,7 +183,8 @@ class SkylabApi(recipe_api.RecipeApi):
       name: str = None, async_suite_run: bool = False,
       container_metadata: ContainerMetadata = None,
       require_stable_devices: bool = False,
-      previous_results: Dict[str, ExecuteResponse] = None) -> List[SkylabTask]:
+      previous_results: Dict[str, ExecuteResponse] = None,
+      build_target_critical_allowlist: List[str] = None) -> List[SkylabTask]:
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
@@ -199,6 +200,9 @@ class SkylabApi(recipe_api.RecipeApi):
           'label-device-stable: True'
       previous_results: The results of the previous invocation. The results are
           a dict mapping the unit_hw_test's display name to an ExecuteResponse.
+      build_target_critical_allowlist: If set (including empty list), only the
+        build targets specified can have tests run as critical. If None,
+        criticality will not be modified for any build targets.
 
     Returns:
       A list of SkylabTasks with buildbucket_id of the recipe launched.
@@ -231,7 +235,12 @@ class SkylabApi(recipe_api.RecipeApi):
       sw_dep_gsc_bucket = req.params.software_dependencies.add()
       sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
       req.params.scheduling.qs_account = self._qs_account
-      if uht.hw_test.common.critical.value:
+
+      allow_critical = True
+      if build_target_critical_allowlist is not None and uht.unit.common.build_target.name not in build_target_critical_allowlist:
+        allow_critical = False
+
+      if uht.hw_test.common.critical.value and allow_critical:
         req.params.test_execution_behavior = (
             Request.Params.TestExecutionBehavior.CRITICAL)
       else:

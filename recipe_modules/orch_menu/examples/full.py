@@ -31,6 +31,7 @@ DEPS = [
     'gerrit',
     'git_footers',
     'orch_menu',
+    'skylab',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -55,6 +56,9 @@ def RunSteps(api, properties):
 
     api.assertions.assertEqual(api.orch_menu.is_release_orchestrator,
                                properties.is_release_orchestrator)
+    if api.orch_menu.is_release_orchestrator:
+      api.skylab.set_qs_account('release_high_prio')
+
     _ = api.orch_menu.is_public_orchestrator
     _ = api.orch_menu.is_factory_orchestrator
     is_cq_orch = build.builder.builder == 'cq-orchestrator'
@@ -150,7 +154,8 @@ def GenTests(api):
               is_release_orchestrator=True, use_extra_props=True,
               skip_paygen=True, expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
-                  summary_markdown='Full version: R99-1234.56.0'))),
+                  summary_markdown='Full version: R99-1234.56.0')),
+      ),
       api.post_check(post_process.MustRun,
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.StepTextEquals,
@@ -172,7 +177,9 @@ def GenTests(api):
           update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
           bump_version=True, manifest_versions_branch='main', skip_paygen=True,
-          schedule_public_build=True),
+          schedule_public_build=True,
+          retry_allowlist_qs_account=['release_high_prio'],
+          retry_allowlist_build_target=['atlas', 'zork']),
       builder='release-main-orchestrator',
       collect_builds=api.orch_menu.orch_child_builds(
           'release-main-orchestrator', '-release-main')[0],

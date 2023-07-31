@@ -1,0 +1,15 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.skylab.examples;
+
+message ScheduleSuitesProperties {
+    // Whether to pass build_target_critical_allowlist or None.
+    bool pass_build_target_critical_allowlist = 1;
+
+    // List of build targets to pass to `schedule_suites`.
+    repeated string build_target_critical_allowlist = 2;
+}

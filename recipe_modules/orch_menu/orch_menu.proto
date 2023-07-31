@@ -76,4 +76,14 @@ message OrchMenuProperties {
   // Defaults to "staging" or "prod", based on the
   // cros_infra_config.is_staging property.
   string build_poller_cipd_ref = 14;
+
+  // List of QS accounts for which retries can be enabled.
+  // See b/293879623 for context.
+  // Only used by release builders.
+  repeated string retry_allowlist_qs_account = 15;
+
+  // List of build targets for which retries can be enabled.
+  // See b/293879623 for context.
+  // Only used by release builders.
+  repeated string retry_allowlist_build_target = 16;
 }

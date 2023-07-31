@@ -9,9 +9,12 @@ from google.protobuf import duration_pb2
 
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.lab import license as license_pb2
+from PB.recipe_modules.chromeos.skylab.examples.schedule_suites import ScheduleSuitesProperties
 from PB.recipe_modules.chromeos.skylab.skylab import SkylabProperties
-from recipe_engine.post_process_inputs import Step
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
+
+from recipe_engine import post_process
+from recipe_engine.post_process_inputs import Step
 
 DEPS = [
     'recipe_engine/assertions',
@@ -27,11 +30,14 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = ScheduleSuitesProperties
 
-def RunSteps(api):
+
+def RunSteps(api, properties: ScheduleSuitesProperties):
   builder_name = 'test-board-release-main'
   hw_test_unit = api.cros_test_plan.test_api.hw_test_unit
   hw_test_unit.common.builder_name = builder_name
+  hw_test_unit.common.build_target.name = 'test-board'
   hw_test = hw_test_unit.hw_test_cfg.hw_test[0]
   hw_test.skylab_board = 'specific-model'
   hw_test.common.display_name = 'my_first_little_hwtest'
@@ -85,6 +91,9 @@ def RunSteps(api):
   api.skylab.apply_qs_account_overrides(
       api.buildbucket.build.input.gerrit_changes)
 
+  build_target_critical_allowlist = None
+  if properties.pass_build_target_critical_allowlist:
+    build_target_critical_allowlist = properties.build_target_critical_allowlist
   tasks = api.skylab.schedule_suites(
       [
           unit_hw_test,
@@ -92,10 +101,9 @@ def RunSteps(api):
           non_crit_unit_hw_test,
           unit_hw_test_with_license,
           unit_hw_test_container,
-      ],
-      timeout=duration_pb2.Duration(seconds=3600),
+      ], timeout=duration_pb2.Duration(seconds=3600),
       container_metadata=api.metadata.test_api.mock_metadata(target="target"),
-  )
+      build_target_critical_allowlist=build_target_critical_allowlist)
 
   api.assertions.assertEqual(len(tasks), 5)
   api.assertions.assertCountEqual(
@@ -118,10 +126,80 @@ def GenTests(api):
                  api.buildbucket.ci_build(builder='cq-orchestrator'))
 
   yield api.test(
+      'build-target-allowlist-disabled',
+      api.buildbucket.ci_build(builder='release-main-orchestrator'),
+      api.properties(
+          ScheduleSuitesProperties(
+              pass_build_target_critical_allowlist=False,
+              build_target_critical_allowlist=['zork'],
+          ),
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"CRITICAL\"'],
+      ),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"NON_CRITICAL\"'],
+      ),
+  )
+
+  yield api.test(
+      'build-target-allowlist-no-match-non-critical',
+      api.buildbucket.ci_build(builder='release-main-orchestrator'),
+      api.properties(
+          ScheduleSuitesProperties(
+              pass_build_target_critical_allowlist=True,
+              build_target_critical_allowlist=['zork'],
+          ),
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"NON_CRITICAL\"'],
+      ),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"CRITICAL\"'],
+      ),
+  )
+
+  yield api.test(
+      'build-target-allowlist-match-critical',
+      api.buildbucket.ci_build(builder='release-main-orchestrator'),
+      api.properties(
+          ScheduleSuitesProperties(
+              pass_build_target_critical_allowlist=True,
+              build_target_critical_allowlist=['test-board'],
+          ),
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"CRITICAL\"'],
+      ),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
+          'request',
+          ['\"NON_CRITICAL\"'],
+      ),
+  )
+
+  yield api.test(
       'exclude-sub-invs',
       api.buildbucket.ci_build(builder='release-main-orchestrator'),
       api.properties(
-          **{'$chromeos/skylab': SkylabProperties(exclude_sub_invs=True)}))
+          **{'$chromeos/skylab': SkylabProperties(exclude_sub_invs=True)}),
+  )
 
   build = api.buildbucket.try_build_message(project='chromeos',
                                             bucket='chromeos',

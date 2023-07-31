@@ -1143,6 +1143,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Returns:
       BuildsStatus updated with any test failures.
     """
+    # allowlist None means nothing is blocked from being critical.
+    # We want this behavior if we're not on release.
+    build_target_critical_allowlist = None
+    if self._is_release_orchestrator:
+      if self.m.skylab.qs_account in self._properties.retry_allowlist_qs_account:
+        build_target_critical_allowlist = self._properties.retry_allowlist_build_target
+      else:
+        # Nothing should be critical.
+        build_target_critical_allowlist = []
+
     self.m.skylab.apply_qs_account_overrides(self.gerrit_changes)
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
     if gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
@@ -1159,6 +1169,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             container_metadata=container_metadata,
             use_test_plan_v2=True,
             supports_fault_attribution=self.is_cq_orchestrator,
+            build_target_critical_allowlist=build_target_critical_allowlist,
         )
       else:
         self.m.cros_test_proctor.run_proctor_v2(gerrit_changes)
@@ -1173,6 +1184,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           run_async=self._properties.run_tests_async,
           container_metadata=container_metadata,
           supports_fault_attribution=self.is_cq_orchestrator,
+          build_target_critical_allowlist=build_target_critical_allowlist,
       )
     self._builds_status.update([], test_failures)
 
