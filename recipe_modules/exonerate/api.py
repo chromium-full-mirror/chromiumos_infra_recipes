@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 from collections import namedtuple
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
@@ -43,6 +43,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     super().__init__(**kwargs)
     self._enable_exoneration = properties.enable_exoneration
     self._dry_run = properties.dry_run
+    self._manual_exoneration_configs = {}
+    # May contain both manual and automated exoneration configs.
     self._exoneration_configs = {}
     self._configs_loaded = False
     self._stats = ExonerateStats(dry_run=properties.dry_run)
@@ -66,6 +68,13 @@ class ExonerateApi(recipe_api.RecipeApi):
   def is_enabled(self):
     """Returns whether exoneration is enabled."""
     return self._enable_exoneration
+
+  @property
+  def manual_exoneration_configs(self) -> Dict:
+    """Returns configs for the manually exonerated tests."""
+    if not self._configs_loaded:
+      self.load_configs()
+    return self._manual_exoneration_configs
 
   def enable_excludes(self):
     """enable excludes config's use."""
@@ -110,6 +119,7 @@ class ExonerateApi(recipe_api.RecipeApi):
 
       self._exoneration_configs[exoneration.name] = targets
 
+    self._manual_exoneration_configs = self._exoneration_configs.copy()
     self._excludes = {
         'tests': set(t.name for t in excludes_cfg.exclude_tests),
         'suites': set(s.name for s in excludes_cfg.exclude_suites),
