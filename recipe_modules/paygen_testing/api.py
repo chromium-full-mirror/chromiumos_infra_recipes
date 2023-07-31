@@ -83,7 +83,7 @@ class PaygenTestConfig():
                tgt_archive_uri: str, tgt_container_metadata_uri: str,
                is_delta_update: bool, delta_type: common_pb2.DeltaType,
                src_version: str, src_payload_uri: str, src_artifact_uri: str,
-               applicable_models: List[str] = None,
+               applicable_models: List[str] = None, critical: bool = False,
                quota_scheduler_account: str = QS_ACCOUNT,
                quota_scheduler_label_pool: str = LABEL_POOL):
     """Initialize a test configuration.
@@ -106,6 +106,7 @@ class PaygenTestConfig():
       src_artifact_uri: The location of source build artifacts.
       applicable_models: A list of models that this config should
         run against. None indicates it can run on any build_target.
+      critical: Whether the test should be run as critical.
     """
     self._test_build_target = test_build_target
     self._build_target_name = build_target_name
@@ -148,6 +149,8 @@ class PaygenTestConfig():
     self._quota_scheduler_account = quota_scheduler_account
     self._quota_scheduler_label_pool = quota_scheduler_label_pool
 
+    self._critical = critical
+
   @property
   def build_target_name(self) -> str:
     return self._build_target_name
@@ -155,6 +158,10 @@ class PaygenTestConfig():
   @property
   def test_build_target(self) -> str:
     return self._test_build_target
+
+  @property
+  def critical(self) -> bool:
+    return self._critical
 
   def _get_test_plan(self) -> Request.TestPlan:
     """A test_platform TestPlan proto with the enumerated test request."""
@@ -207,9 +214,11 @@ class PaygenTestConfig():
           self._create_tagged_request(model=model, request_opts=request_opts))
     return tagged_requests
 
-  def _create_tagged_request(self, model: str = None,
-                             request_opts: TestRequestOpts = None
-                            ) -> Dict[str, Dict]:
+  def _create_tagged_request(
+      self,
+      model: str = None,
+      request_opts: TestRequestOpts = None,
+  ) -> Dict[str, Dict]:
     """Create a tagged test_platform.Request for the given model.
 
     Args:
@@ -240,9 +249,11 @@ class PaygenTestConfig():
                     test_plan=self._get_test_plan()))
     }
 
-  def _get_request_params(self, model: str = None,
-                          request_opts: TestRequestOpts = None
-                         ) -> Request.Params:
+  def _get_request_params(
+      self,
+      model: str = None,
+      request_opts: TestRequestOpts = None,
+  ) -> Request.Params:
     """Return test_platform.Params for the given model.
 
     Args:
@@ -250,7 +261,7 @@ class PaygenTestConfig():
       request_opts: Overrides for the test_platform.Request.
 
     Returns:
-      A test_platform.Request.Params specific to the model.
+      A .Params specific to the model.
     """
     params = Request.Params()
     # Params which can be overriden.
@@ -259,6 +270,9 @@ class PaygenTestConfig():
     params.retry.max = (
         request_opts.max_retries or self._AUTOTEST_DEFAULT_MAX_RETRIES)
     params.retry.allow = bool(params.retry.max > 0)
+
+    if self._critical:
+      params.test_execution_behavior = Request.Params.TestExecutionBehavior.CRITICAL
 
     # Non-CTS traffic uses MANAGED_POOL_QUOTA (go/managed-pools-deprecation).
     params.scheduling.managed_pool = \
@@ -326,6 +340,8 @@ class PaygenTestingApi(recipe_api.RecipeApi):
       self._quota_scheduler_label_pool = \
           properties.quota_scheduler_config.label_pool or \
           self._quota_scheduler_label_pool
+    self._retry_allowlist_qs_account = properties.retry_allowlist_qs_account
+    self._retry_allowlist_build_target = properties.retry_allowlist_build_target
 
   @property
   def qs_account(self):
@@ -529,6 +545,13 @@ class PaygenTestingApi(recipe_api.RecipeApi):
           if 'skylabBoard' in hw_test_cfg[0]:
             test_build_target = hw_test_cfg[0]['skylabBoard']
 
+    critical = False
+    # Tests should be critical for high/med prio builds.
+    # See go/cros-infra:release-tests-automatic-retries for context.
+    # TODO(b/293879623): Remove per-build-target allow list once rollout is complete.
+    if self._quota_scheduler_account in self._retry_allowlist_qs_account and build_target_name in self._retry_allowlist_build_target:
+      critical = True
+
     return PaygenTestConfig(
         test_build_target=test_build_target,
         build_target_name=build_target_name, tgt_channel=tgt_channel,
@@ -539,7 +562,8 @@ class PaygenTestingApi(recipe_api.RecipeApi):
         is_delta_update=is_delta_update, delta_type=delta_type,
         applicable_models=applicable_models,
         quota_scheduler_account=self._quota_scheduler_account,
-        quota_scheduler_label_pool=self._quota_scheduler_label_pool)
+        quota_scheduler_label_pool=self._quota_scheduler_label_pool,
+        critical=critical)
 
   def set_up_paygen_test_configs(
       self, request: PaygenProperties.PaygenRequest,

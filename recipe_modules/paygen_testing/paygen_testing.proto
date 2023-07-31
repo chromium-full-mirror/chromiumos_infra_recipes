@@ -29,4 +29,12 @@ message PaygenTestingProperties {
 
   // Override options for Quote Scheduler.
   QuotaSchedulerConfig quota_scheduler_config = 2;
+
+  // List of QS accounts for which retries are enabled.
+  // See b/293879623 for context.
+  repeated string retry_allowlist_qs_account = 3;
+
+  // List of build targets for which retries are enabled.
+  // See b/293879623 for context.
+  repeated string retry_allowlist_build_target = 4;
 }

@@ -100,6 +100,10 @@ def RunSteps(api: RecipeApi, properties: TestPaygenProperties):
       api.paygen_testing.qs_account,
       properties.expected_quota_scheduler_account or 'legacypool-bvt')
 
+  # Test criticality.
+  api.assertions.assertEqual(full_test_config.critical,
+                             properties.expect_critical)
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
@@ -140,17 +144,57 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'test-quota-scheduler-config-override',
+      'test-quota-scheduler-config-override-critical',
       api.properties(
-          builder_name='zork', expected_test_build_target='zork',
+          builder_name='zork',
+          expected_test_build_target='zork',
           expected_quota_scheduler_account='baz',
-          expected_quota_scheduler_label_pool='bar', override_qs_account='baz',
+          expected_quota_scheduler_label_pool='bar',
+          override_qs_account='baz',
+          # Build target and QS account are in allowlists.
+          expect_critical=True,
           **{
               '$chromeos/paygen_testing': {
                   'quota_scheduler_config': {
                       'account': 'foo',
                       'label_pool': 'bar',
                   },
+                  'retry_allowlist_qs_account': ['baz'],
+                  'retry_allowlist_build_target': ['zork'],
+              },
+          }),
+      api.gitiles.get_file(
+          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.cros_storage.test_listing(
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      api.cros_storage.test_listing(
+          'discover gs artifacts (2).gsutil list',
+          test_data='gs://chromeos-releases/beta-channel/coral/13505.11.0/payloads/chromeos_13505.11.0_coral_beta-channel_full_test.bin-gvtdqntcmnrtbspt25izgbw4ihykaibv'
+      ),
+      # Identical to `test-quota-scheduler-config` above so we don't need
+      # another expectation file.
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'test-quota-scheduler-config-override-non-critical',
+      api.properties(
+          builder_name='zork',
+          expected_test_build_target='zork',
+          expected_quota_scheduler_account='baz',
+          expected_quota_scheduler_label_pool='bar',
+          override_qs_account='baz',
+          # Build target not in allowlist.
+          expect_critical=False,
+          **{
+              '$chromeos/paygen_testing': {
+                  'quota_scheduler_config': {
+                      'account': 'foo',
+                      'label_pool': 'bar',
+                  },
+                  'retry_allowlist_qs_account': ['baz'],
+                  'retry_allowlist_build_target': ['atlas'],
               },
           }),
       api.gitiles.get_file(

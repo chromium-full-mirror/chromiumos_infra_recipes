@@ -21,7 +21,6 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-
 def RunSteps(api: RecipeApi):
   build_target_name = 'octopus-kernelnext'
   test_build_target = 'octopus'
@@ -73,7 +72,7 @@ def RunSteps(api: RecipeApi):
       tgt_version=tgt_version, src_payload_uri=src_payload_uri_13413,
       src_artifact_uri=src_artifact_uri_13413, src_version=src_version_13413,
       is_delta_update=True, delta_type=delta_type_omaha,
-      applicable_models=applicable_models)
+      applicable_models=applicable_models, critical=True)
 
   # Ordinary scheduling for one or multiple paygen test configs.
   # There doesn't seem to be a way to inspect the scheduled build's input props.
@@ -104,6 +103,13 @@ def RunSteps(api: RecipeApi):
       2,  # 2 because two models (and test configs should be merged).
       len(requests.keys()))
 
+  # Test criticality.
+  requests = api.paygen_testing.create_au_test_tagged_requests(
+      [paygen_test_config_13413])
+  for request in requests[1].values():
+    api.assertions.assertEqual(
+        request['params'].get('testExecutionBehavior', None), 'CRITICAL')
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test('basic', api.post_process(post_process.DropExpectation))
@@ -116,7 +122,8 @@ def GenTests(api: RecipeTestApi):
                   PaygenTestingProperties(
                       test_request_opts=TestRequestOpts(
                           max_retries=1, timeout=duration_pb2.Duration(
-                              seconds=100)))
+                              seconds=100)),
+                  ),
           }), api.post_process(post_process.DropExpectation))
 
   # TODO(b/243580346): While I work on untangling the code here, we have these

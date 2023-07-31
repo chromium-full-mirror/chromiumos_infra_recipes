@@ -35,6 +35,9 @@ message TestPaygenProperties {
   // If set, will override the quota scheduler account using
   // api.paygen_testing.override_qs_account.
   string override_qs_account = 8;
+
+  // Whether the tests should be critical.
+  bool expect_critical = 9;
 }
 
 message GetRequestTestInputProperties {
