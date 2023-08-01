@@ -41,6 +41,7 @@ DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
     'build_menu': 'build_menu',
     'build_plan': 'build_plan',
+    'cros_build_api': 'cros_build_api',
     'cros_infra_config': 'cros_infra_config',
     'cros_prebuilts': 'cros_prebuilts',
     'cros_source': 'cros_source',
@@ -50,6 +51,7 @@ DEPS = {
     'scheduler': 'recipe_engine/scheduler',
     'step': 'recipe_engine/step',
     'time': 'recipe_engine/time',
+    'workspace_util': 'workspace_util',
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -57,9 +59,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 PROPERTIES = UploadPrebuiltsFromCqProperties
 
 GERRIT_TOPIC = 'chromeos-base/lacros-ash-atomic'
-GERRIT_PROJECT = 'chromiumos/overlays/chromiumos-overlay'
 GERRIT_HOST = 'chromium-review.googlesource.com'
 GERRIT_HOST_URL = 'https://' + GERRIT_HOST
+
+PUBLIC_OVERLAY_PROJECT = 'chromiumos/overlays/chromiumos-overlay'
+PRIVATE_OVERLAY_PROJECT = 'chromeos/overlays/chromeos-partner-overlay'
+BINHOST_PROJECTS = [PUBLIC_OVERLAY_PROJECT, PRIVATE_OVERLAY_PROJECT]
 
 GIT_PUSH_MAX_RETRY_COUNT = 3
 RETRIEVING_LAST_MERGED_CHANGE_MAX_RETRY_COUNT = 3
@@ -88,7 +93,7 @@ def get_last_merged_change(api: RecipeApi) -> Optional[GerritChange]:
     with api.step.nest(f'query {GERRIT_HOST_URL}') as pres_gerrit_query:
       query = [
           ('topic', GERRIT_TOPIC),
-          ('project', GERRIT_PROJECT),
+          ('project', PUBLIC_OVERLAY_PROJECT),
           ('branch', 'main'),
           ('status', 'merged'),
       ]
@@ -298,7 +303,7 @@ def search_prebuilts(
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhosts(api: RecipeApi, step_name: str,
+def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
                  public_prebuilt_entries: List[dict],
                  private_prebuilt_entries: List[dict]) -> None:
   """Utility function to set the binhosts repeatedly.
@@ -310,35 +315,71 @@ def set_binhosts(api: RecipeApi, step_name: str,
     private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
   """
   with api.step.nest(step_name):
-    with api.cros_source.checkout_overlays_context(
-    ), api.build_menu.setup_workspace(cherry_pick_changes=True):
-      # Processes public builders
-      with api.step.nest("Public binhosts") as presentation:
-        public_prebuilt_entries_len = len(public_prebuilt_entries)
-        presentation.step_summary_text = (
-            f'Set {public_prebuilt_entries_len} binhosts.')
-        if public_prebuilt_entries_len > 0:
-          api.cros_prebuilts.set_binhosts(
-              binhosts=list(
-                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                      public_prebuilt_entries)),
-              private=False,
-              key=binhost_pb.CQ_BINHOST,
-          )
+    if not is_staging:
+      # Obsolete logic for prod env. Will be replaced with the new logic below.
+      with api.cros_source.checkout_overlays_context(
+      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
+        # Processes public builders
+        with api.step.nest("Public binhosts") as presentation:
+          public_prebuilt_entries_len = len(public_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {public_prebuilt_entries_len} binhosts.')
+          if public_prebuilt_entries_len > 0:
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        public_prebuilt_entries)),
+                private=False,
+                key=binhost_pb.CQ_BINHOST,
+            )
 
-      # Processes private builders
-      with api.step.nest("Private binhosts") as presentation:
-        private_prebuilt_entries_len = len(private_prebuilt_entries)
-        presentation.step_summary_text = (
-            f'Set {private_prebuilt_entries_len} binhosts.')
-        if private_prebuilt_entries_len > 0:
-          api.cros_prebuilts.set_binhosts(
-              binhosts=list(
-                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                      private_prebuilt_entries)),
-              private=True,
-              key=binhost_pb.CQ_BINHOST,
-          )
+        # Processes private builders
+        with api.step.nest("Private binhosts") as presentation:
+          private_prebuilt_entries_len = len(private_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {private_prebuilt_entries_len} binhosts.')
+          if private_prebuilt_entries_len > 0:
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        private_prebuilt_entries)),
+                private=True,
+                key=binhost_pb.CQ_BINHOST,
+            )
+    else:
+      # Experimental new logic for testing on staging.
+      with api.cros_source.checkout_overlays_context(
+      ), api.workspace_util.sync_to_commit(staging=is_staging,
+                                           projects=BINHOST_PROJECTS):
+        # Processes public builders
+        with api.step.nest("Public binhosts") as presentation:
+          public_prebuilt_entries_len = len(public_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {public_prebuilt_entries_len} binhosts.')
+          if public_prebuilt_entries_len > 0:
+            with api.cros_build_api.parallel_operations():
+              api.cros_prebuilts.set_binhosts(
+                  binhosts=list(
+                      map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                          public_prebuilt_entries)),
+                  private=False,
+                  key=binhost_pb.CQ_BINHOST,
+              )
+
+        # Processes private builders
+        with api.step.nest("Private binhosts") as presentation:
+          private_prebuilt_entries_len = len(private_prebuilt_entries)
+          presentation.step_summary_text = (
+              f'Set {private_prebuilt_entries_len} binhosts.')
+          if private_prebuilt_entries_len > 0:
+            with api.cros_build_api.parallel_operations():
+              api.cros_prebuilts.set_binhosts(
+                  binhosts=list(
+                      map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                          private_prebuilt_entries)),
+                  private=True,
+                  key=binhost_pb.CQ_BINHOST,
+              )
 
 
 def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
@@ -396,7 +437,7 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
       with api.step.nest(f'patchset #{patchset}'):
         gerrit_change = GerritChange(
             host=GERRIT_HOST,
-            project=GERRIT_PROJECT,
+            project=PUBLIC_OVERLAY_PROJECT,
             change=change_num,
             patchset=patchset,
         )
@@ -431,8 +472,8 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhosts(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
-                   private_prebuilt_entries)
+      set_binhosts(api, 'set BINHOSTs' + name_suffix, is_staging,
+                   public_prebuilt_entries, private_prebuilt_entries)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
@@ -479,7 +520,7 @@ def GenTests(api: RecipeTestApi):
       'host':
           GERRIT_HOST,
       'project':
-          GERRIT_PROJECT,
+          PUBLIC_OVERLAY_PROJECT,
       'current_revision':
           '0123456789abcdef0123456789abcdef01234567',
       'revisions': {
@@ -524,7 +565,7 @@ def GenTests(api: RecipeTestApi):
   GITILES_TRIGGER_UPREV_COMMIT = triggers_pb2.Trigger(
       id=str(CHANGE['_number']),
       gitiles=triggers_pb2.GitilesTrigger(
-          repo=GERRIT_PROJECT,
+          repo=PUBLIC_OVERLAY_PROJECT,
           revision=CHANGE['current_revision'],
       ),
   )
@@ -532,7 +573,7 @@ def GenTests(api: RecipeTestApi):
   GITILES_TRIGGER_NON_UPREV_COMMIT = triggers_pb2.Trigger(
       id='33333',
       gitiles=triggers_pb2.GitilesTrigger(
-          repo=GERRIT_PROJECT,
+          repo=PUBLIC_OVERLAY_PROJECT,
           revision="3333333333333333333333333333333333333333",
       ),
   )
