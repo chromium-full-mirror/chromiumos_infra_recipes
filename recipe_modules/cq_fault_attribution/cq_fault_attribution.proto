@@ -36,6 +36,9 @@ message FaultAttributedBuildTarget {
   // Build target of the failure. e.g. brya
   string build_target = 1;
 
+  // Model the failure occurred on e.g. redrix
+  optional string model = 2;
+
   // All fault attributed tests under this build target.
   repeated FaultAttributionProperties fault_attributes = 3;
 }
@@ -56,6 +59,12 @@ message FaultAttributionProperties {
   // The snapshot used for determining the snapshot_comparison_fault_attribution
   // property.
   SnapshotProperties comparison_snapshot = 5;
+
+  // Whether a different model other than the one specified in the test variant
+  // was used for the comparison. This is possible if there were no snapshot
+  // tests executed with the CQ test variant model, but results were present
+  // for the same test on a different model (and the same build target).
+  bool diff_model_used = 7;
 
   // The snapshots used for determining the likely_flaky property.
   repeated SnapshotProperties flakiness_criteria_snapshots = 6;

@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import re
+
 from typing import Any, Dict, List, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
@@ -37,11 +38,12 @@ PREDICATE_BUILDER_ID = BuilderID(project=PREDICATE_PROJECT,
                                  builder=PREDICATE_BUILDER)
 VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
   [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
-# Restrict snapshot retrieval to the last 12 hours (snapshot builds are
+# Restrict snapshot retrieval to the last 8 hours (snapshot builds are
 # kicked off every 30 mins)
-SNAPSHOT_RETRIEVAL_LIMIT = 24
+SNAPSHOT_RETRIEVAL_LIMIT = 16
 # Threshold used when marking a test as potentially flaky
 FLAKINESS_THRESHOLD = 2
+EMPTY_MODEL = ''
 
 
 class CqFailureAttributionApi(recipe_api.RecipeApi):
@@ -53,21 +55,22 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     super().__init__(**kwargs)
     self._enable_fault_attribution = properties.enable_fault_attribution
     self._cq_test_failure_attributes = CqTestFailureFaultAttributionStats()
-    # Map of build targets to a list of fault attributed tests under the
-    # target
-    self._build_target_to_test_fault_attributes: Dict[
-        str, List[FaultAttributionProperties]] = defaultdict(list)
-    # Map of (test_id, build_target) to the latest completed test_result(s)
-    # across the comparison snapshots
+    # Map of build targets and model (may be empty) to a list of fault
+    # attributed tests under the target.
+    self._dut_to_test_fault_attributes: Dict[Tuple[
+        str, str], List[FaultAttributionProperties]] = defaultdict(list)
+    # Map of (test_id, build_target, model) to the latest completed
+    # test_result(s) across the comparison snapshots.
     self._test_properties_to_latest_test_result_matrix: Dict[Tuple[
-        str, str], List[TestResult]] = defaultdict(list)
-    # Map of (test_id, build_target) to the snapshot containing the latest
-    # results for the test.
+        str, str, str], List[TestResult]] = defaultdict(list)
+    # Map of (test_id, build_target, model) to the snapshot containing the
+    # latest results for the test.
     self._test_properties_to_latest_snapshot_matrix: Dict[Tuple[
-        str, str], build_pb2.Build | None] = defaultdict(lambda: None)
-    # Map of (build_target, test_id, failure_reason) to total occurrence count
+        str, str, str], build_pb2.Build | None] = defaultdict(lambda: None)
+    # Map of (build_target, model, test_id, failure_reason) to total occurrence
+    # count.
     self._invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[
-        str, str, str], int] = defaultdict(int)
+        str, str, str, str], int] = defaultdict(int)
 
   @property
   def cq_test_failure_attributes(self) -> CqTestFailureFaultAttributionStats:
@@ -122,7 +125,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       invocation_id_to_invocation = self._retrieve_rdb_test_results(
           comparison_snapshots)
       invocation_id_to_snapshot = \
-        {self._get_build_invocation_id(snapshot.id): snapshot for snapshot in comparison_snapshots}
+        {self._get_build_invocation_id(snapshot.id): snapshot for snapshot in
+         comparison_snapshots}
       self._set_comparison_matrices(invocation_id_to_invocation,
                                     invocation_id_to_snapshot)
       flakiness_criteria_snapshot_properties = list(
@@ -136,9 +140,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
             flakiness_criteria_snapshot_properties)
 
     fault_attributed_build_targets = []
-    for k, v in self._build_target_to_test_fault_attributes.items():
+    for k, v in self._dut_to_test_fault_attributes.items():
       fault_attributed_build_target = FaultAttributedBuildTarget()
-      fault_attributed_build_target.build_target = k
+      fault_attributed_build_target.build_target = k[0]
+      fault_attributed_build_target.model = k[1]
       fault_attributed_build_target.fault_attributes.extend(v)
       fault_attributed_build_targets.append(fault_attributed_build_target)
 
@@ -163,6 +168,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       if build.critical == Trinary.NO or build.status == Status.SUCCESS:
         continue
       build_target = self.m.cros_infra_config.get_build_target_name(build)
+      model = EMPTY_MODEL
       if 'failed_test_cases' in build.output.properties:
         prop_struct = build.output.properties['failed_test_cases']
         test_failures = json_format.MessageToDict(prop_struct)
@@ -170,7 +176,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           test_id = test_case['name']
           failure_reason = test_case['humanReadableSummary']
           self._set_fault_attribution_properties(
-              build_target, test_id, failure_reason,
+              build_target, model, test_id, failure_reason,
               flakiness_criteria_snapshot_properties)
 
   def _set_hwtest_fault_attributes(
@@ -206,12 +212,14 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           test_id = test_case.name
           attempt = child_result.attempt
           failure_reason = test_case.human_readable_summary
+          model = skylab_res.task.test.skylab_model or \
+                  EMPTY_MODEL
           self._set_fault_attribution_properties(
-              build_target, test_id, failure_reason,
+              build_target, model, test_id, failure_reason,
               flakiness_criteria_snapshot_properties, attempt)
 
   def _set_fault_attribution_properties(
-      self, build_target: str, test_id: str, failure_reason: str,
+      self, build_target: str, model: str, test_id: str, failure_reason: str,
       flakiness_criteria_snapshot_properties: List[SnapshotProperties],
       attempt=0):
     """ Makes the calls to set the fault attribution property for the test case,
@@ -219,7 +227,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     if necessary.
 
     Args:
-      build_target: the build target this test ran for.
+      build_target: The build target this test ran for.
+      model: The model this test ran for. May be empty.
       test_id: The name of the test.
       failure_reason: The reason why the test failed.
       attempt: The attempt number of this test.
@@ -227,14 +236,23 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     test_fault_attribute = FaultAttributionProperties()
     test_fault_attribute.test_name = test_id
     test_fault_attribute.attempt = attempt
-    matrix_index = (test_id, build_target)
+    matrix_index = (test_id, build_target, model)
     comparison_snapshot = self._test_properties_to_latest_snapshot_matrix.get(
         matrix_index)
+    if model and comparison_snapshot is None:
+      # If we don't have any comparisons to use when a model is specified, let's
+      # attempt to find a comparison across any of the models for this target.
+      matrix_index = (test_id, build_target, EMPTY_MODEL)
+      comparison_snapshot = self._test_properties_to_latest_snapshot_matrix.get(
+          matrix_index)
     if comparison_snapshot:
       test_fault_attribute.comparison_snapshot.CopyFrom(
           self._get_snapshot_properties_object(comparison_snapshot))
+      if model not in matrix_index:
+        test_fault_attribute.diff_model_used = True
     snapshot_test_results = \
       self._test_properties_to_latest_test_result_matrix.get(matrix_index, [])
+
     self._set_test_case_failure_fault_attribution(failure_reason,
                                                   test_fault_attribute,
                                                   snapshot_test_results)
@@ -243,16 +261,16 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       # This is classified as a new test failure. Determine and set
       # flakiness.
       self._set_test_case_failure_fault_attribution_flakiness(
-          test_fault_attribute, failure_reason, build_target, test_id)
+          test_fault_attribute, failure_reason, build_target, model, test_id)
       test_fault_attribute.flakiness_criteria_snapshots.extend(
           flakiness_criteria_snapshot_properties)
 
-    self._build_target_to_test_fault_attributes[build_target].append(
-        test_fault_attribute)
+    self._dut_to_test_fault_attributes[(build_target,
+                                        model)].append(test_fault_attribute)
 
   def _set_test_case_failure_fault_attribution_flakiness(
       self, test_fault_attribute: FaultAttributionProperties,
-      failure_reason: str, build_target: str, test_id: str):
+      failure_reason: str, build_target: str, model: str, test_id: str):
     """Sets the 'likely_flaky' property of the test_fault_attribute based
       on the number of failures present on a test case for the same failure
       reason.
@@ -263,12 +281,13 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         failure_reason: The reason this test failed.
         build_target: The build target that this test case failure occurred
           on.
+        model: The model that this test case failure occurred on. May be empty.
         test_id: The name of the test e.g. tast.critical-system
       """
-    matrix_index = (build_target, test_id, failure_reason)
-    likely_flaky =\
+    matrix_index = (build_target, model, test_id, failure_reason)
+    likely_flaky = \
       self._invocation_properties_to_failure_reason_count_matrix.get(
-        matrix_index, 0) >= FLAKINESS_THRESHOLD
+          matrix_index, 0) >= FLAKINESS_THRESHOLD
     test_fault_attribute.likely_flaky = likely_flaky
 
   def _set_test_case_failure_fault_attribution(
@@ -384,22 +403,32 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         if not test_id:
           # Test name wasn't in the expected format. Skipping.
           continue
-        build_target = getattr(test_result.variant, 'def')['build_target']
-        matrix_index = (test_id, build_target)
-        # If we haven't identified any snapshot to get results from for this
-        # test, or if this is another attempt for the same test for an already
-        # identified snapshot, append the test results.
-        if matrix_index not in self._test_properties_to_latest_snapshot_matrix \
-          or self._test_properties_to_latest_snapshot_matrix[matrix_index] == snapshot:
-          self._test_properties_to_latest_test_result_matrix[
-              matrix_index].append(test_result)
-          self._test_properties_to_latest_snapshot_matrix[
-              matrix_index] = snapshot
+        variant_dict = getattr(test_result.variant, 'def')
+        build_target = variant_dict['build_target']
+        # Incase a CQ test runs without any specific model, we should consider
+        # a pseudo-model that represents the latest test results across all
+        # models.
 
-        if test_result.status != TestStatus.PASS:
-          failure_reason = test_result.failure_reason.primary_error_message
-          self._invocation_properties_to_failure_reason_count_matrix[(
-              build_target, test_id, failure_reason)] += 1
+        models = [EMPTY_MODEL]
+        if 'model' in variant_dict:
+          models.append(variant_dict['model'])
+        for model in models:
+          matrix_index = (test_id, build_target, model)
+          # If we haven't identified any snapshot to get results from for this
+          # test, or if this is another attempt for the same test for an already
+          # identified snapshot, append the test results.
+          if matrix_index not in self._test_properties_to_latest_snapshot_matrix \
+              or self._test_properties_to_latest_snapshot_matrix[
+            matrix_index] == snapshot:
+            self._test_properties_to_latest_test_result_matrix[
+                matrix_index].append(test_result)
+            self._test_properties_to_latest_snapshot_matrix[
+                matrix_index] = snapshot
+
+          if test_result.status != TestStatus.PASS:
+            failure_reason = test_result.failure_reason.primary_error_message
+            self._invocation_properties_to_failure_reason_count_matrix[(
+                build_target, model, test_id, failure_reason)] += 1
 
   def _get_build_invocation_id(self, build_id: int) -> str:
     return 'build-{}'.format(build_id)

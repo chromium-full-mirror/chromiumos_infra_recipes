@@ -4,7 +4,7 @@
 # found in the LICENSE file.
 import re
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from recipe_engine import post_process
 from google.protobuf import timestamp_pb2, json_format
 
@@ -76,12 +76,14 @@ def get_build_id_from_invocation(invocation_id: str) -> int:
 
 
 def get_build_target_index(items: List[FaultAttributedBuildTarget],
-                           build_target: str) -> Optional[int]:
+                           build_target: str,
+                           model: Union[str, None]) -> Optional[int]:
   index = None
   for i, item in enumerate(items):
     if item.build_target == build_target:
-      index = i
-      break
+      if (not item.model and not model) or (model and model == item.model):
+        index = i
+        break
   return index
 
 
@@ -128,6 +130,11 @@ mix_of_pass_fail_skipped_child_results = \
 brya_variant = json_format.ParseDict({'def': {
     'build_target': 'brya'
 }}, Variant())
+brya_redrix_variant = json_format.ParseDict(
+    {'def': {
+        'build_target': 'brya',
+        'model': 'redrix'
+    }}, Variant())
 scarlet_variant = json_format.ParseDict({'def': {
     'build_target': 'scarlet'
 }}, Variant())
@@ -225,33 +232,26 @@ snapshot_build_2_invocation \
     test_results=snapshot_2_brya_build_target_test_results +
                  snapshot_2_scarlet_build_target_test_results)
 
-snapshot_build_3_invocation_id = 'build-345'
-snapshot_build_3 \
-  = build_pb2.Build(
-    id=get_build_id_from_invocation(snapshot_build_3_invocation_id),
-    status=Status.SUCCESS,
-    create_time=timestamp_pb2.Timestamp(seconds=1599999998),
-    start_time=timestamp_pb2.Timestamp(seconds=1599999998),
-    end_time=timestamp_pb2.Timestamp(seconds=1599999998))
-snapshot_3_brya_build_target_test_results = [
+snapshot_build_3_invocation_id = 'build-1123'
+snapshot_build_3 = \
+  build_pb2.Build(
+      id=get_build_id_from_invocation(snapshot_build_3_invocation_id),
+      status=Status.SUCCESS,
+      create_time=timestamp_pb2.Timestamp(seconds=1599999998),
+      start_time=timestamp_pb2.Timestamp(seconds=1599999998),
+      end_time=timestamp_pb2.Timestamp(seconds=1599999998))
+snapshot_3_brya_redrix_build_target_test_results = [
     TestResult(
-        name=get_rdb_test_result_name(snapshot_build_3_invocation_id,
-                                      FLAKY_TEST_CASE_NAME),
-        variant=brya_variant, expected=True, status=TestStatus.FAIL,
-        failure_reason=FailureReason(
-            primary_error_message=FLAKY_FAILURE_REASON)),
-    # This same test exists in a newer snapshot (snapshot 2) as a passing test.
-    # We create an older instance with a different outcome to validate the
-    # newer one is used.
-    TestResult(
-        name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
-                                      PASSING_IN_SNAPSHOT_TEST_CASE_NAME),
-        variant=brya_variant, expected=True, status=TestStatus.FAIL),
+        name=get_rdb_test_result_name(
+            snapshot_build_3_invocation_id,
+            PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME),
+        variant=brya_redrix_variant, expected=True, status=TestStatus.FAIL)
 ]
 snapshot_build_3_invocation \
-  = Invocation(test_results=snapshot_3_brya_build_target_test_results)
+  = Invocation(
+    test_results=snapshot_3_brya_redrix_build_target_test_results)
 
-snapshot_build_4_invocation_id = 'build-456'
+snapshot_build_4_invocation_id = 'build-345'
 snapshot_build_4 \
   = build_pb2.Build(
     id=get_build_id_from_invocation(snapshot_build_4_invocation_id),
@@ -266,21 +266,48 @@ snapshot_4_brya_build_target_test_results = [
         variant=brya_variant, expected=True, status=TestStatus.FAIL,
         failure_reason=FailureReason(
             primary_error_message=FLAKY_FAILURE_REASON)),
+    # This same test exists in a newer snapshot (snapshot 2) as a passing test.
+    # We create an older instance with a different outcome to validate the
+    # newer one is used.
     TestResult(
-        name=get_rdb_test_result_name(snapshot_build_4_invocation_id,
+        name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
+                                      PASSING_IN_SNAPSHOT_TEST_CASE_NAME),
+        variant=brya_variant, expected=True, status=TestStatus.FAIL),
+]
+snapshot_build_4_invocation \
+  = Invocation(test_results=snapshot_4_brya_build_target_test_results)
+
+snapshot_build_5_invocation_id = 'build-456'
+snapshot_build_5 \
+  = build_pb2.Build(
+    id=get_build_id_from_invocation(snapshot_build_5_invocation_id),
+    status=Status.SUCCESS,
+    create_time=timestamp_pb2.Timestamp(seconds=1599999996),
+    start_time=timestamp_pb2.Timestamp(seconds=1599999996),
+    end_time=timestamp_pb2.Timestamp(seconds=1599999996))
+snapshot_5_brya_build_target_test_results = [
+    TestResult(
+        name=get_rdb_test_result_name(snapshot_build_5_invocation_id,
+                                      FLAKY_TEST_CASE_NAME),
+        variant=brya_variant, expected=True, status=TestStatus.FAIL,
+        failure_reason=FailureReason(
+            primary_error_message=FLAKY_FAILURE_REASON)),
+    TestResult(
+        name=get_rdb_test_result_name(snapshot_build_5_invocation_id,
                                       FLAKY_TEST_CASE_NAME),
         variant=brya_variant, expected=True, status=TestStatus.FAIL,
         failure_reason=FailureReason(
             primary_error_message='This failed twice')),
 ]
-snapshot_build_4_invocation \
-  = Invocation(test_results=snapshot_4_brya_build_target_test_results)
+snapshot_build_5_invocation \
+  = Invocation(test_results=snapshot_5_brya_build_target_test_results)
 
 invocation_bundle: Dict[str, Invocation] = {
     snapshot_build_1_invocation_id: snapshot_build_1_invocation,
     snapshot_build_2_invocation_id: snapshot_build_2_invocation,
     snapshot_build_3_invocation_id: snapshot_build_3_invocation,
-    snapshot_build_4_invocation_id: snapshot_build_4_invocation
+    snapshot_build_4_invocation_id: snapshot_build_4_invocation,
+    snapshot_build_5_invocation_id: snapshot_build_5_invocation
 }
 
 
@@ -288,9 +315,17 @@ def RunSteps(api):
   scarlet_build_target_task = \
     api.skylab_results.test_api.skylab_task(suite='suite1')
   scarlet_build_target_task.unit.common.build_target.name = 'scarlet'
+  scarlet_dru_build_target_task = \
+    api.skylab_results.test_api.skylab_task(suite='suite1')
+  scarlet_dru_build_target_task.unit.common.build_target.name = 'scarlet'
+  scarlet_dru_build_target_task.test.skylab_model = 'dru'
   brya_build_target_task = \
     api.skylab_results.test_api.skylab_task(suite='suite1')
   brya_build_target_task.unit.common.build_target.name = 'brya'
+  brya_redrix_build_target_task = \
+    api.skylab_results.test_api.skylab_task(suite='suite1')
+  brya_redrix_build_target_task.unit.common.build_target.name = 'brya'
+  brya_redrix_build_target_task.test.skylab_model = 'redrix'
   hw_tests = [
       SkylabResult(task=scarlet_build_target_task,
                    status=common_pb2.Status.FAILURE,
@@ -298,9 +333,25 @@ def RunSteps(api):
       SkylabResult(task=scarlet_build_target_task,
                    status=common_pb2.Status.FAILURE,
                    child_results=failed_and_skipped_child_results),
+      # Model specific test without any model specific snapshot comparisons.
+      SkylabResult(task=scarlet_dru_build_target_task,
+                   status=common_pb2.Status.FAILURE,
+                   child_results=failed_and_skipped_child_results),
       SkylabResult(task=brya_build_target_task,
                    status=common_pb2.Status.SUCCESS,
                    child_results=all_passed_child_results),
+      # Model specific test with a different test outcome for a pre-existing
+      # test.
+      SkylabResult(
+          task=brya_redrix_build_target_task, status=common_pb2.Status.FAILURE,
+          child_results=[
+              ExecuteResponse.TaskResult(
+                  name='suite2', state=fail_state, attempt=0, test_cases=[
+                      ExecuteResponse.TaskResult.TestCaseResult(
+                          name=PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME,
+                          verdict=TaskState.VERDICT_FAILED)
+                  ])
+          ]),
       SkylabResult(task=brya_build_target_task,
                    status=common_pb2.Status.FAILURE,
                    child_results=mix_of_pass_fail_skipped_child_results),
@@ -377,7 +428,10 @@ def RunSteps(api):
           1599999998),
       create_expected_snapshot(
           get_build_id_from_invocation(snapshot_build_4_invocation_id),
-          1599999997)
+          1599999997),
+      create_expected_snapshot(
+          get_build_id_from_invocation(snapshot_build_5_invocation_id),
+          1599999996)
   ]
 
   fault_attributed_build_targets = fault_attributes.test_failure_attributions
@@ -385,7 +439,7 @@ def RunSteps(api):
   # Verify fault attributes for Brya build target.
   actual_brya_fault_attributes_target = \
     fault_attributed_build_targets[
-      get_build_target_index(fault_attributed_build_targets, 'brya')
+      get_build_target_index(fault_attributed_build_targets, 'brya', None)
     ]
 
   expected_brya_new_hw_test_failure = \
@@ -465,7 +519,7 @@ def RunSteps(api):
   # Verify fault attributes for Scarlet build target.
   actual_scarlet_fault_attributes_target = \
     fault_attributed_build_targets[
-      get_build_target_index(fault_attributed_build_targets, 'scarlet')
+      get_build_target_index(fault_attributed_build_targets, 'scarlet', None)
     ]
 
   expected_scarlet_existing_failure = \
@@ -489,7 +543,61 @@ def RunSteps(api):
   api.assertions.assertIn(
       expected_scarlet_no_comparison_failure,
       actual_scarlet_fault_attributes_target.fault_attributes)
-  api.assertions.assertEqual(len(fault_attributed_build_targets), 2)
+
+  # Verify fault attributes for Scarlet.Dru build target.
+  actual_scarlet_dru_fault_attributes_target = \
+    fault_attributed_build_targets[
+      get_build_target_index(fault_attributed_build_targets, 'scarlet', 'dru')
+    ]
+
+  expected_scarlet_dru_existing_failure = \
+    create_expected_fault_attribute_properties(
+        EXISTING_FAILURE_TEST_CASE_NAME,
+        CqFailureAttribute.MATCHING_FAILURE_FOUND,
+        False,
+        expected_snapshot_comparison_properties,
+        [])
+  expected_scarlet_dru_existing_failure.diff_model_used = True
+
+  expected_scarlet_dru_no_comparison_failure = \
+    create_expected_fault_attribute_properties(
+        SKIPPED_TEST_CASE_NAME,
+        CqFailureAttribute.NO_COMPARISON,
+        False,
+        expected_snapshot_comparison_properties,
+        [])
+  expected_scarlet_dru_no_comparison_failure.diff_model_used = True
+
+  api.assertions.assertIn(
+      expected_scarlet_dru_existing_failure,
+      actual_scarlet_dru_fault_attributes_target.fault_attributes)
+  api.assertions.assertIn(
+      expected_scarlet_dru_no_comparison_failure,
+      actual_scarlet_dru_fault_attributes_target.fault_attributes)
+
+  # Verify fault attributes for Brya.Redrix build target.
+  expected_snapshot_comparison_properties = \
+    create_expected_snapshot(
+        get_build_id_from_invocation(snapshot_build_3_invocation_id),
+        1599999998)
+  actual_brya_redrix_fault_attributes_target = \
+    fault_attributed_build_targets[
+      get_build_target_index(fault_attributed_build_targets, 'brya', 'redrix')
+    ]
+
+  expected_brya_redrix_new_hw_test_failure = \
+    create_expected_fault_attribute_properties(
+        PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME,
+        CqFailureAttribute.MATCHING_FAILURE_FOUND,
+        False,
+        expected_snapshot_comparison_properties,
+        [])
+
+  api.assertions.assertIn(
+      expected_brya_redrix_new_hw_test_failure,
+      actual_brya_redrix_fault_attributes_target.fault_attributes)
+
+  api.assertions.assertEqual(len(fault_attributed_build_targets), 4)
 
 
 def GenTests(api):
@@ -504,8 +612,10 @@ def GenTests(api):
           builds=[snapshot_build_1],
           step_name='set fault attributes.buildbucket.search'),
       api.buildbucket.simulated_search_results(
-          builds=[snapshot_build_2, snapshot_build_3, snapshot_build_4],
-          step_name='set fault attributes.buildbucket.search (2)'),
+          builds=[
+              snapshot_build_2, snapshot_build_3, snapshot_build_4,
+              snapshot_build_5
+          ], step_name='set fault attributes.buildbucket.search (2)'),
       api.resultdb.query(inv_bundle=invocation_bundle,
                          step_name='set fault attributes.rdb query'),
       api.post_process(post_process.PropertiesContain, 'cq_fault_attributions'))

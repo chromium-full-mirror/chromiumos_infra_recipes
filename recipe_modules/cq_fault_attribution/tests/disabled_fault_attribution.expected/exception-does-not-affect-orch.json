@@ -40,7 +40,7 @@
       "-json",
       "-nopage",
       "-n",
-      "24",
+      "16",
       "-fields",
       "create_time,end_time,id,start_time,status",
       "-predicate",
