@@ -23,6 +23,18 @@ GreennessTuple = collections.namedtuple(
 # Builder variants to exclude for CQ.
 EXCLUDE_VARIANTS = ['-asan-', '-ubsan-', '-kernel-']
 
+# Builder variants to exclude for local greenness.
+LOCAL_EXCLUDE_VARIANTS = [
+    '-asan-',
+    # TODO(b/294303941): Remove once bazel is enabled for local developers.
+    '-bazel-',
+    '-cpp20-',
+    '-kernel-',
+    '-kernelnext',
+    '-ubsan-',
+    '-vm-optimized-',
+]
+
 
 class GreennessApi(recipe_api.RecipeApi):
   """A module to calculate greenness metric."""
@@ -32,11 +44,17 @@ class GreennessApi(recipe_api.RecipeApi):
     self._publish_property = properties.publish_property
     self._greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
+    self._local_greenness_dict: OrderedDict[
+        str, GreennessTuple] = collections.OrderedDict()
     self._last_greenness_dict = None
 
   @property
   def greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
     return self._greenness_dict
+
+  @property
+  def local_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
+    return self._local_greenness_dict
 
   def get_greenness(self, target: str) -> Optional[GreennessTuple]:
     """Get the greenness metric for a specific target.
@@ -119,6 +137,31 @@ class GreennessApi(recipe_api.RecipeApi):
         self._greenness_dict[bt] = GreennessTuple(green_metric, green_metric,
                                                   critical, True)
 
+  def update_local_build_info(self, builds: List[build_pb2.Build]) -> None:
+    """Update local greenness with build information.
+
+    For local build greenness, we want to track by build target and variant
+    rather than just build target (e.g. amd64-generic-asan is tracked
+    separately from amd64-generic).
+
+    Args:
+      builds: List of builds that have completed.
+    """
+    for build in builds:
+      builder = build.builder.builder
+      if self._is_excluded(builder, LOCAL_EXCLUDE_VARIANTS):
+        continue
+      green_metric = 100 if build.status == common_pb2.SUCCESS else 0
+      critical = build.critical == common_pb2.YES
+      if self.m.cros_tags.has_entry('relevance', 'not relevant', build.tags):
+        self._local_greenness_dict[builder] = GreennessTuple(
+            score=green_metric, build_score=green_metric, critical=critical,
+            relevant=False)
+      else:
+        self._local_greenness_dict[builder] = GreennessTuple(
+            score=green_metric, build_score=green_metric, critical=critical,
+            relevant=True)
+
   def update_hwtest_info(self, results: List[SkylabResult]) -> None:
     """Update greenness with HW test information.
 
@@ -143,6 +186,11 @@ class GreennessApi(recipe_api.RecipeApi):
         build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
         self._greenness_dict[bt] = GreennessTuple(score, build_score, True,
                                                   True)
+        local_build_score = self._get_build_score_for_tests(
+            self._local_greenness_dict, bt)
+        self._local_greenness_dict[bt] = GreennessTuple(score,
+                                                        local_build_score, True,
+                                                        True)
 
   def update_vmtest_info(self, results: List[build_pb2.Build]) -> None:
     """Update greenness with VM test information.
@@ -157,6 +205,11 @@ class GreennessApi(recipe_api.RecipeApi):
         build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
         self._greenness_dict[bt] = GreennessTuple(greenness, build_score, True,
                                                   True)
+        local_build_score = self._get_build_score_for_tests(
+            self._local_greenness_dict, bt)
+        self._local_greenness_dict[bt] = GreennessTuple(greenness,
+                                                        local_build_score, True,
+                                                        True)
 
   def print_step(self) -> None:
     """Print comprehensive greenness info in a step."""

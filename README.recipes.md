@@ -522,6 +522,7 @@
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
   * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
   * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
+  * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
@@ -7563,11 +7564,11 @@ Returns:
 
 API providing a menu for calculating greenness metric.
 
-#### **class [GreennessApi](/recipe_modules/greenness/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GreennessApi](/recipe_modules/greenness/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#41)(self, target: str):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#59)(self, target: str):**
 
 Get the greenness metric for a specific target.
 
@@ -7577,7 +7578,7 @@ Args:
 Returns: Metric of the target or None if the target wasn't
   launched.
 
-&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#52)(self, target: str):**
+&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#70)(self, target: str):**
 
 Get the targetGreenness from the last snapshot run for a given target.
 
@@ -7587,31 +7588,44 @@ Args:
 Returns: targetGreenness, or an empty OrderedDict if the target, its
   greenness, or the last snapshot wasn't found.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#37)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#51)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#161)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
+
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#214)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#168)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#221)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#94)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#112)(self, builds: List[build_pb2.Build]):**
 
 Update greenness with build information.
 
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#122)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#165)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#147)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_local\_build\_info](/recipe_modules/greenness/api.py#140)(self, builds: List[build_pb2.Build]):**
+
+Update local greenness with build information.
+
+For local build greenness, we want to track by build target and variant
+rather than just build target (e.g. amd64-generic-asan is tracked
+separately from amd64-generic).
+
+Args:
+  builds: List of builds that have completed.
+
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#195)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 
@@ -13497,6 +13511,14 @@ Recipe that schedules jobs based on its triggers.
 
 
 &mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_hwtest_info.py#18)(api):**
+### *recipes* / [greenness:examples/update\_local\_build\_info](/recipe_modules/greenness/examples/update_local_build_info.py)
+
+[DEPS](/recipe_modules/greenness/examples/update_local_build_info.py#8): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Test updating build info for local greenness.
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_local_build_info.py#18)(api):**
 ### *recipes* / [greenness:examples/update\_vmtest\_info](/recipe_modules/greenness/examples/update_vmtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_vmtest_info.py#6): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
