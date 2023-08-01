@@ -36,13 +36,19 @@ class CTSResultsArchive(recipe_api.RecipeApi):
       build = self.m.cros_tags.get_single_value('label-image')
 
     with self.m.step.nest('Archive CTS results') as step:
+      parent_task_id = self.m.cros_tags.get_single_value('parent_task_id')
+      # Can be missing in led-triggered runs
+      if not parent_task_id:
+        step.step_text = 'skipped due to missing parent_task_id'
+        return
+
       json_input = {
           'dir': d_dir,
           'cts_results_gsurl': self._properties.cts_results_gsurl,
           'cts_apfe_gsurl': self._properties.cts_apfe_gsurl,
           'build': build,
           'model': model,
-          'parent_job_id': self.m.cros_tags.get_single_value('parent_task_id'),
+          'parent_job_id': parent_task_id,
       }
       step.logs['json_input'] = json.dumps(json_input, sort_keys=True)
       result = self.m.step(

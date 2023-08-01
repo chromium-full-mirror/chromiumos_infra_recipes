@@ -86,3 +86,19 @@ def GenTests(api):
                       cts_apfe_gsurl="gs://fake/apfe",
                   )
           }))
+
+  yield api.test(
+      'missing-tag-parent_task_id',
+      _set_build(
+          bid=42, tags={
+              'build': 'fake-board-release/R11-123.45',
+              'label-model': 'fake-model',
+          }),
+      api.properties(
+          **{
+              '$chromeos/cts_results_archive':
+                  CTSResultsArchiveProperties(
+                      cts_results_gsurl="gs://fake/results",
+                      cts_apfe_gsurl="gs://fake/apfe",
+                  )
+          }))

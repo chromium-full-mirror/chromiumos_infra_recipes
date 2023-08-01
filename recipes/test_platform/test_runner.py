@@ -2055,8 +2055,13 @@ def GenTests(api):
 
   def _set_build(bid, tags=None, experiments=None, swarming_tags=None,
                  swarming_task_dimensions=None, ancestor_buildbucket_ids=None):
+    # parent_task_id is needed by cts_results_archive step. In reality it's
+    # always present unless run via led.
+    tags = tags or {}
+    tags['parent_task_id'] = tags.get('parent_task_id', 'deadbeef')
+
     # tags is a dict, convert that into [StringPair].
-    bb_tags = api.cros_tags.tags(**tags) if tags else []
+    bb_tags = api.cros_tags.tags(**tags)
     build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
                                                  experiments=experiments,
                                                  project='chromeos',
