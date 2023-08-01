@@ -60,6 +60,8 @@ EXISTING_FAILURE_VM_TEST_CASE_NAME = \
   'this.vm.test.failed.for.an.identical.reason.in.the.snapshot'
 UNIQUE_VM_FAILURE_TEST_CASE_NAME = \
   'this.vm.test.failed.for.a.unique.reason.in.the.snapshot'
+VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME = \
+  'this.vm.test.failed.without.a.reason'
 PASSING_IN_SNAPSHOT_GCE_TEST_CASE_NAME = \
   'this.gce.test.passed.in.the.snapshot.only'
 
@@ -372,10 +374,16 @@ def RunSteps(api):
       human_readable_summary='Unique failure message')
   new_vm_failure_test_case = json_format.MessageToDict(
       failed_vm_test_case_result2)
+  failed_vm_test_case_result3 = ExecuteResponse.TaskResult.TestCaseResult(
+      name=VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME,
+      verdict=TaskState.VERDICT_FAILED)
+  absent_reason_vm_failure_test_case = json_format.MessageToDict(
+      failed_vm_test_case_result3)
 
   failed_vm_build_output = build_pb2.Build.Output()
   failed_vm_build_output.properties['failed_test_cases'] = [
-      existing_vm_failure_test_case, new_vm_failure_test_case
+      existing_vm_failure_test_case, new_vm_failure_test_case,
+      absent_reason_vm_failure_test_case
   ]
   failed_vm_build = build_pb2.Build(status=common_pb2.Status.FAILURE,
                                     input=build_input,
@@ -498,6 +506,13 @@ def RunSteps(api):
         False,
         expected_snapshot_comparison_properties,
         [])
+  expected_brya_absent_reason_vm_test_failure = \
+    create_expected_fault_attribute_properties(
+        VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME,
+        CqFailureAttribute.NO_COMPARISON,
+        False,
+        None,
+        [])
 
   api.assertions.assertIn(expected_brya_new_hw_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
@@ -514,6 +529,8 @@ def RunSteps(api):
   api.assertions.assertIn(expected_brya_unique_vm_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
   api.assertions.assertIn(expected_brya_existing_vm_test_failure,
+                          actual_brya_fault_attributes_target.fault_attributes)
+  api.assertions.assertIn(expected_brya_absent_reason_vm_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
 
   # Verify fault attributes for Scarlet build target.

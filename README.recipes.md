@@ -11699,17 +11699,17 @@ Recipe for analyzing and retrying failed CQ runs.
 [DEPS](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#29): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#314)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#316)(api):**
 
-&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#633)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#650)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
 
-&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#624)(source_build_id, source_completed_unix_timestamp):**
+&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#641)(source_build_id, source_completed_unix_timestamp):**
 
-&mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#72)(invocation_id: str):**
+&mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#74)(invocation_id: str):**
 
-&mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#78)(items: List[FaultAttributedBuildTarget], build_target: str, model: Union[(str, None)]):**
+&mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#80)(items: List[FaultAttributedBuildTarget], build_target: str, model: Union[(str, None)]):**
 
-&mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#67)(invocation_id: str, test_name: str):**
+&mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#69)(invocation_id: str, test_name: str):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#10): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

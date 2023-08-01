@@ -174,7 +174,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_failures = json_format.MessageToDict(prop_struct)
         for test_case in test_failures:
           test_id = test_case['name']
-          failure_reason = test_case['humanReadableSummary']
+          failure_reason = test_case.get('humanReadableSummary', '')
           self._set_fault_attribution_properties(
               build_target, model, test_id, failure_reason,
               flakiness_criteria_snapshot_properties)
