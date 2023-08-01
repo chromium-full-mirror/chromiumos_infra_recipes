@@ -298,9 +298,9 @@ def search_prebuilts(
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhots(api: RecipeApi, step_name: str,
-                public_prebuilt_entries: List[dict],
-                private_prebuilt_entries: List[dict]) -> None:
+def set_binhosts(api: RecipeApi, step_name: str,
+                 public_prebuilt_entries: List[dict],
+                 private_prebuilt_entries: List[dict]) -> None:
   """Utility function to set the binhosts repeatedly.
 
   Args:
@@ -431,8 +431,8 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhots(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
-                  private_prebuilt_entries)
+      set_binhosts(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
+                   private_prebuilt_entries)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)

@@ -15262,7 +15262,7 @@ Returns:
   - List of private prebuilt entries added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#301)(api: RecipeApi, step_name: str, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhosts](/recipes/upload_prebuilts_from_cq.py#301)(api: RecipeApi, step_name: str, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
 
 Utility function to set the binhosts repeatedly.
 
