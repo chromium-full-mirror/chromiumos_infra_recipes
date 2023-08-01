@@ -420,74 +420,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_paths = [target.path for target in response.upload_targets]
       return upload_root, upload_paths
 
-  def set_binhost(self, target, private, key, uri, push_retries):
-    """Set the target's Portage binhost to point to the given URI.
-
-    DEPRICATED: this will be removed soon. please use set_binhosts instead.
-
-    This function updates a conf file within the target's overlay, commits the
-    change, and pushes it.
-
-    Args:
-      target (BuildTarget): Build target to update the binhost for.
-      private (bool): Whether the target's binhost is private.
-      key (BinhostKey): The binhost key, e.g. POSTSUBMIT_BINHOST.
-      uri (str): The new binhost URI.
-      push_retries (int): Number of times to retry pushing the changes.
-    """
-    with self.m.step.nest('update binhost conf file'):
-      # In order to avoid any merge conflicts we first pull the latest changes
-      # from remote, update the conf flie locally, and then push the
-      # changes remotely.
-      path_request = binhost_pb.GetBinhostConfPathRequest(
-          build_target=target, private=private, key=key)
-      path_response = self.m.cros_build_api.BinhostService.GetBinhostConfPath(
-          path_request, infra_step=True)
-      binhost_path = self.m.path.abs_to_path(path_response.conf_path)
-      projects = self.m.repo.project_infos(
-          projects=[self.m.path.dirname(binhost_path)])
-      assert len(projects) == 1, '%s must belong to 1 project' % binhost_path
-      project = projects[0]
-      with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(project.path)):
-        branch = project.branch
-        if branch:
-          # The unit tests needs the ebuilds to be the same version we build them at.
-          # so after we pull the latest and commit our changes, we checkout the
-          # the commit from which we started. Here we are saving the current commit
-          # so we can checkout again after we push our updates.
-          current_commit = self.m.git.head_commit()
-
-          # There are instances when, in between fetching from remote and then
-          # commiting our changes, a different builder can commit its changes.
-          # This can cause merging issues(see ex:http://shortn/_WtgjVa2ayK).
-          # We can retry few times to avoid it.
-          for attempt in range(push_retries + 1):
-            self.m.git.fetch_ref(project.remote, branch)
-            self.m.git.checkout('FETCH_HEAD', force=True)
-            request = binhost_pb.SetBinhostRequest(
-                build_target=target, private=private, key=key, uri=uri,
-                max_uris=self._max_binhost_uris)
-            self.m.cros_build_api.BinhostService.SetBinhost(
-                request, infra_step=True)
-            binhost_data = self.m.file.read_text('read binhost conf',
-                                                 binhost_path)
-            lines = [
-                'Set %s=%s.' % (binhost_pb.BinhostKey.Name(key), uri),
-                'go/bbid/%s' % self._build_id
-            ]
-
-            try:
-              with self.m.step.nest('create change'):
-                self.m.git_txn.update_ref_write_files(
-                    project.remote, '\n'.join(lines),
-                    [(binhost_path, binhost_data)], automerge=True, ref=branch)
-                self.m.git.checkout(current_commit)
-              return
-            except recipe_api.StepFailure as ex:
-              if attempt == push_retries:
-                raise ex
-
   def set_binhosts(self, binhosts: List[Tuple[BuildTarget, str]], private: bool,
                    key: binhost_pb.BinhostKey) -> None:
     """Set the target's Portage binhosts to point to the given URIs.
@@ -733,14 +665,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         if BuilderConfig.Id.Type.Name(kind) == 'CQ':
           raise ValueError('CQ should not set the binhost.')
 
-        if self._use_staging_branch:
-          # Experimental: NEW LOGIC, currently working on staging
-          with self.m.step.nest('update binhost conf file'):
-            self.set_binhosts([(target, upload_uri)], private, binhost_key)
-        else:
-          # Deprecated: OLD LOGIC, currently working on prod
-          self.set_binhost(target, private, binhost_key, upload_uri,
-                           push_retries=3)
+        with self.m.step.nest('update binhost conf file'):
+          self.set_binhosts([(target, upload_uri)], private, binhost_key)
 
       # Default to `base` profile when it is not explicitly specified.
       profile = self._profile_or_default(profile)

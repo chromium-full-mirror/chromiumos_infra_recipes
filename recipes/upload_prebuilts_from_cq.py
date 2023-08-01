@@ -298,7 +298,7 @@ def search_prebuilts(
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhots(api: RecipeApi, step_name: str, is_staging: bool,
+def set_binhots(api: RecipeApi, step_name: str,
                 public_prebuilt_entries: List[dict],
                 private_prebuilt_entries: List[dict]) -> None:
   """Utility function to set the binhosts repeatedly.
@@ -309,79 +309,36 @@ def set_binhots(api: RecipeApi, step_name: str, is_staging: bool,
     public_prebuilt_entries: Public prebuilts to be set the binhosts of.
     private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
   """
-  if not is_staging:
-    # Deprecated: OLD LOGIC, currently working on prod
-    # We will remove this soon after the new logic gets stabilized.
-    with api.step.nest(step_name) as presentation:
-      prebuilt_entries_len = len(public_prebuilt_entries)
-      presentation.step_summary_text = f'Set {prebuilt_entries_len} builds'
-      with api.cros_source.checkout_overlays_context(
-      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
-        # Processes public builders
-        with api.step.nest("Public binhosts") as presentation:
-          public_prebuilt_entries_len = len(public_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {public_prebuilt_entries_len} binhosts.')
-          for entry in public_prebuilt_entries:
-            build_target = entry['build_target']
-            with api.step.nest(f'update {build_target.name}'):
-              api.cros_prebuilts.set_binhost(
-                  build_target,
-                  entry['prebuilts_private'],
-                  binhost_pb.CQ_BINHOST,
-                  entry['prebuilts_uri'],
-                  push_retries=GIT_PUSH_MAX_RETRY_COUNT,
-              )
+  with api.step.nest(step_name):
+    with api.cros_source.checkout_overlays_context(
+    ), api.build_menu.setup_workspace(cherry_pick_changes=True):
+      # Processes public builders
+      with api.step.nest("Public binhosts") as presentation:
+        public_prebuilt_entries_len = len(public_prebuilt_entries)
+        presentation.step_summary_text = (
+            f'Set {public_prebuilt_entries_len} binhosts.')
+        if public_prebuilt_entries_len > 0:
+          api.cros_prebuilts.set_binhosts(
+              binhosts=list(
+                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                      public_prebuilt_entries)),
+              private=False,
+              key=binhost_pb.CQ_BINHOST,
+          )
 
-        # Processes private builders
-        with api.step.nest("Private binhosts") as presentation:
-          private_prebuilt_entries_len = len(private_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {private_prebuilt_entries_len} binhosts.')
-          for entry in private_prebuilt_entries:
-            build_target = entry['build_target']
-            with api.step.nest(f'update {build_target.name}'):
-              api.cros_prebuilts.set_binhost(
-                  build_target,
-                  entry['prebuilts_private'],
-                  binhost_pb.CQ_BINHOST,
-                  entry['prebuilts_uri'],
-                  push_retries=GIT_PUSH_MAX_RETRY_COUNT,
-              )
-
-  else:
-    # Experimental: NEW LOGIC, currently working on staging
-    # We will use this logic on both prod and staging after it gets stabilized.
-    with api.step.nest(step_name):
-      with api.cros_source.checkout_overlays_context(
-      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
-        # Processes public builders
-        with api.step.nest("Public binhosts") as presentation:
-          public_prebuilt_entries_len = len(public_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {public_prebuilt_entries_len} binhosts.')
-          if public_prebuilt_entries_len > 0:
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        public_prebuilt_entries)),
-                private=False,
-                key=binhost_pb.CQ_BINHOST,
-            )
-
-        # Processes private builders
-        with api.step.nest("Private binhosts") as presentation:
-          private_prebuilt_entries_len = len(private_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {private_prebuilt_entries_len} binhosts.')
-          if private_prebuilt_entries_len > 0:
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        private_prebuilt_entries)),
-                private=True,
-                key=binhost_pb.CQ_BINHOST,
-            )
+      # Processes private builders
+      with api.step.nest("Private binhosts") as presentation:
+        private_prebuilt_entries_len = len(private_prebuilt_entries)
+        presentation.step_summary_text = (
+            f'Set {private_prebuilt_entries_len} binhosts.')
+        if private_prebuilt_entries_len > 0:
+          api.cros_prebuilts.set_binhosts(
+              binhosts=list(
+                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                      private_prebuilt_entries)),
+              private=True,
+              key=binhost_pb.CQ_BINHOST,
+          )
 
 
 def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
@@ -474,8 +431,8 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhots(api, 'set BINHOSTs' + name_suffix, is_staging,
-                  public_prebuilt_entries, private_prebuilt_entries)
+      set_binhots(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
+                  private_prebuilt_entries)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)

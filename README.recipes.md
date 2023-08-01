@@ -3414,23 +3414,7 @@ Args:
 Returns:
   (list[PackageIndexInfo]) The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhost](/recipe_modules/cros_prebuilts/api.py#423)(self, target, private, key, uri, push_retries):**
-
-Set the target's Portage binhost to point to the given URI.
-
-DEPRICATED: this will be removed soon. please use set_binhosts instead.
-
-This function updates a conf file within the target's overlay, commits the
-change, and pushes it.
-
-Args:
-  target (BuildTarget): Build target to update the binhost for.
-  private (bool): Whether the target's binhost is private.
-  key (BinhostKey): The binhost key, e.g. POSTSUBMIT_BINHOST.
-  uri (str): The new binhost URI.
-  push_retries (int): Number of times to retry pushing the changes.
-
-&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#491)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
+&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#423)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
 
 Set the target's Portage binhosts to point to the given URIs.
 
@@ -3442,7 +3426,7 @@ Args:
   private: Whether the target's binhost is private.
   key: The binhost key, e.g. POSTSUBMIT_BINHOST.
 
-&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#537)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
+&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#469)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
 
 Utility method to update the target's Portage binhosts.
 
@@ -3455,7 +3439,7 @@ Args:
   target_project: Project of the binhosts.
   branch: branch name to update
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#786)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#712)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3469,7 +3453,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#757)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#683)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3479,7 +3463,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#687)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#619)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -15152,9 +15136,9 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#394)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#351)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#387)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#344)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
 &mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#142)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
@@ -15201,7 +15185,7 @@ Returns:
   - List of private prebuilt entries added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#301)(api: RecipeApi, step_name: str, is_staging: bool, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhots](/recipes/upload_prebuilts_from_cq.py#301)(api: RecipeApi, step_name: str, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
 
 Utility function to set the binhosts repeatedly.
 
