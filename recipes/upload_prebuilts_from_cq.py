@@ -230,7 +230,7 @@ def search_prebuilts(
 
       # Ignore running builders.
       if (build.status & common_pb2.ENDED_MASK) == 0:
-        running_builds.append(build_target_name)
+        running_builds.append(build.builder.builder)
         continue_reason.append('The builder is not finished yet.')
 
       # Ignore failed builds.
@@ -239,12 +239,12 @@ def search_prebuilts(
 
       # Ignore builds without uploaded prebuilt.
       if prebuilts_uri is None:
-        continue_reason.append('The builder did not uploaded its prebuilt.')
+        continue_reason.append('The builder did not upload prebuilts.')
 
       # Skip if the newer (= former in the loop) entry of the same build
       # target exists.
       if build_target_name != 'None' and build_target_name in finished_build_targets:
-        continue_reason.append('The prebuilt  alderady uploaded.')
+        continue_reason.append('The prebuilts are already uploaded.')
 
       # LF ('\n') is not added here, but added later with the result.
       debug_prebuilts_log += (f'{build.id}: {build.builder.builder}: ' +

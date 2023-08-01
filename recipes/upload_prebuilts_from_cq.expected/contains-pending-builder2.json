@@ -469,7 +469,7 @@
       "@@@STEP_LOG_END@public_prebuilt_entries@@@",
       "@@@STEP_LOG_LINE@build_targets@['amd64-generic']@@@",
       "@@@STEP_LOG_END@build_targets@@@",
-      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc']@@@",
+      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc-cq']@@@",
       "@@@STEP_LOG_END@running_builds@@@"
     ]
   },
@@ -3279,7 +3279,7 @@
     "~followup_annotations": [
       "@@@STEP_TEXT@Total 2 builds:<br/>- 1 previously-updated builds<br/>- 0 succeeded builds with uploaded prebuilts<br/>- 1 running builds<br/>@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: betty-pi-arc-cq: betty-pi-arc: xxx (True): => Skipped (The builder is not finished yet., The builder has failed.)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilt  alderady uploaded.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_END@debug_prebuilts_log@@@",
       "@@@STEP_LOG_LINE@private_prebuilt_entries@[]@@@",
       "@@@STEP_LOG_END@private_prebuilt_entries@@@",
@@ -3287,7 +3287,7 @@
       "@@@STEP_LOG_END@public_prebuilt_entries@@@",
       "@@@STEP_LOG_LINE@build_targets@[]@@@",
       "@@@STEP_LOG_END@build_targets@@@",
-      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc']@@@",
+      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc-cq']@@@",
       "@@@STEP_LOG_END@running_builds@@@"
     ]
   },
@@ -3348,11 +3348,11 @@
     "name": "search the prebuilts (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@Total 5 builds:<br/>- 1 previously-updated builds<br/>- 1 succeeded builds with uploaded prebuilts<br/>- 0 running builds<br/>@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: None (None): => Skipped (The builder did not uploaded its prebuilt., The prebuilt  alderady uploaded.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: None (None): => Skipped (The builder did not upload prebuilts., The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514008: arm64-generic-cq: arm64-generic: xxx (True): => Skipped (The builder has failed.)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilt  alderady uploaded.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: betty-pi-arc-cq: betty-pi-arc: xxx (True): => Uploading prebuilts@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilt  alderady uploaded.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_END@debug_prebuilts_log@@@",
       "@@@STEP_LOG_LINE@private_prebuilt_entries@[{'build_target': name: \"betty-pi-arc\"@@@",
       "@@@STEP_LOG_LINE@private_prebuilt_entries@, 'build_end_time': , 'prebuilts_private': True, 'prebuilts_uri': 'xxx'}]@@@",

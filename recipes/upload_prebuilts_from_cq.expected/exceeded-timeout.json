@@ -469,7 +469,7 @@
       "@@@STEP_LOG_END@public_prebuilt_entries@@@",
       "@@@STEP_LOG_LINE@build_targets@['amd64-generic']@@@",
       "@@@STEP_LOG_END@build_targets@@@",
-      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc']@@@",
+      "@@@STEP_LOG_LINE@running_builds@['betty-pi-arc-cq']@@@",
       "@@@STEP_LOG_END@running_builds@@@"
     ]
   },
