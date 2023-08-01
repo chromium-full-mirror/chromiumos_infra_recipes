@@ -533,7 +533,7 @@ def determine_maximum_covered_instance(
     if enforce_success:
       if check_staging_builders(all_builds, changes[:i + 1], checks,
                                 log_messages=verbose):
-        break
+        continue
       print_if_verbose('Everything looks good!')
     last_covered_change = change
 

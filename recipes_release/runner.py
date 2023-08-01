@@ -29,7 +29,7 @@ def main(input_args):
     suites = unittest.loader.TestLoader().discover(input_args.test_path,
                                                    '*_unittest.py')
 
-  return unittest.TextTestRunner(verbosity=2).run(suites)
+  return unittest.TextTestRunner(verbosity=2, buffer=True).run(suites)
 
 
 def _make_parser():

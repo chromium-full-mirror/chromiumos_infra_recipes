@@ -3,18 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from collections import defaultdict
+import collections
 import copy
-from datetime import datetime, timedelta
+import datetime
 import json
-from typing import Any
-from typing import Dict
-from typing import List
+from typing import Any, Dict, List
 import unittest
 from unittest import mock
-from unittest.mock import call
-from unittest.mock import MagicMock
-from unittest.mock import patch
+
+import dataclasses
 
 import bb
 import common
@@ -30,14 +27,14 @@ RECIPES_ANALYZE_OUTPUT = """{
   "error": ""
 }"""
 
-
 class GetAffectedRecipesTest(unittest.TestCase):
 
-  @patch('bb.json.dump')
-  @patch('bb.subprocess.run')
-  @patch('bb.tempfile.NamedTemporaryFile')
-  def test_success(self, mock_tempfile: MagicMock,
-                   mock_subprocess_run: MagicMock, mock_dump: MagicMock):
+  @mock.patch('bb.json.dump')
+  @mock.patch('bb.subprocess.run')
+  @mock.patch('bb.tempfile.NamedTemporaryFile')
+  def test_success(self, mock_tempfile: mock.MagicMock,
+                   mock_subprocess_run: mock.MagicMock,
+                   mock_dump: mock.MagicMock):
     mock_subprocess_run.side_effect = [
         test_util.subprocess_stdout('\n'.join(
             ['recipe_modules/util/api.py', 'recipes/bar.py'])),
@@ -51,13 +48,16 @@ class GetAffectedRecipesTest(unittest.TestCase):
     commits = [
         git.Commit(
             'abcde', '', '', '',
-            datetime.fromisoformat('2020-01-01T12:00:00+00:00').isoformat()),
+            datetime.datetime.fromisoformat(
+                '2020-01-01T12:00:00+00:00').isoformat()),
         git.Commit(
             'zzzzz', '', 'update chromite-HEAD version', '',
-            datetime.fromisoformat('2020-01-02T12:00:00+00:00').isoformat()),
+            datetime.datetime.fromisoformat(
+                '2020-01-02T12:00:00+00:00').isoformat()),
         git.Commit(
             '12345', '', '', '',
-            datetime.fromisoformat('2020-01-03T12:00:00+00:00').isoformat())
+            datetime.datetime.fromisoformat(
+                '2020-01-03T12:00:00+00:00').isoformat())
     ]
     all_recipes = ['foo', 'bar', 'baz']
     affected_recipes = bb.get_affected_recipes(commits, all_recipes)
@@ -72,15 +72,15 @@ class GetAffectedRecipesTest(unittest.TestCase):
             'recipes': ['bar', 'baz', 'foo'],
         }, mock.ANY)
     mock_subprocess_run.assert_has_calls([
-        call(['git', 'diff', '--name-only', '12345', 'abcde~'],
-             **test_util.SUBPROCESS_KWARGS)
+        mock.call(['git', 'diff', '--name-only', '12345', 'abcde~'],
+                  **test_util.SUBPROCESS_KWARGS)
     ])
 
 
 class GetBuilderRecipeTest(unittest.TestCase):
 
-  @patch('bb.subprocess.run')
-  def test_success(self, mock_subprocess_run: MagicMock):
+  @mock.patch('bb.subprocess.run')
+  def test_success(self, mock_subprocess_run: mock.MagicMock):
     mock_subprocess_run.return_value = test_util.subprocess_stdout(
         json.dumps({
             'buildbucket': {
@@ -176,8 +176,8 @@ class GetBuilderLinkTest(unittest.TestCase):
 
 class ReturnBuildersForRegexTest(unittest.TestCase):
 
-  @patch('bb.subprocess.run')
-  def test_success(self, mock_subprocess_run: MagicMock):
+  @mock.patch('bb.subprocess.run')
+  def test_success(self, mock_subprocess_run: mock.MagicMock):
     mock_subprocess_run.return_value = test_util.subprocess_stdout('\n'.join([
         'chromeos/staging/staging-release-R108-15183.B-android-vm-rvc-uprev-orchestrator',
         'chromeos/staging/staging-release-R108-15183.B-cq-orchestrator',
@@ -204,10 +204,10 @@ class ReturnBuildersForRegexTest(unittest.TestCase):
 
 class BuildsTest(unittest.TestCase):
 
-  @patch('bb.return_builders_for_regex')
-  @patch('bb.subprocess.run')
-  def test_initialize(self, mock_subprocess_run: MagicMock,
-                      mock_return_builders_for_regex: MagicMock):
+  @mock.patch('bb.return_builders_for_regex')
+  @mock.patch('bb.subprocess.run')
+  def test_initialize(self, mock_subprocess_run: mock.MagicMock,
+                      mock_return_builders_for_regex: mock.MagicMock):
 
     # Changes are not in chronological order.
     changes = [
@@ -226,7 +226,7 @@ class BuildsTest(unittest.TestCase):
 
     def return_builders_for_regex(project: str, bucket: str,
                                   regex: str) -> List[str]:
-      _, _ = project, bucket
+      del project, bucket  # Unused.
       return {
           'staging-Foo': ['chromeos/staging/staging-Foo'],
           'staging-Bar': ['chromeos/staging/staging-Bar'],
@@ -252,8 +252,8 @@ class BuildsTest(unittest.TestCase):
           ],
           **test_util.SUBPROCESS_KWARGS)
 
-  @patch('bb.cipd.cipd_version_to_githash')
-  def test_success(self, mock_cipd_version_to_githash: MagicMock):
+  @mock.patch('bb.cipd.cipd_version_to_githash')
+  def test_success(self, mock_cipd_version_to_githash: mock.MagicMock):
     build_data = {
         'chromeos/staging/staging-foo': [
             _build_data('YYY', bbid=1000, status='SUCCESS',
@@ -316,16 +316,11 @@ class BuildsTest(unittest.TestCase):
 
 class CheckRecentBuildStatusesTest(unittest.TestCase):
 
-  def setUp(self):
-    # Don't want messages printing to stdout if tests are passing.
-    # Comment out if debugging.
-    bb.print = MagicMock()
-
-  @patch('bb.cipd.cipd_version_to_githash')
-  @patch('bb.subprocess.run')
+  @mock.patch('bb.cipd.cipd_version_to_githash')
+  @mock.patch('bb.subprocess.run')
   def do_test(self, build_data: List[Dict[str, Any]], expected_ret: bool,
-              mock_subprocess_run: MagicMock,
-              mock_cipd_version_to_githash: MagicMock):
+              mock_subprocess_run: mock.MagicMock,
+              mock_cipd_version_to_githash: mock.MagicMock):
     mock_subprocess_run.return_value = test_util.subprocess_stdout('\n'.join(
         [json.dumps(build) for build in build_data]))
 
@@ -424,19 +419,30 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
 
 
 class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
-  @patch('bb.get_affected_recipes')
-  @patch('bb.get_builder_recipe')
-  @patch('bb.cipd.cipd_version_to_githash')
-  @patch('bb.return_builders_for_regex')
-  @patch('bb._bb_ls')
-  def doTest(self, changes: List[git.Commit], build_data: Dict[str, List[Dict]],
-             cipd_instances_to_git_hashes: Dict[str, str],
-             affected_recipes: Dict[str,
-                                    List[str]], mock_subprocess_run: MagicMock,
-             mock_return_builders_for_regex: MagicMock,
-             mock_cipd_version_to_githash: MagicMock,
-             mock_get_builder_recipe: MagicMock,
-             mock_get_affected_recipes: MagicMock):
+
+  @dataclasses.dataclass(frozen=True)
+  class TestConfig:
+    changes: List[git.Commit]
+    build_data: Dict[str, List[Dict]]
+    cipd_instances_to_git_hashes: Dict[str, str]
+    affected_recipes: Dict[str, List[str]]
+    enforce_success: bool
+
+  @mock.patch('bb.get_affected_recipes')
+  @mock.patch('bb.get_builder_recipe')
+  @mock.patch('bb.cipd.cipd_version_to_githash')
+  @mock.patch('bb.return_builders_for_regex')
+  @mock.patch('bb._bb_ls')
+  def do_test(self, config: TestConfig, mock_subprocess_run: mock.MagicMock,
+              mock_return_builders_for_regex: mock.MagicMock,
+              mock_cipd_version_to_githash: mock.MagicMock,
+              mock_get_builder_recipe: mock.MagicMock,
+              mock_get_affected_recipes: mock.MagicMock):
+    changes = config.changes
+    build_data = config.build_data
+    cipd_instances_to_git_hashes = config.cipd_instances_to_git_hashes
+    affected_recipes = config.affected_recipes
+    enforce_success = config.enforce_success
 
     def get_builder_recipe(builder: str) -> str:
       return {
@@ -454,7 +460,8 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
 
     for i, _ in enumerate(changes):
       changes[i].is_older_than = is_older_than_mock(changes[i].hash)
-      changes[i].get_cipd_instance = MagicMock(return_value=changes[i].hash)
+      changes[i].get_cipd_instance = mock.MagicMock(
+          return_value=changes[i].hash)
 
     # Some changes affect recipes.
     def get_affected_recipes(changes: List[git.Commit], *_) -> List[str]:
@@ -470,12 +477,18 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
         staging_checks.StagingReCheck('chromeos', 'staging',
                                       'staging-NewBuilder'),
     ]
-    mock_return_builders_for_regex.side_effect = [
-        ['chromeos/staging/staging-Foo'],
-        ['chromeos/staging/staging-Bar'],
-        ['chromeos/staging/staging-Baz'],
-        ['chromeos/staging/staging-NewBuilder'],
-    ]
+
+    def return_builders_for_regex(project: str, bucket: str,
+                                  regex: str) -> List[str]:
+      del project, bucket  # Unused.
+      return {
+          'staging-Foo': ['chromeos/staging/staging-Foo'],
+          'staging-Bar': ['chromeos/staging/staging-Bar'],
+          'staging-Baz': ['chromeos/staging/staging-Baz'],
+          'staging-NewBuilder': ['chromeos/staging/staging-NewBuilder'],
+      }[regex]
+
+    mock_return_builders_for_regex.side_effect = return_builders_for_regex
 
     # These are the build results we get.
     def bb_ls(*args):
@@ -493,15 +506,17 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
 
     all_builds = bb.Builds()
     all_builds.initialize_with_test_data(build_data)
-    return bb.determine_maximum_covered_instance(all_builds, changes, checks)
+    return bb.determine_maximum_covered_instance(
+        all_builds, changes, checks, enforce_success=enforce_success)
 
   def test_success(self):
+    """Test determine_maximum_covered_instance with a releasable instance."""
     changes = {}
     for i in range(10):
       change_hash = str(10000 + i * 10)
-      commit_timestamp = datetime.fromisoformat(
-          '2020-01-01T12:00:00+00:00') + timedelta(hours=i)
-      changes[change_hash] = git.Commit(f'{change_hash}', '', '', '',
+      commit_timestamp = datetime.datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + datetime.timedelta(hours=i)
+      changes[change_hash] = git.Commit(change_hash, '', '', '',
                                         commit_timestamp.isoformat())
 
     changes['10070'].message = 'update chromite-HEAD version'
@@ -543,23 +558,25 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
         # recipes. In this case, declare `bar` to be relevant.
         '10070': ['bar'],
     }
-    affected_recipes_dict = defaultdict(lambda: ['foo', 'bar', 'baz'],
-                                        affected_recipes)
+    affected_recipes_dict = collections.defaultdict(
+        lambda: ['foo', 'bar', 'baz'], affected_recipes)
 
-    instance = self.doTest(  # pylint: disable=no-value-for-parameter
-        list(changes.values()), build_results, instance_to_hash,
-        affected_recipes_dict)
+    instance = self.do_test(  # pylint: disable=no-value-for-parameter
+        self.TestConfig(
+            list(changes.values()), build_results, instance_to_hash,
+            affected_recipes_dict, enforce_success=False))
     # 10060 is releasable but is a trivial commit.
     self.assertEqual(instance, '10050')
 
   def test_success_noreleasable(self):
-    changes = {}
+    """Test determine_maximum_covered_instance with no releasable instances."""
+    changes = []
     for i in range(10):
       change_hash = str(10000 + i * 10)
-      commit_timestamp = datetime.fromisoformat(
-          '2020-01-01T12:00:00+00:00') + timedelta(hours=i)
-      changes[change_hash] = git.Commit(f'{change_hash}', '', '', '',
-                                        commit_timestamp.isoformat())
+      commit_timestamp = datetime.datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + datetime.timedelta(hours=i)
+      changes.append(
+          git.Commit(change_hash, '', '', '', commit_timestamp.isoformat()))
 
     build_results = {
         'chromeos/staging/staging-Foo': [
@@ -589,14 +606,65 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
         'ZZZ': '9000',
     }
 
-    affected_recipes_dict = defaultdict(lambda: ['foo', 'bar', 'baz'])
+    affected_recipes_dict = collections.defaultdict(
+        lambda: ['foo', 'bar', 'baz'])
 
-    instance = self.doTest(  # pylint: disable=no-value-for-parameter
-        list(changes.values()), build_results, instance_to_hash,
-        affected_recipes_dict)
+    instance = self.do_test(  # pylint: disable=no-value-for-parameter
+        self.TestConfig(changes, build_results, instance_to_hash,
+                        affected_recipes_dict, enforce_success=False))
     # ZZZ is older than all changes and there are only four builds
     # since ZZZ for staging-Foo.
     self.assertIsNone(instance)
+
+  def test_success_enforce_success(self):
+    """Test determine_maximum_covered_instance with enforce_success enabled."""
+    changes = []
+    for i in range(10):
+      change_hash = str(10000 + i * 10)
+      commit_timestamp = datetime.datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + datetime.timedelta(hours=i)
+      changes.append(
+          git.Commit(change_hash, '', '', '', commit_timestamp.isoformat()))
+
+    build_results = {
+        'chromeos/staging/staging-Foo': [
+            _build_data('ZZZ', bbid=1000, status='SUCCESS',
+                        create_time='2020-01-01T13:30:00.000000000Z'),
+            _build_data('ZZZ', bbid=1001, status='SUCCESS',
+                        create_time='2020-01-01T14:30:00.000000000Z'),
+            _build_data('ZZZ', bbid=1002, status='SUCCESS',
+                        create_time='2020-01-01T15:30:00.000000000Z'),
+            _build_data('XXX', bbid=1003, status='SUCCESS',
+                        create_time='2020-01-01T16:30:00.000000000Z'),
+            _build_data('XXX', bbid=1004, status='FAILURE',
+                        create_time='2020-01-01T17:30:00.000000000Z'),
+            _build_data('XXX', bbid=1005, status='SUCCESS',
+                        create_time='2020-01-01T18:30:00.000000000Z'),
+            _build_data('XXX', bbid=1006, status='SUCCESS',
+                        create_time='2020-01-01T19:30:00.000000000Z'),
+            _build_data('XXX', bbid=1007, status='SUCCESS',
+                        create_time='2020-01-01T20:30:00.000000000Z'),
+            _build_data('XXX', bbid=1008, status='SUCCESS',
+                        create_time='2020-01-01T20:30:00.000000000Z'),
+            _build_data('XXX', bbid=1009, status='SUCCESS',
+                        create_time='2020-01-01T20:30:00.000000000Z'),
+        ],
+    }
+    instance_to_hash = {
+        'XXX': '10095',
+        'YYY': '10060',
+        'ZZZ': '9000',
+    }
+
+    affected_recipes_dict = collections.defaultdict(lambda: ['foo'])
+
+    instance = self.do_test(  # pylint: disable=no-value-for-parameter
+        self.TestConfig(changes, build_results, instance_to_hash,
+                        affected_recipes_dict, enforce_success=True))
+    # The first 5 foo builds for changes[3] are [1003, 1007], containing 1004 (failure).
+    # The first 5 foo builds for changes[6] are [1005, 1009], which should be OK.
+    # changes[7] only has 4 builds.
+    self.assertEqual(instance, '10060')
 
 
 if __name__ == '__main__':
