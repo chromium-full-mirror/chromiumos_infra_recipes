@@ -572,8 +572,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "109.0.5391.0"
     * suite: test suite,
         e.g. "bluetooth_sa"
-    * builder_name: builder config name,
+    * builder_name: build config name,
         e.g. "eve-release"
+    * buildbucket_builder: buildbucket builder name,
+        e.g. "test runner"
     * servod_version:
         e.g. "v1.0.1732-67007a28 2023-06-20 19:22:43"
     * servo_type:
@@ -695,6 +697,7 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
                                      builder_object.bucket,
                                      builder_object.builder)
   base_tags.append(('job_name', job_name))
+  base_tags.append(('buildbucket_builder', builder_object.builder))
 
   queued_time = datetime.datetime.utcfromtimestamp(
       api.buildbucket.build.create_time.seconds)

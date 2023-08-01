@@ -374,8 +374,10 @@ class TastResultsApi(recipe_api.RecipeApi):
           e.g. "ChromeOSSkylab"
       * kernel_version:
           e.g. "5.4.151-16902-g93699f4e73de"
-      * builder_name
+      * builder_name: build config name,
           e.g. reven-vmtest-cq
+      * buildbucket_builder: buildbucket builder name,
+          e.g. "test runner"
 
     Args:
       tag (str): Tag for this execution. Used to distinguish archive folders.
@@ -407,6 +409,7 @@ class TastResultsApi(recipe_api.RecipeApi):
                                        builder_object.bucket,
                                        builder_object.builder)
     base_tags.append(('job_name', job_name))
+    base_tags.append(('buildbucket_builder', builder_object.builder))
 
     queued_time = datetime.datetime.utcfromtimestamp(build.create_time.seconds)
     base_tags.append(
@@ -416,7 +419,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     if ancestor_buildbucket_ids:
       base_tags.append(('ancestor_buildbucket_ids', ancestor_buildbucket_ids))
 
-    # Fetches builder name from "artifactsGsPath" input property first and then
+    # Fetches build config from "artifactsGsPath" input property first and then
     # fallback to the suite if required.
     builder_name = None
     if "buildPayload" in build.input.properties \
