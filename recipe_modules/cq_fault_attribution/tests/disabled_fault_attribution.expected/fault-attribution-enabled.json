@@ -91,7 +91,7 @@
     "name": "set fault attributes.set cq_fault_attributions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@cq_fault_attributions@{\"testFailureAttributions\": [{\"buildTarget\": \"build_target_name\", \"faultAttributes\": [{\"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"test1\"}, {\"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"test2\"}], \"model\": \"\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@cq_fault_attributions@{\"comparedSnapshots\": [{\"sourceBuildId\": \"123\", \"sourceCompletedUnixTimestamp\": \"1599999998\"}], \"testFailureAttributions\": [{\"buildTarget\": \"build_target_name\", \"faultAttributes\": [{\"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"test1\"}, {\"snapshotComparisonFaultAttribution\": \"NO_COMPARISON\", \"testName\": \"test2\"}], \"model\": \"\"}]}@@@"
     ]
   },
   {

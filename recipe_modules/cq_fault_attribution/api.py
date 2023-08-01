@@ -105,6 +105,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         if fault_attributed_build_targets:
           self._cq_test_failure_attributes.test_failure_attributions.extend(
               fault_attributed_build_targets)
+          self._cq_test_failure_attributes.compared_snapshots.extend(
+              list(
+                  map(self._get_snapshot_properties_object,
+                      comparison_snapshots)))
           self.m.easy.set_properties_step(
               cq_fault_attributions=self._cq_test_failure_attributes)
 
@@ -129,15 +133,11 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
          comparison_snapshots}
       self._set_comparison_matrices(invocation_id_to_invocation,
                                     invocation_id_to_snapshot)
-      flakiness_criteria_snapshot_properties = list(
-          map(self._get_snapshot_properties_object, comparison_snapshots))
       with self.m.step.nest('set hw test fault attributes'):
-        self._set_hwtest_fault_attributes(
-            test_results.skylab, flakiness_criteria_snapshot_properties)
+        self._set_hwtest_fault_attributes(test_results.skylab)
       with self.m.step.nest('set vm & gce test fault attributes'):
-        self._set_vm_gce_test_fault_attributes(
-            test_results.tast_vm + test_results.tast_gce,
-            flakiness_criteria_snapshot_properties)
+        self._set_vm_gce_test_fault_attributes(test_results.tast_vm +
+                                               test_results.tast_gce)
 
     fault_attributed_build_targets = []
     for k, v in self._dut_to_test_fault_attributes.items():
@@ -149,9 +149,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
     return fault_attributed_build_targets
 
-  def _set_vm_gce_test_fault_attributes(
-      self, tests: List[build_pb2.Build],
-      flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
+  def _set_vm_gce_test_fault_attributes(self, tests: List[build_pb2.Build]):
     """ Creates and sets fault attribution properties for a vm and gce tests and
       appends the fault attribution instance to the fault attribute list for the
       corresponding build target.
@@ -161,8 +159,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         snapshot_build_invocation_id: The invocation ID of the snapshot build
           to be used for fault attribution comparisons.
         comparison_snapshot_properties: Properties of the snapshot used for
-        flakiness_criteria_snapshot_properties: Properties of the snapshots used
-        for determining flakiness criteria.
       """
     for build in tests:
       if build.critical == Trinary.NO or build.status == Status.SUCCESS:
@@ -175,13 +171,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         for test_case in test_failures:
           test_id = test_case['name']
           failure_reason = test_case.get('humanReadableSummary', '')
-          self._set_fault_attribution_properties(
-              build_target, model, test_id, failure_reason,
-              flakiness_criteria_snapshot_properties)
+          self._set_fault_attribution_properties(build_target, model, test_id,
+                                                 failure_reason)
 
-  def _set_hwtest_fault_attributes(
-      self, hw_test_results: SkylabResult,
-      flakiness_criteria_snapshot_properties: List[SnapshotProperties]):
+  def _set_hwtest_fault_attributes(self, hw_test_results: SkylabResult):
     """ Creates and sets fault attribution properties for a HW test case and
       appends the fault attribution instance to the fault attribute list for the
       corresponding build target.
@@ -191,8 +184,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         snapshot_build_invocation_id: The invocation ID of the snapshot build
           to be used for fault attribution comparisons.
         comparison_snapshot_properties: Properties of the snapshot used for
-        flakiness_criteria_snapshot_properties: Properties of the snapshots used
-        for determining flakiness criteria.
       """
     for skylab_res in hw_test_results:
       if not skylab_res.task.test.common.critical.value \
@@ -214,13 +205,11 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           failure_reason = test_case.human_readable_summary
           model = skylab_res.task.test.skylab_model or \
                   EMPTY_MODEL
-          self._set_fault_attribution_properties(
-              build_target, model, test_id, failure_reason,
-              flakiness_criteria_snapshot_properties, attempt)
+          self._set_fault_attribution_properties(build_target, model, test_id,
+                                                 failure_reason, attempt)
 
   def _set_fault_attribution_properties(
       self, build_target: str, model: str, test_id: str, failure_reason: str,
-      flakiness_criteria_snapshot_properties: List[SnapshotProperties],
       attempt=0):
     """ Makes the calls to set the fault attribution property for the test case,
     under the build target, and also makes the call to set flakiness likelihood
@@ -262,8 +251,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       # flakiness.
       self._set_test_case_failure_fault_attribution_flakiness(
           test_fault_attribute, failure_reason, build_target, model, test_id)
-      test_fault_attribute.flakiness_criteria_snapshots.extend(
-          flakiness_criteria_snapshot_properties)
 
     self._dut_to_test_fault_attributes[(build_target,
                                         model)].append(test_fault_attribute)

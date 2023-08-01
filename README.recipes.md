@@ -11701,9 +11701,9 @@ Recipe for analyzing and retrying failed CQ runs.
 
 &mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#316)(api):**
 
-&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#650)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties, flakiness_comparison_snapshots):**
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#643)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties):**
 
-&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#641)(source_build_id, source_completed_unix_timestamp):**
+&mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#634)(source_build_id, source_completed_unix_timestamp):**
 
 &mdash; **def [get\_build\_id\_from\_invocation](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#74)(invocation_id: str):**
 

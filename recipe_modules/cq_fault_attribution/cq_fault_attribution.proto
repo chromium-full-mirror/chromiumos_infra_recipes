@@ -30,6 +30,9 @@ enum CqFailureAttribute {
 message CqTestFailureFaultAttributionStats {
   // Fault attributed tests grouped by build targets.
   repeated FaultAttributedBuildTarget test_failure_attributions = 1;
+
+  // The snapshots used for fault attribution.
+  repeated SnapshotProperties compared_snapshots = 2;
 }
 
 message FaultAttributedBuildTarget {
@@ -67,7 +70,7 @@ message FaultAttributionProperties {
   bool diff_model_used = 7;
 
   // The snapshots used for determining the likely_flaky property.
-  repeated SnapshotProperties flakiness_criteria_snapshots = 6;
+  repeated SnapshotProperties flakiness_criteria_snapshots = 6 [deprecated = true];
 }
 
 message SnapshotProperties {

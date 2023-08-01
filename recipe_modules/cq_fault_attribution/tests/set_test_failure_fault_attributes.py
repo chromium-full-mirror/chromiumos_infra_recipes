@@ -427,7 +427,7 @@ def RunSteps(api):
     create_expected_snapshot(
         get_build_id_from_invocation(snapshot_build_2_invocation_id),
         1599999999)
-  flakiness_comparison_snapshots = [
+  compared_snapshots = [
       create_expected_snapshot(
           get_build_id_from_invocation(snapshot_build_2_invocation_id),
           1599999999),
@@ -455,64 +455,55 @@ def RunSteps(api):
         PASSING_IN_SNAPSHOT_TEST_CASE_NAME,
         CqFailureAttribute.SUCCESS_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        flakiness_comparison_snapshots)
+        expected_snapshot_comparison_properties)
   expected_brya_unique_hw_test_failure = \
     create_expected_fault_attribute_properties(
         UNIQUE_FAILURE_TEST_CASE_NAME,
         CqFailureAttribute.DIFFERING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_brya_existing_hw_test_failure = \
     create_expected_fault_attribute_properties(
         EXISTING_FAILURE_TEST_CASE_NAME,
         CqFailureAttribute.MATCHING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_brya_flaky_hw_test_failure = \
     create_expected_fault_attribute_properties(
         FLAKY_TEST_CASE_NAME,
         CqFailureAttribute.SUCCESS_FOUND,
         True,
-        expected_snapshot_comparison_properties,
-        flakiness_comparison_snapshots)
+        expected_snapshot_comparison_properties)
   expected_brya_no_comparison_hw_test_failure = \
     create_expected_fault_attribute_properties(
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        None,
-        [])
+        None)
   expected_brya_new_gce_test_failure = \
     create_expected_fault_attribute_properties(
         PASSING_IN_SNAPSHOT_GCE_TEST_CASE_NAME,
         CqFailureAttribute.SUCCESS_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        flakiness_comparison_snapshots)
+        expected_snapshot_comparison_properties)
   expected_brya_unique_vm_test_failure = \
     create_expected_fault_attribute_properties(
         UNIQUE_VM_FAILURE_TEST_CASE_NAME,
         CqFailureAttribute.DIFFERING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_brya_existing_vm_test_failure = \
     create_expected_fault_attribute_properties(
         EXISTING_FAILURE_VM_TEST_CASE_NAME,
         CqFailureAttribute.MATCHING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_brya_absent_reason_vm_test_failure = \
     create_expected_fault_attribute_properties(
         VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        None,
-        [])
+        None)
 
   api.assertions.assertIn(expected_brya_new_hw_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
@@ -544,15 +535,13 @@ def RunSteps(api):
         EXISTING_FAILURE_TEST_CASE_NAME,
         CqFailureAttribute.MATCHING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_scarlet_no_comparison_failure = \
     create_expected_fault_attribute_properties(
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
 
   api.assertions.assertIn(
       expected_scarlet_existing_failure,
@@ -572,8 +561,7 @@ def RunSteps(api):
         EXISTING_FAILURE_TEST_CASE_NAME,
         CqFailureAttribute.MATCHING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_scarlet_dru_existing_failure.diff_model_used = True
 
   expected_scarlet_dru_no_comparison_failure = \
@@ -581,8 +569,7 @@ def RunSteps(api):
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
   expected_scarlet_dru_no_comparison_failure.diff_model_used = True
 
   api.assertions.assertIn(
@@ -607,14 +594,20 @@ def RunSteps(api):
         PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME,
         CqFailureAttribute.MATCHING_FAILURE_FOUND,
         False,
-        expected_snapshot_comparison_properties,
-        [])
+        expected_snapshot_comparison_properties)
 
   api.assertions.assertIn(
       expected_brya_redrix_new_hw_test_failure,
       actual_brya_redrix_fault_attributes_target.fault_attributes)
 
   api.assertions.assertEqual(len(fault_attributed_build_targets), 4)
+
+  for compared_snapshot in compared_snapshots:
+    api.assertions.assertIn(compared_snapshot,
+                            fault_attributes.compared_snapshots)
+
+  api.assertions.assertEqual(
+      len(compared_snapshots), len(fault_attributes.compared_snapshots))
 
 
 def GenTests(api):
@@ -649,7 +642,7 @@ def create_expected_snapshot(source_build_id, source_completed_unix_timestamp):
 
 def create_expected_fault_attribute_properties(
     test_name, snapshot_comparison_fault_attribution, likely_flaky,
-    expected_snapshot_comparison_properties, flakiness_comparison_snapshots):
+    expected_snapshot_comparison_properties):
   expected_fault_attribute_properties = FaultAttributionProperties()
   expected_fault_attribute_properties.test_name = test_name
   expected_fault_attribute_properties.attempt = 0
@@ -659,7 +652,5 @@ def create_expected_fault_attribute_properties(
   if expected_snapshot_comparison_properties:
     expected_fault_attribute_properties.comparison_snapshot.CopyFrom(
         expected_snapshot_comparison_properties)
-  expected_fault_attribute_properties.flakiness_criteria_snapshots.extend(
-      flakiness_comparison_snapshots)
 
   return expected_fault_attribute_properties
