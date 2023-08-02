@@ -314,7 +314,24 @@ class CrosBuildApiApi(RecipeApi):
           self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
       with self.m.context(
           cwd=self.m.src_state.workspace_path.join(chromite_location)):
-        self.m.git.checkout(commit.strip())
+        try:
+          self.m.git.checkout(
+              commit.strip(),
+              stdout=self.m.raw_io.output_text(add_output_log=True),
+              stderr=self.m.raw_io.output_text(add_output_log=True))
+        except self.m.step.InfraFailure as e:
+          # See b/293887716 for more details about how this can occur. If the
+          # checkout doesn't contain the commit we're looking for, fetch from the
+          # remote and try again.
+          if (e.result.stdout and
+              'fatal: reference is not a tree:' in e.result.stdout) or (
+                  e.result.stderr and
+                  'fatal: reference is not a tree:' in e.result.stderr):
+            with self.m.step.nest('fast-forwarding git checkout'):
+              self.m.git.fetch()
+              self.m.git.checkout(commit.strip())
+          else:
+            raise e
 
   @property
   def log_level(self) -> str:

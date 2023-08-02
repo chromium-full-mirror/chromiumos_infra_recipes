@@ -10,6 +10,8 @@ import contextlib
 from datetime import timedelta
 from urllib.parse import urlparse
 
+from typing import Optional
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 from recipe_engine import recipe_api
@@ -160,20 +162,22 @@ class GitApi(recipe_api.RecipeApi):
     # Need to strip the diff mode characters, e.g. "?? "
     return [line[2:].strip() for line in step_data.stdout.strip().splitlines()]
 
-  def _fetch(self, remote, refspecs, timeout_sec):
+  def _fetch(self, remote: Optional[str], refspecs, timeout_sec):
     """Runs 'git fetch'.
 
     Args:
-      remote (str): The remote repository to fetch from.
+      remote (str): The remote repository to fetch from. Optional!
       refspecs (list[str]): The refspecs to fetch.
       timeout_sec (int): Timeout in seconds.
     """
-    args = ['fetch', remote]
+    args = ['fetch']
+    if remote is not None:
+      args.append(remote)
     if refspecs is not None:
       args += refspecs
     self._step(args, timeout=timeout_sec)
 
-  def fetch(self, remote, refs=None, timeout_sec=None, retries=2):
+  def fetch(self, remote=None, refs=None, timeout_sec=None, retries=2):
     """Runs 'git fetch'.
 
     Args:
@@ -256,7 +260,7 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['remote', 'update'], name=step_name, timeout=timeout_sec)
 
-  def checkout(self, commit=None, force=False, branch=None):
+  def checkout(self, commit=None, force=False, branch=None, **kwargs):
     """Runs 'git checkout'.
 
     Args:
@@ -271,7 +275,7 @@ class GitApi(recipe_api.RecipeApi):
       args += ['-b', branch]
     if commit:
       args += [commit]
-    self._step(args)
+    self._step(args, **kwargs)
 
   def merge(self, ref, message, *args, **kwargs):
     """Runs `git merge`.

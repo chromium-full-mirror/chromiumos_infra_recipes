@@ -70,3 +70,50 @@ def GenTests(api):
           ['deadbeef']),
       api.post_process(DropExpectation),
   )
+
+  yield api.test(
+      'reset-chromite-with-fetch',
+      api.buildbucket.ci_build(
+          builder='atlas-cq',
+          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
+          api.file.read_text('deadbeef')),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout',
+          stdout=api.raw_io.output_text(
+              'fatal: reference is not a tree: deadbeef'), retcode=1),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout'
+      ),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.fast-forwarding git checkout.git fetch'
+      ),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.fast-forwarding git checkout.git checkout'
+      ),
+      api.post_check(
+          StepCommandContains,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.fast-forwarding git checkout.git checkout',
+          ['deadbeef']),
+      api.post_process(DropExpectation),
+  )
+
+  yield api.test(
+      'reset-chromite-other-err',
+      api.buildbucket.ci_build(
+          builder='atlas-cq',
+          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
+          api.file.read_text('deadbeef')),
+      api.step_data(
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout',
+          retcode=1),
+      api.post_check(
+          MustRun,
+          'call chromite.api.BinhostService/PrepareBinhostsUploads.git checkout'
+      ), api.post_process(DropExpectation), status='INFRA_FAILURE')
