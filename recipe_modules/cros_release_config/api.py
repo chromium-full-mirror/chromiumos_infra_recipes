@@ -14,6 +14,7 @@ from recipe_engine.recipe_api import StepFailure
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 CONFIG = "release/release_builders.textpb"
 STABILIZE_CONFIG = "release/stabilize_builders.textpb"
@@ -222,7 +223,11 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                                 release_builders, 'TEXTPB')
 
         # Regenerate config.
-        self.m.step('./regenerate_configs.py', ['./regenerate_configs.py'])
+        @exponential_retry(3, datetime.timedelta(minutes=1))
+        def regenerate_config(self):
+          self.m.step('./regenerate_configs.py', ['./regenerate_configs.py'])
+
+        regenerate_config(self)
 
     with self.m.step.nest('create CL'):
       with self.m.context(cwd=workpath):
