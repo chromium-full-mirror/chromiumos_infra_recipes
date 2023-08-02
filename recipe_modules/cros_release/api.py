@@ -313,6 +313,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 self.m.file.write_raw('write snapshot.xml', manifest_path,
                                       manifest_data)
 
+                cr_branched_from = None
                 position_ref = 'refs/heads/{}'.format(snapshot_branch)
                 # The -snapshot manifest-internal branches inherit from one
                 # another through the normal branching process.
@@ -324,10 +325,21 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 # ref is not the same as our current branch.
                 previous_position_ref = self.m.git_footers.position_ref(
                     position_ref)
+
+                position_num = self.m.git_footers.position_num(position_ref)
                 if previous_position_ref != position_ref:
                   position = 1
+                  # Newly branched, generate Cr-Branched-From footer.
+                  previous_commit = self.m.git.head_commit()
+                  cr_branched_from = f'{previous_commit}-{previous_position_ref}@{{#{position_num}}}'
                 else:
-                  position = self.m.git_footers.position_num(position_ref) + 1
+                  position = position_num + 1
+                  # If the previous commit has a Cr-Branched-From footer,
+                  # use that.
+                  footers = self.m.git_footers.from_ref('HEAD',
+                                                        key='Cr-Branched-From')
+                  if footers:
+                    cr_branched_from = footers[0]
                 commit_lines = [
                     'Update snapshot.xml to {}'.format(buildspec_filename),
                     '',
@@ -338,6 +350,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                     'Cr-Build-Url: {}'.format(self.m.buildbucket.build_url()),
                     'Cr-Automation-Id: cros_release/create_buildspec',
                 ]
+                if cr_branched_from:
+                  commit_lines.append(f'Cr-Branched-From: {cr_branched_from}')
+
                 commit_message = '\n'.join(commit_lines) + '\n'
                 with self.m.step.nest('commit to {}'.format(snapshot_branch)):
                   commit_to_remote(manifest_internal_checkout, 'snapshot.xml',

@@ -90,7 +90,13 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot'
-      ), builder='release-main-orchestrator')
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.write commit message',
+          'commit_msg_tmp_2',
+          ['Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}']),
+      builder='release-main-orchestrator')
 
   yield api.orch_menu.test(
       'commit-as-snapshot-tot-snapshot',
@@ -125,6 +131,39 @@ def GenTests(api):
               'manifest_branch': 'release-R108-15183.B',
           }),
       api.git.diff_check(True),
+      # We must not have just branched, the previous commit was for the same branch.
+      # Counter does not reset.
+      api.override_step_data(
+          'create buildspec.commit buildspec as snapshot.read git footers',
+          stdout=api.raw_io.output('refs/heads/release-R108-15183.B-snapshot')),
+      # Previous commit has a Cr-Branched-From footer, that should be recycled.
+      api.override_step_data(
+          'create buildspec.commit buildspec as snapshot.read git footers (3)',
+          stdout=api.raw_io.output(
+              '12345abcde-refs/heads/main-release-snapshot@{#65}')),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot'
+      ),
+      api.post_check(
+          post_process.LogContains,
+          'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.write commit message',
+          'commit_msg_tmp_2', [
+              'Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#102}',
+              'Cr-Branched-From: 12345abcde-refs/heads/main-release-snapshot@{#65}',
+          ]),
+      builder='release-R108-15183.B-orchestrator')
+
+  yield api.orch_menu.test(
+      'commit-as-snapshot-branch-newly-branched',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'commit_buildspec_as_snapshot': True,
+              },
+              'manifest_branch': 'release-R108-15183.B',
+          }),
+      api.git.diff_check(True),
       # We must have just branched, the previous commit was for main-release-snapshot.
       # Counter should reset to 1.
       api.override_step_data(
@@ -137,8 +176,9 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.write commit message',
-          'commit_msg_tmp_2',
-          ['Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#1}'
+          'commit_msg_tmp_2', [
+              'Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#1}',
+              'Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main-release-snapshot@{#101}',
           ]),
       builder='release-R108-15183.B-orchestrator')
 
