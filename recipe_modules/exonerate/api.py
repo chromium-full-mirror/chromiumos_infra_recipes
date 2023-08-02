@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 from collections import namedtuple
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from google.protobuf import json_format
 from recipe_engine import recipe_api
 
@@ -672,43 +672,52 @@ class ExonerateApi(recipe_api.RecipeApi):
 
       return False
 
-  def _is_test_name_exonerable(self, test_name, build_target):
+  def _is_test_name_exonerable(
+      self, test_name: str, build_target: str,
+      exoneration_configs_override: Optional[Dict] = None) -> bool:
     """Checks to see if test is exonerable.
 
     Args:
-      test_name[str]: Name of the test
-      build_target[str]: Name of the build_target
+      test_name: Name of the test.
+      build_target: Name of the build_target.
+      exoneration_configs_override: Alternate exoneration configs to use when
+          determining if the test is exonerable.
 
     Returns: True if test_name is exonerable for the specific build_target.
     """
+    exoneration_cfgs = exoneration_configs_override or self._exoneration_configs
     if test_name == 'tast':
       return True
-    if test_name not in self._exoneration_configs:
+    if test_name not in exoneration_cfgs:
       return False
-    targets = self._exoneration_configs[test_name]
+    targets = exoneration_cfgs[test_name]
     if targets == []:
       # If targets is empty, match universally.
       return True
     return build_target in targets
 
-  def is_hw_result_exonerable(self, hw_test_result) -> bool:
+  def is_hw_result_exonerable(
+      self, hw_test_result: SkylabResult,
+      exoneration_configs_override: Optional[Dict] = None) -> bool:
     """ Checks to see if hw result is exonerable.
 
     Args:
-      hw_test_result(Skylab_Result): skylab result.
+      hw_test_result: The skylab result to check if it is exonerable.
+      exoneration_configs_override: Alternate exoneration configs to use when
+          determining if the result is exonerable.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
       Note that it will return False if result is a success.
 
     """
-    if not self._enable_exoneration:
+    if not (self._enable_exoneration or exoneration_configs_override):
       return False
     if (hw_test_result.status == common_pb2.SUCCESS or
         not hw_test_result.task.test.common.critical.value):
       # If a result is successful, technically its not exonerable.
       return False
-    if not self._configs_loaded:
+    if not self._configs_loaded or exoneration_configs_override:
       self.load_configs()
 
     build_target = hw_test_result.task.unit.common.build_target.name
@@ -724,29 +733,34 @@ class ExonerateApi(recipe_api.RecipeApi):
         test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
         if (test_case.verdict == TaskState.VERDICT_UNSPECIFIED or
             test_case.verdict == TaskState.VERDICT_FAILED):
-          if not self._is_test_name_exonerable(test_name, build_target):
+          if not self._is_test_name_exonerable(test_name, build_target,
+                                               exoneration_configs_override):
             return False
           exonerated = True
     return exonerated
 
-  def is_vm_test_build_exonerable(self, vm_build):
+  def is_vm_test_build_exonerable(
+      self, vm_build: build_pb2.Build,
+      exoneration_configs_override: Optional[Dict] = None) -> bool:
     """Checks to see if the VM test is exonerable.
 
     Args:
-      vm_build(build_pb2.Build): vm result from the proctor.
+      vm_build: The vm result to check if it is exonerable.
+      exoneration_configs_override: Alternate exoneration configs to use when
+          determining if the result is exonerable.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
       Note that it will return False if the result itself is a success.
     """
-    if not self._enable_exoneration:
+    if not (self._enable_exoneration or exoneration_configs_override):
       return False
 
     if (vm_build.status == common_pb2.SUCCESS or
         vm_build.critical == common_pb2.NO or
         'failed_test_cases' not in vm_build.output.properties):
       return False
-    if not self._configs_loaded:
+    if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
     build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
@@ -757,7 +771,7 @@ class ExonerateApi(recipe_api.RecipeApi):
     for test_case in all_test_cases:
       if test_case[
           'verdict'] == 'VERDICT_FAILED' and not self._is_test_name_exonerable(
-              test_case['name'], build_target):
+              test_case['name'], build_target, exoneration_configs_override):
         return False
     return True
 

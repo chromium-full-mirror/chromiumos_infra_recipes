@@ -442,6 +442,7 @@
   * [exonerate:examples/noop_vmtests](#recipes-exonerate_examples_noop_vmtests)
   * [exonerate:examples/vmtests_cannot_exonerate](#recipes-exonerate_examples_vmtests_cannot_exonerate)
   * [exonerate:examples/vmtests_missing_results](#recipes-exonerate_examples_vmtests_missing_results)
+  * [exonerate:tests/exoneration_configs_override](#recipes-exonerate_tests_exoneration_configs_override)
   * [exonerate:tests/manual_exoneration_configs](#recipes-exonerate_tests_manual_exoneration_configs)
   * [exoneration_util:examples/check_overall_limit](#recipes-exoneration_util_examples_check_overall_limit)
   * [exoneration_util:examples/get_tastless_name](#recipes-exoneration_util_examples_get_tastless_name)
@@ -5657,7 +5658,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#829)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#843)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5667,7 +5668,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#811)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#825)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5687,7 +5688,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#764)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#778)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5724,23 +5725,27 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#694)(self, hw_test_result):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#699)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None):**
 
 Checks to see if hw result is exonerable.
 
 Args:
-  hw_test_result(Skylab_Result): skylab result.
+  hw_test_result: The skylab result to check if it is exonerable.
+  exoneration_configs_override: Alternate exoneration configs to use when
+      determining if the result is exonerable.
 
 Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#732)(self, vm_build):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#742)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None):**
 
 Checks to see if the VM test is exonerable.
 
 Args:
-  vm_build(build_pb2.Build): vm result from the proctor.
+  vm_build: The vm result to check if it is exonerable.
+  exoneration_configs_override: Alternate exoneration configs to use when
+      determining if the result is exonerable.
 
 Returns:
   True if and only if the result is a failure AND exonerable.
@@ -12964,6 +12969,12 @@ json files.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/vmtests_missing_results.py#25)(api):**
+### *recipes* / [exonerate:tests/exoneration\_configs\_override](/recipe_modules/exonerate/tests/exoneration_configs_override.py)
+
+[DEPS](/recipe_modules/exonerate/tests/exoneration_configs_override.py#20): [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/exonerate/tests/exoneration_configs_override.py#31)(api):**
 ### *recipes* / [exonerate:tests/manual\_exoneration\_configs](/recipe_modules/exonerate/tests/manual_exoneration_configs.py)
 
 [DEPS](/recipe_modules/exonerate/tests/manual_exoneration_configs.py#11): [exonerate](#recipe_modules-exonerate), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
