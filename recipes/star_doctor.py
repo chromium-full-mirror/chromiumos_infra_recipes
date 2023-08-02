@@ -400,8 +400,7 @@ def _regenerate_configs(api: RecipeApi) -> None:
     cipd_dir = _ensure_cipd_packages(api)
     with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
       with api.context(cwd=INFRA_CONFIG.checkout_path):
-        api.step('regenerate configs',
-                 ['/bin/bash', 'regenerate_configs.sh', '-b'])
+        api.step('regenerate configs', ['./regenerate_configs.py', '-b'])
       with api.context(cwd=CONFIG_INTERNAL.checkout_path):
         api.step('regenerate test configs', ['./board_config/generate', '-b'],
                  timeout=3 * 60)
@@ -409,7 +408,7 @@ def _regenerate_configs(api: RecipeApi) -> None:
                  ['./test/exoneration/generate', '-b'], timeout=3 * 60)
         api.step(
             'regenerate suite scheduler configs',
-            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
+            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.py', '-b'],
             timeout=3 * 60)
 
 

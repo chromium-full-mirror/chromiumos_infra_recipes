@@ -370,7 +370,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
   with api.step.nest('regenerating suite scheduler configs') as presentation, \
       api.context(cfg_int_ss):
 
-    api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
+    api.step('run regenerate_configs.py', ['./regenerate_configs.py'])
 
     with api.step.nest('diffing to find changes'):
       nothing_changed = not any(
@@ -829,7 +829,7 @@ def GenTests(api):
       api.step_data(
           'Do regenerate_suite_scheduler_configs and create CL' \
               '.regenerating suite scheduler configs'           \
-              '.run regenerate_configs.sh',
+              '.run regenerate_configs.py',
           retcode=1),
       api.post_process(
           post_process.DoesNotRun,

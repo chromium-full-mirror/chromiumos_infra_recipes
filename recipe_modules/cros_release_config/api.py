@@ -222,7 +222,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                                 release_builders, 'TEXTPB')
 
         # Regenerate config.
-        self.m.step('./regenerate_configs.sh', ['./regenerate_configs.sh'])
+        self.m.step('./regenerate_configs.py', ['./regenerate_configs.py'])
 
     with self.m.step.nest('create CL'):
       with self.m.context(cwd=workpath):

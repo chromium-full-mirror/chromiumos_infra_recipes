@@ -244,7 +244,7 @@
   },
   {
     "cmd": [
-      "./regenerate_configs.sh"
+      "./regenerate_configs.py"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
     "luci_context": {
@@ -259,7 +259,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update config../regenerate_configs.sh",
+    "name": "update config../regenerate_configs.py",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
