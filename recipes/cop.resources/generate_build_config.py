@@ -88,6 +88,13 @@ def patch_yaml(base_yaml, user_yaml):
           'machineType': user_yaml['options']['machineType']
       }
 
+  allowlist_keys = ['CoP_hide_full_logs']
+  for key in allowlist_keys:
+    try:
+      patched_yaml[key] = user_yaml[key]
+    except KeyError:
+      pass
+
   return patched_yaml
 
 
