@@ -10005,7 +10005,7 @@ Registers an SSH key for use during test execution.
 Args:
   path (Path): Path to the SSH key.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#570)(self, image, project, machine, zone, network, subnet):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#571)(self, image, project, machine, zone, network, subnet):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -10023,7 +10023,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#449)(self, qcow_image_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#450)(self, qcow_image_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -10067,7 +10067,7 @@ Returns:
 
 Fetch partner key from private ChromeOS Tree
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#542)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#543)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -10077,7 +10077,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#306)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#307)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -10090,7 +10090,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#276)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#277)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -10105,7 +10105,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#186)(self, suite_name, vm_context, tast_inputs):**
+&mdash; **def [run\_vm](/recipe_modules/tast_exec/api.py#187)(self, suite_name, vm_context, tast_inputs):**
 
 Run tast tests in a VM with one retry and upload logs to Google storage.
 

@@ -85,6 +85,8 @@
       "create",
       "-f",
       "qcow2",
+      "-F",
+      "raw",
       "-b",
       "[CLEANUP]/image-archive_tmp_1/image/chromiumos_test_image.bin",
       "[CLEANUP]/image-archive_tmp_1/image/qcow2.img"

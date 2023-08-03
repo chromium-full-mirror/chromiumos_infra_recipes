@@ -174,6 +174,7 @@ class TastExecApi(RecipeApi):
           'qemu-img', \
           'create', \
           '-f', 'qcow2', \
+          '-F', 'raw', \
           '-b', str(vm_image_path), \
           str(qcow_image_path) \
       ])
