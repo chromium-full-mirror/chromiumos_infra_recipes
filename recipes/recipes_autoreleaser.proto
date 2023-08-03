@@ -4,6 +4,8 @@
 
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package recipes.chromeos.recipes_autoreleaser;
 
 message RecipesAutoreleaserProperties {
@@ -33,4 +35,20 @@ message ReleaseResult {
     string body = 2;
   }
   AnnouncementEmail announcement_email = 1;
+
+  message GitCommit {
+    // The commit hash.
+    string hash = 1;
+
+    // The author, before the "@". I.e. if the author is "user1@google.com" this
+    // field is "user1".
+    string author = 2;
+
+    // The subject line of the commit message (i.e. the first line).
+    string subject = 3;
+  }
+
+  // Commits released in this execution of the script. Note that if the script
+  // was run in dry-run mode, the commits won't have actually been released.
+  repeated GitCommit released_commits = 2;
 }

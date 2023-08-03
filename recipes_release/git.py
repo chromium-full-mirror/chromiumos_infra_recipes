@@ -13,6 +13,7 @@ import subprocess
 from typing import List
 
 import common
+from protos.recipes_autoreleaser import ReleaseResult  #pylint: disable=no-name-in-module
 
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
 CHROMITE_PIN_COMMIT = re.compile(r'update chromite-HEAD version')
@@ -104,6 +105,11 @@ class Commit:
   def is_older_than(self, other_hash: str) -> bool:
     """Return whether the change is older than another hash."""
     return _is_older_than(self.hash, other_hash)
+
+  def to_proto(self) -> ReleaseResult.GitCommit:
+    """Return a GitCommit proto based on this Commit."""
+    return ReleaseResult.GitCommit(hash=self.hash, author=self.username,
+                                   subject=self.message)
 
 
 @lru_cache(maxsize=None)

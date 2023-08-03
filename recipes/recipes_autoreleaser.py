@@ -80,9 +80,12 @@ def RunSteps(api: recipe_api.RecipeApi,
           result,
       )
       api.easy.set_properties_step(
-          'set email properties',
+          'set output properties',
           subject=result.announcement_email.subject,
           body=result.announcement_email.body,
+          released_commits=[
+              json_format.MessageToDict(c) for c in result.released_commits
+          ],
       )
 
 
@@ -94,8 +97,18 @@ def GenTests(api):
             announcement_email=ReleaseResult.AnnouncementEmail(
                 subject=f'We released {bundle}',
                 body='Released commits 1, 2, and 3',
-            ),
-        ),
+            ), released_commits=[
+                ReleaseResult.GitCommit(
+                    hash='123',
+                    author='user1',
+                    subject='Commit 1',
+                ),
+                ReleaseResult.GitCommit(
+                    hash='456',
+                    author='user2',
+                    subject='Commit 2',
+                ),
+            ]),
     )
 
     step_name = f"release bundle '{bundle}'{' (dry-run)' if dry_run else ''}.read result jsonproto"
@@ -112,6 +125,15 @@ def GenTests(api):
                        'We released infra'),
       api.post_process(post_process.PropertyEquals, 'body',
                        'Released commits 1, 2, and 3'),
+      api.post_process(post_process.PropertyEquals, 'released_commits', [{
+          'author': 'user1',
+          'hash': '123',
+          'subject': 'Commit 1'
+      }, {
+          'author': 'user2',
+          'hash': '456',
+          'subject': 'Commit 2'
+      }]),
   )
 
   yield api.test(

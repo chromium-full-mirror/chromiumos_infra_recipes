@@ -180,7 +180,11 @@ class RecipeRelease:
         announcement_email=ReleaseResult.AnnouncementEmail(
             subject=gm_client.get_subject(),
             body=gm_client.body,
-        ))
+        ),
+        released_commits=[
+            c.to_proto() for c in pending_changes if not c.trivial
+        ],
+    )
 
 
 def main(argv: List[str]):
