@@ -84,6 +84,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "\n[DRY RUN]Released commits:\n\n- 123 [user1] Commit 1\n- 456 [user2] Commit 2\n"
   }
 ]

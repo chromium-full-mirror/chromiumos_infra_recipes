@@ -4,10 +4,13 @@
 
 """Release recipes by running the release.sh script in infra/recipes."""
 
+from typing import Dict, Iterable
 import datetime
 from google.protobuf import json_format
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.recipes_autoreleaser import RecipesAutoreleaserProperties, ReleaseResult
+from PB.recipe_engine import result as result_pb2
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 from recipe_engine import recipe_api
@@ -35,9 +38,55 @@ def _clone_recipes_repo(api: recipe_api.RecipeApi):
   api.git.clone('https://chromium.googlesource.com/chromiumos/infra/recipes',
                 verbose=True, progress=True)
 
+# A map from return codes from the release.sh script to results to return from
+# the recipe. Some notes:
+#
+# - See recipes_release/common.py for the return codes from the release.sh
+# script.
+# - If release.sh returns one of these codes the recipe will immediately return
+# the RawResult.
+# - If release.sh returns 0, the recipe will continue with later steps such as
+# setting output properties, and return success (assuming none of the later
+# steps fail).
+# - If release.sh returns a non-zero code that is not in this dict, the step
+# will immediately fail the recipe with an InfraFailure.
+_ERROR_HANDLERS: Dict[int, result_pb2.RawResult] = {
+    11:
+        result_pb2.RawResult(
+            summary_markdown='No pending changes to release',
+            status=common_pb2.SUCCESS,
+        ),
+    12:
+        result_pb2.RawResult(
+            summary_markdown='Failures in staging builders blocking release',
+            status=common_pb2.FAILURE,
+        ),
+    21:
+        result_pb2.RawResult(
+            summary_markdown='No releasable changes found',
+            status=common_pb2.FAILURE,
+        )
+}
+
+
+# TODO(b/287276108): Improve summary markdown formatting.
+def _build_summary_markdown(released_commits: Iterable[ReleaseResult.GitCommit],
+                            dry_run: bool):
+  commit_lines = []
+  for commit in released_commits:
+    commit_lines.append(
+        f'- {commit.hash[:9]} [{commit.author}] {commit.subject}')
+
+  commit_string = '\n'.join(commit_lines)
+  return f'''
+{'[DRY RUN]' if dry_run else ''}Released commits:
+
+{commit_string}
+'''
+
 
 def RunSteps(api: recipe_api.RecipeApi,
-             properties: RecipesAutoreleaserProperties):
+             properties: RecipesAutoreleaserProperties) -> result_pb2.RawResult:
   if not properties.bundle:
     raise ValueError('bundle must be set')
 
@@ -68,11 +117,16 @@ def RunSteps(api: recipe_api.RecipeApi,
       result_jsonpb = api.path.mkstemp(prefix='result_jsonpb')
       args.extend(['--result-out', result_jsonpb])
 
-      # TODO(b/287276108): Handle different return codes from the release script.
-      api.step(
+      # Only accept return codes that are 0 or in _ERROR_HANDLERS. All other
+      # codes will raise an InfraFailure. Then it is safe to index into
+      # _ERROR_HANDLERS below (at that point we know the return code is not 0).
+      step_data = api.step(
           'run release.sh',
           args,
+          ok_ret=[0] + list(_ERROR_HANDLERS.keys()),
       )
+      if step_data.retcode:
+        return _ERROR_HANDLERS[step_data.retcode]
 
       result = ReleaseResult()
       json_format.Parse(
@@ -86,6 +140,12 @@ def RunSteps(api: recipe_api.RecipeApi,
           released_commits=[
               json_format.MessageToDict(c) for c in result.released_commits
           ],
+      )
+
+      return result_pb2.RawResult(
+          summary_markdown=_build_summary_markdown(result.released_commits,
+                                                   dry_run=not properties.push),
+          status=common_pb2.SUCCESS,
       )
 
 
@@ -143,6 +203,34 @@ def GenTests(api):
           push=False,
       ),
       result_step_data(bundle='infra', dry_run=True),
+  )
+
+  yield api.test(
+      'handled return code',
+      api.properties(
+          bundle='infra',
+          push=True,
+      ),
+      api.step_data("release bundle 'infra'.run release.sh", retcode=21),
+      api.expect_status('FAILURE'),
+      api.post_process(post_process.SummaryMarkdown,
+                       'No releasable changes found'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'unhandled return code',
+      api.properties(
+          bundle='infra',
+          push=True,
+      ),
+      api.step_data("release bundle 'infra'.run release.sh", retcode=99),
+      api.expect_status('INFRA_FAILURE'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          'Infra Failure: Step("release bundle \'infra\'.run release.sh") (retcode: 99)'
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
