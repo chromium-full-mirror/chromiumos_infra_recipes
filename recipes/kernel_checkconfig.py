@@ -41,10 +41,10 @@ def RunSteps(api: RecipeApi, properties: KernelCheckconfigProperties):
     api.build_menu.setup_workspace_and_chroot():
 
     api.cros_source.ensure_synced_cache()
-    api.step('kernelconfig checkconfig', [
-        api.cros_sdk.cros_sdk_path, '--working-dir', properties.source_path,
-        '--log-level', api.cros_build_api.log_level, '--',
-        './chromeos/scripts/kernelconfig', 'checkconfig'
+    api.cros_sdk('kernelconfig checkconfig', [
+        '--working-dir', properties.source_path, '--log-level',
+        api.cros_build_api.log_level, '--', './chromeos/scripts/kernelconfig',
+        'checkconfig'
     ])
 
 
