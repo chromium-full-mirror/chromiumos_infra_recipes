@@ -2434,7 +2434,7 @@
   {
     "cmd": [
       "/bin/bash",
-      "test/suite_scheduler/regenerate_configs.py",
+      "test/suite_scheduler/regenerate_configs.sh",
       "-b"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_3",

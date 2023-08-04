@@ -408,7 +408,7 @@ def _regenerate_configs(api: RecipeApi) -> None:
                  ['./test/exoneration/generate', '-b'], timeout=3 * 60)
         api.step(
             'regenerate suite scheduler configs',
-            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.py', '-b'],
+            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
             timeout=3 * 60)
 
 
