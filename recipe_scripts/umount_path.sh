@@ -20,7 +20,8 @@ EOF
   local mount_path="$1"
   shift 1
 
-  sudo umount "${mount_path}"
+  # -l means umount will be done as soon as filesystem is not busy anymore.
+  sudo umount -l "${mount_path}"
 
   err=$?
   if [[ $err -ne 0 ]]; then
