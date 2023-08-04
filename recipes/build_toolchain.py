@@ -142,8 +142,10 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
 
     non_binhost_cls = []
     conflicting_cls = set()
+    binhost_cl_re = re.compile(
+        r"updating .*\b(?:FULL_BINHOST|SDK_LATEST_VERSION|TC_PATH)\b")
     for change in patch_sets:
-      if "updating FULL_BINHOST" in change.subject:
+      if binhost_cl_re.search(change.subject):
         binhost_cls[change.display_id] = change
       else:
         non_binhost_cls.append(change)
@@ -313,7 +315,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   prebuilt_binhost_change = GerritChange(
       change=104,
-      project="cromiumos/overlays/chromiumos-overlay",
+      project="cromiumos/overlays/board-overlays",
       host="chromium-review.googlesource.com",
       patchset=1,
   )
@@ -327,6 +329,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   another_change_with_trybots = GerritChange(
       change=106,
+      project="cromiumos/overlays/chromiumos-overlay",
+      host="chromium-review.googlesource.com",
+      patchset=1,
+  )
+
+  sdk_version_change = GerritChange(
+      change=107,
       project="cromiumos/overlays/chromiumos-overlay",
       host="chromium-review.googlesource.com",
       patchset=1,
@@ -390,6 +399,17 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       ("this change also has the trybots footer\n"
                        "\nCq-Include-Trybots: chromeos/cq/chromeos-sdk-cq\n"
                        "\nChange-Id: Xgli\n"),
+              },
+          },
+      },
+      107: {
+          "change_id": "107",
+          "subject": "sdk_version.conf: updating SDK_LATEST_VERSION, TC_PATH",
+          "revision_info": {
+              "commit": {
+                  "message": (
+                      "sdk_version.conf: updating SDK_LATEST_VERSION, TC_PATH\n"
+                      "\nChange-Id: Xttw\n"),
               },
           },
       },
@@ -573,7 +593,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       "successful-run-with-binhost-cl", api.properties(good_properties),
       api.gerrit.set_gerrit_fetch_changes_response(
           "identify key CLs",
-          [single_change_without_trybots, prebuilt_binhost_change],
+          [
+              single_change_without_trybots, prebuilt_binhost_change,
+              sdk_version_change
+          ],
           fetch_changes_responses,
       ), api.post_check(post_process.MustRun, "check properties"),
       api.post_check(post_process.MustRun, "identify key CLs"),
@@ -588,6 +611,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       **builder_args(gerrit_changes=[
           single_change_without_trybots,
           prebuilt_binhost_change,
+          sdk_version_change,
       ]))
 
   yield api.build_menu.test(
