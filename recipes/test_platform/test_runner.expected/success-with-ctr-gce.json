@@ -1022,8 +1022,10 @@
     "name": "execution steps.post upload step (ctr)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@ile-de-france intentionally skipped@@@",
-      "@@@STEP_LOG_END@summary@@@"
+      "@@@STEP_LOG_LINE@repair_request@[]@@@",
+      "@@@STEP_LOG_END@repair_request@@@",
+      "@@@STEP_LOG_LINE@ile-de-france@intentionally skipped@@@",
+      "@@@STEP_LOG_END@ile-de-france@@@"
     ]
   },
   {
@@ -1073,6 +1075,28 @@
     "name": "execution steps.post upload step (ctr).Prototype GCE shutdown.delete instance.call `vmlab`.run cmd",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "echo",
+      "ready"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.post upload step (ctr).stub save local DUT state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1266,28 +1290,6 @@
     "name": "execution steps.post upload step (ctr).Archive CTS results.Upload prepared results.gsutil cp",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "echo",
-      "ready"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.post upload step (ctr).stub save local DUT state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

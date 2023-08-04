@@ -898,8 +898,64 @@
     "name": "execution steps.post upload step (ctr)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@summary@ile-de-france intentionally skipped@@@",
-      "@@@STEP_LOG_END@summary@@@"
+      "@@@STEP_LOG_LINE@repair_request@[]@@@",
+      "@@@STEP_LOG_END@repair_request@@@",
+      "@@@STEP_LOG_LINE@ile-de-france@intentionally skipped@@@",
+      "@@@STEP_LOG_END@ile-de-france@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"ready\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/phosphorus/phosphorus",
+      "save",
+      "-input_json",
+      "/dev/stdin"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`.save",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"ready\",\n  \"sealResultsDir\": true\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -956,60 +1012,6 @@
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"adminService\": \"foo-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"autotestDir\": \"/path/to/autotest\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"ready\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/phosphorus/phosphorus",
-      "save",
-      "-input_json",
-      "/dev/stdin"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.post upload step (ctr).CrosToolRunner: Phosphorus: save local DUT state.call `phosphorus`.save",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"ready\",\n  \"sealResultsDir\": true\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

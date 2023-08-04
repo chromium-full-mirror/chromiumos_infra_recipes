@@ -1724,6 +1724,22 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
       finally:
         with api.step.nest('post upload step (ctr)') as post_step:
           interface.submit_post_job()
+          provision_failed = result_for_output_props is not None and result_for_output_props.prejob_failed(
+          )
+          repair_requests = []
+          if provision_failed:
+            failure_reason = result_for_output_props.prejob_response.failure_reason
+            # List of the reason when no repair-request is required.
+            ok_reasons = [
+                'REASON_DUT_UNREACHABLE_PRE_PROVISION',
+                'REASON_INVALID_REQUEST', 'REASON_GS_UPLOAD_FAILED'
+            ]
+            if failure_reason not in ok_reasons:
+              repair_requests.append('REPAIR_REQUEST_PROVISION')
+          s_log(post_step, "repair_request", "%s" % repair_requests)
+          interface.save_and_seal_skylab_local_state(
+              dut_state, test_metadata, repair_requests=repair_requests)
+
           archive_all_logs(api, interface=interface,
                            test_metadata=test_metadata,
                            result=result_for_uploading)
@@ -1733,14 +1749,13 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
             # results. To align with that, we need to pass the directory
             # .../cros-test/artifacts/tauto/, not its sub directory.
             api.cts_results_archive.archive(os.path.dirname(results_dir))
-
-          if result_for_output_props is not None and result_for_output_props.prejob_failed(
-          ):
+          if provision_failed:
+            s_log(post_step, "ile-de-france", "running")
             dut_state = api.labpack.execute_ile_de_france(
                 common_config=properties.common_config, dut_state=dut_state)
+            interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
           else:
-            s_log(post_step, "summary", "ile-de-france intentionally skipped")
-          interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
+            s_log(post_step, "ile-de-france", "intentionally skipped")
 
           publish_to_result_flow(api, properties.config,
                                  properties.cft_test_request.parent_request_uid,
