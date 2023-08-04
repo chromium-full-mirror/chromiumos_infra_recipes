@@ -443,9 +443,16 @@ def _enumerate_cft_tests(api, requests):
       test_suites = test_finder_result.test_suites
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
-          # DRY RUN
-          _ = _build_filtered_tests(api, r, test_suites, build_target, True,
-                                    suite_name)
+          dry_run = True
+          if ('chromeos.cros_infra_config.filtering_enabled'
+              in api.cros_infra_config.experiments):
+            dry_run = False  # pragma: no cover
+          filtered_test_suites = _build_filtered_tests(api, r, test_suites,
+                                                       build_target, dry_run,
+                                                       suite_name)
+          if not dry_run:  # pragma: no cover
+            test_suites = filtered_test_suites
+
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
       else:
@@ -501,8 +508,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       # This will happen when a suite opts out.
       if not req:  # pragma: no cover
         return test_suites
-      step.presentation.logs["policy_used"] = json_format.MessageToJson(cfg)
-
+      step.presentation.logs["policy_used"] = json_format.MessageToJson(req)
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:  # pragma: no cover
         step.presentation.logs["removed_tests"] = json.dumps(
