@@ -271,3 +271,24 @@ def GenTests(api):
                        'release_low_prio'),
       api.post_process(post_process.DropExpectation),
       builder='release-stabilize-15185.B-orchestrator')
+
+  yield api.orch_menu.test(
+      'stabilize-branch-no-schedule',
+      api.properties(
+          **{
+              'expected_qs_account': 'release_low_prio',
+              '$chromeos/cros_release': {
+                  'channels': [Channel.CHANNEL_STABLE],
+                  'dynamic_qs_account': True,
+              }
+          }),
+      api.step_data(
+          'determine release testing priority.fetch schedule json.gsutil cat',
+          retcode=1),
+      api.post_process(
+          post_process.StepFailure,
+          'determine release testing priority.fetch schedule json'),
+      api.post_process(post_process.PropertyEquals, 'dynamic_qs_account',
+                       'release_low_prio'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-stabilize-15185.B-orchestrator')

@@ -652,6 +652,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         schedule_data = fetch_schedule()
 
         config = self.m.cros_infra_config.config
+        # Stabilize branches should get low priority.
+        if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
+          return RELEASE_LOW_PRIO_QS_ACCOUNT
+
         # TODO(b/278885352): Remove special casing for 108 once channels are
         # actually populated with LTS/LTC (this work is targeting 114).
         if config.orchestrator.gitiles_commit.ref == "refs/heads/release-R108-15183.B":
@@ -667,10 +671,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             return RELEASE_HIGH_PRIO_QS_ACCOUNT
           if Channel.CHANNEL_BETA in self._channels:
             return RELEASE_MED_PRIO_QS_ACCOUNT
-          return RELEASE_LOW_PRIO_QS_ACCOUNT
-
-        # Stabilize branches should get low priority.
-        if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
           return RELEASE_LOW_PRIO_QS_ACCOUNT
 
         milestone = str(self.m.cros_version.version.milestone)
