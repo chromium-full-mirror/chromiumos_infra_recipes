@@ -31,8 +31,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   # Manufacture the minimal builder config.
   config = BuilderConfig(
-      id=BuilderConfig.Id(name='amd64-generic-release',
-                          type=BuilderConfig.Id.RELEASE),
+      id=BuilderConfig.Id(name='kukui-release', type=BuilderConfig.Id.RELEASE),
       artifacts=BuilderConfig.Artifacts(
           artifacts_info=common_pb2.ArtifactsByService(
               legacy=common_pb2.ArtifactsByService.Legacy(output_artifacts=[
@@ -42,7 +41,7 @@ def RunSteps(api):
                       ])
               ]),
           )))
-  sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='amd64-generic'))
+  sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='kukui'))
 
   # Test data for instruction files are defined in
   # recipe_modules/cros_build_api/test_api.py.
@@ -85,19 +84,27 @@ def GenTests(api):
                   }
               },
           }),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'json.output', ['\"bucket\": \"release\"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"override_qs_account": "custom_qs_account"']),
       api.post_check(post_process.DoesNotRun,
                      'generate payloads.inspect failure'),
-      api.test_util.test_child_build('amd64-generic').build)
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
 
   yield api.build_menu.test(
       'conductor',
@@ -118,6 +125,10 @@ def GenTests(api):
                   }
               },
           }),
+      api.post_check(
+          post_process.LogContains,
+          'generate payloads.running paygen orchestrator.buildbucket.schedule',
+          'json.output', ['\"bucket\": \"try-preprod\"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator'),
@@ -127,10 +138,11 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.DoesNotRun,
                      'generate payloads.inspect failure'),
-      api.test_util.test_child_build('amd64-generic').build)
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='try-preprod').build)
 
   yield api.build_menu.test(
       'paygen-failure',
@@ -152,7 +164,10 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'json.output', ['\"bucket\": \"release\"']),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
               id=8922054662172514000, status='FAILURE',
@@ -162,7 +177,8 @@ def GenTests(api):
       api.post_check(post_process.StepFailure, 'generate payloads'),
       api.post_check(post_process.StepFailure,
                      'generate payloads.inspect failure'),
-      api.test_util.test_child_build('amd64-generic').build,
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
       status='FAILURE',
   )
 
@@ -185,7 +201,10 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
-          ['gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0']),
+          ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'json.output', ['\"bucket\": \"release\"']),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
               id=8922054662172514000, status='INFRA_FAILURE',
@@ -195,7 +214,11 @@ def GenTests(api):
       api.post_check(post_process.StepException, 'generate payloads'),
       api.post_check(post_process.StepException,
                      'generate payloads.inspect failure'),
-      api.test_util.test_child_build('amd64-generic').build,
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
   )
