@@ -7,8 +7,8 @@
     "cmd": [],
     "name": "push images",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/amd64-generic-release/R99-1234.56.0@@@",
-      "@@@STEP_LINK@gs release dir: CHANNEL_BETA@https://console.cloud.google.com/storage/browser//beta-channel/amd64-generic/1234.56.0@@@"
+      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/kukui-release/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs release dir: CHANNEL_BETA@https://console.cloud.google.com/storage/browser//beta-channel/kukui/1234.56.0@@@"
     ]
   },
   {
@@ -33,7 +33,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -71,7 +71,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -96,10 +96,10 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/kukui-release/R99-1234.56.0\",@@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"kukui\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"destBucket\": \"gs://\",@@@",
@@ -120,13 +120,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/amd64-generic-release/R99-1234.56.0\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"destBucket\": \"gs://\",\n  \"channels\": [\n    2\n  ]\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/kukui-release/R99-1234.56.0\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"kukui\"\n    }\n  },\n  \"destBucket\": \"gs://\",\n  \"channels\": [\n    2\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -159,7 +159,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -193,7 +193,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -249,12 +249,12 @@
       "-fields",
       "id,input.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"kukui-release-main\", \"project\": \"chromeos\"}}"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -307,7 +307,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -325,13 +325,15 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
-      "amd64-generic-postsubmit",
-      "--paygen"
+      "kukui-release-main",
+      "--paygen",
+      "--branch",
+      "main"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -368,7 +370,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -386,13 +388,15 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
-      "amd64-generic-postsubmit",
-      "--paygen"
+      "kukui-release-main",
+      "--paygen",
+      "--branch",
+      "main"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -424,7 +428,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -435,7 +439,7 @@
       }
     },
     "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_fsi_testing_models\": [], \"au_testing_models\": [], \"builder_name\": \"amd64-generic\", \"channels\": [\"CHANNEL_BETA\"], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"minios\": false, \"override_qs_account\": \"custom_qs_account\", \"src_bucket\": \"chromeos-releases\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_fsi_testing_models\": [], \"au_testing_models\": [], \"builder_name\": \"kukui\", \"channels\": [\"CHANNEL_BETA\"], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"minios\": false, \"override_qs_account\": \"custom_qs_account\", \"src_bucket\": \"chromeos-releases\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -478,7 +482,7 @@
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"au_fsi_testing_models\": [],@@@",
       "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [],@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder_name\": \"amd64-generic\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder_name\": \"kukui\",@@@",
       "@@@STEP_LOG_LINE@request@          \"channels\": [@@@",
       "@@@STEP_LOG_LINE@request@            \"CHANNEL_BETA\"@@@",
       "@@@STEP_LOG_LINE@request@          ],@@@",
@@ -531,7 +535,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -557,7 +561,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {

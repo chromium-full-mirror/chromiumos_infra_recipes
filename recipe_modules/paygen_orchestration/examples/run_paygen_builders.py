@@ -12,6 +12,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/properties',
     'conductor',
@@ -42,6 +43,22 @@ def GenTests(api: RecipeTestApi):
       'basic',
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"override_qs_account": "custom_qs_account"']),
+      api.buildbucket.build(
+          api.buildbucket.ci_build_message(project='chromeos', bucket='release',
+                                           builder='paygen-orchestrator')),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'json.output', ['\"bucket\": \"release\"']),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'basic-try-build',
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request', ['"override_qs_account": "custom_qs_account"']),
+      api.buildbucket.build(
+          api.buildbucket.ci_build_message(project='chromeos', bucket='try-dev',
+                                           builder='paygen-orchestrator')),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'json.output', ['\"bucket\": \"try-dev\"']),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(

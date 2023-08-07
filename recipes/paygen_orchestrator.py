@@ -485,10 +485,14 @@ def GenTests(api: RecipeTestApi):
     summary_markdown = step_odict['$result']['failure']['humanReason']
     check('summary markdown < 4000 chars', len(summary_markdown) < 4000)
 
+  build_message = api.buildbucket.ci_build_message(
+      project='chromeos', bucket='release', builder='paygen-orchestrator')
+
   yield api.test(
       'basic',
       get_props(),
       good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -508,6 +512,7 @@ def GenTests(api: RecipeTestApi):
       'override-qs-account',
       get_props(override_qs_account='custom_qs_account'),
       good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -529,6 +534,7 @@ def GenTests(api: RecipeTestApi):
       'basic-with-pubsub',
       get_props(pubsub=True, bbid=54321),
       good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -557,6 +563,7 @@ def GenTests(api: RecipeTestApi):
       'some-failures',
       get_props(),
       good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -579,6 +586,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'truncate-failures',
       get_props(),
+      api.buildbucket.build(build_message),
       api.paygen_orchestration.test_paygen(
           'discovering payload configuration.get paygen json.gsutil cat',
           api.paygen_orchestration.EXAMPLE_PAYGEN_JSON_BIG),
@@ -612,11 +620,12 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test('no-payloads', get_props(builder_name='goobolywhobbly'),
-                 good_paygen_cfg)
+                 good_paygen_cfg, api.buildbucket.build(build_message))
 
   # Successful lists but don't find a suitable pair in get_requests().
   yield api.test(
       'no-pairs', get_props(), good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
                                     'discover gs artifacts.gsutil list'),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'
@@ -632,6 +641,7 @@ def GenTests(api: RecipeTestApi):
       'no-deltas',
       get_props(),
       good_paygen_cfg,
+      api.buildbucket.build(build_message),
       api.paygen_orchestration.test_paygen(
           'discovering payload configuration.get paygen json.gsutil cat',
           api.paygen_orchestration.NO_DELTA_PAYGEN_JSON),

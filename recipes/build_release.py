@@ -712,7 +712,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
           }),
       build_target='staging-eve',
       builder='staging-eve-release-main',
-      bucket='release',
+      bucket='staging',
   )
 
   yield api.build_menu.test(

@@ -681,7 +681,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       A ScheduleBuildRequest for a Paygen builder.
     """
     is_staging = self.m.cros_infra_config.is_staging
-    bucket = 'staging' if is_staging else 'release'
+    bucket = self.m.buildbucket.build.builder.bucket
     builder = 'staging-paygen' if is_staging else 'paygen'
     props = {'requests': paygen_requests}
     if override_qs_account:
