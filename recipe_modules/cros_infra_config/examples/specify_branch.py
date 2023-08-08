@@ -50,7 +50,7 @@ def GenTests(api):
           iteration=2, binaryproto=False),
       api.test_util.test_child_build(
           'amd64-generic', bucket='staging',
-          builder='staging-clang-tidy-toolchain').build,
+          builder='staging-generic-toolchain-bot').build,
       api.post_check(post_process.MustRun, _config_step_name(config_ref,
                                                              'cfg')))
 
@@ -64,5 +64,5 @@ def GenTests(api):
                   )
           }),
       api.test_util.test_child_build('amd64-generic', bucket='toolchain',
-                                     builder='clang-tidy-toolchain').build,
+                                     builder='generic-toolchain-bot').build,
       api.post_check(post_process.MustRun, _config_step_name('HEAD')))

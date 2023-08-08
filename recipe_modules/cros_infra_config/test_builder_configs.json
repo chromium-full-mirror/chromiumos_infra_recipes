@@ -1500,7 +1500,7 @@
     },
     {
       "id": {
-        "name": "clang-tidy-toolchain",
+        "name": "generic-toolchain-bot",
         "type": "TOOLCHAIN",
         "bucket": "toolchain"
       },
@@ -1521,28 +1521,6 @@
               {
                 "artifactTypes": [
                   "EBUILD_LOGS"
-                ]
-              }
-            ]
-          },
-          "toolchain": {
-            "inputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CHROME_CLANG_WARNINGS_FILE"
-                ],
-                "gsLocations": [
-                  "chromeos-toolchain-artifacts/clang-tidy-1"
-                ]
-              }
-            ],
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CHROME_CLANG_WARNINGS_FILE"
-                ],
-                "gsLocations": [
-                  "chromeos-toolchain-artifacts/clang-tidy-1"
                 ]
               }
             ]
@@ -1569,9 +1547,6 @@
           },
           {
             "flag": "thinlto"
-          },
-          {
-            "flag": "clang_tidy"
           }
         ],
         "installPackages": {
@@ -1594,7 +1569,7 @@
     },
     {
       "id": {
-        "name": "staging-clang-tidy-toolchain",
+        "name": "staging-generic-toolchain-bot",
         "type": "TOOLCHAIN",
         "bucket": "toolchain"
       },
@@ -1615,28 +1590,6 @@
               {
                 "artifactTypes": [
                   "EBUILD_LOGS"
-                ]
-              }
-            ]
-          },
-          "toolchain": {
-            "inputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CHROME_CLANG_WARNINGS_FILE"
-                ],
-                "gsLocations": [
-                  "chromeos-toolchain-artifacts/clang-tidy-1"
-                ]
-              }
-            ],
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "CHROME_CLANG_WARNINGS_FILE"
-                ],
-                "gsLocations": [
-                  "chromeos-toolchain-artifacts/clang-tidy-1"
                 ]
               }
             ]
@@ -1663,9 +1616,6 @@
           },
           {
             "flag": "thinlto"
-          },
-          {
-            "flag": "clang_tidy"
           }
         ],
         "installPackages": {
