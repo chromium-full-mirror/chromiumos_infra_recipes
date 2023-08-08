@@ -127,6 +127,12 @@ def GenTests(api):
       'ssh does not connect',
       api.step_data('connect via ssh', retcode=1),
       api.step_data('connect via ssh (2)', retcode=1),
+      api.step_data('connect via ssh (3)', retcode=1),
+      api.step_data('connect via ssh (4)', retcode=1),
+      api.step_data('connect via ssh (5)', retcode=1),
+      api.step_data('connect via ssh (6)', retcode=1),
+      api.step_data('connect via ssh (7)', retcode=1),
+      api.step_data('connect via ssh (8)', retcode=1),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

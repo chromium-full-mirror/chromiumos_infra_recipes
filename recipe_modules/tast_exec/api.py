@@ -605,6 +605,7 @@ class TastExecApi(RecipeApi):
 
     return gce_vm_context
 
+  @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
   def _test_ssh_conn(self, host, port):
     cmd = self._get_ssh_cmd(host, port, ['true'])
     try:
