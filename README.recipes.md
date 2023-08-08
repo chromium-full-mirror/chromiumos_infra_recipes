@@ -7591,11 +7591,22 @@ Returns: targetGreenness, or an empty OrderedDict if the target, its
 
 &emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#214)(self):**
+&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#140)(self, builds: List[build_pb2.Build]):**
+
+Populate the local greenness dict with build information.
+
+For local build greenness, we want to track by build target and variant
+rather than just build target (e.g. amd64-generic-asan is tracked
+separately from amd64-generic).
+
+Args:
+  builds: List of builds that have completed.
+
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#240)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#221)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#247)(self):**
 
 Publish greenness to output properties.
 
@@ -7606,25 +7617,22 @@ Update greenness with build information.
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#165)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#167)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_local\_build\_info](/recipe_modules/greenness/api.py#140)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#216)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
 
-Update local greenness with build information.
-
-For local build greenness, we want to track by build target and variant
-rather than just build target (e.g. amd64-generic-asan is tracked
-separately from amd64-generic).
+Update scores in the greenness dict for irrelevant builds.
 
 Args:
   builds: List of builds that have completed.
+  greenness_dict: The greenness dict to update.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#195)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#197)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 

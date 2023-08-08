@@ -137,8 +137,8 @@ class GreennessApi(recipe_api.RecipeApi):
         self._greenness_dict[bt] = GreennessTuple(green_metric, green_metric,
                                                   critical, True)
 
-  def update_local_build_info(self, builds: List[build_pb2.Build]) -> None:
-    """Update local greenness with build information.
+  def populate_local_build_info(self, builds: List[build_pb2.Build]) -> None:
+    """Populate the local greenness dict with build information.
 
     For local build greenness, we want to track by build target and variant
     rather than just build target (e.g. amd64-generic-asan is tracked
@@ -151,13 +151,15 @@ class GreennessApi(recipe_api.RecipeApi):
       builder = build.builder.builder
       if self._is_excluded(builder, LOCAL_EXCLUDE_VARIANTS):
         continue
-      green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
       if self.m.cros_tags.has_entry('relevance', 'not relevant', build.tags):
+        # For irrelevant build targets, mark the score and build_score as -1
+        # so the scores can be updated using a relevant build from an earlier
+        # snapshot.
         self._local_greenness_dict[builder] = GreennessTuple(
-            score=green_metric, build_score=green_metric, critical=critical,
-            relevant=False)
+            score=-1, build_score=-1, critical=critical, relevant=False)
       else:
+        green_metric = 100 if build.status == common_pb2.SUCCESS else 0
         self._local_greenness_dict[builder] = GreennessTuple(
             score=green_metric, build_score=green_metric, critical=critical,
             relevant=True)
@@ -210,6 +212,30 @@ class GreennessApi(recipe_api.RecipeApi):
         self._local_greenness_dict[bt] = GreennessTuple(greenness,
                                                         local_build_score, True,
                                                         True)
+
+  def update_irrelevant_builds_scores(
+      self, builds: List[build_pb2.Build],
+      greenness_dict: OrderedDict[str, GreennessTuple]) -> None:
+    """Update scores in the greenness dict for irrelevant builds.
+
+    Args:
+      builds: List of builds that have completed.
+      greenness_dict: The greenness dict to update.
+    """
+    irrelevant_builds = []
+    for b in greenness_dict:
+      green_tuple = greenness_dict[b]
+      if not green_tuple.relevant and green_tuple.build_score == -1:
+        irrelevant_builds.append(b)
+    for ib in irrelevant_builds:
+      build = next((b for b in builds if ib == b.builder.builder), None)
+      if build and not self.m.cros_tags.has_entry('relevance', 'not relevant',
+                                                  build.tags):
+        green_metric = 100 if build.status == common_pb2.SUCCESS else 0
+        critical = build.critical == common_pb2.YES
+        greenness_dict[ib] = GreennessTuple(score=green_metric,
+                                            build_score=green_metric,
+                                            critical=critical, relevant=False)
 
   def print_step(self) -> None:
     """Print comprehensive greenness info in a step."""
