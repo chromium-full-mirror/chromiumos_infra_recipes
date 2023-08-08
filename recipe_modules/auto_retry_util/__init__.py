@@ -4,11 +4,13 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/cq',
     'recipe_engine/step',
     'cros_infra_config',
     'cros_tags',
     'exonerate',
     'exoneration_util',
+    'gerrit',
     'naming',
     'skylab_results',
     'test_util',

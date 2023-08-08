@@ -21,9 +21,11 @@ from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
+
 
 # Start looking back at 1 days worth of data while we are still developing.
 DEFAULT_LOOKBACK_WINDOW = 60 * 60 * 24 * 1
@@ -405,3 +407,26 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       ])
 
     return exonerated_suites
+
+  def retry_build(
+      self,
+      build: build_pb2.Build,
+  ):
+    """Retries build by voting on all of its input changes.
+
+    Sets Commit-Queue+1 or 2 (depending on whether build was a dry run)
+    on all of build's input changes. It is assumed that all other labels
+    required for submission are set.
+
+    Args:
+      build: The build to retry.
+    """
+    # TODO(b/294075301): Comment on CLs with retry reasons.
+    with self.m.step.nest(f'retry build {build.id}'):
+      dry_run = build.input.properties['$recipe_engine/cq'][
+          'runMode'] == self.m.cq.DRY_RUN
+      labels = {
+          Label.COMMIT_QUEUE: 1 if dry_run else 2,
+      }
+      for gc in build.input.gerrit_changes:
+        self.m.gerrit.set_change_labels_remote(gc, labels)
