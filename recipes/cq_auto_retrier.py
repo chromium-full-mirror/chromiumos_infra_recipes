@@ -32,7 +32,11 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         _, _, _ = api.auto_retry_util.analyze_test_results(b)
         # TODO(b/291768475): Try exonerating suites using the updated
         # exoneration configs.
-        _, _, _ = api.auto_retry_util.test_variant_exoneration_analysis(b)
+        prev_exon, newly_exon, outstanding = api.auto_retry_util.test_variant_exoneration_analysis(
+            b)
+        updated_failed_test_stats = prev_exon + newly_exon + outstanding
+        _ = api.auto_retry_util.get_exonerated_suites(
+            b, updated_failed_test_stats)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

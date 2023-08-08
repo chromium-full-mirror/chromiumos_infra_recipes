@@ -3,10 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
+from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
@@ -15,6 +16,12 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+from PB.testplans.target_test_requirements_config import HwTestCfg
+from PB.testplans.target_test_requirements_config import TestSuiteCommon
+from PB.testplans.generate_test_plan import HwTestUnit
+from PB.testplans.generate_test_plan import TestUnitCommon
+
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
 
@@ -305,3 +312,96 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
+
+  # TODO(b/291768475): Calculate override info before exonerating and filter out
+  # previously exonerated suites.
+  def get_exonerated_suites(
+      self, cq_run: build_pb2.Build,
+      failed_test_stats: List[FailedTestStats]) -> List[str]:
+    """Returns the names of the exonerated test suites for the given CQ run.
+
+    Args:
+      cq_run: The cq-orchestrator build for which to get the exonerated suites.
+      failed_test_stats: A list of FailedTestStats to use when performing
+          auto exoneration rathen that the FailedTestStats in the output
+          properties of the build. This list of FailedTestStats should be
+          updated using the latest LUCI analysis data.
+
+    Returns:
+      The names of the exonerated test suites.
+  """
+
+    def _hw_unit(test_summary_dict: Dict) -> UnitHwTest:
+      """Returns a UnitHwTest created using info from the test summary dict.
+
+      Args:
+        test_summary_dict: Information about a test suite result. This includes
+            display name, build_target, criticality, and status.
+            If applicable, also includes board and model.
+
+      Returns:
+        A UnitHwTest based on info found in the test summary dict.
+      """
+      target_name = test_summary_dict['build_target']
+      display_name = test_summary_dict['name']
+      critical = test_summary_dict['critical']
+      builder_name = test_summary_dict['builder_name']
+      suite = display_name.split('.')[-1]
+      hw_test = HwTestCfg.HwTest(
+          common=TestSuiteCommon(display_name=display_name,
+                                 critical={'value': critical}),
+          suite=suite,
+          # TODO(b/289095330): Populate model in test_summary and pass
+          # it in here when a specific model is requested.
+          skylab_model='',
+      )
+      unit = HwTestUnit(
+          common=TestUnitCommon(
+              build_target=BuildTarget(name=target_name),
+              builder_name=builder_name,
+          ),
+          hw_test_cfg=HwTestCfg(
+              hw_test=[hw_test],
+          ),
+      )
+      return UnitHwTest(unit=unit, hw_test=hw_test)
+
+    # Get the test result from the test builders.
+    output_dict = json_format.MessageToDict(cq_run.output.properties)
+    test_summary = output_dict.get('test_summary', [])
+    test_tasks = output_dict.get('test_tasks', {})
+    skylab_builder_ids = [
+        int(b) for b in test_tasks.get('skylab_builder_ids', [])
+    ]
+    tast_vm_tests_builder_ids = [
+        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
+    ]
+
+    # Generate the exoneration configs for this specific CQ run.
+    exon_configs = self.m.exoneration_util.get_updated_configs(
+        failed_test_stats, self.m.exonerate.manual_exoneration_configs)
+
+    exonerated_suites = []
+    # Exonerate HW test results.
+    if len(skylab_builder_ids) > 0:
+      hw_units = [
+          _hw_unit(t) for t in test_summary if '.hw.' in t.get('name', '')
+      ]
+      hw_test_results = self.m.skylab_results.get_previous_results(
+          skylab_builder_ids, hw_units)
+      exonerated_suites.extend([
+          self.m.naming.get_skylab_result_title(result)
+          for result in hw_test_results
+          if self.m.exonerate.is_hw_result_exonerable(result, exon_configs)
+      ])
+    # Exonerate VM test results.
+    if len(tast_vm_tests_builder_ids) > 0:
+      vm_builds = self.m.buildbucket.get_multi(
+          tast_vm_tests_builder_ids).values()
+      exonerated_suites.extend([
+          self.m.naming.get_vm_test_title(result)
+          for result in vm_builds
+          if self.m.exonerate.is_vm_test_build_exonerable(result, exon_configs)
+      ])
+
+    return exonerated_suites

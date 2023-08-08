@@ -9,6 +9,8 @@ DEPS = [
     'cros_tags',
     'exonerate',
     'exoneration_util',
+    'naming',
+    'skylab_results',
     'test_util',
 ]
 
