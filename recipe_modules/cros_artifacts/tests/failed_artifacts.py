@@ -11,6 +11,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/cq',
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
@@ -72,6 +73,24 @@ def GenTests(api):
 
   yield api.test(
       'some-failed',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          SOME_FAILED_RESPONSE),
+      api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
+      api.post_check(post_process.StepFailure,
+                     'upload artifacts.call artifacts service'),
+      api.post_check(post_process.StepTextEquals,
+                     'upload artifacts.call artifacts service',
+                     'Failed to generate: SIMPLE_CHROME_SYSROOT'),
+      api.post_check(post_process.ResultReason,
+                     'Failed to generate: SIMPLE_CHROME_SYSROOT'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'some-failed-cq-dry-run',
+      api.cq(run_mode=api.cq.DRY_RUN),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           SOME_FAILED_RESPONSE),
