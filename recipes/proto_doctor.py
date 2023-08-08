@@ -53,12 +53,14 @@ CHROMITE_REPO = 'chromiumos/chromite'
 INFRA_PROTO_REPO = 'chromiumos/infra/proto'
 CHROMITE_INFRA_PROTO_REPO = 'chromite/infra/proto'
 CHROMIUMOS_OVERLAY_REPO = 'src/third_party/chromiumos-overlay'
+MANIFEST_INTERNAL_REPO = 'chromeos/manifest-internal'
 SCRIPTS_REPO = 'src/scripts'
 PROJECTS_TO_CHECKOUT = (
     INFRA_PROTO_REPO,
     CHROMITE_REPO,
     CHROMITE_INFRA_PROTO_REPO,
     CHROMIUMOS_OVERLAY_REPO,  # Needed for SDK version file.
+    MANIFEST_INTERNAL_REPO,  # Needed to check the ChromeOS version
     SCRIPTS_REPO,  # Needed for make_chroot.sh script.
 )
 

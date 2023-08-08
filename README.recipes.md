@@ -14324,7 +14324,7 @@ changes to the infra/proto repo. The poller should batch requests, so there may
 be several changes, which may be on different branches.
 For more info on gitiles_pollers, see go/lucicfg#luci.gitiles_poller.
 
-&mdash; **def [RunSteps](/recipes/proto_doctor.py#100)(api: recipe_api.RecipeApi, properties: proto_doctor_pb2.ProtoDoctorProperties):**
+&mdash; **def [RunSteps](/recipes/proto_doctor.py#102)(api: recipe_api.RecipeApi, properties: proto_doctor_pb2.ProtoDoctorProperties):**
 
 Starting point for main recipe logic.
 

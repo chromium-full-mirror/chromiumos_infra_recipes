@@ -144,6 +144,7 @@
       "chromiumos/chromite",
       "chromite/infra/proto",
       "src/third_party/chromiumos-overlay",
+      "chromeos/manifest-internal",
       "src/scripts"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -237,6 +238,7 @@
       "chromiumos/chromite",
       "chromite/infra/proto",
       "src/third_party/chromiumos-overlay",
+      "chromeos/manifest-internal",
       "src/scripts"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1548,6 +1550,7 @@
       "chromiumos/chromite",
       "chromite/infra/proto",
       "src/third_party/chromiumos-overlay",
+      "chromeos/manifest-internal",
       "src/scripts"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1641,6 +1644,7 @@
       "chromiumos/chromite",
       "chromite/infra/proto",
       "src/third_party/chromiumos-overlay",
+      "chromeos/manifest-internal",
       "src/scripts"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
