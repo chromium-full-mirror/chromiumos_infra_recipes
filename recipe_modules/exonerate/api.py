@@ -717,7 +717,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         not hw_test_result.task.test.common.critical.value):
       # If a result is successful, technically its not exonerable.
       return False
-    if not self._configs_loaded or exoneration_configs_override:
+    if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
     build_target = hw_test_result.task.unit.common.build_target.name
