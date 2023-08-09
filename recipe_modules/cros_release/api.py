@@ -409,7 +409,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """
     pg_orch_builder = ('staging-paygen-orchestrator' if
                        self.m.build_menu.is_staging else 'paygen-orchestrator')
-    bucket = self.m.buildbucket.build.builder.bucket
+    bucket = 'staging' if self.m.build_menu.is_staging else 'release'
 
     version = self.m.cros_version.version
     with self.m.step.nest('generate payloads'):

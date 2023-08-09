@@ -31,12 +31,12 @@
       "-fields",
       "id,input.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-eve-release-main\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"release\", \"builder\": \"staging-eve-release-main\", \"project\": \"chromeos\"}}"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -70,7 +70,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -93,7 +93,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -144,7 +144,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -175,7 +175,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -214,7 +214,7 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -296,7 +296,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -332,7 +332,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -430,7 +430,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -511,7 +511,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -565,7 +565,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -604,7 +604,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -651,7 +651,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -698,7 +698,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -753,7 +753,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -792,7 +792,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -823,7 +823,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -854,7 +854,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -883,7 +883,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -916,7 +916,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -951,7 +951,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -983,7 +983,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1024,7 +1024,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1071,7 +1071,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1104,7 +1104,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1137,7 +1137,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1170,7 +1170,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1203,7 +1203,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1232,7 +1232,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1286,7 +1286,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1313,7 +1313,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1354,7 +1354,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1401,7 +1401,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1444,7 +1444,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1487,7 +1487,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1515,7 +1515,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1550,7 +1550,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1585,7 +1585,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1618,7 +1618,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1665,7 +1665,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1714,7 +1714,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1759,7 +1759,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1808,7 +1808,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1858,7 +1858,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1919,7 +1919,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1951,7 +1951,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -1985,7 +1985,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2022,7 +2022,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2055,7 +2055,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2088,7 +2088,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2121,7 +2121,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2160,7 +2160,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2194,7 +2194,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2235,7 +2235,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2283,7 +2283,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2328,7 +2328,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2362,7 +2362,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2409,7 +2409,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2458,7 +2458,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2503,7 +2503,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2548,7 +2548,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2597,7 +2597,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2658,7 +2658,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2691,7 +2691,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2742,7 +2742,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2783,7 +2783,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2819,7 +2819,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2847,7 +2847,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2876,7 +2876,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2933,7 +2933,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -2970,7 +2970,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3009,7 +3009,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3090,7 +3090,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3133,7 +3133,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3187,7 +3187,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3221,7 +3221,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3273,7 +3273,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3310,7 +3310,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3349,7 +3349,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3430,7 +3430,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3476,7 +3476,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3509,7 +3509,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3583,7 +3583,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3620,7 +3620,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3659,7 +3659,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3743,7 +3743,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3818,7 +3818,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3860,7 +3860,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3889,7 +3889,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3956,7 +3956,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -3993,7 +3993,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4032,7 +4032,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4120,7 +4120,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4176,7 +4176,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4213,7 +4213,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4251,7 +4251,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4297,7 +4297,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-eve\"\n    ],\n    \"bot-config\": \"staging-eve-release-main\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-eve-release-main\",\n    \"builder_type\": \"staging\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"time\": {\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-eve\"\n    ],\n    \"bot-config\": \"staging-eve-release-main\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-eve-release-main\",\n    \"builder_type\": \"release\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"time\": {\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4307,7 +4307,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4331,7 +4331,7 @@
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"buildbucket_id\": 8945511751514863184,@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder-name\": \"staging-eve-release-main\",@@@",
-      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@partial-metadata.json@    \"builder_type\": \"release\",@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"child-configs\": [],@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"master_build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@partial-metadata.json@    \"metadata-version\": \"2\",@@@",
@@ -4368,7 +4368,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4428,7 +4428,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4465,7 +4465,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4503,7 +4503,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4602,7 +4602,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4710,7 +4710,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4743,7 +4743,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4813,7 +4813,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4850,7 +4850,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4889,7 +4889,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -4976,7 +4976,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5013,7 +5013,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5098,7 +5098,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5135,7 +5135,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5173,7 +5173,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5272,7 +5272,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5412,7 +5412,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5459,7 +5459,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5511,7 +5511,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5583,7 +5583,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5621,7 +5621,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5659,7 +5659,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5755,7 +5755,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5832,7 +5832,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5870,7 +5870,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -5908,7 +5908,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6004,7 +6004,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6081,7 +6081,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6119,7 +6119,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6157,7 +6157,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6253,7 +6253,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6330,7 +6330,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6368,7 +6368,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6406,7 +6406,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6502,7 +6502,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6579,7 +6579,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6617,7 +6617,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6655,7 +6655,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6751,7 +6751,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6828,7 +6828,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6866,7 +6866,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -6904,7 +6904,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7000,7 +7000,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7077,7 +7077,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7115,7 +7115,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7153,7 +7153,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7249,7 +7249,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7326,7 +7326,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7364,7 +7364,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7402,7 +7402,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7498,7 +7498,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7610,7 +7610,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7648,7 +7648,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7686,7 +7686,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7743,7 +7743,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7789,7 +7789,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7849,7 +7849,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7886,7 +7886,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7923,7 +7923,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7960,7 +7960,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -7997,7 +7997,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8034,7 +8034,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8071,7 +8071,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8108,7 +8108,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8161,7 +8161,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8298,7 +8298,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8350,7 +8350,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8487,7 +8487,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8520,7 +8520,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8561,7 +8561,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8610,7 +8610,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8648,7 +8648,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8686,7 +8686,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8832,7 +8832,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8901,7 +8901,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8938,7 +8938,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -8976,7 +8976,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9136,7 +9136,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9201,7 +9201,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9251,7 +9251,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9396,7 +9396,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9445,7 +9445,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9474,7 +9474,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9514,7 +9514,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9543,7 +9543,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9579,7 +9579,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9688,7 +9688,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9718,7 +9718,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -9892,7 +9892,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10049,7 +10049,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10093,7 +10093,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10145,7 +10145,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10200,7 +10200,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-eve\"\n    ],\n    \"bot-config\": \"staging-eve-release-main\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-eve-release-main\",\n    \"builder_type\": \"staging\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:29\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-eve\"\n    ],\n    \"bot-config\": \"staging-eve-release-main\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-eve-release-main\",\n    \"builder_type\": \"release\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:29\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "env": {
@@ -10209,7 +10209,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10233,7 +10233,7 @@
       "@@@STEP_LOG_LINE@metadata.json@    \"build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"buildbucket_id\": 8945511751514863184,@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"builder-name\": \"staging-eve-release-main\",@@@",
-      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@    \"builder_type\": \"release\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"child-configs\": [],@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"master_build_id\": 0,@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"metadata-version\": \"2\",@@@",
@@ -10296,7 +10296,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10356,7 +10356,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10392,7 +10392,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10429,7 +10429,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10470,7 +10470,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10515,7 +10515,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10544,7 +10544,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10581,7 +10581,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10609,7 +10609,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10635,7 +10635,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10663,7 +10663,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10822,7 +10822,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -10866,7 +10866,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {
@@ -11007,7 +11007,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:staging"
+        "name": "chromeos:release"
       },
       "resultdb": {
         "current_invocation": {

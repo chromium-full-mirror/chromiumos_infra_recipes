@@ -10,7 +10,6 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'paygen_orchestration',
 ]
@@ -39,32 +38,20 @@ def GenTests(api: RecipeTestApi):
       len(api.paygen_orchestration.ALL_EXAMPLE_JSONS),
       api.paygen_orchestration.ALL_EXAMPLE_JSONS)
 
-  build_message = api.buildbucket.ci_build_message(
-      project='chromeos', bucket='release', builder='paygen-orchestrator')
-
   yield api.test(
       'basic', good_json,
       api.properties(builder_name='coral', delta_type='OMAHA',
-                     expected_length=2), api.buildbucket.build(build_message))
-
+                     expected_length=2))
   yield api.test(
       'basic-miss', good_json,
-      api.properties(builder_name='videogamething', expected_length=0),
-      api.buildbucket.build(build_message))
-
+      api.properties(builder_name='videogamething', expected_length=0))
   yield api.test(
       'basic-delta-miss', good_json,
       api.properties(builder_name='amenia', expected_length=0,
-                     delta_type='STEPPING_STONE'),
-      api.buildbucket.build(build_message))
-
+                     delta_type='STEPPING_STONE'))
   yield api.test(
       'basic-hit', good_json,
-      api.properties(builder_name='amenia',
-                     expected_length=1, delta_type='NO_DELTA'),
-      api.buildbucket.build(build_message))
-
-  yield api.test('bad-json', api.buildbucket.build(build_message), bad_json,
-                 status="FAILURE")
-  yield api.test('not-json', api.buildbucket.build(build_message), not_json,
-                 status="FAILURE")
+      api.properties(builder_name='amenia', expected_length=1,
+                     delta_type='NO_DELTA'))
+  yield api.test('bad-json', bad_json, status="FAILURE")
+  yield api.test('not-json', not_json, status="FAILURE")

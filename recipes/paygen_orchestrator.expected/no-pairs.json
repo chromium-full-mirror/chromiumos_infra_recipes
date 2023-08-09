@@ -119,18 +119,6 @@
       "gs://chromeos-build-release-console/paygen.json"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "discovering payload configuration.get paygen json.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -175,18 +163,6 @@
       "gs://dev-channel/coral/13505.15.0/**"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "examining dev-channel.target artifacts.discover gs artifacts.gsutil list",
     "timeout": 1800,
     "~followup_annotations": [
@@ -228,18 +204,6 @@
       "gs://beta-channel/coral/13505.11.0/**"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "examining beta-channel.source artifacts.discover gs artifacts.gsutil list",
     "timeout": 1800,
     "~followup_annotations": [
@@ -304,18 +268,6 @@
       "gs://beta-channel/coral/13505.15.0/**"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "examining beta-channel.source artifacts.discover gs artifacts (2).gsutil list",
     "timeout": 1800,
     "~followup_annotations": [
@@ -385,18 +337,6 @@
       "gs://beta-channel/coral/13505.15.0/**"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "examining beta-channel.target artifacts.discover gs artifacts.gsutil list",
     "timeout": 1800,
     "~followup_annotations": [
