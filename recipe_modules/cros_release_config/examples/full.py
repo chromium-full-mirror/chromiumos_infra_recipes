@@ -70,6 +70,10 @@ BLOCK_NEW = """builders {
     value: "git_pi-arc-m%(number)s"
   }
   android_branches {
+    key: "android-container-rvc"
+    value: "git_rvc-arc-m%(number)s"
+  }
+  android_branches {
     key: "android-vm-rvc"
     value: "git_rvc-arc-m%(number)s"
   }
