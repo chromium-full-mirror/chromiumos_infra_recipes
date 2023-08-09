@@ -135,6 +135,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "performing retries",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 1 run(s) to retry@@@",
+      "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
