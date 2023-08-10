@@ -7,6 +7,7 @@
 from typing import Generator
 from typing import Optional
 
+from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -47,12 +48,15 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
             outstanding_test_suite_failures) == 0:
           no_outstanding_failure_runs.append(b)
 
+  summary = f'found {len(no_outstanding_failure_runs)} run(s) to retry.'
   with api.step.nest('performing retries') as pres:
-    pres.step_text = f'found {len(no_outstanding_failure_runs)} run(s) to retry'
+    pres.step_text = summary
     # TODO(b/294075301): Add method to act on CLs. For now just list them so we
     # can inspect them manually.
     for b in no_outstanding_failure_runs:
       pres.links[f'{b.id}'] = api.buildbucket.build_url(build_id=b.id)
+
+  return RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
