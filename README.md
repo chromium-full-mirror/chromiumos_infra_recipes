@@ -168,3 +168,8 @@ This format is supported by PyCharm / IntelliJ
 * The Recipes framework does not require the RecipesApi subclass in recipe
 modules to have any particular name, but this repo has some tooling that expects
 it to be named `NameApi` derived from the `recipe_modules/<name>/`.
+
+## Deployment
+
+See [go/chromeos-ci-releases](http://go/chromeos-ci-releases) (internal link) for information
+about the recipes deployment process.
