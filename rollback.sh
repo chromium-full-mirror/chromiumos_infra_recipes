@@ -17,9 +17,9 @@ instance_id=""
 prompt="yes"
 
 while getopts "fi:" opt; do
-  case $opt in
+  case ${opt} in
     f) prompt="no";;
-    i) instance_id=$OPTARG;;
+    i) instance_id=${OPTARG};;
     *) usage;;
   esac
 done
@@ -29,7 +29,7 @@ if [[ -z "${instance_id}" ]]; then
 fi
 
 if [[ "${prompt}" == "yes" ]]; then
-  read -p "Rollback to version ${instance_id}? (Yy) " answer
+  read -r -p "Rollback to version ${instance_id}? (Yy) " answer
 
   if [[ "${answer^^}" != "Y" ]]; then
     exit 0

@@ -39,8 +39,8 @@ class CrosInfraConfigTestApi(RecipeTestApi):
       of the file, stripped.
     """
     with open(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                     filename)) as f:
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+        encoding='utf-8') as f:
       data = f.read().strip()
     msg = jsonpb.Parse(data, message)
     return self.m.depot_gitiles.make_encoded_file_from_bytes(
@@ -52,7 +52,7 @@ class CrosInfraConfigTestApi(RecipeTestApi):
     with open(
         os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
-            'test_builder_configs.json')) as f:
+            'test_builder_configs.json'), encoding='utf-8') as f:
       data = f.read().strip()
     return jsonpb.Parse(data, BuilderConfigs())
 
@@ -66,7 +66,7 @@ class CrosInfraConfigTestApi(RecipeTestApi):
     with open(
         os.path.join(
             os.path.abspath(os.path.dirname(__file__)),
-            'test_model_realms.cfg')) as f:
+            'test_model_realms.cfg'), encoding='utf-8') as f:
       data = f.read().strip()
     return self.m.depot_gitiles.make_encoded_file(data)
 

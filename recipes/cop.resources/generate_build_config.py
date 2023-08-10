@@ -35,7 +35,7 @@ def securize_user_config(user_config):
 def strip_steps(steps, files):
   """Remove the file-associated steps if they do no apply to a CL."""
   allow_tag = "CoP_FilesAllow"
-  out_steps = list()
+  out_steps = []
   for step in copy.deepcopy(steps):
     file_match_list = step.pop(allow_tag, None)
     if file_match_list and not any(
@@ -106,8 +106,8 @@ def main(args):
   args = parser.parse_args()
 
   input_json = json.load(args.input_json)
-  file_base_config = open(input_json['base_yaml'])
-  base_config = yaml.safe_load(file_base_config.read())
+  with open(input_json['base_yaml'], encoding='utf-8') as file_base_config:
+    base_config = yaml.safe_load(file_base_config.read())
   user_config = yaml.safe_load(input_json['user_yaml'])
   files = input_json['files']
   substitutions = input_json['substitutions']

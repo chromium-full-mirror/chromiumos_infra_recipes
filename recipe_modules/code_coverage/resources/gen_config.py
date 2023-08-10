@@ -92,6 +92,6 @@ if __name__ == '__main__':
   home_dir = os.path.normpath(os.path.join(__file__, '../../../../../..'))
   configs = gen_all_mapping_configs(home_dir)
   path_mapping_file = Path(__file__).parent.joinpath('path_mapping.json')
-  with path_mapping_file.open('w') as f:
+  with path_mapping_file.open('w', encoding='utf-8') as f:
     json.dump(configs, f, indent=2)
   logging.info('generated config to %s', path_mapping_file)

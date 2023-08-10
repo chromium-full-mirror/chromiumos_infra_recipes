@@ -14,36 +14,33 @@ import shutil
 import code_coverage_util
 
 
-def clean_file_paths(coverage_file, path_mapping_file, output_file,
+def clean_file_paths(coverage_filepath, path_mapping_filepath, output_filepath,
                      to_absolute_path):
   """Cleans the file paths in a given coverage file and writes out the results.
 
     Args:
-      coverage_file: the coverage file to process.
-      path_mapping_file: the file of the path mappings configs.
-      output_file: where to write the cleaned file.
-      to_absolute_path: True clean file path as absolute path, otherwise
-        as relative path(the part showing up on gerrit frontend, which is
+      coverage_filepath: Path to the coverage file to process.
+      path_mapping_filepath: Path to the file of the path mappings configs.
+      output_filepath: Where to write the cleaned file.
+      to_absolute_path: If True, clean file path as absolute path. Otherwise,
+        as relative path (the part showing up on gerrit frontend, which is
         decided by repo settings).
   """
-  with open(coverage_file,
-            'r') as coverage_file_obj, open(path_mapping_file,
-                                            'r') as config_file:
-    coverage_file_data = coverage_file_obj.read()
-
-    if code_coverage_util.is_valid_lcov_coverage_file(coverage_file_data):
-      logging.info('Cleaning lcov file %s to_absolute_path=%s', coverage_file,
-                   to_absolute_path)
-      path_mappings = json.load(config_file)
-      results = code_coverage_util.clean_file_names_in_lcov_coverage(
-          coverage_file_data, path_mappings, to_absolute_path)
-      with open(output_file, 'w') as out_file:
-        out_file.write(results)
-    else:
-      logging.info('Copying unknown file %s', coverage_file)
-      # Write the data as is if it can't be cleaned.
-      shutil.copyfile(coverage_file, output_file)
-      return
+  with open(coverage_filepath, 'r', encoding='utf-8') as coverage_file:
+    coverage_file_data = coverage_file.read()
+  if not code_coverage_util.is_valid_lcov_coverage_file(coverage_file_data):
+    logging.info('Copying unknown file %s', coverage_filepath)
+    # Write the data as is if it can't be cleaned.
+    shutil.copyfile(coverage_filepath, output_filepath)
+    return
+  logging.info('Cleaning lcov file %s to_absolute_path=%s', coverage_filepath,
+               to_absolute_path)
+  with open(path_mapping_filepath, 'r', encoding='utf-8') as config_file:
+    path_mappings = json.load(config_file)
+  results = code_coverage_util.clean_file_names_in_lcov_coverage(
+      coverage_file_data, path_mappings, to_absolute_path=to_absolute_path)
+  with open(output_filepath, 'w', encoding='utf-8') as output_file:
+    output_file.write(results)
 
 
 def _parse_args(args):

@@ -248,7 +248,7 @@ def to_compressed_file_record(file_coverage_data, constants_file,
     return None
 
   constants = {}
-  with open(constants_file, 'r') as f:
+  with open(constants_file, 'r', encoding='utf-8') as f:
     constants = json.load(f)
 
   coverage_path = code_coverage_util.clean_file_name(
@@ -328,7 +328,9 @@ def _split_metadata_in_shards_if_necessary(output_dir, compressed_files,
     file_shard_paths = []
     for i, files in enumerate(files_slice):
       file_name = 'files%d.json.gz' % (i + 1)
-      with open(os.path.join(output_dir, files_dir_name, file_name), 'wb') as f:
+      with open(
+          os.path.join(output_dir, files_dir_name, file_name), 'wb',
+          encoding='utf-8') as f:
         f.write(zlib.compress(json.dumps({'files': files})))
       path = os.path.normpath(os.path.join(files_dir_name, file_name))
       file_shard_paths.append(path)
@@ -373,7 +375,7 @@ def load_files_coverage_data(coverage_files, constants_file, diff_mapping):
   path_to_coverage_file = {}
   for coverage_file in coverage_files:
     data = {}
-    with open(coverage_file, 'r') as f:
+    with open(coverage_file, 'r', encoding='utf-8') as f:
       data = json.load(f)
 
     for datum in data['data']:
@@ -471,7 +473,8 @@ def _create_index_html(output_dir):
   for root, _, files in os.walk(output_dir):
     for f in files:
       all_files.append(os.path.relpath(os.path.join(root, f), output_dir))
-  with open(os.path.join(output_dir, 'index.html'), 'w') as index_f:
+  with open(os.path.join(output_dir, 'index.html'), 'w',
+            encoding='utf-8') as index_f:
     for f in sorted(all_files):
       index_f.write('<a href="./%s">%s<a>\n' % (f, f))
       index_f.write('<br>')
@@ -530,7 +533,7 @@ def main():
 
   diff_mapping = None
   if params.diff_mapping_path:
-    with open(params.diff_mapping_path) as f:
+    with open(params.diff_mapping_path, encoding='utf-8') as f:
       diff_mapping = json.load(f)
 
   compressed_data = convert_metadata([params.path_to_coverage_file],
@@ -538,7 +541,9 @@ def main():
                                      params.output_dir, params.constants_file,
                                      diff_mapping)
 
-  with open(os.path.join(params.output_dir, 'all.json.gz'), 'wb') as f:
+  with open(
+      os.path.join(params.output_dir, 'all.json.gz'), 'wb',
+      encoding='utf-8') as f:
     f.write(zlib.compress(json.dumps(compressed_data)))
 
   _create_index_html(params.output_dir)

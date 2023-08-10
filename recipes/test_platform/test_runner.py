@@ -1481,8 +1481,7 @@ def execution_steps_with_phosphorus(api, properties):
 
         # Allow users to set custom provision deadline so long as it is greater
         # or less than the maximum allowed.
-        if max_duration_sec > _PROVISION_DEADLINE:
-          max_duration_sec = _PROVISION_DEADLINE
+        max_duration_sec = min(max_duration_sec, _PROVISION_DEADLINE)
 
         if interface.is_within_deadline():
           result = _execution_steps_for_test_with_phosphorus(
@@ -1562,8 +1561,7 @@ def execution_steps_with_ctr(api, properties):
 
     # Allow users to set custom provision deadline so long as it is greater
     # or less than the maximum allowed.
-    if max_duration_sec > _PROVISION_DEADLINE:
-      max_duration_sec = _PROVISION_DEADLINE
+    max_duration_sec = min(max_duration_sec, _PROVISION_DEADLINE)
 
     if interface.is_within_deadline():
       result = _execution_steps_for_test_with_ctr(

@@ -100,7 +100,7 @@ def RunSteps(api: RecipeApi, properties: RoboCropProperties):
                                                  indent=2, sort_keys=True)
 
     if has_swarming_fetch_error:
-      raise swarming_fetch_error
+      raise swarming_fetch_error  # pylint: disable=used-before-assignment
 
 
 def GenTests(api: RecipeTestApi):

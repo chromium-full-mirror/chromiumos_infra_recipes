@@ -51,7 +51,7 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     return self.m.cros_build_api.set_api_return(step, endpoint, data, iteration,
                                                 retcode)
 
-  def test(self, name, *args, **kwargs):
+  def test(self, name, *args, **kwargs):  # pylint: disable=arguments-differ
     """A test, with build and BuildMenuProperties,
 
     This function creates a test child_build from kwargs, and then calls
@@ -60,11 +60,13 @@ class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
     The following arguments are consumed by this method:
       build_target (str): The name of the build target.  Default: amd64-generic.
       artifact_pointless (bool): Whether the artifact prepare step replies
-          POINTLESS.
+        POINTLESS.
       pointless (bool): The reply from the pointless build check.
 
     Args:
-      *args (list):  Arguments to pass to test_api.test.
+      name: The name of the test.
+      *args (list):  Arguments to pass to test_api.test, besides the name of
+        the test.
       kwargs (dict): Arguments to pass to test_util.test_build.
 
     Returns:

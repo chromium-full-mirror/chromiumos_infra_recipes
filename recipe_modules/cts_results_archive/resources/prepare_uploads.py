@@ -314,23 +314,22 @@ def _read_keyval(path):
     """
   pattern = r'^([-\.\w]+)=(.*)$'
   keyval = {}
-  f = open(path)
-  for line in f:
-    line = re.sub('#.*', '', line).rstrip()
-    if not line:
-      continue
-    match = re.match(pattern, line)
-    if match:
-      key = match.group(1)
-      value = match.group(2)
-      if re.search('^\d+$', value):
-        value = int(value)
-      elif re.search('^(\d+\.)?\d+$', value):
-        value = float(value)
-      keyval[key] = value
-    else:
-      raise ValueError('Invalid format line: %s' % line)
-  f.close()
+  with open(path, encoding='utf-8') as f:
+    for line in f:
+      line = re.sub('#.*', '', line).rstrip()
+      if not line:
+        continue
+      match = re.match(pattern, line)
+      if match:
+        key = match.group(1)
+        value = match.group(2)
+        if re.search('^\d+$', value):
+          value = int(value)
+        elif re.search('^(\d+\.)?\d+$', value):
+          value = float(value)
+        keyval[key] = value
+      else:
+        raise ValueError('Invalid format line: %s' % line)
   return keyval
 
 
@@ -367,7 +366,7 @@ def _first_label_value_for(labels, key):
 
 
 def _deserialize_labels_from_host_info(path):
-  with open(path, 'r') as f:
+  with open(path, 'r', encoding='utf-8') as f:
     info = json.load(f)
   return info['labels']
 

@@ -42,13 +42,13 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
 
   @staticmethod
   def read_coverage_data(file_path):
-    with open(file_path) as f:
+    with open(file_path, encoding='utf-8') as f:
       coverage_json = json.load(f)
       return coverage_json['data'][0]['files']
 
   def testEmptyCoverage(self):
     coverage_path = os.path.join(self.tmpdir, 'empty_coverage.json')
-    with open(coverage_path, 'w') as outfile:
+    with open(coverage_path, 'w', encoding='utf-8') as outfile:
       outfile.write(json.dumps({}))
 
     dest_dir = tempfile.mkdtemp()
@@ -58,7 +58,7 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
 
   def testShouldSplitSuccessfully_1(self):
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
-    with open(coverage_path, 'w') as outfile:
+    with open(coverage_path, 'w', encoding='utf-8') as outfile:
       outfile.write(json.dumps(self.coverage_json(4)))
     dest_dir = tempfile.mkdtemp()
 
@@ -72,7 +72,7 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
 
   def testShouldSplitSuccessfully_2(self):
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
-    with open(coverage_path, 'w') as outfile:
+    with open(coverage_path, 'w', encoding='utf-8') as outfile:
       outfile.write(json.dumps(self.coverage_json(5)))
 
     dest_dir = tempfile.mkdtemp()
@@ -90,7 +90,7 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
   def testShouldSplitSuccessfully_3(self):
     coverage_path = os.path.join(self.tmpdir, 'big_coverage.json')
 
-    with open(coverage_path, 'w') as outfile:
+    with open(coverage_path, 'w', encoding='utf-8') as outfile:
       outfile.write(json.dumps(self.coverage_json(5)))
 
     dest_dir = tempfile.mkdtemp()
@@ -110,7 +110,7 @@ class ChunkLlvmCoverageFileTest(unittest.TestCase):
   def testShouldNotChunkForNonLLVMFile(self):
     coverage_path = os.path.join(self.tmpdir, 'lcov_coverage.json')
 
-    with open(coverage_path, 'w') as outfile:
+    with open(coverage_path, 'w', encoding='utf-8') as outfile:
       outfile.write(json.dumps({}))
 
     dest_dir = tempfile.mkdtemp()

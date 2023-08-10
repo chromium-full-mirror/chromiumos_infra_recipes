@@ -6,7 +6,8 @@
 # Run unit tests.
 set -eu
 
-readonly bin_dir="$(readlink -e -- "$(dirname -- "$0")")"
+bin_dir="$(readlink -e -- "$(dirname -- "$0")")"
+readonly bin_dir
 
 cd "${bin_dir}/.."
 
@@ -19,6 +20,6 @@ if [ "$(type -P vpdython)" == "" ]; then
 fi
 
 # vpython must be in path
-PATH="$PATH:$(pwd)/bin/cipd"
+PATH="${PATH}:$(pwd)/bin/cipd"
 echo ""
 exec vpython3 runner.py "$@"

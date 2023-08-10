@@ -387,7 +387,7 @@ def GenTests(api: RecipeTestApi):
               'schedule skylab tests v2.buildbucket.schedule'].stdin)
     return check(data['requests'][0]['scheduleBuild']['properties']['requests']
                  ['htarget.hw.bvt-inline']['params']['scheduling']['qsAccount']
-                 == u'pupr')
+                 == 'pupr')
 
   yield api.orch_menu.test(
       'quota-scheduler-override', data.ctp_normal,

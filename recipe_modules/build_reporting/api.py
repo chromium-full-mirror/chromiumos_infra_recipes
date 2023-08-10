@@ -434,11 +434,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
       try:
         # Publish the final step time.
         self._upload_to_gs(gs_path or self.m.build_menu.artifacts_gs_path())
-      except Exception as e:
-        # Swallow in favor of actual exception.
-        if exception:
-          raise exception  # pylint: disable=raise-missing-from
-        raise
+      except Exception:  # pylint: disable=broad-except
+        # If there was an actual exception before publishing, don't raise the
+        # publish exception, so that we can see the previous one.
+        if not exception:
+          raise
       if exception:
         raise exception
 

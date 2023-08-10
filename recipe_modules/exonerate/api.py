@@ -731,8 +731,8 @@ class ExonerateApi(recipe_api.RecipeApi):
       test_cases = result.test_cases
       for test_case in test_cases:
         test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
-        if (test_case.verdict == TaskState.VERDICT_UNSPECIFIED or
-            test_case.verdict == TaskState.VERDICT_FAILED):
+        if test_case.verdict in (TaskState.VERDICT_UNSPECIFIED,
+                                 TaskState.VERDICT_FAILED):
           if not self._is_test_name_exonerable(test_name, build_target,
                                                exoneration_configs_override):
             return False

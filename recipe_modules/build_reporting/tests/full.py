@@ -34,8 +34,9 @@ def _read_test_file(filename):
   Returns:
     (str): The contents of the file.
   """
-  with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                         filename)) as f:
+  # TODO(gredelston): Use api.file instead.
+  filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)
+  with open(filepath, encoding='utf-8') as f:
     return f.read().strip()
 
 

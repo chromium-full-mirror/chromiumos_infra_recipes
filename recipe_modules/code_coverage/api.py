@@ -12,7 +12,7 @@ from recipe_engine.recipe_api import StepFailure
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 
-class CoverageFileSettings():
+class CoverageFileSettings:
   """Contains parameters used to drive different coverage upload workflows."""
 
   def __init__(self, should_clean, to_absolute_path):
@@ -343,11 +343,11 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
       tmp_dir = self.m.path.mkdtemp(prefix='filtered-coverage')
       result = {}
-      for change in change_to_file_names:
+      for change, file_names in change_to_file_names.items():
         coverage_data = []
         for data in data_to_clean['data']:
           for file_data in data['files']:
-            for change_file_name in change_to_file_names[change]:
+            for change_file_name in file_names:
               # file_data[filename] contains src prefix example: /src/platform2/vm/foo.cc.
               # patch_file_name does not contain src prefix. example: vm/foo.cc.
               # So perform filtering based on endswith check.

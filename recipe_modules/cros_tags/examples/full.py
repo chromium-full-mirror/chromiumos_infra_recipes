@@ -79,8 +79,8 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  equiv = u'01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'
-  group = u'099ed4f822eaff88f1f0d0cae8c40f09e212b0672c2497afe9f88449'
+  equiv = '01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'
+  group = '099ed4f822eaff88f1f0d0cae8c40f09e212b0672c2497afe9f88449'
   yield api.test(
       'basic', api.cq(run_mode=api.cq.FULL_RUN),
       api.properties(

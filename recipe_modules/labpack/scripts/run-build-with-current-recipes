@@ -19,15 +19,16 @@ test -n "$1" || die 'must provide build'
 
 td="$(mktemp -d)" || die 'failed to make temporary directory'
 
-./get-builder "$1" | ./add-stanza "$2" > "$td"/job.json || die 'failed to create file'
-test -f "$td"/job.json || die 'file does not exist'
+./get-builder "$1" | ./add-stanza "$2" > "${td}"/job.json \
+  || die 'failed to create file'
+test -f "${td}"/job.json || die 'file does not exist'
 
 edit_file() {
-  ${VISUAL-vim} "$td"/job.json
-  if test -z "$(cat <"$td"/job.json)"; then
+  ${VISUAL-vim} "${td}"/job.json
+  if test -z "$(cat <"${td}"/job.json)"; then
     return 0
   fi
-  if python3 -m json.tool "$td"/job.json >/dev/null; then
+  if python3 -m json.tool "${td}"/job.json >/dev/null; then
     return 0
   fi
   return 1
@@ -35,9 +36,9 @@ edit_file() {
 
 edit_file || die 'failed to edit file'
 
-if test -z "$(cat <"$td"/job.json)"; then
+if test -z "$(cat <"${td}"/job.json)"; then
   1>&2 printf '%s\n' "file empty: launch aborted"
   exit 0
 fi
 
-cat "$td"/job.json | led edit-recipe-bundle | led launch
+<"${td}"/job.json led edit-recipe-bundle | led launch

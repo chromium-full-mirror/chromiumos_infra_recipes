@@ -3,44 +3,8 @@
 # found in the LICENSE file.
 
 import git_cl
-from subprocess2 import CalledProcessError
 
 USE_PYTHON3 = True
-
-UNLINTABLE_FILES = set(
-    ['recipes.py', 'recipes_release/protos/recipes_autoreleaser.py'])
-
-
-def PylintCheck(input_api, output_api):
-  """Run pylint checks for modified files."""
-
-  pylint_errors = []
-
-  # Find pylint (currently v2.7).
-  canned_checks_path = input_api.canned_checks.__file__
-  canned_checks_path = input_api.os_path.abspath(canned_checks_path)
-  depot_tools_path = input_api.os_path.dirname(canned_checks_path)
-  pylint_path = input_api.os_path.join(depot_tools_path, 'pylint-2.7')
-
-  for affected in input_api.AffectedFiles(include_deletes=False):
-    affected_str = str(affected)
-    if affected_str.endswith(".py"):
-      if affected_str in UNLINTABLE_FILES:
-        continue
-      try:
-        input_api.subprocess.check_output(
-            [pylint_path, '--rcfile', 'pylintrc',
-             '%s' % (affected_str)])
-      except CalledProcessError as error:
-        pylint_errors.append("%s" % error)
-  if pylint_errors:
-    pylint_errors = [
-        output_api.PresubmitError((
-            'Please fix pylint errors or add \'#pylint: disable=your-error\' in the source code '
-            'at the end of the relevant line:\n\n%s') %
-                                  "\n".join(pylint_errors))
-    ]
-  return pylint_errors
 
 
 def FormatCheck(input_api, output_api):
@@ -121,7 +85,6 @@ def CommitChecks(input_api, output_api):
           python3=True,
       )
   ])
-  results += PylintCheck(input_api, output_api)
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
   results += FormatCheck(input_api, output_api)
@@ -133,7 +96,6 @@ def UploadChecks(input_api, output_api):
   file_filter = lambda x: x.LocalPath() == 'infra/config/recipes.cfg'
   results = input_api.canned_checks.CheckJsonParses(input_api, output_api,
                                                     file_filter=file_filter)
-  results += PylintCheck(input_api, output_api)
   # Python formatting issues are errors, but we need to ignore recipes.py, which
   # we do not control.
   results += FormatCheck(input_api, output_api)

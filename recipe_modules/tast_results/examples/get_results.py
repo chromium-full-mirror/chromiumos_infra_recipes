@@ -57,7 +57,7 @@ def RunSteps(api):
   api.assertions.assertEqual(results.failures[0].title, 'arc.Boot')
   api.assertions.assertEqual(test_cases[1]['name'], 'arc.StartStop')
   api.assertions.assertEqual(test_cases[1]['humanReadableSummary'],
-                             u'Test did not run')
+                             'Test did not run')
 
   passed_task_result = ExecuteResponse.TaskResult(
       name=task_result.name, state=TaskState(verdict=TaskState.VERDICT_PASSED),

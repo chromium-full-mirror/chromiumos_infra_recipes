@@ -445,9 +445,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return 'build-{}'.format(build_id)
 
   def _has_build_started(self, build: build_pb2.Build) -> bool:
-    return (build.status == Status.SUCCESS or build.status == Status.FAILURE or
-            build.status == Status.INFRA_FAILURE or
-            build.status == Status.STARTED)
+    return build.status in (Status.SUCCESS, Status.FAILURE,
+                            Status.INFRA_FAILURE, Status.STARTED)
 
   def _get_test_id_from_rdb_test_name(self, rdb_test_name: str) -> str:
     """Returns the test_id from a test_result name from rdb. rdb test names

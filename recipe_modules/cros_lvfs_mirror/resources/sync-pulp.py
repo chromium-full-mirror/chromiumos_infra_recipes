@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2020 Richard Hughes <richard@hughsie.com>
@@ -64,18 +64,12 @@ import requests
 
 # pylint: disable=superfluous-parens
 
-# Python 2.x compat
-try:
-  FileNotFoundError
-except NameError:
-  FileNotFoundError = IOError  # pylint: disable=redefined-builtin
 
-
-class Pulp():
+class Pulp:
 
   def __init__(self, url, existent):
     self.url = url
-    self.existent = open(existent, "r")
+    self.existent = open(existent, "r", encoding='utf-8')  # pylint: disable=consider-using-with
     self.manifest = 'PULP_MANIFEST'
     self.useragent = os.path.basename(sys.argv[0])
     self.session = requests.Session()
@@ -95,7 +89,7 @@ class Pulp():
     ) as e:
       print(str(e))
     else:
-      with open(os.path.join(path, fn), 'wb') as f:
+      with open(os.path.join(path, fn), 'wb', encoding='utf-8') as f:
         f.write(rv.content)
 
   def _sync_file(self, fn, path):
@@ -132,7 +126,7 @@ class Pulp():
     for line in rv.content.decode().split("\n"):
       try:
         fn, _, _ = line.rsplit(",", 2)
-      except ValueError as e:
+      except ValueError:
         continue
       self._sync_file(fn, path)
 

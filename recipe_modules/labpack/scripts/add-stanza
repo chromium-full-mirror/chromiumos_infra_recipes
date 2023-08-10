@@ -6,7 +6,6 @@
 # ./add-stanza  is a filter that adds or replaces the ile-de-france stanza
 # of a job description.
 
-import os
 import sys
 import json
 

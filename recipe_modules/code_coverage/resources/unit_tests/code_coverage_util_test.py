@@ -36,16 +36,17 @@ class IsValidLlvmCoverageJsonTest(unittest.TestCase):
 class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
 
   def setUp(self):
-    with open(os.path.join(__RESOURCES_DIR__, "path_mapping.json"),
-              'r') as constant_file:
+    with open(
+        os.path.join(__RESOURCES_DIR__, "path_mapping.json"), 'r',
+        encoding='utf-8') as constant_file:
       self.path_mappings = json.load(constant_file)
 
   def testCleanFileName(self):
     # expected tuples of (artifact, absolute_path, relative_path)
     expectations = []
     with open(
-        os.path.join(__THIS_DIR__, 'path_mapping_test_data.csv'),
-        newline='') as f:
+        os.path.join(__THIS_DIR__, 'path_mapping_test_data.csv'), newline='',
+        encoding='utf-8') as f:
       reader = csv.reader(f)
       expectations = [(row[0], row[1], row[2]) for row in reader if len(row) > 0
                      ]

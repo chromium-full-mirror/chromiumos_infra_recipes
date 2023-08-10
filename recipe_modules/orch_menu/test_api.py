@@ -24,7 +24,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
   """Helpers for testing Chrome OS Recipes."""
 
-  def test(self, name, *args, **kwargs):
+  def test(self, name, *args, **kwargs):  # pylint: disable=arguments-differ
     """A test, with orchestrator and OrchMenuProperties,
 
     This function creates a test orchestrator from kwargs, and then calls

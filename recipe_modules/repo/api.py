@@ -10,7 +10,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 from collections import defaultdict
 from collections import namedtuple
-import distutils.version
+import distutils.version  # pylint: disable=no-name-in-module
 import json
 import re
 from typing import Any, Dict, Optional, Union
@@ -178,9 +178,9 @@ class RepoApi(recipe_api.RecipeApi):
         'check if repo version is at least {}'.format(version_string)):
       current_version_string = self.version(return_version=True)
       if current_version_string:
-        # Note: distutils is slated for deprecation in python 3.12. We should
-        # explore replacing this with a suitable alternative, which will be made
-        # easier when we're off python 2. See b/197782701.
+        # Note: distutils is deprecated and planned for removal in python3.12.
+        # We should replace it with a suitable alternative.
+        # https://docs.python.org/3/library/distutils.html
         min_version = distutils.version.LooseVersion(version_string)
         cur_version = distutils.version.LooseVersion(current_version_string)
         return cur_version >= min_version

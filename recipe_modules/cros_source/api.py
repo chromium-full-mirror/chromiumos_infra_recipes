@@ -1667,7 +1667,7 @@ class CrosSourceApi(RecipeApi):
                                           is_staging, namespace)
                         passed_uprevs.append(repo_name)
                         break
-                      except StepFailure as ex:
+                      except StepFailure:
                         if index == 2:
                           failed_uprevs.append(repo_name)
                           all_uprevs_passed = False

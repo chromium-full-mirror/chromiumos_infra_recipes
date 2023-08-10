@@ -32,17 +32,17 @@ class CleanFilePathsTest(unittest.TestCase):
 
   @staticmethod
   def _write_to_file(path, content):
-    with open(path, 'w') as f:
+    with open(path, 'w', encoding='utf-8') as f:
       f.write(content)
 
   @staticmethod
   def _read_file(path):
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
       return f.read()
 
   @staticmethod
   def _read_file_json(path):
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
       return json.load(f)
 
   @mock.patch.object(code_coverage_util, 'is_valid_llvm_coverage_json_file')

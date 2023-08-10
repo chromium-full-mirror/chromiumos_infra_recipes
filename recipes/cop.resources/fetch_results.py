@@ -91,7 +91,7 @@ def main(args):
       'log': result_logs,
       'log_url': build.log_url,
   }
-  steps = list()
+  steps = []
   for i, step in enumerate(build.steps):
     if not should_log_step(step):
       continue

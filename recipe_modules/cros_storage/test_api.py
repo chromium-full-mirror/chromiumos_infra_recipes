@@ -17,8 +17,9 @@ def _read_test_file(filename):
   Returns:
     (str): The contents of the file.
   """
-  with open(os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                         filename)) as f:
+  with open(
+      os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+      encoding='utf-8') as f:
     return f.read().strip()
 
 

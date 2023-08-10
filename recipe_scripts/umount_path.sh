@@ -24,7 +24,7 @@ EOF
   sudo umount -l "${mount_path}"
 
   err=$?
-  if [[ $err -ne 0 ]]; then
+  if [[ ${err} -ne 0 ]]; then
     # umount was not successful, provide diagnostics.
     set -x
     sudo fuser "${mount_path}"
@@ -32,7 +32,7 @@ EOF
     sudo losetup -a
     ps auxf
     set +x
-    exit $err
+    exit "${err}"
   fi
 }
 

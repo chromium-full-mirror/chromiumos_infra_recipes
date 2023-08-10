@@ -31,7 +31,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = GitilesTriggererProperties
 
-Key = namedtuple('_Key', [u'repo', u'ref', u'branch'])
+Key = namedtuple('_Key', ['repo', 'ref', 'branch'])
 
 
 def _make_key(trigger: Trigger) -> Key:

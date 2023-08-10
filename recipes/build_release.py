@@ -143,7 +143,7 @@ def DoRunSteps(api, config, properties):
           with api.step.nest('try creating test service containers') as step:
             try:
               api.build_menu.create_containers(config)
-            except StepFailure as sf:
+            except StepFailure:
               # For now only mark the step as failed. Do not fail the build.
               step.status = api.step.FAILURE
               step.step_summary_text = 'One or more test service containers failed to build.'

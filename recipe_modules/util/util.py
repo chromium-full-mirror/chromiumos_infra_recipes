@@ -20,6 +20,7 @@ def read_test_file(filename: str, fdir: str) -> str:
   Returns:
     The contents of the file, stripped.
   """
-  with open(os.path.join(os.path.abspath(os.path.dirname(fdir)),
-                         filename)) as f:
+  with open(
+      os.path.join(os.path.abspath(os.path.dirname(fdir)), filename),
+      encoding='utf-8') as f:
     return f.read().strip()

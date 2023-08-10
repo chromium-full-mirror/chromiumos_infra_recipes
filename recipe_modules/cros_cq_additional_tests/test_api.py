@@ -93,7 +93,7 @@ class CrosCqAdditionalTestsTestApi(recipe_test_api.RecipeTestApi):
         ['build_target', 'some_build_target', 'mybuild'])
 
   def _create_build_input_object(self, build_targets):
-    r = list()
+    builds = []
     for bt in build_targets:
       properties = {}
       properties = {'artifacts': self.generate_mock_artifact(build_target=bt)}
@@ -105,8 +105,8 @@ class CrosCqAdditionalTestsTestApi(recipe_test_api.RecipeTestApi):
 
       build.input.properties.update(
           {'buildTarget': json_format.MessageToDict(BuildTarget(name=bt))})
-      r.append(build)
-    return r
+      builds.append(build)
+    return builds
 
   @property
   def generate_mock_gerrit_change(self):

@@ -55,11 +55,11 @@ def RunSteps(api):
   api.assertions.assertEqual(passed_tcr.verdict, TaskState.VERDICT_PASSED)
   failed_tcr = api.tast_results.convert_to_testcaseresult(failed_test_result)
   api.assertions.assertEqual(failed_tcr.verdict, TaskState.VERDICT_FAILED)
-  api.assertions.assertEqual(failed_tcr.human_readable_summary, u'failure')
+  api.assertions.assertEqual(failed_tcr.human_readable_summary, 'failure')
   skipped_tcr = api.tast_results.convert_to_testcaseresult(skipped_test_result)
   api.assertions.assertEqual(skipped_tcr.verdict, TaskState.VERDICT_NO_VERDICT)
   api.assertions.assertEqual(skipped_tcr.human_readable_summary,
-                             u'Felt like it.')
+                             'Felt like it.')
 
 
 def GenTests(api):

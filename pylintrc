@@ -48,11 +48,13 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 #
 #   bad-continuation <-- fights with git cl presubmits.
 #   line-too-long
+#   consider-using-f-string <-- new as of pylint-2.13
 #   ...and more based on case by case and workload.
 disable=
     attribute-defined-outside-init,
     bad-continuation,
     consider-iterating-dictionary,
+    consider-using-f-string,
     duplicate-code,
     file-ignored,
     fixme,

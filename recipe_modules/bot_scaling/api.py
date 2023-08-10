@@ -646,8 +646,8 @@ def _calculate_bot_adjustment(bot_policy: BotPolicy, requested: int,
     else:
       bots_requested = requested
   else:
-    if (bot_policy.scaling_mode == BotPolicy.STEPPED or
-        bot_policy.scaling_mode == BotPolicy.STEPPED_DECREASE):
+    if bot_policy.scaling_mode in (BotPolicy.STEPPED,
+                                   BotPolicy.STEPPED_DECREASE):
       bots_requested = current_amount - min(
           (current_amount - requested),
           bot_policy.scaling_restriction.step_size)

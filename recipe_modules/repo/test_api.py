@@ -23,8 +23,8 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
       (str): The contents of the file.
     """
     with open(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                     filename)) as f:
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+        encoding='utf-8') as f:
       return f.read().strip()
 
   @property
