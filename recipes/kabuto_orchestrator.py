@@ -100,6 +100,9 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str,
 
 
 def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
+  if properties.use_release_build_artifacts and not properties.manifest_branch:
+    raise StepFailure(
+        'must set manifest_branch if use_release_build_artifacts is true')
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
   # Default shadercache build timeout to 3 hours if not specified
@@ -119,7 +122,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   else:
     paygen_input_props = {
         "destination_gs_bucket": "kabuto_cache",
-        "destination_gs_path": "test-recipe-payloads/"
+        "destination_gs_path": "test-recipe-payloads/",
+        "use_release_build_artifacts": properties.use_release_build_artifacts
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
@@ -210,6 +214,24 @@ def GenTests(api: RecipeTestApi) -> None:
       'manifest-branch',
       api.properties(**props),
   )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  props['use_release_build_artifacts'] = True
+  yield api.test(
+      'use-release-build-artifacts', api.properties(**props),
+      api.post_check(post_process.LogContains,
+                     'paygen build.buildbucket.run.schedule', 'request', [
+                         '"manifest_branch": "release-R105-14989.B"',
+                         '"use_release_build_artifacts": true'
+                     ]))
+
+  props = good_props.copy()
+  props['use_release_build_artifacts'] = True
+  yield api.test('release-build-but-no-manifest-branch',
+                 api.properties(**props),
+                 api.post_process(post_process.DropExpectation),
+                 status='FAILURE')
 
   props = good_props.copy()
   props[

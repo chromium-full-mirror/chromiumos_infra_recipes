@@ -18,4 +18,8 @@ message KabutoPaygenProperties {
   // The manifest branch to check out (e.g. 'release-R105-14989.B')
   // Defaults to main tip of tree if not specified.
   string manifest_branch = 3;
+
+  // Whether to use release build artifacts instead of building Mesa locally.
+  // Defaults to false if not provided.
+  bool use_release_build_artifacts = 4;
 }

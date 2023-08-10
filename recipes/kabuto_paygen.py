@@ -66,7 +66,15 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
   kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
     # Build Mesa and fossilize tools.
-    api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
+    if properties.use_release_build_artifacts:
+      # Use artifacts from a CrOS release build.
+      api.step('build fossilize-tools', [
+          './kabuto', 'build-fossilize-tools-release',
+          f'--manifest-branch={properties.manifest_branch}'
+      ])
+    else:
+      # Default build style, from source.
+      api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
 
     # TODO(b/282030070): randomize this to avoid collisions.
     time_now_utc = api.time.utcnow()
@@ -129,5 +137,19 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [
               '--manifest-branch',
               'release-R105-14989.B',
+          ],
+      ))
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  props['use_release_build_artifacts'] = True
+  yield api.test(
+      'use-release-artifacts', api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'build fossilize-tools',
+          [
+              './kabuto', 'build-fossilize-tools-release',
+              '--manifest-branch=release-R105-14989.B'
           ],
       ))

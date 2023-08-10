@@ -21,4 +21,9 @@ message KabutoOrchestratorProperties {
   // Timeout (in hours) to wait for the shadercache builders to return.
   // Defaults to 3 hours if not provided.
   int32 shadercache_timeout = 4;
+
+  // Whether to use release build artifacts instead of building Mesa locally on
+  // the spawned kabuto-paygen builder.
+  // Defaults to false if not provided.
+  bool use_release_build_artifacts = 5;
 }
