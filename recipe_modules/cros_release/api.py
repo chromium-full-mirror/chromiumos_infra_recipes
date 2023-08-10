@@ -656,9 +656,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         if not self.m.cros_source.is_tot and 'release' not in config.orchestrator.gitiles_commit.ref:
           return RELEASE_LOW_PRIO_QS_ACCOUNT
 
-        # TODO(b/278885352): Remove special casing for 108 once channels are
-        # actually populated with LTS/LTC (this work is targeting 114).
-        if config.orchestrator.gitiles_commit.ref == "refs/heads/release-R108-15183.B":
+        # TODO(b/278885352): Remove special casing for 108/114 once channels are
+        # actually populated with LTS/LTC (this work is targeting 120).
+        if config.orchestrator.gitiles_commit.ref in [
+            "refs/heads/release-R108-15183.B", "refs/heads/release-R114-15437.B"
+        ]:
           return RELEASE_HIGH_PRIO_QS_ACCOUNT
 
         if Channel.CHANNEL_LTS in self._channels or Channel.CHANNEL_LTC in self._channels:
