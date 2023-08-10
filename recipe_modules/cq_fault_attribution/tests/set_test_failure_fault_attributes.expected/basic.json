@@ -68,6 +68,8 @@
       "0",
       "-tr-fields",
       "failureReason,status,variant",
+      "-test",
+      "this.gce.test.passed.in.the.snapshot.only|this.test.failed.for.a.unique.reason.in.the.snapshot|this.test.failed.for.an.identical.reason.in.the.snapshot|this.test.is.flaky|this.test.passed.in.the.snapshot.and.cq|this.test.passed.in.the.snapshot.only|this.test.was.skipped.in.the.snapshot|this.vm.test.failed.for.a.unique.reason.in.the.snapshot|this.vm.test.failed.for.an.identical.reason.in.the.snapshot|this.vm.test.failed.without.a.reason",
       "build-234",
       "build-1123",
       "build-345",

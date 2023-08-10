@@ -2345,11 +2345,11 @@ Initializes the module.
 A module for ascribing build and test failure attributes based on
 snapshot build comparisons.
 
-&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#81)(self):**
 
 Returns determined failure attributes
 
-&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#80)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#86)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
 
 Compares test failures between a snapshot and CQ build, and assigns
 failure attributes and a flakiness status to each failure if a comparison

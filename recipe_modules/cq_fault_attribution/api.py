@@ -5,7 +5,7 @@
 # found in the LICENSE file.
 import re
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
 from google.protobuf import timestamp_pb2, json_format
@@ -53,6 +53,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
   def __init__(self, properties: CqFaultAttributionApiProperties,
                **kwargs: Any):
     super().__init__(**kwargs)
+    # Failed VM and GCE test list, comprising of dictionaries of the failed
+    # "test_case" and "build".
+    self._failed_vm_tests: List[Dict] = []
+    # Failed HW test list, comprising of dictionaries of the failed
+    # "skylab_res", "child_result" and "test_case".
+    self._failed_hw_tests: List[Dict] = []
     self._enable_fault_attribution = properties.enable_fault_attribution
     self._cq_test_failure_attributes = CqTestFailureFaultAttributionStats()
     # Map of build targets and model (may be empty) to a list of fault
@@ -94,13 +100,17 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         if not self._enable_fault_attribution or not \
             orch_supports_fault_attribution:
           return self.cq_test_failure_attributes
+
         # Comparison snapshots ordered in descending order of start_time
         comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
         if not comparison_snapshots:
           # No snapshots available for comparison. Skip fault attribution.
           return self.cq_test_failure_attributes
+        # names of tests that failed across hw, vm and gce tests.
+        failed_test_names = self._get_failed_test_names(
+            test_results.skylab, test_results.tast_vm + test_results.tast_gce)
         fault_attributed_build_targets = self._get_cq_fault_attributes(
-            test_results, comparison_snapshots)
+            comparison_snapshots, failed_test_names)
 
         if fault_attributed_build_targets:
           self._cq_test_failure_attributes.test_failure_attributions.extend(
@@ -115,29 +125,27 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return self.cq_test_failure_attributes
 
   def _get_cq_fault_attributes(
-      self, test_results: MetaTestTuple,
-      comparison_snapshots: List[build_pb2.Build]
-  ) -> List[FaultAttributedBuildTarget]:
+      self, comparison_snapshots: List[build_pb2.Build],
+      failed_test_names: List[str]) -> List[FaultAttributedBuildTarget]:
     """Returns fault attributed test failures.
 
       Args:
-        test_results: HW and VM test results.
         comparison_snapshots: Snapshots retrieved to be used for
           comparison.
+        failed_test_names: test variant name for each test that failed.
       """
     if comparison_snapshots:
       invocation_id_to_invocation = self._retrieve_rdb_test_results(
-          comparison_snapshots)
+          comparison_snapshots, failed_test_names)
       invocation_id_to_snapshot = \
         {self._get_build_invocation_id(snapshot.id): snapshot for snapshot in
          comparison_snapshots}
       self._set_comparison_matrices(invocation_id_to_invocation,
                                     invocation_id_to_snapshot)
       with self.m.step.nest('set hw test fault attributes'):
-        self._set_hwtest_fault_attributes(test_results.skylab)
+        self._set_hwtest_fault_attributes()
       with self.m.step.nest('set vm & gce test fault attributes'):
-        self._set_vm_gce_test_fault_attributes(test_results.tast_vm +
-                                               test_results.tast_gce)
+        self._set_vm_gce_test_fault_attributes()
 
     fault_attributed_build_targets = []
     for k, v in self._dut_to_test_fault_attributes.items():
@@ -149,64 +157,38 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
     return fault_attributed_build_targets
 
-  def _set_vm_gce_test_fault_attributes(self, tests: List[build_pb2.Build]):
+  def _set_vm_gce_test_fault_attributes(self):
     """ Creates and sets fault attribution properties for a vm and gce tests and
       appends the fault attribution instance to the fault attribute list for the
       corresponding build target.
-
-      Args:
-        tests: The relevant tests (Builds) to set fault attributes for.
-        snapshot_build_invocation_id: The invocation ID of the snapshot build
-          to be used for fault attribution comparisons.
-        comparison_snapshot_properties: Properties of the snapshot used for
       """
-    for build in tests:
-      if build.critical == Trinary.NO or build.status == Status.SUCCESS:
-        continue
-      build_target = self.m.cros_infra_config.get_build_target_name(build)
+    for failed_vm_test in self._failed_vm_tests:
+      test_case = failed_vm_test["test_case"]
+      build = failed_vm_test["build"]
       model = EMPTY_MODEL
-      if 'failed_test_cases' in build.output.properties:
-        prop_struct = build.output.properties['failed_test_cases']
-        test_failures = json_format.MessageToDict(prop_struct)
-        for test_case in test_failures:
-          test_id = test_case['name']
-          failure_reason = test_case.get('humanReadableSummary', '')
-          self._set_fault_attribution_properties(build_target, model, test_id,
-                                                 failure_reason)
+      build_target = self.m.cros_infra_config.get_build_target_name(build)
+      test_id = test_case['name']
+      failure_reason = test_case.get('humanReadableSummary', '')
+      self._set_fault_attribution_properties(build_target, model, test_id,
+                                             failure_reason)
 
-  def _set_hwtest_fault_attributes(self, hw_test_results: SkylabResult):
+  def _set_hwtest_fault_attributes(self):
     """ Creates and sets fault attribution properties for a HW test case and
       appends the fault attribution instance to the fault attribute list for the
       corresponding build target.
-
-      Args:
-        hw_test_results: All HW test results for the given build run.
-        snapshot_build_invocation_id: The invocation ID of the snapshot build
-          to be used for fault attribution comparisons.
-        comparison_snapshot_properties: Properties of the snapshot used for
       """
-    for skylab_res in hw_test_results:
-      if not skylab_res.task.test.common.critical.value \
-          or skylab_res.status == Status.SUCCESS:
-        continue
+    for failed_hw_test in self._failed_hw_tests:
+      test_case = failed_hw_test["test_case"]
+      child_result = failed_hw_test["child_result"]
+      skylab_res = failed_hw_test["skylab_res"]
+      test_id = test_case.name
+      attempt = child_result.attempt
+      failure_reason = test_case.human_readable_summary
       build_target = skylab_res.task.unit.common.build_target.name
-      for child_result in skylab_res.child_results:
-        if child_result.state.verdict not in \
-            VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
-          continue
-        # Test shard is not successful, check individual test cases.
-        for test_case in child_result.test_cases:
-          if test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
-            continue
-          # test_case.name here is analogous to the test_id substring in
-          # the rdb test_result name.
-          test_id = test_case.name
-          attempt = child_result.attempt
-          failure_reason = test_case.human_readable_summary
-          model = skylab_res.task.test.skylab_model or \
-                  EMPTY_MODEL
-          self._set_fault_attribution_properties(build_target, model, test_id,
-                                                 failure_reason, attempt)
+      model = skylab_res.task.test.skylab_model or \
+              EMPTY_MODEL
+      self._set_fault_attribution_properties(build_target, model, test_id,
+                                             failure_reason, attempt)
 
   def _set_fault_attribution_properties(
       self, build_target: str, model: str, test_id: str, failure_reason: str,
@@ -306,6 +288,45 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     else:
       test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
 
+  def _get_failed_test_names(self, hw_tests: SkylabResult,
+                             vm_gce_tests: List[build_pb2.Build]):
+    """Returns a list of all failed test names, and also sets failed HW and VM
+    test properties on the class instance."""
+    failed_test_names = set()
+    for skylab_res in hw_tests:
+      if not skylab_res.task.test.common.critical.value \
+          or skylab_res.status == Status.SUCCESS:
+        continue
+      for child_result in skylab_res.child_results:
+        if child_result.state.verdict not in \
+            VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
+          continue
+        # Test shard is not successful, check individual test cases.
+        for test_case in child_result.test_cases:
+          if test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
+            continue
+          # test_case.name here is analogous to the test_id substring in
+          # the rdb test_result name.
+          self._failed_hw_tests.append({
+              "skylab_res": skylab_res,
+              "child_result": child_result,
+              "test_case": test_case
+          })
+          failed_test_names.add(test_case.name)
+
+    # Store failed VM tests and get failed test names.
+    for build in vm_gce_tests:
+      if build.critical == Trinary.NO or build.status == Status.SUCCESS:
+        continue
+      if 'failed_test_cases' in build.output.properties:
+        prop_struct = build.output.properties['failed_test_cases']
+        test_failures = json_format.MessageToDict(prop_struct)
+        for test_case in test_failures:
+          self._failed_vm_tests.append({"build": build, "test_case": test_case})
+          failed_test_names.add(test_case['name'])
+
+    return failed_test_names
+
   def _get_comparison_snapshots(self, orch_snapshot: GitilesCommit) \
       -> List[build_pb2.Build]:
     """Returns at most <SNAPSHOT_RETRIEVAL_LIMIT> snapshot builds
@@ -359,14 +380,17 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return ordered_snapshot_builds
 
   def _retrieve_rdb_test_results(
-      self, builds: List[build_pb2.Build]) -> Dict[str, Invocation]:
+      self, builds: List[build_pb2.Build],
+      failed_test_names: Set[str]) -> Dict[str, Invocation]:
     """Retrieves test results from ResultDB for the given list of builds."""
+    failed_test_names_regex = "|".join(sorted(failed_test_names))
     fields = ['failureReason', 'status', 'variant']
     invocation_ids = list(
         map(lambda build: self._get_build_invocation_id(build.id), builds))
 
     return self.m.resultdb.query(inv_ids=invocation_ids, limit=0,
-                                 tr_fields=fields)
+                                 tr_fields=fields,
+                                 test_regex=failed_test_names_regex)
 
   def _set_comparison_matrices(
       self, invocation_id_to_invocation: Dict[str, Invocation],
