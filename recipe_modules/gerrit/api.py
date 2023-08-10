@@ -621,53 +621,64 @@ class GerritApi(RecipeApi):
       pres.links['gerrit change'] = self.parse_gerrit_change_url(gerrit_change)
       change_num = gerrit_change.change
 
-      applied_labels = self._do_set_change_labels(change_num, str_labels,
-                                                  gerrit_change.host)
-      return applied_labels
+      return self._do_post(
+          f'https://{gerrit_change.host}/changes/{change_num}/revisions/current/review',
+          {'labels': str_labels},
+          test_output_data=self.m.json.dumps({'labels': str_labels}),
+      )
 
-  @exponential_retry(retries=4, delay=timedelta(seconds=5))
-  def _do_set_change_labels(self, change_num: int, labels: Dict[Label, int],
-                            gerrit_host: str,
-                            test_output_data: Optional[Dict] = None) -> str:
-    """Set the labels on a gerrit change using Gerrit and Gitiles REST API.
+  def add_change_comment_remote(self, gerrit_change: GerritChange,
+                                comment: str):
+    """Add comment to gerrit_change.
+
+    The comment is left as a resolved patchset level comment.
 
     Args:
-      change_num: The number of the change to label.
-      labels: Mapping from label (Label) to value (int).
-      gerrit_host: Base URL to curl against.
-      test_output_data: Test output for set_change_labels.
+      gerrit_change: The change to comment on.
+      comment: The comment to leave.
+    """
+    with self.m.step.nest(f'add comment on CL {gerrit_change.change}'):
+      comment_map = {"/PATCHSET_LEVEL": [{"message": comment}]}
+      self._do_post(
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/review',
+          {"comments": comment_map}, test_output_data='{}')
+
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
+  def _do_post(self, url: str, json_data: Dict[str, Any],
+               test_output_data: str) -> str:
+    """Send a POST request with json_data to url.
+
+    This method gets a token from luci-auth and includes it in the request.
+
+    Args:
+      url: The url to send the request to.
+      json_data: A dict to include in the request as JSON.
 
     Returns:
-      str: JSON containing the applied labels (primarily for testing).
+      The POST response.
     """
-    post_url = 'https://%s/changes/%s/revisions/current/review' % (gerrit_host,
-                                                                   change_num)
-    post_json = {'labels': labels}
-
-    # Retrieve the service_account user's auth token.
     auth_token_out = self.m.easy.stdout_step(
-        'Retrieve service_account auth token', [
+        'Retrieve service_account auth token',
+        [
             'luci-auth', 'token', '-scopes',
             'https://www.googleapis.com/auth/gerritcodereview', '-json-output',
             '-'
-        ], ok_ret={0}, test_stdout='{"token": "TEST_TOKEN"}')
+        ],
+        test_stdout='{"token": "TEST_TOKEN"}',
+    )
     auth_token = self.m.json.loads(auth_token_out)['token']
     auth_token_path = self.m.path.mkstemp(prefix='service_account_auth_token')
     self.m.file.write_text('Write auth token to temp file', auth_token_path,
-                           'Authorization: Bearer %s' % auth_token,
+                           f'Authorization: Bearer {auth_token}',
                            include_log=False)
-
     curl_params = [
-        '-f', '-X', 'POST', '-H',
-        '@%s' % auth_token_path, '-H', 'Content-Type: application/json', '-d',
-        self.m.json.dumps(post_json)
+        '-f', '-X', 'POST', '-H', f'@{auth_token_path}', '-H',
+        'Content-Type: application/json', '-d',
+        self.m.json.dumps(json_data)
     ]
-    test_output_data = test_output_data or self.m.json.dumps(post_json)
-
-    post_json = {'labels': labels}
-    data = self.m.easy.stdout_step('curl %s' % post_url,
-                                   ['curl'] + curl_params + [post_url],
-                                   ok_ret={0}, test_stdout=test_output_data)
+    data = self.m.easy.stdout_step(f'curl {url}',
+                                   ['curl'] + curl_params + [url],
+                                   test_stdout=test_output_data)
     return data.decode()
 
   def set_change_labels(self, gerrit_change: GerritChange,

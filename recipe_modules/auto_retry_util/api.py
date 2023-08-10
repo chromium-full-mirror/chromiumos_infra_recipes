@@ -30,6 +30,11 @@ from recipe_engine import recipe_api
 # Start looking back at 1 days worth of data while we are still developing.
 DEFAULT_LOOKBACK_WINDOW = 60 * 60 * 24 * 1
 
+# Limits on the number of builds and suites that will be listed out in comments.
+# Doesn't affect retry behavior.
+LIMIT_BUILDS_IN_COMMENT = 5
+LIMIT_SUITES_IN_COMMENT = 5
+
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
     bb_common_pb2.INFRA_FAILURE,
@@ -408,20 +413,69 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return exonerated_suites
 
+  def _create_comment(self, build: build_pb2.Build,
+                      retryable_builders: List[str],
+                      retryable_test_suites: List[str]) -> str:
+    """Create a comment explaining why the build was retried.
+
+    Does formatting of the comment, e.g. truncating the lists of builds / test
+    suites if they are very long.
+
+    Args:
+      build: The build to retry.
+      retryable_builders: Names of the child builders that are now retryable.
+      retryable_test_suites: Names of the test suites that are now retryable.
+
+    Returns:
+      A string comment.
+    """
+    comment = f'The previous build (ci.chromium.org/b/{build.id}) is being automatically retried for the following reasons:\n'
+    if retryable_builders:
+      comment += '- Some child builders are now retriable:'
+      if len(retryable_builders) <= LIMIT_BUILDS_IN_COMMENT:
+        comment += ', '.join(retryable_builders) + '\n'
+      else:
+        comment += ', '.join(
+            retryable_builders[:LIMIT_BUILDS_IN_COMMENT]) + ',...\n'
+
+    if retryable_test_suites:
+      comment += '- Some tests are now retriable:'
+      if len(retryable_test_suites) <= LIMIT_SUITES_IN_COMMENT:
+        comment += ', '.join(retryable_test_suites) + '\n'
+      else:
+        comment += ', '.join(
+            retryable_test_suites[:LIMIT_SUITES_IN_COMMENT]) + ',...\n'
+
+    return comment
+
   def retry_build(
       self,
       build: build_pb2.Build,
+      retryable_builders: List[str],
+      retryable_test_suites: List[str],
   ):
     """Retries build by voting on all of its input changes.
 
     Sets Commit-Queue+1 or 2 (depending on whether build was a dry run)
     on all of build's input changes. It is assumed that all other labels
-    required for submission are set.
+    required for submission are set. Also leaves a comment explaining why the
+    build was retried.
+
+    At least one of retryable_builders and retryable_test_suites must be
+    non-empty.
 
     Args:
       build: The build to retry.
+      retryable_builders: Names of the child builders that are now retryable.
+      retryable_test_suites: Names of the test suites that are now retryable.
     """
-    # TODO(b/294075301): Comment on CLs with retry reasons.
+    if not retryable_builders and not retryable_test_suites:
+      raise ValueError(
+          'At least one builder or test suite must be given as a retry reason')
+
+    comment = self._create_comment(build, retryable_builders,
+                                   retryable_test_suites)
+
     with self.m.step.nest(f'retry build {build.id}'):
       dry_run = build.input.properties['$recipe_engine/cq'][
           'runMode'] == self.m.cq.DRY_RUN
@@ -430,3 +484,4 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       }
       for gc in build.input.gerrit_changes:
         self.m.gerrit.set_change_labels_remote(gc, labels)
+        self.m.gerrit.add_change_comment_remote(gc, comment)
