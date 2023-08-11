@@ -548,17 +548,24 @@ class CrosSdkApi(RecipeApi):
       if timeout_sec == 'DEFAULT':
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 180 * 60
 
+      request = UpdateSdkRequest(
+          chroot=self.chroot, toolchain_targets=toolchain_targets,
+          flags=UpdateSdkRequest.Flags(build_source=build_source,
+                                       toolchain_changed=toolchain_cls))
       try:
-        self.m.cros_build_api.SdkService.Update(
-            UpdateSdkRequest(
-                chroot=self.chroot, toolchain_targets=toolchain_targets,
-                flags=UpdateSdkRequest.Flags(build_source=build_source,
-                                             toolchain_changed=toolchain_cls)),
-            timeout=timeout_sec, test_output_data=test_data)
-      except StepFailure:
+        response = self.m.cros_build_api.SdkService.Update(
+            request, timeout=timeout_sec, test_output_data=test_data)
+        # Check if the SdkService/Update call failed to compile any packages.
+        # If so, output the failed package data and then raise an exception.
+        # Context: If a package failed to compile, the Build API call will have
+        # a return code of 2 which does not automatically throw an exception.
+        pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
+        # TODO(b/271120919): Specify that it is a host package.
+        self.m.failures.set_compile_failed_packages(pres, pkgs)
+      except StepFailure as e:
         # If the update fails, also delete the SDK.
         self._remove_chroot(name='UpdateSDK failure')
-        raise
+        raise e
 
   @contextlib.contextmanager
   def cleanup_context(self, checkout_path=None):

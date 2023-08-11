@@ -19,6 +19,7 @@ DEPS = [
     'cros_source',
     'cros_version',
     'easy',
+    'failures',
     'git',
     'goma',
     'overlayfs',
