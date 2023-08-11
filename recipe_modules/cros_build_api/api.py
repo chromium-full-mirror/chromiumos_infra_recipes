@@ -188,6 +188,10 @@ class SdkService(Stub):
   """Stub for SdkService."""
 
 
+class SdkSubtoolsService(Stub):
+  """Stub for SdkSubtoolsService."""
+
+
 class SysrootService(Stub):
   """Stub for SysrootService."""
 

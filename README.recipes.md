@@ -192,6 +192,7 @@
   * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
+  * [build_sdk_subtools](#recipes-build_sdk_subtools) &mdash; Recipe that runs the Subtools Builder.
   * [build_signing_docker_image](#recipes-build_signing_docker_image) &mdash; Recipe for building the signing docker image.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
@@ -2707,7 +2708,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#261)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#265)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -2724,7 +2725,7 @@ will "magically" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform some validation and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#383)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#387)(self, test_data=None):**
 
 Get the Build API version.
 
@@ -2736,7 +2737,7 @@ Args:
 Returns:
   The version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#500)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#504)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
 
 Call the build API with the given input proto.
 
@@ -2770,7 +2771,7 @@ Args:
 Returns:
   The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#443)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#447)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2784,7 +2785,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#407)(self, input_proto: message.Message, output_proto: message.Message):**
+&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#411)(self, input_proto: message.Message, output_proto: message.Message):**
 
 Function to cat log file and retrieve package name.
 
@@ -2800,7 +2801,7 @@ Args:
 Returns:
   A list of tuples (package_name, build_log).
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#472)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#476)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2813,7 +2814,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#680)(self, stub: 'Stub', method: str):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#684)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
@@ -2824,28 +2825,28 @@ Args:
 Returns:
   Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#278)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#282)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#379)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#383)(self, major=1, minor=0, bug=0):**
 
 Return whether the Build API version is at least major.minor.bug.
 
-&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#340)(self):**
+&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#344)(self):**
 
 Return the log level used when calling Build API.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#297)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#301)(self):**
 
 Sets up the build API for running operations in parallel.
 
 Since we check out the chromite commit before making calls, parallel calls
 can clobber each other, so this context does the checkout once.
 
-&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#314)(self):**
+&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#318)(self):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#362)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#366)(self):**
 
 Return the version that this build API uses.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -11423,6 +11424,17 @@ Recipe for building images for release.
 Recipe that builds a ChromiumOS SDK and cross-compilers.
 
 &mdash; **def [RunSteps](/recipes/build_sdk.py#74)(api: recipe_api.RecipeApi, properties: build_sdk_pb2.BuildSDKProperties):**
+### *recipes* / [build\_sdk\_subtools](/recipes/build_sdk_subtools.py)
+
+[DEPS](/recipes/build_sdk_subtools.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe that runs the Subtools Builder.
+
+The Subtools builder starts with an SDK, builds some additional _host_ packages,
+then exports build artifacts to external locations, such as CIPD.
+
+&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#31)(api: recipe_api.RecipeApi):**
 ### *recipes* / [build\_signing\_docker\_image](/recipes/build_signing_docker_image.py)
 
 [DEPS](/recipes/build_signing_docker_image.py#18): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12174,10 +12186,10 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/failed_pkg_names.py#18)(api):**
 ### *recipes* / [cros\_build\_api:tests/misc](/recipe_modules/cros_build_api/tests/misc.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/misc.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_build_api/tests/misc.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#41)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#42)(api):**
 ### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

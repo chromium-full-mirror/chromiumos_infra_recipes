@@ -22,6 +22,7 @@ from PB.chromite.api import packages
 from PB.chromite.api import payload
 from PB.chromite.api import portage_explorer
 from PB.chromite.api import sdk
+from PB.chromite.api import sdk_subtools
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
 from PB.chromite.api import toolchain
@@ -179,6 +180,9 @@ def RunSteps(api):
           'Uprev': sdk.UprevResponse,
           'CreateBinhostCLs': sdk.CreateBinhostCLsResponse,
           'UploadPrebuiltPackages': sdk.UploadPrebuiltPackagesResponse,
+      },
+      'SdkSubtoolsService': {
+          'BuildSdkSubtools': sdk_subtools.BuildSdkSubtoolsResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
