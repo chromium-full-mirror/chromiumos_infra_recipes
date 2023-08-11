@@ -49,11 +49,10 @@ def GenTests(api):
         for i in range(number_of_gerrit_changes)
     ]
 
-    experiments = ['chromeos.build_menu.upload_sources']
     return api.test_util.test_child_build(
         build_target, cq=True, gerrit_changes=gerrit_changes,
         git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
-        experiments=experiments, input_properties=input_properties).build
+        input_properties=input_properties).build
 
   yield api.test(
       'no-artifacts-bucket',
@@ -82,11 +81,12 @@ def GenTests(api):
 
   yield api.test(
       'release-branch',
-      api.test_util.test_child_build(
-          'kukui', builder_name='kukui-release-R111-12345.B',
-          input_properties=input_properties, git_repo=internal_git_repo,
-          git_ref='release-R111-12345.B', revision=revision,
-          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.test_util.test_child_build('kukui',
+                                     builder_name='kukui-release-R111-12345.B',
+                                     input_properties=input_properties,
+                                     git_repo=internal_git_repo,
+                                     git_ref='release-R111-12345.B',
+                                     revision=revision).build,
       api.properties(
           TestProperties(expected_sources=expected_sources,
                          manifest_branch='release-R111-12345.B')),
@@ -97,8 +97,7 @@ def GenTests(api):
   yield api.test(
       'release-no-commit',
       api.test_util.test_child_build(
-          'kukui', builder_name='kukui-release-R111-12345.B',
-          experiments=['chromeos.build_menu.upload_sources']).build,
+          'kukui', builder_name='kukui-release-R111-12345.B').build,
       api.properties(TestProperties(manifest_branch='release-R111-12345.B')),
       api.post_check(post_process.DoesNotRun, 'upload sources metadata'),
       api.post_process(post_process.DropExpectation),
@@ -108,8 +107,7 @@ def GenTests(api):
       'factory',
       api.test_util.test_child_build(
           'factory-corsola-15197.B-corsola',
-          builder_name='staging-factory-corsola-15197.B-corsola',
-          experiments=['chromeos.build_menu.upload_sources']).build,
+          builder_name='staging-factory-corsola-15197.B-corsola').build,
       api.cros_infra_config.override_builder_configs_test_data(
           api.cros_infra_config.builder_configs_test_data, ref='HEAD'),
       api.post_check(post_process.DoesNotRun, 'upload sources metadata'),
@@ -151,10 +149,9 @@ def GenTests(api):
   expected_sources = Sources(gitiles_commit=gitiles_commit)
   yield api.test(
       'release-tot',
-      api.test_util.test_child_build(
-          'kukui', builder_name='kukui-release-main',
-          git_repo=internal_git_repo, git_ref=git_ref, revision=revision,
-          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     git_repo=internal_git_repo,
+                                     git_ref=git_ref, revision=revision).build,
       api.properties(TestProperties(expected_sources=expected_sources)),
       api.post_check(post_process.MustRun, 'upload sources metadata'),
       api.post_process(post_process.DropExpectation),
@@ -167,10 +164,9 @@ def GenTests(api):
   expected_sources = Sources(gitiles_commit=gitiles_commit)
   yield api.test(
       'public-target-no-override',
-      api.test_util.test_child_build(
-          'amd64-generic', git_repo=external_git_repo, revision=revision,
-          git_ref=git_ref,
-          experiments=['chromeos.build_menu.upload_sources']).build,
+      api.test_util.test_child_build('amd64-generic',
+                                     git_repo=external_git_repo,
+                                     revision=revision, git_ref=git_ref).build,
       api.properties(TestProperties(expected_sources=expected_sources)),
       api.post_process(post_process.DropExpectation),
   )

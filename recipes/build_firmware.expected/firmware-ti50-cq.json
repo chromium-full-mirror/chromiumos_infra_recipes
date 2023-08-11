@@ -2492,6 +2492,114 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read git footers"
+  },
+  {
+    "cmd": [],
+    "name": "upload sources metadata"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"changelists\": [\n    {\n      \"change\": \"123456\",\n      \"host\": \"chromium-review.googlesource.com\",\n      \"patchset\": \"7\",\n      \"project\": \"project-a\"\n    }\n  ],\n  \"gitiles_commit\": {\n    \"commit_hash\": \"snapshot-HEAD-SHA\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"refs/heads/snapshot\"\n  }\n}",
+      "[CLEANUP]/tmp_tmp_1/sources.jsonpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"changelists\": [@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"change\": \"123456\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"patchset\": \"7\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@      \"project\": \"project-a\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  ],@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"host\": \"chrome-internal.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"position\": \"999\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  }@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
+      "gs://chromeos-image-archive/firmware-ti50-cq/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload sources metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-cq/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "read chromiumos-sdk pin"
   },

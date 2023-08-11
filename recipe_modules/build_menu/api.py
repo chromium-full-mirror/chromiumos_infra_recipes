@@ -983,11 +983,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       if not config.artifacts.artifacts_gs_bucket:
         return None
 
-      # TODO(b/279631301): Gate behind an experiment flag for now.
-      if not ('chromeos.build_menu.upload_sources'
-              in self.m.cros_infra_config.experiments):
-        return None
-
       # This is currently limited to CQ, Postsubmit, and Release builders.
       if not (config and config.id.type in [
           BuilderConfig.Id.CQ, BuilderConfig.Id.POSTSUBMIT,
