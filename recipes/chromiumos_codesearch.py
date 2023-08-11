@@ -142,6 +142,8 @@ def RunSteps(api, properties):
             board,
             '--chroot',
             api.build_menu.chroot.path,
+            '--chroot-out',
+            api.build_menu.chroot.out_path,
             '--build-dir',
             build_dir,
             '--compile-commands',
@@ -188,6 +190,9 @@ def RunSteps(api, properties):
 
           # ~/cros_chroot/chroot;chroot
           api.build_menu.chroot.path: 'chroot',
+
+          # ~/cros_chroot/out;out
+          api.build_menu.chroot.out_path: 'out',
       }
 
       # Don't sync chroot/home/. The directory doesn't contain any relevant
