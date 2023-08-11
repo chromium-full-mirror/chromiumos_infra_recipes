@@ -423,7 +423,7 @@ def _ensure_cipd_packages(api: RecipeApi) -> Path:
   """
   cipd_dir = api.path.mkdtemp()
   pkgs = api.cipd.EnsureFile()
-  pkgs.add_package('infra/tools/protoc/linux-amd64', 'protobuf_version:v3.11.4')
+  pkgs.add_package('infra/tools/protoc/linux-amd64', 'protobuf_version:v3.17.0')
   api.cipd.ensure(cipd_dir, pkgs)
   return cipd_dir
 
