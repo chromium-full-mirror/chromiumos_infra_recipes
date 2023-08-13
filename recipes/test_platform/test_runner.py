@@ -582,8 +582,9 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "servo_v4_with_servo_micro_and_ccd_cr50"
     * servo_versions:
         e.g. "servo_v4_v2.4.58-c37246f9c,servo_micro_v2.4.73-d771c18ba9"
-    * label-cbx: True is applicable to CBX SKU DUTs, otherwise they are non-CBX,
-        e.g. True or False
+    * cbx: CBX label for CBX and non-CBX SKU DUTs. Current values of the label
+        are "True" and "False", but in future there might be more values.
+        e.g. "True", "False"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -684,10 +685,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if hwid_sku:
     base_tags.append(('hwid_sku', hwid_sku[0]))
 
-  label_cbx = api.cros_tags.get_values(
+  cbx = api.cros_tags.get_values(
       'label-cbx', api.buildbucket.build.infra.swarming.bot_dimensions)
-  if label_cbx:
-    base_tags.append(('label_cbx', label_cbx[0]))
+  if cbx:
+    base_tags.append(('cbx', cbx[0]))
 
   suite_task_id = _convert_to_task_request_id(
       api.buildbucket.build.infra.swarming.parent_run_id)
