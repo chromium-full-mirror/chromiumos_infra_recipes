@@ -102,7 +102,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       """
     with self.m.failures.ignore_exceptions():
       with self.m.step.nest('set fault attributes'):
-        if not self._enable_fault_attribution or not \
+        if (not self._enable_fault_attribution and 'chromeos.cros_infra_config.cq_fault_attribution'
+            not in self.m.cros_infra_config.experiments) or not \
             orch_supports_fault_attribution:
           return self.cq_test_failure_attributes
 

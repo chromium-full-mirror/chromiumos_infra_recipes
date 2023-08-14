@@ -11,9 +11,9 @@ DEPS = [
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/time',
+    'cros_infra_config',
     'easy',
     'failures',
-    'cros_infra_config',
     'looks_for_green',
 ]
 
