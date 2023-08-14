@@ -568,8 +568,40 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
     # 10060 is releasable but is a trivial commit.
     self.assertEqual(instance, '10050')
 
-  def test_success_noreleasable(self):
-    """Test determine_maximum_covered_instance with no releasable instances."""
+  def test_success_limited_builds(self):
+    """Test determine_maximum_covered_instance with limited builds available."""
+    changes = {}
+    for i in range(10):
+      change_hash = str(10000 + i * 10)
+      commit_timestamp = datetime.datetime.fromisoformat(
+          '2020-01-01T12:00:00+00:00') + datetime.timedelta(hours=i)
+      changes[change_hash] = git.Commit(change_hash, '', '', '',
+                                        commit_timestamp.isoformat())
+
+    build_results = {
+        'chromeos/staging/staging-Foo': [
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('XXX'),
+            _build_data('YYY'),
+            _build_data('YYY'),
+        ],
+    }
+    instance_to_hash = {
+        'XXX': '10095',
+        'YYY': '10060',
+        'ZZZ': '9000',
+    }
+    affected_recipes_dict = collections.defaultdict(lambda: ['foo'])
+
+    instance = self.do_test(  # pylint: disable=no-value-for-parameter
+        self.TestConfig(
+            list(changes.values()), build_results, instance_to_hash,
+            affected_recipes_dict, enforce_success=False))
+    self.assertEqual(instance, '10060')
+
+  def test_success_nocovered(self):
+    """Test determine_maximum_covered_instance with no covered instances."""
     changes = []
     for i in range(10):
       change_hash = str(10000 + i * 10)

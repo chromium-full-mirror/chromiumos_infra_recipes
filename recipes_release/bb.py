@@ -479,6 +479,10 @@ def determine_maximum_covered_instance(
       else:
         change_coverage[change_pointer + 1] = change_coverage[change_pointer]
         change_pointer += 1
+    # If we haven't processed all the changes (because we ran out of builds),
+    # copy coverage to all the remaining (older) changes.
+    for j in range(change_pointer + 1, len(changes)):
+      change_coverage[j] = change_coverage[change_pointer]
     return change_coverage
 
   # Get change coverage for each builder. Multithread for performance.
