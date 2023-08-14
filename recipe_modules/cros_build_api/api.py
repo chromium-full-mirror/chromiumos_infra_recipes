@@ -422,7 +422,7 @@ class CrosBuildApiApi(RecipeApi):
       if failed_pkg.log_path.path:
         name = '%s/%s' % (failed_pkg.name.category,
                           failed_pkg.name.package_name)
-        # Prior to R117, build API would return inside-chroot paths, so we
+        # Prior to R118, build API would return inside-chroot paths, so we
         # translate them here.
         # TODO(b/265885353): Remove INSIDE handling once old branches are dead.
         if failed_pkg.log_path.location == common_pb2.Path.INSIDE:

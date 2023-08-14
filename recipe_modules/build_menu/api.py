@@ -760,7 +760,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             return
 
         request = BuildTargetUnitTestRequest(
-            build_target=self.build_target, chroot=self.m.cros_sdk.chroot,
+            build_target=self.build_target,
+            chroot=self.m.cros_sdk.chroot,
             package_blocklist=unit_tests.package_blocklist,
             packages=relevant_testable_packages,
             flags=BuildTargetUnitTestRequest.Flags(
@@ -768,7 +769,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 rust_code_coverage=self._test_with_rust_code_coverage,
                 empty_sysroot=unit_tests.empty_sysroot,
                 testable_packages_optional=testable_packages_optional,
-                filter_only_cros_workon=filter_only_cros_workon, bazel=bazel))
+                filter_only_cros_workon=filter_only_cros_workon, bazel=bazel),
+            results_path=common_pb2.ResultPath(
+                path=common_pb2.Path(
+                    path=str(self.m.path.mkdtemp()),
+                    location=common_pb2.Path.OUTSIDE)),
+        )
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             request,
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.

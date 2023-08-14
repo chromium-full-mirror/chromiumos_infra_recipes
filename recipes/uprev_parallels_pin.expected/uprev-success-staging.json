@@ -6192,7 +6192,13 @@
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"flags\": {}@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultsPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_7\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
@@ -6207,7 +6213,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"flags\": {}\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"flags\": {},\n  \"resultsPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_7\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6331,7 +6337,13 @@
       "@@@STEP_LOG_LINE@published event@      },@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"flags\": {}@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@    \"resultsPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_7\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildTargetUnitTestResponse\": {},@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
@@ -6345,7 +6357,7 @@
     "name": "build chromiumos with upreved Parallels.run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI64DE/QQQgMq17gEiBgjtgMT9BIICXwoPCg1hbWQ2NC1nZW5lcmljGkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIAigIA0ALQ7IDZrvG1knzaAoABYnVpbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI64DE/QQQgMq17gEiBgjtgMT9BIICegoPCg1hbWQ2NC1nZW5lcmljGkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIAQhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNxACigIA0ALQ7IDZrvG1knzaAoABYnVpbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6377,7 +6389,7 @@
       }
     },
     "name": "build chromiumos with upreved Parallels.run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI64DE/QQQgMq17gEiBgjtgMT9BIICXwoPCg1hbWQ2NC1nZW5lcmljGkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIAigIA0ALQ7IDZrvG1knzaAoABYnVpbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI64DE/QQQgMq17gEiBgjtgMT9BIICegoPCg1hbWQ2NC1nZW5lcmljGkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIAQhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNxACigIA0ALQ7IDZrvG1knzaAoABYnVpbGQgY2hyb21pdW1vcyB3aXRoIHVwcmV2ZWQgUGFyYWxsZWxzfHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -8903,7 +8915,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/tmp_tmp_7/workspace/upperdir/workspace"
+      "[CLEANUP]/tmp_tmp_8/workspace/upperdir/workspace"
     ],
     "infra_step": true,
     "luci_context": {
@@ -8933,7 +8945,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[CLEANUP]/tmp_tmp_7/workspace/workdir/workspace"
+      "[CLEANUP]/tmp_tmp_8/workspace/workdir/workspace"
     ],
     "infra_step": true,
     "luci_context": {
@@ -8991,7 +9003,7 @@
       "-t",
       "overlay",
       "--options",
-      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/tmp_tmp_7/workspace/upperdir/workspace,workdir=[CLEANUP]/tmp_tmp_7/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/tmp_tmp_8/workspace/upperdir/workspace,workdir=[CLEANUP]/tmp_tmp_8/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
       "overlay",
       "[CLEANUP]/chromiumos_workspace"
     ],
