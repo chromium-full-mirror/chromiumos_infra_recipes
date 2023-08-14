@@ -43,6 +43,11 @@ VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
 SNAPSHOT_RETRIEVAL_LIMIT = 16
 # Threshold used when marking a test as potentially flaky
 FLAKINESS_THRESHOLD = 2
+# Maximum number of failed test IDs to query for from rdb.
+# This number is derived as a result of stress testing the rdb query, which
+# accounts for the highest CPU usage in this module. In combination with a
+# snapshot retrieval limit of 16, this keeps CPU utilization at or below 80%.
+TEST_QUERY_LIMIT = 200
 EMPTY_MODEL = ''
 
 
@@ -109,6 +114,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         # names of tests that failed across hw, vm and gce tests.
         failed_test_names = self._get_failed_test_names(
             test_results.skylab, test_results.tast_vm + test_results.tast_gce)
+        if len(failed_test_names) > TEST_QUERY_LIMIT:
+          # Too many failed tests to query for.
+          return self.cq_test_failure_attributes
         fault_attributed_build_targets = self._get_cq_fault_attributes(
             comparison_snapshots, failed_test_names)
 
@@ -126,7 +134,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
   def _get_cq_fault_attributes(
       self, comparison_snapshots: List[build_pb2.Build],
-      failed_test_names: List[str]) -> List[FaultAttributedBuildTarget]:
+      failed_test_names: Set[str]) -> List[FaultAttributedBuildTarget]:
     """Returns fault attributed test failures.
 
       Args:
