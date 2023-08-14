@@ -10,3 +10,9 @@ message DisabledFaultAttributionProperties {
   int32 expected_size = 1;
   bool is_cq_orch = 2;
 }
+
+message OutOfTestRangeProperties {
+  int32 expected_size = 1;
+  bool is_cq_orch = 2;
+  bool has_failed_tests = 3;
+}

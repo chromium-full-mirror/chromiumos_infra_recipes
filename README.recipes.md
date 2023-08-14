@@ -243,7 +243,7 @@
   * [cq_fault_attribution:tests/ignores_failures](#recipes-cq_fault_attribution_tests_ignores_failures)
   * [cq_fault_attribution:tests/no_comparison_snapshots_found](#recipes-cq_fault_attribution_tests_no_comparison_snapshots_found)
   * [cq_fault_attribution:tests/set_test_failure_fault_attributes](#recipes-cq_fault_attribution_tests_set_test_failure_fault_attributes)
-  * [cq_fault_attribution:tests/too_many_failed_tests](#recipes-cq_fault_attribution_tests_too_many_failed_tests)
+  * [cq_fault_attribution:tests/too_many_or_no_failed_tests](#recipes-cq_fault_attribution_tests_too_many_or_no_failed_tests)
   * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
@@ -11786,12 +11786,12 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [get\_build\_target\_index](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#80)(items: List[FaultAttributedBuildTarget], build_target: str, model: Union[(str, None)]):**
 
 &mdash; **def [get\_rdb\_test\_result\_name](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#69)(invocation_id: str, test_name: str):**
-### *recipes* / [cq\_fault\_attribution:tests/too\_many\_failed\_tests](/recipe_modules/cq_fault_attribution/tests/too_many_failed_tests.py)
+### *recipes* / [cq\_fault\_attribution:tests/too\_many\_or\_no\_failed\_tests](/recipe_modules/cq_fault_attribution/tests/too_many_or_no_failed_tests.py)
 
-[DEPS](/recipe_modules/cq_fault_attribution/tests/too_many_failed_tests.py#27): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cq_fault_attribution/tests/too_many_or_no_failed_tests.py#27): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/too_many_failed_tests.py#72)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/too_many_or_no_failed_tests.py#81)(api, properties):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#10): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

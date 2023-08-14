@@ -115,8 +115,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         # names of tests that failed across hw, vm and gce tests.
         failed_test_names = self._get_failed_test_names(
             test_results.skylab, test_results.tast_vm + test_results.tast_gce)
-        if len(failed_test_names) > TEST_QUERY_LIMIT:
-          # Too many failed tests to query for.
+        if len(failed_test_names) > TEST_QUERY_LIMIT or\
+            len(failed_test_names) == 0:
+          # Too many failed tests to query for, or none.
           return self.cq_test_failure_attributes
         fault_attributed_build_targets = self._get_cq_fault_attributes(
             comparison_snapshots, failed_test_names)

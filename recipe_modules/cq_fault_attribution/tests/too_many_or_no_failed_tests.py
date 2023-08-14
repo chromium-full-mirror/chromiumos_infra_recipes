@@ -17,7 +17,7 @@ from PB.go.chromium.org.luci.resultdb.proto.v1.test_result import TestResult, \
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFaultAttributionApiProperties
 from PB.recipe_modules.chromeos.cq_fault_attribution.tests.tests import \
-  DisabledFaultAttributionProperties
+  OutOfTestRangeProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
@@ -34,13 +34,14 @@ DEPS = [
     'skylab_results',
 ]
 
-PROPERTIES = DisabledFaultAttributionProperties
+PROPERTIES = OutOfTestRangeProperties
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 ORCH_SNAPSHOT_COMMIT_SHA = 'orchsnapshotcommitsha'
 
 fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)
+pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
 failing_test_cases = []
 for i in range(201):
   failing_test_cases.append(
@@ -48,9 +49,17 @@ for i in range(201):
           name=f'test{i}', verdict=TaskState.VERDICT_FAILED,
           human_readable_summary='missing SoftwareDeps: android_vm'))
 
-child_results = [
+failed_child_results = [
     ExecuteResponse.TaskResult(name='suite2', state=fail_state,
                                test_cases=(failing_test_cases))
+]
+passed_child_result = [
+    ExecuteResponse.TaskResult(
+        name='suite2', state=pass_state, test_cases=([
+            ExecuteResponse.TaskResult.TestCaseResult(
+                name='passed_test', verdict=TaskState.VERDICT_PASSED,
+                human_readable_summary='missing SoftwareDeps: android_vm')
+        ]))
 ]
 # Mock Orchestrator snapshot
 orch_snapshot_build = \
@@ -70,6 +79,7 @@ snapshot_build_invocation \
 
 
 def RunSteps(api, properties):
+  child_results = failed_child_results if properties.has_failed_tests else passed_child_result
   hw_test_failures = [
       SkylabResult(
           task=api.skylab_results.test_api.skylab_task(suite='suite1'),
@@ -94,7 +104,22 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'too-many-unique-tests', api.properties(expected_size=0, is_cq_orch=True),
+      'too-many-failed-unique-tests',
+      api.properties(expected_size=0, is_cq_orch=True, has_failed_tests=True),
+      api.properties(
+          **{
+              '$chromeos/cq_fault_attribution':
+                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
+          }),
+      api.buildbucket.simulated_search_results(
+          builds=[orch_snapshot_build],
+          step_name='set fault attributes.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds=[orch_snapshot_build],
+          step_name='set fault attributes.buildbucket.search (2)'))
+  yield api.test(
+      'no-failed-tests',
+      api.properties(expected_size=0, is_cq_orch=True, has_failed_tests=False),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':
