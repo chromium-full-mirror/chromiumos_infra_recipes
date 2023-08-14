@@ -72,6 +72,9 @@ class GmailAnnouncer:
     Args:
       pending_changes: Changes that will be released. Note that announcer does
         nothing to check whether the changes have been / will be released.
+        Changes will be appear in the announcement in the order they appear in
+        this list, newest to oldest is the suggested order, so it matches the
+        output of `git log`.
       bundle_longname: Human-readable name of the Recipes bundle being released.
       recipients: Email addresses to send the announcement to.
       bccs: Email addresses to bcc on the announcement.

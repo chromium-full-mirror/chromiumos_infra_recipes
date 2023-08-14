@@ -46,9 +46,18 @@ message ReleaseResult {
 
     // The subject line of the commit message (i.e. the first line).
     string subject = 3;
+
+    // The date of the commit, relative to the time the release script was run.
+    // See the "%cr" placeholder in the git format string:
+    // https://git-scm.com/docs/git-log#Documentation/git-log.txt-emcrem
+    string relative_date = 4;
+
+    // The first recipes bundle CIPD instance that contains this commit.
+    string cipd_instance = 5;
   }
 
   // Commits released in this execution of the script. Note that if the script
   // was run in dry-run mode, the commits won't have actually been released.
+  // Changes are returned sorted newest to oldest.
   repeated GitCommit released_commits = 2;
 }

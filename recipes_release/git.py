@@ -28,7 +28,6 @@ class Commit:
     self.hash = git_hash
     self.username = username
     self.message = message
-    self.cipd_instance = None
     self.human_readable_commit_date = human_readable_commit_date
     self.commit_timestamp = datetime.fromisoformat(commit_timestamp)
 
@@ -58,9 +57,6 @@ class Commit:
   def get_cipd_instance(self) -> str:
     """Find the recipe bundle instance that contains up to this commit."""
     return _get_cipd_instance(self)
-
-  def set_cipd_instance(self, instanceid: common.CipdInstance):
-    self.cipd_instance = instanceid
 
   def color_strs(self, show_instances: bool) -> List[str]:
     """Return colorified strings for each field of the Commit.
@@ -108,8 +104,13 @@ class Commit:
 
   def to_proto(self) -> ReleaseResult.GitCommit:
     """Return a GitCommit proto based on this Commit."""
-    return ReleaseResult.GitCommit(hash=self.hash, author=self.username,
-                                   subject=self.message)
+    return ReleaseResult.GitCommit(
+        hash=self.hash,
+        author=self.username,
+        subject=self.message,
+        relative_date=self.human_readable_commit_date,
+        cipd_instance=self.get_cipd_instance(),
+    )
 
 
 @lru_cache(maxsize=None)
@@ -139,12 +140,17 @@ def _is_older_than(maybe_older_hash: str, commit_hash: str) -> bool:
 
 def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
                         to_hash: common.GitHash) -> List[Commit]:
-  """Find all changes that will be released.
+  """Find all changes in the range (from_hash, to_hash].
 
-  recipes_dir: The recipes dir to work in.
-  from_hash: The git hash immediately preceding the first in the changelist.
-  to_hash: The final git hash of the changelist.
-  verbose: If False, exclude trivial recipe rolls.
+  from_hash is not inclusive, to_hash is inclusive. I.e. finds the changes
+  between the first change following from_hash to to_hash.
+
+  Args:
+    recipes_dir: The recipes dir to work in.
+    from_hash: The git hash immediately preceding the first in the changelist.
+    to_hash: The final git hash of the changelist.
+  Returns:
+    The changes that will be released, ordered from newest to oldest.
   """
   fmt = '%H|%al|%s|%cr|%cI'  # %H=commit, %al=user, %s=summary, %cr=commit date, %cI=ISO 8061 commit timestamp
   cmd = [
@@ -167,7 +173,15 @@ def get_pending_changes(recipes_dir: str, from_hash: common.GitHash,
 
 
 def trim_trivial_suffix(changes: List[Commit]) -> List[Commit]:
-  """Remove any trivial commits that have landed since the last non-trivial commit."""
+  """Remove any trivial commits that have landed since the last non-trivial commit.
+
+  Args:
+    changes: Commits to trim, order does not matter.
+
+  Returns:
+    Trimmed changes, sorted from oldest to newest.
+  """
+  # Sort changes newest to oldest.
   changes = sorted(changes, reverse=True)
   for i, change in enumerate(changes):
     if not change.trivial:

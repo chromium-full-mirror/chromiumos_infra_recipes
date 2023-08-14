@@ -160,7 +160,8 @@ class RecipeRelease:
 
     # Send the email announcement or produce a link for a human to send it.
     gm_client = gmail.GmailAnnouncer(
-        pending_changes,
+        # Changes should appear newest to oldest in the annoucement.
+        sorted(pending_changes, reverse=True),
         bundle_longname=self._longname,
         recipients=options.recipients,
         bccs=options.bccs,
@@ -182,7 +183,10 @@ class RecipeRelease:
             body=gm_client.body,
         ),
         released_commits=[
-            c.to_proto() for c in pending_changes if not c.trivial
+            # Return non-trivial changes sorted newest to oldest.
+            c.to_proto()
+            for c in sorted(pending_changes, reverse=True)
+            if not c.trivial
         ],
     )
 
