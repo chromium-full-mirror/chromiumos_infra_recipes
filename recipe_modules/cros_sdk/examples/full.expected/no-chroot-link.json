@@ -292,7 +292,7 @@
     "name": "init sdk.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R117-98765.0.0-101@@@"
+      "@@@STEP_TEXT@found version: R118-98765.0.0-101@@@"
     ]
   },
   {

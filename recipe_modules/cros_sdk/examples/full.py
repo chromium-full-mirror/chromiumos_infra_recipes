@@ -194,7 +194,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no-chroot-link', api.cros_version.workspace_version('R117-98765.0.0'),
+      'no-chroot-link', api.cros_version.workspace_version('R118-98765.0.0'),
       api.properties(
           **{
               '$chromeos/goma':

@@ -40,6 +40,11 @@ _REMOTE_LATEST_SDK_TEST_DATA = (
 LATEST_SDK_KEY = 'LATEST_SDK'
 LATEST_UPREV_TARGET_KEY = 'LATEST_SDK_UPREV_TARGET'
 
+# TODO(b/187787264): On old branches, chromite may still depend on the chroot
+# living within the source tree. We provide a symlink only for checkouts before
+# this milestone. Remove when old milestones are no longer supported.
+_MILESTONE_NEEDS_CHROOT_SYMLINK = 118
+
 
 class CrosSdkApi(RecipeApi):
   """A module for interacting with cros_sdk."""
@@ -502,8 +507,8 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to the checkout root.
       chroot_path (Path): Path to the chroot, or None for the default.
     """
-    # TODO(b/187787264): Remove when pre-M-117 branches are dead.
-    if self.m.cros_version.version.milestone >= 117:
+    # TODO(b/187787264): Remove when old branches are dead.
+    if self.m.cros_version.version.milestone >= _MILESTONE_NEEDS_CHROOT_SYMLINK:
       return
 
     checkout_basename = self.m.path.basename(checkout_path)
@@ -616,8 +621,8 @@ class CrosSdkApi(RecipeApi):
      Args:
       checkout_path (Path): Path to the checkout root.
     """
-    # TODO(b/187787264): Remove when pre-M-117 branches are dead.
-    if self.m.cros_version.version.milestone >= 117:
+    # TODO(b/187787264): Remove when old branches are dead.
+    if self.m.cros_version.version.milestone >= _MILESTONE_NEEDS_CHROOT_SYMLINK:
       return
 
     checkout_basename = self.m.path.basename(checkout_path)
