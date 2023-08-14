@@ -551,7 +551,11 @@ class CrosSdkApi(RecipeApi):
       request = UpdateSdkRequest(
           chroot=self.chroot, toolchain_targets=toolchain_targets,
           flags=UpdateSdkRequest.Flags(build_source=build_source,
-                                       toolchain_changed=toolchain_cls))
+                                       toolchain_changed=toolchain_cls),
+          result_path=common.ResultPath(
+              path=common.Path(
+                  path=str(self.m.path.mkdtemp()),
+                  location=common.Path.OUTSIDE)))
       try:
         response = self.m.cros_build_api.SdkService.Update(
             request, timeout=timeout_sec, test_output_data=test_data)

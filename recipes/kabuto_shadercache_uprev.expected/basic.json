@@ -1776,6 +1776,12 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -1791,7 +1797,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1868,6 +1874,12 @@
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"updateResponse\": {@@@",
@@ -1885,7 +1897,7 @@
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBOQoAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dNoBBAoCCHvaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBVAoAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIZChcKE1tDTEVBTlVQXS90bXBfdG1wXzEQAtoBBAoCCHvaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1905,7 +1917,7 @@
     },
     "infra_step": true,
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBOQoAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dNoBBAoCCHvaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIx4DE/QQQgMq17gEiBgjJgMT9BNIBVAoAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIZChcKE1tDTEVBTlVQXS90bXBfdG1wXzEQAtoBBAoCCHvaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1927,7 +1939,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\"mesa_hash\": {\"volteer\": \"e1d21f72c12a3f9c8b84bcc55fd88b0849253523\", \"brya\": \"af3d0ce62bff0c7b567d07b7eee15a7668e35ab8\", \"guybrush\": \"a9c55e47e3254e976284695ae7c73b76b3c7113b\"}, \"game_id_to_board\": {}}",
-      "[CLEANUP]/tmp_tmp_1"
+      "[CLEANUP]/tmp_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
     "env_suffixes": {
@@ -1939,7 +1951,7 @@
       ]
     },
     "infra_step": true,
-    "name": "write updated artifacts to tempfile.writing uprev_info to [CLEANUP]/tmp_tmp_1",
+    "name": "write updated artifacts to tempfile.writing uprev_info to [CLEANUP]/tmp_tmp_2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1952,7 +1964,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_1",
+      "[CLEANUP]/tmp_tmp_2",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
@@ -1968,13 +1980,13 @@
     "name": "write updated artifacts to tempfile.updated artifacts file contents",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@tmp_tmp_1@@@"
+      "@@@STEP_LOG_END@tmp_tmp_2@@@"
     ]
   },
   {
     "cmd": [
       "util/shader-dlc-uprev/upload-and-uprev.py",
-      "[CLEANUP]/tmp_tmp_1"
+      "[CLEANUP]/tmp_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
     "env_suffixes": {
