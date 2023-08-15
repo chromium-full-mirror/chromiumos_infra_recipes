@@ -34,4 +34,10 @@ message BuildBorealisRootfsProperties {
 
   // Whether to build the tast binaries tarball.
   bool build_tast_binaries = 7;
+
+  // Whether to run build_full with --disable_arch_sig_validation or not. This
+  // switches to using a locally sourced hash verification method rather than
+  // Arch's built in PGP keys. Used for cases when keys expire (specifically on
+  // manifest branches where the Arch version can't be uprev'd.)
+  bool disable_arch_sig_validation = 8;
 }

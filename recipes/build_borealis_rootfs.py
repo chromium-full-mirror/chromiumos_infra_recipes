@@ -88,14 +88,15 @@ def DoRunSteps(api: RecipeApi,
     # src/platform/borealis/docs/build-and-deploy.md
     # TODO(davidriley): Perform the build steps in parallel.
     api.step('borealis_kernel', ['./tools/borealis_kernel.py'])
+
+    borealis_build_cmd = ['./tools/build_full.py', '--no-cache']
+    if properties.disable_arch_sig_validation:
+      borealis_build_cmd.append('--disable-arch-sig-validation')
     if properties.docker_variant:
-      api.step('borealis build_full.py', [
-          './tools/build_full.py', '--no-cache', '--variant',
-          properties.docker_variant
-      ])
-    else:
-      api.step('borealis build_full.py',
-               ['./tools/build_full.py', '--no-cache'])
+      borealis_build_cmd.append('--variant')
+      borealis_build_cmd.append(properties.docker_variant)
+
+    api.step('borealis build_full.py', borealis_build_cmd)
     api.step('convert_docker_image', ['./tools/convert_docker_image.py'])
 
     # Version the archive.
@@ -208,6 +209,27 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'docker_variant chroot',
       api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'borealis build_full.py',
+          ['./tools/build_full.py', '--no-cache', '--variant', 'chroot'],
+      ),
+  )
+
+  props = good_props.copy()
+  props['disable_arch_sig_validation'] = True
+  yield api.test(
+      'disable-arch-sig-validation',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'borealis build_full.py',
+          [
+              './tools/build_full.py',
+              '--no-cache',
+              '--disable-arch-sig-validation',
+          ],
+      ),
   )
 
   props = good_props.copy()
