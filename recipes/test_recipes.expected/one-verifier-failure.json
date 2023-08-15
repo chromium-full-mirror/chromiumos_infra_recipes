@@ -3,7 +3,145 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@multiple CLs, not skipping builders@@@"
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-release-triggerer']@@@",
+      "@@@STEP_LOG_END@Skipped builders@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "--limit",
+      "1",
+      "-p",
+      "change=123456",
+      "-o",
+      "ALL_REVISIONS",
+      "-o",
+      "DOWNLOAD_COMMANDS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get non-skipped builders.gerrit fetch current CL info",
+    "timeout": 480,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"owner\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"John Doe\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"7\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "changes",
+      "--verbose",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--json_file",
+      "/path/to/tmp/json",
+      "--limit",
+      "1",
+      "-p",
+      "change=123456",
+      "-o",
+      "ALL_REVISIONS",
+      "-o",
+      "ALL_COMMITS"
+    ],
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get non-skipped builders.gerrit changes",
+    "timeout": 480,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"1\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"A test change\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--json",
+      "/path/to/tmp/json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get non-skipped builders.parse description",
+    "stdin": "A test change",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -305,7 +443,7 @@
       }
     },
     "name": "apply gerrit changes.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}, {\"change_number\": 123457, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 10}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -353,50 +491,6 @@
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123457,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123457,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/infra/recipes\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
-      "@@@STEP_LOG_LINE@json.output@      },@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 10,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 10,@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/57/123457/10\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromiumos/infra/recipes\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/57/123457/10\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -480,87 +574,12 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chromium.googlesource.com/chromiumos/infra/recipes",
-      "refs/changes/57/123457/10:"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply gerrit changes.git fetch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply gerrit changes.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "cherry-pick",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply gerrit changes.git cherry-pick (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "analyze and launch builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@launched 2 / 3 builders@@@",
+      "@@@STEP_TEXT@launched 2 / 2 builders@@@",
       "@@@STEP_LINK@staging-Annealing@https://ci.chromium.org/b/1@@@",
-      "@@@STEP_LINK@staging-release-triggerer@https://ci.chromium.org/b/3@@@"
+      "@@@STEP_LINK@staging-release-triggerer@https://ci.chromium.org/b/2@@@"
     ]
   },
   {
@@ -735,7 +754,9 @@
       "led",
       "edit-system",
       "-tag",
-      "test_recipes_task_id:fake-task-id"
+      "test_recipes_task_id:fake-task-id",
+      "-tag",
+      "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "luci_context": {
@@ -1103,135 +1124,6 @@
   },
   {
     "cmd": [],
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@builder staging-chromite-postsubmit (recipe test_chromite) not affected@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-chromite-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-chromite-postsubmit\"}, \"id\": \"2\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "led",
-      "get-build",
-      "-real-build",
-      "2"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.led get-build",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@proto.output@{@@@",
-      "@@@STEP_LOG_LINE@proto.output@  \"buildbucket\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-chromite-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
-      "@@@STEP_LOG_LINE@proto.output@              {@@@",
-      "@@@STEP_LOG_LINE@proto.output@                \"key\": \"bot_size\",@@@",
-      "@@@STEP_LOG_LINE@proto.output@                \"value\": \"large\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@              }@@@",
-      "@@@STEP_LOG_LINE@proto.output@            ]@@@",
-      "@@@STEP_LOG_LINE@proto.output@          }@@@",
-      "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"test_chromite\"@@@",
-      "@@@STEP_LOG_LINE@proto.output@          }@@@",
-      "@@@STEP_LOG_LINE@proto.output@        }@@@",
-      "@@@STEP_LOG_LINE@proto.output@      }@@@",
-      "@@@STEP_LOG_LINE@proto.output@    }@@@",
-      "@@@STEP_LOG_LINE@proto.output@  }@@@",
-      "@@@STEP_LOG_LINE@proto.output@}@@@",
-      "@@@STEP_LOG_END@proto.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./recipes.py",
-      "analyze",
-      "{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"test_chromite\"]}",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/recipes/src",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.recipe analyze",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"recipes\": []@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@input.json@{\"files\": [\"a/b/text.txt\", \"other_test.txt\"], \"recipes\": [\"test_chromite\"]}@@@",
-      "@@@STEP_LOG_END@input.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1269,9 +1161,9 @@
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-triggerer\"}, \"id\": \"3\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-triggerer\"}, \"id\": \"2\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@staging-release-triggerer@https://cr-buildbucket.appspot.com/build/3@@@"
+      "@@@STEP_LINK@staging-release-triggerer@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
@@ -1279,7 +1171,7 @@
       "led",
       "get-build",
       "-real-build",
-      "3"
+      "2"
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "luci_context": {
@@ -1304,7 +1196,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
@@ -1332,7 +1224,9 @@
       "led",
       "edit-system",
       "-tag",
-      "test_recipes_task_id:fake-task-id"
+      "test_recipes_task_id:fake-task-id",
+      "-tag",
+      "buildset:patch/gerrit/host/123/1"
     ],
     "cwd": "[CLEANUP]/recipes/src",
     "luci_context": {
@@ -1348,7 +1242,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1358,7 +1252,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
@@ -1403,7 +1297,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1413,7 +1307,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
@@ -1459,7 +1353,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1469,7 +1363,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"task_dimensions\": [@@@",
@@ -1513,7 +1407,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1523,7 +1417,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
@@ -1588,7 +1482,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1598,7 +1492,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
@@ -1647,7 +1541,7 @@
       "led",
       "edit",
       "-name",
-      "staging-release-triggerer 3",
+      "staging-release-triggerer 2",
       "-exp",
       "false"
     ],
@@ -1665,7 +1559,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (3)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1675,7 +1569,7 @@
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-release-triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
-      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"buildbucket\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"agent\": {@@@",
@@ -1714,7 +1608,7 @@
       "@@@STEP_LOG_LINE@proto.output@        }@@@",
       "@@@STEP_LOG_LINE@proto.output@      }@@@",
       "@@@STEP_LOG_LINE@proto.output@    },@@@",
-      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"staging-release-triggerer 3\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@    \"name\": \"staging-release-triggerer 2\"@@@",
       "@@@STEP_LOG_LINE@proto.output@  }@@@",
       "@@@STEP_LOG_LINE@proto.output@}@@@",
       "@@@STEP_LOG_END@proto.output@@@"
@@ -1741,17 +1635,17 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led launch",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-release-triggerer 3\"\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"2\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-release-triggerer 2\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildbucket\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"build_id\": 3,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"build_id\": 2,@@@",
       "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"buildbucket@appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Build@https://ci.chromium.org/b/3@@@"
+      "@@@STEP_LINK@Build@https://ci.chromium.org/b/2@@@"
     ]
   },
   {
@@ -1774,7 +1668,7 @@
       "-interval",
       "60s",
       "1",
-      "3"
+      "2"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1816,20 +1710,66 @@
       }
     },
     "name": "collect results.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"1\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"3\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"1\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"2\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"builder\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"3\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"builder\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"2\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -1847,24 +1787,30 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"3\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"2\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
-      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@"
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
     "cmd": [],
     "name": "analyze results",
     "~followup_annotations": [
-      "@@@STEP_TEXT@all tasks succeeded@@@"
+      "@@@STEP_TEXT@1 tasks failed, 1 succeeded@@@",
+      "@@@STEP_LINK@[FAILED] builder@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 tasks failed. Please file a go/cros-recipes-cq-fail if you believe the failures are unrelated to your change."
+    },
     "name": "$result"
   }
 ]

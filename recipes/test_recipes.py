@@ -8,6 +8,7 @@
 from collections import OrderedDict
 import contextlib
 from typing import Dict, Generator, List, Optional, Tuple
+import re
 
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
@@ -19,7 +20,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import BuildPredicate
 from PB.go.chromium.org.luci.led.job import job as job_pb2
 from PB.recipes.chromeos.test_recipes import TestRecipesProperties
-from RECIPE_MODULES.recipe_engine.led.api import LedApi
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -50,6 +50,13 @@ PROJECT = 'chromeos'
 # Bucket to test in. Only the staging environment should be used.
 BUCKET = 'staging'
 
+# Regex for valid Gerrit patchset buildset tags.
+# Taken from http://shortn/_N21EtSUNDM.
+RE_BUILDSET_GERRIT_CL = re.compile(r'^patch/gerrit/([^/]+)/(\d+)/(\d+)$')
+
+# How long to wait for results.
+COLLECT_TIMEOUT_SECONDS = 60 * 60 * 10
+
 
 class VerifierRunInfo:
   """All of the information about a verifier."""
@@ -64,7 +71,7 @@ class VerifierRunInfo:
     self.skipped = False
     self.led_job = None
     self.led_launch_result = None
-    self.swarming_result = None
+    self.build_result = None
 
   @property
   def name(self) -> str:
@@ -205,8 +212,6 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
     verifiers dict, mutated to include led and launch results.
   """
   with api.step.nest('analyze and launch builders') as launch_pres:
-    results = []
-
     with api.step.nest('get affected files') as affected_files_pres:
       # Changes should be cherry picked at this point. The relevant diffs should
       # be between the original checkout and HEAD.
@@ -224,6 +229,7 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
 
     my_id = api.swarming.task_id
     considered = 0
+    launched = 0
     for idx, verifier in enumerate(verifiers.values()):
       if verifier.skipped:
         continue
@@ -236,7 +242,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
         # Mark this as a dry_run so that builders with side effects (for
         # example, annealing pushes a manifest_ref) can avoid them.
         last_successful_build = _get_last_successful_build(api, builder)
-        led_result = api.led('get-build', last_successful_build.id)
+        led_result = api.led('get-build', '-real-build',
+                             last_successful_build.id)
 
         buildbucket = led_result.result.buildbucket
         build = buildbucket.bbagent_args.build
@@ -252,9 +259,19 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
                 last_successful_build.output.gitiles_commit)
 
           # Set the buildbucket test_recipes_task_id tag.
-          tag = buildbucket.bbagent_args.build.tags.add()
-          tag.key = 'test_recipes_task_id'
-          tag.value = my_id
+          edit_system_cmd = ['edit-system']
+          edit_system_cmd.extend(['-tag', f'test_recipes_task_id:{my_id}'])
+
+          # Copy over Gerrit change "buildset" tags. This is what Gerrit Checks
+          # uses to surface buildbucket builds on Gerrit.
+          build_set_tags = [
+              x.value for x in api.buildbucket.build.tags if
+              x.key == 'buildset' and RE_BUILDSET_GERRIT_CL.fullmatch(x.value)
+          ]
+          for v in build_set_tags:
+            edit_system_cmd.extend(['-tag', f'buildset:{v}'])
+
+          led_result = led_result.then(*edit_system_cmd)
 
           # Provide a unique id for testing.
           if api._test_data.enabled:  # pylint: disable=protected-access
@@ -274,71 +291,52 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
           # but there are no large role=infra bots.
           name = '%s %s' % (builder, last_successful_build.id)
           led_result = led_result.then('edit-recipe-bundle').then(
-              'edit-system', '-p', '20').then('edit', '-name', name)
+              'edit-system', '-p', '20').then('edit', '-name', name, '-exp',
+                                              'false')
           verifier.led_job = led_result
-          result = led_result.then('launch').launch_result
-          verifier.led_launch_result = result
-          url = 'https://{}/task?id={}'.format(result.swarming_hostname,
-                                               result.task_id)
+          # Setting -bound-to-parent will cancel the led builds if the parent is
+          # canceled.
+          led_launch_data = led_result.then('launch', '-real-build',
+                                            '-bound-to-parent').launch_result
+          verifier.led_launch_result = led_launch_data
+          url = led_launch_data.build_url
           launch_pres.links[builder] = url
-          results.append(result)
+          launched += 1
         else:
           builder_pres.step_text = (
               'builder {} (recipe {}) not affected'.format(builder, recipe))
 
     launch_pres.step_text = 'launched {} / {} builders'.format(
-        len(results), considered)
+        launched, considered)
 
     return verifiers
-
-
-def _extract_host_name(api: RecipeApi,
-                       led_results: List[LedApi.LedLaunchData]) -> str:
-  """Extract host name from the results of 'led launch'.
-
-  Asserts there is only one host name.
-
-  Args:
-    api: See RunSteps documentation.
-    led_results: List of led results.
-
-  Returns:
-    The swarming host name.
-  """
-  with api.step.nest('extract host name'):
-    host_names = set(result.swarming_hostname for result in led_results)
-
-    # All builders should be in the staging bucket, and run on the same
-    # swarming server.
-    assert len(host_names) == 1, (
-        'There should be exactly 1 swarming host name.'
-        ' Actual host names: {}').format(host_names)
-
-    return list(host_names)[0]
-
 
 def _collect_results(
     api: RecipeApi,
     verifiers: Dict[str, VerifierRunInfo]) -> Dict[str, VerifierRunInfo]:
-  """Collect results from swarming, blocking if necessary.
+  """Collect results from buildbucket, blocking if necessary.
 
   Args:
     api: See RunSteps documentation.
     verifiers: The verifiers.
 
   Returns:
-    verifiers dict, mutated to include swarming results.
+    verifiers dict, mutated to include the led job build results.
   """
-  verifier_by_id = OrderedDict((v.led_launch_result.task_id, v)
+  verifier_by_id = OrderedDict((v.led_launch_result.build_id, v)
                                for v in verifiers.values()
                                if v.led_launch_result)
   assert verifier_by_id
+  build_ids = [v.led_launch_result.build_id for v in verifier_by_id.values()]
   with api.step.nest('collect results'):
-    results = api.swarming.collect(
-        'collect swarming tasks',
-        [v.led_launch_result.task_id for v in verifier_by_id.values()])
+    try:
+      results = api.buildbucket.collect_builds(
+          build_ids, timeout=COLLECT_TIMEOUT_SECONDS).values()
+    # Fallback to get_multi in case of collect failure (e.g. timeout).
+    except StepFailure:
+      results = api.buildbucket.get_multi(build_ids).values()
     for result in results:
-      verifier_by_id[result.id].swarming_result = result
+      verifier_by_id[result.id].build_result = result
     return verifiers
 
 
@@ -380,9 +378,8 @@ def _update_skipped_verifiers(
     return verifiers
 
 
-def _analyze_swarming_results(api: RecipeApi, verifiers: Dict[str,
-                                                              VerifierRunInfo]):
-  """Raise a StepFailure if any swarming task was unsuccessful.
+def _analyze_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]):
+  """Raise a StepFailure if any led job was unsuccessful.
 
   Args:
     api: See RunSteps documentation.
@@ -391,22 +388,20 @@ def _analyze_swarming_results(api: RecipeApi, verifiers: Dict[str,
   Raises:
     StepFailure
   """
-  with api.step.nest('analyze swarming results') as presentation:
-    host_name = _extract_host_name(api, [
-        v.led_launch_result for v in verifiers.values() if v.led_launch_result
-    ])
+  with api.step.nest('analyze results') as presentation:
     fail_count = 0
     total_count = 0
     for verifier in verifiers.values():
-      result = verifier.swarming_result
-      if result:
+      build_result = verifier.build_result
+      if build_result:
         total_count += 1
-        if not result.success:
+        if not build_result.status == common_pb2.SUCCESS:
           if verifier.critical:
             fail_count += 1
-          url = 'https://{}/task?id={}'.format(host_name, result.id)
+          url = api.buildbucket.build_url(build_id=build_result.id)
           presentation.links['[FAILED] {}{}'.format(
-              result.name, '' if verifier.critical else '(non-critical)')] = url
+              build_result.builder.builder,
+              '' if verifier.critical else '(non-critical)')] = url
 
     if fail_count:
       presentation.step_text = '{} tasks failed, {} succeeded'.format(
@@ -442,7 +437,7 @@ def RunSteps(api: RecipeApi, properties: TestRecipesProperties) -> None:
 
   if any(v.led_launch_result for v in verifiers.values()):
     _collect_results(api, verifiers)
-    _analyze_swarming_results(api, verifiers)
+    _analyze_results(api, verifiers)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -551,18 +546,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
         api.json.output({'recipes': recipes}))
 
   def collect_results_failed_test_data() -> TestData:
-    """Get step data for failures in a 'swarming.collect' command.
+    """Get step data for failures in a 'buildbucket.collect' command.
 
     Returns:
       A TestData object.
     """
-    return api.step_data(
-        'collect results.collect swarming tasks',
-        api.swarming.collect([
-            api.swarming.task_result(id='fake-id-1', name='A swarming task',
-                                     failure=True),
-            api.swarming.task_result(id='fake-id-2', name='Another task')
-        ]))
+    return api.buildbucket.simulated_collect_output([
+        api.buildbucket.ci_build_message(build_id=1, status='FAILURE'),
+        api.buildbucket.ci_build_message(build_id=2, status='SUCCESS'),
+    ], 'collect results.buildbucket.collect')
 
   def try_build(project: str, bucket: str, builder: str) -> TestData:
     """Return a tryb_build for the recipes repo.
@@ -570,9 +562,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     Returns:
       A TestData object.
     """
+    # Tags includes one valid and one invalid Gerrit CL buildset pattern.
+    # Only the valid one is expected to be propogated.
+    tags = api.buildbucket.tags(
+        buildset=['patch/gerrit/not/quite/valid', 'patch/gerrit/host/123/1'])
     return api.buildbucket.try_build(project=project, bucket=bucket,
                                      builder=builder, git_repo=RECIPE_REPO_URL,
-                                     priority=30)
+                                     priority=30, tags=tags)
 
   def two_cl_try_build(project: str, bucket: str, builder: str) -> TestData:
     """Return a try_build with two CLs attached to it.
@@ -744,9 +740,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=[]))
 
   yield api.test(
-      'failed-swarming-task',
+      'one-verifier-failure',
       api.cq(run_mode=api.cq.FULL_RUN),
-      # Specify one builder to run.
+      # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
               'name': 'staging-Annealing',
@@ -768,6 +764,33 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=['annealing']),
       # swarming TaskResults contain a failed task.
       collect_results_failed_test_data(),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'collect-failure',
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      # Specify two builders to run.
+      api.properties(
+          TestRecipesProperties(verifiers=[{
+              'name': 'staging-Annealing',
+              'always_launch': True,
+              'critical': True
+          }, {
+              'name': 'staging-release-triggerer',
+              'always_launch': True,
+              'critical': True
+          }])),
+      # Buildbucket search and led get-build results.
+      buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
+      buildbucket_search_and_get_build('staging-release-triggerer',
+                                       'release_triggerer', 2),
+      api.step_data('collect results.buildbucket.collect.wait', retcode=1),
+      api.buildbucket.simulated_get_multi([
+          api.buildbucket.ci_build_message(build_id=1, status='FAILURE'),
+          api.buildbucket.ci_build_message(build_id=2, status='SUCCESS')
+      ], 'collect results.buildbucket.get_multi'),
       status='FAILURE',
   )
 
