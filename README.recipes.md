@@ -848,7 +848,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retriable.
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#230)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#246)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -856,8 +856,9 @@ Returns cq-orchestrator builds which may be elegible for auto retry.
 Candidate cq-orchestrator builds must meet the following criteria:
   * The build status is in RETRYABLE_STATUSES.
   * The build is the latest cq attempt for the CLs under test.
+  * The build had a supported failure mode.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#325)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#345)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -873,7 +874,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#47)(self):**
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#451)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#471)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -890,7 +891,7 @@ Args:
   retryable_builders: Names of the child builders that are now retryable.
   retryable_test_suites: Names of the test suites that are now retryable.
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#240)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#260)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 

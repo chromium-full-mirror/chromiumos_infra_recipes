@@ -227,6 +227,22 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         pres.links[b.id] = self.m.buildbucket.build_url(build_id=b.id)
       return builds
 
+  def _has_supported_failure_mode(self, cq_orch: build_pb2.Build) -> bool:
+    """Returns whether a cq-orchestrator had a supported failure mode.
+
+    Currently only child build failures and end-to-end test failures are
+    supported. Other failures in the cq-orchestrator execution
+    (e.g. merge conflict) are not currently retryable.
+
+    Args:
+      cq_orch: The cq-orchestrator run to consider.
+
+    Returns:
+      Whether the cq-orchestrator had a failure which may be auto-retryable.
+    """
+    return ('has_child_failures' in cq_orch.output.properties and
+            cq_orch.output.properties['has_child_failures'])
+
   def cq_retry_candidates(self) -> List[build_pb2.Build]:
     """Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -234,8 +250,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     Candidate cq-orchestrator builds must meet the following criteria:
       * The build status is in RETRYABLE_STATUSES.
       * The build is the latest cq attempt for the CLs under test.
+      * The build had a supported failure mode.
     """
-    return self._get_current_cq_orchs_with_retryable_statuses()
+    cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
+    cq_orchs = [c for c in cq_orchs if self._has_supported_failure_mode(c)]
+
+    return cq_orchs
 
   def test_variant_exoneration_analysis(
       self, cq_run: build_pb2.Build

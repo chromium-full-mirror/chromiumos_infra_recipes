@@ -20,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
 
   # pylint: disable=protected-access
-  builds = api.auto_retry_util.cq_retry_candidates()
+  builds = api.auto_retry_util._get_current_cq_orchs_with_retryable_statuses()
   build_ids = [b.id for b in builds]
   expected_build_ids = api.properties['expected_build_ids']
   api.assertions.assertCountEqual(build_ids, expected_build_ids)

@@ -62,10 +62,16 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   cq_orchs = [
-      api.test_util.test_orchestrator(cq=True, status='FAILURE', build_id=1111,
-                                      create_time=1111).message,
-      api.test_util.test_orchestrator(cq=True, status='FAILURE', build_id=1112,
-                                      create_time=1112).message,
+      api.test_util.test_orchestrator(
+          cq=True, status='FAILURE', build_id=1111, create_time=1111,
+          output_properties={
+              'has_child_failures': True
+          }).message,
+      api.test_util.test_orchestrator(
+          cq=True, status='FAILURE', build_id=1112, create_time=1112,
+          output_properties={
+              'has_child_failures': True
+          }).message,
   ]
   yield api.test(
       'basic',
