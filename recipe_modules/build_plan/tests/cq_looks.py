@@ -137,41 +137,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'switch-to-green-dry-run',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.properties(
-          **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True,
-                  'dry_run': True
-              }
-          }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check disallow looks for green'
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
-      api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
-      api.post_check(post_process.DoesNotRun,
-                     'filter builds.looks for green.set green snapshot'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
       'use-complete-snapshot',
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
@@ -252,76 +217,6 @@ def GenTests(api):
   )
 
   yield api.test(
-      'fallback-to-green-dry-run',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.properties(
-          **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True,
-                  'dry_run': True
-              }
-          }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check disallow looks for green'
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
-      api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
-      api.post_check(
-          post_process.MustRun,
-          'filter builds.looks for green.find green snapshot.set looks_for_green'
-      ),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'no-green-dry-run',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.properties(
-          **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True,
-                  'dry_run': True
-              }
-          }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check disallow looks for green'
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
-      api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
       'lfg-disabled',
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
@@ -345,7 +240,6 @@ def GenTests(api):
           **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True,
-                  'dry_run': True
               }
           }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
       api.git_footers.simulated_get_footers([

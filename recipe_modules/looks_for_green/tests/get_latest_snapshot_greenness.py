@@ -34,6 +34,8 @@ TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 def RunSteps(api, properties):
   agg_greenness = api.looks_for_green.get_latest_snapshot_greenness()
+  # Call to satisfy recipe coverage rules.
+  _ = api.looks_for_green.use_scored_over_minted
   api.assertions.assertEqual(properties.expected_greenness, agg_greenness)
   is_snap_orch_green = api.looks_for_green.is_snap_orch_green()
   api.assertions.assertEqual(properties.expected_is_snap_orch_green,
@@ -68,6 +70,33 @@ def GenTests(api):
       ),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_RAN_LATEST_MINTED),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'success-but-scored',
+      api.properties(
+          **{'$chromeos/looks_for_green': {
+              'use_scored_over_minted': True,
+          }}, expected_greenness=100, expected_is_snap_orch_green=True),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ],
+          step_name='checking latest scored snapshot greenness.buildbucket.search'
+      ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(id=123, output=output,
+                              start_time=TEST_START_TIMESTAMP,
+                              end_time=TEST_END_TIMESTAMP)
+          ],
+          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
+      ),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(post_process.DropExpectation),
   )
 

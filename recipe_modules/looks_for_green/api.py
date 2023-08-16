@@ -43,11 +43,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                **kwargs: Any) -> None:
     super().__init__(**kwargs)
     self.enable_looks_for_green = properties.enable_looks_for_green
-    self.dry_run = properties.dry_run
     self._max_concurrent_snapshot_runs = properties.max_concurrent_snapshot_runs or 25
     self._lookback_hours = properties.lookback_hours or 10
     self._greenness_threshold = properties.greenness_threshold or 80
     self.use_complete_snapshot = properties.use_complete_snapshot
+    self._use_scored_over_minted = properties.use_scored_over_minted
     self._stats = LooksForGreenStats()
     self._now = None
     self._seconds_now = None
@@ -84,6 +84,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def stats(self) -> LooksForGreenStats:
     '''Returns looks for green stats'''
     return self._stats
+
+  @property
+  def use_scored_over_minted(self) -> bool:
+    '''Returns use_scored_over_minted property.'''
+    return self._use_scored_over_minted
 
   @property
   def _greenness_bucket(self) -> str:
@@ -346,7 +351,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             f'greenness {green.agg_green} and {green.approx_snap_age_hours} '
             'hours old.')
         self._set_snapshot_stats(green, suggested=True)
-        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER if not self.dry_run else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
+        self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
         self.m.easy.set_properties_step(looks_for_green=self.stats)
       else:
         presentation.logs['latest green'] = (
@@ -370,8 +375,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._stats.latest_scored.is_snap_orch_green = is_snap_orch_green
     # This logic is a bit brittle as it assumes that the caller is not going to
     # turn around and choose a different snapshot.
-    if is_snap_orch_green or self.dry_run:
-      self._stats.status = LooksForGreenStatus.STATUS_RAN_LATEST_MINTED
+    if is_snap_orch_green:
+      self._stats.status = (
+          LooksForGreenStatus.STATUS_RAN_OLDER if self._use_scored_over_minted
+          else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED)
     self.m.easy.set_properties_step(looks_for_green=self.stats)
     return is_snap_orch_green
 
