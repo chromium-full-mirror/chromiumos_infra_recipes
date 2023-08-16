@@ -318,7 +318,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       with self._api.context(env={'USE_DUT_TOPO': True}):
         return self._api.phosphorus.load_skylab_local_state(test_id=test_id)
 
-  def save_skylab_local_state(self, dut_state, metadata):
+  def save_skylab_local_state(self, dut_state, metadata, repair_requests=None):
     """Save skylab local state on DUT.
 
     Args:
@@ -334,7 +334,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             dut_state)):
       self._api.phosphorus.save_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts])
+          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          repair_requests=repair_requests)
 
   def save_and_seal_skylab_local_state(self, dut_state, metadata,
                                        repair_requests=None):

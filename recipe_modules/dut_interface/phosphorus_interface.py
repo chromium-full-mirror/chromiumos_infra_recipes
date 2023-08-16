@@ -340,12 +340,13 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           peer_duts=[dut.hostname for dut in metadata.peer_duts],
           repair_requests=repair_requests)
 
-  def save_skylab_local_state(self, dut_state, metadata):
+  def save_skylab_local_state(self, dut_state, metadata, repair_requests):
     with self._api.step.nest(
         'Phosphorus: mark local DUT state: {}'.format(dut_state)):
       self._api.phosphorus.save_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.hostname,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts])
+          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          repair_requests=repair_requests)
 
   def load_skylab_local_state(self, test, test_id):
     with self._api.step.nest('Phosphorus: load skylab local state'):

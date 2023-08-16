@@ -339,7 +339,10 @@
       "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutState\": \"needs_repair\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"repairRequests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    \"REPAIR_REQUEST_PROVISION\"@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -365,7 +368,7 @@
       }
     },
     "name": "execution steps.original_test.Phosphorus: mark local DUT state: needs_repair.call `phosphorus`.save",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"needs_repair\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"dutState\": \"needs_repair\",\n  \"repairRequests\": [\n    \"REPAIR_REQUEST_PROVISION\"\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1388,7 +1391,7 @@
     "name": "execution steps.original_test.post upload step (phosphorus)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@repair_requests@[]@@@",
+      "@@@STEP_LOG_LINE@repair_requests@['REPAIR_REQUEST_UNKNOWN']@@@",
       "@@@STEP_LOG_END@repair_requests@@@"
     ]
   },
@@ -1414,7 +1417,10 @@
       "@@@STEP_LOG_LINE@request@  \"resultsDir\": \"dummy-results-dir\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dutName\": \"fake_host\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"dummy-dut-id\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true@@@",
+      "@@@STEP_LOG_LINE@request@  \"sealResultsDir\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"repairRequests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    \"REPAIR_REQUEST_UNKNOWN\"@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -1440,7 +1446,7 @@
       }
     },
     "name": "execution steps.original_test.post upload step (phosphorus).Phosphorus: save local DUT state.call `phosphorus`.save",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"sealResultsDir\": true\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"resultsDir\": \"dummy-results-dir\",\n  \"dutName\": \"fake_host\",\n  \"dutId\": \"dummy-dut-id\",\n  \"sealResultsDir\": true,\n  \"repairRequests\": [\n    \"REPAIR_REQUEST_UNKNOWN\"\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
     ]

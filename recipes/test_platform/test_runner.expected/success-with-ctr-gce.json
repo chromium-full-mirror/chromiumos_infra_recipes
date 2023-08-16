@@ -1022,7 +1022,7 @@
     "name": "execution steps.post upload step (ctr)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@repair_request@[]@@@",
+      "@@@STEP_LOG_LINE@repair_request@['REPAIR_REQUEST_UNKNOWN']@@@",
       "@@@STEP_LOG_END@repair_request@@@",
       "@@@STEP_LOG_LINE@ile-de-france@intentionally skipped@@@",
       "@@@STEP_LOG_END@ile-de-france@@@"

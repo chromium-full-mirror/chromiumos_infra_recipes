@@ -1344,7 +1344,8 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
       finally:
         with api.step.nest('post upload step (phosphorus)') as post_step:
           # Repair-requests need to be saved before verify the DUT.
-          repair_requests = []
+          # Set unknown request to reset repair-requests is not needed.
+          repair_requests = ['REPAIR_REQUEST_UNKNOWN']
           # Could not find cases when result is present when pre-job failed,
           # so add repair-request when result is not present or the state
           # is faillure.
@@ -1352,14 +1353,14 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
             if result.prejob_response.is_failure():
               s_log(post_step, "summary",
                     "ile-de-france: skipped as provision failed")
-              repair_requests.append('REPAIR_REQUEST_PROVISION')
+              repair_requests = ['REPAIR_REQUEST_PROVISION']
             else:
               dut_state = api.labpack.execute_ile_de_france(
                   common_config=properties.common_config, dut_state=dut_state)
           else:
             s_log(post_step, "summary",
                   "ile-de-france: skipped as results is None")
-            repair_requests.append('REPAIR_REQUEST_PROVISION')
+            repair_requests = ['REPAIR_REQUEST_PROVISION']
           s_log(post_step, "repair_requests", '%s' % repair_requests)
           interface.save_and_seal_skylab_local_state(dut_state, test_metadata,
                                                      repair_requests)
@@ -1472,8 +1473,10 @@ def execution_steps_with_phosphorus(api, properties):
           raise api.step.StepFailure("VMTest should go through CFT.")
         test_metadata = interface.build_test_metadata(test_id, test)
         # Needs to be distinct per test as logs are uploaded for each test separately.
+        repair_requests = ['REPAIR_REQUEST_PROVISION']
         interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR,
-                                          test_metadata)
+                                          test_metadata,
+                                          repair_requests=repair_requests)
 
         dut_state = _DUT_STATE_NEEDS_REPAIR
         max_duration_sec = int(
@@ -1554,7 +1557,9 @@ def execution_steps_with_ctr(api, properties):
     test_metadata = interface.build_test_metadata(
         "original_test", "", properties.cft_test_request.autotest_keyvals)
 
-    interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata)
+    repair_requests = ['REPAIR_REQUEST_PROVISION']
+    interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata,
+                                      repair_requests=repair_requests)
 
     dut_state = _DUT_STATE_NEEDS_REPAIR
     max_duration_sec = int(properties.config.harness.prejob_deadline_seconds or
@@ -1732,16 +1737,15 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
           interface.submit_post_job()
           provision_failed = result_for_output_props is not None and result_for_output_props.prejob_failed(
           )
-          repair_requests = []
+          repair_requests = ['REPAIR_REQUEST_UNKNOWN']
           if provision_failed:
             failure_reason = result_for_output_props.prejob_response.failure_reason
             # List of the reason when no repair-request is required.
             ok_reasons = [
-                'REASON_DUT_UNREACHABLE_PRE_PROVISION',
                 'REASON_INVALID_REQUEST', 'REASON_GS_UPLOAD_FAILED'
             ]
             if failure_reason not in ok_reasons:
-              repair_requests.append('REPAIR_REQUEST_PROVISION')
+              repair_requests = ['REPAIR_REQUEST_PROVISION']
           s_log(post_step, "repair_request", "%s" % repair_requests)
           interface.save_and_seal_skylab_local_state(
               dut_state, test_metadata, repair_requests=repair_requests)
