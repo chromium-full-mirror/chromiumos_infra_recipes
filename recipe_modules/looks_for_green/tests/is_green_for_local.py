@@ -75,15 +75,13 @@ def GenTests(api):
       api.properties(expected_result=True),
       api.buildbucket.simulated_search_results(
           builds=current_snapshot_builds,
-          step_name='check current snapshot build.get snapshot builds.buildbucket.search'
-      ),
+          step_name='check current snapshot build.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=previous_snapshot,
-          step_name='check previous snapshot builds.buildbucket.search'),
+          step_name='get previous snapshot builds.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=previous_snapshot_builds_success,
-          step_name='check previous snapshot builds.get snapshot builds.buildbucket.search'
-      ),
+          step_name='update with previous snapshot builds.buildbucket.search'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -92,14 +90,12 @@ def GenTests(api):
       api.properties(expected_result=False),
       api.buildbucket.simulated_search_results(
           builds=current_snapshot_builds,
-          step_name='check current snapshot build.get snapshot builds.buildbucket.search'
-      ),
+          step_name='check current snapshot build.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=previous_snapshot,
-          step_name='check previous snapshot builds.buildbucket.search'),
+          step_name='get previous snapshot builds.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=previous_snapshot_builds_failure,
-          step_name='check previous snapshot builds.get snapshot builds.buildbucket.search'
-      ),
+          step_name='update with previous snapshot builds.buildbucket.search'),
       api.post_process(post_process.DropExpectation),
   )
