@@ -28,12 +28,12 @@ from recipe_engine import recipe_api
 
 
 # Start looking back at 1 days worth of data while we are still developing.
-DEFAULT_LOOKBACK_WINDOW = 60 * 60 * 24 * 1
+DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
 
 # Limits on the number of builds and suites that will be listed out in comments.
 # Doesn't affect retry behavior.
-LIMIT_BUILDS_IN_COMMENT = 5
-LIMIT_SUITES_IN_COMMENT = 5
+DEFAULT_BUILDS_COMMENT_LIMIT = 5
+DEFAULT_SUITES_COMMENT_LIMIT = 5
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -43,6 +43,24 @@ RETRYABLE_STATUSES = [
 
 class AutoRetryUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with the CQ auto retries."""
+
+  @property
+  def lookback_seconds(self):
+    return self._lookback_seconds
+
+  @property
+  def builds_comment_limit(self):
+    return self._builds_comment_limit
+
+  @property
+  def suites_comment_limit(self):
+    return self._suites_comment_limit
+
+  def __init__(self, props, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._lookback_seconds = props.lookback_seconds or DEFAULT_LOOKBACK_SECONDS
+    self._builds_comment_limit = props.builds_comment_limit or DEFAULT_BUILDS_COMMENT_LIMIT
+    self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
 
   def initialize(self):
     self._cq_orch_default_child_buiders = [
@@ -198,7 +216,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       create_time = bb_common_pb2.TimeRange(
           start_time=timestamp_pb2.Timestamp(
               seconds=int(self.m.buildbucket.build.start_time.seconds) -
-              DEFAULT_LOOKBACK_WINDOW))
+              self.lookback_seconds))
       search_predicate = builds_service_pb2.BuildPredicate(
           builder=builder, create_time=create_time)
 
@@ -452,19 +470,19 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     comment = f'The previous build (ci.chromium.org/b/{build.id}) is being automatically retried for the following reasons:\n'
     if retryable_builders:
       comment += '- Some child builders are now retriable:'
-      if len(retryable_builders) <= LIMIT_BUILDS_IN_COMMENT:
+      if len(retryable_builders) <= self.builds_comment_limit:
         comment += ', '.join(retryable_builders) + '\n'
       else:
         comment += ', '.join(
-            retryable_builders[:LIMIT_BUILDS_IN_COMMENT]) + ',...\n'
+            retryable_builders[:self.builds_comment_limit]) + ',...\n'
 
     if retryable_test_suites:
       comment += '- Some tests are now retriable:'
-      if len(retryable_test_suites) <= LIMIT_SUITES_IN_COMMENT:
+      if len(retryable_test_suites) <= self.suites_comment_limit:
         comment += ', '.join(retryable_test_suites) + '\n'
       else:
         comment += ', '.join(
-            retryable_test_suites[:LIMIT_SUITES_IN_COMMENT]) + ',...\n'
+            retryable_test_suites[:self.suites_comment_limit]) + ',...\n'
 
     return comment
 

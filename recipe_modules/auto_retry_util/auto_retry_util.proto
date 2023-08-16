@@ -1,0 +1,22 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.auto_retry_util;
+
+message AutoRetryUtilProperties {
+
+  // The window in which we will consider CLs that have recently been labeled.
+  // Default: 1 day (86400 seconds).
+  uint32 lookback_seconds = 1;
+
+  // The maximum number of builds to place in the description of the retry.
+  // Default: 5.
+  uint32 builds_comment_limit = 2;
+
+  // The maximum number of suites to place in the description of the retry.
+  // Default: 5.
+  uint32 suites_comment_limit = 3;
+}
