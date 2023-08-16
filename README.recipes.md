@@ -878,7 +878,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#47)(self):**
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#489)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#491)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 

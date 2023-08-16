@@ -103,7 +103,7 @@ def GenTests(api):
         ],
     )
 
-  expected_comment = """The previous build (ci.chromium.org/b/123) is being automatically retried for the following reasons:
+  expected_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
 - Some child builders are now retriable:builderA, builderB
 - Some tests are now retriable:suite1, suite2
 """
@@ -128,7 +128,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  many_builds_and_tests_comment = """The previous build (ci.chromium.org/b/123) is being automatically retried for the following reasons:
+  many_builds_and_tests_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
 - Some child builders are now retriable:builder0, builder1, builder2, builder3, builder4,...
 - Some tests are now retriable:suite0, suite1, suite2, suite3, suite4,...
 """

@@ -467,7 +467,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     Returns:
       A string comment.
     """
-    comment = f'The previous build (ci.chromium.org/b/{build.id}) is being automatically retried for the following reasons:\n'
+    build_link = self.m.buildbucket.build_url(host='cr-buildbucket.appspot.com',
+                                              build_id=build.id)
+    comment = f'The previous build ({build_link}) is being automatically retried for the following reasons:\n'
     if retryable_builders:
       comment += '- Some child builders are now retriable:'
       if len(retryable_builders) <= self.builds_comment_limit:
