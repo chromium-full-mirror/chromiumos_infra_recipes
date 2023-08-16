@@ -412,3 +412,38 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           if len(related):
             return True, gerrit_change, len(related)
         return False, None, 0
+
+  def is_green_for_local(self) -> bool:
+    '''Returns whether the current snapshot is green for local builds.
+
+    If there are irrelevant builders for the current snapshot, look at previous
+    snapshots to find the last relevant build and update the greenness scores.
+    '''
+    with self.m.step.nest('check current snapshot build') as presentation:
+      current_child_builds = self.m.cros_history.get_snapshot_builds(
+          self.m.src_state.gitiles_commit)
+      self.m.greenness.populate_local_build_info(current_child_builds)
+      presentation.logs['current snapshot greenness'] = str(
+          self.m.greenness.local_greenness_dict)
+
+    with self.m.step.nest('check previous snapshot builds') as presentation:
+      prev_snapshot_builds = self._get_snapshots()
+      update_log = ''
+      for snapshot in prev_snapshot_builds:
+        # Only update for irrelevant builders that have not yet been updated
+        # (i.e. build_score is -1).
+        if any(gt.build_score == -1 and gt.relevant is False
+               for gt in self.m.greenness.local_greenness_dict.values()):
+          prev_child_builds = self.m.cros_history.get_snapshot_builds(
+              snapshot.input.gitiles_commit)
+          self.m.greenness.update_irrelevant_builds_scores(
+              prev_child_builds, self.m.greenness.local_greenness_dict)
+          update_log += (
+              'Updated greenness dict using snapshot: '
+              f'{snapshot.input.gitiles_commit.id}\n'
+              f'Updated greenness dict: {self.m.greenness.local_greenness_dict}\n'
+          )
+      presentation.logs['updated local greenness'] = update_log
+
+    return not any(gt.build_score != 100 and gt.critical is True
+                   for gt in self.m.greenness.local_greenness_dict.values())

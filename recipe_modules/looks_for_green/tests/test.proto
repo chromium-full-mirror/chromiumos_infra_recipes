@@ -40,3 +40,7 @@ message ShouldLfgProperties {
   bool enable_test_on_multiple_changes = 3;
 
 }
+
+message IsGreenForLocalProperties {
+  bool expected_result = 1;
+}
