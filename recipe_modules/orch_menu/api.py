@@ -398,7 +398,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if not self.builds_status.fatal_failures:
       self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
-    with self.m.step.nest('clean up orchestrator') as presentation:
+    with self.m.step.nest('clean up orchestrator'):
       # Recheck the BuilderConfigs at HEAD, one last time, to see if any
       # failed builders are now noncritical.
       self._non_critical_build_check('final build criticality update',
@@ -430,7 +430,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # Output whether any of the cq-orchestrator children (build and test) had
     # fatal failures. This is currently used by cq-auto-retrier.
     has_child_failures = any(failure.fatal for failure in results.failures)
-    presentation.properties['has_child_failures'] = has_child_failures
+    self.m.easy.set_properties_step(has_child_failures=has_child_failures)
 
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)
