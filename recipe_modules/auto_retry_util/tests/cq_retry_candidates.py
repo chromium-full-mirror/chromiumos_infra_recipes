@@ -32,7 +32,7 @@ def GenTests(api):
       build_id=11,
       cq=True,
       tags={
-          'cq_cl_group_key': 'group1'
+          'cq_cl_group_key': 'group_1'
       },
       status='SUCCESS',
       create_time=11,
@@ -41,7 +41,7 @@ def GenTests(api):
       build_id=12,
       cq=True,
       tags={
-          'cq_cl_group_key': 'group1'
+          'cq_cl_group_key': 'group_1'
       },
       status='FAILURE',
       create_time=12,
@@ -52,11 +52,100 @@ def GenTests(api):
   group_1_builds = [success, failure]
 
   yield api.test(
-      'get-latest-from-cq-group',
-      api.properties(expected_build_ids=[12]),
-      api.post_check(post_process.MustRun, 'query for cq-orchestrators'),
+      'get-latest-from-cq-group-latest-has-retryable-status',
       api.buildbucket.simulated_search_results(
           group_1_builds, 'query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[12]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Group with a non-retryable run as the "current".
+  failure = api.test_util.test_orchestrator(
+      build_id=21,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_2'
+      },
+      status='FAILURE',
+      create_time=21,
+      output_properties={
+          'has_child_failures': True
+      },
+  ).message
+  success = api.test_util.test_orchestrator(
+      build_id=22,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_2'
+      },
+      status='SUCCESS',
+      create_time=22,
+  ).message
+  group_2_builds = [success, failure]
+
+  yield api.test(
+      'get-latest-from-cq-group-latest-does-not-have-retryable-status',
+      api.buildbucket.simulated_search_results(
+          group_2_builds, 'query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Group with a multiple retryable builds. Takes the latest.
+  failure_1 = api.test_util.test_orchestrator(
+      build_id=31,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_3'
+      },
+      status='FAILURE',
+      create_time=31,
+      output_properties={
+          'has_child_failures': True
+      },
+  ).message
+  failure_2 = api.test_util.test_orchestrator(
+      build_id=32,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_3'
+      },
+      status='FAILURE',
+      create_time=32,
+      output_properties={
+          'has_child_failures': True
+      },
+  ).message
+  failure_3 = api.test_util.test_orchestrator(
+      build_id=33,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_3'
+      },
+      status='INFRA_FAILURE',
+      create_time=33,
+      output_properties={
+          'has_child_failures': True
+      },
+  ).message
+  group_3_builds = [failure_1, failure_2, failure_3]
+
+  yield api.test(
+      'get-latest-from-cq-group-multiple-with-retryable-status-takes-latest',
+      api.buildbucket.simulated_search_results(
+          group_3_builds, 'query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[33]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Test that we do get one per group that has a current cq-orchestrator with a
+  # retryable status (one from group_1 and one from group_3)
+  all_group_builds = group_1_builds + group_2_builds + group_3_builds
+  yield api.test(
+      'get-latest-from-cq-group-multiple-cq-cl-groups',
+      api.buildbucket.simulated_search_results(
+          all_group_builds, 'query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[12, 33]),
       api.post_process(post_process.DropExpectation),
   )
 

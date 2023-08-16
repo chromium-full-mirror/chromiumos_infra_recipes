@@ -132,7 +132,6 @@
   * [auto_retry_util:tests/analyze_build_failures](#recipes-auto_retry_util_tests_analyze_build_failures)
   * [auto_retry_util:tests/analyze_test_results](#recipes-auto_retry_util_tests_analyze_test_results)
   * [auto_retry_util:tests/cq_retry_candidates](#recipes-auto_retry_util_tests_cq_retry_candidates)
-  * [auto_retry_util:tests/current_cq_orchs_with_retryable_statuses](#recipes-auto_retry_util_tests_current_cq_orchs_with_retryable_statuses)
   * [auto_retry_util:tests/get_exonerated_suites](#recipes-auto_retry_util_tests_get_exonerated_suites)
   * [auto_retry_util:tests/retry_build](#recipes-auto_retry_util_tests_retry_build)
   * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
@@ -10753,12 +10752,6 @@ The annealing builders run in serial and do the following:
 
 
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#20)(api):**
-### *recipes* / [auto\_retry\_util:tests/current\_cq\_orchs\_with\_retryable\_statuses](/recipe_modules/auto_retry_util/tests/current_cq_orchs_with_retryable_statuses.py)
-
-[DEPS](/recipe_modules/auto_retry_util/tests/current_cq_orchs_with_retryable_statuses.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/current_cq_orchs_with_retryable_statuses.py#20)(api):**
 ### *recipes* / [auto\_retry\_util:tests/get\_exonerated\_suites](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#19): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_history](#recipe_modules-cros_history), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
