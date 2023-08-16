@@ -1,0 +1,276 @@
+[
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "query for cq-orchestrators",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 1 builds@@@",
+      "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,tags,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-31T00:00:00Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "query for cq-orchestrators.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:18:32Z\", \"createdBy\": \"project:chromeos\", \"id\": \"1112\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:1112\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"has_child_failures\": true, \"test_summary\": [{\"builder_name\": \"builder1\", \"critical\": true, \"name\": \"builder1.hw.suite\", \"status\": \"FAILURE\"}]}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates"
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build link@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.analyzing build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@0 success, 0 retryable, 0 outstanding@@@",
+      "@@@STEP_LOG_END@successful_builders@@@",
+      "@@@STEP_LOG_END@retryable_failure_builders@@@",
+      "@@@STEP_LOG_END@outstanding_failure_builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.analyzing test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@0 success, 1 retryable, 0 outstanding@@@",
+      "@@@STEP_LOG_END@successful_test_suite_names@@@",
+      "@@@STEP_LOG_LINE@retryable_test_suite_names@builder1.hw.suite@@@",
+      "@@@STEP_LOG_END@retryable_test_suite_names@@@",
+      "@@@STEP_LOG_END@outstanding_failure_test_suite_names@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1112.exoneration analysis",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@skipping: no test variant failures@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/test_exoneration.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "analyzing candidates.analyzing 1112.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/excludes.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "analyzing candidates.analyzing 1112.fetch HEAD:test/exoneration/generated/excludes.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "performing retries",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found 1 run(s) to retry.@@@",
+      "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "performing retries.retry build 1112",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@retryable builders@@@@",
+      "@@@STEP_LOG_END@retryable builders@@@",
+      "@@@STEP_LOG_LINE@retryable test suites@builder1.hw.suite@@@",
+      "@@@STEP_LOG_END@retryable test suites@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "performing retries.retry build 1112.set labels on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Commit-Queue\": 2}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project-a/+/123456/7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "performing retries.retry build 1112.set labels on CL 123456.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "performing retries.retry build 1112.set labels on CL 123456.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_1",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Commit-Queue\": 2}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "name": "performing retries.retry build 1112.set labels on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "performing retries.retry build 1112.add comment on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "name": "performing retries.retry build 1112.add comment on CL 123456.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "infra_step": true,
+    "name": "performing retries.retry build 1112.add comment on CL 123456.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The previous build (https://cr-buildbucket.appspot.com/build/1112) is being automatically retried for the following reasons:\\n- Some tests are now retriable:builder1.hw.suite\\n\"}]}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "name": "performing retries.retry build 1112.add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "name": "$result",
+    "summaryMarkdown": "found 1 run(s) to retry."
+  }
+]

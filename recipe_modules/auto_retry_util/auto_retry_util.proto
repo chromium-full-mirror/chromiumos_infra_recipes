@@ -19,4 +19,7 @@ message AutoRetryUtilProperties {
   // The maximum number of suites to place in the description of the retry.
   // Default: 5.
   uint32 suites_comment_limit = 3;
+
+  // If true, don't actually retry the CLs (or leave comments on the CLs).
+  bool dry_run = 4;
 }

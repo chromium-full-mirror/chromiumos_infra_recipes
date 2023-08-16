@@ -116,8 +116,9 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  # The orchestrator being retried was dry run.
   yield api.test(
-      'dry-run',
+      'orchestrator-dry-run',
       api.properties(
           runMode='DRY_RUN',
       ),
@@ -125,6 +126,17 @@ def GenTests(api):
       check_labels(build_id=123, change_id=789, labels={"Commit-Queue": 1}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
       check_comment(build_id=123, change_id=789, comment=expected_comment),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # The auto retrier is being dry run.
+  yield api.test(
+      'dry-run',
+      api.properties(**{'$chromeos/auto_retry_util': {
+          'dry_run': True
+      }}),
+      api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
+      api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
       api.post_process(post_process.DropExpectation),
   )
 

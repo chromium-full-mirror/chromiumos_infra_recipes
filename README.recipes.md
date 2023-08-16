@@ -834,9 +834,9 @@ Returns:
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#101)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#102)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#133)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#134)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -850,7 +850,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#51)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#264)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#265)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -860,7 +860,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build is the latest cq attempt for the CLs under test.
   * The build had a supported failure mode.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#363)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#364)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -874,11 +874,11 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#65)(self):**
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#66)(self):**
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#47)(self):**
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#491)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#492)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -890,6 +890,9 @@ build was retried.
 At least one of retryable_builders and retryable_test_suites must be
 non-empty.
 
+Note that this method is affected by the dry_run property on this module (it
+won't set labels or leave comments).
+
 Args:
   build: The build to retry.
   retryable_builders: Names of the child builders that are now retryable.
@@ -897,7 +900,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#55)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#278)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#279)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -11758,12 +11761,12 @@ This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 Call the RunCopybot endpoint.
 ### *recipes* / [cq\_auto\_retrier](/recipes/cq_auto_retrier.py)
 
-[DEPS](/recipes/cq_auto_retrier.py#16): [auto\_retry\_util](#recipe_modules-auto_retry_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/cq_auto_retrier.py#19): [auto\_retry\_util](#recipe_modules-auto_retry_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for analyzing and retrying failed CQ runs.
 
-&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#26)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#29)(api: RecipeApi):**
 ### *recipes* / [cq\_fault\_attribution:tests/comparison\_snapshots\_retrieval](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py)
 
 [DEPS](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#19): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

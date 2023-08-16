@@ -61,6 +61,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._lookback_seconds = props.lookback_seconds or DEFAULT_LOOKBACK_SECONDS
     self._builds_comment_limit = props.builds_comment_limit or DEFAULT_BUILDS_COMMENT_LIMIT
     self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
+    self._dry_run = props.dry_run
 
   def initialize(self):
     self._cq_orch_default_child_buiders = [
@@ -504,6 +505,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     At least one of retryable_builders and retryable_test_suites must be
     non-empty.
 
+    Note that this method is affected by the dry_run property on this module (it
+    won't set labels or leave comments).
+
     Args:
       build: The build to retry.
       retryable_builders: Names of the child builders that are now retryable.
@@ -511,17 +515,29 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """
     if not retryable_builders and not retryable_test_suites:
       raise ValueError(
-          'At least one builder or test suite must be given as a retry reason')
+          'At least one builder or test suite must be given as a retry reason '
+          f'for build {build.id}')
 
     comment = self._create_comment(build, retryable_builders,
                                    retryable_test_suites)
 
-    with self.m.step.nest(f'retry build {build.id}'):
-      dry_run = build.input.properties['$recipe_engine/cq'][
+    with self.m.step.nest(
+        f'retry build {build.id}{ " (dry_run)" if self._dry_run else ""}'
+    ) as pres:
+      pres.logs['retryable builders'] = ','.join(sorted(retryable_builders))
+      pres.logs['retryable test suites'] = ','.join(
+          sorted(retryable_test_suites))
+
+      build_was_dry_run = build.input.properties['$recipe_engine/cq'][
           'runMode'] == self.m.cq.DRY_RUN
       labels = {
-          Label.COMMIT_QUEUE: 1 if dry_run else 2,
+          Label.COMMIT_QUEUE: 1 if build_was_dry_run else 2,
       }
+
+      if self._dry_run:
+        pres.step_text = f'would have set labels { {str(k): v for k, v in labels.items()} }'
+        return
+
       for gc in build.input.gerrit_changes:
         self.m.gerrit.set_change_labels_remote(gc, labels)
         self.m.gerrit.add_change_comment_remote(gc, comment)
