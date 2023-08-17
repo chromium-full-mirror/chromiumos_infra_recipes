@@ -378,3 +378,9 @@ def GenTests(api):
           'build images.image size regression check',
           'No rootfs size delta.',
       ), api.post_process(post_process.PropertyEquals, 'rootfs_delta', 0))
+
+  yield api.test(
+      'remoteexec-logs-upload',
+      api.properties(**{
+          '$chromeos/remoteexec': RemoteexecProperties(enable_logs_upload=True)
+      }))

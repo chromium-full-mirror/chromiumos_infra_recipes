@@ -1,0 +1,74 @@
+[
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"/tmp/TEST.log\"@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (3)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@[CLEANUP]/logs-_tmp_1@@@",
+      "@@@STEP_LOG_END@log_dir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "process_remoteexec_artifacts (4)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@remoteexec_artifacts@log_files: \"/tmp/TEST.log\"@@@",
+      "@@@STEP_LOG_END@remoteexec_artifacts@@@",
+      "@@@STEP_LOG_LINE@log_dir@[CLEANUP]/logs-_tmp_1@@@",
+      "@@@STEP_LOG_END@log_dir@@@",
+      "@@@STEP_LOG_LINE@gs_bucket@chromeos-reclient-logs@@@",
+      "@@@STEP_LOG_END@gs_bucket@@@",
+      "@@@STEP_LOG_LINE@gs_path@2012/05/14/mock-amd64-generic@@@",
+      "@@@STEP_LOG_END@gs_path@@@",
+      "@@@STEP_LOG_LINE@num_logs_uploaded@1@@@",
+      "@@@STEP_LOG_END@num_logs_uploaded@@@",
+      "@@@STEP_LINK@TEST.log@https://storage.cloud.google.com/chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-h",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 0, \"build_target_name\": \"mock-amd64-generic\", \"builder_id\": {\"bucket\": \"\", \"builder\": \"\", \"project\": \"\"}, \"is_cros\": true}",
+      "cp",
+      "/tmp/TEST.log",
+      "gs://chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log"
+    ],
+    "cwd": "[CLEANUP]/logs-_tmp_1",
+    "infra_step": true,
+    "name": "process_remoteexec_artifacts (4).gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-reclient-logs/2012/05/14/mock-amd64-generic/tmp/TEST.log@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

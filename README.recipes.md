@@ -642,6 +642,7 @@
   * [recipes_autoreleaser](#recipes-recipes_autoreleaser) &mdash; Release recipes by running the release.
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full)
+  * [remoteexec:tests/process_artifacts](#recipes-remoteexec_tests_process_artifacts)
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
   * [repo:examples/branching](#recipes-repo_examples_branching)
   * [repo:examples/cache_builder](#recipes-repo_examples_cache_builder)
@@ -9440,15 +9441,28 @@ Args:
 
 API for working with re-client for remote execution.
 
-#### **class [RemoteexecApi](/recipe_modules/remoteexec/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RemoteexecApi](/recipe_modules/remoteexec/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with re-client for remote execution.
 
-&emsp; **@property**<br>&mdash; **def [reclient\_dir](/recipe_modules/remoteexec/api.py#20)(self):**
+&emsp; **@property**<br>&mdash; **def [enable\_logs\_upload](/recipe_modules/remoteexec/api.py#36)(self):**
+
+&mdash; **def [process\_artifacts](/recipe_modules/remoteexec/api.py#50)(self, install_pkg_response: InstallPackagesResponse, log_dir: str, build_target_name: str, is_staging: bool=False):**
+
+Process remoteexec artifacts, uploading to Google Cloud Storage if they exist.
+
+Args:
+  install_pkg_response: Result from InstallPackage call. May contain
+    remoteexec artifacts.
+  log_dir (str): Log directory that contains the artifacts.
+  build_target_name (str): Build target string.
+  is_staging (bool): If being run in staging environment instead of prod.
+
+&emsp; **@property**<br>&mdash; **def [reclient\_dir](/recipe_modules/remoteexec/api.py#25)(self):**
 
 Fetches the reclient directory and returns its path.
 
-&emsp; **@property**<br>&mdash; **def [reproxy\_cfg\_file](/recipe_modules/remoteexec/api.py#27)(self):**
+&emsp; **@property**<br>&mdash; **def [reproxy\_cfg\_file](/recipe_modules/remoteexec/api.py#32)(self):**
 ### *recipe_modules* / [repo](/recipe_modules/repo)
 
 [DEPS](/recipe_modules/repo/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10213,7 +10227,7 @@ Args:
   limit (int): Number of tasks to return.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
-[DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for various support functions for building.
@@ -10238,7 +10252,7 @@ Args:
     cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#301)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: int=((2 \* 60) \* 60), build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#317)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: int=((2 \* 60) \* 60), build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
 
 Build and validate images.
 
@@ -14775,6 +14789,12 @@ Instead, try to process the other projects, and THEN fail.
 
 
 &mdash; **def [RunSteps](/recipe_modules/remoteexec/tests/full.py#21)(api, properties):**
+### *recipes* / [remoteexec:tests/process\_artifacts](/recipe_modules/remoteexec/tests/process_artifacts.py)
+
+[DEPS](/recipe_modules/remoteexec/tests/process_artifacts.py#11): [remoteexec](#recipe_modules-remoteexec), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/remoteexec/tests/process_artifacts.py#19)(api):**
 ### *recipes* / [repo:examples/annealing](/recipe_modules/repo/examples/annealing.py)
 
 [DEPS](/recipe_modules/repo/examples/annealing.py#13): [easy](#recipe_modules-easy), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

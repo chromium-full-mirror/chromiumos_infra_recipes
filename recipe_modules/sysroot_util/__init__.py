@@ -20,6 +20,7 @@ DEPS = [
     'easy',
     'failures',
     'goma',
+    'remoteexec',
     'workspace_util',
 ]
 

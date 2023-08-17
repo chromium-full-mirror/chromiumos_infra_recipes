@@ -208,6 +208,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       def _InstallPackagesRequest(dryrun=False):
         """Helper to make InstallPackagesRequest."""
+        remoteexec_config = None
+        if self.m.remoteexec.enable_logs_upload:
+          remoteexec_config = common_pb2.RemoteexecConfig(
+              log_dir=common_pb2.SyncedDir(
+                  dir=str(self.m.path.mkdtemp(prefix='remoteexec-logs-'))))
+
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot,
             sysroot=self.sysroot,
@@ -220,6 +226,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 bazel=bazel_build),
             use_flags=config.build.use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
+            remoteexec_config=remoteexec_config,
             result_path=common_pb2.ResultPath(
                 path=common_pb2.Path(
                     path=str(self.m.path.mkdtemp()),
@@ -287,6 +294,15 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.goma.process_artifacts(
             response, install_pkg_request.goma_config.log_dir.dir,
             self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
+
+      if self.m.remoteexec.enable_logs_upload:
+        with self.m.step.nest('process reclient artifacts'):
+          self.m.remoteexec.process_artifacts(
+              response,
+              install_pkg_request.remoteexec_config.log_dir.dir,
+              self.sysroot.build_target.name,
+              self.m.cros_infra_config.is_staging,
+          )
 
       pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
                                                    response)

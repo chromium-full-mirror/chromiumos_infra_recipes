@@ -11,4 +11,6 @@ message RemoteexecProperties {
   string reclient_version = 1;
   // file of the config that should be passed when calling reproxy.
   string reproxy_cfg_file = 2;
+  // Enable uploading the log files.
+  bool enable_logs_upload = 3;
 }
