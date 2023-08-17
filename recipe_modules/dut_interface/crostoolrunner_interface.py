@@ -63,7 +63,13 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     # TODO(b/220801220): When multi-dut testing is enabled for CFT, make sure first dut is always primary dut.
     self.primary_dut = self.load_response.lab_dut_topology[0].duts[0]
     # TODO(b/220801220): Match peer_duts appropriately when multi-dut testing feature is enabled for CFT.
-    self.peer_duts = []
+    # Check if the companion dut is chromeos. There is always 1:1 with chromeos companion duts.
+    if len(self.load_response.lab_dut_topology
+          ) == 2 and self.load_response.lab_dut_topology[1].duts[0].WhichOneof(
+              'dut_type') == 'chromeos':
+      self.peer_duts = [self.load_response.lab_dut_topology[1].duts[0]]
+    else:
+      self.peer_duts = []
     # Unix time of when test execution finished. Used to be passed via keyvals for autotests.
     self.job_finished = 0
     # Info used in rdb upload.
@@ -288,9 +294,15 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
           dut=metadata.primary_dut, container_metadata_key=self.cft_test_request
           .primary_dut.container_metadata_key)
+      companion_dut_devices = None
+      if len(metadata.peer_duts) > 0:
+        companion_dut_devices = [
+            ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
+        ]
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
-          primary_dut=primary_dut_device, artifact_dir=metadata.artifact_dir)
+          primary_dut=primary_dut_device, companion_duts=companion_dut_devices,
+          artifact_dir=metadata.artifact_dir)
       test_response = self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
 
@@ -336,7 +348,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             dut_state)):
       self._api.phosphorus.save_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          peer_duts=[dut.id.value for dut in metadata.peer_duts],
           repair_requests=repair_requests)
 
   def save_and_seal_skylab_local_state(self, dut_state, metadata,
@@ -356,7 +368,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'CrosToolRunner: Phosphorus: save local DUT state'):
       self._api.phosphorus.save_and_seal_skylab_local_state(
           dut_state=dut_state, dut_name=metadata.primary_dut.id.value,
-          peer_duts=[dut.hostname for dut in metadata.peer_duts],
+          peer_duts=[dut.id.value for dut in metadata.peer_duts],
           repair_requests=repair_requests)
 
   def fetch_crashes(self, metadata, max_duration_seconds):
