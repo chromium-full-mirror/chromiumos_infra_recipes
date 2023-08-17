@@ -2334,43 +2334,6 @@
   },
   {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[CLEANUP]/tmp_tmp_4",
-      "-ensure-file",
-      "infra/tools/protoc/linux-amd64 protobuf_version:v3.17.0",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate binary config.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-protobuf_version\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/protoc/linux-amd64\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
       "./regenerate_configs.py",
       "-b"
     ],
@@ -2380,8 +2343,7 @@
         "0"
       ],
       "PATH": [
-        "RECIPE_REPO[depot_tools]",
-        "[CLEANUP]/tmp_tmp_4"
+        "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "generate binary config.regenerate configs",
@@ -2400,8 +2362,7 @@
         "0"
       ],
       "PATH": [
-        "RECIPE_REPO[depot_tools]",
-        "[CLEANUP]/tmp_tmp_4"
+        "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "generate binary config.regenerate test configs",
@@ -2421,8 +2382,7 @@
         "0"
       ],
       "PATH": [
-        "RECIPE_REPO[depot_tools]",
-        "[CLEANUP]/tmp_tmp_4"
+        "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "generate binary config.regenerate test exoneration configs",
@@ -2443,8 +2403,7 @@
         "0"
       ],
       "PATH": [
-        "RECIPE_REPO[depot_tools]",
-        "[CLEANUP]/tmp_tmp_4"
+        "RECIPE_REPO[depot_tools]"
       ]
     },
     "name": "generate binary config.regenerate suite scheduler configs",

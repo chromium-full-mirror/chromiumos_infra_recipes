@@ -396,36 +396,18 @@ def _regenerate_configs(api: RecipeApi) -> None:
   """Runs the generate scripts in infra/config and src/config-internal."""
   # We need lucicfg from depot_tools.
   with api.depot_tools.on_path():
-    # We need protoc from cipd.
-    cipd_dir = _ensure_cipd_packages(api)
-    with api.context(**{'env_suffixes': {'PATH': [cipd_dir]}}):
-      with api.context(cwd=INFRA_CONFIG.checkout_path):
-        api.step('regenerate configs', ['./regenerate_configs.py', '-b'])
-      with api.context(cwd=CONFIG_INTERNAL.checkout_path):
-        api.step('regenerate test configs', ['./board_config/generate', '-b'],
-                 timeout=3 * 60)
-        api.step('regenerate test exoneration configs',
-                 ['./test/exoneration/generate', '-b'], timeout=3 * 60)
-        api.step(
-            'regenerate suite scheduler configs',
-            ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
-            timeout=3 * 60)
-
-
-def _ensure_cipd_packages(api: RecipeApi) -> Path:
-  """Ensure that any necessary CIPD packages are installed.
-
-  Args:
-    api: The recipe modules API.
-
-  Returns:
-    The full path to the CIPD directory.
-  """
-  cipd_dir = api.path.mkdtemp()
-  pkgs = api.cipd.EnsureFile()
-  pkgs.add_package('infra/tools/protoc/linux-amd64', 'protobuf_version:v3.17.0')
-  api.cipd.ensure(cipd_dir, pkgs)
-  return cipd_dir
+    # NOTE: The following generate scripts each obtain their own copy of protoc.
+    with api.context(cwd=INFRA_CONFIG.checkout_path):
+      api.step('regenerate configs', ['./regenerate_configs.py', '-b'])
+    with api.context(cwd=CONFIG_INTERNAL.checkout_path):
+      api.step('regenerate test configs', ['./board_config/generate', '-b'],
+               timeout=3 * 60)
+      api.step('regenerate test exoneration configs',
+               ['./test/exoneration/generate', '-b'], timeout=3 * 60)
+      api.step(
+          'regenerate suite scheduler configs',
+          ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
+          timeout=3 * 60)
 
 
 def _copy_ini_configs(api: RecipeApi) -> None:
