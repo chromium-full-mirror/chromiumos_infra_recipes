@@ -40,6 +40,9 @@ RETRYABLE_STATUSES = [
     bb_common_pb2.INFRA_FAILURE,
 ]
 
+RETRY_OPTIONS_FOOTER_KEY = 'RetryOptions'
+RETRY_OPTIONS_EXEMPT_VALUE = 'None'
+
 
 class AutoRetryUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with the CQ auto retries."""
@@ -203,6 +206,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.output.properties['found_force_relevant_targets'])
     return self._cq_orch_default_child_buiders + forced_relevant_builders
 
+  def no_retry_footer_set(self, build):
+    """Given an orchestrator's associated CLs, have any opted out via footer."""
+    vals = self.m.git_footers.get_footer_values(build.input.gerrit_changes,
+                                                key=RETRY_OPTIONS_FOOTER_KEY)
+    if RETRY_OPTIONS_EXEMPT_VALUE in vals:
+      return True
+    return False
+
   def _get_current_cq_orchs_with_retryable_statuses(
       self) -> List[build_pb2.Build]:
     """Returns cq-orchestrators that are "current" and have a retryable status.
@@ -273,6 +284,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """
     cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
     cq_orchs = [c for c in cq_orchs if self._has_supported_failure_mode(c)]
+    cq_orchs = [c for c in cq_orchs if not self.no_retry_footer_set(c)]
 
     return cq_orchs
 

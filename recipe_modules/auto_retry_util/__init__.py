@@ -13,6 +13,7 @@ DEPS = [
     'exonerate',
     'exoneration_util',
     'gerrit',
+    'git_footers',
     'naming',
     'skylab_results',
     'test_util',
