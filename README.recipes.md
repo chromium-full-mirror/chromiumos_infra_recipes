@@ -862,7 +862,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build had a supported failure mode.
   * No CL tested in the build opted-out via footer.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#400)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#398)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -884,7 +884,7 @@ Returns:
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#528)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#526)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -906,7 +906,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#58)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#315)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#313)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -10782,10 +10782,10 @@ The annealing builders run in serial and do the following:
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/analyze_test_results.py#22)(api):**
 ### *recipes* / [auto\_retry\_util:tests/cq\_retry\_candidates](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#8): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#21)(api):**
 ### *recipes* / [auto\_retry\_util:tests/footers](/recipe_modules/auto_retry_util/tests/footers.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/footers.py#11): [auto\_retry\_util](#recipe_modules-auto_retry_util), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

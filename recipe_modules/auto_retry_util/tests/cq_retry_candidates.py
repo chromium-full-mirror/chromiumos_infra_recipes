@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/properties',
     'auto_retry_util',
     'cros_infra_config',
+    'git_footers',
     'test_util',
 ]
 
@@ -176,5 +177,31 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # The build is retryable, but has opted out via footer.
+  builds = [
+      api.test_util.test_orchestrator(
+          build_id=13,
+          cq=True,
+          tags={
+              'cq_cl_group_key': 'group1'
+          },
+          status='FAILURE',
+          create_time=13,
+          output_properties={
+              'has_child_failures': True
+          },
+      ).message
+  ]
+  yield api.test(
+      'opt-out-via-footer',
+      api.properties(expected_build_ids=[]),
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.git_footers.simulated_get_footers(
+          ['None'], 'find candidates.filter out opt-out runs'),
       api.post_process(post_process.DropExpectation),
   )

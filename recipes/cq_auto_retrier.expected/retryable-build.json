@@ -75,7 +75,7 @@
     "name": "find candidates.filter out opt-out runs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@filtered out 1 run(s)@@@"
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
     ]
   },
   {

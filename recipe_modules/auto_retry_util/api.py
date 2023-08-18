@@ -302,10 +302,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
 
       with self.m.step.nest('filter out opt-out runs') as pres:
-        opt_out_ids = [c for c in cq_orchs if not self.no_retry_footer_set(c)]
-        cq_orchs = [
-            c for c in cq_orchs if c.id not in unsupported_failure_mode_ids
-        ]
+        opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
+        cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
         pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
