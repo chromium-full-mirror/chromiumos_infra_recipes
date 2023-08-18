@@ -98,7 +98,7 @@
     ],
     "infra_step": true,
     "name": "paygen build.buildbucket.run.collect.wait",
-    "timeout": 10800,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -231,7 +231,7 @@
     ],
     "infra_step": true,
     "name": "shadercache build.buildbucket.run.collect.wait",
-    "timeout": 10800,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

@@ -74,8 +74,6 @@ def _launch_builders(api: RecipeApi, bucket: str, builder: str,
 
     # Yield execution on the child build and return the properties when
     # the job is complete..
-    # 3 hour timeout since paygen builder is roughly 1h in execution time,
-    # the default 1h timeout causes an INFRA_FAILURE.
     builds = api.buildbucket.run(requests, timeout=60 * 60 * timeout_hours)
 
     # Check for FAILURE or INFRA_FAILURE on the completed child builder.
@@ -105,8 +103,10 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
         'must set manifest_branch if use_release_build_artifacts is true')
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
-  # Default shadercache build timeout to 3 hours if not specified
-  shadercache_timeout = 3 if not properties.shadercache_timeout else properties.shadercache_timeout
+  # Default shadercache build timeout to 6 hours if not specified.
+  shadercache_timeout = 6 if not properties.shadercache_timeout else properties.shadercache_timeout
+  # Default paygen build timeout to 6 hours if not specified.
+  paygen_timeout = 6 if not properties.paygen_timeout else properties.paygen_timeout
 
   bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
@@ -127,9 +127,11 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
+    # Launch the Kabuto paygen builder.
     paygen_build = _launch_builders(api, bucket, 'kabuto_paygen',
                                     api.build_menu.is_staging, 1,
-                                    paygen_input_props, 'paygen build')
+                                    paygen_input_props, 'paygen build',
+                                    timeout_hours=paygen_timeout)
     paygen_build = paygen_build[0]
     paygen_output_props = paygen_build.output.properties
 
