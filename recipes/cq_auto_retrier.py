@@ -119,7 +119,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.auto_retry_util.enable_retries(),
       api.buildbucket.simulated_search_results(
           [retryable_build_orch],
-          'query for cq-orchestrators.buildbucket.search'),
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1111',
@@ -134,7 +134,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.auto_retry_util.enable_retries(),
       api.buildbucket.simulated_search_results(
           [retryable_test_orch],
-          'query for cq-orchestrators.buildbucket.search'),
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1112',

@@ -54,7 +54,8 @@ def GenTests(api):
   yield api.test(
       'get-latest-from-cq-group-latest-has-retryable-status',
       api.buildbucket.simulated_search_results(
-          group_1_builds, 'query for cq-orchestrators.buildbucket.search'),
+          group_1_builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.properties(expected_build_ids=[12]),
       api.post_process(post_process.DropExpectation),
   )
@@ -86,7 +87,8 @@ def GenTests(api):
   yield api.test(
       'get-latest-from-cq-group-latest-does-not-have-retryable-status',
       api.buildbucket.simulated_search_results(
-          group_2_builds, 'query for cq-orchestrators.buildbucket.search'),
+          group_2_builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.properties(expected_build_ids=[]),
       api.post_process(post_process.DropExpectation),
   )
@@ -133,7 +135,8 @@ def GenTests(api):
   yield api.test(
       'get-latest-from-cq-group-multiple-with-retryable-status-takes-latest',
       api.buildbucket.simulated_search_results(
-          group_3_builds, 'query for cq-orchestrators.buildbucket.search'),
+          group_3_builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.properties(expected_build_ids=[33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -144,7 +147,8 @@ def GenTests(api):
   yield api.test(
       'get-latest-from-cq-group-multiple-cq-cl-groups',
       api.buildbucket.simulated_search_results(
-          all_group_builds, 'query for cq-orchestrators.buildbucket.search'),
+          all_group_builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.properties(expected_build_ids=[12, 33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -167,8 +171,10 @@ def GenTests(api):
   yield api.test(
       'filter-out-non-retryable-failure-mode',
       api.properties(expected_build_ids=[]),
-      api.post_check(post_process.MustRun, 'query for cq-orchestrators'),
+      api.post_check(post_process.MustRun,
+                     'find candidates.query for cq-orchestrators'),
       api.buildbucket.simulated_search_results(
-          builds, 'query for cq-orchestrators.buildbucket.search'),
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(post_process.DropExpectation),
   )

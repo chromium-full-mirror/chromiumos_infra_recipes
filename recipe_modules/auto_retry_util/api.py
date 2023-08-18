@@ -288,10 +288,27 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       * The build status is in RETRYABLE_STATUSES.
       * The build is the latest cq attempt for the CLs under test.
       * The build had a supported failure mode.
+      * No CL tested in the build opted-out via footer.
     """
-    cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
-    cq_orchs = [c for c in cq_orchs if self._has_supported_failure_mode(c)]
-    cq_orchs = [c for c in cq_orchs if not self.no_retry_footer_set(c)]
+    with self.m.step.nest('find candidates') as presentation:
+      cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
+      with self.m.step.nest('filter out unsupported failure modes') as pres:
+        unsupported_failure_mode_ids = [
+            c.id for c in cq_orchs if not self._has_supported_failure_mode(c)
+        ]
+        cq_orchs = [
+            c for c in cq_orchs if c.id not in unsupported_failure_mode_ids
+        ]
+        pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
+
+      with self.m.step.nest('filter out opt-out runs') as pres:
+        opt_out_ids = [c for c in cq_orchs if not self.no_retry_footer_set(c)]
+        cq_orchs = [
+            c for c in cq_orchs if c.id not in unsupported_failure_mode_ids
+        ]
+        pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+
+      presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
 
     return cq_orchs
 

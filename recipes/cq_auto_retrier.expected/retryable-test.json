@@ -24,8 +24,16 @@
   },
   {
     "cmd": [],
-    "name": "query for cq-orchestrators",
+    "name": "find candidates",
     "~followup_annotations": [
+      "@@@STEP_TEXT@found 1 candidate(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find candidates.query for cq-orchestrators",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@found 1 builds@@@",
       "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
     ]
@@ -46,9 +54,9 @@
       "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-31T00:00:00Z\"}}"
     ],
     "infra_step": true,
-    "name": "query for cq-orchestrators.buildbucket.search",
+    "name": "find candidates.query for cq-orchestrators.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:18:32Z\", \"createdBy\": \"project:chromeos\", \"id\": \"1112\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:1112\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"has_child_failures\": true, \"test_summary\": [{\"builder_name\": \"builder1\", \"critical\": true, \"name\": \"builder1.hw.suite\", \"status\": \"FAILURE\"}]}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
@@ -56,8 +64,25 @@
   },
   {
     "cmd": [],
-    "name": "get CL 123456 description",
+    "name": "find candidates.filter out unsupported failure modes",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find candidates.filter out opt-out runs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@filtered out 1 run(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "find candidates.filter out opt-out runs.get CL 123456 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
@@ -67,9 +92,9 @@
   },
   {
     "cmd": [],
-    "name": "get CL 123456 description.ensure support CIPD package",
+    "name": "find candidates.filter out opt-out runs.get CL 123456 description.ensure support CIPD package",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -86,9 +111,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "get CL 123456 description.ensure support CIPD package.ensure_installed",
+    "name": "find candidates.filter out opt-out runs.get CL 123456 description.ensure support CIPD package.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -107,11 +132,11 @@
       "[START_DIR]/cipd-support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "get CL 123456 description.gerrit-fetch-changes",
+    "name": "find candidates.filter out opt-out runs.get CL 123456 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -168,8 +193,11 @@
       "RetryOptions"
     ],
     "infra_step": true,
-    "name": "read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
+    "name": "find candidates.filter out opt-out runs.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
   },
   {
     "cmd": [],
