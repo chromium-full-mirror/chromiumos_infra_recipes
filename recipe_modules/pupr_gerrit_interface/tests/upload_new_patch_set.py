@@ -25,6 +25,7 @@ def RunSteps(api: recipe_api.RecipeApi):
           '_number': 1234,
           'project': 'a project?',
       },
+      'patch_set_revision': 'f000' * 10,
       'revision_info': {
           '_number': 5678,
       },

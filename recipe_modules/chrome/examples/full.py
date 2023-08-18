@@ -61,6 +61,7 @@ def RunSteps(api, properties):
             'project': project
         },
         'patch_set': '3',
+        'patch_set_revision': 'f000' * 10,
         'revision_info': {
             'files': {f: {} for f in files}
         }

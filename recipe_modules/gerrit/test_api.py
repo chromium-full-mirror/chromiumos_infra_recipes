@@ -45,6 +45,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'created': values.get('created', '2017-01-30 13:11:20.000000000'),
         'updated': values.get('updated', '2017-02-01 13:11:20.000000000'),
         'submitted': values.get('submitted', '2017-02-02 13:11:20.000000000'),
+        'submittable': values.get('submittable', False),
         'change_id': values.get('change_id', 'Ideadbeef'),
         'project': values.get('project', 'chromium/src'),
         'has_review_started': values.get('has_review_started', False),
@@ -54,11 +55,16 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'hashtags': values.get('hashtags', []),
         'messages': values.get('messages', []),
         'current_revision': values.get('current_revision', 'f000' * 10),
+        'work_in_progress': values.get('work_in_progress', False)
     }
-    if resp['info']['status'] in ['NEW', 'ABANDONED']:
+    if resp['info']['status'] == 'NEW':
       resp['info']['submitted'] = ''
-    if resp['info']['status'] in ['MERGED', 'ABANDONED']:
+    elif resp['info']['status'] == 'ABANDONED':
       resp['info']['submittable'] = False
+      resp['info']['submitted'] = ''
+    elif resp['info']['status'] == 'MERGED':
+      resp['info']['submittable'] = False
+      resp['info']['work_in_progress'] = False
     if 'patch_set' in values:
       resp['info']['patch_set'] = values['patch_set']
     ref = values.get(
@@ -67,6 +73,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
             request['change_number'],
             request['patch_set'],
         ))
+    resp['patch_set_revision'] = values.get('patch_set_revision', 'f000' * 10)
     resp['revision_info'] = values.get(
         'revision_info', {
             '_number':

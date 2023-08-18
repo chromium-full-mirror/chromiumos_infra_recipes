@@ -20,6 +20,7 @@ CHANGES = [
     GerritChange(host='chromium-review.googlesource.com', change=91827,
                  patchset=1),
     GerritChange(host='example.com', change=2, patchset=3),
+    GerritChange(host='example.com', change=3, patchset=4),
 ]
 
 
@@ -38,6 +39,8 @@ def _get_values_dict(api):
               '2017-02-01 13:11:20.000000000',
           'submitted':
               '',
+          'submittable':
+              False,
           'change_id':
               'Ideadbeef',
           'current_revision':
@@ -48,6 +51,10 @@ def _get_values_dict(api):
               'chromium/src',
           'has_review_started':
               False,
+          'work_in_progress':
+              False,
+          'patch_set_revision':
+              'f000' * 10,
           'branch':
               api.src_state.default_branch,
           'subject':
@@ -89,6 +96,8 @@ def _get_values_dict(api):
               '2020-08-02 12:12:22.000000000',
           'submitted':
               '2020-08-02 12:12:22.000000000',
+          'submittable':
+              False,
           'change_id':
               'Ib767aac2',
           'current_revision':
@@ -99,6 +108,10 @@ def _get_values_dict(api):
               'new-project',
           'has_review_started':
               True,
+          'work_in_progress':
+              False,
+          'patch_set_revision':
+              'b000' * 10,
           'branch':
               'release',
           'subject':
@@ -134,6 +147,67 @@ def _get_values_dict(api):
               'example.com',
           '_host':
               'example.com',
+      },
+      3: {
+          'status':
+              'ABANDONED',
+          'created':
+              '2020-08-01 11:11:11.000000000',
+          'updated':
+              '2020-08-02 12:12:22.000000000',
+          'submitted':
+              '',
+          'submittable':
+              False,
+          'change_id':
+              'Ib767aac3',
+          'current_revision':
+              'c000' * 10,
+          'patch_set':
+              4,
+          'project':
+              'new-project',
+          'has_review_started':
+              True,
+          'work_in_progress':
+              True,
+          'patch_set_revision':
+              'c000' * 10,
+          'branch':
+              'release',
+          'subject':
+              'Different title',
+          'topic':
+              'topic3',
+          'message':
+              '\n'.join(['Different title', '', 'Change-Id: Ib767aac3', '']),
+          'url':
+              'https://example.com/project-path',
+          'ref':
+              'refs/something/02/3/4',
+          'files': {
+              'their/fake/file': {
+                  'status': 'A',
+                  'size_delta': 0,
+                  'size': 0
+              },
+          },
+          'hashtags': ['foo', 'bar'],
+          'messages': [{
+              'id': '1',
+              'message': 'hello!'
+          }, {
+              'id': '2',
+              'message': 'goodbye.'
+          }],
+          '_display_id':
+              'example.com:3',
+          '_display_url':
+              'https://example.com/c/3',
+          '_short_host':
+              'example.com',
+          '_host':
+              'example.com',
       }
   }
 
@@ -159,6 +233,10 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.created, values['created'])
     api.assertions.assertEqual(patch.updated, values['updated'])
     api.assertions.assertEqual(patch.submitted, values['submitted'])
+    api.assertions.assertEqual(patch.submittable, values['submittable'])
+    api.assertions.assertEqual(patch.status, values['status'])
+    api.assertions.assertEqual(patch.work_in_progress,
+                               values['work_in_progress'])
     api.assertions.assertEqual(patch.hashtags, values['hashtags'])
     api.assertions.assertEqual(patch.messages, values['messages'])
     api.assertions.assertEqual(patch.current_revision,
@@ -171,6 +249,9 @@ def RunSteps(api):
         patch.to_gerrit_change_proto(),
         GerritChange(host=patch.host, change=patch.change_id,
                      project=patch.project, patchset=patch.patch_set))
+    api.assertions.assertEqual(
+        patch.is_latest_patch_set(),
+        values['current_revision'] == values['patch_set_revision'])
 
   with api.step.nest('test fetch_patch_sets_from_change'):
     for change, patch in zip(CHANGES, patches):
@@ -191,6 +272,10 @@ def RunSteps(api):
       api.assertions.assertEqual(patch.created, values['created'])
       api.assertions.assertEqual(patch.updated, values['updated'])
       api.assertions.assertEqual(patch.submitted, values['submitted'])
+      api.assertions.assertEqual(patch.submittable, values['submittable'])
+      api.assertions.assertEqual(patch.status, values['status'])
+      api.assertions.assertEqual(patch.work_in_progress,
+                                 values['work_in_progress'])
       api.assertions.assertEqual(patch.hashtags, values['hashtags'])
       api.assertions.assertEqual(patch.messages, values['messages'])
       api.assertions.assertEqual(patch.current_revision,
@@ -225,6 +310,7 @@ def RunSteps(api):
             'info': {
                 '_number': 12345,
             },
+            'patch_set_revision': 'f000' * 10,
             'revision_info': {
                 '_number': 1,
             },

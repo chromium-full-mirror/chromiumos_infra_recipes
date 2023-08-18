@@ -67,6 +67,7 @@ class PatchSet:
     self._change_info = change['info']
     self._rev_info = change['revision_info']
     self._patch_set = self._rev_info.get('_number', 0)
+    self._patch_set_revision = change['patch_set_revision']
 
   @property
   def short_host(self) -> str:
@@ -135,6 +136,16 @@ class PatchSet:
     return self._patch_set
 
   @property
+  def patch_set_revision(self) -> str:
+    """Return the patch set revision for this PatchSet."""
+    return self._patch_set_revision
+
+  @property
+  def status(self) -> str:
+    """Return the PatchSet status string."""
+    return self._change_info['status']
+
+  @property
   def submitted(self) -> Optional[str]:
     """Return the date string with when this PatchSet was submitted (merged).
 
@@ -143,6 +154,16 @@ class PatchSet:
     See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
     """
     return self._change_info.get('submitted', None)
+
+  @property
+  def submittable(self) -> bool:
+    """Return the bool if PatchSet has been approved by the project submit rules.
+
+    Returns False if the PatchSet don't have submittable field set.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+    """
+    return self._change_info.get('submittable', False)
 
   @property
   def topic(self) -> str:
@@ -189,6 +210,16 @@ class PatchSet:
     return self._rev_info.get('files')
 
   @property
+  def work_in_progress(self) -> bool:
+    """Return the work_in_progress status for PatchSet.
+
+    Returns False if the PatchSet don't have work_in_progress field set.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+    """
+    return self._change_info.get('work_in_progress', False)
+
+  @property
   def commit_info(self) -> JSONObject:
     """Return the CommitInfo for this PatchSet.
 
@@ -203,6 +234,13 @@ class PatchSet:
           f'No commit info for PatchSet {self.display_id}. '
           'Try adding include_commit_info=True into gerrit.fetch_patch_sets().')
     return self._rev_info['commit']
+
+  def is_latest_patch_set(self) -> Optional[bool]:
+    """Return whether the PatchSet is the latest.
+
+    Sometime patch_set_revision is empty, then return False.
+    """
+    return self.current_revision == self.patch_set_revision if self.patch_set_revision else False
 
   def to_gerrit_change_proto(self) -> GerritChange:
     """Return a GerritChange proto constructed from this patchset."""
