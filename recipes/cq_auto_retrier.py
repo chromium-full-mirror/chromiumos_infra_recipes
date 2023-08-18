@@ -4,6 +4,7 @@
 
 """Recipe for analyzing and retrying failed CQ runs."""
 
+from collections import defaultdict
 from typing import Dict
 from typing import Generator
 from typing import List
@@ -20,6 +21,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
     'auto_retry_util',
+    'easy',
     'test_util',
 ]
 
@@ -27,7 +29,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
+  run_properties = defaultdict(lambda: 0)
+
   builds = api.auto_retry_util.cq_retry_candidates()
+  run_properties.update({'orch_builds_considered': len(builds)})
+
   # While we decide on the retry critera start by retrying only runs which have
   # no outstanding failures.
   no_outstanding_failure_runs = []
@@ -38,18 +44,41 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
     for b in builds:
       with api.step.nest('analyzing %d' % b.id) as pres:
         pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
+
+        # Examine builds.
         _, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
             b)
+        run_properties['retryable_build_failures'] += len(
+            retryable_build_failures)
+        run_properties['outstanding_build_failures'] += len(
+            outstanding_build_failures)
+
+        # Examine test suites.
         _, retryable_test_suite_failures, outstanding_test_suite_failures = api.auto_retry_util.analyze_test_results(
             b)
-        prev_exon, newly_exon, outstanding = api.auto_retry_util.test_variant_exoneration_analysis(
+        run_properties['retryable_test_suite_failures'] += len(
+            retryable_test_suite_failures)
+        run_properties['outstanding_test_suite_failures'] += len(
+            outstanding_test_suite_failures)
+
+        # Examine exonerations.
+        previously_exonerated, newly_exonerated, outstanding_exonerations = api.auto_retry_util.test_variant_exoneration_analysis(
             b)
-        updated_failed_test_stats = prev_exon + newly_exon + outstanding
+        run_properties['previously_exonerated_tests'] += len(
+            previously_exonerated)
+        run_properties['newly_exonerated_tests'] += len(newly_exonerated)
+        run_properties['outstanding_exonerations_tests'] += len(
+            outstanding_exonerations)
+
+        updated_failed_test_stats = previously_exonerated + newly_exonerated + outstanding_exonerations
         exonerated_test_suites = api.auto_retry_util.get_exonerated_suites(
             b, updated_failed_test_stats)
+        run_properties['exonerated_test_suites'] += len(exonerated_test_suites)
+
         outstanding_test_suite_failures = list(
             set(outstanding_test_suite_failures) - set(exonerated_test_suites))
 
+        # Final determination.
         if len(outstanding_build_failures) == 0 and len(
             outstanding_test_suite_failures) == 0:
           no_outstanding_failure_runs.append(b)
@@ -58,6 +87,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
               b.id] = exonerated_test_suites + retryable_test_suite_failures
 
   summary = f'found {len(no_outstanding_failure_runs)} run(s) to retry.'
+  run_properties['retries_found'] = len(no_outstanding_failure_runs)
+
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary
     for b in no_outstanding_failure_runs:
@@ -71,6 +102,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
           retryable_test_suites=build_to_exonerated_test_suites[b.id],
       )
 
+  api.easy.set_properties_step(run_properties=run_properties)
   return RawResult(status=common.SUCCESS, summary_markdown=summary)
 
 
