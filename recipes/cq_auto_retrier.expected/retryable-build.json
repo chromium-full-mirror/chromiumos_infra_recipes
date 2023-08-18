@@ -470,7 +470,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The previous build (https://cr-buildbucket.appspot.com/build/1111) is being automatically retried for the following reasons:\\n- Some child builders are now retriable:builder1\\n\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The previous build (https://cr-buildbucket.appspot.com/build/1111) is being automatically retried for the following reasons:\\n- Some child builders are now retryable:builder1\\n\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "name": "performing retries.retry build 1111.add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",

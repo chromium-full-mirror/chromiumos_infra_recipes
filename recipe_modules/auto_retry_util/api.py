@@ -197,7 +197,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     Returns:
       A tuple containing 3 lists of test suite names grouped by whether the
           suite was successful, failed but is retryable, or failed and is not
-          retriable.
+          retryable.
     """
     with self.m.step.nest('analyzing test results') as pres:
 
@@ -580,7 +580,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                                               build_id=build.id)
     comment = f'The previous build ({build_link}) is being automatically retried for the following reasons:\n'
     if retryable_builders:
-      comment += '- Some child builders are now retriable:'
+      comment += '- Some child builders are now retryable:'
       if len(retryable_builders) <= self.builds_comment_limit:
         comment += ', '.join(retryable_builders) + '\n'
       else:
@@ -588,7 +588,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             retryable_builders[:self.builds_comment_limit]) + ',...\n'
 
     if retryable_test_suites:
-      comment += '- Some tests are now retriable:'
+      comment += '- Some tests are now retryable:'
       if len(retryable_test_suites) <= self.suites_comment_limit:
         comment += ', '.join(retryable_test_suites) + '\n'
       else:

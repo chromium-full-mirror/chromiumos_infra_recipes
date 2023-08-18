@@ -849,7 +849,7 @@ Args:
 Returns:
   A tuple containing 3 lists of test suite names grouped by whether the
       suite was successful, failed but is retryable, or failed and is not
-      retriable.
+      retryable.
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#64)(self):**
 
@@ -9494,7 +9494,7 @@ Args:
   no_tags (bool): Don't fetch tags.
   optimized_fetch (bool): Only fetch projects if revision doesn't exist.
   cache_dir (Path): Use git-cache with this cache directory.
-  retry_fetches (int): The number of times to retry retriable fetches.
+  retry_fetches (int): The number of times to retry retryable fetches.
   projects (list[str]): Projects to limit the sync to, or None to sync
     all projects.
   verbose (bool): Whether to produce verbose output.

@@ -104,8 +104,8 @@ def GenTests(api):
     )
 
   expected_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
-- Some child builders are now retriable:builderA, builderB
-- Some tests are now retriable:suite1, suite2
+- Some child builders are now retryable:builderA, builderB
+- Some tests are now retryable:suite1, suite2
 """
   yield api.test(
       'retry-build',
@@ -143,8 +143,8 @@ def GenTests(api):
   )
 
   many_builds_and_tests_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
-- Some child builders are now retriable:builder0, builder1, builder2, builder3, builder4,...
-- Some tests are now retriable:suite0, suite1, suite2, suite3, suite4,...
+- Some child builders are now retryable:builder0, builder1, builder2, builder3, builder4,...
+- Some tests are now retryable:suite0, suite1, suite2, suite3, suite4,...
 """
   yield api.test(
       'many-builds-and-tests',

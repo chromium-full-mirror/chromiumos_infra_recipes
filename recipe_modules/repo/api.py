@@ -291,7 +291,7 @@ class RepoApi(recipe_api.RecipeApi):
       no_tags (bool): Don't fetch tags.
       optimized_fetch (bool): Only fetch projects if revision doesn't exist.
       cache_dir (Path): Use git-cache with this cache directory.
-      retry_fetches (int): The number of times to retry retriable fetches.
+      retry_fetches (int): The number of times to retry retryable fetches.
       projects (list[str]): Projects to limit the sync to, or None to sync
         all projects.
       verbose (bool): Whether to produce verbose output.
