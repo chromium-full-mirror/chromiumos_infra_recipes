@@ -205,3 +205,31 @@ def GenTests(api):
           ['None'], 'find candidates.filter out opt-out runs'),
       api.post_process(post_process.DropExpectation),
   )
+
+  # The latest build for the CQ group, otherwise retriable, was us, and is
+  # therefore excluded.
+  failure_4 = api.test_util.test_orchestrator(
+      build_id=12,
+      cq=True,
+      tags={
+          'cq_cl_group_key':
+              'group_1',
+          'cq_triggerer':
+              'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com',
+      },
+      status='FAILURE',
+      create_time=12,
+      output_properties={
+          'has_child_failures': True
+      },
+  ).message
+  group_4_builds = [failure_4]
+
+  yield api.test(
+      'get-latest-from-cq-group-latest-has-retryable-status-but-was-us',
+      api.buildbucket.simulated_search_results(
+          group_4_builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )

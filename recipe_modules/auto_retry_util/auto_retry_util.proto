@@ -23,4 +23,8 @@ message AutoRetryUtilProperties {
   // If true, actually retry the CLs. By default, the retrier will just analyze
   // candidate CLs but not take action on them.
   bool enable_retries = 4;
+
+  // The list of service accounts used by auto retry.
+  // e.g. 'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
+  repeated string service_accounts = 5;
 }

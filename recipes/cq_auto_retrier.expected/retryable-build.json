@@ -201,6 +201,14 @@
   },
   {
     "cmd": [],
+    "name": "find candidates.filter out runs last triggered by retry",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "analyzing candidates"
   },
   {

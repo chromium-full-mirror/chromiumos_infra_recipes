@@ -35,6 +35,12 @@ DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
 DEFAULT_BUILDS_COMMENT_LIMIT = 5
 DEFAULT_SUITES_COMMENT_LIMIT = 5
 
+# The service accounts considered as one of the auto retriers.
+DEFAULT_RETRY_SERVICE_ACCOUNTS = [
+    'chromeos-ci-staging@chromeos-bot.iam.gserviceaccount.com',
+    'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
+]
+
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
     bb_common_pb2.INFRA_FAILURE,
@@ -65,6 +71,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._builds_comment_limit = props.builds_comment_limit or DEFAULT_BUILDS_COMMENT_LIMIT
     self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
     self._enable_retries = props.enable_retries
+    self._retry_service_accounts = props.service_accounts or DEFAULT_RETRY_SERVICE_ACCOUNTS
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -221,6 +228,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return True
     return False
 
+  def triggerer_was_us(self, build):
+    """Given the build, return if it was triggered by the auto retry accts."""
+    cq_triggerer = self.m.cros_tags.get_single_value('cq_triggerer', build.tags)
+    if cq_triggerer in self._retry_service_accounts:
+      return True
+    return False
+
   def _get_current_cq_orchs_with_retryable_statuses(
       self) -> List[build_pb2.Build]:
     """Returns cq-orchestrators that are "current" and have a retryable status.
@@ -284,11 +298,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """Returns cq-orchestrator builds which may be elegible for auto retry.
 
     # TODO(b/291767456): Expand to include all criteria listed in the bug.
+    # TODO(b/296271623): Define more elaborate exclusion critia than last.
     Candidate cq-orchestrator builds must meet the following criteria:
       * The build status is in RETRYABLE_STATUSES.
       * The build is the latest cq attempt for the CLs under test.
       * The build had a supported failure mode.
       * No CL tested in the build opted-out via footer.
+      * The build was not last triggered by our service account.
     """
     with self.m.step.nest('find candidates') as presentation:
       cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
@@ -305,6 +321,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
         cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
         pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+
+      with self.m.step.nest('filter out runs last triggered by retry') as pres:
+        last_our_retry_ids = [
+            c.id for c in cq_orchs if self.triggerer_was_us(c)
+        ]
+        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
+        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
 
