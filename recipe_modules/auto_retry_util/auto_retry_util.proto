@@ -20,6 +20,7 @@ message AutoRetryUtilProperties {
   // Default: 5.
   uint32 suites_comment_limit = 3;
 
-  // If true, don't actually retry the CLs (or leave comments on the CLs).
-  bool dry_run = 4;
+  // If true, actually retry the CLs. By default, the retrier will just analyze
+  // candidate CLs but not take action on them.
+  bool enable_retries = 4;
 }

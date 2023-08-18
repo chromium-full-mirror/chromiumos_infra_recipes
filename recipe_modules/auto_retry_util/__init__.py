@@ -7,6 +7,7 @@ from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetry
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'cros_infra_config',
     'cros_tags',

@@ -109,6 +109,7 @@ def GenTests(api):
 """
   yield api.test(
       'retry-build',
+      api.auto_retry_util.enable_retries(),
       check_labels(build_id=123, change_id=456, labels={"Commit-Queue": 2}),
       check_labels(build_id=123, change_id=789, labels={"Commit-Queue": 2}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
@@ -119,6 +120,7 @@ def GenTests(api):
   # The orchestrator being retried was dry run.
   yield api.test(
       'orchestrator-dry-run',
+      api.auto_retry_util.enable_retries(),
       api.properties(
           runMode='DRY_RUN',
       ),
@@ -133,7 +135,7 @@ def GenTests(api):
   yield api.test(
       'dry-run',
       api.properties(**{'$chromeos/auto_retry_util': {
-          'dry_run': True
+          'enable_retries': False
       }}),
       api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
       api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
@@ -146,6 +148,7 @@ def GenTests(api):
 """
   yield api.test(
       'many-builds-and-tests',
+      api.auto_retry_util.enable_retries(),
       api.properties(
           retryable_builders=[f'builder{i}' for i in range(10)],
           retryable_test_suites=[f'suite{i}' for i in range(10)],
@@ -157,6 +160,7 @@ def GenTests(api):
 
   yield api.test(
       'no-builds-or-tests',
+      api.auto_retry_util.enable_retries(),
       api.properties(
           retryable_builders=[],
           retryable_test_suites=[],

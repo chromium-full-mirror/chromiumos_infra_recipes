@@ -64,9 +64,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._lookback_seconds = props.lookback_seconds or DEFAULT_LOOKBACK_SECONDS
     self._builds_comment_limit = props.builds_comment_limit or DEFAULT_BUILDS_COMMENT_LIMIT
     self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
-    self._dry_run = props.dry_run
+    self._enable_retries = props.enable_retries
 
   def initialize(self):
+    # enable_retries should never be set on a staging builder.
+    # api.expect_exception doesn't work on exceptions thrown from initialize, so
+    # don't cover this case.
+    self.m.cros_infra_config.determine_if_staging()
+    if self.m.cros_infra_config.is_staging and self._enable_retries:  # pragma: nocover
+      raise ValueError('enable_retries should not be set on staging builders')
+
     self._cq_orch_default_child_buiders = [
         c.name for c in self.m.cros_infra_config.get_builder_config(
             'cq-orchestrator').orchestrator.child_specs
@@ -517,8 +524,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     At least one of retryable_builders and retryable_test_suites must be
     non-empty.
 
-    Note that this method is affected by the dry_run property on this module (it
-    won't set labels or leave comments).
+    Note that this method is affected by the enable_retries property on this
+    module (it won't set labels or leave comments if the property is not set).
 
     Args:
       build: The build to retry.
@@ -534,7 +541,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                                    retryable_test_suites)
 
     with self.m.step.nest(
-        f'retry build {build.id}{ " (dry_run)" if self._dry_run else ""}'
+        f'retry build {build.id}{ " (dry_run)" if not self._enable_retries else ""}'
     ) as pres:
       pres.logs['retryable builders'] = ','.join(sorted(retryable_builders))
       pres.logs['retryable test suites'] = ','.join(
@@ -546,7 +553,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           Label.COMMIT_QUEUE: 1 if build_was_dry_run else 2,
       }
 
-      if self._dry_run:
+      if not self._enable_retries:
         pres.step_text = f'would have set labels { {str(k): v for k, v in labels.items()} }'
         return
 
