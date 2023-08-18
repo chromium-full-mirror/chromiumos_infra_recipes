@@ -1768,6 +1768,7 @@ class CrosSourceApi(RecipeApi):
       already_applied_ids = set()
       related_changes_to_apply = OrderedDict()
       for change_id, related in all_related_changes.items():
+        already_applied_ids.add(change_id)
         to_apply = []
         # Related changes are listed from newest to oldest, but we want to
         # start with oldest.
@@ -1781,11 +1782,11 @@ class CrosSourceApi(RecipeApi):
             log += f'Skipping {rel} which is already included.'
           # Once we reach the change that's actually included with the builder,
           # stop traversing related changes so we include related changes lower
-          # in a stack, but not related changes higher in a stack unless
-          # explicitly included.
+          # in a stack, but not the change itself or related changes higher in
+          # a stack (unless explicitly included).
           if change_id == rel['_change_number']:
             break
-        if len(to_apply) > 1:
+        if to_apply:
           related_changes_to_apply[change_id] = to_apply
       pres.logs['skips'] = log
       pres.logs['related changes to apply'] = str(related_changes_to_apply)

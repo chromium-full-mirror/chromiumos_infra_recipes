@@ -39,6 +39,8 @@ message ShouldLfgProperties {
   // Whether to test with multiple changes..
   bool enable_test_on_multiple_changes = 3;
 
+  // Stacked or CQ-Depended changes not already included in a CQ run.
+  string related_to_apply = 4;
 }
 
 message IsGreenForLocalProperties {

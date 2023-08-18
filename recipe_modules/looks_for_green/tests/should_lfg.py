@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
+
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 
@@ -46,6 +48,9 @@ multiple_gerrit_changes = [
 
 
 def RunSteps(api, properties):
+  if properties.related_to_apply:
+    api.looks_for_green.related_changes_to_apply = json.loads(
+        properties.related_to_apply)
   if properties.enable_test_on_multiple_changes:
     gerrit_changes = multiple_gerrit_changes
   else:
@@ -141,18 +146,22 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  # TODO(b/276363760): Remove when relation chains are supported.
-  related_output = {
-      'related': [{
-          '_change_number': '1234'
+  related_to_apply = {
+      '4508966': [{
+          '_change_number': 4508965,
+          '_revision_number': 1,
+          'project': 'chromiumos/platform2'
       }, {
-          '_change_number': '4321'
+          '_change_number': 4508966,
+          '_revision_number': 2,
+          'project': 'chromiumos/platform2'
       }]
   }
   yield api.test(
-      'relation-chain',
+      'relation-chain-with-missing',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, experiments=lfg_experiment,
+          related_to_apply=json.dumps(related_to_apply), **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -164,10 +173,6 @@ def GenTests(api):
                     api.raw_io.stream_output_text('commitsha1')),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check if CL uses Cq-Depend'),
-      api.gerrit.set_gerrit_related_changes(
-          related_output,
-          'check should look for green.check if CL has related changes.Check for stacked change'
-      ),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES),
       api.post_process(post_process.DropExpectation),

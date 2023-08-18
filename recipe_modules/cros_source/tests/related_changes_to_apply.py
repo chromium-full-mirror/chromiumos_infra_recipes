@@ -77,10 +77,6 @@ def GenTests(api):
           '_change_number': '123',
           '_revision_number': '1',
           'project': 'should/include'
-      }, {
-          '_change_number': '123456',
-          '_revision_number': '7',
-          'project': 'chromeos/manifest-internal'
       }]
   })
 

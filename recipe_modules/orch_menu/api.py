@@ -365,6 +365,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                     related_changes=all_related_changes)
                 to_apply = self.m.cros_source.related_changes_to_apply(
                     self.gerrit_changes, all_related_changes)
+                self.m.looks_for_green.related_changes_to_apply = to_apply
                 self.m.easy.set_properties_step(
                     related_changes_to_apply=to_apply)
 

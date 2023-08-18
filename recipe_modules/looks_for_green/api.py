@@ -52,6 +52,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._now = None
     self._seconds_now = None
     self._should_lfg = None
+    self._related_changes_to_apply = None
 
   @property
   def now_utc(self) -> datetime.datetime:
@@ -101,6 +102,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
 
+  @property
+  def related_changes_to_apply(self) -> Dict:
+    return self._related_changes_to_apply
+
+  @related_changes_to_apply.setter
+  def related_changes_to_apply(self, related_changes_to_apply):
+    self._related_changes_to_apply = related_changes_to_apply
+
   def _has_merge_commit(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether gerrit_changes contains one or more merge commit."""
     with self.m.context(cwd=self.m.cros_source.workspace_path):
@@ -149,7 +158,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           should_lfg_log = (
               f'Found CQ looks experiment: {exp_enabled}, Found LFG enabled:'
               f' {lfg_enabled}, Found disallow footer: {disallow}, Found has'
-              f' merge commit {has_merge_commit}')
+              f' merge commit: {has_merge_commit}')
           # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
           if self._should_lfg:
             with self.m.step.nest('check if CL uses Cq-Depend'):
@@ -161,17 +170,17 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                 pres.logs['Cq-Depend footer'] = (
                     'Found Cq-Depend footer. Skipping'
                     ' looks for green.')
-          # TODO(b/276363760): Don't LFG with stacked changes until supported.
+          # TODO(b/276363760): Don't LFG with stacked changes that aren't
+          # included.
           if self._should_lfg:
-            with self.m.step.nest('check if CL has related changes'):
-              related, gerrit_change, num_related = self._has_stacked_change(
-                  gerrit_changes)
-              if related:
+            with self.m.step.nest(
+                'check if CL has related changes not included'):
+              if self.related_changes_to_apply:
                 self._should_lfg = False
                 self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES
-                should_lfg_log += '. Found relation chain'
+                should_lfg_log += '. Found relation chain with depended changes not included'
                 pres.logs['Relation chain'] = (
-                    f'Found CL {gerrit_change.change} is part of a relation chain with {num_related} changes. Skipping'
+                    f'Found CL(s) part of a relation chain. Some depended changes are not included: {self.related_changes_to_apply}. Skipping'
                     ' looks for green.')
           if not self._should_lfg:
             should_lfg_log += '. Using original snapshot.'
@@ -406,18 +415,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
               'for green behavior.')
 
       return found_disallow
-
-  def _has_stacked_change(
-      self, gerrit_changes: List[GerritChange]
-  ) -> (bool, Optional[GerritChange], int):
-    """Returns whether any change is part of a stack aka relation chain."""
-    with self.m.step.nest('Check for stacked change'):
-      with self.m.context(cwd=self.m.cros_source.workspace_path):
-        for gerrit_change in gerrit_changes:
-          related = self.m.gerrit.gerrit_related_changes(gerrit_change)
-          if len(related):
-            return True, gerrit_change, len(related)
-        return False, None, 0
 
   def is_green_for_local(self) -> bool:
     """Returns whether the current snapshot is green for local builds.
