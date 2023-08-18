@@ -810,19 +810,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self.m.greenness.update_build_info(completed_builds)
     self.m.greenness.print_step()
 
-    # Determine the failure ratio and see if we should update the ref. If we
-    # didn't complete a build, call it success.
+    # Use looks for green to determine if we should update the refs.
     # These steps are only run on snapshot-orchestrator.
     if self._update_manifest_refs:
       with self.m.failures.ignore_exceptions():
         with self.m.step.nest('update local greenness') as pres:
-          pres.step_text = str(self.m.looks_for_green.is_green_for_local())
-    failure_ratio = (
-        len(self._builds_status.fatal_failures) /
-        max(1, len(self._builds_status.completed_builds)))
-    if failure_ratio <= self._properties.update_manifest_refs.max_build_failure_ratio:
-      # If we've made it this far, update the build success manifest ref.
-      self._push_manifest_refs(self._properties.update_manifest_refs.build)
+          should_update = self.m.looks_for_green.is_green_for_local()
+          pres.step_text = str(should_update)
+          if should_update:
+            self._push_manifest_refs(
+                self._properties.update_manifest_refs.build)
 
     return self._builds_status
 

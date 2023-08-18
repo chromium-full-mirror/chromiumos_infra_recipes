@@ -2864,14 +2864,17 @@
   },
   {
     "cmd": [],
-    "name": "update manifest-internal ref refs/heads/stable"
+    "name": "update local greenness.update manifest-internal ref refs/heads/green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:refs/heads/stable"
+      "snapshot-HEAD-SHA:refs/heads/green"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2887,21 +2890,24 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update manifest-internal ref refs/heads/stable.git push",
+    "name": "update local greenness.update manifest-internal ref refs/heads/green.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update manifest ref refs/heads/stable"
+    "name": "update local greenness.update manifest ref refs/heads/green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "git",
       "push",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:refs/heads/stable"
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:refs/heads/green"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2917,9 +2923,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update manifest ref refs/heads/stable.git push",
+    "name": "update local greenness.update manifest ref refs/heads/green.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

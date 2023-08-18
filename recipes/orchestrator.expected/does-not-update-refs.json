@@ -2693,7 +2693,7 @@
     "cmd": [],
     "name": "update local greenness",
     "~followup_annotations": [
-      "@@@STEP_TEXT@True@@@"
+      "@@@STEP_TEXT@False@@@"
     ]
   },
   {
@@ -2701,7 +2701,7 @@
     "name": "update local greenness.check current snapshot build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@current snapshot greenness@OrderedDict()@@@",
+      "@@@STEP_LOG_LINE@current snapshot greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=0, build_score=0, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@current snapshot greenness@@@"
     ]
   },
@@ -2736,7 +2736,9 @@
     "name": "update local greenness.check current snapshot build.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"YES\", \"id\": \"8922054662172514000\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:8922054662172514000\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"large\"}], \"priority\": 30}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"build_target\": {\"name\": \"amd64-generic\"}}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {

@@ -76,6 +76,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     process_child = kwargs.pop('process_child', None)
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
+    local_green_builds = kwargs.pop('local_green_builds', [])
 
     cq = kwargs.get('cq')
     default_props = {
@@ -177,6 +178,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
               [follow_on_orch],
               'run follow on orchestrator.collect'))  # pragma: nocover
 
+    if local_green_builds:
+      args.append(
+          self.m.buildbucket.simulated_search_results(
+              local_green_builds,
+              'update local greenness.check current snapshot build.buildbucket.search'
+          ))  # pragma: nocover
+
     # Call recipe_test_api.test().
     return super().test(name, ret, *args, status=status)
 
@@ -187,7 +195,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     ret = {'stagger_children_seconds': 10}
     if with_manifest_refs:
       ret['update_manifest_refs'] = {
-          'build': 'refs/heads/stable',
+          'build': 'refs/heads/green',
           'start': 'refs/heads/postsubmit',
           'max_build_failure_ratio': max_build_failure_ratio,
       }
@@ -221,7 +229,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
         'history_builds', 'after_builds', 'crit_fail', 'non_crit_fail',
         'process_child', 'follow_on_orchestrator', 'mixed_build_results',
-        'ctp_normal', 'ctp_failure'
+        'local_green_success', 'local_green_fail', 'ctp_normal', 'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -316,6 +324,19 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          status='SUCCESS', critical='NO'),
     ]
 
+    local_green_success = [
+        _child_build_msg('amd64-generic', build_id=8922054662172514000,
+                         status='SUCCESS', critical='YES', tags={
+                             'relevance': 'relevant',
+                         })
+    ]
+    local_green_fail = [
+        _child_build_msg('amd64-generic', build_id=8922054662172514000,
+                         status='FAILURE', critical='YES', tags={
+                             'relevance': 'relevant',
+                         })
+    ]
+
     values = [
         orchestrator,
         inflight_orchestrator,
@@ -328,6 +349,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         process_child,
         follow_on_orchestrator,
         mixed_build_results,
+        local_green_success,
+        local_green_fail,
     ]
 
     def _ctp_sched_resp(build_id):

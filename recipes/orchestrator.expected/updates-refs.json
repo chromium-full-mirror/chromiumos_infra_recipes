@@ -2791,7 +2791,7 @@
     "name": "update local greenness.check current snapshot build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@current snapshot greenness@OrderedDict()@@@",
+      "@@@STEP_LOG_LINE@current snapshot greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@current snapshot greenness@@@"
     ]
   },
@@ -2826,7 +2826,9 @@
     "name": "update local greenness.check current snapshot build.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"YES\", \"id\": \"8922054662172514000\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:8922054662172514000\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"large\"}], \"priority\": 30}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"build_target\": {\"name\": \"amd64-generic\"}}}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
   {
@@ -2882,14 +2884,17 @@
   },
   {
     "cmd": [],
-    "name": "update manifest-internal ref refs/heads/stable"
+    "name": "update local greenness.update manifest-internal ref refs/heads/green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:refs/heads/stable"
+      "snapshot-HEAD-SHA:refs/heads/green"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2905,21 +2910,24 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update manifest-internal ref refs/heads/stable.git push",
+    "name": "update local greenness.update manifest-internal ref refs/heads/green.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update manifest ref refs/heads/stable"
+    "name": "update local greenness.update manifest ref refs/heads/green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
       "git",
       "push",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:refs/heads/stable"
+      "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee:refs/heads/green"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "infra_step": true,
@@ -2935,9 +2943,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update manifest ref refs/heads/stable.git push",
+    "name": "update local greenness.update manifest ref refs/heads/green.git push",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

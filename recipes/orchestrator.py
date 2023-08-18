@@ -340,29 +340,54 @@ def GenTests(api: RecipeTestApi):
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
 
-  yield api.orch_menu.test('updates-refs', data.ctp_normal,
-                           with_manifest_refs=True, collect_builds=data.builds)
+  yield api.orch_menu.test(
+      'updates-refs',
+      data.ctp_normal,
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest ref refs/heads/green'),
+      with_manifest_refs=True,
+      collect_builds=data.builds,
+      local_green_builds=data.local_green_success,
+  )
 
   yield api.orch_menu.test(
       'does-not-update-refs',
       data.ctp_normal,
-      api.post_check(post_process.DoesNotRun,
-                     'update manifest-internal ref refs/heads/stable'),
-      api.post_check(post_process.DoesNotRun,
-                     'update manifest ref refs/heads/stable'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'update local greenness.update manifest ref refs/heads/green'),
       with_manifest_refs=True,
-      max_build_failure_ratio=0.49,
       collect_builds=data.crit_fail,
+      local_green_builds=data.local_green_fail,
       status='FAILURE',
   )
 
   yield api.orch_menu.test(
-      'missing-gitiles-commit', data.ctp_normal,
+      'missing-gitiles-commit',
+      data.ctp_normal,
       api.post_check(post_process.MustRun,
                      'update manifest-internal ref refs/heads/postsubmit'),
-      api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/stable'),
-      collect_builds=data.builds, revision=None, with_manifest_refs=True)
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest ref refs/heads/green'),
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      collect_builds=data.builds,
+      revision=None,
+      with_manifest_refs=True,
+      local_green_builds=data.local_green_success,
+  )
 
   yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
                            collect_builds=data.builds,
