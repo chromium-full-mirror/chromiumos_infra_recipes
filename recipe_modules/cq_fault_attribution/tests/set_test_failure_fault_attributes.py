@@ -57,13 +57,15 @@ EXISTING_FAILURE_TEST_CASE_NAME = \
 EXISTING_FAILURE_REASON = 'Failed for an identical, existing reason.'
 SKIPPED_TEST_CASE_NAME = 'this.test.was.skipped.in.the.snapshot'
 EXISTING_FAILURE_VM_TEST_CASE_NAME = \
+  'tast.this.vm.test.failed.for.an.identical.reason.in.the.snapshot'
+EXISTING_FAILURE_VM_TEST_CASE_NAME_NO_TAST_PREFIX = \
   'this.vm.test.failed.for.an.identical.reason.in.the.snapshot'
 UNIQUE_VM_FAILURE_TEST_CASE_NAME = \
-  'this.vm.test.failed.for.a.unique.reason.in.the.snapshot'
+  'tast.this.vm.test.failed.for.a.unique.reason.in.the.snapshot'
 VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME = \
-  'this.vm.test.failed.without.a.reason'
+  'tast.this.vm.test.failed.without.a.reason'
 PASSING_IN_SNAPSHOT_GCE_TEST_CASE_NAME = \
-  'this.gce.test.passed.in.the.snapshot.only'
+  'tast.this.gce.test.passed.in.the.snapshot.only'
 
 
 def get_rdb_test_result_name(invocation_id: str, test_name: str) -> str:
@@ -365,7 +367,8 @@ def RunSteps(api):
                                         input=build_input)
 
   failed_vm_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
-      name=EXISTING_FAILURE_VM_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
+      name=EXISTING_FAILURE_VM_TEST_CASE_NAME_NO_TAST_PREFIX,
+      verdict=TaskState.VERDICT_FAILED,
       human_readable_summary=EXISTING_FAILURE_REASON)
   existing_vm_failure_test_case = json_format.MessageToDict(
       failed_vm_test_case_result1)

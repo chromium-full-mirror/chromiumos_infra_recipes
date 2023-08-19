@@ -107,18 +107,20 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
             orch_supports_fault_attribution:
           return self.cq_test_failure_attributes
 
+        # names of tests that failed across hw, vm and gce tests.
+        failed_test_names = self._get_failed_test_names(
+            test_results.skylab, test_results.tast_vm + test_results.tast_gce)
+        if len(failed_test_names) > TEST_QUERY_LIMIT or \
+            len(failed_test_names) == 0:
+          # Too many failed tests to query for, or none.
+          return self.cq_test_failure_attributes
+
         # Comparison snapshots ordered in descending order of start_time
         comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
         if not comparison_snapshots:
           # No snapshots available for comparison. Skip fault attribution.
           return self.cq_test_failure_attributes
-        # names of tests that failed across hw, vm and gce tests.
-        failed_test_names = self._get_failed_test_names(
-            test_results.skylab, test_results.tast_vm + test_results.tast_gce)
-        if len(failed_test_names) > TEST_QUERY_LIMIT or\
-            len(failed_test_names) == 0:
-          # Too many failed tests to query for, or none.
-          return self.cq_test_failure_attributes
+
         fault_attributed_build_targets = self._get_cq_fault_attributes(
             comparison_snapshots, failed_test_names)
 
@@ -177,7 +179,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       build = failed_vm_test["build"]
       model = EMPTY_MODEL
       build_target = self.m.cros_infra_config.get_build_target_name(build)
-      test_id = test_case['name']
+      # Some failed vm / gce test names within the build are not prefixed with
+      # 'tast.' like how the invocation results are. For those cases, let's add
+      # the prefix.
+      test_prefix = 'tast.'
+      test_id = test_case['name'] if test_case['name'].startswith(test_prefix) \
+        else test_prefix + test_case['name']
       failure_reason = test_case.get('humanReadableSummary', '')
       self._set_fault_attribution_properties(build_target, model, test_id,
                                              failure_reason)

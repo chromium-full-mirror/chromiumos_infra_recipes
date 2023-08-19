@@ -110,13 +110,7 @@ def GenTests(api):
           **{
               '$chromeos/cq_fault_attribution':
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
-          }),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search (2)'))
+          }))
   yield api.test(
       'no-failed-tests',
       api.properties(expected_size=0, is_cq_orch=True, has_failed_tests=False),
@@ -124,10 +118,4 @@ def GenTests(api):
           **{
               '$chromeos/cq_fault_attribution':
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
-          }),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search (2)'))
+          }))
