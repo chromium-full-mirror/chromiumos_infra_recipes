@@ -5,13 +5,15 @@
 """Recipe for analyzing and retrying failed CQ runs."""
 
 from collections import defaultdict
-from typing import Dict
 from typing import Generator
-from typing import List
 from typing import Optional
+
+from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import RetryDetails
+
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -20,6 +22,7 @@ from recipe_engine.recipe_test_api import TestData
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
+    'recipe_engine/time',
     'auto_retry_util',
     'easy',
     'test_util',
@@ -34,16 +37,14 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   builds = api.auto_retry_util.cq_retry_candidates()
   run_properties.update({'orch_builds_considered': len(builds)})
 
-  # While we decide on the retry critera start by retrying only runs which have
-  # no outstanding failures.
+  # A list of (Build, RetryDetails) tuples.
   retryable_runs = []
 
-  # Maps of build id -> retryable builds / tests.
-  build_to_retryable_build_failures: Dict[int, List[str]] = {}
-  build_to_exonerated_test_suites: Dict[int, List[str]] = {}
   with api.step.nest('analyzing candidates'):
     for b in builds:
       with api.step.nest('analyzing %d' % b.id) as pres:
+        retry_reason = RetryDetails(original_orch_id=b.id)
+
         pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
 
         # Examine builds.
@@ -82,10 +83,10 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         # Final determination.
         if len(outstanding_build_failures) == 0 and len(
             outstanding_test_suite_failures) == 0:
-          retryable_runs.append(b)
-          build_to_retryable_build_failures[b.id] = retryable_build_failures
-          build_to_exonerated_test_suites[
-              b.id] = exonerated_test_suites + retryable_test_suite_failures
+          retry_reason.retryable_builders.extend(retryable_build_failures)
+          retry_reason.retryable_test_suites.extend(
+              retryable_test_suite_failures + exonerated_test_suites)
+          retryable_runs.append((b, retry_reason))
 
   unthrottled_retry_n = len(retryable_runs)
   with api.step.nest('check recent executions for throttle'):
@@ -102,17 +103,23 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary
-    for b in retryable_runs:
+    for b, details in retryable_runs:
       pres.links[f'{b.id}'] = api.buildbucket.build_url(build_id=b.id)
       # There should be at least one retryable builder or test suite at this
       # point, because cq_retry_candidates only returns builds with at least one
       # fatal failure, and there are no more outstanding failures for the build.
       api.auto_retry_util.retry_build(
           b,
-          retryable_builders=build_to_retryable_build_failures[b.id],
-          retryable_test_suites=build_to_exonerated_test_suites[b.id],
+          retryable_builders=details.retryable_builders,
+          retryable_test_suites=details.retryable_test_suites,
       )
+      details.retry_age_seconds = int(
+          api.time.ms_since_epoch() / 1000) - b.end_time.seconds
+
   run_properties['retries_made'] = len(retryable_runs)
+  run_properties['retry_reasons'] = [
+      json_format.MessageToDict(y) for x, y in retryable_runs
+  ]
 
   api.easy.set_properties_step(run_properties=run_properties)
   return RawResult(status=common.SUCCESS, summary_markdown=summary)

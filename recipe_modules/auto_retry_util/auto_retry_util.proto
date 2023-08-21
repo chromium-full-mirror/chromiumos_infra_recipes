@@ -6,6 +6,21 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.auto_retry_util;
 
+message RetryDetails {
+  // The length of time since the last orchestrator completed until the retry
+  // was initiated in seconds.
+  uint32 retry_age_seconds = 1;
+
+  // The original orchestrator's build bucket id.
+  int64 original_orch_id = 2;
+
+  // The specific build failures that were retryable.
+  repeated string retryable_builders = 3;
+
+  // The specific test suite failures that were retryable.
+  repeated string retryable_test_suites = 4;
+}
+
 message AutoRetryUtilProperties {
 
   // The window in which we will consider CLs that have recently been labeled.

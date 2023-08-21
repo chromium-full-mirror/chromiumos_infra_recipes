@@ -207,7 +207,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       retryable_test_suite_names = []
       outstanding_failure_test_suite_names = []
 
-      # Failures on builders that are no longer blocking CQ submission are now
+      # Failures on test suites that are no longer blocking CQ submission are now
       # retryable.
       active_cq_verifiers = self._submission_blocking_builders(cq_run)
       for t in test_summary:
@@ -590,7 +590,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       build: build_pb2.Build,
       retryable_builders: List[str],
       retryable_test_suites: List[str],
-  ):
+  ) -> int:
     """Retries build by voting on all of its input changes.
 
     Sets Commit-Queue+1 or 2 (depending on whether build was a dry run)
