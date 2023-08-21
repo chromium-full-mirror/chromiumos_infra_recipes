@@ -98,7 +98,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   # prioritizing the cq runs to retry in a throttle constrained scenario.
   retryable_runs = retryable_runs[:retries_avail]
 
-  summary = f'{retries_avail} run(s) to retry, {throttled_runs_n} are throttled.'
+  summary = f'{unthrottled_retry_n} run(s) to retry, {throttled_runs_n} are throttled.'
 
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary

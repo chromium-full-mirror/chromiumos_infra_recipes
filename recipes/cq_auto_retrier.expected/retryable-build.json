@@ -64,6 +64,14 @@
   },
   {
     "cmd": [],
+    "name": "find candidates.filter out runs last triggered by retry",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "find candidates.filter out unsupported failure modes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -201,14 +209,6 @@
   },
   {
     "cmd": [],
-    "name": "find candidates.filter out runs last triggered by retry",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "analyzing candidates"
   },
   {
@@ -338,7 +338,7 @@
     "cmd": [],
     "name": "performing retries",
     "~followup_annotations": [
-      "@@@STEP_TEXT@30 run(s) to retry, 0 are throttled.@@@",
+      "@@@STEP_TEXT@1 run(s) to retry, 0 are throttled.@@@",
       "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@"
     ]
   },
@@ -479,6 +479,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "30 run(s) to retry, 0 are throttled."
+    "summaryMarkdown": "1 run(s) to retry, 0 are throttled."
   }
 ]

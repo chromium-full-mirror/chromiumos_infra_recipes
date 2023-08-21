@@ -346,6 +346,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('find candidates') as presentation:
       cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
+
+      with self.m.step.nest('filter out runs last triggered by retry') as pres:
+        last_our_retry_ids = [
+            c.id for c in cq_orchs if self.triggerer_was_us(c)
+        ]
+        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
+        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
+
       with self.m.step.nest('filter out unsupported failure modes') as pres:
         unsupported_failure_mode_ids = [
             c.id for c in cq_orchs if not self._has_supported_failure_mode(c)
@@ -359,13 +367,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
         cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
         pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
-
-      with self.m.step.nest('filter out runs last triggered by retry') as pres:
-        last_our_retry_ids = [
-            c.id for c in cq_orchs if self.triggerer_was_us(c)
-        ]
-        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
-        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
 
