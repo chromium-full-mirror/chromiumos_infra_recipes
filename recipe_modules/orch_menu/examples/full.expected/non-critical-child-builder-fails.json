@@ -4459,11 +4459,11 @@
       "-json",
       "-nopage",
       "-n",
-      "1000",
+      "20",
       "-fields",
       "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-14T02:53:24Z\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2018-05-25T13:50:17Z\"}}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9238,7 +9238,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:27Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {

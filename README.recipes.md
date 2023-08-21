@@ -8016,7 +8016,7 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#458)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#462)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 

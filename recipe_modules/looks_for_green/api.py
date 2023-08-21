@@ -425,14 +425,18 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     If there are irrelevant builders for the current snapshot, look at previous
     snapshots to find the last relevant build and update the greenness scores.
     """
+    current_build = self.m.buildbucket.build
     with self.m.step.nest('check current snapshot build') as presentation:
-      current_child_builds = self.get_child_builds(self.m.buildbucket.build)
+      current_child_builds = self.get_child_builds(current_build)
       self.m.greenness.populate_local_build_info(current_child_builds)
       presentation.logs['current snapshot greenness'] = str(
           self.m.greenness.local_greenness_dict)
 
     with self.m.step.nest('get previous snapshot builds'):
-      prev_snapshot_builds = self._get_snapshots()
+      # Filter the last n builds to builds that were created before the current
+      # build.
+      prev_snapshot_builds = self._get_snapshots(
+          limit=20, latest_start=current_build.create_time)
 
     with self.m.step.nest(
         'update with previous snapshot builds') as presentation:
