@@ -41,6 +41,10 @@ DEFAULT_RETRY_SERVICE_ACCOUNTS = [
     'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
 ]
 
+# The default setting for the global throttle.
+DEFAULT_24_HR_THROTTLE = 300
+DEFAULT_2_HR_THROTTLE = 30
+
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
     bb_common_pb2.INFRA_FAILURE,
@@ -72,6 +76,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
     self._enable_retries = props.enable_retries
     self._retry_service_accounts = props.service_accounts or DEFAULT_RETRY_SERVICE_ACCOUNTS
+    self._throttle_24hr = props.throttle_24hr or DEFAULT_24_HR_THROTTLE
+    self._throttle_2hr = props.throttle_2hr or DEFAULT_2_HR_THROTTLE
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -85,6 +91,38 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         c.name for c in self.m.cros_infra_config.get_builder_config(
             'cq-orchestrator').orchestrator.child_specs
     ]
+
+  def _get_recent_retry_sum(self, lookback_hours: int) -> int:
+    """Return the sum of retries made by the same builder in the window.
+
+    Args:
+      lookback_hours: The number of hours to look back for our builds.
+    Returns:
+      prev_retry_sum: The number of retries made in the previous runs.
+    """
+    builder = self.m.buildbucket.build.builder
+    create_time = bb_common_pb2.TimeRange(
+        start_time=timestamp_pb2.Timestamp(
+            seconds=int(self.m.buildbucket.build.start_time.seconds) -
+            lookback_hours * 60 * 60))
+    search_predicate = builds_service_pb2.BuildPredicate(
+        builder=builder, create_time=create_time)
+
+    prev_runs = self.m.buildbucket.search(search_predicate)
+
+    prev_retry_sum = 0
+    for r in prev_runs:
+      r_props = json_format.MessageToDict(r.output.properties)
+      prev_retry_sum += r_props.get('retries_made', 0)
+    return prev_retry_sum
+
+  def unthrottled_retries_left(self) -> int:
+    """Returns the number of retries left below the 24 and 2 hour throttles."""
+    short_term_tries = max(self._throttle_2hr - self._get_recent_retry_sum(2),
+                           0)
+    long_term_tries = max(self._throttle_24hr - self._get_recent_retry_sum(24),
+                          0)
+    return min(short_term_tries, long_term_tries)
 
   def _get_child_builders(
       self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str]]:

@@ -288,9 +288,57 @@
   },
   {
     "cmd": [],
+    "name": "check recent executions for throttle"
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"1969-12-31T22:00:00Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "check recent executions for throttle.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {}, \"createTime\": {\"startTime\": \"1969-12-31T00:00:00Z\"}}"
+    ],
+    "infra_step": true,
+    "name": "check recent executions for throttle.buildbucket.search (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "performing retries",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 run(s) to retry.@@@",
+      "@@@STEP_TEXT@30 run(s) to retry, 0 are throttled.@@@",
       "@@@STEP_LINK@1112@https://cr-buildbucket.appspot.com/build/1112@@@"
     ]
   },
@@ -426,11 +474,11 @@
     "cmd": [],
     "name": "set run_properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@run_properties@{\"exonerated_test_suites\": 0, \"newly_exonerated_tests\": 0, \"orch_builds_considered\": 1, \"outstanding_build_failures\": 0, \"outstanding_exonerations_tests\": 0, \"outstanding_test_suite_failures\": 0, \"previously_exonerated_tests\": 0, \"retries_found\": 1, \"retryable_build_failures\": 0, \"retryable_test_suite_failures\": 1}@@@"
+      "@@@SET_BUILD_PROPERTY@run_properties@{\"exonerated_test_suites\": 0, \"newly_exonerated_tests\": 0, \"orch_builds_considered\": 1, \"outstanding_build_failures\": 0, \"outstanding_exonerations_tests\": 0, \"outstanding_test_suite_failures\": 0, \"previously_exonerated_tests\": 0, \"retries_made\": 1, \"retryable_build_failures\": 0, \"retryable_test_suite_failures\": 1, \"throttled_runs\": 0}@@@"
     ]
   },
   {
     "name": "$result",
-    "summaryMarkdown": "found 1 run(s) to retry."
+    "summaryMarkdown": "30 run(s) to retry, 0 are throttled."
   }
 ]

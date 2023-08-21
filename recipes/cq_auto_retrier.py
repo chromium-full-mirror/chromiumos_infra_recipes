@@ -36,7 +36,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 
   # While we decide on the retry critera start by retrying only runs which have
   # no outstanding failures.
-  no_outstanding_failure_runs = []
+  retryable_runs = []
+
   # Maps of build id -> retryable builds / tests.
   build_to_retryable_build_failures: Dict[int, List[str]] = {}
   build_to_exonerated_test_suites: Dict[int, List[str]] = {}
@@ -81,17 +82,27 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         # Final determination.
         if len(outstanding_build_failures) == 0 and len(
             outstanding_test_suite_failures) == 0:
-          no_outstanding_failure_runs.append(b)
+          retryable_runs.append(b)
           build_to_retryable_build_failures[b.id] = retryable_build_failures
           build_to_exonerated_test_suites[
               b.id] = exonerated_test_suites + retryable_test_suite_failures
 
-  summary = f'found {len(no_outstanding_failure_runs)} run(s) to retry.'
-  run_properties['retries_found'] = len(no_outstanding_failure_runs)
+  unthrottled_retry_n = len(retryable_runs)
+  with api.step.nest('check recent executions for throttle'):
+    retries_avail = api.auto_retry_util.unthrottled_retries_left()
+    throttled_runs_n = max(unthrottled_retry_n - retries_avail, 0)
+    run_properties['throttled_runs'] = throttled_runs_n
+
+  # For now just slice the considered CL count somewhat arb (by query return
+  # order), however in the future we might consider different methods of
+  # prioritizing the cq runs to retry in a throttle constrained scenario.
+  retryable_runs = retryable_runs[:retries_avail]
+
+  summary = f'{retries_avail} run(s) to retry, {throttled_runs_n} are throttled.'
 
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary
-    for b in no_outstanding_failure_runs:
+    for b in retryable_runs:
       pres.links[f'{b.id}'] = api.buildbucket.build_url(build_id=b.id)
       # There should be at least one retryable builder or test suite at this
       # point, because cq_retry_candidates only returns builds with at least one
@@ -101,6 +112,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
           retryable_builders=build_to_retryable_build_failures[b.id],
           retryable_test_suites=build_to_exonerated_test_suites[b.id],
       )
+  run_properties['retries_made'] = len(retryable_runs)
 
   api.easy.set_properties_step(run_properties=run_properties)
   return RawResult(status=common.SUCCESS, summary_markdown=summary)

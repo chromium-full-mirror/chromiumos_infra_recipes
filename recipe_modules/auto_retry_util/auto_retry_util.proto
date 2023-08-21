@@ -27,4 +27,10 @@ message AutoRetryUtilProperties {
   // The list of service accounts used by auto retry.
   // e.g. 'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
   repeated string service_accounts = 5;
+
+  // The maximum CLs we will vote on in a 2hr period.
+  uint32 throttle_2hr = 6;
+
+  // The maximum CLs we will vote on in a 24hr period.
+  uint32 throttle_24hr = 7;
 }
