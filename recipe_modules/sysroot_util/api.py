@@ -190,10 +190,15 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     packages = packages or []
     package_indexes = package_indexes or []
     install_packages = config.build.install_packages
+    bazel_build = (
+        install_packages.install_packages_orchestrator ==
+        builder_config_pb2.BuilderConfig.BAZEL)
 
     name = name or 'install packages'
     if timeout_sec == 'DEFAULT':
-      timeout_sec = None if self.m.cros_sdk.long_timeouts else 8 * 60 * 60
+      default_timeout_hours = 12 if bazel_build else 8
+      timeout_sec = (None if self.m.cros_sdk.long_timeouts else
+                     default_timeout_hours * 60 * 60)
 
     with self.m.step.nest(name) as presentation:
       toolchain_cls = self.m.workspace_util.toolchain_cls_applied
@@ -212,8 +217,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 compile_source=install_packages.compile_source,
                 use_goma=self.m.cros_sdk.has_goma_config(),
                 toolchain_changed=toolchain_cls, dryrun=dryrun,
-                bazel=(install_packages.install_packages_orchestrator ==
-                       builder_config_pb2.BuilderConfig.BAZEL)),
+                bazel=bazel_build),
             use_flags=config.build.use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             result_path=common_pb2.ResultPath(
