@@ -87,7 +87,8 @@ class GreennessApi(recipe_api.RecipeApi):
             sub_pres.logs['current snapshot'] = str(current_snapshot.id)
             sub_pres.logs['last snapshot'] = str(last_snapshot)
           self._last_greenness_dict = self.m.buildbucket_stats.get_snapshot_greenness(
-              commit=last_snapshot, pres=pres)
+              commit=last_snapshot, pres=pres,
+              end_bbid=self.m.buildbucket.build.id)
     return self._last_greenness_dict.get(target, collections.OrderedDict())
 
   def _is_excluded(self, builder_name: str, exclude_list: List[str]) -> bool:

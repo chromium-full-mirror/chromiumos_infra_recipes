@@ -34,8 +34,9 @@ BUILD_OUTPUT.properties['greenness'] = {
 
 def RunSteps(api):
   with api.step.nest('get snapshot greenness') as pres:
+    test_end_bbid = api.properties.get('end_bbid')
     target_greenness = api.buildbucket_stats.get_snapshot_greenness(
-        'bababa', pres)
+        'bababa', pres, end_bbid=test_end_bbid)
     expected_target_greenness = api.properties['expected_target_greenness']
     api.assertions.assertEqual(expected_target_greenness, target_greenness)
 
@@ -79,5 +80,15 @@ def GenTests(api):
   yield api.test(
       'no-results',
       api.properties(expected_target_greenness=OrderedDict()),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-end-bbid',
+      api.properties(expected_target_greenness=TARGET_GREENNESS, end_bbid=100),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                          output=BUILD_OUTPUT, input=BUILD_INPUT),
+      ], 'get snapshot greenness.buildbucket.search'),
       api.post_process(post_process.DropExpectation),
   )

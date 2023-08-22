@@ -3,8 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Dict
 from collections import OrderedDict
+from typing import Dict, Optional
 
 from google.protobuf import struct_pb2
 
@@ -111,14 +111,21 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
     return OrderedDict()
 
-  def get_snapshot_greenness(self, commit: str,
-                             pres: StepPresentation) -> OrderedDict():
-    """Returns snapshot run for specified commit, if found."""
+  def get_snapshot_greenness(self, commit: str, pres: StepPresentation,
+                             end_bbid: Optional[int] = None) -> OrderedDict():
+    """Returns snapshot run for specified commit, if found.
+
+    If end_bbid is specified, return all runs that are older than the specified
+    bbid (inclusive).
+    """
     pres.logs[
         'looking'] = f'Trying to find greenness for snapshot for commit {commit}...'
     fields = frozenset(
         {'id', 'status', 'input.gitiles_commit.id', 'output.properties'})
-    predicate = builds_service_pb2.BuildPredicate()
+    build_range = None
+    if end_bbid:
+      build_range = builds_service_pb2.BuildRange(end_build_id=end_bbid)
+    predicate = builds_service_pb2.BuildPredicate(build=build_range)
     predicate.builder.project = self._project
     predicate.builder.bucket = self._snapshot_bucket
     predicate.builder.builder = self._snapshot_builder

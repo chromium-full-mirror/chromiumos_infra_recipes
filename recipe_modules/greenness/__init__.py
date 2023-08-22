@@ -6,6 +6,7 @@
 from PB.recipe_modules.chromeos.greenness.greenness import GreennessProperties
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/step',
     'buildbucket_stats',

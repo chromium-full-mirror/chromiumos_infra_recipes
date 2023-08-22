@@ -1913,13 +1913,16 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#114)(self, commit: str, pres: StepPresentation):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#114)(self, commit: str, pres: StepPresentation, end_bbid: Optional[int]=None):**
 
 Returns snapshot run for specified commit, if found.
 
+If end_bbid is specified, return all runs that are older than the specified
+bbid (inclusive).
+
 &mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#25)(self):**
 
-&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#127)(self, list_value: struct_pb2.ListValue):**
+&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#134)(self, list_value: struct_pb2.ListValue):**
 
 Reformat ListValue to a dictionary, using target as key.
 
@@ -7621,7 +7624,7 @@ Returns:
       log files. None is returned if there were no artifacts to process.
 ### *recipe_modules* / [greenness](/recipe_modules/greenness)
 
-[DEPS](/recipe_modules/greenness/__init__.py#8): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/greenness/__init__.py#8): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API providing a menu for calculating greenness metric.
@@ -7654,7 +7657,7 @@ Returns: targetGreenness, or an empty OrderedDict if the target, its
 
 &emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
 
-&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#140)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#141)(self, builds: List[build_pb2.Build]):**
 
 Populate the local greenness dict with build information.
 
@@ -7665,29 +7668,29 @@ separately from amd64-generic).
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#240)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#241)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#247)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#248)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#112)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#113)(self, builds: List[build_pb2.Build]):**
 
 Update greenness with build information.
 
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#167)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#168)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#216)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
+&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#217)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
 
 Update scores in the greenness dict for irrelevant builds.
 
@@ -7695,7 +7698,7 @@ Args:
   builds: List of builds that have completed.
   greenness_dict: The greenness dict to update.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#197)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#198)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 
