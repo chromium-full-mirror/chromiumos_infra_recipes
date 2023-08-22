@@ -46,7 +46,7 @@
   },
   {
     "cmd": [],
-    "name": "uploading",
+    "name": "uploading breakpad",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@upload logs@@@@",
       "@@@STEP_LOG_END@upload logs@@@"
@@ -63,7 +63,33 @@
       "-staging",
       "-dry-run=false"
     ],
-    "name": "uploading.call upload go binary",
+    "name": "uploading breakpad.call upload go binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uploading vmlinux",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@upload logs@@@@",
+      "@@@STEP_LOG_END@upload logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/upload_debug_symbols",
+      "upload",
+      "-gs-path",
+      "gs-test/vmlinuz.tar.xz",
+      "-data-type=vmlinux",
+      "-worker-count 90",
+      "-retry-quota 90",
+      "-staging",
+      "-dry-run=false"
+    ],
+    "name": "uploading vmlinux.call upload go binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"

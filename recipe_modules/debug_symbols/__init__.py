@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'easy',
+    'failures',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
