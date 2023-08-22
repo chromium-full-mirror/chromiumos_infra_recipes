@@ -50,6 +50,29 @@ def RunSteps(api):
   api.assertions.assertEqual(updated_test_results[0].status, common_pb2.FAILURE)
 
 
+  crash_test_cases = [
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='test2', verdict=TaskState.VERDICT_NO_VERDICT),
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='test3', verdict=TaskState.VERDICT_NO_VERDICT),
+  ]
+  child_results = [
+      ExecuteResponse.TaskResult(name='suite1', state=fail_state,
+                                 test_cases=crash_test_cases)
+  ]
+  hw_test_failures = [
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE, child_results=child_results),
+  ]
+
+  updated_test_results, exonerated_test_names = api.exonerate.exonerate_hwtests(
+      hw_test_failures)
+  # Check that no exoneration occurred.
+  api.assertions.assertEqual(exonerated_test_names, [])
+  api.assertions.assertEqual(updated_test_results[0].status, common_pb2.FAILURE)
+
+
 def GenTests(api):
   yield api.test(
       'basic',

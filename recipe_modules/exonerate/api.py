@@ -234,10 +234,6 @@ class ExonerateApi(recipe_api.RecipeApi):
     Returns: list of TestCaseResult changed based on the decision, new overall
       verdict of the tests.
     """
-    if not test_cases:
-      # If test_cases are empty, assume tests didn't run and return a fail verdict.
-      return [], TaskState.VERDICT_FAILED
-
     new_test_cases = []
     for test_case in test_cases:
       if test_case.verdict == TaskState.VERDICT_UNSPECIFIED:
@@ -290,6 +286,12 @@ class ExonerateApi(recipe_api.RecipeApi):
       if result.state.verdict == TaskState.VERDICT_PASSED:
         filtered_results.append(result)
       elif TaskState.VERDICT_FAILED in prejob_verdicts:
+        filtered_results.append(result)
+      elif all([
+          tc.verdict == TaskState.VERDICT_NO_VERDICT for tc in result.test_cases
+      ]):
+        # Test for case where all test_cases have VERDICT_NO_VERDICT. See b/296463877.
+        # Also tests the case where there are no test_cases.
         filtered_results.append(result)
       else:
         new_result = result
