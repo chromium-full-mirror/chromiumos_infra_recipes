@@ -837,9 +837,9 @@ Returns:
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#157)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#158)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#189)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#190)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -853,7 +853,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#64)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#335)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#336)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -866,7 +866,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * No CL tested in the build opted-out via footer.
   * The build was not last triggered by our service account.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#460)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#472)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -880,15 +880,15 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#82)(self):**
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#83)(self):**
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#60)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#261)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#262)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#588)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#600)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -910,7 +910,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#68)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#375)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#387)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -928,11 +928,11 @@ Returns:
   A tuple containing 3 lists of FailedTestStats grouped by whether the test
       variant is previously exonerated, newly exonerated, or not exonerated.
 
-&mdash; **def [triggerer\_was\_us](/recipe_modules/auto_retry_util/api.py#269)(self, build):**
+&mdash; **def [triggerer\_was\_us](/recipe_modules/auto_retry_util/api.py#270)(self, build):**
 
 Given the build, return if it was triggered by the auto retry accts.
 
-&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#119)(self):**
+&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#120)(self):**
 
 Returns the number of retries left below the 24 and 2 hour throttles.
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)

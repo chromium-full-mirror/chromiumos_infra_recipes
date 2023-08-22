@@ -78,6 +78,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._retry_service_accounts = props.service_accounts or DEFAULT_RETRY_SERVICE_ACCOUNTS
     self._throttle_24hr = props.throttle_24hr or DEFAULT_24_HR_THROTTLE
     self._throttle_2hr = props.throttle_2hr or DEFAULT_2_HR_THROTTLE
+    self._experiment_allowlist = set(props.experiment_allowlist)
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -362,6 +363,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             c for c in cq_orchs if c.id not in unsupported_failure_mode_ids
         ]
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
+
+      with self.m.step.nest('filter by experiment allowlist') as pres:
+        if self._experiment_allowlist:
+          not_in_allowlist_ids = [
+              c.id for c in cq_orchs if not set(
+                  c.input.experiments).intersection(self._experiment_allowlist)
+          ]
+          cq_orchs = [c for c in cq_orchs if c.id not in not_in_allowlist_ids]
+          pres.step_text = f'filtered out {len(not_in_allowlist_ids)} run(s)'
+        else:
+          pres.step_text = 'no experiment allowlist filtering'
 
       with self.m.step.nest('filter out opt-out runs') as pres:
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]

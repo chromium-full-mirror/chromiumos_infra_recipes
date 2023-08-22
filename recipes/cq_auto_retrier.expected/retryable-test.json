@@ -80,6 +80,14 @@
   },
   {
     "cmd": [],
+    "name": "find candidates.filter by experiment allowlist",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no experiment allowlist filtering@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "find candidates.filter out opt-out runs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

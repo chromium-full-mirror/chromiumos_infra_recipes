@@ -48,4 +48,11 @@ message AutoRetryUtilProperties {
 
   // The maximum CLs we will vote on in a 24hr period.
   uint32 throttle_24hr = 7;
+
+  // A list of Buildbucket experiments used to filter the retry candidate
+  // builds. If non-empty, only builds that contain at least one of the
+  // experiments in this allowlist will be considered for retry. Note that all
+  // other criteria (e.g. the build is from the latest CQ attempt) still apply.
+  // If this list is empty, there is no filtering by experiment.
+  repeated string experiment_allowlist = 8;
 }

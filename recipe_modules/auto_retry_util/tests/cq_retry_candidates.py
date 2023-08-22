@@ -233,3 +233,46 @@ def GenTests(api):
       api.properties(expected_build_ids=[]),
       api.post_process(post_process.DropExpectation),
   )
+
+  failure_with_allowlisted_experiment = api.test_util.test_orchestrator(
+      build_id=12,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_1'
+      },
+      status='FAILURE',
+      create_time=12,
+      output_properties={
+          'has_child_failures': True
+      },
+      experiments=['auto-retry-fishfood'],
+  ).message
+  failure_without_allowlisted_experiment = api.test_util.test_orchestrator(
+      build_id=13,
+      cq=True,
+      tags={
+          'cq_cl_group_key': 'group_2'
+      },
+      status='FAILURE',
+      create_time=12,
+      output_properties={
+          'has_child_failures': True
+      },
+      experiments=['some-other-experiment'],
+  ).message
+
+  yield api.test(
+      'filter-by-experiment-allowlist',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util': {
+                  'experiment_allowlist': ['auto-retry-fishfood']
+              }
+          }),
+      api.buildbucket.simulated_search_results([
+          failure_with_allowlisted_experiment,
+          failure_without_allowlisted_experiment
+      ], 'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.properties(expected_build_ids=[12]),
+      api.post_process(post_process.DropExpectation),
+  )
