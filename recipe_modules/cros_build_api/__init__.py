@@ -15,6 +15,7 @@ DEPS = [
     'recipe_engine/time',
     'analysis_service',
     'cros_infra_config',
+    'failures',
     'git',
     'portage',
     'src_state',

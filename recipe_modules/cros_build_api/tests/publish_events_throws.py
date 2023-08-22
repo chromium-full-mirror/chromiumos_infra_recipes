@@ -39,6 +39,5 @@ def GenTests(api):
       api.step_data(
           'install packages step.publish event.publish message (3).publish-message',
           retcode=1),
-      api.post_check(post_process.StepTextEquals, 'install packages step',
-                     'failed to publish pubsub message to analysis service'),
+      api.post_check(post_process.PropertiesContain, 'caught_exceptions'),
   )

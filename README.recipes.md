@@ -2694,7 +2694,7 @@ Args:
     Accepts the same keyword arguments as __call__.
 ### *recipe_modules* / [cros\_build\_api](/recipe_modules/cros_build_api)
 
-[DEPS](/recipe_modules/cros_build_api/__init__.py#8): [analysis\_service](#recipe_modules-analysis_service), [cros\_infra\_config](#recipe_modules-cros_infra_config), [git](#recipe_modules-git), [portage](#recipe_modules-portage), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_build_api/__init__.py#8): [analysis\_service](#recipe_modules-analysis_service), [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [portage](#recipe_modules-portage), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API for working with the protobuf-based Build API.
@@ -2805,7 +2805,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#679)(self, stub: 'Stub', method: str):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#676)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
