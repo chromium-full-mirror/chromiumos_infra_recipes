@@ -62,7 +62,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     return step
 
   def _swarming_time_to_datetime(self, time_str):
-    format_str = '%Y-%m-%dT%H:%M:%S.%f'
+    format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
     return datetime.strptime(time_str, format_str)
 
   def get_max_pending_time(self, dimensions, lookback_hours, swarming_instance):

@@ -49,7 +49,7 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     Return:
       list(dicts): Mock tasks, as from Swarming
     """
-    fmt = '%Y-%m-%dT%H:%M:%S.%f'
+    fmt = '%Y-%m-%dT%H:%M:%S.%fZ'
     now = api.time.utcnow()
     one_hour_ago = now - datetime.timedelta(hours=1)
     two_hours_ago = now - datetime.timedelta(hours=2)
