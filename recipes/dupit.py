@@ -94,7 +94,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'filter_missing_links':
           True,
       'regex_for_archival_sync':
-          "^.+[.](db|db.tar.gz|files|files.tar.gz)$",
+          '^.+[.](db|db.tar.gz|files|files.tar.gz)$',
       'gs_uri_for_archival_sync':
           'gs://chromeos-mirror/archlinux-archive/repos/',
       'path_datetime_for_archival_sync':

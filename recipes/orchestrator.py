@@ -196,12 +196,12 @@ def GenTests(api: RecipeTestApi):
       data.ctp_normal,
       api.properties(
           **{
-              "$chromeos/cros_lkgm": {
-                  "enable_lkgm": True,
-                  "full_run": True,
-                  "builder_threshold_percentage": 0,
+              '$chromeos/cros_lkgm': {
+                  'enable_lkgm': True,
+                  'full_run': True,
+                  'builder_threshold_percentage': 0,
               },
-              "$chromeos/orch_menu":
+              '$chromeos/orch_menu':
                   OrchMenuProperties(skip_paygen=True,
                                      schedule_public_build=True),
               '$chromeos/signing': {
@@ -239,12 +239,12 @@ def GenTests(api: RecipeTestApi):
       data.ctp_normal,
       api.properties(
           **{
-              "$chromeos/cros_lkgm": {
-                  "enable_lkgm": True,
-                  "full_run": True,
-                  "builder_threshold_percentage": 0,
+              '$chromeos/cros_lkgm': {
+                  'enable_lkgm': True,
+                  'full_run': True,
+                  'builder_threshold_percentage': 0,
               },
-              "$chromeos/orch_menu":
+              '$chromeos/orch_menu':
                   OrchMenuProperties(skip_paygen=True,
                                      schedule_public_build=True),
               '$chromeos/signing': {
@@ -277,7 +277,7 @@ def GenTests(api: RecipeTestApi):
       'public-orchestrator',
       api.properties(
           **{
-              "$chromeos/cros_source":
+              '$chromeos/cros_source':
                   CrosSourceProperties(
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),
@@ -290,7 +290,7 @@ def GenTests(api: RecipeTestApi):
       'public-orchestrator-no-manifest',
       api.properties(
           **{
-              "$chromeos/cros_source":
+              '$chromeos/cros_source':
                   CrosSourceProperties(use_external_source_cache=True)
           }), builder='public-main-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
@@ -299,7 +299,7 @@ def GenTests(api: RecipeTestApi):
       'factory-orchestrator', data.ctp_normal,
       api.properties(
           **{
-              "$chromeos/cros_source":
+              '$chromeos/cros_source':
                   CrosSourceProperties(
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),

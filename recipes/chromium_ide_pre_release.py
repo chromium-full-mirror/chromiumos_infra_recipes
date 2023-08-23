@@ -16,7 +16,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/path',
-    "recipe_engine/properties",
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
@@ -70,7 +70,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'success',
       api.properties(
-          ChromiumIDEPreReleaseProperties(reviewers=["oka@chromium.org"])),
+          ChromiumIDEPreReleaseProperties(reviewers=['oka@chromium.org'])),
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
@@ -91,7 +91,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'fail_npm_ci',
       api.properties(
-          ChromiumIDEPreReleaseProperties(reviewers=["oka@chromium.org"])),
+          ChromiumIDEPreReleaseProperties(reviewers=['oka@chromium.org'])),
       api.step_data('npm ci', retcode=1),
       api.post_check(post_process.StepFailure, 'npm ci'),
       api.post_check(post_process.DoesNotRun, 'release update'),
@@ -106,7 +106,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'fail_release_update',
       api.properties(
-          ChromiumIDEPreReleaseProperties(reviewers=["oka@chromium.org"])),
+          ChromiumIDEPreReleaseProperties(reviewers=['oka@chromium.org'])),
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=1),
       api.post_check(post_process.StepFailure, 'release update'),
@@ -121,7 +121,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'fail_npm_t',
       api.properties(
-          ChromiumIDEPreReleaseProperties(reviewers=["oka@chromium.org"])),
+          ChromiumIDEPreReleaseProperties(reviewers=['oka@chromium.org'])),
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),

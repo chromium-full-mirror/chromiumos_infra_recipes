@@ -53,17 +53,17 @@ def is_unsupported_rubik_build(api: RecipeApi, source_version: str) -> bool:
 def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
   with api.step.nest('validate properties'):
     if not properties.source_version:
-      raise StepFailure("source_version required")
+      raise StepFailure('source_version required')
     if properties.branch_info.type not in [Branch.RELEASE, Branch.STABILIZE]:
-      raise StepFailure("unsupported branch type: {}".format(
+      raise StepFailure('unsupported branch type: {}'.format(
           properties.branch_info.type))
     # Legacy tryjob CLI does not work on branches created from Rubik buildspecs,
     # see b/252809202.
     if properties.branch_info.type == Branch.STABILIZE:
       if is_unsupported_rubik_build(api, properties.source_version):
         raise StepFailure(
-            "temporary: do not cut stabilize branches from Rubik buildspecs "
-            "(b/252809202 for context)")
+            'temporary: do not cut stabilize branches from Rubik buildspecs '
+            '(b/252809202 for context)')
 
   # Create branch.
   with api.step.nest('create branch') as presentation:
@@ -71,8 +71,8 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
         properties.source_version, branch=properties.branch_info,
         push=properties.branch_util_push, force=properties.branch_util_force)
     if not branch_name:
-      raise StepFailure("branch name could not be parsed from branch_util")
-    presentation.step_text = "Created branch {}".format(branch_name)
+      raise StepFailure('branch name could not be parsed from branch_util')
+    presentation.step_text = 'Created branch {}'.format(branch_name)
     api.easy.set_properties_step(branch_name=branch_name)
 
   # Only update config if the branch was actually created.
@@ -91,11 +91,11 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
-  TEST_STDOUT = """
+  TEST_STDOUT = '''
 2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...
 2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B
 2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest
-"""
+'''
 
   yield api.test(
       'release-branch',
@@ -129,7 +129,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               source_version='R89-13729.0.0',
               branch_info=Branch(type=Branch.STABILIZE,
                                  name='this should not be used anywhere',
-                                 descriptor="foo"),
+                                 descriptor='foo'),
               branch_util_push=True,
           )),
       api.post_check(

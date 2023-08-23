@@ -97,7 +97,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # likely that upload artifacts failed as a result of those previous issues).
     raise failing_build_exception or sf
 
-  with api.step.nest("publish toolchain metadata"):
+  with api.step.nest('publish toolchain metadata'):
     toolchain_info = api.cros_sdk.get_toolchain_info(
         api.build_menu.build_target.name)
     api.build_reporting.publish_toolchain_info(toolchain_info)

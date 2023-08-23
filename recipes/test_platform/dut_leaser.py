@@ -82,7 +82,7 @@ def GenTests(api):
               json_format.MessageToJson(
                   skylab_local_state.load.LoadResponse(
                       results_dir='dummy-results-dir', dut_topology=[
-                          skylab_local_state.load.Dut(hostname="dummy-hostname")
+                          skylab_local_state.load.Dut(hostname='dummy-hostname')
                       ])))),
       api.post_process(post_process.DropExpectation),
   )

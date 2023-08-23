@@ -39,7 +39,7 @@ def _download_test_result_files(api, remote_test_results):
         # there are no matching files, which causes the depot_tools logic
         # around gsutil to erroneously retry.
         files = api.gsutil.list(
-            gs_path + "/**",
+            gs_path + '/**',
             stdout=api.raw_io.output_text(),
             ok_ret=(0, 1),
         ).stdout.strip().splitlines()

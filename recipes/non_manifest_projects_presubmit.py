@@ -61,7 +61,7 @@ def categorize_changes(api, properties, gerrit_changes):
   with api.step.nest('validate inputs') as presentation:
     # If there are no gerrit_changes, we're done.
     if not gerrit_changes:
-      presentation.step_text = "No changes given:  Build is POINTLESS."
+      presentation.step_text = 'No changes given:  Build is POINTLESS.'
 
     patch_sets = api.gerrit.fetch_patch_sets(gerrit_changes)
 
@@ -78,7 +78,7 @@ def categorize_changes(api, properties, gerrit_changes):
 
     if dropped_changes:
       presentation.logs['changes not applied'] = dropped_changes
-      presentation.step_text = "some changes not applied as they are not supported by this builder."
+      presentation.step_text = 'some changes not applied as they are not supported by this builder.'
 
     return project_to_patches_map
 

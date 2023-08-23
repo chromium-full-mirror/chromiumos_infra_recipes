@@ -37,7 +37,7 @@ LOCAL_PAYLOAD_FILENAME = 'kabuto_payload.tar.gz'
 
 def _upload_kabuto_logs(api: RecipeTestApi) -> None:
   """Tars and uploads the contents of borealis/kabuto/logs/."""
-  time_now_utc = api.time.utcnow().strftime("%Y-%m-%d-%H%M%S")
+  time_now_utc = api.time.utcnow().strftime('%Y-%m-%d-%H%M%S')
   kabuto_log_tarball = f'kabuto_logs_{time_now_utc}.tar'
   kabuto_log_path = 'tools/kabuto/logs/'
 
@@ -134,7 +134,7 @@ def DoRunSteps(api: RecipeTestApi,
     # Get info on newly compiled shadercaches for uprev.
     # If this step fails we can continue with an empty updated_artifacts,
     # this can (rarely) happen in sharding situations.
-    updated_artifacts = "{}"
+    updated_artifacts = '{}'
     with api.failures.ignore_exceptions():
       updated_artifacts = api.file.read_text(
           'Read updated_artifacts.json',
@@ -173,7 +173,7 @@ def GenTests(api: RecipeTestApi) -> None:
   # We explicitly want to test shard-0 here since in testing, 0 == False
   # made the command not update properly.
   props = good_props.copy()
-  props['shard'] = "0"
+  props['shard'] = '0'
   yield api.test(
       'shard-specified',
       api.properties(**props),
@@ -181,14 +181,14 @@ def GenTests(api: RecipeTestApi) -> None:
           post_process.StepCommandContains,
           'run kabuto',
           [
-              "./tools/kabuto/kabuto", "--gcs", "--no-interactive",
-              "--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json"
+              './tools/kabuto/kabuto', '--gcs', '--no-interactive',
+              '--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json'
           ],
       ),
   )
 
   props = good_props.copy()
-  props['shard'] = "0"
+  props['shard'] = '0'
   yield api.test(
       'staging-shard',
       api.properties(**props),
@@ -197,8 +197,8 @@ def GenTests(api: RecipeTestApi) -> None:
           post_process.StepCommandContains,
           'run kabuto',
           [
-              "./tools/kabuto/kabuto", "--gcs", "--no-interactive",
-              "--kabuto-config=tools/kabuto/in/staging/shard-staging-0/kabuto.json"
+              './tools/kabuto/kabuto', '--gcs', '--no-interactive',
+              '--kabuto-config=tools/kabuto/in/staging/shard-staging-0/kabuto.json'
           ],
       ),
   )

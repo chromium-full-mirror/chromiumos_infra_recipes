@@ -151,7 +151,7 @@ def _SyncChromeSources(api, config):
   with api.step.nest('Sync Chrome sources'):
     chrome_root = api.path['start_dir'].join('chrome')
     api.chrome.cache_sync(cache_path=chrome_root, sync=False,
-                          step_name="populate chrome cache")
+                          step_name='populate chrome cache')
     api.chrome.sync(chrome_root, api.cros_sdk.chroot,
                     api.build_menu.sysroot.build_target, config.chrome.internal,
                     cache_dir=chrome_root.join('chrome_cache'))

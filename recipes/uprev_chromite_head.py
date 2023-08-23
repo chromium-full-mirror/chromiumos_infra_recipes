@@ -32,7 +32,7 @@ PROPERTIES = UprevChromiteHeadProperties
 def RunSteps(api: RecipeApi, properties) -> None:
   # 1. get the chromite remote head commit.
   api.step('git init', ['git', 'init'])
-  with api.step.nest("get latest commit") as step:
+  with api.step.nest('get latest commit') as step:
     commit = api.git.fetch_ref(
         'https://chromium.googlesource.com/chromiumos/chromite/',
         'refs/heads/main')

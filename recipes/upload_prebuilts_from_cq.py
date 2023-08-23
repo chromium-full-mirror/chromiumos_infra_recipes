@@ -4,12 +4,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-'''Recipe that retrieves locations from google storage that the binpkgs are
+"""Recipe that retrieves locations from google storage that the binpkgs are
 uploaded to by the Chrome PUpr and updates *_CQ_BINHOST.conf files with
 the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
-'''
+"""
 
 import time
 
@@ -320,7 +320,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
       with api.cros_source.checkout_overlays_context(
       ), api.build_menu.setup_workspace(cherry_pick_changes=True):
         # Processes public builders
-        with api.step.nest("Public binhosts") as presentation:
+        with api.step.nest('Public binhosts') as presentation:
           public_prebuilt_entries_len = len(public_prebuilt_entries)
           presentation.step_summary_text = (
               f'Set {public_prebuilt_entries_len} binhosts.')
@@ -334,7 +334,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
             )
 
         # Processes private builders
-        with api.step.nest("Private binhosts") as presentation:
+        with api.step.nest('Private binhosts') as presentation:
           private_prebuilt_entries_len = len(private_prebuilt_entries)
           presentation.step_summary_text = (
               f'Set {private_prebuilt_entries_len} binhosts.')
@@ -352,7 +352,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
       ), api.workspace_util.sync_to_commit(staging=is_staging,
                                            projects=BINHOST_PROJECTS):
         # Processes public builders
-        with api.step.nest("Public binhosts") as presentation:
+        with api.step.nest('Public binhosts') as presentation:
           public_prebuilt_entries_len = len(public_prebuilt_entries)
           presentation.step_summary_text = (
               f'Set {public_prebuilt_entries_len} binhosts.')
@@ -367,7 +367,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
               )
 
         # Processes private builders
-        with api.step.nest("Private binhosts") as presentation:
+        with api.step.nest('Private binhosts') as presentation:
           private_prebuilt_entries_len = len(private_prebuilt_entries)
           presentation.step_summary_text = (
               f'Set {private_prebuilt_entries_len} binhosts.')
@@ -463,7 +463,7 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   timeout = INITIAL_TIMEOUT_SEC
   count = 1
   while True:
-    name_suffix = "" if count == 1 else f" ({count})"
+    name_suffix = '' if count == 1 else f' ({count})'
     public_prebuilt_entries, private_prebuilt_entries, running_builds = \
         search_prebuilts(api, 'search the prebuilts' + name_suffix, builds,
                          gerrit_change, finished_build_targets, is_staging)
@@ -488,9 +488,9 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     # Adding one sec is a hack for test.
     if (time.time() - start_time + 1) >= entire_timeout_sec:
-      return "\n".join([
-          f"Updated {finished_build_targets_len} of {all_builds_len} builders after {count} trials.",
-          f"Interrupted: maximum running time ({entire_timeout_sec} sec) exceeded.",
+      return '\n'.join([
+          f'Updated {finished_build_targets_len} of {all_builds_len} builders after {count} trials.',
+          f'Interrupted: maximum running time ({entire_timeout_sec} sec) exceeded.',
       ])
 
     with api.step.nest(f'waiting {timeout} sec for next retry') as presentation:
@@ -501,7 +501,7 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
     count += 1
 
   finished_build_targets_len = len(finished_build_targets)
-  return f"Updated all of {finished_build_targets_len} builders after {count} trials."
+  return f'Updated all of {finished_build_targets_len} builders after {count} trials.'
 
 
 def GenTests(api: RecipeTestApi):
@@ -574,7 +574,7 @@ def GenTests(api: RecipeTestApi):
       id='33333',
       gitiles=triggers_pb2.GitilesTrigger(
           repo=PUBLIC_OVERLAY_PROJECT,
-          revision="3333333333333333333333333333333333333333",
+          revision='3333333333333333333333333333333333333333',
       ),
   )
 

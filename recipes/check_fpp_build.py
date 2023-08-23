@@ -4,21 +4,21 @@
 # found in the LICENSE file.
 
 DEPS = [
-    "recipe_engine/path",
-    "recipe_engine/step",
+    'recipe_engine/path',
+    'recipe_engine/step',
 ]
 
 
 def RunSteps(api):
-  api.step("Clone source", [
-      "git", "clone", "--recurse-submodules", "sso://nearby/fp-provider",
-      str(api.path['cleanup'].join("fp-provider"))
+  api.step('Clone source', [
+      'git', 'clone', '--recurse-submodules', 'sso://nearby/fp-provider',
+      str(api.path['cleanup'].join('fp-provider'))
   ])
-  api.step("Build/Run tests", [
-      str(api.path['cleanup'].join("fp-provider", "build.sh")), "gLinux",
-      "run_tests"
+  api.step('Build/Run tests', [
+      str(api.path['cleanup'].join('fp-provider', 'build.sh')), 'gLinux',
+      'run_tests'
   ])
 
 
 def GenTests(api):
-  yield api.test("build_test_fpp")
+  yield api.test('build_test_fpp')

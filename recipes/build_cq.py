@@ -130,8 +130,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
         # Set a property to indicate image artifacts are uploaded, so CQ
         # orchestrator can poll for this property.
         api.easy.set_properties_step(image_artifacts_uploaded=True)
-        api.easy.set_properties_step(
-            image_artifacts_uploaded_time=api.time.utcnow().strftime("%FT%T.%fZ"))
+        api.easy.set_properties_step(image_artifacts_uploaded_time=api.time
+                                     .utcnow().strftime('%FT%T.%fZ'))
         # We have no steps following unit_test_images, so we don't need to
         # check the return value.
         api.build_menu.unit_test_images(config)

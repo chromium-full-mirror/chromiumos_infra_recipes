@@ -35,7 +35,7 @@ STAGING_BUCKET = 'staging'
 
 def _launch_builders(api: RecipeApi, bucket: str, builder: str,
                      is_staging: bool, count=1, input_properties=None,
-                     step_name="", timeout_hours=3) -> list:
+                     step_name='', timeout_hours=3) -> list:
   """
   Launch builders using api.bitbucket.run and return the list of builds.
 
@@ -121,9 +121,9 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     paygen_output_props = {'payload_gs_url': properties.payload_gs_url}
   else:
     paygen_input_props = {
-        "destination_gs_bucket": "kabuto_cache",
-        "destination_gs_path": "test-recipe-payloads/",
-        "use_release_build_artifacts": properties.use_release_build_artifacts
+        'destination_gs_bucket': 'kabuto_cache',
+        'destination_gs_path': 'test-recipe-payloads/',
+        'use_release_build_artifacts': properties.use_release_build_artifacts
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
@@ -140,9 +140,9 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   if 'payload_gs_url' in paygen_output_props:
     payload_gs_url = paygen_output_props['payload_gs_url']
     # Extra the bucket from the GS URL.
-    payload_bucket = payload_gs_url.lstrip("gs://").split("/")[0]
+    payload_bucket = payload_gs_url.lstrip('gs://').split('/')[0]
     # Extra the path from the GS URL.
-    payload_path = str.join("/", payload_gs_url.lstrip("gs://").split("/")[1:])
+    payload_path = str.join('/', payload_gs_url.lstrip('gs://').split('/')[1:])
     shadercache_input_props = {
         'payload_gs_bucket': payload_bucket,
         'payload_gs_path': payload_path
@@ -168,7 +168,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
       all_uprev_info.append(uprev_info)
   # Prepare the cumulative uprev information.
   # Use json.dumps to convert back to a JSON-compatible formatted string.
-  uprev_input_props = {"uprev_info": json.dumps(all_uprev_info)}
+  uprev_input_props = {'uprev_info': json.dumps(all_uprev_info)}
   if manifest_branch:
     uprev_input_props['manifest_branch'] = manifest_branch
 
@@ -184,7 +184,7 @@ def GenTests(api: RecipeTestApi) -> None:
     paygen_child_data = build_pb2.Build(id=8922054662172514000,
                                         status='SUCCESS')
     paygen_child_data.output.properties[
-        'payload_gs_url'] = "gs://kabuto_cache/kabuto_payload.tar.xz"
+        'payload_gs_url'] = 'gs://kabuto_cache/kabuto_payload.tar.xz'
     return paygen_child_data
 
   def shadercache_child_data() -> Build:

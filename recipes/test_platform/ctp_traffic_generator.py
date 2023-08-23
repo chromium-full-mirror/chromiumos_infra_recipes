@@ -117,7 +117,7 @@ def _replay_successful_ctp_builds_in_replay_builder(api, replay_builder,
       api, replay_builder, num_builds=ctp_num_replay_builds,
       time_limit_seconds=time_limit_seconds)
   for build in builds:
-    reqs = MessageToDict(build.input.properties["requests"])
+    reqs = MessageToDict(build.input.properties['requests'])
     new_reqs = _check_dev_env_and_cft(replay_builder, reqs)
     if not new_reqs:
       continue  # pragma: nocover
@@ -131,14 +131,14 @@ def _replay_successful_ctp_builds_in_replay_builder(api, replay_builder,
 # b/267268890: Only schedule cft requests in dev env. Remove after trv2
 # rolls to prod.
 def _check_dev_env_and_cft(replay_builder, reqs_dict):
-  if not replay_builder.endswith("dev"):
+  if not replay_builder.endswith('dev'):
     return reqs_dict
 
   new_reqs_dict = {}
   for tag, req in reqs_dict.items():
-    if req.get("params") and req.get("params").get("runViaCft") is True:
+    if req.get('params') and req.get('params').get('runViaCft') is True:
       # Run the request in trv2
-      req["params"]["runViaTrv2"] = True
+      req['params']['runViaTrv2'] = True
       new_reqs_dict[tag] = req
 
   return new_reqs_dict
@@ -147,49 +147,49 @@ def _check_dev_env_and_cft(replay_builder, reqs_dict):
 def GenTests(api):
   ctp_input_properties = struct_pb2.Struct()
   ctp_input_properties['requests'] = {
-      "gale_gale": {
-          "params": {
-              "decorations": {
-                  "tags": [
-                      "label-board:gale", "analytics_name:RLZ",
-                      "label-model:gale", "build:gale-release/R89-13729.57.2",
-                      "suite:rlz", "ctp-fwd-task-name:RLZ",
-                      "label-pool:MANAGED_POOL_QUOTA"
+      'gale_gale': {
+          'params': {
+              'decorations': {
+                  'tags': [
+                      'label-board:gale', 'analytics_name:RLZ',
+                      'label-model:gale', 'build:gale-release/R89-13729.57.2',
+                      'suite:rlz', 'ctp-fwd-task-name:RLZ',
+                      'label-pool:MANAGED_POOL_QUOTA'
                   ]
               },
-              "hardwareAttributes": {
-                  "model": "gale"
+              'hardwareAttributes': {
+                  'model': 'gale'
               },
-              "metadata": {
-                  "debugSymbolsArchiveUrl":
-                      "gs://chromeos-image-archive/gale-release/R89-13729.57.2",
-                  "testMetadataUrl":
-                      "gs://chromeos-image-archive/gale-release/R89-13729.57.2"
+              'metadata': {
+                  'debugSymbolsArchiveUrl':
+                      'gs://chromeos-image-archive/gale-release/R89-13729.57.2',
+                  'testMetadataUrl':
+                      'gs://chromeos-image-archive/gale-release/R89-13729.57.2'
               },
-              "retry": {
-                  "allow": True,
-                  "max": 3
+              'retry': {
+                  'allow': True,
+                  'max': 3
               },
-              "runViaCft": True,
-              "scheduling": {
-                  "managedPool": "MANAGED_POOL_QUOTA",
-                  "qsAccount": "legacypool-suites"
+              'runViaCft': True,
+              'scheduling': {
+                  'managedPool': 'MANAGED_POOL_QUOTA',
+                  'qsAccount': 'legacypool-suites'
               },
-              "softwareAttributes": {
-                  "buildTarget": {
-                      "name": "gale"
+              'softwareAttributes': {
+                  'buildTarget': {
+                      'name': 'gale'
                   }
               },
-              "softwareDependencies": [{
-                  "chromeosBuild": "gale-release/R89-13729.57.2"
+              'softwareDependencies': [{
+                  'chromeosBuild': 'gale-release/R89-13729.57.2'
               }],
-              "time": {
-                  "maximumDuration": "153000s"
+              'time': {
+                  'maximumDuration': '153000s'
               }
           },
-          "testPlan": {
-              "suite": [{
-                  "name": "rlz"
+          'testPlan': {
+              'suite': [{
+                  'name': 'rlz'
               }]
           }
       }

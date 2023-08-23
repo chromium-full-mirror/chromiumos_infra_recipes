@@ -216,8 +216,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
     # TODO(crbug/1012763) small bots do not work well with led launch.
     def _bad_bot_size(swarm: build_pb2.BuildInfra.Swarming) -> bool:
       for d in swarm.task_dimensions:
-        if d.key == "bot_size":
-          if d.value and d.value != "small":
+        if d.key == 'bot_size':
+          if d.value and d.value != 'small':
             return False
           break
       return True
@@ -253,7 +253,7 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
 
           # Set the buildbucket test_recipes_task_id tag.
           tag = buildbucket.bbagent_args.build.tags.add()
-          tag.key = "test_recipes_task_id"
+          tag.key = 'test_recipes_task_id'
           tag.value = my_id
 
           # Provide a unique id for testing.
@@ -559,9 +559,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     return api.step_data(
         'collect results.collect swarming tasks',
         api.swarming.collect([
-            api.swarming.task_result(id='fake-id-1', name="A swarming task",
+            api.swarming.task_result(id='fake-id-1', name='A swarming task',
                                      failure=True),
-            api.swarming.task_result(id='fake-id-2', name="Another task")
+            api.swarming.task_result(id='fake-id-2', name='Another task')
         ]))
 
   def try_build(project: str, bucket: str, builder: str) -> TestData:

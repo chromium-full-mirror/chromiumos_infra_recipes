@@ -359,10 +359,10 @@ class BuildSDKRun:
       contents_dict = self.m.key_value_store.parse_contents(
           contents, source=cros_sdk_api.REMOTE_LATEST_SDK_URI)
       presentation.properties['old_LATEST_SDK'] = contents_dict.get(
-          'LATEST_SDK', "None")
+          'LATEST_SDK', 'None')
       presentation.properties[
           'old_LATEST_SDK_UPREV_TARGET'] = contents_dict.get(
-              'LATEST_SDK_UPREV_TARGET', "None")
+              'LATEST_SDK_UPREV_TARGET', 'None')
     return contents
 
   def _pick_bucket(self, prod_bucket: str) -> str:
@@ -508,7 +508,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   RE_GSUTIL = re.compile(r'gsutil\.py$')
 
   # DEFAULT_VERSION is a parsing of the buildbucket API's default start_time.
-  DEFAULT_VERSION = "1970.01.01.000000"
+  DEFAULT_VERSION = '1970.01.01.000000'
 
   yield api.test(
       'basic',
@@ -560,17 +560,17 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       # Check the processing of the upstream latest file.
       api.post_check(
           post_process.PropertyEquals,
-          "old_LATEST_SDK",
-          "2023.03.13.222421",
+          'old_LATEST_SDK',
+          '2023.03.13.222421',
       ),
       api.post_check(
           post_process.PropertyEquals,
-          "old_LATEST_SDK_UPREV_TARGET",
-          "2023.03.14.159265",
+          'old_LATEST_SDK_UPREV_TARGET',
+          '2023.03.14.159265',
       ),
       api.post_check(
           post_process.PropertyEquals,
-          "new_LATEST_SDK_UPREV_TARGET",
+          'new_LATEST_SDK_UPREV_TARGET',
           DEFAULT_VERSION,
       ),
       # Prod builder should run prod PUpr.

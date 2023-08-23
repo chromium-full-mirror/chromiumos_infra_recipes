@@ -32,7 +32,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
-    "recipe_engine/resultdb",
+    'recipe_engine/resultdb',
     'recipe_engine/step',
     'build_menu',
     'cros_artifacts',
@@ -125,18 +125,18 @@ def RunSteps(api, properties):
     binary_sizes = {}
     if response.metrics and response.metrics.value:
       for fw_metric in response.metrics.value:
-        region_prefix = ""
+        region_prefix = ''
         if fw_metric.platform_name:
-          region_prefix += fw_metric.platform_name + "_"
+          region_prefix += fw_metric.platform_name + '_'
         if fw_metric.target_name:
-          region_prefix += fw_metric.target_name + "_"
+          region_prefix += fw_metric.target_name + '_'
         for fw_section in fw_metric.fw_section:
           if fw_section.track_on_gerrit:
             if fw_section.used:
               binary_sizes[region_prefix + fw_section.region] = fw_section.used
             if fw_section.total:
               binary_sizes[region_prefix + fw_section.region +
-                           ".budget"] = fw_section.total
+                           '.budget'] = fw_section.total
 
     if binary_sizes:
       api.easy.set_properties_step(binary_sizes=binary_sizes,
@@ -176,9 +176,9 @@ def RunSteps(api, properties):
             a for a in uploaded_artifacts[2]['FIRMWARE_TARBALL']
             if not SKIP_SIGNING_RE.match(a)
         ]:
-          archive = "gs://%s/%s/%s" % (uploaded_artifacts[0],
+          archive = 'gs://%s/%s/%s' % (uploaded_artifacts[0],
                                        uploaded_artifacts[1], artifact_name)
-          sign_image_props["archive"] = archive
+          sign_image_props['archive'] = archive
           requests.append(
               api.buildbucket.schedule_request(bucket=bucket, builder=builder,
                                                properties=sign_image_props))
@@ -216,7 +216,7 @@ def CreateTi50TastArtifacts(api, location, config):
     tast_dir = api.path.join(temp_dir, 'tast')
     tast_dir_empty = True
     download_dir = api.path.join(temp_dir, 'download')
-    api.file.ensure_directory("Create download directory", download_dir)
+    api.file.ensure_directory('Create download directory', download_dir)
     signing_re = re.compile(r'.*/ti50_Unknown_(.*).bin')
     for tar_file in tars:
       api.gsutil.download(artifacts_gs_bucket, tar_file, download_dir,
@@ -269,7 +269,7 @@ def _read_chromiumos_sdk_pin(api, properties):
 
 def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
                                       properties):
-  '''
+  """
   Whether signing for current build should be invoked.
 
   Args:
@@ -279,7 +279,7 @@ def _invoke_signing_for_current_build(builder_name, uploaded_artifacts,
 
   Returns:
     (bool): True if signing should be invoked. False otherwise.
-  '''
+  """
   valid_builder = builder_name in properties.signing_allowed_builder_names and properties.sign_image_properties
   artifact_upload_succeeded = uploaded_artifacts and len(uploaded_artifacts) > 2
   return valid_builder and artifact_upload_succeeded
@@ -320,7 +320,7 @@ def _find_files_with_suffix(api, bucket, path, suffix):
 def GenTests(api):
 
   def get_signing_image_props_for_test(is_staging=False):
-    '''
+    """
     Get SignImageProperties for test.
 
     Args:
@@ -328,15 +328,15 @@ def GenTests(api):
 
     Returns:
       (dict): SignImageProperties object as dict for testing.
-    '''
+    """
     return {
-        "image_type": 13,
-        "channel": 0,
-        "keyset": "test-keyset",
-        "signer_type": 2 if is_staging else 1,
-        "allow_non_release_signer_bucket": True,
-        "gsc_instructions": {
-            "target": 1,
+        'image_type': 13,
+        'channel': 0,
+        'keyset': 'test-keyset',
+        'signer_type': 2 if is_staging else 1,
+        'allow_non_release_signer_bucket': True,
+        'gsc_instructions': {
+            'target': 1,
         },
     }
 
@@ -458,7 +458,7 @@ def GenTests(api):
                   'name': 'amd64-generic-postsubmit',
               },
               'container_version_format':
-                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -480,7 +480,7 @@ def GenTests(api):
                   'name': 'amd64-generic-postsubmit',
               },
               'container_version_format':
-                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -504,7 +504,7 @@ def GenTests(api):
                   'name': 'amd64-generic-postsubmit',
               },
               'container_version_format':
-                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -521,7 +521,7 @@ def GenTests(api):
                   'name': 'amd64-generic-postsubmit',
               },
               'container_version_format':
-                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -548,7 +548,7 @@ def GenTests(api):
                   'name': 'amd64-generic-postsubmit',
               },
               'container_version_format':
-                  "{staging?}{build-target}-postsubmit.{cros-version}-{bbid}",
+                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

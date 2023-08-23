@@ -55,10 +55,10 @@ CROS_EXTERNAL = 'https://chromium.googlesource.com/chromiumos'
 CROS_INTERNAL = 'https://chrome-internal.googlesource.com/chromeos'
 
 # Paths to repos
-PATH_CROS_CONFIG = "src/config"
-PATH_CROS_HWID = "src/platform/chromeos-hwid"
-PATH_CROS_OVERLAYS = "src/overlays"
-PATH_CROS_OVERLAYS_PRIVATE = "src/private-overlays"
+PATH_CROS_CONFIG = 'src/config'
+PATH_CROS_HWID = 'src/platform/chromeos-hwid'
+PATH_CROS_OVERLAYS = 'src/overlays'
+PATH_CROS_OVERLAYS_PRIVATE = 'src/private-overlays'
 
 # Repo URL configuration
 PUBLIC_BASEBOARD_REPO = CROS_EXTERNAL + '/overlays/board-overlays'
@@ -157,7 +157,7 @@ def create_portage_workaround(api):
             config_paths[program]['public_baseboard'],
         ),
         dst_path=path_cros_repo.join(
-            "src/overlays/overlay-{}".format(program),
+            'src/overlays/overlay-{}'.format(program),
             config_paths[program]['public_overlay'],
         ),
     )
@@ -165,11 +165,11 @@ def create_portage_workaround(api):
     _copy_baseboard(
         step_text='[%s] configuring private baseboard overlay' % program,
         src_path=path_cros_repo.join(
-            "src/private-overlays/baseboard-{}-private".format(program),
+            'src/private-overlays/baseboard-{}-private'.format(program),
             config_paths[program]['private_baseboard'],
         ),
         dst_path=path_cros_repo.join(
-            "src/private-overlays/overlay-{}-private".format(program),
+            'src/private-overlays/overlay-{}-private'.format(program),
             config_paths[program]['private_overlay'],
         ),
     )
@@ -250,14 +250,14 @@ def config_merger(api, config, path_cros_repo, step_pres):
   def merge():
     """Execute merge operation on repo"""
 
-    path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
+    path_project_repo = path_cros_repo.join('src/project/{}/{}'.format(
         config.program_name.lower(),
         config.project_name.lower(),
     ))
 
     path_config_yaml = None
     download_dirs = download_latest_config_yaml(
-        api, "{}-postsubmit".format(config.program_name.lower()))
+        api, '{}-postsubmit'.format(config.program_name.lower()))
     if len(download_dirs) > 0:
       path_config_yaml = download_dirs[0]
 
@@ -275,7 +275,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
     if config.HasField('private_yaml'):
       path_private_yaml = path_cros_repo.join(
           PATH_CROS_OVERLAYS_PRIVATE,
-          split_overlay_project(api, config.private_yaml.repo).split("/")[-1],
+          split_overlay_project(api, config.private_yaml.repo).split('/')[-1],
           config.private_yaml.path,
       )
 
@@ -283,7 +283,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
     if config.hwid_key:
       path_hwid = path_cros_repo.join(
           PATH_CROS_HWID,
-          "v3/{}".format(config.hwid_key),
+          'v3/{}'.format(config.hwid_key),
       )
 
     with api.context(cwd=path_project_repo):
@@ -315,7 +315,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
       # Copy the HWID database.
       if config.hwid_key:
-        dst_path = path_imported.join("hwid")
+        dst_path = path_imported.join('hwid')
         api.file.copy(
             'copy HWID database',
             path_hwid,
@@ -394,9 +394,9 @@ def config_merger(api, config, path_cros_repo, step_pres):
     with api.step.nest('diffing repo to find changes'):
       changed_files = api.git.get_diff_files('HEAD')
       if changed_files:
-        step_pres.logs['changed files'] = ", ".join(changed_files)
+        step_pres.logs['changed files'] = ', '.join(changed_files)
       else:
-        step_pres.step_summary_text = "no files changed"
+        step_pres.step_summary_text = 'no files changed'
         return False
 
       # Add and commit
@@ -433,14 +433,14 @@ def backfill_project(api, config):
   project = config.project_name.lower()
 
   path_cros_repo = api.context.cwd
-  path_project_repo = path_cros_repo.join("src/project/{}/{}".format(
+  path_project_repo = path_cros_repo.join('src/project/{}/{}'.format(
       program, project))
 
-  with api.step.nest("processing {}/{}".format(program,
+  with api.step.nest('processing {}/{}'.format(program,
                                                project)) as presentation:
     if not api.path.exists(path_project_repo):
-      presentation.step_summary_text = "not checked out"
-      return BackfillStatus(True, program, project, "")
+      presentation.step_summary_text = 'not checked out'
+      return BackfillStatus(True, program, project, '')
 
     # Update the repo atomically
     with api.context(cwd=path_project_repo):
@@ -450,8 +450,8 @@ def backfill_project(api, config):
       )
 
       if not infos:
-        presentation.step_summary_text = "not in manifest"
-        return BackfillStatus(True, program, project, "")
+        presentation.step_summary_text = 'not in manifest'
+        return BackfillStatus(True, program, project, '')
 
       project_info = infos[0]
       updated = api.git_txn.update_ref(
@@ -461,16 +461,16 @@ def backfill_project(api, config):
           dry_run=api.cros_infra_config.is_staging,
       )
 
-      commit_hash = ""
+      commit_hash = ''
       if updated:
         commit_hash = api.git.head_commit()
 
         # don't actually link to commit in staging (because it doesn't exist)
         if api.cros_infra_config.is_staging:
-          presentation.step_summary_text = "[%s]" % commit_hash[:8]
+          presentation.step_summary_text = '[%s]' % commit_hash[:8]
         else:
-          url = api.git.remote_url(project_info.remote) + "/+/" + commit_hash
-          presentation.step_summary_text = "[%s](%s)" % (commit_hash[:8], url)
+          url = api.git.remote_url(project_info.remote) + '/+/' + commit_hash
+          presentation.step_summary_text = '[%s](%s)' % (commit_hash[:8], url)
 
       return BackfillStatus(False, program, project, commit_hash)
 
@@ -489,14 +489,14 @@ def format_output_markdown(commits, errors, nmissing):
 
   # create summary markdown
   COMMIT_TEMPLATE = \
-    "- {program}/{project} [{commit_short}]("                      \
-      "https://chrome-internal.googlesource.com/chromeos/project/" \
-      "{program}/{project}/+/{commit_sha}"                         \
-    ")"
+    '- {program}/{project} [{commit_short}]('                      \
+      'https://chrome-internal.googlesource.com/chromeos/project/' \
+      '{program}/{project}/+/{commit_sha}'                         \
+    ')'
 
-  lines = [""]
+  lines = ['']
   if commits:
-    lines = ["{} changes made".format(len(commits))]
+    lines = ['{} changes made'.format(len(commits))]
     for commit in sorted(commits):
       program, project, commit_sha = commit
       lines.append(
@@ -507,16 +507,16 @@ def format_output_markdown(commits, errors, nmissing):
               commit_sha=commit_sha,
           ),
       )
-    lines.append("")
+    lines.append('')
 
   if errors:
-    lines.append("{} errors".format(len(errors)))
+    lines.append('{} errors'.format(len(errors)))
     for error in errors:
-      lines.append("- {}".format(error))
-    lines.append("")
+      lines.append('- {}'.format(error))
+    lines.append('')
 
   if nmissing > 0:
-    lines.append("{} missing from manifest".format(nmissing))
+    lines.append('{} missing from manifest'.format(nmissing))
 
   # Truncate the list of failures per section to keep the summary under
   # Buildbucket's 4000 byte limit on the summary_markdown field.
@@ -540,7 +540,7 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache()
 
     with api.context(cwd=api.cros_source.workspace_path):
-      with api.step.nest("create portage workaround symlinks"):
+      with api.step.nest('create portage workaround symlinks'):
         create_portage_workaround(api)
 
       # run backfill
@@ -684,7 +684,7 @@ def GenTests(api):
 
   yield api.test(
       'buildbucket-search-result',
-      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.buildbucket.generic_build(builder='staging-backfiller'),
       api.properties(
           **{
               'configs': [{
@@ -719,7 +719,7 @@ def GenTests(api):
 
   yield api.test(
       'no-buildbucket-search-result',
-      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.buildbucket.generic_build(builder='staging-backfiller'),
       api.properties(
           **{
               'configs': [{
@@ -743,7 +743,7 @@ def GenTests(api):
 
   yield api.test(
       'incomplete-buildbucket-search-result',
-      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.buildbucket.generic_build(builder='staging-backfiller'),
       api.properties(
           **{
               'configs': [{
@@ -767,7 +767,7 @@ def GenTests(api):
 
   yield api.test(
       'no-buildbucket-artifacts-search-result',
-      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.buildbucket.generic_build(builder='staging-backfiller'),
       api.properties(
           **{
               'configs': [{
@@ -791,7 +791,7 @@ def GenTests(api):
 
   yield api.test(
       'staging-no-commit',
-      api.buildbucket.generic_build(builder="staging-backfiller"),
+      api.buildbucket.generic_build(builder='staging-backfiller'),
       api.properties(
           **{
               'configs': [{
@@ -808,10 +808,10 @@ def GenTests(api):
       mock_workspace_path('src/project/test_program/test_project'),
       api.post_process(
           post_process.StepCommandContains,
-          "processing test_program/test_project"
-          ".update ref.git transaction"
-          ".git push",
-          ["git", "push", "--dry-run"],
+          'processing test_program/test_project'
+          '.update ref.git transaction'
+          '.git push',
+          ['git', 'push', '--dry-run'],
       ),
   )
 

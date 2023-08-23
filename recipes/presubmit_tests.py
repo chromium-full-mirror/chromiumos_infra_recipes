@@ -75,7 +75,7 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
   with api.step.nest('validate inputs') as presentation:
     # If there are no gerrit_changes, we're done.
     if not gerrit_changes:
-      presentation.step_text = "No changes given:  Build is POINTLESS."
+      presentation.step_text = 'No changes given:  Build is POINTLESS.'
       return
 
   # Some of the repos (e.g., crostools) reach into other repos in presubmit

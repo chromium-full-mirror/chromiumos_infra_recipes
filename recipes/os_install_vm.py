@@ -243,24 +243,24 @@ Partition name: 'ROOT-B'
   }
 
   success_json = [{
-      "name": "osinstall.OsInstall",
-      "pkg": "chromiumos/tast/remote/bundles/osinstall",
-      "additionalTime": 30000000000,
-      "desc": "Description",
-      "contacts": ["someone@chromium.org"],
-      "attr": ["name:osinstall.OsInstall", "bundle:cros", "dep:chrome"],
-      "data": None,
-      "softwareDeps": ["chrome"],
-      "timeout": 300000000000,
-      "errors": None,
-      "start": "2022-05-17T10:11:00.989201834-05:00",
-      "end": "2022-05-17T10:21:01.285837834-05:00",
-      "outDir": "/tmp/vm-test-results.GyXptL/tests/osinstall.OsInstall",
-      "skipReason": ""
+      'name': 'osinstall.OsInstall',
+      'pkg': 'chromiumos/tast/remote/bundles/osinstall',
+      'additionalTime': 30000000000,
+      'desc': 'Description',
+      'contacts': ['someone@chromium.org'],
+      'attr': ['name:osinstall.OsInstall', 'bundle:cros', 'dep:chrome'],
+      'data': None,
+      'softwareDeps': ['chrome'],
+      'timeout': 300000000000,
+      'errors': None,
+      'start': '2022-05-17T10:11:00.989201834-05:00',
+      'end': '2022-05-17T10:21:01.285837834-05:00',
+      'outDir': '/tmp/vm-test-results.GyXptL/tests/osinstall.OsInstall',
+      'skipReason': ''
   }]
 
   failure_json = copy.deepcopy(success_json)
-  failure_json[0]['errors'] = [{"reason": "installer is broken"}]
+  failure_json[0]['errors'] = [{'reason': 'installer is broken'}]
 
   def make_results_jsonl(src: List[str]) -> StepTestData:
     jsonl = '\n'.join(api.json.dumps(x) for x in src)

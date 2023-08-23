@@ -42,7 +42,7 @@ def RunSteps(api: RecipeApi, properties: RoboCropProperties):
       pres.logs['gce_config'] = jsonpb.MessageToJson(gce_config)
       if gce_config_tuple.missing_configs:
         pres.status = api.step.FAILURE
-        pres.step_summary_text = "No config found for prefix(s): {}".format(
+        pres.step_summary_text = 'No config found for prefix(s): {}'.format(
             ','.join(gce_config_tuple.missing_configs))
     with api.step.nest('update bot policies') as pres:
       updated_bot_policy = api.bot_scaling.update_bot_policy_limits(

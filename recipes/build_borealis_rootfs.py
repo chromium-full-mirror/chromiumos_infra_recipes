@@ -103,7 +103,7 @@ def DoRunSteps(api: RecipeApi,
     version = api.time.utcnow().strftime('%Y.%m.%d.%H%M%S')
     if properties.manifest_branch:
       # Extract the version number from the provided manifest branch
-      milestone_number_regex = r"^release-R([0-9]+)-"
+      milestone_number_regex = r'^release-R([0-9]+)-'
       match = re.search(milestone_number_regex, properties.manifest_branch)
       milestone_number = match.group(1)
       # Prepend the milestone into the version in a way ebuilds can uprev

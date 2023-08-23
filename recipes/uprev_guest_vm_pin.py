@@ -177,7 +177,7 @@ def CopyPostsubmitImage(api: RecipeApi, board: str, build: Build,
     build_artifact_bucket = str(
         build.output.properties['artifacts']['gs_bucket'])
     build_artifact_path = str(build.output.properties['artifacts']['gs_path'])
-    src_path = '{}/{}'.format(build_artifact_path, "image.zip")
+    src_path = '{}/{}'.format(build_artifact_path, 'image.zip')
     api.gsutil.download(build_artifact_bucket, src_path, './')
     api.archive.extract('unzip image archive',
                         api.context.cwd.join('image.zip'),
@@ -196,7 +196,7 @@ def CopyPostsubmitImage(api: RecipeApi, board: str, build: Build,
     dst_bucket = vm_property_map[board].destination_gs_bucket
     dst_path = '{}/{}/'.format(vm_property_map[board].destination_gs_path,
                                sanitized_version)
-    api.gsutil.upload("*.tbz", dst_bucket, dst_path)
+    api.gsutil.upload('*.tbz', dst_bucket, dst_path)
 
 
 def CopyReleaseImage(api: RecipeApi, board: str, build: Build,

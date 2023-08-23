@@ -93,8 +93,8 @@ class FirmwareBuilder():
     # If not specified, default to building virtual/chromeos-firmware.
     if not properties.packages:
       pkg = properties.packages.add()
-      pkg.category = "virtual"
-      pkg.package_name = "chromeos-firmware"
+      pkg.category = 'virtual'
+      pkg.package_name = 'chromeos-firmware'
 
     # We may have been passed properties.build_target.
     if not properties.build_targets and properties.build_target.name:
@@ -318,7 +318,7 @@ class FirmwareBuilder():
 
   def _setup_board_and_install_packages(self, build_target):
     board = build_target.name
-    with self.m.step.nest("build {}".format(board)):
+    with self.m.step.nest('build {}'.format(board)):
       board_arg = '--board={}'.format(board)
       if self._old_setup_board:
         cmd = [
@@ -594,7 +594,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket="chromeos-image-archive",
+                  artifacts_gs_bucket='chromeos-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -621,9 +621,9 @@ def GenTests(api):
       api.post_check(post_process.StepCommandDoesNotContain,
                      'upload artifacts.create firmware archive.create tarball',
                      [
-                         "-C",
-                         "/build/target/usr/share/chromeos-config/yaml",
-                         "config.yaml",
+                         '-C',
+                         '/build/target/usr/share/chromeos-config/yaml',
+                         'config.yaml',
                      ]),
       input_properties={
           'bump_version': True,
@@ -641,7 +641,7 @@ def GenTests(api):
                                   bucket='firmware'),
               artifacts=BuilderConfig.Artifacts(
                   attestation_eligible=True,
-                  artifacts_gs_bucket="chromeos-image-archive",
+                  artifacts_gs_bucket='chromeos-image-archive',
                   artifacts_info=common_pb2.ArtifactsByService(
                       firmware=common_pb2.ArtifactsByService
                       .Firmware(output_artifacts=[
@@ -668,9 +668,9 @@ def GenTests(api):
       api.post_check(post_process.StepCommandContains,
                      'upload artifacts.create firmware archive.create tarball',
                      [
-                         "-C",
-                         "/build/target/usr/share/chromeos-config/yaml",
-                         "config.yaml",
+                         '-C',
+                         '/build/target/usr/share/chromeos-config/yaml',
+                         'config.yaml',
                      ]),
       input_properties={
           'bump_version': True,

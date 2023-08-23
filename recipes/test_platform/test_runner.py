@@ -169,7 +169,7 @@ def validate_request(api, test):
     """
   with api.step.nest('validate request'):
     if not test.autotest.name:
-      raise StepFailure("Test name must be specified")
+      raise StepFailure('Test name must be specified')
 
 
 def archive_all_logs(api, interface, test_metadata, result):
@@ -222,18 +222,18 @@ def summarize_results_from_phosphorus_results(api, result):
               failure_condition=test_case.verdict !=
               Result.Autotest.TestCase.VERDICT_PASS)
       if result.is_test_incomplete():
-        _set_step_status(api=api, step_name="autoserv",
+        _set_step_status(api=api, step_name='autoserv',
                          summary=error_messages.AUTOSERV_CRASH)
     if not result.is_failure():
       if result.prejob_response.is_failure():
         _set_step_status(
-            api=api, step_name="prejob execution",
+            api=api, step_name='prejob execution',
             summary=error_messages.UNSUCCESSFUL_STATE.format(
                 result.prejob_response.get_state_name()))
       for failed_test in result.get_failed_tests():
         _set_step_status(
             api=api,
-            step_name="test execution for test: {}".format(failed_test.test_id),
+            step_name='test execution for test: {}'.format(failed_test.test_id),
             summary=error_messages.UNSUCCESSFUL_STATE.format(
                 failed_test.get_state_name()))
 
@@ -498,7 +498,7 @@ def _convert_to_task_request_id(swarming_task_run_id):
   if not swarming_task_run_id:
     return ''
 
-  return swarming_task_run_id[:-1] + "0"
+  return swarming_task_run_id[:-1] + '0'
 
 
 def _generate_resultdb_base_tags(api, properties, test_metadata,
@@ -1298,7 +1298,7 @@ def _get_context_deadline(api, limit_seconds, step):
   deadline.soft_deadline = builder_deadline if builder_deadline < deadline.soft_deadline else deadline.soft_deadline
 
   step.presentation.logs[
-      'result upload deadline info'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (
+      'result upload deadline info'] = 'start: %s\nend: %s\ntotal_seconds: %s\n' % (
           _format_time(current_time), _format_time(
               deadline.soft_deadline), str(limit_seconds))
 
@@ -1351,17 +1351,17 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
           # is faillure.
           if result is not None:
             if result.prejob_response.is_failure():
-              s_log(post_step, "summary",
-                    "ile-de-france: skipped as provision failed")
+              s_log(post_step, 'summary',
+                    'ile-de-france: skipped as provision failed')
               repair_requests = ['REPAIR_REQUEST_PROVISION']
             else:
               dut_state = api.labpack.execute_ile_de_france(
                   common_config=properties.common_config, dut_state=dut_state)
           else:
-            s_log(post_step, "summary",
-                  "ile-de-france: skipped as results is None")
+            s_log(post_step, 'summary',
+                  'ile-de-france: skipped as results is None')
             repair_requests = ['REPAIR_REQUEST_PROVISION']
-          s_log(post_step, "repair_requests", '%s' % repair_requests)
+          s_log(post_step, 'repair_requests', '%s' % repair_requests)
           interface.save_and_seal_skylab_local_state(dut_state, test_metadata,
                                                      repair_requests)
 
@@ -1379,7 +1379,7 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
       # potential misfiled bugs.
       step.presentation.staus = api.step.FAILURE
       e = StepFailure(
-          "Result upload execution timelimit of %.1f hours reached" %
+          'Result upload execution timelimit of %.1f hours reached' %
           (_RESULT_PUBLISHING_LIMIT / HOUR))
 
     # Regardless of the error we'd like to set the output properties. They
@@ -1470,7 +1470,7 @@ def execution_steps_with_phosphorus(api, properties):
         validate_request(api, test)
         if 'build' in test.autotest.keyvals and test.autotest.keyvals[
             'build'].startswith('betty'):
-          raise api.step.StepFailure("VMTest should go through CFT.")
+          raise api.step.StepFailure('VMTest should go through CFT.')
         test_metadata = interface.build_test_metadata(test_id, test)
         # Needs to be distinct per test as logs are uploaded for each test separately.
         repair_requests = ['REPAIR_REQUEST_PROVISION']
@@ -1555,7 +1555,7 @@ def execution_steps_with_ctr(api, properties):
     publish_to_result_flow(api, properties.config,
                            properties.cft_test_request.parent_request_uid)
     test_metadata = interface.build_test_metadata(
-        "original_test", "", properties.cft_test_request.autotest_keyvals)
+        'original_test', '', properties.cft_test_request.autotest_keyvals)
 
     repair_requests = ['REPAIR_REQUEST_PROVISION']
     interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata,
@@ -1575,12 +1575,12 @@ def execution_steps_with_ctr(api, properties):
           test_metadata=test_metadata, max_duration_sec=max_duration_sec,
           dut_state=dut_state, container_image_info=None, step=step)
 
-      global_result.add_result("original_test", result)
+      global_result.add_result('original_test', result)
     else:
       prejob_response = interface.build_aborted_prejob_response(test_metadata)
       result = interface.parse_test_results(test_metadata)
       result.add_prejob_response(prejob_response)
-      global_result.add_result("original_test", result)
+      global_result.add_result('original_test', result)
 
   return global_result
 
@@ -1615,7 +1615,7 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
   result_for_output_props = None
   run_test_response = None
   run_test_resp_for_output_props = None
-  results_dir = ""
+  results_dir = ''
 
   try:
     prejob_response = interface.submit_pre_job(test_metadata, max_duration_sec)
@@ -1746,7 +1746,7 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
             ]
             if failure_reason not in ok_reasons:
               repair_requests = ['REPAIR_REQUEST_PROVISION']
-          s_log(post_step, "repair_request", "%s" % repair_requests)
+          s_log(post_step, 'repair_request', '%s' % repair_requests)
           interface.save_and_seal_skylab_local_state(
               dut_state, test_metadata, repair_requests=repair_requests)
 
@@ -1760,12 +1760,12 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
             # .../cros-test/artifacts/tauto/, not its sub directory.
             api.cts_results_archive.archive(os.path.dirname(results_dir))
           if provision_failed:
-            s_log(post_step, "ile-de-france", "running")
+            s_log(post_step, 'ile-de-france', 'running')
             dut_state = api.labpack.execute_ile_de_france(
                 common_config=properties.common_config, dut_state=dut_state)
             interface.save_and_seal_skylab_local_state(dut_state, test_metadata)
           else:
-            s_log(post_step, "ile-de-france", "intentionally skipped")
+            s_log(post_step, 'ile-de-france', 'intentionally skipped')
 
           publish_to_result_flow(api, properties.config,
                                  properties.cft_test_request.parent_request_uid,
@@ -1781,7 +1781,7 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
       # potential misfiled bugs.
       step.presentation.staus = api.step.FAILURE
       e = StepFailure(
-          "Result upload execution timelimit of %.1f hours reached" %
+          'Result upload execution timelimit of %.1f hours reached' %
           (_RESULT_PUBLISHING_LIMIT / HOUR))
 
     # Regardless of the error we'd like to set the output properties. They
@@ -1818,7 +1818,7 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
 
     # Default values
     prejob_verdict = Result.Prejob.Step.VERDICT_FAIL
-    prejob_reason = ""
+    prejob_reason = ''
     is_incomplete = True
     test_verdict = Result.Autotest.TestCase.VERDICT_NO_VERDICT
     log_data = TaskLogData()
@@ -1865,7 +1865,7 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
             Result.Prejob.Step(name='provision', verdict=prejob_verdict,
                                human_readable_summary=prejob_reason)
         ]), autotest_result=autotest_result,
-        autotest_results={"original_test": autotest_result},
+        autotest_results={'original_test': autotest_result},
         state_update=Result.StateUpdate(dut_state=dut_state), log_data=log_data)
     s_log(step, 'skylab_result', json_format.MessageToJson(skylab_result))
     return skylab_result
@@ -1888,12 +1888,12 @@ def summarize_results_from_ctr_results(api, result):
         s_link(step=step, name='Logs in Stainless',
                link=result.get_stainless_log_url())
     for prejob in result.get_prejob_steps():
-      _set_step_status(api=api, step_name="provision of " + prejob.test_id,
-                       summary="", failure_condition=prejob.is_failure())
+      _set_step_status(api=api, step_name='provision of ' + prejob.test_id,
+                       summary='', failure_condition=prejob.is_failure())
     for test_result in result.get_test_results():
       if test_result.is_skipped():
         continue
-      _set_step_status(api=api, step_name=test_result.test_id, summary="",
+      _set_step_status(api=api, step_name=test_result.test_id, summary='',
                        failure_condition=test_result.is_failure())
 
 
@@ -1928,15 +1928,15 @@ def _get_prejob_failure_reason_from_ctr_results(ctr_result):
       * ctr_result (DUTResult): The result of all tests.
     """
   if not ctr_result:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not ctr_result.prejob_response:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not ctr_result.prejob_response.prejob_dut_responses:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not ctr_result.prejob_response.prejob_dut_responses[0].data:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not ctr_result.prejob_response.prejob_dut_responses[0].data.failure:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
 
   return ctr_api.provision_service.InstallFailure.Reason.Name(
       ctr_result.prejob_response.prejob_dut_responses[0].data.failure.reason)
@@ -1951,11 +1951,11 @@ def _get_failure_reason_from_test_result(test_result):
     """
 
   if not test_result:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not test_result.data:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
   if not test_result.data.reason:
-    return ""  # pragma: nocover
+    return ''  # pragma: nocover
 
   return test_result.data.reason
 
@@ -1982,7 +1982,7 @@ def _trv2_post_processing(api):
     """
   with api.step.nest('Post processing test results') as step:  # pragma: nocover
     dirs = api.file.glob_paths(
-        "List test results directories for CTS archiver", api.path['start_dir'],
+        'List test results directories for CTS archiver', api.path['start_dir'],
         os.path.join('**', 'cros-test', 'results', 'tauto'))
     if len(dirs) == 0:
       s_log(step, 'Skip processing', 'No directories found, skip CTS archiving')
@@ -2113,7 +2113,7 @@ def GenTests(api):
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read autotest keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
@@ -2137,13 +2137,13 @@ tast_missing_test.0=foo.SomeTest
 tast_missing_test.1=foo.SomeOtherTest
 tast_missing_test.2=bar.DifferentTest
 tast_missing_test.3=bar.YetAnotherTest
-    """))
+    '''))
 
   def _autotest_keyval_file_step_data_no_timestamps():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read autotest keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
@@ -2162,13 +2162,13 @@ tast_missing_test.0=foo.SomeTest
 tast_missing_test.1=foo.SomeOtherTest
 tast_missing_test.2=bar.DifferentTest
 tast_missing_test.3=bar.YetAnotherTest
-    """))
+    '''))
 
   def _crossystem_keyval_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read crossystem keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 fw_prev_result          = success                        # [RO/str] Firmware result of previous boot
 fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)
 fw_result               = success                        # [RW/str] Firmware result this boot
@@ -2181,13 +2181,13 @@ fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmw
 fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)
 hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
-    """))
+    '''))
 
   def _gsctool_keyval_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read gsctool keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 start
 target running protocol version 6
 keyids: RO 0xc7d40497, RW 0xfba25ca9
@@ -2195,34 +2195,34 @@ offsets: backup RO at 0, backup RW at 0x4000
 Current versions:
 RO 0.0.38
 RW 0.24.13
-    """))
+    '''))
 
   def _servo_keyval_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read servo keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af
 servo_host_os_version=fizz-labstation-release/R114-15437.59.0
 servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9
 servo_type=servo_v4_with_servo_micro_and_ccd_cr50
 servo_v4_version.root=servo_v4_v2.4.58-c37246f9c
 servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43
-    """))
+    '''))
 
   def _kernel_log_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read kernel log file',
-        api.file.read_text("""
+        api.file.read_text('''
 Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
-  """))
+  '''))
 
   def _tast_test_result_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read test results from streamed_results.jsonl',
-        api.file.read_text("""
+        api.file.read_text('''
 {
    "name":"crostini.SSHFSMount.bullseye_stable",
    "pkg":"chromiumos/tast/local/bundles/cros/crostini",
@@ -2253,13 +2253,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
    "outDir":"/usr/local/autotest/results/lxc_job_folder/tast/results/tests/crostini.SSHFSMount.bullseye_stable",
    "skipReason":""
 }
-    """))
+    '''))
 
   def _tauto_test_result_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read test results from test_runner_result.json',
-        api.file.read_text("""
+        api.file.read_text('''
 {
   "autotest_result": {
     "test_cases": [
@@ -2286,13 +2286,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     "dut_state": "ready"
   }
 }
-    """))
+    '''))
 
   def _autotest_wrapper_tast_result_file_step_data():
     return api.step_data(
         'execution steps.original_test.' + RESULTDB_UPLOAD_STEP +
         '.read test results from autotest_wrapper_tast_result.json',
-        api.file.read_text("""
+        api.file.read_text('''
 {
   "autotest_result": {
     "test_cases": [
@@ -2319,7 +2319,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     "dut_state": "ready"
   }
 }
-    """))
+    '''))
 
   # Required for initial module set up.
   def _misc_properties(cft_is_enabled=False, use_result_publishing_limit=False,
@@ -2547,24 +2547,24 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                         'test_args':
                             'foo=bar',
                         'keyvals': {
-                            "branch":
-                                "main",
-                            "build":
-                                "bob-release/R102-14637.0.0",
-                            "build_config":
-                                "bob-release",
-                            "cidb_build_id":
-                                "5141110",
-                            "datastore_parent_key":
+                            'branch':
+                                'main',
+                            'build':
+                                'bob-release/R102-14637.0.0',
+                            'build_config':
+                                'bob-release',
+                            'cidb_build_id':
+                                '5141110',
+                            'datastore_parent_key':
                                 "('Build', 5141110)",
-                            "label":
-                                "bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess",
-                            "master_build_config":
-                                "master-release",
-                            "parent_job_id":
-                                "59dfe8555444e811",
-                            "suite":
-                                "bvt-tast-informational"
+                            'label':
+                                'bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess',
+                            'master_build_config':
+                                'master-release',
+                            'parent_job_id':
+                                '59dfe8555444e811',
+                            'suite':
+                                'bvt-tast-informational'
                         },
                         'is_client_test':
                             True,
@@ -2727,7 +2727,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   ######## CFT MVP Testing related functions ############
 
-  def mock_metadata(target="test-target"):
+  def mock_metadata(target='test-target'):
     metadata = container_metadata.ContainerMetadata(
         containers={
             target:
@@ -2760,56 +2760,56 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _canned_test_runner_request_for_ctr():
     return {
-        "parent_build_id": 12345,
-        "primary_dut": {
-            "container_metadata_key": "kevin",
-            "dut_model": {
-                "build_target": "kevin",
-                "model_name": "kevin"
+        'parent_build_id': 12345,
+        'primary_dut': {
+            'container_metadata_key': 'kevin',
+            'dut_model': {
+                'build_target': 'kevin',
+                'model_name': 'kevin'
             },
-            "provision_state": {
-                "system_image": {
-                    "system_image_path": {
-                        "host_type":
-                            "GS",
-                        "path":
-                            "gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000",
+            'provision_state': {
+                'system_image': {
+                    'system_image_path': {
+                        'host_type':
+                            'GS',
+                        'path':
+                            'gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000',
                     },
                 },
             },
         },
-        "test_suites": [{
-            "name": "suite1",
-            "test_case_ids": {
-                "test_case_ids": [{
-                    "value": "tauto.stub_Pass"
+        'test_suites': [{
+            'name': 'suite1',
+            'test_case_ids': {
+                'test_case_ids': [{
+                    'value': 'tauto.stub_Pass'
                 }, {
-                    "value": "tast.example.Fail"
+                    'value': 'tast.example.Fail'
                 }, {
-                    "value": "tast.example.Pass"
+                    'value': 'tast.example.Pass'
                 }]
             }
         }],
-        "container_metadata": mock_metadata(),
-        "autotest_keyvals": {
-            "branch":
-                "main",
-            "build":
-                "bob-release/R102-14637.0.0",
-            "build_config":
-                "bob-release",
-            "cidb_build_id":
-                "5141110",
-            "datastore_parent_key":
+        'container_metadata': mock_metadata(),
+        'autotest_keyvals': {
+            'branch':
+                'main',
+            'build':
+                'bob-release/R102-14637.0.0',
+            'build_config':
+                'bob-release',
+            'cidb_build_id':
+                '5141110',
+            'datastore_parent_key':
                 "('Build', 5141110)",
-            "label":
-                "bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess",
-            "master_build_config":
-                "master-release",
-            "parent_job_id":
-                "59dfe8555444e811",
-            "suite":
-                "bvt-tast-informational"
+            'label':
+                'bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess',
+            'master_build_config':
+                'master-release',
+            'parent_job_id':
+                '59dfe8555444e811',
+            'suite':
+                'bvt-tast-informational'
         }
     }
 
@@ -2849,18 +2849,18 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                                                     model='fake_model'),
                     ], lab_dut_topology=[
                         lab_api.dut.DutTopology(
-                            id=lab_api.dut.DutTopology.Id(value="fake_host"),
+                            id=lab_api.dut.DutTopology.Id(value='fake_host'),
                             duts=[
                                 lab_api.dut.Dut(
-                                    id=lab_api.dut.Dut.Id(value="fake_host"),
+                                    id=lab_api.dut.Dut.Id(value='fake_host'),
                                     cache_server=lab_api.dut.CacheServer(
                                         address=IpEndpoint(
-                                            address="0.0.0.0", port=123)),
+                                            address='0.0.0.0', port=123)),
                                     chromeos=lab_api.dut.Dut.ChromeOS(
                                         dut_model=lab_api.dut.DutModel(
-                                            build_target="fake_board",
-                                            model_name="fake_model"),
-                                        ssh=IpEndpoint(address="fake_host",
+                                            build_target='fake_board',
+                                            model_name='fake_model'),
+                                        ssh=IpEndpoint(address='fake_host',
                                                        port=0)))
                             ])
                     ])))))
@@ -2886,7 +2886,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _provision_resp_with_state_for_ctr(state, failure_reason=None):
     provision_resp = ctr_api.cros_provision_cli.CrosProvisionResponse(
-        id=lab_api.dut.Dut.Id(value="test_dut_host_name"))
+        id=lab_api.dut.Dut.Id(value='test_dut_host_name'))
     data = {state: {}}
     if state == 'failure' and failure_reason:
       data['failure']['reason'] = failure_reason
@@ -2918,11 +2918,11 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   def _test_case_result_resp_with_state_for_ctr(state, has_result_dir=True):
     test_case_result = ctr_api.test_case_result.TestCaseResult(
-        test_case_id=ctr_api.test_case.TestCase.Id(value="tauto.dummy_id"),
+        test_case_id=ctr_api.test_case.TestCase.Id(value='tauto.dummy_id'),
         result_dir_path=StoragePath(
             host_type=StoragePath.HostType.LOCAL,
-            path="dummy-results-dir/subdir" if has_result_dir else ""),
-        reason="reason", start_time=timestamp_pb2.Timestamp(seconds=2369692800),
+            path='dummy-results-dir/subdir' if has_result_dir else ''),
+        reason='reason', start_time=timestamp_pb2.Timestamp(seconds=2369692800),
         duration=duration_pb2.Duration(seconds=3600))
     data = {state: {}}
     return json_format.ParseDict(data, test_case_result)
@@ -2930,7 +2930,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   def _crossystem_keyval_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read crossystem keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 fw_prev_result          = success                        # [RO/str] Firmware result of previous boot
 fw_prev_tried           = B                              # [RO/str] Firmware tried on previous boot (A or B)
 fw_result               = success                        # [RW/str] Firmware result this boot
@@ -2943,12 +2943,12 @@ fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmw
 fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)
 hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID
 ro_fwid                 = Google_Voema.13672.224.0       # [RO/str] Read-only firmware ID
-    """))
+    '''))
 
   def _gsctool_keyval_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read gsctool keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 start
 target running protocol version 6
 keyids: RO 0xc7d40497, RW 0xfba25ca9
@@ -2956,26 +2956,26 @@ offsets: backup RO at 0, backup RW at 0x4000
 Current versions:
 RO 0.0.38
 RW 0.24.13
-    """))
+    '''))
 
   def _servo_keyval_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read servo keyval file',
-        api.file.read_text("""
+        api.file.read_text('''
 ccd_cr50_version.ccd_flex_secondary=0.6.190/cr50_v3.94_pp.192-3677cf40af
 servo_host_os_version=fizz-labstation-release/R114-15437.59.0
 servo_micro_version.main=servo_micro_v2.4.73-d771c18ba9
 servo_type=servo_v4_with_servo_micro_and_ccd_cr50
 servo_v4_version.root=servo_v4_v2.4.58-c37246f9c
 servod_version=v1.0.1732-67007a28 2023-06-20 19:22:43
-    """))
+    '''))
 
   def _kernel_log_file_step_data_for_ctr():
     return api.step_data(
         'execution steps.read kernel log file',
-        api.file.read_text("""
+        api.file.read_text('''
 Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 PDT 2022 x86_64 Intel(R) Core(TM) i7-7Y75 CPU @ 1.30GHz GenuineIntel GNU/Linux
-    """))
+    '''))
 
   ########## Test cases #########
 
@@ -4157,7 +4157,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
 
   fetch_crashes_proto = phosphorus.fetchcrashes.FetchCrashesResponse(
       state=phosphorus.runtest.RunTestResponse.SUCCEEDED,
-      crashes_rtd_only=["foobar.meta"])
+      crashes_rtd_only=['foobar.meta'])
   yield api.test(
       'successful-fetchcrashes-with-missed-crashes',
       _set_build(bid=42),

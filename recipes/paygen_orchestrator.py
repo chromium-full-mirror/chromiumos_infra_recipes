@@ -212,7 +212,7 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
     # Buildbucket's 4000 byte limit on the summary_markdown field.
     # To be removed when https://crbug.com/1063398 is resolved.
     if len(summary_markdown) >= 4000:
-      summary_markdown = summary_markdown[:3995] + "\n..."
+      summary_markdown = summary_markdown[:3995] + '\n...'
     # Give a failure markdown with the failed paygen jobs.
     return result_pb2.RawResult(
         status=common_pb2.INFRA_FAILURE if infra_fail else common_pb2.FAILURE,
@@ -258,213 +258,213 @@ def GenTests(api: RecipeTestApi):
     paygen_child_data = build_pb2.Build(id=8922054662172514000 + child_num,
                                         status='SUCCESS')
     paygen_child_data.output.properties['payloads'] = [{
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }, {
-        "appid": "appid",
-        "channel": "CHANNEL_CANARY",
-        "metadataSignature": "signature",
-        "metadataSize": "1337",
-        "payload": {
-            "sha256": "deadbeef",
-            "type": "PAYLOAD_DELTA",
-            "uri": {
-                "gcs": "gs://path/to/payload"
+        'appid': 'appid',
+        'channel': 'CHANNEL_CANARY',
+        'metadataSignature': 'signature',
+        'metadataSize': '1337',
+        'payload': {
+            'sha256': 'deadbeef',
+            'type': 'PAYLOAD_DELTA',
+            'uri': {
+                'gcs': 'gs://path/to/payload'
             }
         },
-        "payloadType": "PAYLOAD_TYPE_STANDARD",
-        "size": "1234",
-        "sourceVersion": "1.2.3",
-        "targetVersion": "4.5.6"
+        'payloadType': 'PAYLOAD_TYPE_STANDARD',
+        'size': '1234',
+        'sourceVersion': '1.2.3',
+        'targetVersion': '4.5.6'
     }]
 
     paygen_child_data.input.properties['requests'] = [

@@ -82,7 +82,7 @@ def _CommitChanges(api: RecipeApi) -> None:
   This function expects to be run from the cwd that you want to commit the
   changes for."""
   project = api.repo.project_info(project=api.git.repository_root())
-  with api.step.nest("commit dlc changes"):
+  with api.step.nest('commit dlc changes'):
     # Create our local branch.
     branch = 'uprev-kabuto-dlc'
     api.repo.start(branch, projects=[project.name])
@@ -134,7 +134,7 @@ def DoRunSteps(api: RecipeApi,
       'src/private-overlays/chromeos-partner-overlay')
   with api.context(cwd=partner_overlay_path), api.depot_tools.on_path():
     # A bit of debugging output to make issues easier to spot.
-    with api.step.nest("private-overlay git info"):
+    with api.step.nest('private-overlay git info'):
       api.step('git status', ['git', 'status'])
       api.step('git diff', ['git', 'diff'])
 
@@ -146,7 +146,7 @@ def DoRunSteps(api: RecipeApi,
 def GenTests(api: RecipeTestApi) -> None:
   good_props = {
       'uprev_info':
-          "{\"mesa_hash\": {\"volteer\": \"e1d21f72c12a3f9c8b84bcc55fd88b0849253523\", \"brya\": \"af3d0ce62bff0c7b567d07b7eee15a7668e35ab8\", \"guybrush\": \"a9c55e47e3254e976284695ae7c73b76b3c7113b\"}, \"game_id_to_board\": {}}",
+          '{"mesa_hash": {"volteer": "e1d21f72c12a3f9c8b84bcc55fd88b0849253523", "brya": "af3d0ce62bff0c7b567d07b7eee15a7668e35ab8", "guybrush": "a9c55e47e3254e976284695ae7c73b76b3c7113b"}, "game_id_to_board": {}}',
   }
 
   yield api.test(

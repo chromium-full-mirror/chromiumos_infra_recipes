@@ -269,7 +269,7 @@ def enumerate_tests(api, requests, error_in_requests):
   }
   # Fail build if no valid requests are found.
   if not (non_cft_requests or cft_requests):
-    raise api.step.StepFailure("No valid request found")
+    raise api.step.StepFailure('No valid request found')
 
   non_cft_enums = _enumerate_non_cft_tests(api, non_cft_requests)
   cft_enums = _enumerate_cft_tests(api, cft_requests)
@@ -309,7 +309,7 @@ def _reconstruct_build_target(r):
     if dep.WhichOneof('dep') == 'chromeos_build':
       dep_parts = dep.chromeos_build.split('/')[0].split('-')[:-1]
       # Strip prefixes that aren't included in build_target
-      if dep_parts[0] == "staging" or dep_parts[0] == "dev":
+      if dep_parts[0] == 'staging' or dep_parts[0] == 'dev':
         dep_parts = dep_parts[1:]
       dep = '-'.join(dep_parts)
       break
@@ -495,12 +495,12 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
 
   Returns: List[test_suite]
   """
-  with api.step.nest("filter test cases") as step:
+  with api.step.nest('filter test cases') as step:
     try:
       build_number_matches = _extract_build_numbers_from_request(r)
       milestone = next(iter(build_number_matches))
       cfg = api.cros_infra_config.get_test_filter_config()
-      step.presentation.logs["cfg_used"] = json_format.MessageToJson(cfg)
+      step.presentation.logs['cfg_used'] = json_format.MessageToJson(cfg)
 
       req = _ctr_test_filter(test_suites, build_target, milestone, dryrun, cfg,
                              str(api.buildbucket.build.id), suite_name)
@@ -508,12 +508,12 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       # This will happen when a suite opts out.
       if not req:  # pragma: no cover
         return test_suites
-      step.presentation.logs["policy_used"] = json_format.MessageToJson(req)
+      step.presentation.logs['policy_used'] = json_format.MessageToJson(req)
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:  # pragma: no cover
-        step.presentation.logs["removed_tests"] = json.dumps(
+        step.presentation.logs['removed_tests'] = json.dumps(
             {
-                "removed": [
+                'removed': [
                     str(test) for test in pre_test_resp.response.removed_tests
                 ]
             }, separators=(',', ': '), indent=2)
@@ -523,7 +523,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       return pre_test_resp.response.test_suites  # pragma: no cover
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
-      step.presentation.logs["Exception"] = json.dumps({"exception": str(e)},
+      step.presentation.logs['Exception'] = json.dumps({'exception': str(e)},
                                                        separators=(',', ': '),
                                                        indent=2)
       return test_suites
@@ -538,24 +538,24 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
 
   Returns: List[EnumerationResponse.AutotestInvocation].
   """
-  with api.step.nest("Shard test cases") as step:
+  with api.step.nest('Shard test cases') as step:
     seed = request.test_plan.seed
     total_shards = request.test_plan.total_shards
     max_in_shard = request.test_plan.max_in_shard
     if max_in_shard == 0:
       max_in_shard = MAX_IN_SHARD
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
-    if suite_name.__contains__("tast-tags-test-suite"):  # pragma: no cover
+    if suite_name.__contains__('tast-tags-test-suite'):  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
-        if request.test_plan.tag_criteria.test_names[0] == "tast.arc.*":
+        if request.test_plan.tag_criteria.test_names[0] == 'tast.arc.*':
           max_in_shard = 100
-        elif request.test_plan.tag_criteria.test_names[0] == "tast.crostini.*":
+        elif request.test_plan.tag_criteria.test_names[0] == 'tast.crostini.*':
           max_in_shard = 40
       else:
         max_in_shard = 225
     if seed is None or seed == 0:
       seed = int(api.time.time())
-    step.presentation.logs["shard seed"] = json.dumps({"seed": seed},
+    step.presentation.logs['shard seed'] = json.dumps({'seed': seed},
                                                       separators=(',', ': '),
                                                       indent=2)
     api.random.seed(seed)
@@ -565,8 +565,8 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
           list(test_suite.test_cases.test_cases))
       shards = _shard_test_buckets(api, test_buckets, total_shards,
                                    max_in_shard)
-      step.presentation.tags["shard_count"] = str(len(shards))
-      step.presentation.tags["unique_dependencies_count"] = str(
+      step.presentation.tags['shard_count'] = str(len(shards))
+      step.presentation.tags['unique_dependencies_count'] = str(
           len(test_buckets))
       for i, shard in enumerate(shards):
         shard_name = '%s-shard-%d' % (suite_name, i)
@@ -574,9 +574,9 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
         shard_dependencies = _shard_dependencies(shard)
         step.presentation.logs[shard_name] = json.dumps(
             {
-                "shardName": shard_name,
-                "dependencies": shard_dependencies,
-                "testNames": test_names,
+                'shardName': shard_name,
+                'dependencies': shard_dependencies,
+                'testNames': test_names,
             }, separators=(',', ': '), indent=2)
         autotest_invocation = EnumerationResponse.AutotestInvocation(
             test=test_metadata.AutotestTest(
@@ -639,8 +639,8 @@ def _bucket_by_dependencies(test_cases):
   for test_case in test_cases:
     # TODO (b/277945083): Hard code to group tast.security tests together.
     # Remove once long term solution is implemented.
-    if "tast.security" in test_case.id.value:  # pragma: no cover
-      security_bucket = "__SECURITY__"
+    if 'tast.security' in test_case.id.value:  # pragma: no cover
+      security_bucket = '__SECURITY__'
       if security_bucket not in bucket:
         bucket[security_bucket] = []
       bucket[security_bucket].append(test_case)
@@ -744,7 +744,7 @@ def _shard_dependencies(shard):
 
 
 def _ctr_test_filter(test_suites, board, milestone, dryrun, cfg, bbid=None,
-                     suite_name=""):
+                     suite_name=''):
   """Build a CrosToolRunnerPreTestRequest.
 
   Args:
@@ -766,7 +766,7 @@ def _ctr_test_filter(test_suites, board, milestone, dryrun, cfg, bbid=None,
 
   # Loop through the cfg, and look for the first policy match.
   for policy in cfg.filter_cfg:
-    if policy.test_suites == ["*"]:
+    if policy.test_suites == ['*']:
       globalcfg = policy.pass_rate_policy
     else:
       if suite_name in policy.test_suites:  # pragma: no cover
@@ -822,7 +822,7 @@ def _ctr_test_suite(request):
     test_names = tag_criteria.test_names
     test_name_excludes = tag_criteria.test_name_excludes
   else:
-    tags = ["suite:%s" % s.name for s in request.test_plan.suite]
+    tags = ['suite:%s' % s.name for s in request.test_plan.suite]
   return ctr_test_suite.TestSuite(
       test_case_tag_criteria=ctr_test_suite.TestSuite.TestCaseTagCriteria(
           tags=tags, tag_excludes=tag_excludes, test_names=test_names,
@@ -919,15 +919,15 @@ def _limit_tests_retry(api, requests):
   """
   requests_user_agents = api.cros_tags.get_values('user_agent')
   # Suite scheduler are not limited
-  if "suite_scheduler" in requests_user_agents:
+  if 'suite_scheduler' in requests_user_agents:
     return
 
   # Exception for tast.lacross tests scheduled via crosfleet as they are
   # critical but can't currently be marked as critical via the cros CLI
-  if "crosfleet" in requests_user_agents:
-    if (len(requests) == 1 and "default" in requests.keys() and
-        len(requests["default"].test_plan.test) == 1 and
-        requests["default"].test_plan.test[0].autotest.name == "tast.lacros"):
+  if 'crosfleet' in requests_user_agents:
+    if (len(requests) == 1 and 'default' in requests.keys() and
+        len(requests['default'].test_plan.test) == 1 and
+        requests['default'].test_plan.test[0].autotest.name == 'tast.lacros'):
       return
 
   for _, request in requests.items():
@@ -1008,7 +1008,7 @@ def _error_response():
   """ExecuteResponse for error cases."""
   return json_format.MessageToDict(
       ExecuteResponse.TaskResult(
-          state=TaskState(verdict="VERDICT_FAILED",
+          state=TaskState(verdict='VERDICT_FAILED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ))
 
@@ -1085,7 +1085,7 @@ def add_container_metadata(api, requests, error_in_requests):
 
   with api.step.nest('assign container metadata to requests') as step:
     for t, r in requests.items():
-      error = ""
+      error = ''
       if r.params.run_via_cft:
         with api.step.nest(t) as step:
           # TODO(b/242007010): Change back to use build_target.
@@ -1267,25 +1267,25 @@ def summarize(api, enumerations, responses, error_in_requests,
       with api.step.nest('execution logs') as log_step:
         # Log the suite execution metrics
         for key in suite_execution_logs:
-          if key == "totals":
+          if key == 'totals':
             log_step.logs[
                 'Total Per Suite Execution Statistics'] = suite_execution_logs[
                     key]
           else:
-            log_step.logs[key + " execution logs"] = suite_execution_logs[key]
+            log_step.logs[key + ' execution logs'] = suite_execution_logs[key]
 
     for tag, response in sorted(responses.items()):
       with api.step.nest('%s task results' % tag) as results_step:
-        if "totals" in suite_execution_logs:  # pragma: nocover
-          ioStringReader = StringIO(suite_execution_logs["totals"])
+        if 'totals' in suite_execution_logs:  # pragma: nocover
+          ioStringReader = StringIO(suite_execution_logs['totals'])
           reader = csv.DictReader(ioStringReader)
           for row in reader:
             if row['suiteName'] == tag and row['exceededExecutionLimit'].lower(
-            ) == "true":
-              if row['exceptionGranted'].lower() == "true":
-                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded, but exception granted. No action taken."
+            ) == 'true':
+              if row['exceptionGranted'].lower() == 'true':
+                results_step.step_summary_text = 'SuiteLimits: Execution limit exceeded, but exception granted. No action taken.'
               else:
-                results_step.step_summary_text = "SuiteLimits: Execution limit exceeded"
+                results_step.step_summary_text = 'SuiteLimits: Execution limit exceeded'
 
         if tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
@@ -1321,7 +1321,7 @@ def _get_requests_from_properties(api, properties):
   if properties.HasField('request'):
     raise api.step.StepFailure(
         'This request was made using an outdated version of the skylab tool. '
-        'Please `skylab update` and try again. If you\'re stuck on this, '
+        "Please `skylab update` and try again. If you're stuck on this, "
         'please see http://go/skylab-cli')
   if not properties.requests:
     raise api.step.StepFailure(
@@ -1340,7 +1340,7 @@ def _top_level_export_to_bigquery(api, force_export):
     return
   with api.step.nest('configure resultdb bigquery export'):
     bigquery_export = invocation_pb2.BigQueryExport(
-        project="cros-test-analytics", dataset="resultdb", table="test_results",
+        project='cros-test-analytics', dataset='resultdb', table='test_results',
         test_results=invocation_pb2.BigQueryExport.TestResults())
     api.cros_resultdb.export_invocation_to_bigquery([bigquery_export])
 
@@ -1348,7 +1348,7 @@ def _top_level_export_to_bigquery(api, force_export):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    step.presentation.logs["output"] = json_format.MessageToJson(responses)
+    step.presentation.logs['output'] = json_format.MessageToJson(responses)
     marshalled = api.skylab_results.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
@@ -1482,7 +1482,7 @@ def _emit_links(step, task_results):
         step.logs['rejected dimensions for ' + t.name] = str(
             t.rejected_dimensions)
 
-      _emit_link(step, "", "task", t.name, t.task_url)
+      _emit_link(step, '', 'task', t.name, t.task_url)
 
       continue
     suffix = ''
@@ -1490,9 +1490,9 @@ def _emit_links(step, task_results):
       suffix = ' attempt #%s' % str(t.attempt)
       if t.state.verdict in _PASSED_VERDICTS:
         suffix = suffix + ' passed on retry'
-    _emit_link(step, '{}.'.format(str(i)), "log", '{}{}'.format(t.name, suffix),
+    _emit_link(step, '{}.'.format(str(i)), 'log', '{}{}'.format(t.name, suffix),
                t.log_url)
-    _emit_link(step, '{}.'.format(str(i)), "task",
+    _emit_link(step, '{}.'.format(str(i)), 'task',
                '{}{}'.format(t.name, suffix), t.task_url)
 
 
@@ -1522,13 +1522,13 @@ def _test_scheduling():
 def _default_software_dependencies():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build="staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231",
+          chromeos_build='staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231',
       ),
       Request.Params.SoftwareDependency(
-          ro_firmware_build="single-ro-firmware",
+          ro_firmware_build='single-ro-firmware',
       ),
       Request.Params.SoftwareDependency(
-          rw_firmware_build="single-rw-firmware",
+          rw_firmware_build='single-rw-firmware',
       ),
   ]
 
@@ -1536,19 +1536,19 @@ def _default_software_dependencies():
 def _software_dependencies_with_milestone_before_108():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build="foo-build-target-postsubmit/R107-33333.0.0-112318231231",
+          chromeos_build='foo-build-target-postsubmit/R107-33333.0.0-112318231231',
       ),
       Request.Params.SoftwareDependency(
-          ro_firmware_build="single-ro-firmware",
+          ro_firmware_build='single-ro-firmware',
       ),
       Request.Params.SoftwareDependency(
-          rw_firmware_build="single-rw-firmware",
+          rw_firmware_build='single-rw-firmware',
       ),
   ]
 
 
 # pylint: disable=dangerous-default-value
-def _test_request(request_name_tag, build_target="foo-build-target",
+def _test_request(request_name_tag, build_target='foo-build-target',
                   scheduling=_test_scheduling(), individual_test=False,
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
@@ -1587,7 +1587,7 @@ def _test_request(request_name_tag, build_target="foo-build-target",
 
 
 # pylint: disable=dangerous-default-value
-def _cft_test_request(request_name, build_target="foo-build-target",
+def _cft_test_request(request_name, build_target='foo-build-target',
                       individual_test=False, individual_test_name=None,
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
@@ -1604,12 +1604,14 @@ def _cft_test_request(request_name, build_target="foo-build-target",
 
 def _cft_test_request_without_container_metadata(tag):
   test_req = _cft_test_request(tag)
-  test_req.params.metadata.container_metadata_url = ""
+  test_req.params.metadata.container_metadata_url = ''
   return test_req
 
 def _cft_test_request_with_build_target_in_keyvals(tag):
   test_req = _cft_test_request(tag)
-  test_req.params.decorations.CopyFrom(Request.Params.Decorations(autotest_keyvals = {"build_target": "foo-build-target"}))
+  test_req.params.decorations.CopyFrom(
+      Request.Params.Decorations(
+          autotest_keyvals={'build_target': 'foo-build-target'}))
   return test_req
 
 
@@ -1619,7 +1621,7 @@ def _test_config(tag):
   )
 
 
-def _mock_container_metadata_step(api, tag, build_target="foo-build-target"):
+def _mock_container_metadata_step(api, tag, build_target='foo-build-target'):
   return api.step_data(
       'retrieve container metadata'
       '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
@@ -1643,7 +1645,7 @@ def _succeeded_request_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='foo-passed',
-      state=TaskState(verdict="VERDICT_PASSED",
+      state=TaskState(verdict='VERDICT_PASSED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   return ExecuteResponse(
@@ -1662,7 +1664,7 @@ def _parameters_rejected_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='foo-rejected',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_REJECTED'),
   )
   return ExecuteResponse(
@@ -1681,14 +1683,14 @@ def _incomplete_failure_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   complete_tr_2 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
 
@@ -1696,14 +1698,14 @@ def _incomplete_failure_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_ABORTED'),
   )
   incomplete_tr_2 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_PENDING'),
   )
   return ExecuteResponse(
@@ -1726,14 +1728,14 @@ def _failure_with_no_test_cases():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   tr_2 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
 
@@ -1753,14 +1755,14 @@ def _tast_incomplete_failure_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='bar-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_ABORTED'),
   )
   tr_2 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='bar-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
       test_cases=[
           ExecuteResponse.TaskResult.TestCaseResult(
@@ -1784,14 +1786,14 @@ def _complete_failure_execute_response():
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='bar-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_ABORTED'),
   )
   tr_2 = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='bar-fail',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
       test_cases=[
           ExecuteResponse.TaskResult.TestCaseResult(
@@ -1890,7 +1892,7 @@ def _generic_cft_enumerate_response(api):
 
 
 def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
-  test_cases = ",\n".join([
+  test_cases = ',\n'.join([
       '''{
       "id":{
           "value":"foo-test-%s"
@@ -1930,7 +1932,7 @@ def _generic_passing_execute_response(api):
           task_url='foo://bar/baz/b100',
           log_url='logs://bar/baz',
           name='foo-passed',
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
   ]
@@ -2096,19 +2098,19 @@ def GenTests(api):
                                   qs_account='foo-qs-account'),
                               software_dependencies=[
                                   Request.Params.SoftwareDependency(
-                                      chromeos_build="duplicate-build",
+                                      chromeos_build='duplicate-build',
                                   ),
                                   Request.Params.SoftwareDependency(
-                                      chromeos_build="duplicate-build",
+                                      chromeos_build='duplicate-build',
                                   ),
                                   Request.Params.SoftwareDependency(
-                                      ro_firmware_build="single-ro-firmware",
+                                      ro_firmware_build='single-ro-firmware',
                                   ),
                                   Request.Params.SoftwareDependency(
-                                      rw_firmware_build="duplicate-rw-firmware",
+                                      rw_firmware_build='duplicate-rw-firmware',
                                   ),
                                   Request.Params.SoftwareDependency(
-                                      rw_firmware_build="duplicate-rw-firmware-diff-value",
+                                      rw_firmware_build='duplicate-rw-firmware-diff-value',
                                   ),
                               ],
                           ),
@@ -2353,14 +2355,14 @@ def GenTests(api):
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='foo-passed',
-      state=TaskState(verdict="VERDICT_PASSED",
+      state=TaskState(verdict='VERDICT_PASSED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   skipped_task_result = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b101',
       log_url='logs://bar/baz1',
       name='foo-skipped',
-      state=TaskState(verdict="VERDICT_NO_VERDICT",
+      state=TaskState(verdict='VERDICT_NO_VERDICT',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   yield api.test(
@@ -2410,7 +2412,7 @@ def GenTests(api):
           task_url='foo://bar/baz/b100',
           log_url='logs://bar/baz',
           name='foo-failed',
-          state=TaskState(verdict="VERDICT_FAILED",
+          state=TaskState(verdict='VERDICT_FAILED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
           test_cases=[
               ExecuteResponse.TaskResult.TestCaseResult(
@@ -2422,7 +2424,7 @@ def GenTests(api):
           log_url='logs://bar/baz1',
           name='foo-failed',
           attempt=1,
-          state=TaskState(verdict="VERDICT_FAILED",
+          state=TaskState(verdict='VERDICT_FAILED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
           test_cases=[
               ExecuteResponse.TaskResult.TestCaseResult(
@@ -2460,7 +2462,7 @@ def GenTests(api):
           task_url='foo://foo/foo/0',
           log_url='logs://foo/foo',
           name='foo-test',
-          state=TaskState(verdict="VERDICT_FAILED",
+          state=TaskState(verdict='VERDICT_FAILED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2468,14 +2470,14 @@ def GenTests(api):
           log_url='logs://foo/foo1',
           name='foo-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
           task_url='bar://bar/bar/0',
           log_url='logs://bar/bar',
           name='bar-test',
-          state=TaskState(verdict="VERDICT_NO_VERDICT",
+          state=TaskState(verdict='VERDICT_NO_VERDICT',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2483,7 +2485,7 @@ def GenTests(api):
           log_url='logs://bar/bar1',
           name='bar-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2497,7 +2499,7 @@ def GenTests(api):
           log_url='logs://baz/baz1',
           name='baz-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2511,7 +2513,7 @@ def GenTests(api):
           log_url='logs://haha/haha1',
           name='haha-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2525,7 +2527,7 @@ def GenTests(api):
           log_url='logs://lol/lol1',
           name='lol-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
       ExecuteResponse.TaskResult(
@@ -2539,7 +2541,7 @@ def GenTests(api):
           log_url='logs://lmao/lmao1',
           name='lmao-test',
           attempt=1,
-          state=TaskState(verdict="VERDICT_PASSED",
+          state=TaskState(verdict='VERDICT_PASSED',
                           life_cycle='LIFE_CYCLE_COMPLETED'),
       ),
   ]
@@ -2567,11 +2569,11 @@ def GenTests(api):
 
   task_result_baz = ExecuteResponse.TaskResult(
       name='baz',
-      state=TaskState(life_cycle="LIFE_CYCLE_REJECTED"),
+      state=TaskState(life_cycle='LIFE_CYCLE_REJECTED'),
   )
   task_result_foo = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100', log_url='logs://bar/baz', name='foo',
-      state=TaskState(life_cycle="LIFE_CYCLE_REJECTED"), rejected_dimensions=[
+      state=TaskState(life_cycle='LIFE_CYCLE_REJECTED'), rejected_dimensions=[
           ExecuteResponse.TaskResult.RejectedTaskDimension(
               key='dim1', value='val1'),
           ExecuteResponse.TaskResult.RejectedTaskDimension(
@@ -2614,7 +2616,7 @@ def GenTests(api):
       task_url=None,
       log_url=None,
       name='foo-pending',
-      state=TaskState(life_cycle="LIFE_CYCLE_PENDING"),
+      state=TaskState(life_cycle='LIFE_CYCLE_PENDING'),
   )
   yield api.test(
       'end-to-end-execution-with-pending-tasks',
@@ -2649,7 +2651,7 @@ def GenTests(api):
           task_url=None,
           log_url=None,
           name='foo-cancelled',
-          state=TaskState(life_cycle="LIFE_CYCLE_CANCELLED"),
+          state=TaskState(life_cycle='LIFE_CYCLE_CANCELLED'),
       ),
   ]
   yield api.test(
@@ -2682,7 +2684,7 @@ def GenTests(api):
       task_url=None,
       log_url=None,
       name='foo-aborted',
-      state=TaskState(life_cycle="LIFE_CYCLE_ABORTED"),
+      state=TaskState(life_cycle='LIFE_CYCLE_ABORTED'),
   )
   yield api.test(
       'end-to-end-execution-with-aborted-tasks',
@@ -2752,14 +2754,14 @@ def GenTests(api):
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='foo-failed',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   task_result_baz = ExecuteResponse.TaskResult(
       task_url='foo://bar/baz/b100',
       log_url='logs://bar/baz',
       name='baz-failed',
-      state=TaskState(verdict="VERDICT_FAILED",
+      state=TaskState(verdict='VERDICT_FAILED',
                       life_cycle='LIFE_CYCLE_COMPLETED'),
   )
   yield api.test(
@@ -2859,8 +2861,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           total_shards=5)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
@@ -2882,8 +2884,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           total_shards=5)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
@@ -2905,8 +2907,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           total_shards=5)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
@@ -2927,8 +2929,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]))
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']))
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
@@ -2948,8 +2950,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]))
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']))
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
@@ -3020,8 +3022,8 @@ def GenTests(api):
                   'cft':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"])),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop'])),
                   'default':
                       _test_request('default')
               }, config=_test_config('foo')), **{
@@ -3044,8 +3046,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]))
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']))
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
@@ -3086,10 +3088,10 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', individual_test=True,
-                          individual_test_name="tast.lacros",
+                          individual_test_name='tast.lacros',
                           tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           retries=1)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
@@ -3121,8 +3123,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           retries=1)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
@@ -3154,8 +3156,8 @@ def GenTests(api):
                   'default':
                       _cft_test_request(
                           'foo', tag_criteria=ctr_test_suite.TestSuite
-                          .TestCaseTagCriteria(tags=["beep", "boop"],
-                                               tag_excludes=["blap", "blop"]),
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
                           retries=1)
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':

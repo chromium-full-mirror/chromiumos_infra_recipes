@@ -458,14 +458,14 @@ def _has_changes_on_host(changes: List[GerritChange], host: str) -> bool:
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
-  message_template = """Regenerate audio config in project {project}.
+  message_template = '''Regenerate audio config in project {project}.
 
 Regenerate the audio config in project {project}
 per the changes in program galaxy.
 
 BUG=https://crbug.com/1087514
 TEST=CQ
-"""
+'''
   cls = [
       common_pb2.GerritChange(host='chromium-review.googlesource.com',
                               project='chromiumos/config', change=1234),

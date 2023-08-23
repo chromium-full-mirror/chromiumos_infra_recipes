@@ -382,12 +382,12 @@ def _fetch_and_write_keyset_config(api: RecipeApi) -> None:
 def _update_release_time(api: RecipeApi) -> None:
   """Update the infra/config/releases/timeline_configuration.json time field."""
   tl_cfg_fpath = api.path.join(INFRA_CONFIG.checkout_path, TIMELINE_FILENAME)
-  with api.step.nest("update configured release time"):
+  with api.step.nest('update configured release time'):
     step_result = api.json.read(
         'read json', tl_cfg_fpath, step_test_data=lambda: api.json.test_api.
-        output({"time": "2021-04-06T16:00:40Z"}))
+        output({'time': '2021-04-06T16:00:40Z'}))
     tl_cfg = step_result.json.output
-    tl_cfg['time'] = api.time.utcnow().strftime("%FT%TZ")
+    tl_cfg['time'] = api.time.utcnow().strftime('%FT%TZ')
     api.file.write_text('write release channel timeline configuration',
                         tl_cfg_fpath, json.dumps(tl_cfg, indent=2))
 

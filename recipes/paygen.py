@@ -258,7 +258,7 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
       try:
         api.cros_sdk.create_chroot(version=None, timeout_sec=timeout)
       except Exception as e:
-        if "timeout" in str(e):
+        if 'timeout' in str(e):
           presentation.step_text = 'SDK initialization timed out'
           presentation.status = api.step.FAILURE
           return StepFailure(presentation.step_text)
@@ -387,7 +387,7 @@ def GenTests(api: RecipeTestApi):
   full_payload_uri = (
       'gs://test-bucket/canary-channel/zork/12345.0.0/payloads/'
       'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
-  payload_json_data = """{
+  payload_json_data = '''{
   "appid": "appid",
   "metadata_signature": "signature",
   "metadata_size": 1337,
@@ -396,11 +396,11 @@ def GenTests(api: RecipeTestApi):
   "target_version": "4.5.6",
   "sha256_hex": "deadbeef",
   "is_delta": true
-}"""
+}'''
 
   yield api.test(
       'dryrun',
-      api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
@@ -410,7 +410,7 @@ def GenTests(api: RecipeTestApi):
                                        applicable_models=['woomax']),
               ],
           }]), **{
-              "$chromeos/cros_infra_config":
+              '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_payload_response(
@@ -457,7 +457,7 @@ def GenTests(api: RecipeTestApi):
                   ]
               },
           ]), **{
-              "$chromeos/cros_infra_config":
+              '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_payload_response(
@@ -481,7 +481,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'dryrun-legacy',
-      api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
       api.properties(
           PaygenProperties(requests=[
               {
@@ -493,7 +493,7 @@ def GenTests(api: RecipeTestApi):
                   ]
               },
           ]), **{
-              "$chromeos/cros_infra_config":
+              '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_legacy_payload_response(api,
@@ -640,8 +640,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.StepFailure, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
-          "failure_reason": "UNSPECIFIED",
-          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+          'failure_reason': 'UNSPECIFIED',
+          'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
       }]),
       # api.post_process(post_process.DropExpectation),
       status='FAILURE',
@@ -677,8 +677,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
-          "failure_reason": "NOT_MINIOS_COMPATIBLE",
-          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+          'failure_reason': 'NOT_MINIOS_COMPATIBLE',
+          'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
       }]),
       api.post_process(post_process.DropExpectation),
   )
@@ -696,8 +696,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
-          "failure_reason": "MINIOS_COUNT_MISMATCH",
-          "payload": "DLC (termina-dlc) stable-channel | Full (13425.90.0)"
+          'failure_reason': 'MINIOS_COUNT_MISMATCH',
+          'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
       }]),
       api.post_process(post_process.DropExpectation),
   )
@@ -859,7 +859,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'fail-attest-path-inside-chroot',
-      api.buildbucket.generic_build(builder="staging-paygen", bucket='staging'),
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
@@ -869,7 +869,7 @@ def GenTests(api: RecipeTestApi):
                                        applicable_models=['woomax']),
               ],
           }]), **{
-              "$chromeos/cros_infra_config":
+              '$chromeos/cros_infra_config':
                   CrosInfraConfigProperties(release_tot_builds_snapshot=True)
           }),
       generate_payload_response(

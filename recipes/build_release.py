@@ -189,7 +189,7 @@ def DoRunSteps(api, config, properties):
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,
               path=uploaded_artifacts.gs_path)
-          with api.step.nest("publish DLCs to pubsub"):
+          with api.step.nest('publish DLCs to pubsub'):
             # TODO(b/277931195): Determine whether dlc_locations publishing is
             # still needed by GoldenEye and remove if not.
             dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
@@ -221,7 +221,7 @@ def DoRunSteps(api, config, properties):
               name='import VM image',
               build_path=api.build_menu.artifacts_build_path(), wait=False)
 
-      with api.step.nest("publish toolchain metadata"):
+      with api.step.nest('publish toolchain metadata'):
         toolchain_info = api.cros_sdk.get_toolchain_info(
             api.build_menu.build_target.name)
         api.build_reporting.publish_toolchain_info(toolchain_info)
@@ -264,7 +264,7 @@ def DoRunSteps(api, config, properties):
   with api.checkpoint.retry(RetryStep.DEBUG_SYMBOLS) as run_step:
     if run_step:
       with api.build_reporting.step_reporting(StepDetails.STEP_DEBUG_SYMBOLS):
-        with api.step.nest("upload debug symbols"):
+        with api.step.nest('upload debug symbols'):
           api.debug_symbols.upload_debug_symbols(gs_image_dir)
 
   # Launch unit tests asynchronously. Wait for results after paygen.
@@ -392,7 +392,7 @@ def GenTests(api):
                       'name': 'kukui',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/checkpoint': {
                   'force_retry_summary': True,
@@ -417,21 +417,21 @@ def GenTests(api):
       api.signing.setup_mocks(),
       api.step_data(
           'publish DLCs to pubsub.Hash DLCs.Find DLCs.gsutil ls dlc',
-          stdout=api.raw_io.output_text("""
+          stdout=api.raw_io.output_text('''
 gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img
 gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
-      """), retcode=0),
+      '''), retcode=0),
       api.post_check(post_process.LogContains,
                      'publish DLCs to pubsub.build status pubsub update (2)',
                      'message', ['dlcArtifactDetails']),
       api.post_check(
           post_process.LogContains,
           'publish DLCs to pubsub.build status pubsub update (2)', 'message', [
-              '"gcs\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img\"'
+              '"gcs": "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img"'
           ]),
       api.post_check(post_process.LogContains,
                      'publish DLCs to pubsub.build status pubsub update (2)',
-                     'message', ['"sha256\": \"deadbeef\"']),
+                     'message', ['"sha256": "deadbeef"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
@@ -466,12 +466,12 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
           'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101'),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
-              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
-              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
-              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
-              RetryStep.Name(RetryStep.EBUILD_TESTS): "SUCCESS",
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
-              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SUCCESS',
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): 'SUCCESS',
+              RetryStep.Name(RetryStep.EBUILD_TESTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
+              RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
       api.post_check(post_process.DoesNotRun, 'overriding release channels'),
       build_target='kukui',
@@ -493,7 +493,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                       'name': 'kukui',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/checkpoint': {
                   'force_retry_summary': True,
@@ -547,12 +547,12 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       api.post_check(post_process.DoesNotRun, 'get signed build metadata'),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
-              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
-              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
-              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
-              RetryStep.Name(RetryStep.EBUILD_TESTS): "SUCCESS",
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
-              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SUCCESS',
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): 'SUCCESS',
+              RetryStep.Name(RetryStep.EBUILD_TESTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
+              RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
       build_target='kukui',
       builder='kukui-release-main',
@@ -573,7 +573,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                       'name': 'betty-arc-r',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/checkpoint': {
                   'force_retry_summary': True,
@@ -634,7 +634,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                       'name': 'eve',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
@@ -719,7 +719,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       'release-build-no-buildspec',
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation), build_target='eve',
-      builder='eve-release-main', bucket='release', status="FAILURE")
+      builder='eve-release-main', bucket='release', status='FAILURE')
 
   def build_result(bbid, buildspec):
     build = build_pb2.Build(id=bbid)
@@ -736,9 +736,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       api.properties(
           **{
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -904,12 +904,12 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
-              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SUCCESS",
-              RetryStep.Name(RetryStep.PUSH_IMAGES): "SUCCESS",
-              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
-              RetryStep.Name(RetryStep.EBUILD_TESTS): "FAILED",
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
-              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SUCCESS',
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): 'SUCCESS',
+              RetryStep.Name(RetryStep.EBUILD_TESTS): 'FAILED',
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
+              RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
       bucket='release',
       builder='kukui-release-main',
@@ -985,7 +985,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                       'name': 'kukui',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
@@ -1035,7 +1035,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                       'name': 'kukui',
                   },
                   'container_version_format':
-                      "{staging?}{build-target}-release.{cros-version}",
+                      '{staging?}{build-target}-release.{cros-version}',
               },
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
@@ -1083,11 +1083,11 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
           'gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0'),
       api.post_check(
           post_process.PropertyEquals, 'retry_summary', {
-              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): "SKIPPED",
-              RetryStep.Name(RetryStep.PUSH_IMAGES): "SKIPPED",
-              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): "SUCCESS",
-              RetryStep.Name(RetryStep.COLLECT_SIGNING): "SUCCESS",
-              RetryStep.Name(RetryStep.PAYGEN): "SUCCESS"
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SKIPPED',
+              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SKIPPED',
+              RetryStep.Name(RetryStep.DEBUG_SYMBOLS): 'SUCCESS',
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
+              RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
       build_target='kukui',
       builder='kukui-release-main',
@@ -1110,7 +1110,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               'build_mass_deploy_image':
                   True,
           }),
-      api.signing.setup_mocks(channel="stable"),
+      api.signing.setup_mocks(channel='stable'),
       # This needs some work. signing needs to be mocked differently.
       api.post_check(post_process.MustRun, 'get signed build metadata'),
       api.post_check(post_process.MustRun, 'generate mass deploy builds'),

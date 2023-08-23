@@ -161,7 +161,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
   with api.step.nest('determine is_staging') as presentation:
     # Configure knowledge of whether this is running in staging.
     api.cros_infra_config.determine_if_staging()
-    presentation.step_text = "Running build with is_staging set to {}".format(
+    presentation.step_text = 'Running build with is_staging set to {}'.format(
         api.cros_infra_config.is_staging)
 
   with api.step.nest('validate request') as presentation:
@@ -292,7 +292,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
       api.gsutil(['cp', local_trigger, trigger_path])
       presentation.step_text = 'trigger uploaded'
     else:
-      presentation.step_text = "skipped in staging"
+      presentation.step_text = 'skipped in staging'
   return None
 
 
@@ -411,7 +411,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'gsc-non-release-bucket-staging',
-      api.buildbucket.generic_build(builder="staging-sign-image"),
+      api.buildbucket.generic_build(builder='staging-sign-image'),
       props(
           signer_type=sign_image_os.SIGNER_STAGING,
           image_type=common_os.IMAGE_TYPE_GSC_FIRMWARE,

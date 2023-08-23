@@ -94,11 +94,11 @@ def _generate_filter_test_output_file_path(api: RecipeApi,
     An updated file path with ".filtered.jsonproto" appended.
   """
   basename = api.path.basename(file_path)
-  basename_without_jsonproto = basename[:-len(".jsonproto")]
+  basename_without_jsonproto = basename[:-len('.jsonproto')]
   path_name = api.path.dirname(file_path)
 
   return api.path.join(
-      path_name, "{}.filtered.jsonproto".format(basename_without_jsonproto))
+      path_name, '{}.filtered.jsonproto'.format(basename_without_jsonproto))
 
 
 def _generate_test_plan_summary_file_path(api: RecipeApi,
@@ -149,7 +149,7 @@ def _run_filter_command_and_commit(api: RecipeApi, input_file: PathLike,
   for dependency in [
       PAYLOAD_UTILS_PATH, INFRA_CONFIG_PATH, CONFIG_INTERNAL_PATH
   ]:
-    python_paths.append("{}".format(
+    python_paths.append('{}'.format(
         api.cros_source.workspace_path.join(dependency)))
 
   with api.context(
@@ -179,9 +179,9 @@ def _run_generate_command_and_commit(api: RecipeApi, input_file: PathLike,
 
   generate_command = [
       generate_test_plan_summary_script,
-      "--input",
+      '--input',
       input_file,
-      "--output",
+      '--output',
       output_file,
   ]
 
@@ -228,11 +228,11 @@ def _find_test_plan_files(api: RecipeApi) -> List[str]:
 
   find_command = [
       find_tests_script,
-      "--repo",
+      '--repo',
       '{}'.format(api.context.cwd.join(TEST_PLANS_PATH)),
   ]
 
-  step_result = api.step("find test plans", ['vpython3'] + find_command,
+  step_result = api.step('find test plans', ['vpython3'] + find_command,
                          stdout=api.raw_io.output_text())
 
   return step_result.stdout.strip().splitlines()
@@ -258,15 +258,15 @@ def RunSteps(api: RecipeApi, _: TestPlanFilteringProperties):
       _update_test_plans(api, file_path=test_plan_file)
 
     # If nothing got changed, don't push
-    with api.step.nest("diffing to find changes"):
+    with api.step.nest('diffing to find changes'):
       changed_files = api.git.get_diff_files('HEAD')
       if not changed_files:
         return False  # abort transaction
 
     # commit files
-    message = """Updating test plans.
+    message = '''Updating test plans.
 Cr-Build-Url: {}
-Cr-Automation-Id: {}""" \
+Cr-Automation-Id: {}''' \
         .format(api.buildbucket.build_url(),
                 'test_plan_filtering/filter')
 
@@ -297,7 +297,7 @@ def GenTests(api: RecipeTestApi):
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
-          stdout=api.raw_io.output_text("\n".join([
+          stdout=api.raw_io.output_text('\n'.join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'
@@ -317,7 +317,7 @@ def GenTests(api: RecipeTestApi):
       # Mocking to make it seem there are 3 star files
       api.step_data(
           'update ref.gerrit transaction.find test plans',
-          stdout=api.raw_io.output_text("\n".join([
+          stdout=api.raw_io.output_text('\n'.join([
               '[START_DIR]/base1/file1.jsonproto',
               '[START_DIR]/base2/file2.jsonproto',
               '[START_DIR]/base3/file3.jsonproto'

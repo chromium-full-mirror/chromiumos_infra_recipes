@@ -63,7 +63,7 @@ def RunSteps(api, properties):
   commit = api.src_state.gitiles_commit
   cq_run = api.cq.active
   # If we have a commit.ref, then this must be a CQ run.
-  assert cq_run or not commit.ref, "GitilesCommit provided for non-CQ run"
+  assert cq_run or not commit.ref, 'GitilesCommit provided for non-CQ run'
 
   # If this is not a CQ run, we need to sync tip-of-tree.  If it is, then we
   # should sync to the provided commit, or snapshot if none was provided.
@@ -441,7 +441,7 @@ def _get_gerrit_changes(api, manifest_diffs):
           # the rest.
           reviewed_on_footers = [
               footer for footer in reviewed_on_footers
-              if "googlesource.com" in footer
+              if 'googlesource.com' in footer
           ]
 
           if reviewed_on_footers:
@@ -522,7 +522,7 @@ def GenTests(api):
 
   yield api.test(
       'staging-basic',
-      api.buildbucket.generic_build(builder="staging-Annealing",
+      api.buildbucket.generic_build(builder='staging-Annealing',
                                     bucket='staging'),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
   )

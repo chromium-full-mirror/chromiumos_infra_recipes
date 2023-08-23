@@ -69,7 +69,7 @@ def _gen_build_config(api: RecipeApi, user_yaml: str, substitutions: Dict,
       'substitutions': substitutions,
       'files': files,
   }
-  return _run_script(api, "generate_build_config.py", data_in)
+  return _run_script(api, 'generate_build_config.py', data_in)
 
 
 def _launch_build(api: RecipeApi, project: str, build_config: Dict) -> str:
@@ -78,7 +78,7 @@ def _launch_build(api: RecipeApi, project: str, build_config: Dict) -> str:
       'build_config': build_config,
       'project': project,
   }
-  data_out = _run_script(api, "launch_build.py", data_in)
+  data_out = _run_script(api, 'launch_build.py', data_in)
   return data_out['id'], data_out['log_url']
 
 
@@ -89,7 +89,7 @@ def _wait_for_build_completion(api: RecipeApi, project: str,
       'build_id': build_id,
       'project': project,
   }
-  _run_script(api, "monitor_build.py", data_in)
+  _run_script(api, 'monitor_build.py', data_in)
 
 
 def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
@@ -98,7 +98,7 @@ def _fetch_results(api: RecipeApi, project: str, build_id: str) -> Dict:
       'build_id': build_id,
       'project': project,
   }
-  return _run_script(api, "fetch_results.py", data_in)
+  return _run_script(api, 'fetch_results.py', data_in)
 
 
 def _fetch_cop_file(api: RecipeApi, host: str, change_id: str,
@@ -225,7 +225,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
 
   with api.step.nest('fetch results') as presentation:
     results = _fetch_results(api, properties.project_name, build_id)
-    build_passed = results['result']['status'] == "SUCCESS"
+    build_passed = results['result']['status'] == 'SUCCESS'
 
   log_url_set_in_review_comment = False
   with api.step.nest('send Vote to Gerrit') as presentation:
@@ -248,8 +248,8 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     if api.cros_infra_config.is_staging:
       presentation.step_text = 'Do not vote or comment with the staging builder.'
     elif _set_gerrit_review(api, patch_set, body={
-        "labels": {
-            "Verified": vote
+        'labels': {
+            'Verified': vote
         },
         **body
     }, name='comment and vote'):
@@ -366,7 +366,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test('missing-user-yaml', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets()),
-                 api.step_data('check CoP.cop-fetch-file', stdout=api.raw_io.output("NotAbase64")),
+                 api.step_data('check CoP.cop-fetch-file', stdout=api.raw_io.output('NotAbase64')),
                  api.post_check(post_process.StepSuccess, 'check committer'),
                  api.post_check(post_process.DoesNotRun, 'generate build config'),
                  api.post_process(post_process.DropExpectation)) + \
@@ -407,7 +407,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',api.json.output(None)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
-                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(post_process.PropertyEquals, 'change_type', 'tricium'),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented and Voted',)),
                  api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
@@ -421,7 +421,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',retcode=1),
                  api.step_data('send Vote to Gerrit.gerrit comment only',api.json.output({})),
-                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(post_process.PropertyEquals,'change_type','tricium'),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Commented but unable to Vote',)),
                  api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
@@ -435,7 +435,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send Vote to Gerrit.gerrit comment and vote',retcode=1),
                  api.step_data('send Vote to Gerrit.gerrit comment only',retcode=1),
-                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(post_process.PropertyEquals,'change_type','tricium'),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Cannot comment or vote',)),
                  api.post_check(tricium_has_comments,[{'category': 'CoP Result: SUCCESS', 'message': 'CoP Log URL: https://example.com/build/logs\n```\nSoo good\n```', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run hello world): SUCCESS', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
@@ -452,7 +452,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.post_check(post_process.StepSuccess, 'send Tricium comments'),
                  api.post_check(post_process.StepTextContains,'send Vote to Gerrit',('Do not vote or comment',)),
                  api.post_check(post_process.DoesNotRun, 'send Vote to Gerrit.gerrit comment and vote','send Vote to Gerrit.gerrit comment only'),
-                 api.post_check(post_process.PropertyEquals,"change_type","fixed_change"),
+                 api.post_check(post_process.PropertyEquals,'change_type','fixed_change'),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
 
@@ -477,7 +477,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
-                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(post_process.PropertyEquals,'change_type','tricium'),
                  api.post_check(tricium_has_comments,[{'category': 'CoP Result: FAILURE', 'message': 'CoP Log URL: https://example.com/build/logs\n```\nSoo good\n```', 'path': '/PATCHSET_LEVEL'}, {'category': 'CoP Step 1 (run bye world): FAILURE', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))
@@ -490,7 +490,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send Vote to Gerrit'),
-                 api.post_check(post_process.PropertyEquals,"change_type","tricium"),
+                 api.post_check(post_process.PropertyEquals,'change_type','tricium'),
                  api.post_check(tricium_has_comments,[{'category': 'CoP Step 1 (run bye world): FAILURE', 'message': '```\nHello World\n```', 'path': '/PATCHSET_LEVEL'}]),
                  api.post_process(post_process.DropExpectation)) + \
                  api.properties(CopProperties(project_name='name'))

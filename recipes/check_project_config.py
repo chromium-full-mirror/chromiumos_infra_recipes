@@ -155,14 +155,14 @@ def GenTests(api):
         'manifest_groups': ['partner-config'],
         'local_manifests': [
             {
-                "repo_url": ('https://chrome-internal.googlesource.com'
+                'repo_url': ('https://chrome-internal.googlesource.com'
                              '/chromeos/project/testproject1'),
-                "manifest_path": 'local_manifest.xml',
+                'manifest_path': 'local_manifest.xml',
             },
             {
-                "repo_url": ('https://chrome-internal.googlesource.com'
+                'repo_url': ('https://chrome-internal.googlesource.com'
                              '/chromeos/program/testprogram1'),
-                "manifest_path": 'local_manifest.xml',
+                'manifest_path': 'local_manifest.xml',
             },
         ],
         'chromiumos_config_checkout_path':

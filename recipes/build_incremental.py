@@ -56,16 +56,16 @@ def RunSteps(api: RecipeApi,
 #   2. Move the checkout back to ToT. Build from that.
 def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                extra_properties: IncrementalProperties) -> Optional[RawResult]:
-  snapshot_branch_name = "origin/snapshot"
+  snapshot_branch_name = 'origin/snapshot'
   failing_build_exception = None
   error_type = ErrorType.UNKNOWN
 
   build_time_delta = extra_properties.build_time_delta
   if not build_time_delta:
-    raise StepFailure("build_time_delta input property is empty")
+    raise StepFailure('build_time_delta input property is empty')
 
   manifest_internal_tempdir = api.path.mkdtemp()
-  manifest_internal_url = "https://chrome-internal.googlesource.com/chromeos/manifest-internal"
+  manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
   repo_path = str(api.repo.repo_path)
 
   # Checkout and attempt to build the old snapshot.
@@ -73,21 +73,21 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
 
     # Get old snapshot hash.
-    delta_hash_result = api.step(f"Get {build_time_delta} manifest snapshot", [
-        "git", "-C", manifest_internal_tempdir, "rev-list", "-1", "--before",
+    delta_hash_result = api.step(f'Get {build_time_delta} manifest snapshot', [
+        'git', '-C', manifest_internal_tempdir, 'rev-list', '-1', '--before',
         build_time_delta, snapshot_branch_name
     ], stdout=api.raw_io.output_text())
     delta_hash = delta_hash_result.stdout.strip()
 
     # Rewind the source to old snapshot.
-    api.step(f"Revert manifest to {build_time_delta} snapshot",
-             ["git", "-C", manifest_internal_tempdir, "checkout", delta_hash])
+    api.step(f'Revert manifest to {build_time_delta} snapshot',
+             ['git', '-C', manifest_internal_tempdir, 'checkout', delta_hash])
     with api.repo.m.depot_tools.on_path():
       api.step(
-          f"Apply {build_time_delta} manifest snapshot",
+          f'Apply {build_time_delta} manifest snapshot',
           [
-              repo_path, "init", "--standalone-manifest",
-              f"file://{manifest_internal_tempdir}/snapshot.xml"
+              repo_path, 'init', '--standalone-manifest',
+              f'file://{manifest_internal_tempdir}/snapshot.xml'
           ],
       )
     api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
@@ -105,8 +105,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       # Fast forward the source to latest snapshot.
-      api.step("Revert manifest to the latest snapshot", [
-          "git", "-C", manifest_internal_tempdir, "checkout",
+      api.step('Revert manifest to the latest snapshot', [
+          'git', '-C', manifest_internal_tempdir, 'checkout',
           snapshot_branch_name
       ])
     old_build_successful = True
@@ -123,10 +123,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     try:
       with api.repo.m.depot_tools.on_path():
         api.step(
-            "Apply latest manifest snapshot",
+            'Apply latest manifest snapshot',
             [
-                repo_path, "init", "--standalone-manifest",
-                f"file://{manifest_internal_tempdir}/snapshot.xml"
+                repo_path, 'init', '--standalone-manifest',
+                f'file://{manifest_internal_tempdir}/snapshot.xml'
             ],
         )
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
@@ -152,7 +152,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # the changes we made thus far.
     error_type = ErrorType.INCREMENTAL
 
-  api.easy.set_properties_step(step_name="set incremental failure",
+  api.easy.set_properties_step(step_name='set incremental failure',
                                error_type=error_type)
   # Always upload the artifacts, regardless of whether the above threw an
   # exception.
@@ -182,7 +182,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.properties(
-          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
@@ -213,7 +213,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.properties(
-          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': False})),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
@@ -242,7 +242,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.properties(
-          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -265,7 +265,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.properties(
-          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -290,7 +290,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.properties(
-          IncrementalProperties(**{'build_time_delta': "7.days.ago"})),
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.PropertyEquals, 'error_type',

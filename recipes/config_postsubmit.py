@@ -148,14 +148,14 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   # generated a temporary flattened.jsonproto in each project
   empty_flatten_payload = []
   for project_info in project_infos:
-    if not project_info.name.startswith("chromeos/project"):
+    if not project_info.name.startswith('chromeos/project'):
       continue
 
     with api.step.nest('processing %s' % project_info.name) as presentation,\
          api.context(api.context.cwd.join(project_info.path)):
 
       if not project_info.name in allowed_projects:
-        presentation.step_summary_text = "skipping, not in allowed projects"
+        presentation.step_summary_text = 'skipping, not in allowed projects'
         continue
 
       # if no joined configuration (not backfilled), use the ConfigBundle
@@ -166,15 +166,15 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
       full_input = api.context.cwd.join(input_config)
       if not api.path.exists(full_input):
-        presentation.step_summary_text = "(does not exist)"
+        presentation.step_summary_text = '(does not exist)'
         continue
 
       # have input selected and we know it exists, generate a flattened file
       cmd = [
           flatten_script,
-          "--input",
+          '--input',
           input_config,
-          "--output",
+          '--output',
           flat_config,
       ]
 
@@ -187,7 +187,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
       # note if we had no flattened entries for project
       nflat = int(result.stdout.strip())
       if nflat == 0:
-        program, project = project_info.name.split("/")[2:4]
+        program, project = project_info.name.split('/')[2:4]
         empty_flatten_payload.append([program, project])
 
       flat_files.append(api.context.cwd.join(flat_config))
@@ -204,7 +204,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   binary_output_path = config_internal.join('hw_design', binary_flat_config)
 
   with api.context(config_internal),\
-       api.step.nest("aggregating flattened configs") as presentation:
+       api.step.nest('aggregating flattened configs') as presentation:
     project_configs_path = api.path.mkstemp()
 
     # Merge all the flattened projet configs together into a single payload
@@ -252,7 +252,7 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
   ]
 
   # get project info for internal config repo
-  config_project_info = api.repo.project_info("chromeos/config-internal")
+  config_project_info = api.repo.project_info('chromeos/config-internal')
 
   cwd = api.context.cwd
   merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
@@ -294,9 +294,9 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
         ] + files,
     )
 
-    with api.step.nest("diffing to find changes") as presentation:
+    with api.step.nest('diffing to find changes') as presentation:
       if not api.git.diff_check(output_path):
-        presentation.step_summary_text = "No changes to commit"
+        presentation.step_summary_text = 'No changes to commit'
         return False  # abort transaction
 
     # commit files
@@ -311,7 +311,7 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     return True
 
   with api.context(config_internal),\
-       api.step.nest("aggregating configs"):
+       api.step.nest('aggregating configs'):
 
     api.git_txn.update_ref(config_project_info.remote, _merge_configs,
                            ref=config_project_info.branch, dry_run=dry_run)
@@ -320,18 +320,18 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
       'src/config/payload_utils/config_to_datastore.py')
   vpython_spec = cwd.join('src/config/.vpython')
 
-  ufs_env = properties.ufs_env or "prod"
+  ufs_env = properties.ufs_env or 'prod'
 
   # only need to upload for not flattened configs; need to determine condition
   with api.context(config_internal),\
-       api.step.nest("upload configs to ufs"):
+       api.step.nest('upload configs to ufs'):
 
-    api.step("upload generated configs to UFS datastore", [
-        "vpython3",
-        "-vpython-spec",
+    api.step('upload generated configs to UFS datastore', [
+        'vpython3',
+        '-vpython-spec',
         vpython_spec,
         config_to_ufs_datastore,
-        "--env",
+        '--env',
         ufs_env,
     ])
 
@@ -393,7 +393,7 @@ def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
   """
   del dry_run
 
-  config_internal = api.context.cwd.join("src/config-internal")
+  config_internal = api.context.cwd.join('src/config-internal')
   config_internal_test = config_internal.join('test')
   config_internal_test_plans = config_internal_test.join('plans')
 
@@ -478,18 +478,18 @@ def RunSteps(api, properties):
 
     # load all the repos defined in the DLM config.
     all_program_configs = api.file.read_json(
-        "reading DLM config",
+        'reading DLM config',
         api.context.cwd.join(
-            "infra/config/project_config/all_programs_config.json"))
+            'infra/config/project_config/all_programs_config.json'))
 
     names = set()
-    for program in all_program_configs.get("programs", []):
-      name = program.get("repo", {}).get("name")
+    for program in all_program_configs.get('programs', []):
+      name = program.get('repo', {}).get('name')
       if name:
         names.add(name)
 
-      for project in program.get("deviceProjects", []):
-        name = project.get("repo", {}).get("name")
+      for project in program.get('deviceProjects', []):
+        name = project.get('repo', {}).get('name')
         if name:
           names.add(name)
 
@@ -542,10 +542,10 @@ def GenTests(api):
 
   def default_properties(allowed_projects=None, allowed_programs=None):
     if allowed_projects is None:
-      allowed_projects = [{"repo_name": "chromeos/project/galaxy/milkyway"}]
+      allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
 
     if allowed_programs is None:
-      allowed_programs = [{"repo_name": "chromeos/program/galaxy"}]
+      allowed_programs = [{'repo_name': 'chromeos/program/galaxy'}]
 
     aclc = PROPERTIES.ActionCLConfig(
         reviewers=['test1@google.com'],
@@ -554,11 +554,11 @@ def GenTests(api):
     return api.properties(
         PROPERTIES(
             cl_configs={
-                "REGENERATE_SUITE_SCHEDULER": aclc,
-                "FLATTEN_CONFIGS": aclc,
-                "COPY_TO_INTERNAL": aclc,
-                "REPLICATE_PUBLIC_CONFIG": aclc,
-                "REGENERATE_TEST_PLAN": aclc,
+                'REGENERATE_SUITE_SCHEDULER': aclc,
+                'FLATTEN_CONFIGS': aclc,
+                'COPY_TO_INTERNAL': aclc,
+                'REPLICATE_PUBLIC_CONFIG': aclc,
+                'REGENERATE_TEST_PLAN': aclc,
             },
             allowed_programs=allowed_programs,
             allowed_projects=allowed_projects,
@@ -568,20 +568,20 @@ def GenTests(api):
     return api.step_data(
         'find config repos.reading DLM config',
         api.file.read_json({
-            "programs": [
+            'programs': [
                 {
-                    "repo": {
-                        "name": "chromeos/program/galaxy",
+                    'repo': {
+                        'name': 'chromeos/program/galaxy',
                     },
-                    "deviceProjects": [{
-                        "repo": {
-                            "name": "chromeos/project/galaxy/milkyway"
+                    'deviceProjects': [{
+                        'repo': {
+                            'name': 'chromeos/project/galaxy/milkyway'
                         }
                     },]
                 },
                 {
-                    "repo": {
-                        "name": "chromeos/program/otherprogram",
+                    'repo': {
+                        'name': 'chromeos/program/otherprogram',
                     },
                 },
             ]
@@ -637,9 +637,9 @@ def GenTests(api):
       api.post_process(post_process.DoesNotRunRE, 'git commit'),
       api.post_process(
           post_process.ResultReason,
-          "1 step failed:\n\n\n- Infra Failure: "              \
+          '1 step failed:\n\n\n- Infra Failure: '              \
                "Step('Do replicate_public_config and create CL" \
-                   ".chromeos/project/galaxy/milkyway"          \
+                   '.chromeos/project/galaxy/milkyway'          \
                    ".copy public config') (retcode: 1)\n"
       ),
       api.post_process(post_process.DropExpectation),
@@ -673,7 +673,7 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
       api.git.diff_check(True),
       flatten_step_data(1),
       api.post_process(
@@ -708,13 +708,13 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
       api.git.diff_check(True),
       flatten_step_data(0),
       api.post_process(
           post_process.PropertyEquals,
-          "empty_flatten_payload",
-          [["galaxy", "milkyway"]],
+          'empty_flatten_payload',
+          [['galaxy', 'milkyway']],
       ),
   )
 
@@ -723,8 +723,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("joined.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('joined.jsonproto'),
       api.git.diff_check(False),
       flatten_step_data(1),
       api.post_process(
@@ -750,7 +750,7 @@ def GenTests(api):
           post_process.StepSummaryEquals,
           'Do flatten_configs and create CL' \
               '.processing chromeos/project/galaxy/milkyway',
-          "(does not exist)"),
+          '(does not exist)'),
   )
 
   # import to internal config stage tests
@@ -759,8 +759,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("flattened.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('flattened.jsonproto'),
       mock_program_payloads(),
       api.git.diff_check(True),
       api.post_process(
@@ -784,14 +784,14 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_program_payloads(),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("flattened.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(False),
       api.post_process(
           post_process.StepSummaryEquals, 'Do aggregate_configs and create CL'
           '.aggregating configs'
           '.update ref.git transaction.diffing to find changes',
-          "No changes to commit"),
+          'No changes to commit'),
       api.post_process(
           post_process.MustRun,
           'Do aggregate_configs and create CL'
@@ -806,8 +806,8 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_program_payloads(),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("flattened.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do aggregate_configs and create CL'
@@ -823,8 +823,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("flattened.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_suite_scheduler_configs and create CL' \
@@ -846,8 +846,8 @@ def GenTests(api):
       default_properties(),
       config_repos_step_data(api),
       config_dlm_step_data(api),
-      mock_project_payloads("config.jsonproto"),
-      mock_project_payloads("flattened.jsonproto"),
+      mock_project_payloads('config.jsonproto'),
+      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_test_plan and create CL' \

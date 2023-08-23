@@ -159,7 +159,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
     api.step('check docker install', ['docker', 'help'])
 
     # Do an initial stage build to generate termina-tools
-    DoBorealisBuild(api, use_cache=False, skip_termina=False, stage="initial")
+    DoBorealisBuild(api, use_cache=False, skip_termina=False, stage='initial')
 
     # Uprev Arch historic mirror
     if properties.uprev_arch_mirror:

@@ -92,7 +92,7 @@ def RunSteps(api: RecipeApi):
 
   with api.step.nest('check branch') as presentation:
     branch = patch_set.branch
-    if not branch.startswith(("chromeos-", "chameleon-")):
+    if not branch.startswith(('chromeos-', 'chameleon-')):
       presentation.step_text = 'Branch not reviewed'
       return
 
@@ -134,7 +134,7 @@ def RunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
 
   def test_builder(**kwargs) -> TestData:
-    '''Generate a test build.'''
+    """Generate a test build."""
     kwargs.setdefault('builder', 'infra-presubmit')
     kwargs.setdefault('cq', True)
     kwargs.setdefault('bucket', 'cq')
@@ -142,7 +142,7 @@ def GenTests(api: RecipeTestApi):
     return api.test_util.test_build(**kwargs).build
 
   def gen_patch_sets(message: str, filename: str,
-                     branch: str = "chromeos-5.4") -> Dict[int, Dict]:
+                     branch: str = 'chromeos-5.4') -> Dict[int, Dict]:
     return {
         1: {
             'subject': message.splitlines()[0],
@@ -221,9 +221,9 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'check if tech debt'),
       api.post_process(post_process.DropExpectation))
 
-  for idx, subject in enumerate(("FROMGIT: drm_repo", "UPSTREAM: Land Kcam",
-                                 "BACKPORT: FROMGIT: Fix all gpu crashes",
-                                 "BACKPORT: Linus fix to the big lock")):
+  for idx, subject in enumerate(('FROMGIT: drm_repo', 'UPSTREAM: Land Kcam',
+                                 'BACKPORT: FROMGIT: Fix all gpu crashes',
+                                 'BACKPORT: Linus fix to the big lock')):
     yield api.test(
         'upstream %d' % idx, test_builder(gerrit_changes=changes),
         api.gerrit.set_gerrit_fetch_changes_response(

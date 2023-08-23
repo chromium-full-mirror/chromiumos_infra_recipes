@@ -63,13 +63,13 @@ def _FullCheckout(api: RecipeApi):
   with api.step.nest('validate inputs') as presentation:
     # If there are no gerrit_changes, we're done.
     if len(gerrit_changes) == 0:
-      presentation.step_text = "No changes given:  Build is POINTLESS."
+      presentation.step_text = 'No changes given:  Build is POINTLESS.'
       return
     # If there is more than one gerrit_change, this recipe was invoked
     # incorrectly, as the Tricium service only passes singletons.
     if len(gerrit_changes) != 1:
       presentation.status = api.step.FAILURE
-      presentation.step_text = "More than one change given."
+      presentation.step_text = 'More than one change given.'
       return
 
   commit = api.src_state.gerrit_changes[0]
@@ -139,7 +139,7 @@ def _FullCheckout(api: RecipeApi):
     commit_message = api.gerrit.get_change_description(commit)
     files = [
         name for name, finfo in patch_set.file_infos.items()
-        if finfo.get('status', None) != "D"
+        if finfo.get('status', None) != 'D'
     ]
     api.tricium.run_legacy(analyzers, project_path, files, commit_message)
 
@@ -168,8 +168,8 @@ def GenTests(api: RecipeTestApi):
               '_number': 1,
               'ref': 'refs/change/foo',
               'files': {
-                  "foo.ebuild": {},
-                  "bar.sh": {},
+                  'foo.ebuild': {},
+                  'bar.sh': {},
               }
           },
       },
@@ -224,8 +224,8 @@ def GenTests(api: RecipeTestApi):
               '_number': 1,
               'ref': 'refs/change/foo',
               'files': {
-                  "foo.ebuild": {},
-                  "bar.sh": {},
+                  'foo.ebuild': {},
+                  'bar.sh': {},
               }
           },
       },
@@ -260,8 +260,8 @@ def GenTests(api: RecipeTestApi):
               '_number': 1,
               'ref': 'refs/change/foo',
               'files': {
-                  "foo.ebuild": {},
-                  "bar.sh": {},
+                  'foo.ebuild': {},
+                  'bar.sh': {},
               }
           },
       },
@@ -296,8 +296,8 @@ def GenTests(api: RecipeTestApi):
               '_number': 1,
               'ref': 'refs/changes/foo',
               'files': {
-                  "foo.ebuild": {},
-                  "bar.sh": {},
+                  'foo.ebuild': {},
+                  'bar.sh': {},
               }
           },
       },

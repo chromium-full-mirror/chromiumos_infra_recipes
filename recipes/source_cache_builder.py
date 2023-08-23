@@ -262,7 +262,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'staging-execution',
-      api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
+      api.buildbucket.generic_build(builder='staging_SourceCacheBuilder',
                                     bucket='staging'),
       api.properties(
           cache_definition=[
@@ -356,27 +356,27 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [
                       {
-                          "cron": {
-                              "generation": "1335"
+                          'cron': {
+                              'generation': '1335'
                           },
-                          "id": "cron:v1:1335"
+                          'id': 'cron:v1:1335'
                       },
                       {
-                          "webui": {},  # Here we add an unassociated trigger.
+                          'webui': {},  # Here we add an unassociated trigger.
                       },
                       {
-                          "cron": {
-                              "generation": "1336"
+                          'cron': {
+                              'generation': '1336'
                           },
-                          "id": "cron:v1:1336"
+                          'id': 'cron:v1:1336'
                       }
                   ]
               }
@@ -402,22 +402,22 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [{
-                      "cron": {
-                          "generation": "15221"
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [{
+                      'cron': {
+                          'generation': '15221'
                       },
-                      "id": "cron:v1:15221"
+                      'id': 'cron:v1:15221'
                   }, {
-                      "cron": {
-                          "generation": "15224"
+                      'cron': {
+                          'generation': '15224'
                       },
-                      "id": "cron:v1:15224"
+                      'id': 'cron:v1:15224'
                   }]
               }
           }),
@@ -462,22 +462,22 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [{
-                      "cron": {
-                          "generation": "15221"
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [{
+                      'cron': {
+                          'generation': '15221'
                       },
-                      "id": "cron:v1:15221"
+                      'id': 'cron:v1:15221'
                   }, {
-                      "cron": {
-                          "generation": "15224"
+                      'cron': {
+                          'generation': '15224'
                       },
-                      "id": "cron:v1:15224"
+                      'id': 'cron:v1:15224'
                   }]
               }
           }),
@@ -502,27 +502,27 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [
                       {
-                          "cron": {
-                              "generation": "1335"
+                          'cron': {
+                              'generation': '1335'
                           },
-                          "id": "cron:v1:1335"
+                          'id': 'cron:v1:1335'
                       },
                       {
-                          "webui": {},  # Here we add an unassociated trigger.
+                          'webui': {},  # Here we add an unassociated trigger.
                       },
                       {
-                          "cron": {
-                              "generation": "1336"
+                          'cron': {
+                              'generation': '1336'
                           },
-                          "id": "cron:v1:1336"
+                          'id': 'cron:v1:1336'
                       }
                   ]
               }
@@ -548,27 +548,27 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [
                       {
-                          "cron": {
-                              "generation": "1335"
+                          'cron': {
+                              'generation': '1335'
                           },
-                          "id": "cron:v1:1335"
+                          'id': 'cron:v1:1335'
                       },
                       {
-                          "webui": {},  # Here we add an unassociated trigger.
+                          'webui': {},  # Here we add an unassociated trigger.
                       },
                       {
-                          "cron": {
-                              "generation": "1336"
+                          'cron': {
+                              'generation': '1336'
                           },
-                          "id": "cron:v1:1336"
+                          'id': 'cron:v1:1336'
                       }
                   ]
               }
@@ -595,22 +595,22 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [{
-                      "cron": {
-                          "generation": "15221"
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [{
+                      'cron': {
+                          'generation': '15221'
                       },
-                      "id": "cron:v1:15221"
+                      'id': 'cron:v1:15221'
                   }, {
-                      "cron": {
-                          "generation": "15224"
+                      'cron': {
+                          'generation': '15224'
                       },
-                      "id": "cron:v1:15224"
+                      'id': 'cron:v1:15224'
                   }]
               }
           }),
@@ -659,22 +659,22 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [{
-                      "cron": {
-                          "generation": "15221"
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [{
+                      'cron': {
+                          'generation': '15221'
                       },
-                      "id": "cron:v1:15221"
+                      'id': 'cron:v1:15221'
                   }, {
-                      "cron": {
-                          "generation": "15224"
+                      'cron': {
+                          'generation': '15224'
                       },
-                      "id": "cron:v1:15224"
+                      'id': 'cron:v1:15224'
                   }]
               }
           }),
@@ -740,22 +740,22 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           **{
               '$recipe_engine/scheduler': {
-                  "hostname":
-                      "luci-scheduler.appspot.com",
-                  "invocation":
-                      "8967204358994338640",
-                  "job":
-                      "chromeos/staging_SourceCacheBuilder",
-                  "triggers": [{
-                      "cron": {
-                          "generation": "15221"
+                  'hostname':
+                      'luci-scheduler.appspot.com',
+                  'invocation':
+                      '8967204358994338640',
+                  'job':
+                      'chromeos/staging_SourceCacheBuilder',
+                  'triggers': [{
+                      'cron': {
+                          'generation': '15221'
                       },
-                      "id": "cron:v1:15221"
+                      'id': 'cron:v1:15221'
                   }, {
-                      "cron": {
-                          "generation": "15224"
+                      'cron': {
+                          'generation': '15224'
                       },
-                      "id": "cron:v1:15224"
+                      'id': 'cron:v1:15224'
                   }]
               }
           }),

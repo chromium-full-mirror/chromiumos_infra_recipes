@@ -42,46 +42,46 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
           'props must be used together')
 
   if len(properties.buildspec_watch_paths) > 0:
-    with api.step.nest("create external buildspecs"):
-      cmd = ["public-buildspec"]
-      cmd += ["--paths", ",".join(properties.buildspec_watch_paths)]
+    with api.step.nest('create external buildspecs'):
+      cmd = ['public-buildspec']
+      cmd += ['--paths', ','.join(properties.buildspec_watch_paths)]
       if properties.push:
-        cmd += ["--push"]
+        cmd += ['--push']
       if properties.internal_buildspecs_bucket:
-        cmd += ["--internal-bucket", properties.internal_buildspecs_bucket]
+        cmd += ['--internal-bucket', properties.internal_buildspecs_bucket]
       if properties.external_buildspecs_bucket:
-        cmd += ["--external-bucket", properties.external_buildspecs_bucket]
+        cmd += ['--external-bucket', properties.external_buildspecs_bucket]
 
       api.manifest_doctor(cmd)
 
   if len(properties.buildspec_watch_paths_legacy) > 0:
-    with api.step.nest("create external buildspecs (legacy)"):
-      cmd = ["public-buildspec"]
-      cmd += ["--paths", ",".join(properties.buildspec_watch_paths_legacy)]
-      cmd += ["--legacy"]
+    with api.step.nest('create external buildspecs (legacy)'):
+      cmd = ['public-buildspec']
+      cmd += ['--paths', ','.join(properties.buildspec_watch_paths_legacy)]
+      cmd += ['--legacy']
       if properties.push:
-        cmd += ["--push"]
+        cmd += ['--push']
       if properties.internal_buildspecs_bucket:
-        cmd += ["--internal-bucket", properties.internal_buildspecs_bucket]
+        cmd += ['--internal-bucket', properties.internal_buildspecs_bucket]
       if properties.external_buildspecs_bucket:
-        cmd += ["--external-bucket", properties.external_buildspecs_bucket]
+        cmd += ['--external-bucket', properties.external_buildspecs_bucket]
 
       api.manifest_doctor(cmd)
 
   if len(properties.project_buildspec_watch_paths
         ) > 0 and properties.project_buildspec_min_milestone > 0:
-    with api.step.nest("create partner buildspecs"):
-      cmd = ["project-buildspec"]
-      cmd += ["--paths", ",".join(properties.project_buildspec_watch_paths)]
-      cmd += ["--min_milestone", properties.project_buildspec_min_milestone]
-      cmd += ["--projects", ",".join(properties.project_buildspecs)]
+    with api.step.nest('create partner buildspecs'):
+      cmd = ['project-buildspec']
+      cmd += ['--paths', ','.join(properties.project_buildspec_watch_paths)]
+      cmd += ['--min_milestone', properties.project_buildspec_min_milestone]
+      cmd += ['--projects', ','.join(properties.project_buildspecs)]
       if properties.project_buildspec_watch_paths_other_repos:
         cmd += [
-            "--other-repos",
-            ",".join(properties.project_buildspec_watch_paths_other_repos)
+            '--other-repos',
+            ','.join(properties.project_buildspec_watch_paths_other_repos)
         ]
       if properties.push:
-        cmd += ["--push"]
+        cmd += ['--push']
 
       api.manifest_doctor(cmd)
 
@@ -91,35 +91,35 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
       api.cros_source.ensure_synced_cache()
       api.cros_source.checkout_tip_of_tree()
 
-      with api.step.nest("branch local manifests"):
+      with api.step.nest('branch local manifests'):
         with api.context(cwd=api.workspace_util.workspace_path):
           all_projects = api.repo.project_infos()
           project_paths = []
           for project in all_projects:
             if project.name.startswith(
-                "chromeos/project/") or project.name.startswith(
-                    "chromeos/program/") or project.name.startswith(
-                        "chromeos/overlays/chipset-"):
+                'chromeos/project/') or project.name.startswith(
+                    'chromeos/program/') or project.name.startswith(
+                        'chromeos/overlays/chipset-'):
               project_paths.append(project.path)
 
           nproc = api.step(
-              "nproc", ["nproc"], stdout=api.raw_io.output_text(),
+              'nproc', ['nproc'], stdout=api.raw_io.output_text(),
               step_test_data=lambda: api.raw_io.test_api.stream_output_text(
                   '8\n')).stdout.strip()
 
-          cmd = ["branch-local-manifest"]
-          cmd += ["--chromeos_checkout", api.workspace_util.workspace_path]
+          cmd = ['branch-local-manifest']
+          cmd += ['--chromeos_checkout', api.workspace_util.workspace_path]
           cmd += [
-              "--min_milestone",
+              '--min_milestone',
               properties.local_manifest_branching_min_milestone
           ]
-          cmd += ["--projects", ",".join(project_paths)]
+          cmd += ['--projects', ','.join(project_paths)]
           if api.buildbucket.build.id:
-            cmd += ["--bbid", str(api.buildbucket.build.id)]
-          cmd += ["-j", nproc]
+            cmd += ['--bbid', str(api.buildbucket.build.id)]
+          cmd += ['-j', nproc]
 
           if properties.push:
-            cmd += ["--push"]
+            cmd += ['--push']
           api.manifest_doctor(cmd)
 
 
@@ -129,7 +129,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'validate',
       api.properties(
-          **{"internal_buildspecs_bucket": "chromeos-manifest-versions"}),
+          **{'internal_buildspecs_bucket': 'chromeos-manifest-versions'}),
       api.post_check(post_process.StepFailure, 'validate properties'),
       status='FAILURE',
   )
@@ -138,17 +138,17 @@ def GenTests(api: RecipeTestApi):
       'basic',
       api.properties(
           **{
-              "local_manifest_branching_min_milestone": 90,
-              "buildspec_watch_paths": ["release/", "test/"],
-              "buildspec_watch_paths_legacy": ["buildspecs/"],
-              "project_buildspec_watch_paths":
-                  ["full/buildspecs/", "buildspecs/"],
-              "project_buildspec_min_milestone": 90,
-              "project_buildspecs": ["galaxy/", "foo/bar"],
-              "project_buildspec_watch_paths_other_repos": ["chromeos/foo"],
-              "$recipe_engine/buildbucket": {
-                  "build": {
-                      "id": _test_build_id
+              'local_manifest_branching_min_milestone': 90,
+              'buildspec_watch_paths': ['release/', 'test/'],
+              'buildspec_watch_paths_legacy': ['buildspecs/'],
+              'project_buildspec_watch_paths':
+                  ['full/buildspecs/', 'buildspecs/'],
+              'project_buildspec_min_milestone': 90,
+              'project_buildspecs': ['galaxy/', 'foo/bar'],
+              'project_buildspec_watch_paths_other_repos': ['chromeos/foo'],
+              '$recipe_engine/buildbucket': {
+                  'build': {
+                      'id': _test_build_id
                   }
               }
           }),
@@ -202,16 +202,16 @@ def GenTests(api: RecipeTestApi):
       'push',
       api.properties(
           **{
-              "push": True,
-              "local_manifest_branching_min_milestone": 90,
-              "buildspec_watch_paths": ["release/", "test/"],
-              "buildspec_watch_paths_legacy": ["buildspecs/"],
-              "project_buildspec_watch_paths":
-                  ["full/buildspecs/", "buildspecs/"],
-              "project_buildspec_min_milestone": 90,
-              "project_buildspecs": ["galaxy/", "foo/bar"],
-              "internal_buildspecs_bucket": "chromeos-manifest-versions",
-              "external_buildspecs_bucket": "chromiumos-manifest-versions",
+              'push': True,
+              'local_manifest_branching_min_milestone': 90,
+              'buildspec_watch_paths': ['release/', 'test/'],
+              'buildspec_watch_paths_legacy': ['buildspecs/'],
+              'project_buildspec_watch_paths':
+                  ['full/buildspecs/', 'buildspecs/'],
+              'project_buildspec_min_milestone': 90,
+              'project_buildspecs': ['galaxy/', 'foo/bar'],
+              'internal_buildspecs_bucket': 'chromeos-manifest-versions',
+              'external_buildspecs_bucket': 'chromiumos-manifest-versions',
           }),
       api.repo.project_infos_step_data(
           'branch local manifests', data=[
@@ -255,12 +255,12 @@ def GenTests(api: RecipeTestApi):
       'with-ref',
       api.properties(
           **{
-              "local_manifest_branching_min_milestone": 90,
-              "$chromeos/manifest_doctor": {
-                  "manifest_doctor_cipd_package":
-                      "chromiumos/infra/manifest_doctor_foo",
-                  "manifest_doctor_cipd_ref":
-                      "bar"
+              'local_manifest_branching_min_milestone': 90,
+              '$chromeos/manifest_doctor': {
+                  'manifest_doctor_cipd_package':
+                      'chromiumos/infra/manifest_doctor_foo',
+                  'manifest_doctor_cipd_ref':
+                      'bar'
               }
           }),
       api.post_check(

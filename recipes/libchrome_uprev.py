@@ -232,7 +232,7 @@ def GenTests(api: RecipeTestApi):
   ]
 
   expected_outdated_changes = [
-      OUTDATED_PATCH_INFO.format(i, value["subject"])
+      OUTDATED_PATCH_INFO.format(i, value['subject'])
       for i, (value, should_abandon) in test_data.items()
       if should_abandon
   ]
@@ -266,8 +266,8 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'abandon-pre-ToT-uprev-commit-staging',
-      api.buildbucket.generic_build(builder="staging-libchrome-uprev",
-                                    bucket="staging"),
+      api.buildbucket.generic_build(builder='staging-libchrome-uprev',
+                                    bucket='staging'),
       api.gerrit.set_query_changes_response(
           'identify outdated uprev commits', gerrit_change_infos,
           'https://chromium-review.googlesource.com'),

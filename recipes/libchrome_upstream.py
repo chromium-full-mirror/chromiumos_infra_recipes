@@ -46,7 +46,7 @@ def RunSteps(api: RecipeApi):
           with api.step.nest('use chromium cache'):
             chrome_cache_dir = api.path.mkdtemp()
             api.chrome.cache_sync(cache_path=chrome_cache_dir, sync=False,
-                                  step_name="populate cached chrome")
+                                  step_name='populate cached chrome')
             chrome_cache_objects_dir = chrome_cache_dir.join(
                 CHROMIUM_OBJECTS_CACHE)
             git_objects_info_dir = project_dir.join('.git/objects/info')

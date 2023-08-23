@@ -71,7 +71,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     orch = api.test_util.test_orchestrator(**kwargs)
     changes = orch.message.input.gerrit_changes
 
-    values = {x.change: {"branch": branch} for x in changes}
+    values = {x.change: {'branch': branch} for x in changes}
     args += (orch.build,
              api.gerrit.set_gerrit_fetch_changes_response(
                  'configure builder', changes, values))

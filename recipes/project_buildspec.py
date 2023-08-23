@@ -30,12 +30,12 @@ PROPERTIES = ProjectBuildspecProperties
 
 def RunSteps(api: RecipeApi, properties: ProjectBuildspecProperties):
   with api.bot_cost.build_cost_context():
-    with api.step.nest("create program/project buildspec(s)"):
-      cmd = ["project-buildspec"]
-      cmd += ["--buildspec", properties.buildspec]
-      cmd += ["--projects", ",".join(properties.projects)]
+    with api.step.nest('create program/project buildspec(s)'):
+      cmd = ['project-buildspec']
+      cmd += ['--buildspec', properties.buildspec]
+      cmd += ['--projects', ','.join(properties.projects)]
       if not properties.dry_run:
-        cmd += ["--push"]
+        cmd += ['--push']
 
       api.manifest_doctor(cmd)
 

@@ -25,8 +25,8 @@ def securize_user_config(user_config):
   for i, step in enumerate(user_config['steps']):
     name = step['name']
     if not name.startswith(valid_containers):
-      print(f"Container names must start with {valid_containers}, "
-            f"got {name!r} for step {i}")
+      print(f'Container names must start with {valid_containers}, '
+            f'got {name!r} for step {i}')
       sys.exit(-1)
 
   return user_config
@@ -34,7 +34,7 @@ def securize_user_config(user_config):
 
 def strip_steps(steps, files):
   """Remove the file-associated steps if they do no apply to a CL."""
-  allow_tag = "CoP_FilesAllow"
+  allow_tag = 'CoP_FilesAllow'
   out_steps = []
   for step in copy.deepcopy(steps):
     file_match_list = step.pop(allow_tag, None)
