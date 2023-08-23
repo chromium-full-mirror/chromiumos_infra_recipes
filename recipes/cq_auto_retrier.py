@@ -34,8 +34,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   run_properties = defaultdict(lambda: 0)
 
+  def _set_len_prop(**kwargs):
+    """Helper function to set accumulating length of list properties."""
+    for k, v in kwargs.items():
+      run_properties[k] += len(v)
+
   builds = api.auto_retry_util.cq_retry_candidates()
-  run_properties.update({'orch_builds_considered': len(builds)})
+  _set_len_prop(orch_builds_considered=builds)
 
   # A list of (Build, RetryDetails) tuples.
   retryable_runs = []
@@ -48,34 +53,30 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
 
         # Examine builds.
-        _, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
+        successful_builders, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
             b)
-        run_properties['retryable_build_failures'] += len(
-            retryable_build_failures)
-        run_properties['outstanding_build_failures'] += len(
-            outstanding_build_failures)
+        _set_len_prop(successful_builders=successful_builders,
+                      retryable_build_failures=retryable_build_failures,
+                      outstanding_build_failures=outstanding_build_failures)
 
         # Examine test suites.
-        _, retryable_test_suite_failures, outstanding_test_suite_failures = api.auto_retry_util.analyze_test_results(
+        successful_test_suites, retryable_test_suite_failures, outstanding_test_suite_failures = api.auto_retry_util.analyze_test_results(
             b)
-        run_properties['retryable_test_suite_failures'] += len(
-            retryable_test_suite_failures)
-        run_properties['outstanding_test_suite_failures'] += len(
-            outstanding_test_suite_failures)
+        _set_len_prop(
+            successful_test_suites=successful_test_suites,
+            retryable_test_suite_failures=retryable_test_suite_failures,
+            outstanding_test_suite_failures=outstanding_test_suite_failures)
 
         # Examine exonerations.
         previously_exonerated, newly_exonerated, outstanding_exonerations = api.auto_retry_util.test_variant_exoneration_analysis(
             b)
-        run_properties['previously_exonerated_tests'] += len(
-            previously_exonerated)
-        run_properties['newly_exonerated_tests'] += len(newly_exonerated)
-        run_properties['outstanding_exonerations_tests'] += len(
-            outstanding_exonerations)
-
         updated_failed_test_stats = previously_exonerated + newly_exonerated + outstanding_exonerations
         exonerated_test_suites = api.auto_retry_util.get_exonerated_suites(
             b, updated_failed_test_stats)
-        run_properties['exonerated_test_suites'] += len(exonerated_test_suites)
+        _set_len_prop(previously_exonerated_tests=previously_exonerated,
+                      newly_exonerated_tests=newly_exonerated,
+                      outstanding_exonerations_tests=outstanding_exonerations,
+                      exonerated_test_suites=exonerated_test_suites)
 
         outstanding_test_suite_failures = list(
             set(outstanding_test_suite_failures) - set(exonerated_test_suites))
@@ -87,6 +88,9 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
           retry_reason.retryable_test_suites.extend(
               retryable_test_suite_failures + exonerated_test_suites)
           retryable_runs.append((b, retry_reason))
+          _set_len_prop(
+              actionable_retryable_builders=retryable_build_failures,
+              actionable_test_suites=retry_reason.retryable_test_suites)
 
   unthrottled_retry_n = len(retryable_runs)
   with api.step.nest('check recent executions for throttle'):
@@ -116,7 +120,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
       details.retry_age_seconds = int(
           api.time.ms_since_epoch() / 1000) - b.end_time.seconds
 
-  run_properties['retries_made'] = len(retryable_runs)
+  _set_len_prop(retries_made=retryable_runs)
   run_properties['retry_reasons'] = [
       json_format.MessageToDict(y) for x, y in retryable_runs
   ]
