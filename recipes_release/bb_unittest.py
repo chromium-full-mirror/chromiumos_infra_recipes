@@ -19,13 +19,14 @@ import git
 import staging_checks
 import test_util
 
-RECIPES_ANALYZE_OUTPUT = """{
+RECIPES_ANALYZE_OUTPUT = '''{
   "recipes": [
     "bar"
   ],
   "invalidRecipes": [],
   "error": ""
-}"""
+}'''
+
 
 class GetAffectedRecipesTest(unittest.TestCase):
 

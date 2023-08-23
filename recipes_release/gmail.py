@@ -149,4 +149,4 @@ class GmailAnnouncer:
 
     create_message = {'raw': encoded_message}
 
-    service.users().messages().send(userId="me", body=create_message).execute()
+    service.users().messages().send(userId='me', body=create_message).execute()
