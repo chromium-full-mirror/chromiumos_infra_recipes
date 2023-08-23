@@ -117,7 +117,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     # Get the format string, empty version is fine so just return it
     version = self._container_version_fmt
     if not version:
-      return ""
+      return ''
 
     for field, value in ALLOWED_FIELDS.items():
       version = version.replace(field, str(value))
@@ -136,10 +136,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
     #   start with a period or a dash and may contain a maximum of 128
     #   characters.
     if not re.match('[A-Za-z0-9_][A-Za-z0-9_.-]*$', version):
-      raise RuntimeError('Invalid tag format: \'{}\''.format(version))
+      raise RuntimeError("Invalid tag format: '{}'".format(version))
 
     if len(version) > 128:
-      raise RuntimeError('Tag is too long: \'{}\' (max 128)'.format(version))
+      raise RuntimeError("Tag is too long: '{}' (max 128)".format(version))
 
     return version
 
@@ -880,13 +880,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
       with self.m.step.nest('create test service containers') as presentation:
         if not self.m.cros_build_api.has_endpoint(
             self.m.cros_build_api.TestService, 'BuildTestServiceContainers'):
-          presentation.step_summary_text = "No endpoint, skipping"
+          presentation.step_summary_text = 'No endpoint, skipping'
         else:
           BuildTestServiceContainers = \
             self.m.cros_build_api.TestService.BuildTestServiceContainers
 
           version = self.container_version
-          presentation.step_summary_text = 'version: \'{}\''.format(version)
+          presentation.step_summary_text = "version: '{}'".format(version)
 
           build_id = self.m.buildbucket.build.id
 
@@ -897,9 +897,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   version=version,
                   tags=[version] + ([str(build_id)] if build_id else []),
                   labels={
-                      "build-url":
-                          "https://ci.chromium.org/b/{}".format(build_id)
-                          if build_id else "led"
+                      'build-url':
+                          'https://ci.chromium.org/b/{}'.format(build_id)
+                          if build_id else 'led'
                   },
               ), timeout=1 * 60 * 60)
 
@@ -913,10 +913,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
               image_info = result.success.image_info
 
               # Make sure digest has the hash algorithm on it so links work
-              if not image_info.digest.startswith("sha256:"):
-                image_info.digest = "sha256:" + image_info.digest
+              if not image_info.digest.startswith('sha256:'):
+                image_info.digest = 'sha256:' + image_info.digest
 
-              image_link = "https://{host}/{proj}/{name}@{hash}".format(
+              image_link = 'https://{host}/{proj}/{name}@{hash}'.format(
                   host=image_info.repository.hostname,
                   proj=image_info.repository.project,
                   name=image_info.name,
@@ -924,7 +924,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
               )
 
               # Remove the sha prefix and get a subset of the digest to display.
-              short_hash = image_info.digest.replace("sha256:", "")[:8]
+              short_hash = image_info.digest.replace('sha256:', '')[:8]
               link_name = '{} [{}]'.format(result.name, short_hash)
               presentation.links[link_name] = image_link
 
