@@ -5115,8 +5115,7 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"compileSource\": true,@@@",
-      "@@@STEP_LOG_LINE@request@    \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@request@    \"compileSource\": true@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -5165,15 +5164,6 @@
       "@@@STEP_LOG_LINE@request@      \"flag\": \"-strict_toolchain_checks\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"None\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 1,@@@",
-      "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"statsFile\": \"stats.binaryproto\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_4\",@@@",
@@ -5194,7 +5184,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"path\": \"/build/chell\",\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }\n  },\n  \"flags\": {\n    \"compileSource\": true,\n    \"useGoma\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        },\n        {\n          \"flag\": \"strict_toolchain_checks\"\n        },\n        {\n          \"flag\": \"-orderfile_use\"\n        },\n        {\n          \"flag\": \"orderfile_generate\"\n        },\n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    },\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    },\n    {\n      \"flag\": \"-cros-debug\"\n    },\n    {\n      \"flag\": \"strict_toolchain_checks\"\n    },\n    {\n      \"flag\": \"-orderfile_use\"\n    },\n    {\n      \"flag\": \"orderfile_generate\"\n    },\n    {\n      \"flag\": \"-strict_toolchain_checks\"\n    }\n  ],\n  \"gomaConfig\": {\n    \"gomaDir\": \"None\",\n    \"gomaApproach\": 1,\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\",\n    \"counterzFile\": \"counterz.binaryproto\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_4\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/chell\",\n    \"buildTarget\": {\n      \"name\": \"chell\"\n    }\n  },\n  \"flags\": {\n    \"compileSource\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        },\n        {\n          \"flag\": \"strict_toolchain_checks\"\n        },\n        {\n          \"flag\": \"-orderfile_use\"\n        },\n        {\n          \"flag\": \"orderfile_generate\"\n        },\n        {\n          \"flag\": \"-strict_toolchain_checks\"\n        }\n      ]\n    },\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    },\n    {\n      \"flag\": \"-cros-debug\"\n    },\n    {\n      \"flag\": \"strict_toolchain_checks\"\n    },\n    {\n      \"flag\": \"-orderfile_use\"\n    },\n    {\n      \"flag\": \"orderfile_generate\"\n    },\n    {\n      \"flag\": \"-strict_toolchain_checks\"\n    }\n  ],\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_4\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5318,8 +5308,7 @@
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"compileSource\": true,@@@",
-      "@@@STEP_LOG_LINE@published event@      \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@published event@      \"compileSource\": true@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -5368,15 +5357,6 @@
       "@@@STEP_LOG_LINE@published event@        \"flag\": \"-strict_toolchain_checks\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    ],@@@",
-      "@@@STEP_LOG_LINE@published event@    \"gomaConfig\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"gomaDir\": \"None\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"gomaApproach\": \"DEFAULT\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"logDir\": {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
-      "@@@STEP_LOG_LINE@published event@      },@@@",
-      "@@@STEP_LOG_LINE@published event@      \"statsFile\": \"stats.binaryproto\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"counterzFile\": \"counterz.binaryproto\"@@@",
-      "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
       "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_4\",@@@",
@@ -5398,7 +5378,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CtwDChcKDC9idWlsZC9jaGVsbBIHCgVjaGVsbBIECAEYASLNAQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QagQEKEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnChkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzChAKDi1vcmRlcmZpbGVfdXNlChQKEm9yZGVyZmlsZV9nZW5lcmF0ZQoaChgtc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MiEltTVEFSVF9ESVJdL2Nocm9tZTIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQqEQoPY2hyb21lX2ludGVybmFsKg0KCy1jcm9zLWRlYnVnKhkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzKhAKDi1vcmRlcmZpbGVfdXNlKhQKEm9yZGVyZmlsZV9nZW5lcmF0ZSoaChgtc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MyTwoETm9uZSABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG9KGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF80EAISABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CokDChcKDC9idWlsZC9jaGVsbBIHCgVjaGVsbBICCAEizQEKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GoEBChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcwoQCg4tb3JkZXJmaWxlX3VzZQoUChJvcmRlcmZpbGVfZ2VuZXJhdGUKGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzIhJbU1RBUlRfRElSXS9jaHJvbWUyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbCoNCgstY3Jvcy1kZWJ1ZyoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcyoQCg4tb3JkZXJmaWxlX3VzZSoUChJvcmRlcmZpbGVfZ2VuZXJhdGUqGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNBACEgAaDAjfgMT9BBCAyrXuASIGCOGAxP0E0ALQ7IDZrvG1knzaAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5433,22 +5413,13 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CtwDChcKDC9idWlsZC9jaGVsbBIHCgVjaGVsbBIECAEYASLNAQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QagQEKEQoPY2hyb21lX2ludGVybmFsCg0KCy1jcm9zLWRlYnVnChkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzChAKDi1vcmRlcmZpbGVfdXNlChQKEm9yZGVyZmlsZV9nZW5lcmF0ZQoaChgtc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MiEltTVEFSVF9ESVJdL2Nocm9tZTIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQqEQoPY2hyb21lX2ludGVybmFsKg0KCy1jcm9zLWRlYnVnKhkKF3N0cmljdF90b29sY2hhaW5fY2hlY2tzKhAKDi1vcmRlcmZpbGVfdXNlKhQKEm9yZGVyZmlsZV9nZW5lcmF0ZSoaChgtc3RyaWN0X3Rvb2xjaGFpbl9jaGVja3MyTwoETm9uZSABKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG9KGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF80EAISABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CokDChcKDC9idWlsZC9jaGVsbBIHCgVjaGVsbBICCAEizQEKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GoEBChEKD2Nocm9tZV9pbnRlcm5hbAoNCgstY3Jvcy1kZWJ1ZwoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcwoQCg4tb3JkZXJmaWxlX3VzZQoUChJvcmRlcmZpbGVfZ2VuZXJhdGUKGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzIhJbU1RBUlRfRElSXS9jaHJvbWUyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbCoNCgstY3Jvcy1kZWJ1ZyoZChdzdHJpY3RfdG9vbGNoYWluX2NoZWNrcyoQCg4tb3JkZXJmaWxlX3VzZSoUChJvcmRlcmZpbGVfZ2VuZXJhdGUqGgoYLXN0cmljdF90b29sY2hhaW5fY2hlY2tzShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNBACEgAaDAjfgMT9BBCAyrXuASIGCOGAxP0E0ALQ7IDZrvG1knzaAldpbnN0YWxsIHBhY2thZ2VzfGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0luc3RhbGxQYWNrYWdlc3xjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "install packages.process_goma_artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
-      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
     ]
   },
   {

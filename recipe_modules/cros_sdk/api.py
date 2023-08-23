@@ -206,7 +206,7 @@ class CrosSdkApi(RecipeApi):
       stats_file (str): Name of the goma stats file, relative to log_dir.
       counterz_file (str): Name of the goma counterz file, relative to log_dir.
     """
-    self._goma_dir = str(goma_dir)
+    self._goma_dir = str(goma_dir) if goma_dir is not None else None
     self._goma_approach = goma_approach
     self._goma_log_dir = str(log_dir)
     self._goma_stats_file = stats_file
