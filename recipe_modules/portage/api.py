@@ -21,12 +21,12 @@ class PortageApi(recipe_api.RecipeApi):
 
     self._BQ_TABLE_NAME = 'portage_stats.staging' if self.m.cros_infra_config.is_staging else 'portage_stats.prod'
 
-    self._INSERT_QUERY_FORMAT = """INSERT `chromeos-bot.{dataset}` (job, total,
+    self._INSERT_QUERY_FORMAT = '''INSERT `chromeos-bot.{dataset}` (job, total,
     category, package, version, duration, start, `end`, insert_time, emerge_type,
     bbid, bucket, builder, step_name)
-    SELECT * FROM UNNEST([{query_data}])"""
+    SELECT * FROM UNNEST([{query_data}])'''
 
-    self._INSERT_QUERY_DATA = """(%(job)s,
+    self._INSERT_QUERY_DATA = '''(%(job)s,
     %(total)s,
     '%(category)s',
     '%(package)s',
@@ -39,7 +39,7 @@ class PortageApi(recipe_api.RecipeApi):
     '%(bbid)s',
     '%(bucket)s',
     '%(builder)s',
-    '%(step_name)s')"""
+    '%(step_name)s')'''
 
     # Many of these regexs can be best understood by consulting `man emerge`.
     self._START_STATES = ['Emerging binary', 'Emerging']

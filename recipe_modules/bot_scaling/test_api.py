@@ -42,7 +42,7 @@ class BotScalingTestApi(recipe_test_api.RecipeTestApi):
   def get_bot_type() -> BotType:
     """Return a sample BotType for tests."""
     return BotType(
-        bot_size="small",
+        bot_size='small',
         cores_per_bot=4,
         hourly_cost=.337,
         memory_gb=16,

@@ -84,7 +84,7 @@ class ConductorApi(recipe_api.RecipeApi):
 
     collect_config = self.collect_config(collect_name)
     if not collect_config:
-      raise StepFailure('could not find collect config for collection \'%s\'' %
+      raise StepFailure("could not find collect config for collection '%s'" %
                         collect_name)
 
     if not bbids:
@@ -132,7 +132,7 @@ class ConductorApi(recipe_api.RecipeApi):
         conductor_bbids = [int(bbid) for bbid in output.get('bbids', [])]
         if not conductor_bbids:
           presentation.status = self.m.step.FAILURE
-          presentation.step_text = "conductor reported no bbids, falling back to original bbids"
+          presentation.step_text = 'conductor reported no bbids, falling back to original bbids'
           conductor_bbids = bbids
         return [int(bbid) for bbid in conductor_bbids]
       except:  #pylint: disable=bare-except

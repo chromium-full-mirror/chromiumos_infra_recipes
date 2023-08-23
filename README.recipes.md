@@ -5633,7 +5633,7 @@ Returns:
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#618)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#617)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -5652,7 +5652,7 @@ Clear failed_tests entries.
 
 enable excludes config's use.
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#323)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#322)(self, hw_test_results):**
 
 Exonerate the list of HW Test failures based on configs.
 
@@ -5663,7 +5663,7 @@ Returns:
   [Skylab_Result] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#373)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#372)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -5674,7 +5674,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#403)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#402)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -5686,7 +5686,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#436)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#435)(self, vm_builds):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -5707,11 +5707,11 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#584)(self, failure_rates: TestVariantFailureRateAnalysis):**
+&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#583)(self, failure_rates: TestVariantFailureRateAnalysis):**
 
 Returns FailedTestStats for the given LUCI Analysis failure rates.
 
-&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#545)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#544)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
 
 Get the number of failures in the last 10 independant runs from LUCI Analysis.
 
@@ -5720,7 +5720,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#845)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#844)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5730,7 +5730,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#827)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#826)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -5740,7 +5740,7 @@ Args:
 Returns:
   A list of the exonerable VM test builds.
 
-&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#557)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#556)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
 
 Get the flake count & percent of the test for the last 24 hr period.
 
@@ -5750,7 +5750,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#780)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#779)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -5762,7 +5762,7 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#524)(self, test_id: str, board: str, build_target: str, model: str):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#523)(self, test_id: str, board: str, build_target: str, model: str):**
 
 Create test_variant dict for LUCI Analysis from inputs.
 
@@ -5778,7 +5778,7 @@ Returns: A dict that contains the test & variant info.
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#494)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#493)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -5787,7 +5787,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#701)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#700)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None):**
 
 Checks to see if hw result is exonerable.
 
@@ -5800,7 +5800,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#744)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#743)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None):**
 
 Checks to see if the VM test is exonerable.
 
@@ -5821,7 +5821,7 @@ Load configs from binary/json files.
 
 Returns configs for the manually exonerated tests.
 
-&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#510)(self):**
+&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#509)(self):**
 
 Populate markdown style info about suites that were exonerated.
 
@@ -7956,7 +7956,7 @@ Returns:
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#307)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#305)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -7966,13 +7966,13 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#336)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#334)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
 Optionally specify a latest_start time in UTC for builds.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#385)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#384)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -7982,11 +7982,11 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#459)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#458)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#274)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#272)(self):**
 
 Returns aggregate greenness of latest scored snapshot-orchestrator.
 
@@ -8001,14 +8001,14 @@ Returns:
   aggregate greenness for latest scored snapshot-orchestrator, or -1 if
   not found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#423)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#422)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
 If there are irrelevant builders for the current snapshot, look at previous
 snapshots to find the last relevant build and update the greenness scores.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#365)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#364)(self):**
 
 Returns whether the latest scored snapshot-orchestrator greenness is
 
@@ -8030,7 +8030,7 @@ Returns the current UTC time in seconds.
 
 Initialized once and used throughout for any time calculations. Cast to int to use seconds as level of precision.
 
-&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#123)(self, exps: Dict[(str, bool)], gerrit_changes: List[GerritChange]):**
+&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#121)(self, exps: Dict[(str, bool)], gerrit_changes: List[GerritChange]):**
 
 Returns whether looks for green logic should be run.
 
@@ -9274,11 +9274,11 @@ API for working with the 'repo' VCS tool.
 
 See: https://chromium.googlesource.com/external/repo/
 
-#### **class [RepoApi](/recipe_modules/repo/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RepoApi](/recipe_modules/repo/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with the repo tool.
 
-&mdash; **def [abandon](/recipe_modules/repo/api.py#485)(self, branch, projects=None):**
+&mdash; **def [abandon](/recipe_modules/repo/api.py#484)(self, branch, projects=None):**
 
 Abandon the branch in the given projects, or all projects if not set.
 
@@ -9286,13 +9286,13 @@ Args:
   branch (str): The branch to abandon.
   projects (list[str]): The projects for which to abandon the branch.
 
-&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#437)(self, manifest_data):**
+&mdash; **def [create\_tmp\_manifest](/recipe_modules/repo/api.py#436)(self, manifest_data):**
 
 Write manifest_data to a temporary manifest file inside the repo root.
 
 Returns (string): path of tmp manifest relative.
 
-&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#730)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
+&mdash; **def [diff\_manifests](/recipe_modules/repo/api.py#729)(self, from_manifest_str, to_manifest_str, use_merge_base=False):**
 
 Diffs the two manifests and returns an array of differences.
 
@@ -9310,7 +9310,7 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#837)(self, old_manifest_path, new_manifest_path):**
+&mdash; **def [diff\_manifests\_informational](/recipe_modules/repo/api.py#836)(self, old_manifest_path, new_manifest_path):**
 
 Informational step that logs a "manifest diff".
 
@@ -9318,7 +9318,7 @@ Args:
   old_manifest_path (Path): Path to old manifest file.
   new_manifest_path (Path): Path to new manifest file.
 
-&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#688)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
+&mdash; **def [diff\_remote\_and\_local\_manifests](/recipe_modules/repo/api.py#687)(self, from_manifest_url, from_manifest_ref, to_manifest_str, test_from_data=None, use_merge_base=False):**
 
 Diffs the remote manifest against the local manifest string.
 
@@ -9338,9 +9338,9 @@ Returns:
   list[ManifestDiff]: An array of `ManifestDiff` namedtuple for any existing
   changed project (excludes added/removed projects).
 
-&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#87)(self):**
+&emsp; **@property**<br>&mdash; **def [disable\_source\_cache\_health](/recipe_modules/repo/api.py#86)(self):**
 
-&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#630)(self, projects=None, regexes=None, test_data=None, step_name=None):**
+&mdash; **def [ensure\_pinned\_manifest](/recipe_modules/repo/api.py#629)(self, projects=None, regexes=None, test_data=None, step_name=None):**
 
 Ensure that we know the revision info for all projects.
 
@@ -9358,7 +9358,7 @@ Returns:
   (str): The manifest XML as a string, or None if the manifest is already
   pinned.
 
-&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#918)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
+&mdash; **def [ensure\_synced\_checkout](/recipe_modules/repo/api.py#917)(self, root_path, manifest_url, init_opts=None, sync_opts=None, projects=None, final_cleanup=False, sanitize=False):**
 
 Ensure the given repo checkout exists and is synced.
 
@@ -9374,7 +9374,7 @@ Args:
     and uncommitted files are cleaned up after the sync.
   sanitize (bool): Should we run `git gc` on all repos.
 
-&mdash; **def [init](/recipe_modules/repo/api.py#193)(self, manifest_url, \*, manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=True, clean=True, manifest_depth=None):**
+&mdash; **def [init](/recipe_modules/repo/api.py#192)(self, manifest_url, \*, manifest_branch='', reference=None, groups=None, depth=None, repo_url=None, repo_branch=None, local_manifests=None, manifest_name=None, projects=None, verbose=True, clean=True, manifest_depth=None):**
 
 Executes 'repo init' with the given arguments.
 
@@ -9394,9 +9394,9 @@ Args:
   verbose (bool): Whether to produce verbose output.
   manifest_depth (str): Value to pass in as manifest-depth to repo.
 
-&mdash; **def [initialize](/recipe_modules/repo/api.py#76)(self):**
+&mdash; **def [initialize](/recipe_modules/repo/api.py#75)(self):**
 
-&mdash; **def [manifest](/recipe_modules/repo/api.py#657)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
+&mdash; **def [manifest](/recipe_modules/repo/api.py#656)(self, manifest_file=None, test_data=None, pinned=False, step_name=None):**
 
 Uses repo to create a manifest and returns it as a string.
 
@@ -9413,11 +9413,11 @@ Args:
 Returns:
   str: The manifest XML as a string.
 
-&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#912)(self):**
+&emsp; **@property**<br>&mdash; **def [manifest\_gitiles\_commit](/recipe_modules/repo/api.py#911)(self):**
 
 Return a Gitiles commit for the repo manifest.
 
-&mdash; **def [project\_exists](/recipe_modules/repo/api.py#581)(self, project):**
+&mdash; **def [project\_exists](/recipe_modules/repo/api.py#580)(self, project):**
 
 Use 'repo info' to determine if the project exists in the checkout.
 
@@ -9427,7 +9427,7 @@ Args:
 Returns:
   (bool): whether or not the project exists.
 
-&mdash; **def [project\_info](/recipe_modules/repo/api.py#564)(self, project: Optional[Union[(str, Path)]]=None, \*\*kwargs: Dict[(str, Any)]):**
+&mdash; **def [project\_info](/recipe_modules/repo/api.py#563)(self, project: Optional[Union[(str, Path)]]=None, \*\*kwargs: Dict[(str, Any)]):**
 
 Use 'repo forall' to gather project information for one project.
 
@@ -9439,7 +9439,7 @@ Args:
 Returns:
   ProjectInfo: The request project info.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [project\_infos](/recipe_modules/repo/api.py#500)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [project\_infos](/recipe_modules/repo/api.py#499)(self, projects=None, regexes=None, test_data=None, ignore_missing=False):**
 
 Uses 'repo forall' to gather project information.
 
@@ -9462,9 +9462,9 @@ Args:
 Returns:
   list[ProjectInfo]: Requested project infos.
 
-&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [repo\_path](/recipe_modules/repo/api.py#82)(self):**
 
-&mdash; **def [report\_manifest\_branch\_state](/recipe_modules/repo/api.py#609)(self, projects=None, test_data='Repo: info', test_failure=False):**
+&mdash; **def [report\_manifest\_branch\_state](/recipe_modules/repo/api.py#608)(self, projects=None, test_data='Repo: info', test_failure=False):**
 
 Use 'repo info' to output manifest state to stdout.
 Args:
@@ -9476,7 +9476,7 @@ Returns:
   (str): Full info on the manifest branch, current branch or
   unmerged branches.
 
-&mdash; **def [start](/recipe_modules/repo/api.py#471)(self, branch, projects=None):**
+&mdash; **def [start](/recipe_modules/repo/api.py#470)(self, branch, projects=None):**
 
 Start a new branch in the given projects, or all projects if not set.
 
@@ -9484,7 +9484,7 @@ Args:
   branch (str): The new branch name.
   projects (list[str]): The projects for which to start a branch.
 
-&mdash; **def [sync](/recipe_modules/repo/api.py#280)(self, \*, force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=True, no_manifest_update=False, force_remove_dirty=False, prune=None, repo_event_log=True, manifest_branch_state=True, test_manifest_branch_state_failure=False):**
+&mdash; **def [sync](/recipe_modules/repo/api.py#279)(self, \*, force_sync=False, detach=False, current_branch=False, jobs=None, manifest_name=None, no_tags=False, optimized_fetch=False, cache_dir=None, timeout=None, retry_fetches=None, projects=None, verbose=True, no_manifest_update=False, force_remove_dirty=False, prune=None, repo_event_log=True, manifest_branch_state=True, test_manifest_branch_state_failure=False):**
 
 Executes 'repo sync' with the given arguments.
 
@@ -9510,7 +9510,7 @@ Args:
   test_manifest_branch_state_failure (bool): Raise StepFailure in repo-info
   step and confirm it does not fail the entire build.
 
-&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#451)(self, manifest_url, manifest_data, \*\*kwargs):**
+&mdash; **def [sync\_manifest](/recipe_modules/repo/api.py#450)(self, manifest_url, manifest_data, \*\*kwargs):**
 
 Sync to the given manifest file data.
 
@@ -9519,7 +9519,7 @@ Args:
   manifest_data (str): Manifest XML data to use for the sync.
   kwargs: Keyword arguments to pass to 'repo.sync'.
 
-&mdash; **def [version](/recipe_modules/repo/api.py#156)(self, return_version=False):**
+&mdash; **def [version](/recipe_modules/repo/api.py#155)(self, return_version=False):**
 
 Gets the version info retrieved by running `repo version`.
 
@@ -9527,7 +9527,7 @@ Args:
   return_version (bool): If true, return just the parsed version. If false,
     emit the full version command text into the step's stdout.
 
-&mdash; **def [version\_at\_least](/recipe_modules/repo/api.py#171)(self, version_string):**
+&mdash; **def [version\_at\_least](/recipe_modules/repo/api.py#170)(self, version_string):**
 
 Checks to make sure repo version is as least the specified version.
 

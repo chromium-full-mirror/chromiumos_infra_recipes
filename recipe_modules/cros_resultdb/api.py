@@ -80,8 +80,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # TODO(mwarton): move this method implementation to the resultdb API class
     # (in chromium src) once it is tested and verified to be working.
     self.m.resultdb._rpc(  # pylint: disable=protected-access
-        "mark resultdb invocation for bigquery export",
-        "luci.resultdb.v1.Recorder", "UpdateInvocation", MessageToDict(req),
+        'mark resultdb invocation for bigquery export',
+        'luci.resultdb.v1.Recorder', 'UpdateInvocation', MessageToDict(req),
         include_update_token=True,
         step_test_data=lambda: self.m.json.test_api.output_stream({}))
 
@@ -460,7 +460,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
           _is_non_critical(result)
       ])
     self.m.resultdb.exonerate(test_exonerations,
-                              step_name="exonerate non-critical failures")
+                              step_name='exonerate non-critical failures')
 
   def apply_exonerated_exonerations(self, invocation_ids):
     """Exonerate already exonerated test failures for the given invocations.
@@ -512,7 +512,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         pres.logs['exoneration_logs'] = '\n'.join(log_lines)
       try:
         # Don't fail orchestrator if exonerate cmd fails.
-        self.m.resultdb.exonerate(test_exonerations, step_name="exonerate")
+        self.m.resultdb.exonerate(test_exonerations, step_name='exonerate')
       except self.m.step.StepFailure:
         pass
 

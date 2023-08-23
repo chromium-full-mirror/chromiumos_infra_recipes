@@ -17,25 +17,25 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
 
   def fake_exoneration_configs(self):
     """Returns fake configs for unittesting."""
-    betty_criteria = TestDisablement.FilterCriterion(key="build_target",
-                                                     values=["betty"])
+    betty_criteria = TestDisablement.FilterCriterion(key='build_target',
+                                                     values=['betty'])
     build_target_name_criteria = TestDisablement.FilterCriterion(
-        key="build_target", values=["build_target_name"])
+        key='build_target', values=['build_target_name'])
 
-    target_criteria = TestDisablement.FilterCriterion(key="build_target",
-                                                      values=["target"])
+    target_criteria = TestDisablement.FilterCriterion(key='build_target',
+                                                      values=['target'])
     exonerations = [
-        TestDisablement(name="test1", bug_ids=["123456"]),
-        TestDisablement(name="test2", bug_ids=["123456"]),
-        TestDisablement(name="test3", dut_criteria=[build_target_name_criteria],
-                        bug_ids=["123456"]),
-        TestDisablement(name="test4", dut_criteria=[build_target_name_criteria],
-                        bug_ids=["123456"]),
-        TestDisablement(name="test6", dut_criteria=[betty_criteria],
-                        bug_ids=["123456"]),
-        TestDisablement(name="arc.Boot", dut_criteria=[betty_criteria],
-                        bug_ids=["123456"]),
-        TestDisablement(name="camera.TakesGreatPhotos", bug_ids=["123456"],
+        TestDisablement(name='test1', bug_ids=['123456']),
+        TestDisablement(name='test2', bug_ids=['123456']),
+        TestDisablement(name='test3', dut_criteria=[build_target_name_criteria],
+                        bug_ids=['123456']),
+        TestDisablement(name='test4', dut_criteria=[build_target_name_criteria],
+                        bug_ids=['123456']),
+        TestDisablement(name='test6', dut_criteria=[betty_criteria],
+                        bug_ids=['123456']),
+        TestDisablement(name='arc.Boot', dut_criteria=[betty_criteria],
+                        bug_ids=['123456']),
+        TestDisablement(name='camera.TakesGreatPhotos', bug_ids=['123456'],
                         dut_criteria=[target_criteria]),
     ]
 
@@ -60,8 +60,8 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
     return self.m.gitiles.make_encoded_file_from_bytes(b'')
 
   @staticmethod
-  def fake_vm_build(status="FAILURE"):
+  def fake_vm_build(status='FAILURE'):
     return build_pb2.Build(
         id=123,
-        builder=builder_common_pb2.BuilderID(builder="something-direct-vm"),
+        builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
         status=status)

@@ -237,7 +237,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           # This will change the return from _InstallPackagesRequest().
           chrome_root = self.m.path['start_dir'].join('chrome')
           self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
-                                   step_name="populate chrome cache")
+                                   step_name='populate chrome cache')
           self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
                              self.sysroot.build_target, config.chrome.internal,
                              cache_dir=chrome_root.join('chrome_cache'))
@@ -418,9 +418,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       with self.m.step.nest('test images') as presentation:
         if skip_image_tests:
           presentation.step_text = \
-            "Skipping image tests as per board configuration.To check " \
-            "configuration, view generated/builder_configs.cfg or " \
-            "builderconfig/unit_tests_config.star in infra/config."
+            'Skipping image tests as per board configuration.To check ' \
+            'configuration, view generated/builder_configs.cfg or ' \
+            'builderconfig/unit_tests_config.star in infra/config.'
           return response.images
 
         failed_images = []

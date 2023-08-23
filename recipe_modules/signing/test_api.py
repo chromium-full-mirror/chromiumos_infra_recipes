@@ -12,7 +12,7 @@ from recipe_engine.recipe_test_api import TestData
 
 class SigningTestApi(recipe_test_api.RecipeTestApi):
 
-  def setup_mocks(self, channel: str = "dev") -> TestData:
+  def setup_mocks(self, channel: str = 'dev') -> TestData:
     """Set up mocks based on the instructions files from the build_api.
 
     Args:
@@ -76,7 +76,7 @@ class SigningTestApi(recipe_test_api.RecipeTestApi):
 
   def set_timeout(self, timeout: int = 1) -> TestData:
     return self.m.properties(
-        **{"$chromeos/signing": SigningProperties(timeout=timeout)})
+        **{'$chromeos/signing': SigningProperties(timeout=timeout)})
 
   def mock_signing_successes(self, file_names: List[str],
                              prestep: str = '') -> TestData:

@@ -35,7 +35,7 @@ class CrosRelevanceTestApi(recipe_test_api.RecipeTestApi):
     resp = GenerateBuildPlanResponse(builds_to_run=builds_to_run,
                                      skip_for_run_when_rules=builds_to_skip)
     return self.step_data(
-        step_name or "plan builds.read output file",
+        step_name or 'plan builds.read output file',
         self.m.file.read_raw(resp.SerializeToString()),
     )
 

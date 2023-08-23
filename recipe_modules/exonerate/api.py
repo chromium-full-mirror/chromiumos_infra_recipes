@@ -287,9 +287,8 @@ class ExonerateApi(recipe_api.RecipeApi):
         filtered_results.append(result)
       elif TaskState.VERDICT_FAILED in prejob_verdicts:
         filtered_results.append(result)
-      elif all([
-          tc.verdict == TaskState.VERDICT_NO_VERDICT for tc in result.test_cases
-      ]):
+      elif all(tc.verdict == TaskState.VERDICT_NO_VERDICT
+               for tc in result.test_cases):
         # Test for case where all test_cases have VERDICT_NO_VERDICT. See b/296463877.
         # Also tests the case where there are no test_cases.
         filtered_results.append(result)
@@ -297,7 +296,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         new_result = result
         new_test_cases, new_verdict = self._exonerate_hw_test_cases(
             result.test_cases, build_target, board, model)
-        new_result.ClearField("test_cases")
+        new_result.ClearField('test_cases')
         new_result.test_cases.extend(new_test_cases)
         new_result.state.verdict = new_verdict
         filtered_results.append(new_result)

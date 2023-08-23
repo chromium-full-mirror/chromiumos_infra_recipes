@@ -12,7 +12,7 @@ from PB.chromiumos.branch import Branch
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-BRANCH_UTIL_REGEX = r"Creating branch: (?P<branch>.*)\s*"
+BRANCH_UTIL_REGEX = r'Creating branch: (?P<branch>.*)\s*'
 
 
 class CrosBranchApi(recipe_api.RecipeApi):
@@ -104,7 +104,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     with self.m.step.nest('parse source_version'):
       version = self.m.cros_version.Version.from_string(source_version)
       if not version:
-        raise StepFailure("invalid version: {}".format(source_version))
+        raise StepFailure('invalid version: {}'.format(source_version))
 
     kwargs.setdefault(
         'step_name',

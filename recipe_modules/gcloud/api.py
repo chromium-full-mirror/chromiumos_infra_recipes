@@ -29,8 +29,8 @@ _SWARMING_HOST_REGEXP = (r'^(chromeos|chromiumos)-'
 _DEFAULT_TEST_BOT_ID = 'chromeos-ci-infra-us-central1-b-x16-0-nvcj'
 
 # TODO(b/216558719): Consider removing this when gcloud issue is resolved.
-_RE_DISK_SIZE = re.compile('New disk size \'(?P<first>[0-9]+)\' GiB must be '
-                           'larger than existing size \'(?P<second>[0-9]+)\' '
+_RE_DISK_SIZE = re.compile("New disk size '(?P<first>[0-9]+)' GiB must be "
+                           "larger than existing size '(?P<second>[0-9]+)' "
                            'GiB.')
 
 # Sometimes asking to create a disk results in the disk existing, even when
@@ -39,7 +39,7 @@ _RE_DISK_SIZE = re.compile('New disk size \'(?P<first>[0-9]+)\' GiB must be '
 _RE_DISK_EXISTS = re.compile('The resource .+ already exists')
 
 RECOVERY_IMAGE_TEMPLATE = 'initial-{}-source-snapshot'
-RECOVERY_IMAGE_FALLBACK_TEMPLATE = "{}-fallback"
+RECOVERY_IMAGE_FALLBACK_TEMPLATE = '{}-fallback'
 
 
 class GcloudApi(recipe_api.RecipeApi):
@@ -763,7 +763,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     lookback_date = (
         self.m.time.utcnow() -
-        datetime.timedelta(days=retention_days)).strftime("%Y-%m-%d")
+        datetime.timedelta(days=retention_days)).strftime('%Y-%m-%d')
     list_cmd = ['gcloud', 'compute', 'images', 'list', '--format', 'json']
     image_list = []
     cmd = []
@@ -1284,7 +1284,7 @@ class GcloudApi(recipe_api.RecipeApi):
       The temp recovery disk to delete later.
     """
     if not self.image_exists(image):
-      raise StepFailure("Asked to copy an image that does not exist")
+      raise StepFailure('Asked to copy an image that does not exist')
 
     recovery_image_name = recovery_image or RECOVERY_IMAGE_TEMPLATE.format(
         cache_name)

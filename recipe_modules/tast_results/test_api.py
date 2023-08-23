@@ -13,7 +13,7 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
 
   gsutil_timeout_seconds = 120
 
-  test_results_json = json.loads("""
+  test_results_json = json.loads('''
 [
   {
     "name": "arc.Boot",
@@ -110,9 +110,9 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "unknownField": 123
   }
 ]
-""")
+''')
 
   @property
   def test_streamed_results_jsonl(self):
-    return "\n".join(
+    return '\n'.join(
         [json.dumps(x, sort_keys=True) for x in self.test_results_json])

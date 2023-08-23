@@ -19,8 +19,8 @@ class ObservabilityImageSizeApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     # TODO(b/224589938): Determine what these IDs should be
-    self._pubsub_project_id = properties.pubsub_project_id or "cros-build-telemetry"
-    self._pubsub_topic_id = properties.pubsub_topic_id or "image-size-events"
+    self._pubsub_project_id = properties.pubsub_project_id or 'cros-build-telemetry'
+    self._pubsub_topic_id = properties.pubsub_topic_id or 'image-size-events'
     self._data_proto = ImageSizeObservabilityData()
 
   def _add_target_versions(self, version_data_response):

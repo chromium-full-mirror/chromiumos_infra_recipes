@@ -34,7 +34,7 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
 
   def local_manifest_step_test_data(self):
     """Returns test data to simulate a local manifest."""
-    test_manifest = """
+    test_manifest = '''
 <manifest>
   <remote name="cros-internal"
           fetch="https://chrome-internal.googlesource.com"
@@ -43,7 +43,7 @@ class RepoTestApi(recipe_test_api.RecipeTestApi):
      path="src/private-repo1"
      remote="cros-internal" />
 </manifest>
-    """
+    '''
 
     return self.m.gitiles.make_encoded_file(test_manifest)
 

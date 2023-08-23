@@ -61,7 +61,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
       return response
 
   def publish(self, project_id, topic_id, build_type,
-              should_poll_for_completion=False, parent_uid=""):
+              should_poll_for_completion=False, parent_uid=''):
     """Run the result_flow to publish build's own build ID to Pubsub.
 
     Args:

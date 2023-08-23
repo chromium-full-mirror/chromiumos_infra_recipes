@@ -319,7 +319,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     with self.m.step.nest('uprev sdk'):
       self._validate_sdk_uprev_spec()
       request = sdk_pb2.UprevRequest(
-          binhost_gs_bucket="gs://chromeos-prebuilt/",
+          binhost_gs_bucket='gs://chromeos-prebuilt/',
           version=self.properties.sdk_uprev_spec.sdk_version,
           toolchain_tarball_template=(
               self.properties.sdk_uprev_spec.toolchain_template),

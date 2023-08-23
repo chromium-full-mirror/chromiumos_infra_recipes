@@ -43,8 +43,8 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
 
   EXAMPLE_PAYGEN_JSON_BIG = _example_big_config()
 
-  EXAMPLE_EMPTY_JSON = "{}"
-  EXAMPLE_NOT_EVEN_JSON = "dawiojdoiawjdioawjdow"
+  EXAMPLE_EMPTY_JSON = '{}'
+  EXAMPLE_NOT_EVEN_JSON = 'dawiojdoiawjdioawjdow'
   ALL_EXAMPLE_JSONS = [
       EXAMPLE_PAYGEN_JSON, EXAMPLE_EMPTY_JSON, EXAMPLE_NOT_EVEN_JSON
   ]
@@ -289,17 +289,17 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
   # Includes models that aren't configured for AU testing (ex. bruce).
   # Excludes some models that may be in a cfg's applicable_models (ex. mako).
   ALL_EXPORTED_MODELS = [
-      "astronaut", "nasher360", "blue", "bruce", "lava", "whitetip", "santa",
-      "blacktip360", "blacktiplte", "babymega", "robo", "nasher", "blacktip",
-      "robo360", "rabbid", "babytiger", "epaulette"
+      'astronaut', 'nasher360', 'blue', 'bruce', 'lava', 'whitetip', 'santa',
+      'blacktip360', 'blacktiplte', 'babymega', 'robo', 'nasher', 'blacktip',
+      'robo360', 'rabbid', 'babytiger', 'epaulette'
   ]
 
   # Sample list of models that might be configured in GoldenEye for AU testing.
   # Compared to ALL_EXPORTED_MODELS, excludes the following:
   # babymega, blacktip360, blacktiplte, bruce, lava, nasher, robo360, whitetip.
   AU_TESTING_MODELS = [
-      "astronaut", "nasher360", "blue", "santa", "robo", "blacktip", "rabbid",
-      "babytiger", "epaulette"
+      'astronaut', 'nasher360', 'blue', 'santa', 'robo', 'blacktip', 'rabbid',
+      'babytiger', 'epaulette'
   ]
 
   EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(

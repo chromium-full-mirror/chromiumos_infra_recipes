@@ -40,7 +40,7 @@ class CrosDebugApi(recipe_api.RecipeApi):
         location to look for the `resume` file, but for tests the location can
         be passed in with this property for ease of verification.
     """
-    with self.m.step.nest("debug builder steps") as presentation:
+    with self.m.step.nest('debug builder steps') as presentation:
       # Step 1. Safety checks.
       if (not self.m.cros_infra_config.is_staging or self.m.buildbucket.build.id
           != 0) and not override_led_launch_only_staging:
@@ -55,13 +55,13 @@ class CrosDebugApi(recipe_api.RecipeApi):
       # Step 2. Create sentinel file to watch.
       path = test_location_override or self.m.path.mkdtemp()
       with self.m.context(cwd=path):
-        with self.m.step.nest("set up file to watch") as pres:
+        with self.m.step.nest('set up file to watch') as pres:
           file_to_watch = '{}/resume'.format(path)
           pres.step_text = 'Watching for file to appear to resume build. To resume, run `touch {}` on the bot'.format(
               file_to_watch)
 
         # Step 3. Poll for the file's existence (or wait for the timeout).
-        with self.m.step.nest("waiting for file to appear") as pres:
+        with self.m.step.nest('waiting for file to appear') as pres:
           start_time = self.m.time.utcnow()
           while (self.m.time.utcnow() - start_time).total_seconds() < timeout:
             if self.m.path.exists(file_to_watch):
@@ -71,7 +71,7 @@ class CrosDebugApi(recipe_api.RecipeApi):
             self.m.time.sleep(5)
 
         # Step 4. If the file exists, delete it to not pollute the next run.
-        with self.m.step.nest("clean up"):
+        with self.m.step.nest('clean up'):
           if self.m.path.exists(file_to_watch):
             self.m.easy.stdout_step('remove resume file', ['rm', file_to_watch],
                                     infra_step=True)

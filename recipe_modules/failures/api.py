@@ -195,7 +195,7 @@ class FailuresApi(RecipeApi):
       step = self.m.step('ignored exception', cmd=None)
       step.presentation.logs['caught exception'] = repr(e)
       # Update the caught_exceptions output property with error for the current step.
-      self._caught_exceptions.update({".".join(self.m.step.active_result.name_tokens): repr(e)})
+      self._caught_exceptions.update({'.'.join(self.m.step.active_result.name_tokens): repr(e)})
       self.m.easy.set_properties_step(caught_exceptions=self._caught_exceptions)
 
   def _set_failed_packages(self, enclosing_step, packages, compile_failure):
@@ -452,7 +452,7 @@ class FailuresApi(RecipeApi):
                                     self.m.buildbucket.is_critical,
                                     self.m.naming.get_build_title,
                                     self.m.urls.get_build_link_map, get_id,
-                                    "{} {}".format(detail, kind))
+                                    '{} {}'.format(detail, kind))
         all_results.failures += results.failures
         if results.successes:
           all_results.successes = {
@@ -708,14 +708,14 @@ class FailuresApi(RecipeApi):
     Returns:
       formatted markdown string for UI presentation.
     """
-    markdown = ""
+    markdown = ''
     if step_failures:
       lines = [
-          "{} step{} failed:\n".format(
-              len(step_failures), "" if len(step_failures) == 1 else "s")
+          '{} step{} failed:\n'.format(
+              len(step_failures), '' if len(step_failures) == 1 else 's')
       ]
       for failure in step_failures:
-        lines += ["- %s\n" % failure.reason or failure.name]
+        lines += ['- %s\n' % failure.reason or failure.name]
 
       # truncate markdown to 4K to avoid INFRA_FAILURE
       markdown = lines[0]

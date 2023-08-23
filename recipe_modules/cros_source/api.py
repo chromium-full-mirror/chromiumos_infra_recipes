@@ -534,7 +534,7 @@ class CrosSourceApi(RecipeApi):
     """Return the branch for a gitiles_commit.ref"""
     branch = (
         ref[len('refs/heads/'):] if ref.startswith('refs/heads/') else ref)
-    branch = '' if branch in ("snapshot", "staging-snapshot") else branch
+    branch = '' if branch in ('snapshot', 'staging-snapshot') else branch
     return branch
 
   def get_external_snapshot_commit(self, internal_manifest_path: Path,
@@ -1374,8 +1374,8 @@ class CrosSourceApi(RecipeApi):
       if not manifest_gs_path:
         # Check that the manifest_url is allowed.
         if manifest_url not in ALLOWED_MANIFEST_SOURCES:
-          raise StepFailure("manifest_url ({}) was not one of {}".format(
-              manifest_url, ",".join(ALLOWED_MANIFEST_SOURCES)))
+          raise StepFailure('manifest_url ({}) was not one of {}'.format(
+              manifest_url, ','.join(ALLOWED_MANIFEST_SOURCES)))
 
         step_test_data = lambda: self.m.depot_gitiles.test_api.make_encoded_file(
             testdata)

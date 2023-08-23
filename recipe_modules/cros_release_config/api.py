@@ -16,9 +16,9 @@ from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import E
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
-CONFIG = "release/release_builders.textpb"
-STABILIZE_CONFIG = "release/stabilize_builders.textpb"
-CHROMITE_ANDROID = "lib/constants.py"
+CONFIG = 'release/release_builders.textpb'
+STABILIZE_CONFIG = 'release/stabilize_builders.textpb'
+CHROMITE_ANDROID = 'lib/constants.py'
 
 ANDROID_BRANCH_FORMAT = {
     'android-container-pi': 'git_pi-arc-m%s',
@@ -30,7 +30,7 @@ ANDROID_BRANCH_FORMAT = {
 TEST_DATA = ReleaseBuilders(builders=[
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='main', number=-1),
-        build_schedule="0 1 * * *"),
+        build_schedule='0 1 * * *'),
     ReleaseBuilder(
         milestone=ReleaseBuilder.Milestone(branch_name='release-R01-00001.B',
                                            number=1)),
@@ -50,7 +50,7 @@ RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
 
 
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
-  CONFIG_PROJECT = "chromeos/infra/config"
+  CONFIG_PROJECT = 'chromeos/infra/config'
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -78,7 +78,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     """
     try:
       return datetime.datetime.strptime(builder.expiration_date.value,
-                                        "%Y-%m-%d")
+                                        '%Y-%m-%d')
     except ValueError:
       return None
 
@@ -151,18 +151,18 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       if not branch.startswith('release-') and not branch.startswith(
           'stabilize-'):
         raise StepFailure(
-            "{} is not a release or stabilize branch".format(branch))
+            '{} is not a release or stabilize branch'.format(branch))
 
       is_release_branch = branch.startswith('release-')
       if is_release_branch:
         with self.m.step.nest('validate release branch'):
           milestone = self._extract_milestone(branch)
           if not milestone:
-            raise StepFailure("bad release branch")
+            raise StepFailure('bad release branch')
 
     with self.m.step.nest('validate CL settings'):
       if not self._reviewers and not self._auto_submit:
-        raise StepFailure("no reviewers specified and auto submit is false")
+        raise StepFailure('no reviewers specified and auto submit is false')
 
     workpath = self.m.cros_source.workspace_path
     projects = [self.CONFIG_PROJECT]
@@ -194,11 +194,11 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           ):
             expiration_date = ReleaseBuilder.Date(
                 value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
-                       datetime.timedelta(days=14)).strftime("%Y-%m-%d"))
+                       datetime.timedelta(days=14)).strftime('%Y-%m-%d'))
         else:
           # Default expiration date for stabilize branches is 6 months.
           date = datetime.datetime.today() + datetime.timedelta(days=30 * 6)
-          expiration_date = ReleaseBuilder.Date(value=date.strftime("%Y-%m-%d"))
+          expiration_date = ReleaseBuilder.Date(value=date.strftime('%Y-%m-%d'))
           extra_text = (
               '\nThis CL defines release builders for this stabilize branch for'
               ' use with `cros try`. If you do not need `cros try` support,'

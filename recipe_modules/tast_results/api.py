@@ -342,7 +342,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     # request id with "0" suffix. Both can be used to point to the same swarming
     # task. Swarming supported implicit retry and first task has "1" in suffix
     # and retried task has "2" in suffix.
-    return swarming_task_run_id[:-1] + "0"
+    return swarming_task_run_id[:-1] + '0'
 
   def _generate_resultdb_base_tags(self, tag, suite_name):
     """Generate the base tags for the test results.
@@ -422,9 +422,9 @@ class TastResultsApi(recipe_api.RecipeApi):
     # Fetches build config from "artifactsGsPath" input property first and then
     # fallback to the suite if required.
     builder_name = None
-    if "buildPayload" in build.input.properties \
-      and "artifactsGsPath" in build.input.properties["buildPayload"]:
-      image = build.input.properties["buildPayload"]["artifactsGsPath"]
+    if 'buildPayload' in build.input.properties \
+      and 'artifactsGsPath' in build.input.properties['buildPayload']:
+      image = build.input.properties['buildPayload']['artifactsGsPath']
       if image:
         builder_name = image.split('/')[0]
     if not builder_name:
@@ -439,9 +439,9 @@ class TastResultsApi(recipe_api.RecipeApi):
       base_tags.append(('suite_task_id', suite_task_id))
 
     # Fetches the following information from buildbucket.build.input.properties.
-    if "buildPayload" in build.input.properties \
-      and "artifactsGsPath" in build.input.properties["buildPayload"]:
-      image = build.input.properties["buildPayload"]["artifactsGsPath"]
+    if 'buildPayload' in build.input.properties \
+      and 'artifactsGsPath' in build.input.properties['buildPayload']:
+      image = build.input.properties['buildPayload']['artifactsGsPath']
       if image:
         base_tags.append(('image', image))
         base_tags.append(('build', image.split('/')[-1]))

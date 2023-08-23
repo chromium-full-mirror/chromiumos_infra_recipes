@@ -696,7 +696,7 @@ class CrosBuildApiApi(RecipeApi):
 
     # Lastly, check that the build API side implements the endpoint, and that
     # testing has not told us to remove the endpoint.
-    wanted = "%s/%s" % (service_name, method)
+    wanted = '%s/%s' % (service_name, method)
     remove_endpoints = {}
     if self._test_data.enabled:
       remove_endpoints = self._test_data.get('remove_endpoints', {})

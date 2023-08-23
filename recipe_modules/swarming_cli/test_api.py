@@ -19,12 +19,12 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     """
     if any('cq' in dim for dim in dimensions):
       return {
-          "busy": "21",
-          "count": "23",
-          "dead": "0",
-          "maintenance": "0",
-          "now": "2020-03-26T23:38:02.383828",
-          "quarantined": "0"
+          'busy': '21',
+          'count': '23',
+          'dead': '0',
+          'maintenance': '0',
+          'now': '2020-03-26T23:38:02.383828',
+          'quarantined': '0'
       }
     return {}
 
@@ -37,7 +37,7 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     task_counts = {}
     for dim in dimensions:
       if 'cq' in dim:
-        task_counts = {"count": "23", "now": "2020-03-27T19:08:08.207587"}
+        task_counts = {'count': '23', 'now': '2020-03-27T19:08:08.207587'}
     return task_counts
 
   def swarming_task_list_test_data(self, api):
@@ -55,9 +55,9 @@ class SwarmingCliTestApi(recipe_test_api.RecipeTestApi):
     two_hours_ago = now - datetime.timedelta(hours=2)
     return [
         {
-            "created_ts": one_hour_ago.strftime(fmt),
+            'created_ts': one_hour_ago.strftime(fmt),
         },
         {
-            "created_ts": two_hours_ago.strftime(fmt),
+            'created_ts': two_hours_ago.strftime(fmt),
         },
     ]

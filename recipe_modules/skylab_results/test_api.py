@@ -128,7 +128,7 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
     return {name: response_obj for name in names}
 
   def _response_json(self, task_state, test_cases_verdict):
-    return """{
+    return '''{
     "state": {
         "verdict": "%s",
         "lifeCycle": "%s"
@@ -155,7 +155,7 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
         }
     ]
 }
-""" % (
+''' % (
         task_state.verdict,
         task_state.life_cycle,
         test_cases_verdict,

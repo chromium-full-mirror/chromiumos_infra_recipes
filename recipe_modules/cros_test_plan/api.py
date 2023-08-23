@@ -18,7 +18,7 @@ from recipe_engine import recipe_api
 
 CONFIG_INTERNAL_CHECKOUT = 'src/config-internal'
 INFRA_CONFIG_URL = 'https://chrome-internal.googlesource.com/chromeos/infra/config'
-HELP_STDOUT = """Generate testing config for specified release builders.
+HELP_STDOUT = '''Generate testing config for specified release builders.
 
 Usage: ./generate_test_config [options]
 Usage: ./generate_test_config [options] all
@@ -27,7 +27,7 @@ Usage: ./generate_test_config [options] coral-release-main,staging-kevin-release
 Options:
   ...
   -b, --branch                  Tell the tool what branch we're on. Only for
-"""
+'''
 
 
 class CrosTestPlanApi(recipe_api.RecipeApi):

@@ -46,7 +46,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self.timeout = properties.timeout
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=9 * 60 * 60)
-    self._vm_bucket = properties.vm_bucket or "staging"
+    self._vm_bucket = properties.vm_bucket or 'staging'
     self._skylab_task_per_build_target = properties.skylab_task_per_build_target
     self._test_summary = []
     self._not_runnable_addtnl_tests = []
@@ -470,7 +470,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       GenerateTestPlanResponse of tests that should run.
     """
     # Remove informational tast VM tests from test_plan.
-    if self.m.buildbucket.build.builder.builder == "snapshot-orchestrator":
+    if self.m.buildbucket.build.builder.builder == 'snapshot-orchestrator':
       with self.m.step.nest('filter test plan') as pres:
         non_informational_units = [
             self._get_non_informational(unit)
@@ -483,9 +483,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         filtered_hw_test_units = self._filter_snapshot_hw_test_units(
             test_plan.hw_test_units)
 
-        test_plan.ClearField("direct_tast_vm_test_units")
+        test_plan.ClearField('direct_tast_vm_test_units')
         test_plan.ClearField('tast_gce_test_units')
-        test_plan.ClearField("hw_test_units")
+        test_plan.ClearField('hw_test_units')
 
         test_plan.direct_tast_vm_test_units.extend(non_informational_units)
         test_plan.tast_gce_test_units.extend(non_informational_gce_units)

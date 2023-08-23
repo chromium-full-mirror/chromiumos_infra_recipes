@@ -173,7 +173,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
       values['mergeable'] = value
     return self.override_step_data(
         step_name,
-        stdout=self.m.raw_io.output(')]}\'\n' + self.m.json.dumps(values)))
+        stdout=self.m.raw_io.output(")]}'\n" + self.m.json.dumps(values)))
 
   def test_gerrit_fetch_changes(self, request: JSONObject,
                                 gerrit_changes: List[GerritChange]

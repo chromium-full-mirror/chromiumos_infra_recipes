@@ -352,8 +352,8 @@ class PaygenTestingApi(recipe_api.RecipeApi):
     """Overrides whatever QS account was set via properties"""
     self._quota_scheduler_account = qs_account
 
-  def _get_channel_from_paygen_request(self, gen_req: GenerationRequest
-                                      ) -> Optional["common_pb2.Channel"]:
+  def _get_channel_from_paygen_request(
+      self, gen_req: GenerationRequest) -> Optional['common_pb2.Channel']:
     """Get the target channel from a paygen request input properties.
 
     When creating a build report we look at the input arguments of the finished
@@ -463,7 +463,7 @@ class PaygenTestingApi(recipe_api.RecipeApi):
                                 src_version: str = None,
                                 src_channel: str = None,
                                 applicable_models: List[str] = None,
-                                src_bucket: str = None) -> "PaygenTestConfig":
+                                src_bucket: str = None) -> 'PaygenTestConfig':
     """Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
 
     Args:

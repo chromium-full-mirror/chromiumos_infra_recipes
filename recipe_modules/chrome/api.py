@@ -37,7 +37,7 @@ DEFAULT_GCLIENT_SYNC_TIMEOUT_SECONDS = 10800  # 3 hrs.
 # This cache config is a slightly strange json format in that it needs the
 # python preference for capitalized bools. Instead of json.dumps, just
 # explicitly format this as needed. (See legacy build step SyncChrome.)
-GCLIENT_CACHE_CONFIG = """[
+GCLIENT_CACHE_CONFIG = '''[
     {
         'url': '%s',
         'managed': False,
@@ -48,7 +48,7 @@ GCLIENT_CACHE_CONFIG = """[
             'checkout_google_internal': True
         }
     }
-]""" % CHROMIUM_GIT_URL  # Intentionally not using .format so custom_deps works.
+]''' % CHROMIUM_GIT_URL  # Intentionally not using .format so custom_deps works.
 
 # The following project->regexes should trigger a chrome rebuild.
 CHROMIUM_REBUILD_REGEXES = {
@@ -59,9 +59,9 @@ CHROMIUM_REBUILD_REGEXES = {
 }
 
 # Gerrit topic for the chrome atomic uprev CLs
-TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC = "chromeos-base/lacros-ash-atomic"
+TOPIC_CHROME_UPREV_LACROS_ASH_ATOMIC = 'chromeos-base/lacros-ash-atomic'
 # Cq-Cl-Tag footer value for the chrome atomic uprev CLs
-CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC = "pupr:chromeos-base/lacros-ash-atomic"
+CL_TAG_CHROME_UPREV_LACROS_ASH_ATOMIC = 'pupr:chromeos-base/lacros-ash-atomic'
 
 CHROME_PACKAGE = PackageInfo(category='chromeos-base',
                              package_name='chromeos-chrome')
@@ -198,7 +198,7 @@ class ChromeApi(recipe_api.RecipeApi):
       with self.m.step.nest('sync chrome source async'):
         chrome_root = self._chrome_root
         self.cache_sync(cache_path=chrome_root, sync=False,
-                        step_name="populate chrome cache")
+                        step_name='populate chrome cache')
         with self.m.step.nest('find chrome cache head'):
           cache_head = _get_cache_head()
         self.m.easy.set_properties_step(chrome_cache_head=cache_head)

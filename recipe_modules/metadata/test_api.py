@@ -12,7 +12,7 @@ from PB.chromiumos.build.api import container_metadata
 class MetadataTestApi(recipe_test_api.RecipeTestApi):
   """Test examples for metadata api."""
 
-  def mock_metadata(self, target="test-target"):
+  def mock_metadata(self, target='test-target'):
     metadata = container_metadata.ContainerMetadata(
         containers={
             target:

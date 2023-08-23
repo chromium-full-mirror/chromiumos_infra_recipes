@@ -155,8 +155,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     self._build_poller_cipd_package = (
         self._properties.build_poller_cipd_package.encode('utf-8') or
-        "chromiumos/infra/build_poller/${platform}")
-    default_build_poller_cipd_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+        'chromiumos/infra/build_poller/${platform}')
+    default_build_poller_cipd_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
     self._build_poller_cipd_ref = (
         self._properties.build_poller_cipd_ref.encode('utf-8') or
         default_build_poller_cipd_ref)
@@ -435,10 +435,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)
     if include_build_details:
-      summary_markdown = "Full version: {}".format(
+      summary_markdown = 'Full version: {}'.format(
           self.m.cros_version.version.legacy_version)
       if raw_result.summary_markdown:
-        summary_markdown += "\n\n{}".format(raw_result.summary_markdown)
+        summary_markdown += '\n\n{}'.format(raw_result.summary_markdown)
       raw_result = result_pb2.RawResult(status=raw_result.status,
                                         summary_markdown=summary_markdown)
     return raw_result
@@ -489,7 +489,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             self.m.context(cwd=manifest.path):
           try:
             self.m.git.push(manifest.url,
-                            "%s:%s" % (manifest.gitiles_commit.id, ref))
+                            '%s:%s' % (manifest.gitiles_commit.id, ref))
           except self.m.step.StepFailure:
             # Making this fail silently because newer snapshot orchestrator can
             # update a ref before the older one.
@@ -1047,7 +1047,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # orchestrator's child has a *-postsubmit name, or a slim-cq build which
       # doesn't have an explicit ChildSpec.
       build_target = self._get_property(
-          "$chromeos/build_menu.build_target.name", build.input.properties)
+          '$chromeos/build_menu.build_target.name', build.input.properties)
       if build_target:
         child_spec = child_targets_dict.get(build_target)
 
@@ -1271,7 +1271,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             # pylint: disable=cell-var-from-loop
             for step in [payload_step, aggregate_step]:
               step.status = self.m.step.FAILURE
-              step.step_summary_text = summary or ""
+              step.step_summary_text = summary or ''
 
           skipped = []
           for build in child_builds:
@@ -1355,7 +1355,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
               aggregated.MergeFrom(message)
 
           payload_step.logs['skipped build info'] = '\n'.join(
-              "%s - %s" % skipped_build for skipped_build in sorted(skipped))
+              '%s - %s' % skipped_build for skipped_build in sorted(skipped))
 
         # TODO(b/204184594): Due to an issue in builder_config, we can't set an
         # artifacts path for orchestrators, so we'll hardcode the image-archive
@@ -1368,7 +1368,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         gs_path = self.m.cros_artifacts.upload_metadata(
             metadata_info.name,
             self.m.build_menu.config_or_default.id.name, # eg: cq-orchestrator
-            "", # orchestrators have no build target
+            '', # orchestrators have no build target
             gs_bucket,
             metadata_info.filename,
             aggregated,

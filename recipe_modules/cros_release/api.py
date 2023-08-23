@@ -375,7 +375,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             gs_location = gs_location[len('gs://'):]
           # Split bucket off, and then append buildspec to the rest of the path (if any).
           # If a filename is not supplied in gs_location, we use the buildspec_filename.
-          gs_toks = self.m.path.dirname(gs_location).split("/", 1)
+          gs_toks = self.m.path.dirname(gs_location).split('/', 1)
           gs_bucket = gs_toks[0]
           gs_path = self.m.path.join(
               gs_toks[1],
@@ -659,7 +659,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         # TODO(b/278885352): Remove special casing for 108/114 once channels are
         # actually populated with LTS/LTC (this work is targeting 120).
         if config.orchestrator.gitiles_commit.ref in [
-            "refs/heads/release-R108-15183.B", "refs/heads/release-R114-15437.B"
+            'refs/heads/release-R108-15183.B', 'refs/heads/release-R114-15437.B'
         ]:
           return RELEASE_HIGH_PRIO_QS_ACCOUNT
 

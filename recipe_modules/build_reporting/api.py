@@ -34,7 +34,7 @@ from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
 
 # TODO(b/200713946): Lookup the builder region and use that endpoint
-PUBSUB_ENDPOINT = "us-central1-pubsub.googleapis.com:443"
+PUBSUB_ENDPOINT = 'us-central1-pubsub.googleapis.com:443'
 
 BuildConfig = BuildReport.BuildConfig
 
@@ -138,9 +138,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """Set the type for the build, must be set once and only once."""
     if not build_type in BuildReport.BuildType.values():
       raise ValueError("Invalid build type '%d', must be value defined in "
-                       "BuildReport.BuildType" % build_type)
+                       'BuildReport.BuildType' % build_type)
     if self._build_type is not None:
-      raise RuntimeError("Build type can only be set once.")
+      raise RuntimeError('Build type can only be set once.')
 
     self._build_type = build_type
     self._build_target = build_target
@@ -177,7 +177,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       Reference to BuildReport input message.
     """
     if not isinstance(build_report, BuildReport):
-      raise TypeError("Can only publish BuildReport messages.")
+      raise TypeError('Can only publish BuildReport messages.')
 
     # Persist the override ID for all subsequent publishes.
     if override_buildbucket_id:
@@ -189,7 +189,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     if not self._build_preamble_sent:
       if self._build_type is None:
         raise RuntimeError(
-            "Build type must be set before sending first message.")
+            'Build type must be set before sending first message.')
 
       parent = self.m.cros_tags.get_values('parent_buildbucket_id')
       if parent:
@@ -303,8 +303,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """
     created = created or self.m.time.utcnow()
 
-    if not gs_uri.startswith("gs://"):
-      raise ValueError("GS bucket URI should start with gs:// prefix")
+    if not gs_uri.startswith('gs://'):
+      raise ValueError('GS bucket URI should start with gs:// prefix')
 
     build_report = BuildReport()
     artifact = build_report.artifacts.add()

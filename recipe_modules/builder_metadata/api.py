@@ -39,7 +39,7 @@ class BuilderMetadataApi(recipe_api.RecipeApi):
             GetBuilderMetadataRequest(
                 build_target=self.m.build_menu.build_target,
                 chroot=self.m.cros_sdk.chroot))
-      presentation.logs["builder_metadata"] = MessageToJson(
+      presentation.logs['builder_metadata'] = MessageToJson(
           self._cached_metadata)
 
       return self._cached_metadata

@@ -72,25 +72,25 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
       self.ensure_cros_tool_runner()
       preserve_env = [
           # Container cache service info.
-          "CONTAINER_CACHE_SERVICE_PORT",
-          "CONTAINER_CACHE_SERVICE_HOST",
+          'CONTAINER_CACHE_SERVICE_PORT',
+          'CONTAINER_CACHE_SERVICE_HOST',
 
           # Docker drone info.
-          "DOCKER_DRONE_IMAGE",
-          "DOCKER_DRONE_SERVER_NAME",
+          'DOCKER_DRONE_IMAGE',
+          'DOCKER_DRONE_SERVER_NAME',
 
           # Resource limits for docker.
-          "DRONE_AGENT_BOT_BLKIO_READ_BPS",
-          "DRONE_AGENT_BOT_BLKIO_WRITE_BPS",
+          'DRONE_AGENT_BOT_BLKIO_READ_BPS',
+          'DRONE_AGENT_BOT_BLKIO_WRITE_BPS',
 
           # BBID
-          "LOGDOG_STREAM_PREFIX",
-          "SWARMING_TASK_ID",
+          'LOGDOG_STREAM_PREFIX',
+          'SWARMING_TASK_ID',
       ]
       cmd = [
-          "sudo",
-          "--non-interactive",
-          "--preserve-env={}".format(",".join(preserve_env)),
+          'sudo',
+          '--non-interactive',
+          '--preserve-env={}'.format(','.join(preserve_env)),
           self._cmd,
           subcommand,
           '-docker_key_file',
@@ -187,16 +187,16 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
       job_name (str): job name to be passed to tko-parse.
     """
     args = [tko_parse_path]
-    args.append("--write-pidfile")
+    args.append('--write-pidfile')
     args.append(results_dir)
-    args.append("--effective_job_name")
+    args.append('--effective_job_name')
     args.append(job_name)
-    args.append("-l")
-    args.append("3")
-    args.append("--record-duration")
-    args.append("-r")
-    args.append("-o")
-    args.append("--suite-report")
+    args.append('-l')
+    args.append('3')
+    args.append('--record-duration')
+    args.append('-r')
+    args.append('-o')
+    args.append('--suite-report')
     return args
 
   def ensure_cros_tool_runner(self):

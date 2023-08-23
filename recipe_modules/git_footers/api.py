@@ -158,17 +158,17 @@ class GitFootersApi(recipe_api.RecipeApi):
     Returns:
       str: Modified change_message.
     """
-    blocks = change_message.split("\n\n")
+    blocks = change_message.split('\n\n')
     footer_block = blocks[-1]
-    footers = footer_block.split("\n")
+    footers = footer_block.split('\n')
 
     def reassemble():
-      blocks[-1] = "\n".join(footers)
-      return "\n\n".join(blocks)
+      blocks[-1] = '\n'.join(footers)
+      return '\n\n'.join(blocks)
 
-    if footer_text.startswith(footer + ":"):
+    if footer_text.startswith(footer + ':'):
       footer_text = footer_text[len(footer) + 1:].lstrip()
-    new_footer = "{}: {}".format(footer, footer_text)
+    new_footer = '{}: {}'.format(footer, footer_text)
     for i, _ in enumerate(footers):
       # Exists, edit existing footer.
       if footers[i].startswith(footer):

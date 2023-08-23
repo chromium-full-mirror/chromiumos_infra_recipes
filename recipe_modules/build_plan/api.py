@@ -380,7 +380,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       latest successful child builds with the same patches as the current
       cq orchestrator with refreshed critical values.
     """
-    with self.m.step.nest("get completed builds") as presentation:
+    with self.m.step.nest('get completed builds') as presentation:
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
       count_broken_before_rebuilds = 0

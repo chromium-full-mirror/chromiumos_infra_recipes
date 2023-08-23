@@ -309,7 +309,7 @@ class SkylabApi(recipe_api.RecipeApi):
                   not build_target in container_metadata.containers):
                 configure_step.status = self.m.step.FAILURE
                 configure_step.step_summary_text = \
-                  "Execution via container requested, " + \
+                  'Execution via container requested, ' + \
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
               request.params.run_via_cft = True
@@ -322,7 +322,7 @@ class SkylabApi(recipe_api.RecipeApi):
                 tast_first_class_tests.append(
                     self.m.skylab_results.request_tag(uht.hw_test))
                 request.test_plan.total_shards = uht.hw_test.total_shards
-              configure_step.step_summary_text = "(Executing via CFT)"
+              configure_step.step_summary_text = '(Executing via CFT)'
 
               # Only pass the names of previously failed tests if the run is
               # elegible for direct tast testing.
@@ -346,7 +346,7 @@ class SkylabApi(recipe_api.RecipeApi):
               if key not in suiteReqCount:
                 suiteReqCount[key] = 1
               suiteReqCount[key] += 1
-              key += "_{}".format(suiteReqCount[key])
+              key += '_{}'.format(suiteReqCount[key])
             reqs[key] = json_format.MessageToDict(request)
 
       # It is possible no reqs were actually added, e.g. if no containers are
@@ -384,7 +384,7 @@ class SkylabApi(recipe_api.RecipeApi):
   def _set_license_labels(self, request, licenses):
     """Set params on request for licenses."""
     for lic in licenses:
-      dimension = "label-license:" + license_pb2.LicenseType.Name(lic)
+      dimension = 'label-license:' + license_pb2.LicenseType.Name(lic)
       request.params.freeform_attributes.swarming_dimensions.append(dimension)
 
   def _get_ctp_tags(self, test, image_path):

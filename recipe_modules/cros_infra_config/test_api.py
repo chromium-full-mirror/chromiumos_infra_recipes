@@ -172,5 +172,5 @@ class CrosInfraConfigTestApi(RecipeTestApi):
                     builder=builder_common_pb2.BuilderID(
                         builder=builder_config.id.name,
                         bucket=builder_config.id.bucket,
-                        project="chromeos",
+                        project='chromeos',
                     ))))

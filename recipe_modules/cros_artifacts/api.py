@@ -457,8 +457,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
                   for f in paths['paths']
               ]
         if failed_artifacts:
-          presentation.step_text = "Failed to generate: {}".format(
-              ", ".join(failed_artifacts))
+          presentation.step_text = 'Failed to generate: {}'.format(
+              ', '.join(failed_artifacts))
           presentation.status = self.m.step.FAILURE
         return files_by_artifact, failed_artifacts
 
@@ -541,7 +541,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         'build_id':
             str(
                 self.m.buildbucket.build.id or
-                self.m.led.run_id.replace("/", "_")),
+                self.m.led.run_id.replace('/', '_')),
         'target':
             target.name,
         'builder_name':
@@ -635,7 +635,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         for publish_template in info['gsLocations']:
           for aname in info['artifactTypes']:
             files = files_by_artifact.get(aname, [])
-            files = [x for x in files if x != "."]
+            files = [x for x in files if x != '.']
             if files:
               location_dict['artifact_name'] = aname
               publish_loc = publish_template.format(**location_dict)
@@ -828,7 +828,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         result = func(chroot, sysroot, artifacts_info, outpath, test_data)
         files_by_artifact = result
         # _bundle_artifacts is the only function that returns failed artifacts.
-        if func.__name__ == "_bundle_artifacts":
+        if func.__name__ == '_bundle_artifacts':
           files_by_artifact, failed_artifacts = result
       except Exception as e:
         self.m.disk_usage.track(step_name='track disk usage', depth=2,
@@ -837,8 +837,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       if not files_by_artifact:
         if failed_artifacts:
-          raise StepFailure("Failed to generate: {}".format(
-              ", ".join(failed_artifacts)))
+          raise StepFailure('Failed to generate: {}'.format(
+              ', '.join(failed_artifacts)))
         presentation.step_text = 'No artifacts found.'
         return uploaded_artifacts
 
@@ -883,7 +883,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           for dlc in dlc_local_paths:
             paths_to_hash[dlc] = self.m.path.relpath(dlc, outpath)
 
-          with self.m.step.nest("generate provenance"):
+          with self.m.step.nest('generate provenance'):
             for abspath, basepath in paths_to_hash.items():
               file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
               self.m.bcid_reporter.report_gcs(
@@ -958,8 +958,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         for k, v in sorted(links.items()):
           presentation.links[k] = v
     if failed_artifacts:
-      raise StepFailure("Failed to generate: {}".format(
-          ", ".join(failed_artifacts)))
+      raise StepFailure('Failed to generate: {}'.format(
+          ', '.join(failed_artifacts)))
     return uploaded_artifacts
 
   def upload_metadata(self, name, builder_name, target, gs_bucket, filename,
@@ -1176,7 +1176,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           # version is below 113.
           if (self.m.cros_version.version.milestone < 113 and
               atype == BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE and
-              any("amd64/5.15" in gs_location
+              any('amd64/5.15' in gs_location
                   for gs_location in in_art.gs_locations)):
             return POINTLESS
           input_artifacts.append(

@@ -12,7 +12,7 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
 
   @property
   def test_annotation_response(self):
-    return json.loads("""
+    return json.loads('''
 [
    {
       "key":"chromeos.buildbucket:step with linked bugs",
@@ -59,4 +59,4 @@ class CrosSomTestApi(recipe_test_api.RecipeTestApi):
       "group_id":"123"
    }
 ]
-    """)
+    ''')

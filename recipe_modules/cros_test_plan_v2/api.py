@@ -91,15 +91,15 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
   def initialize(self):
     self._cipd_package = (
         self._properties.test_plan_cipd_package or
-        "chromiumos/infra/test_plan/${platform}")
+        'chromiumos/infra/test_plan/${platform}')
 
-    default_ref = "staging" if self.m.cros_infra_config.is_staging else "prod"
+    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
     self._cipd_ref = (self._properties.test_plan_cipd_ref or default_ref)
 
     docker_image_name = (
-        self._properties.platform_test_plan_docker_image or "testplan")
+        self._properties.platform_test_plan_docker_image or 'testplan')
     docker_tag = (self._properties.platform_test_plan_docker_tag or default_ref)
-    self._docker_image = "{}:{}".format(docker_image_name, docker_tag)
+    self._docker_image = '{}:{}'.format(docker_image_name, docker_tag)
     self._migration_configs = self._properties.migration_configs
     self._test_plan_path = None
 
@@ -528,7 +528,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         dut_attribute_list_path = self._download_dut_attributes(host_input_path)
 
       out_path = (
-          self.m.path.join(host_input_path, "generatetestplanresp.binaryproto")
+          self.m.path.join(host_input_path, 'generatetestplanresp.binaryproto')
           if self.generate_ctpv1_format else self.m.path.join(
               host_input_path, 'hw_test_plans.jsonproto'))
 

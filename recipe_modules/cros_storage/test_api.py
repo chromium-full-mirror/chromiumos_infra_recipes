@@ -30,9 +30,9 @@ TEST_SRC_LS_OUTPUT_TEXT = _read_test_file('test_src_ls_output.txt')
 TEST_TGT_LS_OUTPUT_TEXT = _read_test_file('test_tgt_ls_output.txt')
 
 # Test data for paygen target missing all except an unsigned test image.
-TEST_TGT_LS_OUTPUT_MISSING_TEST = """
+TEST_TGT_LS_OUTPUT_MISSING_TEST = '''
 gs://chromeos-releases/beta-channel/coral/13505.15.0/ChromeOS-test-R87-13505.15.0-coral.tar.xz
-"""
+'''
 
 
 class CrosStorageTestApi(recipe_test_api.RecipeTestApi):

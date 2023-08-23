@@ -22,14 +22,13 @@ from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import StepFailure
-
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
-MANIFEST_MOCK = """
+MANIFEST_MOCK = '''
     <manifest>
       <project path="SAMPLE" revision="FROM_REV"/>
     </manifest>
-  """
+  '''
 
 ManifestDiff = namedtuple('ManifestDiff',
                           ['name', 'path', 'from_rev', 'to_rev'])
@@ -463,7 +462,7 @@ class RepoApi(recipe_api.RecipeApi):
     manifest_path = self.create_tmp_manifest(manifest_data)
     manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
 
-    init_opts = {"projects": kwargs.get("projects", None)}
+    init_opts = {'projects': kwargs.get('projects', None)}
     self.init(manifest_url, manifest_name=manifest_relpath, manifest_depth='0',
               **init_opts)
     self.sync(**kwargs)

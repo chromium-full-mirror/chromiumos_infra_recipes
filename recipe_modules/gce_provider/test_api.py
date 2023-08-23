@@ -16,48 +16,48 @@ class GceProviderTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       config(dict)|None: Dictionary of GCE Provider config
     """
-    if prefix in ("prefix-should-return-none", "prefix-fifth"):
+    if prefix in ('prefix-should-return-none', 'prefix-fifth'):
       return None
     return {
-        "amount": {
-            "max": 100,
-            "min": 15
+        'amount': {
+            'max': 100,
+            'min': 15
         },
-        "attributes": {
-            "disk": [{
-                "image": "global/images/chromeos-bionic-20031500-6b26172a85c",
-                "size": "750"
+        'attributes': {
+            'disk': [{
+                'image': 'global/images/chromeos-bionic-20031500-6b26172a85c',
+                'size': '750'
             }],
-            "machineType": "zones/{{.Zone}}/machineTypes/custom-32-65536",
-            "metadata": [{
-                "fromText": ""
+            'machineType': 'zones/{{.Zone}}/machineTypes/custom-32-65536',
+            'metadata': [{
+                'fromText': ''
             }],
-            "minCpuPlatform": "Intel Broadwell",
-            "networkInterface": [{
-                "network": "global/networks/machine-provider-bot-network"
+            'minCpuPlatform': 'Intel Broadwell',
+            'networkInterface': [{
+                'network': 'global/networks/machine-provider-bot-network'
             }],
-            "project": "chromeos-bot",
-            "serviceAccount": [{
-                "email":
-                    "test-email@developer.gserviceaccount.com",
-                "scope": [
-                    "https://www.googleapis.com/auth/devstorage.full_control",
-                    "https://www.googleapis.com/auth/gerritcodereview",
-                    "https://www.googleapis.com/auth/logging.write",
-                    "https://www.googleapis.com/auth/monitoring",
-                    "https://www.googleapis.com/auth/pubsub",
-                    "https://www.googleapis.com/auth/userinfo.email"
+            'project': 'chromeos-bot',
+            'serviceAccount': [{
+                'email':
+                    'test-email@developer.gserviceaccount.com',
+                'scope': [
+                    'https://www.googleapis.com/auth/devstorage.full_control',
+                    'https://www.googleapis.com/auth/gerritcodereview',
+                    'https://www.googleapis.com/auth/logging.write',
+                    'https://www.googleapis.com/auth/monitoring',
+                    'https://www.googleapis.com/auth/pubsub',
+                    'https://www.googleapis.com/auth/userinfo.email'
                 ]
             }],
-            "zone": "us-central1-b"
+            'zone': 'us-central1-b'
         },
-        "currentAmount": 15,
-        "lifetime": {
-            "seconds": "86400"
+        'currentAmount': 15,
+        'lifetime': {
+            'seconds': '86400'
         },
-        "prefix": prefix,
-        "revision": "4414d646bb94ed7b9129aa980bdf0794cc5ebc59",
-        "swarming": "https://chromeos-swarming.appspot.com"
+        'prefix': prefix,
+        'revision': '4414d646bb94ed7b9129aa980bdf0794cc5ebc59',
+        'swarming': 'https://chromeos-swarming.appspot.com'
     }
 
   def get_update_config_data(self, update_config):

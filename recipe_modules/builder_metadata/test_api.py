@@ -4,7 +4,7 @@
 
 from recipe_engine import recipe_test_api
 
-BUILDER_METADATA = """
+BUILDER_METADATA = '''
     build_target_metadata {
       build_target: "eve"
       android_container_branch: "git_rvc-arc"
@@ -22,7 +22,7 @@ BUILDER_METADATA = """
       main_readonly_firmware_version: "Google_Eve.9584.107.0"
       main_readwrite_firmware_version: "Google_Eve.9584.230.0"
     }
-    """
+    '''
 
 
 class BuilderMetadataTestApi(recipe_test_api.RecipeTestApi):

@@ -117,10 +117,10 @@ class Image():
   _SUPPORTED_IMAGE_TYPES = [1, 3, 6, 12]
 
   _IMAGE_TYPE_TO_PATH_ATOM = {
-      1: "base",
-      3: "test",
-      6: "recovery",
-      12: "dlc",
+      1: 'base',
+      3: 'test',
+      6: 'recovery',
+      12: 'dlc',
   }
 
   _IMAGE_TYPE_ATOM_TO_ENUM = {v: k for k, v in _IMAGE_TYPE_TO_PATH_ATOM.items()}

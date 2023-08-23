@@ -71,8 +71,8 @@ class CrosCqDependsApi(RecipeApi):
     private_prefix = PRIVATE_HOST + ':'
     public_prefix = PUBLIC_HOST + ':'
     for dep in deps:
-      host = ""
-      change_num = ""
+      host = ''
+      change_num = ''
       if dep.startswith(public_prefix):
         host = PUBLIC_HOST
         change_num = dep[len(public_prefix):]

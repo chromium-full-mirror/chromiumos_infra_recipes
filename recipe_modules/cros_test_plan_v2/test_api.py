@@ -29,14 +29,14 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
   def kernel_source_test_plan():
     return SourceTestPlan(test_plan_starlark_files=[
         TestPlanStarlarkFile(
-            host="chromium.googlesource.com",
-            project="platform/testrepoA",
-            path="a/b/kernel1.star",
+            host='chromium.googlesource.com',
+            project='platform/testrepoA',
+            path='a/b/kernel1.star',
         ),
         TestPlanStarlarkFile(
-            host="chromium.googlesource.com",
-            project="platform/testrepoB",
-            path="kernel2.star",
+            host='chromium.googlesource.com',
+            project='platform/testrepoB',
+            path='kernel2.star',
         )
     ])
 
@@ -44,9 +44,9 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
   def fp_source_test_plan():
     return SourceTestPlan(test_plan_starlark_files=[
         TestPlanStarlarkFile(
-            host="chromium.googlesource.com",
-            project="platform/testrepoB",
-            path="dir/fp.star",
+            host='chromium.googlesource.com',
+            project='platform/testrepoB',
+            path='dir/fp.star',
         )
     ])
 

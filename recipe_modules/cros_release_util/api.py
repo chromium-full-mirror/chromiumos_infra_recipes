@@ -73,10 +73,10 @@ class CrosReleaseUtilApi(recipe_api.RecipeApi):
     staging_prefix = 'staging-' if (staging or
                                     self.m.cros_infra_config.is_staging) else ''
     branch_suffix = branch or self.m.cros_source.manifest_branch
-    if branch_suffix.startswith("release-"):
-      branch_suffix = branch_suffix[len("release-"):]
+    if branch_suffix.startswith('release-'):
+      branch_suffix = branch_suffix[len('release-'):]
     if not branch_suffix or self.m.cros_source.is_tot:
-      branch_suffix = "main"
-    target_release_builder_name = "{}{}-release-{}".format(
+      branch_suffix = 'main'
+    target_release_builder_name = '{}{}-release-{}'.format(
         staging_prefix, build_target, branch_suffix)
     return target_release_builder_name

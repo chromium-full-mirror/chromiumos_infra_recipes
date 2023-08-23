@@ -33,17 +33,17 @@ class LabpackCommand(recipe_api.RecipeApi):
   def convert_step_data_to_status(step_data, dut_state):
     """Utility method to convert step data into a status like "ready". """
     assert step_data is None or isinstance(
-        step_data, StepData), "step_data unexpectedly has type {}".format(
+        step_data, StepData), 'step_data unexpectedly has type {}'.format(
             type(step_data))  # pragma: nocover
     assert isinstance(dut_state,
-                      str), "dut_state unexpectedly has type {}".format(
+                      str), 'dut_state unexpectedly has type {}'.format(
                           type(dut_state))
     if step_data is None:  # pragma: nocover
       return dut_state  # pragma: nocover
 
     if step_data.exc_result.retcode != 0:  # pragma: nocover
-      return "needs_repair"
-    return "ready"
+      return 'needs_repair'
+    return 'ready'
 
   def has_downloaded_package(self):
     return self.downloaded_executable_path is not None  # pragma: nocover
@@ -104,19 +104,19 @@ class LabpackCommand(recipe_api.RecipeApi):
       see step.__call__
     """
 
-    assert "cmd" not in kwargs, r'keyword argument "cmd" cannot be specified'
-    assert "stdin_data" not in kwargs, r'keyword argument "stdin_data" cannot be specified'
+    assert 'cmd' not in kwargs, r'keyword argument "cmd" cannot be specified'
+    assert 'stdin_data' not in kwargs, r'keyword argument "stdin_data" cannot be specified'
 
     if not self.has_downloaded_package():
       self.ensure_labpack()
 
     out = self.m.easy.step(
-        name=kwargs.get("name", "labpack invocation"),
+        name=kwargs.get('name', 'labpack invocation'),
         cmd=[self.downloaded_executable_path],
         stdin_data=jsonify_labpack_input(labpack_input),
         **kwargs,
     )
-    assert isinstance(out, StepData), "out unexpectedly has type {}".format(
+    assert isinstance(out, StepData), 'out unexpectedly has type {}'.format(
         type(out))
     return out
 
@@ -176,16 +176,16 @@ class LabpackCommand(recipe_api.RecipeApi):
     if not use_ile_de_france:
       return dut_state
 
-    if dut_state != "needs_repair":  # pragma: nocover
+    if dut_state != 'needs_repair':  # pragma: nocover
       return dut_state  # pragma: nocover
 
-    assert self.ensure_labpack().get("ok")  # pragma: nocover
+    assert self.ensure_labpack().get('ok')  # pragma: nocover
 
     step_data = self.run_labpack(
         labpack_input=LabpackInput(
             unit_name=hostnames[0],
-            task_name="post_test",
-            caller="test_runner.py",
+            task_name='post_test',
+            caller='test_runner.py',
         ))  # pragma: nocover
 
     return self.convert_step_data_to_status(step_data, dut_state)

@@ -154,7 +154,7 @@ class GomaApi(recipe_api.RecipeApi):
           # is important to display for BigQuery type conversion.
           test_goma_stats_proto = GomaStats(
               time_stats=TimeStats(uptime=1234), machine_info=MachineInfo(
-                  goma_revision="953240d2c4512d99191488cc98fc6f99@1586141662",
+                  goma_revision='953240d2c4512d99191488cc98fc6f99@1586141662',
                   os=MachineInfo.OSType.Value('LINUX'), ncpus=32,
                   memory_size=67242942464))
           stats_filename = os.path.join(

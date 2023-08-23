@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 from recipe_engine import recipe_api
 
-TEST_MANIFEST = b"""<?xml version="1.0" encoding="UTF-8"?>
+TEST_MANIFEST = b'''<?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <include name="_remotes.xml" />
   <default revision="refs/heads/main"
@@ -20,7 +20,7 @@ TEST_MANIFEST = b"""<?xml version="1.0" encoding="UTF-8"?>
            revision="c49a7334d30256abc1fc1e56d79615a220028998"
            groups="minilayout,firmware,buildtools,labtools" />
 </manifest>
-"""
+'''
 
 
 class ChromiteApi(recipe_api.RecipeApi):

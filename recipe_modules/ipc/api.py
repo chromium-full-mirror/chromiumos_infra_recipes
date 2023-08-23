@@ -23,7 +23,7 @@ class IPCApi(recipe_api.RecipeApi):
       topic: Pubsub topic name.
       sub_name: Pubsub subscription name.
     """
-    self._execute("setup", ["-topic", topic, "-sub-name", sub_name])
+    self._execute('setup', ['-topic', topic, '-sub-name', sub_name])
 
   def send(self, topic: str, message_body: bytes,
            attributes: Optional[Dict[str, str]] = None) -> None:
@@ -39,8 +39,8 @@ class IPCApi(recipe_api.RecipeApi):
       attributes = {}
     json_attributes = self.m.json.input(attributes)
 
-    self._execute("publish", [
-        "-topic", topic, "-file", '/dev/stdin', "-attributes", json_attributes
+    self._execute('publish', [
+        '-topic', topic, '-file', '/dev/stdin', '-attributes', json_attributes
     ], stdin_data=message_body)
 
   def receive(self, topic: str, sub_name: str,
@@ -60,8 +60,8 @@ class IPCApi(recipe_api.RecipeApi):
       filter_attributes = {}
     json_filter = self.m.json.input(filter_attributes)
     return self._execute(
-        "subscribe",
-        ["-topic", topic, "-sub-name", sub_name, "-attributes", json_filter])
+        'subscribe',
+        ['-topic', topic, '-sub-name', sub_name, '-attributes', json_filter])
 
   def _ensure_binary_present(self) -> None:
     """Ensure the IPC pubsub CLI is installed."""

@@ -111,7 +111,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return new_b
 
   @property
-  def default_delta_types(self) -> List["common_pb2.DeltaType"]:
+  def default_delta_types(self) -> List['common_pb2.DeltaType']:
     return DEFAULT_DELTA_TYPES
 
   def get_builder_configs(self, builder_name: str,

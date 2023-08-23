@@ -638,10 +638,10 @@ class GerritApi(RecipeApi):
       comment: The comment to leave.
     """
     with self.m.step.nest(f'add comment on CL {gerrit_change.change}'):
-      comment_map = {"/PATCHSET_LEVEL": [{"message": comment}]}
+      comment_map = {'/PATCHSET_LEVEL': [{'message': comment}]}
       self._do_post(
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/review',
-          {"comments": comment_map}, test_output_data='{}')
+          {'comments': comment_map}, test_output_data='{}')
 
   @exponential_retry(retries=4, delay=timedelta(seconds=5))
   def _do_post(self, url: str, json_data: Dict[str, Any],
@@ -966,7 +966,7 @@ class GerritApi(RecipeApi):
       messages_path = self.m.path.mkdtemp(prefix='gerrit_related_changes_')
       input_json_file = messages_path.join('input.json')
       output_json_file = messages_path.join('output.json')
-      input_json = {"change": gerrit_change.change, "host": gerrit_change.host}
+      input_json = {'change': gerrit_change.change, 'host': gerrit_change.host}
       self.m.file.write_text('write gerrit_related_changes input',
                              input_json_file, json.dumps(input_json))
       presentation.logs['input_json'] = json.dumps(input_json)

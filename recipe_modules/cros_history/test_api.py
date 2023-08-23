@@ -16,7 +16,7 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_test_api
 
-COMPRESSED_UPREV_RESPONSE = """
+COMPRESSED_UPREV_RESPONSE = '''
 eJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\n
 TGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\n
 GFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\n
@@ -29,7 +29,7 @@ q10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\n
 3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\n
 Vtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\n
 eQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\n
-"""
+'''
 
 
 class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
@@ -188,7 +188,7 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     for _ in range(num_success):
       build = build_pb2.Build(
           id=bbid,
-          builder=builder_common_pb2.BuilderID(builder="something-direct-vm"),
+          builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
           status=common_pb2.SUCCESS)
       build.input.properties.update({'name': 'test_name_' + str(bbid)})
       builds.append(build)
@@ -201,7 +201,7 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     for _ in range(num_failure):
       build = build_pb2.Build(
           id=bbid,
-          builder=builder_common_pb2.BuilderID(builder="something-direct-vm"),
+          builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
           status=common_pb2.FAILURE)
       build.output.properties.update(
           {'failed_test_cases': [failed_test_case_dict1]})

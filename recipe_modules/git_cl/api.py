@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from recipe_engine import recipe_api
 
-ISSUE_LINE_RE = r"Branch for issue number (?P<issue>\d+): (?P<ref>.+)"
+ISSUE_LINE_RE = r'Branch for issue number (?P<issue>\d+): (?P<ref>.+)'
 
 
 class GitClApi(recipe_api.RecipeApi):

@@ -78,7 +78,7 @@ class GreennessApi(recipe_api.RecipeApi):
       greenness, or the last snapshot wasn't found.
     """
     if self._last_greenness_dict is None:
-      with self.m.step.nest("getting last snapshot greenness") as pres:
+      with self.m.step.nest('getting last snapshot greenness') as pres:
         current_snapshot = self.m.cros_infra_config.gitiles_commit
         with self.m.context(cwd=self.m.src_state.build_manifest.path):
           with self.m.step.nest('last snapshot') as sub_pres:

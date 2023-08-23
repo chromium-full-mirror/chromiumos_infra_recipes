@@ -74,9 +74,9 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
   def __init__(self, properties: AnalysisServiceProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    self._pubsub_project_id = properties.pubsub_project_id or "chromeos-bot"
+    self._pubsub_project_id = properties.pubsub_project_id or 'chromeos-bot'
     self._pubsub_topic_id = (
-        properties.pubsub_topic_id or "analysis-service-events")
+        properties.pubsub_topic_id or 'analysis-service-events')
     self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
   @staticmethod

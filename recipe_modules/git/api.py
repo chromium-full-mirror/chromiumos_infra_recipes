@@ -151,10 +151,10 @@ class GitApi(recipe_api.RecipeApi):
 
   def get_working_dir_diff_files(self):
     """Finds all changed files (including untracked)."""
-    test_stdout = """
+    test_stdout = '''
  M changed.txt
 ?? new.txt
-"""
+'''
     step_data = self._step(['status', '--porcelain'],
                            stdout=self.m.raw_io.output_text(),
                            test_stdout=test_stdout)
@@ -790,9 +790,9 @@ class GitApi(recipe_api.RecipeApi):
       URL to the remote on success
     """
     result = self._step(
-        ["remote", "get-url", remote],
+        ['remote', 'get-url', remote],
         stdout=self.m.raw_io.output_text(),
-        test_stdout="https://chromium.googlesource.com",
+        test_stdout='https://chromium.googlesource.com',
     )
     return result.stdout.strip()
 

@@ -22,25 +22,25 @@ CHROMIUMDASH_MSTONE_FETCH_URL_TEMPLATE = (
     'https://chromiumdash.appspot.com/fetch_milestones?mstone={}')
 
 CHROME_BRANCH_TEST_DATA = json.dumps([{
-    "angle_branch": "5615",
-    "bling_ldap": "govind",
-    "bling_owner": "Krishna Govind",
-    "chromium_branch": "5615",
-    "chromium_main_branch_hash": "9c6408ef696e83a9936b82bbead3d41c93c82ee4",
-    "chromium_main_branch_position": 1109224,
-    "clank_ldap": "govind",
-    "clank_owner": "Krishna Govind",
-    "cros_ldap": "obenedict",
-    "cros_owner": "Benedict Oleforo",
-    "dawn_branch": "5615",
-    "desktop_ldap": "srinivassista",
-    "desktop_owner": "Srinivas Sista",
-    "devtools_branch": "5615",
-    "milestone": 112,
-    "pdfium_branch": "5615",
-    "skia_branch": "m112",
-    "v8_branch": "11.2-lkgr",
-    "webrtc_branch": "5615"
+    'angle_branch': '5615',
+    'bling_ldap': 'govind',
+    'bling_owner': 'Krishna Govind',
+    'chromium_branch': '5615',
+    'chromium_main_branch_hash': '9c6408ef696e83a9936b82bbead3d41c93c82ee4',
+    'chromium_main_branch_position': 1109224,
+    'clank_ldap': 'govind',
+    'clank_owner': 'Krishna Govind',
+    'cros_ldap': 'obenedict',
+    'cros_owner': 'Benedict Oleforo',
+    'dawn_branch': '5615',
+    'desktop_ldap': 'srinivassista',
+    'desktop_owner': 'Srinivas Sista',
+    'devtools_branch': '5615',
+    'milestone': 112,
+    'pdfium_branch': '5615',
+    'skia_branch': 'm112',
+    'v8_branch': '11.2-lkgr',
+    'webrtc_branch': '5615'
 }])
 
 
@@ -154,4 +154,4 @@ class CrosScheduleApi(recipe_api.RecipeApi):
       except Exception as e:
         raise self.m.step.StepFailure(
             'fetch milestone response json format bad') from e
-      return mstone.get("chromium_branch", None)
+      return mstone.get('chromium_branch', None)

@@ -25,10 +25,10 @@ CHROMIUMOS_OVERLAY_PATH = 'src/third_party/chromiumos-overlay'
 
 CHROME_VERSION_REGEXP = r'chromeos-base/chromeos-chrome/chromeos-chrome-\d+\.\d+\.(?P<branch>\d+)\.\d+_.*\.ebuild'
 
-CHROME_EBUILD_TEST_DATA = """
+CHROME_EBUILD_TEST_DATA = '''
 chromeos-base/chromeos-chrome/chromeos-chrome-106.0.5204.0_rc-r1.ebuild
 chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild
-"""
+'''
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -103,7 +103,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     with self.m.step.nest('collect public orchestrator'):
       if not self._public_build:
         raise StepFailure(
-            "collect_public_build called but no public build exists")
+            'collect_public_build called but no public build exists')
 
       self._public_build_results = self.m.buildbucket.collect_build(
           self._public_build.id, step_name='collect', timeout=60 * 60 * 8)

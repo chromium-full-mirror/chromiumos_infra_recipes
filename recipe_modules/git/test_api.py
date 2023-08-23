@@ -20,7 +20,7 @@ class GitTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       (str) the commit id to use (varies based on index).
     """
-    return ["deadbeef00000000%024x" % x for x in range(count)]
+    return ['deadbeef00000000%024x' % x for x in range(count)]
 
   @recipe_test_api.mod_test_data
   @staticmethod

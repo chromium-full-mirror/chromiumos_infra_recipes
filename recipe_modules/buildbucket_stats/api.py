@@ -133,10 +133,10 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
 
   def reformat_target_dict(
       self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:
-    '''Reformat ListValue to a dictionary, using target as key.
+    """Reformat ListValue to a dictionary, using target as key.
 
     This makes buildbucket properties like targetGreenness easier to work with.
-    '''
+    """
     target_dict = {}
     for target in list_value:
       # Use build target as key.

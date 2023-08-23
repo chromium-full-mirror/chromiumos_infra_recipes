@@ -45,10 +45,10 @@ ORIGINAL_BUILD_PROPERTIES = [
      'signing_instructions_uris'),
 ]
 
-STATUS_STARTED = "STARTED"
-STATUS_SUCCESS = "SUCCESS"
-STATUS_SKIPPED = "SKIPPED"
-STATUS_FAILED = "FAILED"
+STATUS_STARTED = 'STARTED'
+STATUS_SUCCESS = 'SUCCESS'
+STATUS_SKIPPED = 'SKIPPED'
+STATUS_FAILED = 'FAILED'
 
 
 class CheckpointApi(recipe_api.RecipeApi):
@@ -184,7 +184,7 @@ class CheckpointApi(recipe_api.RecipeApi):
     """Perform initial set up for checkpoint / mark the build as a retry."""
     if not self._retry_run:
       return
-    with self.m.step.nest("RUNNING IN RETRY MODE") as presentation:
+    with self.m.step.nest('RUNNING IN RETRY MODE') as presentation:
       if not self._original_build_bbid:
         raise StepFailure('no bbid specified')
 

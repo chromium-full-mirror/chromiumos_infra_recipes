@@ -552,7 +552,7 @@ class BotScalingApi(recipe_api.RecipeApi):
       )
       try:
         recent_builds = self.m.buildbucket.search(
-            predicate, step_name="search for builds in past hour")
+            predicate, step_name='search for builds in past hour')
       except self.m.step.StepFailure:  # pragma: no cover
         _warn_about_default('Buildbucket search failed')
         return DEFAULT_HOURS_BETWEEN_BUILDS

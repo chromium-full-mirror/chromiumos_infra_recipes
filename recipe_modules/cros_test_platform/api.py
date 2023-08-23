@@ -116,15 +116,15 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     self._ensure_cros_test_platform()
     with self.m.step.nest('call binary') as s:
-      cmd = self._cipd_dir.join("luciexe")
+      cmd = self._cipd_dir.join('luciexe')
       # Simply use the same directory for the sub-build because I'm lazy and
       # because the intent is to unwrap the sub-build completely to replace this
       # parent build eventually.
       sub_cwd = self.m.path['start_dir']
-      input_json = sub_cwd.join("input.json")
-      output_json = sub_cwd.join("output.json")
+      input_json = sub_cwd.join('input.json')
+      output_json = sub_cwd.join('output.json')
 
-      self.m.file.write_proto("write input", input_json, request, 'JSONPB')
+      self.m.file.write_proto('write input', input_json, request, 'JSONPB')
 
       # crbug.com/1119441: Clear out some output fields from a clone of the
       # parent Build that may have been already populated so far, because
@@ -145,13 +145,13 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # StepFailure.
       with self.m.context(cwd=sub_cwd, infra_steps=True):
         self.m.step.sub_build(
-            "launch luciexe",
+            'launch luciexe',
             [cmd, '--', '-input_json', input_json, '-output_json', output_json],
             build,
         )
 
       responses = self.m.file.read_proto(
-          "read output",
+          'read output',
           output_json,
           ExecuteResponses,
           'JSONPB',
@@ -178,23 +178,23 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
             # Read the final per suite report
             final_metrics = self.m.file.read_text(
-                "read suite execution final metrics",
-                totalsDir.join("final.csv"), include_log=False,
-                test_data="suiteName,totalTestExecutionSeconds,completed,exceededExecutionLimit\ndefault,0,True,False"
+                'read suite execution final metrics',
+                totalsDir.join('final.csv'), include_log=False,
+                test_data='suiteName,totalTestExecutionSeconds,completed,exceededExecutionLimit\ndefault,0,True,False'
             )
 
-            suite_execution_logs["totals"] = final_metrics
+            suite_execution_logs['totals'] = final_metrics
 
             perSuiteLogPaths = self.m.file.listdir(
                 'List Dir', perSuiteDir, test_data=['/tmp/default.csv'])
             for path in perSuiteLogPaths:
               # Read the final per suite report
               suite_metric = self.m.file.read_text(
-                  "read suite execution final metrics", path, include_log=False,
-                  test_data="suiteName,taskName,lastSeen,currentlySeenAt,delta,completed\ndefault,default,,12,True"
+                  'read suite execution final metrics', path, include_log=False,
+                  test_data='suiteName,taskName,lastSeen,currentlySeenAt,delta,completed\ndefault,default,,12,True'
               )
               # Strip file type from name
-              suite = self.m.path.basename(path).replace(".csv", "")
+              suite = self.m.path.basename(path).replace('.csv', '')
 
               suite_execution_logs[suite] = suite_metric
         # TODO(b/271176507): We don't want logging to be blocking as this will mean

@@ -47,7 +47,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
                                                  add_output_log=True)
     listing = self.m.gsutil.list(
         recursive_uri,
-        name="ls {}".format(dlc_dir),
+        name='ls {}'.format(dlc_dir),
         timeout=GSUTIL_TIMEOUT_SECONDS,
         stdout=gsutil_ls_stdout,
         # Be ok with empty/missing directories.
@@ -72,7 +72,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
     Returns:
       List of fully qualified paths of DLCs within the path.
     """
-    with self.m.step.nest("Find DLCs"):
+    with self.m.step.nest('Find DLCs'):
       dlc_paths = []
       # Loop through each directory.
       for dlc_dir in self._dlc_directories:
@@ -100,7 +100,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
     Returns:
       Dict mapping DLC locations to file hashes.
     """
-    with self.m.step.nest("Hash DLCs") as pres:
+    with self.m.step.nest('Hash DLCs') as pres:
       dlc_artifacts = {}
       failed_logs = []
       # List uploaded DLCs
@@ -125,5 +125,5 @@ class DlcUtilsApi(recipe_api.RecipeApi):
         failed_logs = [
             'The following DLCs were not found locally: '
         ] + failed_logs + ['Attempting to download from Google Storage.']
-        pres.logs['failed local hashes'] = "\n".join(failed_logs)
+        pres.logs['failed local hashes'] = '\n'.join(failed_logs)
       return dlc_artifacts

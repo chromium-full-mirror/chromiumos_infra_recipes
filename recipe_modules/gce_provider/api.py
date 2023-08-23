@@ -18,7 +18,7 @@ class NoneConfigFailure(recipe_api.StepFailure):
   """Error class for when GCE Provider returns None for a Configuration.Get"""
 
   def __init__(self, config_prefix):
-    super().__init__("No config found for prefix {}".format(config_prefix))
+    super().__init__('No config found for prefix {}'.format(config_prefix))
 
 
 ConfigResponse = namedtuple('ConfigResponse', ['configs', 'missing_configs'])

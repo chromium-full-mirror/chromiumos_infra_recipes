@@ -226,9 +226,9 @@ class UrlsApi(recipe_api.RecipeApi):
                   ] if use_top_level_step else step.name_tokens
     # Replace " " and "/" with "_", then join the tokens with "/".
     sanitized_name_tokens = [
-        t.replace(" ", "_").replace("/", "_") for t in name_tokens
+        t.replace(' ', '_').replace('/', '_') for t in name_tokens
     ]
-    step_name = "/".join(sanitized_name_tokens)
+    step_name = '/'.join(sanitized_name_tokens)
 
     return _LOGDOG_URL_TEMPLATE % {
         'logdog_hostname': self.m.buildbucket.build.infra.logdog.hostname,

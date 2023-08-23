@@ -44,8 +44,8 @@ class CloudPubsubApi(recipe_api.RecipeApi):
           'project_id': project_id,
           'topic_id': topic_id,
           'data': data,
-          'ordering_key': ordering_key or "",
-          'endpoint': endpoint or "",
+          'ordering_key': ordering_key or '',
+          'endpoint': endpoint or '',
       }
 
       presentation.logs['request'] = pprint.pformat(publish_input)

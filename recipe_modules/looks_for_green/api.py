@@ -55,11 +55,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   @property
   def now_utc(self) -> datetime.datetime:
-    '''Returns the current UTC time.
+    """Returns the current UTC time.
 
     Initialized once and used throughout for any time calculations. Zero out
     the microseconds to use seconds as level of precision.
-    '''
+    """
     if not self._now:
       self._now = self.m.time.utcnow().replace(microsecond=0)
     # Synchronize timing.
@@ -69,10 +69,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   @property
   def seconds_utc(self) -> int:
-    '''Returns the current UTC time in seconds.
+    """Returns the current UTC time in seconds.
 
     Initialized once and used throughout for any time calculations. Cast to int to use seconds as level of precision.
-    '''
+    """
     if not self._seconds_now:
       self._seconds_now = int(self.m.time.time())
     # Synchronize timing.
@@ -82,29 +82,27 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   @property
   def stats(self) -> LooksForGreenStats:
-    '''Returns looks for green stats'''
+    """Returns looks for green stats"""
     return self._stats
 
   @property
   def use_scored_over_minted(self) -> bool:
-    '''Returns use_scored_over_minted property.'''
+    """Returns use_scored_over_minted property."""
     return self._use_scored_over_minted
 
   @property
   def _greenness_bucket(self) -> str:
-    '''Returns bucket to query for greenness.
-    '''
+    """Returns bucket to query for greenness."""
     return 'staging' if self.m.cros_infra_config.is_staging else 'postsubmit'
 
   @property
   def _greenness_builder(self) -> str:
-    '''Returns builder to query for greenness.
-    '''
+    """Returns builder to query for greenness."""
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
 
   def _has_merge_commit(self, gerrit_changes: List[GerritChange]) -> bool:
-    '''Returns whether gerrit_changes contains one or more merge commit.'''
+    """Returns whether gerrit_changes contains one or more merge commit."""
     with self.m.context(cwd=self.m.cros_source.workspace_path):
       patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes)
       for patch in patch_sets:
@@ -122,13 +120,13 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def should_lfg(self, exps: Dict[str, bool],
                  gerrit_changes: List[GerritChange]) -> bool:
-    '''Returns whether looks for green logic should be run.'''
+    """Returns whether looks for green logic should be run."""
     if self._should_lfg is None:
       # This check shouldn't be fatal to a build.
       self._should_lfg = False
       with self.m.failures.ignore_exceptions():
         with self.m.step.nest('check should look for green') as pres:
-          exp_enabled = "chromeos.cros_infra_config.cq_looks" in exps
+          exp_enabled = 'chromeos.cros_infra_config.cq_looks' in exps
           lfg_enabled = self.m.looks_for_green.enable_looks_for_green
           # Don't perform extra checks if we don't meet these preconditions.
           if not exp_enabled or not lfg_enabled:
@@ -186,10 +184,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       self, limit: Optional[int] = None,
       latest_start: Optional[timestamp_pb2.Timestamp] = None
   ) -> List[build_pb2.Build]:
-    '''Get snapshot builds within the lookback period.
+    """Get snapshot builds within the lookback period.
 
-    Optionally specify a limit of builds to return. Optionally specify a latest_start time in UTC for builds.
-    '''
+    Optionally specify a limit of builds to return. Optionally specify a
+    latest_start time in UTC for builds.
+    """
     fields = frozenset({
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
         'end_time', 'status'
@@ -217,8 +216,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def _parse_snapshot_result(self,
                              snapshot_result: build_pb2.Build) -> Snapshot:
-    '''Parse buildbucket return into Snapshot NamedTuple.
-    '''
+    """Parse buildbucket return into Snapshot NamedTuple."""
     start_time = datetime.datetime.utcfromtimestamp(
         snapshot_result.start_time.seconds)
     end_time = datetime.datetime.utcfromtimestamp(
@@ -246,12 +244,12 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       snapshot_stats: Snapshot,
       suggested: bool = False,
   ) -> None:
-    '''Set output stats using LooksForGreenStats proto fields.
+    """Set output stats using LooksForGreenStats proto fields.
 
     When suggested is True, populate stats for the snapshot that CQ Looks
     recommends to use. Otherwise, populate state for the latest snapshot that
     has go/greenness properties set.
-    '''
+    """
     if not suggested:
       stats = self._stats.latest_scored
     else:
@@ -264,7 +262,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def _get_latest_scored_snapshot(
       self, build_results: List[build_pb2.Build]) -> Optional[build_pb2.Build]:
-    '''Find the latest snapshot with a greenness score.'''
+    """Find the latest snapshot with a greenness score."""
     for build in build_results:
       if 'greenness' in build.output.properties and \
       'aggregateMetric' in build.output.properties['greenness']:
@@ -272,7 +270,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return None
 
   def get_latest_snapshot_greenness(self) -> int:
-    '''Returns aggregate greenness of latest scored snapshot-orchestrator.
+    """Returns aggregate greenness of latest scored snapshot-orchestrator.
 
     Or -1 if no latest scored snapshot is found.
 
@@ -284,7 +282,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Returns:
       aggregate greenness for latest scored snapshot-orchestrator, or -1 if
       not found.
-    '''
+    """
     with self.m.step.nest(
         'checking latest scored snapshot greenness') as presentation:
       results = self._get_snapshots(limit=self._max_concurrent_snapshot_runs)
@@ -306,14 +304,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def calc_approx_snap_age_hours(self,
                                  orch_start_time: datetime.datetime) -> int:
-    '''Returns how many hours age the latest scored snap-orch started.
+    """Returns how many hours age the latest scored snap-orch started.
 
     This is used as an approximation of snapshot manifest age since a
     snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 
     Returns:
       Approx age in hours of snapshot used by latest scored snap-orch.
-    '''
+    """
     delta = self.now_utc - orch_start_time
     days, seconds = delta.days, delta.seconds
     approx_snap_age_hours = days * 24 + seconds / 3600
@@ -321,10 +319,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def _get_latest_green_snapshot(self, parsed_results: List[Snapshot]
                                 ) -> Optional[Snapshot]:
-    '''Get the latest green snapshot from a list of buildbucket snapshots.
+    """Get the latest green snapshot from a list of buildbucket snapshots.
 
     Return None if no green snapshot exists.
-    '''
+    """
     green_results = list(
         filter(lambda d: d.agg_green >= self._greenness_threshold,
                parsed_results))
@@ -336,9 +334,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def find_green_snapshot(
       self, latest_start: Optional[timestamp_pb2.Timestamp] = None
   ) -> Optional[Snapshot]:
-    '''Find a green snapshot within the lookback period if one exists.
+    """Find a green snapshot within the lookback period if one exists.
 
-    Optionally specify a latest_start time in UTC for builds.'''
+    Optionally specify a latest_start time in UTC for builds.
+    """
     with self.m.step.nest('find green snapshot') as presentation:
       results = self._get_snapshots(latest_start=latest_start)
       parsed_results = []
@@ -363,13 +362,13 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       return green
 
   def is_snap_orch_green(self) -> bool:
-    '''Returns whether the latest scored snapshot-orchestrator greenness is
+    """Returns whether the latest scored snapshot-orchestrator greenness is
 
     higher than greenness threshold.
 
     Returns:
       Whether latest scored snap-orch run is green
-    '''
+    """
     self.latest_greenness = self.get_latest_snapshot_greenness()
     is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
     self._stats.latest_scored.is_snap_orch_green = is_snap_orch_green
@@ -411,7 +410,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def _has_stacked_change(
       self, gerrit_changes: List[GerritChange]
   ) -> (bool, Optional[GerritChange], int):
-    '''Returns whether any change is part of a stack aka relation chain.'''
+    """Returns whether any change is part of a stack aka relation chain."""
     with self.m.step.nest('Check for stacked change'):
       with self.m.context(cwd=self.m.cros_source.workspace_path):
         for gerrit_change in gerrit_changes:
@@ -421,11 +420,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         return False, None, 0
 
   def is_green_for_local(self) -> bool:
-    '''Returns whether the current snapshot is green for local builds.
+    """Returns whether the current snapshot is green for local builds.
 
     If there are irrelevant builders for the current snapshot, look at previous
     snapshots to find the last relevant build and update the greenness scores.
-    '''
+    """
     with self.m.step.nest('check current snapshot build') as presentation:
       current_child_builds = self.get_child_builds(self.m.buildbucket.build)
       self.m.greenness.populate_local_build_info(current_child_builds)
@@ -459,7 +458,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   @exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
   def get_child_builds(self,
                        current_build: build_pb2.Build) -> List[build_pb2.Build]:
-    '''Get the child builds of the current build.'''
+    """Get the child builds of the current build."""
     predicate = builds_service_pb2.BuildPredicate(
         tags=self.m.buildbucket.tags(
             parent_buildbucket_id=str(current_build.id)))

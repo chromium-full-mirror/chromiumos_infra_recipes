@@ -64,16 +64,16 @@ class VmlabApi(recipe_api.RecipeApi):
       Object containing project, name, status, source of the imported image.
     """
     with self.m.step.nest(name):
-      args = ["-build-path", build_path, '-json']
+      args = ['-build-path', build_path, '-json']
       if wait:
         args.append('-wait')
       result = self._run(
-          ["image"] + args,
+          ['image'] + args,
           test_data='{"project":"p", "name":"n", "status":"READY", "source":"s"}\n'
       )
       result_json = json.loads(result.strip())
       if assert_ready and result_json['status'] != 'READY':
-        raise recipe_api.StepFailure("Image is not ready.")
+        raise recipe_api.StepFailure('Image is not ready.')
       return result_json
 
   def clean_images(self, name, dry_run, rate=1):
@@ -91,11 +91,11 @@ class VmlabApi(recipe_api.RecipeApi):
         images, deleted images, failed to import images, unknown images.
     """
     with self.m.step.nest(name):
-      args = ["-rate", str(rate), "-json"]
+      args = ['-rate', str(rate), '-json']
       if dry_run:
         args.append('-dry-run')
       result = self._run(
-          ["clean-images"] + args,
+          ['clean-images'] + args,
           test_data='{"Total":2,"Deleted":["d"],"Failed":[],"Unknown":[]}\n')
       return json.loads(result.strip())
 
@@ -113,13 +113,13 @@ class VmlabApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(name):
       args = [
-          "--config", config, "--gce-image-name", image_name,
-          "--gce-image-project", image_project, '--json'
+          '--config', config, '--gce-image-name', image_name,
+          '--gce-image-project', image_project, '--json'
       ]
       if swarming_bot_name:
-        args.extend(["--swarming-bot-name", swarming_bot_name])
+        args.extend(['--swarming-bot-name', swarming_bot_name])
       result = self._run(
-          ["lease"] + args,
+          ['lease'] + args,
           test_data='{"name":"prefix-b310d29ece80d77ab4f4ffac8", "ssh":{"address":"8.8.8.8", "port":22}}\n'
       )
       return json.loads(result.strip())
@@ -163,5 +163,5 @@ class VmlabApi(recipe_api.RecipeApi):
       instance_name: name of the instnace returned by lease_vm.
     """
     with self.m.step.nest(name):
-      args = ["--config", config, "--instance-name", instance_name]
-      self._run(["release"] + args, test_data='')
+      args = ['--config', config, '--instance-name', instance_name]
+      self._run(['release'] + args, test_data='')

@@ -331,7 +331,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     test_data = (
         self.test_api.bot_policy_test_data_chrome
-        if application == "Chrome" else self.test_api.bot_policy_test_data)
+        if application == 'Chrome' else self.test_api.bot_policy_test_data)
     return BotPolicyCfg.FromString(
         self.download_binproto(
             'configs/bot-scaling/generated/bot_policy_%s' % application.lower(),

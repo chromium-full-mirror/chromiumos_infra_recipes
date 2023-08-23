@@ -175,8 +175,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       corresponding build target.
       """
     for failed_vm_test in self._failed_vm_tests:
-      test_case = failed_vm_test["test_case"]
-      build = failed_vm_test["build"]
+      test_case = failed_vm_test['test_case']
+      build = failed_vm_test['build']
       model = EMPTY_MODEL
       build_target = self.m.cros_infra_config.get_build_target_name(build)
       # Some failed vm / gce test names within the build are not prefixed with
@@ -195,9 +195,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       corresponding build target.
       """
     for failed_hw_test in self._failed_hw_tests:
-      test_case = failed_hw_test["test_case"]
-      child_result = failed_hw_test["child_result"]
-      skylab_res = failed_hw_test["skylab_res"]
+      test_case = failed_hw_test['test_case']
+      child_result = failed_hw_test['child_result']
+      skylab_res = failed_hw_test['skylab_res']
       test_id = test_case.name
       attempt = child_result.attempt
       failure_reason = test_case.human_readable_summary
@@ -325,9 +325,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           # test_case.name here is analogous to the test_id substring in
           # the rdb test_result name.
           self._failed_hw_tests.append({
-              "skylab_res": skylab_res,
-              "child_result": child_result,
-              "test_case": test_case
+              'skylab_res': skylab_res,
+              'child_result': child_result,
+              'test_case': test_case
           })
           failed_test_names.add(test_case.name)
 
@@ -339,7 +339,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         prop_struct = build.output.properties['failed_test_cases']
         test_failures = json_format.MessageToDict(prop_struct)
         for test_case in test_failures:
-          self._failed_vm_tests.append({"build": build, "test_case": test_case})
+          self._failed_vm_tests.append({'build': build, 'test_case': test_case})
           failed_test_names.add(test_case['name'])
 
     return failed_test_names
@@ -400,7 +400,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       self, builds: List[build_pb2.Build],
       failed_test_names: Set[str]) -> Dict[str, Invocation]:
     """Retrieves test results from ResultDB for the given list of builds."""
-    failed_test_names_regex = "|".join(sorted(failed_test_names))
+    failed_test_names_regex = '|'.join(sorted(failed_test_names))
     fields = ['failureReason', 'status', 'variant']
     invocation_ids = list(
         map(lambda build: self._get_build_invocation_id(build.id), builds))
@@ -466,9 +466,11 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
                             Status.INFRA_FAILURE, Status.STARTED)
 
   def _get_test_id_from_rdb_test_name(self, rdb_test_name: str) -> str:
-    """Returns the test_id from a test_result name from rdb. rdb test names
-      are of the format:
-      "invocations/{INVOCATION_ID}/tests/{TEST_ID}/results/{RESULT_ID}". """
+    """Returns the test_id from a test_result name from rdb.
+
+    rdb test namesare of the format:
+      "invocations/{INVOCATION_ID}/tests/{TEST_ID}/results/{RESULT_ID}".
+    """
     m = re.search(TEST_ID_REGEX, rdb_test_name)
     if not m:
       return ''
