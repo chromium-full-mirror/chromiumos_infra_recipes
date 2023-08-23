@@ -456,6 +456,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       failure_rates = self.m.exoneration_util.query_failure_rate(variants)
       # TODO(b/291768475): Check that new exonerations do not exceed guardrails.
       updated_stats = self.m.exonerate.generate_failed_test_stats(failure_rates)
+      pres.logs['updated failed test stats'] = str(updated_stats)
 
       newly_exonerated_stats, outstanding_failure_stats = _categorize_stats(
           updated_stats)
