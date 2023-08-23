@@ -10,6 +10,7 @@ See: https://chromium.googlesource.com/external/repo/
 
 from collections import defaultdict
 from collections import namedtuple
+import datetime
 import distutils.version  # pylint: disable=no-name-in-module
 import json
 import re
@@ -21,6 +22,8 @@ from PB.chromiumos.repo_cache_state import RepoState
 from recipe_engine import recipe_api
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import StepFailure
+
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 MANIFEST_MOCK = """
     <manifest>
@@ -493,6 +496,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--all')
     self._step(cmd)
 
+  # Fails with no stderr: b/297202581. Adding retries.
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
   def project_infos(self, projects=None, regexes=None, test_data=None,
                     ignore_missing=False):
     """Uses 'repo forall' to gather project information.

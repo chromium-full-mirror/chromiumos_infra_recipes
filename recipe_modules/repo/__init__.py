@@ -8,10 +8,11 @@ from PB.recipe_modules.chromeos.repo.repo import RepoProperties
 DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
-    'recipe_engine/path',
     'recipe_engine/raw_io',
-    'recipe_engine/step',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/step',
+    'recipe_engine/time',
     'depot_tools/depot_tools',
     'depot_tools/gitiles',
     'cros_infra_config',
