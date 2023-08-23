@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from typing import Dict, List, Tuple
+from typing import Dict, FrozenSet, List, NamedTuple, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
@@ -51,6 +51,12 @@ RETRYABLE_STATUSES = [
 
 RETRY_OPTIONS_FOOTER_KEY = 'RetryOptions'
 RETRY_OPTIONS_EXEMPT_VALUE = 'None'
+
+
+class BasicClInfo(NamedTuple):
+  """Basic information about the change list."""
+  host: str
+  change: str
 
 
 class AutoRetryUtilApi(recipe_api.RecipeApi):
@@ -278,8 +284,23 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """Returns cq-orchestrators that are "current" and have a retryable status.
 
     "Current" means that the cq-orchestrator was the most recent cq-orchestrator
-    run for that cq_cl_group.
+    run for the group of changes under test.
+
+    Only the CLs' host and number are taken into account when grouping across CQ
+    runs, thus allowing us to group changes across patchset revisions and filter
+    out runs which correspond to outdated patchsets.
     """
+
+    def _cl_set_hash(build: build_pb2.Build) -> FrozenSet[BasicClInfo]:
+      """Returns a frozenset of BasicClInfo for the changes in the build.
+
+      This will be used as a hash to group CQ runs that test the same set of
+      GerritChanges across patchset revisions.
+      """
+      changes = []
+      for gc in build.input.gerrit_changes:
+        changes.append(BasicClInfo(gc.host, str(gc.change)))
+      return frozenset(changes)
 
     with self.m.step.nest('query for cq-orchestrators') as pres:
       builder = builder_common_pb2.BuilderID(builder='cq-orchestrator',
@@ -298,17 +319,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                             key=lambda build: build.create_time.seconds,
                             reverse=True)
 
-      # Get the latest cq-orchestrator run for each cq_cl_group.
-      cl_group_to_run_mapping = {}
+      # Get the latest cq-orchestrator run for each set of CLs.
+      cl_set_to_run_mapping = {}
       for x in cq_orch_runs:
-        cq_cl_group = self.m.cros_tags.get_single_value('cq_cl_group_key',
-                                                        x.tags)
-        if cq_cl_group not in cl_group_to_run_mapping:
-          cl_group_to_run_mapping[cq_cl_group] = x
+
+        cl_group_hash = _cl_set_hash(x)
+        if cl_group_hash not in cl_set_to_run_mapping:
+          cl_set_to_run_mapping[cl_group_hash] = x
 
       # Only return the builds with a retryable status.
       builds = [
-          x for x in cl_group_to_run_mapping.values()
+          x for x in cl_set_to_run_mapping.values()
           if x.status in RETRYABLE_STATUSES
       ]
       pres.step_text = 'found %d builds' % len(builds)
@@ -403,7 +424,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             sorted([str(x) for x in non_latest_patch_set_ids]))
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
 
-      with self.m.step.nest('filter out by merge conflicts') as pres:
+      with self.m.step.nest('filter out merge conflicts') as pres:
         non_mergeable_ids = set()
         for c in cq_orchs:
           try:
