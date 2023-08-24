@@ -334,13 +334,16 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         if autoex_running:
           self.m.exonerate.enable_excludes()
           auto_exonerated_hw_results, auto_exonerated_hw_tests = (
-              self.m.exonerate.exonerate_hwtests(test_results.skylab))
+              self.m.exonerate.exonerate_hwtests(manually_exonerated_hw_results)
+          )
           passed_test_names += auto_exonerated_hw_tests
           auto_exonerated_vm_results, auto_exonerated_vm_tests = (
-              self.m.exonerate.exonerate_vmtests(test_results.tast_vm))
+              self.m.exonerate.exonerate_vmtests(manually_exonerated_vm_results)
+          )
           passed_test_names += auto_exonerated_vm_tests
           auto_exonerated_gce_results, auto_exonerated_gce_tests = (
-              self.m.exonerate.exonerate_vmtests(test_results.tast_gce))
+              self.m.exonerate.exonerate_vmtests(
+                  manually_exonerated_gce_results))
           passed_test_names += auto_exonerated_gce_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
