@@ -11,6 +11,47 @@
     ]
   },
   {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/reporter",
+      "-ensure-file",
+      "infra/tools/security/provenance_broker/${platform} git_revision:d3cf3b0144447a77fd79c84fe8500dfe993ef602",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "name": "ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:d3c\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/security/provenance_broker/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "start",
+      "-recipe",
+      "kabuto_shadercache_uprev",
+      "-pid",
+      "12345"
+    ],
+    "name": "snoop: report_stage"
+  },
+  {
     "cmd": [],
     "name": "configure builder"
   },
@@ -1876,6 +1917,16 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "compile"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "snoop: report_stage (2)"
+  },
+  {
     "cmd": [],
     "name": "write updated artifacts to tempfile"
   },
@@ -1949,6 +2000,74 @@
       ]
     },
     "name": "Upload and uprev"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "upload"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "snoop: report_stage (3)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto/dlc_assets/snoopy.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Read [CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto/dlc_assets/snoopy.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@snoopy.json@{\"/path/to/dlc.img\": \"gs://bucket/dlc-imgs/dlc.img\"}@@@",
+      "@@@STEP_LOG_END@snoopy.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/dlc.img"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "name": "Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://bucket/dlc-imgs/dlc.img"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "snoop: report_gcs"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-stage",
+      "-stage",
+      "upload-complete"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "snoop: report_stage (4)"
   },
   {
     "cmd": [],

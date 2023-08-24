@@ -15,17 +15,21 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/file',
+    'recipe_engine/json',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'build_menu',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'cros_version',
+    'failures',
     'gerrit',
     'git',
     'src_state',
@@ -49,6 +53,10 @@ def RunSteps(api: RecipeApi,
     if not properties.uprev_info:
       raise StepFailure('must set uprev_info')
     presentation.step_text = 'all properties good'
+
+  with api.failures.ignore_exceptions():
+    if not api.cros_infra_config.is_staging:
+      api.bcid_reporter.report_stage('start')
 
   commit = None
   if properties.manifest_branch:
@@ -121,9 +129,45 @@ def _CreateGerritCL(api: RecipeApi) -> None:
     presentation.links['Gerrit CL'] = api.gerrit.parse_gerrit_change_url(change)
 
 
+def _GenerateAndUploadProvenance(api: RecipeApi, dlc_assets_file: str) -> None:
+  """Generate and upload Snoopy provenance using Kabuto's dlc_assets.json."""
+  dlc_assets = _ReadDlcAssetsFile(api, dlc_assets_file)
+  for local_file in dlc_assets:
+    gs_uri = dlc_assets[local_file]
+    file_hash = _GenerateProvenance(api, local_file)
+    _UploadProvenance(api, file_hash, gs_uri)
+
+
+def _ReadDlcAssetsFile(api: RecipeApi, dlc_assets_file: str) -> list:
+  """Read Kabuto's DLC assets file.
+
+  dlc_assets/snoopy.json is generated during the DLC uprev process. It contains
+  a dict in which the keys are the path to the local 'dlc.img' file and the
+  value is the Google Storage URL for that file.  """
+  test_data = '{"/path/to/dlc.img": "gs://bucket/dlc-imgs/dlc.img"}'
+  dlc_assets_raw = api.file.read_text(f'Read {dlc_assets_file}',
+                                      dlc_assets_file, test_data=test_data)
+  dlc_assets = api.json.loads(dlc_assets_raw)
+  return dlc_assets
+
+
+def _GenerateProvenance(api: RecipeApi, file: str) -> str:
+  """Generate and return the hash of a file to be reported to Snoopy."""
+  return api.file.file_hash(file, test_data='deadbeef')
+
+
+def _UploadProvenance(api: RecipeApi, file_hash: str, gs_uri: str) -> None:
+  """Upload Snoopy provenance for a given file in Google Storage."""
+  api.bcid_reporter.report_gcs(file_hash, gs_uri)
+
+
 def DoRunSteps(api: RecipeApi,
                properties: KabutoShadercacheUprevProperties) -> None:
   chroot_path = api.cros_source.workspace_path
+
+  with api.failures.ignore_exceptions():
+    if not api.cros_infra_config.is_staging:
+      api.bcid_reporter.report_stage('compile')
 
   kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
@@ -137,6 +181,18 @@ def DoRunSteps(api: RecipeApi,
       api.step(
           'Upload and uprev',
           ['util/shader-dlc-uprev/upload-and-uprev.py', updated_artifacts_path])
+
+  with api.failures.ignore_exceptions():
+    if not api.cros_infra_config.is_staging:
+      api.bcid_reporter.report_stage('upload')
+
+  # Create provenance.
+  # TODO(b/292108614): Remove ignore_exceptions when stable.
+  with api.failures.ignore_exceptions():
+    if not api.cros_infra_config.is_staging:
+      dlc_assets_file = api.path.join(kabuto_path, 'dlc_assets/snoopy.json')
+      _GenerateAndUploadProvenance(api, dlc_assets_file)
+      api.bcid_reporter.report_stage('upload-complete')
 
   partner_overlay_path = chroot_path.join(
       'src/private-overlays/chromeos-partner-overlay')
