@@ -22,4 +22,8 @@ message KabutoPaygenProperties {
   // Whether to use release build artifacts instead of building Mesa locally.
   // Defaults to false if not provided.
   bool use_release_build_artifacts = 4;
+
+  // Whether to use postsubmit build artifacts instead of building Mesa locally.
+  // Defaults to false if not provided.
+  bool use_postsubmit_build_artifacts = 5;
 }

@@ -45,6 +45,13 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
       raise StepFailure('must set destination_gs_bucket')
     if not properties.destination_gs_path:
       raise StepFailure('must set destination_gs_path')
+    if properties.use_release_build_artifacts and not properties.manifest_branch:
+      raise StepFailure(
+          'manifest_branch must be set when using release build artifacts')
+    if properties.use_postsubmit_build_artifacts and properties.manifest_branch:
+      raise StepFailure(
+          'manifest_branch must not be set when using postsubmit build artifacts'
+      )
 
     presentation.step_text = 'all properties good'
 
@@ -72,6 +79,10 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
           './kabuto', 'build-fossilize-tools-release',
           f'--manifest-branch={properties.manifest_branch}'
       ])
+    elif properties.use_postsubmit_build_artifacts:
+      # Use artifacts from a CrOS postsubmit build.
+      api.step('build fossilize-tools',
+               ['./kabuto', 'build-fossilize-tools-postsubmit'])
     else:
       # Default build style, from source.
       api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
@@ -153,3 +164,35 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               '--manifest-branch=release-R105-14989.B'
           ],
       ))
+
+  props = good_props.copy()
+  props['use_postsubmit_build_artifacts'] = True
+  yield api.test(
+      'use-postsubmit-artifacts', api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'build fossilize-tools',
+          [
+              './kabuto',
+              'build-fossilize-tools-postsubmit',
+          ],
+      ))
+
+  props = good_props.copy()
+  props['use_release_build_artifacts'] = True
+  yield api.test(
+      'use-release-artifacts-without-manifest-branch',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['use_postsubmit_build_artifacts'] = True
+  props['manifest_branch'] = 'release-R105-14989.B'
+  yield api.test(
+      'use-postsubmit-artifacts-with-manifest-branch',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      status='FAILURE',
+  )
