@@ -235,9 +235,12 @@ class CrosSourceApi(RecipeApi):
     return jobs
 
   def configure_builder(
-      self, commit: Optional[bb_common_pb2.GitilesCommit] = None,
+      self,
+      commit: Optional[bb_common_pb2.GitilesCommit] = None,
       changes: Optional[List[bb_common_pb2.GerritChange]] = None,
-      default_main: bool = False, name: str = 'configure builder'
+      default_main: bool = False,
+      name: str = 'configure builder',
+      lookup_config_with_bucket=False,
   ) -> Optional[builder_config_pb2.BuilderConfig]:
     """Configure the builder.
 
@@ -253,6 +256,11 @@ class CrosSourceApi(RecipeApi):
       default_main: Whether the default branch should be 'main'. Default: use
         the appropriate snapshot branch.
       name: Step name.
+      lookup_config_with_bucket: If true, include builder.bucket in key when
+        looking up the BuilderConfig. If the bucket is not included in the key
+        and there are builders with the same name (in different buckets), it is
+        undefined which BuilderConfig is returned. The bucket will eventually
+        be included in the key by default, see b/287633203.
 
     Returns:
       BuilderConfig for the active build, or None if the active build does not
@@ -317,7 +325,8 @@ class CrosSourceApi(RecipeApi):
 
       config = self.m.cros_infra_config.configure_builder(
           commit=commit, changes=changes, name='cros_infra_config',
-          choose_branch=False, config_ref=config_ref)
+          choose_branch=False, config_ref=config_ref,
+          lookup_config_with_bucket=lookup_config_with_bucket)
 
       commit = self.m.src_state.gitiles_commit
       if not commit.ref:

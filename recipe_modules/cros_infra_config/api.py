@@ -5,7 +5,7 @@
 
 import datetime
 import typing
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
@@ -51,8 +51,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    # Map from BuilderConfig's id.name to BuilderConfig, lazily loaded.
-    self._name_to_builder_config = {}
+    # Map from BuilderConfig.Id.Name and
+    # (BuilderConfig.Id.Bucket, BuilderConfig.Id.Name) to BuilderConfig. That
+    # is, for each loaded BuilderConfig, either the name or the (bucket, name)
+    # tuple can be used as the key. Eventually, all lookups should be done by
+    # (bucket, name), as looking up by just name can be ambiguous. Storing both
+    # keys allows for a gradual migration. See b/287633203 for more.
+    #
+    # Lazily loaded.
+    self._name_to_builder_config: Dict[Union[str, Tuple[str, str]],
+                                       BuilderConfig] = {}
 
     # Save the properties message.
     self._properties = properties
@@ -249,44 +257,61 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         builder_cfgs_file_contents = self._fetch_builder_configs()
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
+        # Override the ref from generated builder_config for (staging-)
+        # release-main-orchestrator if experiment is enabled.
+        if self._properties.release_tot_builds_snapshot:
+          if self._is_staging and config.id.name == 'staging-release-main-orchestrator':
+            config.orchestrator.gitiles_commit.ref = 'refs/heads/staging-snapshot'
+          elif not self._is_staging and config.id.name == 'release-main-orchestrator':
+            config.orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
+
+        # Store the BuilderConfig with both name and (bucket, name) as a key,
+        # to allow lookup by either name or (bucket, name).
         name_to_builder_config[config.id.name] = config
-      # Override the ref from generated builder_config for (staging-)
-      # release-main-orchestrator if experiment is enabled.
-      if self._properties.release_tot_builds_snapshot:
-        staging_prefix = 'staging-' if self._is_staging else ''
-        builder_name = f'{staging_prefix}release-main-orchestrator'
-        name_to_builder_config[
-            builder_name].orchestrator.gitiles_commit.ref = 'refs/heads/{}snapshot'.format(
-                'staging-' if self._is_staging else '')
+        name_to_builder_config[(config.id.bucket, config.id.name)] = config
+
       self._name_to_builder_config = name_to_builder_config
     return self._name_to_builder_config
 
-  def get_builder_config(self, builder_name, missing_ok=False):
+  def get_builder_config(
+      self,
+      builder_name: str,
+      *,
+      bucket_name: Optional[str] = None,
+      missing_ok: bool = False,
+  ) -> BuilderConfig:
     """Gets the BuilderConfig for the specified builder from HEAD.
 
     Finds the BuilderConfig whose id.name matches the specified Buildbucket
-    builder.
+    builder. If bucket_name is specified, looks up by
+    (bucket_name, builder_name). Note that looking up by just builder name is
+    potentially ambiguous as builders in different buckets can have the same
+    name, see b/287633203. Eventually, bucket will be required in the lookup.
 
-    This function loads the checked in proto and forms a map from id.name to
-    BuilderConfig on the first call. Subsequent calls just look up in the map,
-    so will be much faster than the first call. This is meant for the case when
-    many lookups are needed, e.g. a parent builder looks up all child configs.
+    This function loads the checked in proto and forms a map from id.name and
+    (id.bucket, id.name) to BuilderConfig on the first call. Subsequent calls
+    just look up in the map, so will be much faster than the first call. This is
+    meant for the case when many lookups are needed, e.g. a parent builder looks
+    up all child configs.
 
     Args:
-      * builder_name (str): The Buildbucket builder to look for, matched against
+      * builder_name: The Buildbucket builder to look for, matched against
         BuilderConfig's id.name.
-      * missing_ok (boolean): Whether to allow a missing config.
+      * bucket_name: The Buildbucket bucket to look in, matched against
+        BuilderConfig's id.bucket. If not set, only builder_name is used in the
+        lookup. Will eventually be required.
+      * missing_ok: Whether to allow a missing config.
 
     Returns:
       A BuilderConfigs proto.
 
     Raises:
       A LookupError if a BuilderConfig is not found for the specified builder.
-
     """
-    config = self._get_name_to_builder_config().get(builder_name)
+    key = (bucket_name, builder_name) if bucket_name else builder_name
+    config = self._get_name_to_builder_config().get(key)
     if not config and not missing_ok:
-      raise LookupError('No BuilderConfig for builder {}'.format(builder_name))
+      raise LookupError('No BuilderConfig for builder {}'.format(key))
     return config
 
   def safe_get_builder_configs(
@@ -528,9 +553,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
          config.general.environment == BuilderConfig.General.STAGING),
     ))
 
-  def configure_builder(self, commit=None, changes=None,
-                        name='configure builder', choose_branch=True,
-                        config_ref=None):
+  def configure_builder(
+      self,
+      commit: Optional[GitilesCommit] = None,
+      changes: Optional[List[GerritChange]] = None,
+      name: str = 'configure builder',
+      choose_branch: bool = True,
+      config_ref: Optional[str] = None,
+      lookup_config_with_bucket: bool = False,
+  ) -> Optional[BuilderConfig]:
     """Configure the builder.
 
     Fetch the builder config.
@@ -538,15 +569,22 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Set the bisect_builder and use_flags.
 
     Args:
-      commit (GitilesCommit): The gitiles commit to use.  Default:
-          GitilesCommit(.... ref='refs/heads/snapshot').
-      changes (list[GerritChange]): The gerrit changes to apply.  Default: the
-          gerrit_changes from buildbucket.
-      name (string): Step name.  Default: "configure builder".
-      config_ref (string): Override properties.config_ref (for config CLs).
+      commit: The gitiles commit to use. Default:
+        GitilesCommit(.... ref='refs/heads/snapshot').
+      changes: The gerrit changes to apply.  Default: the gerrit_changes from
+        buildbucket.
+      name: Step name.  Default: "configure builder".
+      choose_branch: If true, choose a branch for the gitiles commit if none is
+        given.
+      config_ref: Override properties.config_ref (for config CLs).
+      lookup_config_with_bucket: If true, include builder.bucket in key when
+        looking up the BuilderConfig. If the bucket is not included in the key
+        and there are builders with the same name (in different buckets), it is
+        undefined which BuilderConfig is returned. The bucket will eventually
+        be included in the key by default, see b/287633203.
 
     Returns:
-      BuilderConfig or None
+      The BuilderConfig for this builder, if one was found.
     """
     build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
@@ -560,7 +598,15 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       # into the CQ run.
       self._config_ref = config_ref or self._config_ref
 
-      config = self.config
+      if lookup_config_with_bucket:
+        config = self.get_builder_config(
+            build.builder.builder,
+            bucket_name=build.builder.bucket,
+            missing_ok=True,
+        )
+      else:
+        config = self.config
+
       if config:
         # The url can be constructed from output.properties.config_ref:
         # ('+/%s/%s' % (CHROME_OS_REPO_URL, self._config_ref, filename))

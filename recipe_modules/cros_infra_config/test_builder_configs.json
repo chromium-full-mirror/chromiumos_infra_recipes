@@ -3885,6 +3885,18 @@
         "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES"
       }
+    },
+    {
+      "id": {
+        "name": "generic-staging-builder",
+        "bucket": "staging"
+      }
+    },
+    {
+      "id": {
+        "name": "generic-staging-builder",
+        "bucket": "try-dev"
+      }
     }
   ]
 }

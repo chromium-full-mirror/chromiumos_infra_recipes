@@ -264,6 +264,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       disable_sdk: bool = False,
       commit: Optional[bb_common_pb2.GitilesCommit] = None,
       targets: Iterable[common_pb2.BuildTarget] = (),
+      lookup_config_with_bucket=False,
   ) -> Optional[BuilderConfig]:
     """Initial setup steps for the builder.
 
@@ -277,6 +278,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
       commit: The GitilesCommit for the build, or None.
       targets: List of build_targets for metadata_json to use instead of our
         build_target.
+      lookup_config_with_bucket: If true, include builder.bucket in key when
+        looking up the BuilderConfig. If the bucket is not included in the key
+        and there are builders with the same name (in different buckets), it is
+        undefined which BuilderConfig is returned. The bucket will eventually
+        be included in the key by default, see b/287633203.
 
     Returns:
       BuilderConfig for the active build (or None if the active build has no
@@ -295,7 +301,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.build
       changes = build.input.gerrit_changes
       commit = commit or self.m.buildbucket.gitiles_commit
-      config = self.m.cros_source.configure_builder(commit, changes)
+      config = self.m.cros_source.configure_builder(
+          commit, changes, lookup_config_with_bucket=lookup_config_with_bucket)
       targets = targets or [self.build_target]
       if changes and config and not config.build.apply_gerrit_changes:
         raise recipe_api.StepFailure(
