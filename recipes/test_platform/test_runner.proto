@@ -9,6 +9,7 @@ package recipes.chromeos.test_platform.test_runner;
 import "test_platform/skylab_test_runner/config.proto";
 import "test_platform/skylab_test_runner/request.proto";
 import "test_platform/skylab_test_runner/cft_request.proto";
+import "test_platform/skylab_test_runner/cros_test_runner_request.proto";
 import "test_platform/skylab_test_runner/result.proto";
 import "test_platform/skylab_test_runner/common_config.proto";
 import "google/protobuf/timestamp.proto";
@@ -48,4 +49,9 @@ message TestRunnerProperties {
   // The following property used to determine the build configs are for
   // parnters. Defaults to false.
   bool partner_config = 8;
+
+  // cros_test_runner_request describes the input for cros_test_runner, as
+  // part of the cft workflow execution into the test_runner recipe;
+  // is set by the caller.
+  .test_platform.skylab_test_runner.CrosTestRunnerRequest cros_test_runner_request = 9;
 }
