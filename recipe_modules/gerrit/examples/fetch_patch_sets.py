@@ -37,7 +37,7 @@ def _get_values_dict(api):
           'updated':
               '2017-02-01 13:11:20.000000000',
           'submitted':
-              '2017-02-02 13:11:20.000000000',
+              '',
           'change_id':
               'Ideadbeef',
           'current_revision':
@@ -82,7 +82,7 @@ def _get_values_dict(api):
       },
       2: {
           'status':
-              'OLD',
+              'MERGED',
           'created':
               '2020-08-01 11:11:11.000000000',
           'updated':

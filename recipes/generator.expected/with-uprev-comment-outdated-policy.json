@@ -1775,7 +1775,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1905,7 +1905,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1962,7 +1962,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -2003,7 +2003,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -2038,137 +2038,7 @@
     "cmd": [],
     "name": "outdated CLs",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@outdated CLs@chromium:91827@@@",
-      "@@@STEP_LOG_LINE@outdated CLs@chrome-internal:91827@@@",
       "@@@STEP_LOG_END@outdated CLs@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT"
-  },
-  {
-    "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
-      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "91827",
-      "-a",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827.git_cl comment",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@comment text@This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827@@@",
-      "@@@STEP_LOG_LINE@comment text@@@@",
-      "@@@STEP_LOG_LINE@comment text@PUpr has been set to remind you that it likely should be abandoned.@@@",
-      "@@@STEP_LOG_END@comment text@@@",
-      "@@@STEP_LINK@gerrit change@https://chrome-internal-review.googlesource.com/c/chromium/src/+/91827@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2).repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "comment",
-      "-i",
-      "91827",
-      "-a",
-      "This CL has been obviated by: https://chrome-internal-review.googlesource.com/c/91827\n\nPUpr has been set to remind you that it likely should be abandoned."
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "act on outdated CLs with policy: OUTDATED_LEAVE_COMMENT.comment on CL 91827 (2).git_cl comment",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2463,7 +2333,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/overlay\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -2641,7 +2511,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"src/private-overlay\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",

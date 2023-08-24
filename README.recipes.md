@@ -14433,7 +14433,7 @@ Run the test logic.
 
 Verify that handle_open_changes() runs the expected process.
 
-&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/handle_outdated_changes.py#46)(api: recipe_api.RecipeApi, properties: HandleOutdatedChangesProperties):**
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/handle_outdated_changes.py#78)(api: recipe_api.RecipeApi, properties: HandleOutdatedChangesProperties):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py)
 
 [DEPS](/recipe_modules/pupr_gerrit_interface/tests/upload_new_patch_set.py#16): [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface)

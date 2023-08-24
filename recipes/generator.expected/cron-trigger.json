@@ -1359,7 +1359,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1425,7 +1425,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1466,7 +1466,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1501,14 +1501,8 @@
     "cmd": [],
     "name": "outdated CLs",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@outdated CLs@chromium:1@@@",
-      "@@@STEP_LOG_LINE@outdated CLs@chromium:2@@@",
       "@@@STEP_LOG_END@outdated CLs@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "act on outdated CLs with policy: OUTDATED_DO_NOTHING"
   },
   {
     "cmd": [],
@@ -1559,7 +1553,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",
@@ -1586,7 +1580,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"2017-02-02 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\"@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",

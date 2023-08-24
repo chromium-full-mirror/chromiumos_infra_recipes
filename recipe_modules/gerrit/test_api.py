@@ -55,6 +55,10 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'messages': values.get('messages', []),
         'current_revision': values.get('current_revision', 'f000' * 10),
     }
+    if resp['info']['status'] in ['NEW', 'ABANDONED']:
+      resp['info']['submitted'] = ''
+    if resp['info']['status'] in ['MERGED', 'ABANDONED']:
+      resp['info']['submittable'] = False
     if 'patch_set' in values:
       resp['info']['patch_set'] = values['patch_set']
     ref = values.get(
