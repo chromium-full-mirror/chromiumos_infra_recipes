@@ -25,6 +25,7 @@ DEPS = [
     'build_menu',
     'cros_sdk',
     'cros_source',
+    'cros_version',
     'gerrit',
     'git',
     'src_state',
@@ -36,6 +37,8 @@ GERRIT_CL_TOPIC = 'borealis-shadercache-dlc'
 GERRIT_CL_REVIEWERS = [
     'davidriley@google.com', 'endlesspring@google.com', 'pobega@google.com'
 ]
+
+_MILESTONE_USES_KABUTO_UPREV = 118
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -125,10 +128,15 @@ def DoRunSteps(api: RecipeApi,
   kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
     updated_artifacts_path = _SetupUpdatedArtifacts(api, properties.uprev_info)
-    # Run upload-and-uprev.py.
-    api.step(
-        'Upload and uprev',
-        ['util/shader-dlc-uprev/upload-and-uprev.py', updated_artifacts_path])
+    if api.cros_version.version.milestone >= _MILESTONE_USES_KABUTO_UPREV:
+      api.step('Upload and uprev', [
+          './kabuto', 'dlc-upload-and-uprev', '--updated-artifacts-path',
+          updated_artifacts_path
+      ])
+    else:
+      api.step(
+          'Upload and uprev',
+          ['util/shader-dlc-uprev/upload-and-uprev.py', updated_artifacts_path])
 
   partner_overlay_path = chroot_path.join(
       'src/private-overlays/chromeos-partner-overlay')
@@ -178,5 +186,27 @@ def GenTests(api: RecipeTestApi) -> None:
               '--manifest-branch',
               'release-R105-14989.B',
           ],
+      ),
+  )
+
+  yield api.test(
+      'use-old-uprev-method',
+      api.cros_version.workspace_version('R113-45678.0.0'),
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Upload and uprev',
+          ['util/shader-dlc-uprev/upload-and-uprev.py'],
+      ),
+  )
+
+  yield api.test(
+      'use-new-uprev-method',
+      api.cros_version.workspace_version('R118-98765.0.0'),
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Upload and uprev',
+          ['./kabuto', 'dlc-upload-and-uprev', '--updated-artifacts-path'],
       ),
   )
