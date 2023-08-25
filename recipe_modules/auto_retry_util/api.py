@@ -26,7 +26,6 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
 
-
 # Start looking back at 1 days worth of data while we are still developing.
 DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
 
@@ -379,6 +378,42 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
         cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
         pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+
+      with self.m.step.nest('filter out by basic eligibility') as pres:
+        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids = set(
+        ), set(), set(), set()
+
+        for c in cq_orchs:
+          patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes,
+                                                      include_submittable=True)
+          non_new_ids.update({c.id for p in patch_sets if p.status != 'NEW'})
+          non_submittable_ids.update(
+              {c.id for p in patch_sets if not p.submittable})
+          wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
+          non_latest_patch_set_ids.update(
+              {c.id for p in patch_sets if not p.is_latest_patch_set()})
+
+        ineligible_ids = non_new_ids | non_submittable_ids | wip_ids | non_latest_patch_set_ids
+        cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
+        pres.logs['non_new'] = '\n'.join(sorted([str(x) for x in non_new_ids]))
+        pres.logs['non_submittable'] = '\n'.join(
+            sorted([str(x) for x in non_submittable_ids]))
+        pres.logs['wip'] = '\n'.join(sorted([str(x) for x in wip_ids]))
+        pres.logs['non_latest_patch_set'] = '\n'.join(
+            sorted([str(x) for x in non_latest_patch_set_ids]))
+        pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
+
+      with self.m.step.nest('filter out by merge conflicts') as pres:
+        non_mergeable_ids = set()
+        for c in cq_orchs:
+          try:
+            self.m.gerrit.assert_changes_submittable(c.input.gerrit_changes)
+          except recipe_api.StepFailure:
+            non_mergeable_ids.add(c.id)
+        cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]
+        pres.logs['non_mergeable'] = '\n'.join(
+            sorted([str(x) for x in non_mergeable_ids]))
+        pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
 

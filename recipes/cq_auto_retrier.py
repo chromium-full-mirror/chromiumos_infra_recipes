@@ -25,6 +25,7 @@ DEPS = [
     'recipe_engine/time',
     'auto_retry_util',
     'easy',
+    'gerrit',
     'test_util',
 ]
 
@@ -169,12 +170,22 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           },]
       }).message
 
+  gerrit_changes = [
+      common.GerritChange(change=123456,
+                          host='chromium-review.googlesource.com', patchset=7)
+  ]
+
+  eligible_value_dict = {123456: {'change_number': 123456, 'submittable': True}}
+
   yield api.test(
       'retryable-build',
       api.auto_retry_util.enable_retries(),
       api.buildbucket.simulated_search_results(
           [retryable_build_orch],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1111',
@@ -190,6 +201,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.buildbucket.simulated_search_results(
           [retryable_test_orch],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1112',

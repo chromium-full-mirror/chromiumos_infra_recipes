@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from PB.chromiumos.common import GerritChange
 from recipe_engine import post_process
 
 DEPS = [
@@ -11,6 +12,7 @@ DEPS = [
     'recipe_engine/properties',
     'auto_retry_util',
     'cros_infra_config',
+    'gerrit',
     'git_footers',
     'test_util',
 ]
@@ -27,6 +29,13 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  # Test changes eligible for retry.
+  gerrit_changes = [
+      GerritChange(change=123456, host='chromium-review.googlesource.com',
+                   patchset=7)
+  ]
+
+  eligible_value_dict = {123456: {'change_number': 123456, 'submittable': True}}
 
   # Group with a failed run as the "current".
   success = api.test_util.test_orchestrator(
@@ -57,6 +66,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           group_1_builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.properties(expected_build_ids=[12]),
       api.post_process(post_process.DropExpectation),
   )
@@ -138,6 +150,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           group_3_builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.properties(expected_build_ids=[33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -150,6 +165,12 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           all_group_builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict, 2),
       api.properties(expected_build_ids=[12, 33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -273,6 +294,85 @@ def GenTests(api):
           failure_with_allowlisted_experiment,
           failure_without_allowlisted_experiment
       ], 'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.properties(expected_build_ids=[12]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Basic eligibility tests.
+  non_new_value_dict = {
+      123456: {
+          'change_number': 123456,
+          'status': 'ABANDONED'
+      }
+  }
+
+  non_submittable_value_dict = {
+      123456: {
+          'change_number': 123456,
+          'submittable': False
+      }
+  }
+  wip_value_dict = {
+      123456: {
+          'change_number': 123456,
+          'submittable': True,
+          'work_in_progress': True
+      }
+  }
+
+  non_latest_value_dict = {
+      123456: {
+          'change_number': 123456,
+          'submittable': True,
+          'current_revision': 'f000' * 10,
+          'patch_set_revision': 'c111' * 10
+      }
+  }
+
+  builds_basic = [
+      api.test_util.test_orchestrator(
+          build_id=10 + i,
+          cq=True,
+          tags={
+              'cq_cl_group_key': f'group{i}'
+          },
+          status='FAILURE',
+          create_time=10 + i,
+          output_properties={
+              'has_child_failures': True
+          },
+      ).message for i in range(1, 7)
+  ]
+
+  yield api.test(
+      'filter-out-by-basic-eligibility',
+      api.buildbucket.simulated_search_results(
+          builds_basic,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict, 1),
+      api.gerrit.simulated_changes_are_submittable(
+          submittable=False,
+          step_name_prefix='find candidates.filter out by merge conflicts.'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          non_new_value_dict, 2),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          non_submittable_value_dict, 3),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          wip_value_dict, 4),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          non_latest_value_dict, 5),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict, 6),
+      api.properties(expected_build_ids=[11]),
       api.post_process(post_process.DropExpectation),
   )
