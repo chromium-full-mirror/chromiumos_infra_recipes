@@ -631,7 +631,7 @@
   * [rdb_util:examples/get_model_from_variant](#recipes-rdb_util_examples_get_model_from_variant)
   * [rdb_util:examples/get_shardless_test_config](#recipes-rdb_util_examples_get_shardless_test_config)
   * [rdb_util:examples/get_suite](#recipes-rdb_util_examples_get_suite)
-  * [recipe_analyze:examples/full](#recipes-recipe_analyze_examples_full)
+  * [recipe_analyze:tests/is_recipe_affected](#recipes-recipe_analyze_tests_is_recipe_affected)
   * [recipes_autoreleaser](#recipes-recipes_autoreleaser) &mdash; Release recipes by running the release.
   * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full)
@@ -9264,11 +9264,11 @@ Returns:
 
 API for calling 'recipes.py analyze'
 
-#### **class [RecipeAnalyzeApi](/recipe_modules/recipe_analyze/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [RecipeAnalyzeApi](/recipe_modules/recipe_analyze/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for calling 'recipes.py analyze'
 
-&mdash; **def [is\_recipe\_affected](/recipe_modules/recipe_analyze/api.py#20)(self, affected_files, recipe):**
+&mdash; **def [is\_recipe\_affected](/recipe_modules/recipe_analyze/api.py#21)(self, affected_files: List[str], recipe: str):**
 
 Return True iff changes in <affected_files> affect <recipe>.
 
@@ -9276,13 +9276,10 @@ Must be called from the root of a recipes repo (i.e. recipes.py is in the
 cwd).
 
 Args:
-  * affected_files (list[str]): A list of changed files. Paths may be
-    absolute or relative (to the root of the recipes repo), and should use
-    forward slashes only.
-  * recipe (str): The name of the recipe to analyze.
-
-Return:
-  Bool
+  * affected_files: A list of changed files. Paths may be absolute or
+    relative (to the root of the recipes repo), and should use forward
+    slashes only.
+  * recipe: The name of the recipe to analyze.
 ### *recipe_modules* / [remoteexec](/recipe_modules/remoteexec)
 
 [DEPS](/recipe_modules/remoteexec/__init__.py#7): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -14509,12 +14506,18 @@ Recipe for running PVS-related scripts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/rdb_util/examples/get_suite.py#14)(api):**
-### *recipes* / [recipe\_analyze:examples/full](/recipe_modules/recipe_analyze/examples/full.py)
+### *recipes* / [recipe\_analyze:tests/is\_recipe\_affected](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py)
 
-[DEPS](/recipe_modules/recipe_analyze/examples/full.py#6): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+[DEPS](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py#14): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/examples/full.py#11)(api):**
+&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py#24)(api: recipe_api.RecipeApi, properties: is_recipe_affected_pb2.IsRecipeAffectedProperties):**
+
+Main test logic.
+
+Run is_recipe_affected on the affected_files, and assert that each expected
+affectedrecipe is indeed affected, and that each expected unaffectedrecipe
+is unaffected.
 ### *recipes* / [recipes\_autoreleaser](/recipes/recipes_autoreleaser.py)
 
 [DEPS](/recipes/recipes_autoreleaser.py#19): [easy](#recipe_modules-easy), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

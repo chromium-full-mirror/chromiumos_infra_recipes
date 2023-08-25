@@ -1,0 +1,18 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.recipe_analyze.tests;
+
+message IsRecipeAffectedProperties {
+  // The `affected_files` input to enter into is_recipe_affected().
+  repeated string affected_files = 1;
+
+  // Recipes that should be affected by the affected_files.
+  repeated string expected_affected_recipes = 2;
+
+  // Recipes that should NOT be affected by the affected_files.
+  repeated string expected_unaffected_recipes = 3;
+}
