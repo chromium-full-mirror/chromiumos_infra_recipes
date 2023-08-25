@@ -35,7 +35,7 @@ def GenTests(api):
                                         retcode=1),
       api.post_process(
           post_process.SummaryMarkdown,
-          'Step(\'update sdk.call chromite.api.SdkService/Update.call build API script\') (retcode: 1)'
+          "Step('update sdk.call chromite.api.SdkService/Update.call build API script') (retcode: 1)"
       ),
       api.post_process(post_process.MustRun, 'update sdk.UpdateSDK failure'),
       api.post_process(post_process.DropExpectation),

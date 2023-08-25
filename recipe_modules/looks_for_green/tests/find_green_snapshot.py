@@ -33,8 +33,8 @@ TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 # Mock builds
 output = build_pb2.Build.Output()
-brya_greenness = {"buildMetric": "100", "metric": "98", "target": "brya"}
-eve_greenness = {"buildMetric": "90", "metric": "80", "target": "eve"}
+brya_greenness = {'buildMetric': '100', 'metric': '98', 'target': 'brya'}
+eve_greenness = {'buildMetric': '90', 'metric': '80', 'target': 'eve'}
 output.properties['greenness'] = {
     'aggregateMetric': 80,
     'targetGreenness': [brya_greenness]
@@ -65,13 +65,13 @@ unscored_build = build_pb2.Build(id=123, input=build_input,
                                  end_time=TEST_END_TIMESTAMP)
 
 
-expected_brya_greenness = {"brya": {"buildMetric": "100", "metric": "98"}}
-expected_both_greenness = {"eve": {"buildMetric": "90", "metric": "80"}}
+expected_brya_greenness = {'brya': {'buildMetric': '100', 'metric': '98'}}
+expected_both_greenness = {'eve': {'buildMetric': '90', 'metric': '80'}}
 expected_both_greenness.update(expected_brya_greenness)
 
 model_to_greenness = {
-    "brya": expected_brya_greenness,
-    "both": expected_both_greenness,
+    'brya': expected_brya_greenness,
+    'both': expected_both_greenness,
     '': {}
 }
 
@@ -116,8 +116,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'find green snapshot.buildbucket.search',
           [
-              "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2021-02-19T14:10:30Z\"}}"
+              '-predicate',
+              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:30Z"}}'
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -162,8 +162,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'find green snapshot.buildbucket.search',
           [
-              "-predicate",
-              "{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2021-02-19T14:10:30Z\"}}"
+              '-predicate',
+              '{"builder": {"bucket": "staging", "builder": "staging-snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:30Z"}}'
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -185,8 +185,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'find green snapshot.buildbucket.search',
           [
-              "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2021-02-20T00:00:00Z\", \"startTime\": \"2021-02-19T14:00:00Z\"}}"
+              '-predicate',
+              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"endTime": "2021-02-20T00:00:00Z", "startTime": "2021-02-19T14:00:00Z"}}'
           ],
       ),
       api.post_process(post_process.DropExpectation),

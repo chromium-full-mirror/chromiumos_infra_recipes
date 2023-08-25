@@ -18,16 +18,16 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test data.
-TARGET_GREENNESS = {"eve": {"buildMetric": "100"}}
+TARGET_GREENNESS = {'eve': {'buildMetric': '100'}}
 BUILD_INPUT = build_pb2.Build.Input()
 BUILD_INPUT.gitiles_commit.id = 'bababa'
 BUILD_OUTPUT = build_pb2.Build.Output()
 BUILD_OUTPUT.properties['greenness'] = {
     'aggregateMetric': 98,
     'targetGreenness': [{
-        "buildMetric": "100",
-        "metric": "98",
-        "target": "eve"
+        'buildMetric': '100',
+        'metric': '98',
+        'target': 'eve'
     }]
 }
 

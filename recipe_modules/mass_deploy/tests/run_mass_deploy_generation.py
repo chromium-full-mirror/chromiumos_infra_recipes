@@ -23,56 +23,56 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8779172876182422209/+/u/get_signed_build_metadata/parse_metadata/signed_build_metadata
 
 _METADATA_CANARY = {
-    "gs://chromeos-releases/canary-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions":
+    'gs://chromeos-releases/canary-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
-            "channel": "canary",
-            "outputs": {
-                "chromeos_15487.0.0_reven_recovery_canary-channel_mp-v2.bin": {
+            'channel': 'canary',
+            'outputs': {
+                'chromeos_15487.0.0_reven_recovery_canary-channel_mp-v2.bin': {
                 },
-                "chromeos_15487.0.0_reven_recovery_canary-channel_mp-v2.bin.zip":
+                'chromeos_15487.0.0_reven_recovery_canary-channel_mp-v2.bin.zip':
                     {}
             },
-            "release_directory": "canary-channel/reven/15487.0.0",
+            'release_directory': 'canary-channel/reven/15487.0.0',
         }
 }
 
 _METADATA_DEV = {
-    "gs://chromeos-releases/dev-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions":
+    'gs://chromeos-releases/dev-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
-            "channel": "dev",
-            "outputs": {
-                "chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin": {},
-                "chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin.zip": {
+            'channel': 'dev',
+            'outputs': {
+                'chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin': {},
+                'chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin.zip': {
                 }
             },
-            "release_directory": "dev-channel/reven/15487.0.0",
+            'release_directory': 'dev-channel/reven/15487.0.0',
         }
 }
 
 _METADATA_BETA = {
-    "gs://chromeos-releases/beta-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions":
+    'gs://chromeos-releases/beta-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions':
         {
-            "channel": "beta",
-            "outputs": {
-                "chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin": {},
-                "chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin.zip":
+            'channel': 'beta',
+            'outputs': {
+                'chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin': {},
+                'chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin.zip':
                     {}
             },
-            "release_directory": "beta-channel/reven/15437.42.0",
+            'release_directory': 'beta-channel/reven/15437.42.0',
         }
 }
 
 _METADATA_STABLE = {
-    "gs://chromeos-releases/stable-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions":
+    'gs://chromeos-releases/stable-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions':
         {
-            "channel": "stable",
-            "outputs": {
-                "chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin": {
+            'channel': 'stable',
+            'outputs': {
+                'chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin': {
                 },
-                "chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin.zip":
+                'chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin.zip':
                     {}
             },
-            "release_directory": "stable-channel/reven/15437.42.0",
+            'release_directory': 'stable-channel/reven/15437.42.0',
         }
 }
 

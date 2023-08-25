@@ -40,7 +40,7 @@ def GenTests(api: RecipeTestApi):
                  ), api.post_process(post_process.DropExpectation))
 
   expected_dict = collections.OrderedDict()
-  expected_dict["my_key"] = "my value"
+  expected_dict['my_key'] = 'my value'
   yield api.test(
       'simple-success',
       api.properties(
@@ -53,13 +53,13 @@ def GenTests(api: RecipeTestApi):
   expected_dict['single_quotes'] = 'hello'
   expected_dict['with_whitespace'] = 'hi      '
   expected_dict['with_internal_quote'] = 'punctuation (")!'
-  expected_dict['multiline'] = 'hello,\'\nworld!'
+  expected_dict['multiline'] = "hello,'\nworld!"
   expected_dict['multiline_with_fakeout'] = (
-      'hello,\nnot_a_real_keyval = \'psych\'\nworld!')
+      "hello,\nnot_a_real_keyval = 'psych'\nworld!")
   yield api.test(
       'complicated-success',
       api.properties(
-          contents="""
+          contents='''
 # Ignorable comment.
 double_quotes="hey"
 single_quotes='hello'
@@ -71,21 +71,21 @@ multiline_with_fakeout = "hello,
 not_a_real_keyval = 'psych'
 world!"
 
-""",
+''',
           expected_json_str=json.dumps(expected_dict),
       ), api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'line-without-equals',
       api.properties(
-          contents="""my_key='my value'
-Hey, how's it going?""",
+          contents='''my_key='my value'
+Hey, how's it going?''',
           expected_json_str='{}',
       ),
       api.post_check(post_process.StepFailure,
                      'parse key-value store from a cool file'),
       api.post_check(post_process.SummaryMarkdown,
-                     'Invalid line (no assignment): Hey, how\'s it going?'),
+                     "Invalid line (no assignment): Hey, how's it going?"),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -93,11 +93,11 @@ Hey, how's it going?""",
   yield api.test(
       'unterminated-multiline-value',
       api.properties(
-          contents="""my_key='hello,
+          contents='''my_key='hello,
 w
 o
 r
-l""",
+l''',
           expected_json_str='{}',
       ),
       api.post_check(post_process.StepFailure,
@@ -111,7 +111,7 @@ l""",
   yield api.test(
       'invalid-quote-char',
       api.properties(
-          contents="my_key=`my value`",
+          contents='my_key=`my value`',
           expected_json_str='{}',
       ),
       api.post_check(post_process.StepFailure,

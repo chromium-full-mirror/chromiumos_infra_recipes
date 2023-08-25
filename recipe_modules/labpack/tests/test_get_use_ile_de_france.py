@@ -23,12 +23,12 @@ def RunSteps(api):
                                                common_config=None) is False
     with api.step.nest('opted-in model'):
       assert api.labpack.get_use_ile_de_france(
-          models=["eve"], common_config=make_common_config(True, ["eve"],
+          models=['eve'], common_config=make_common_config(True, ['eve'],
                                                            None)) is True
     with api.step.nest('opted-out model'):
       assert api.labpack.get_use_ile_de_france(
-          models=["eve"], common_config=make_common_config(True, None,
-                                                           ["eve"])) is False
+          models=['eve'], common_config=make_common_config(True, None,
+                                                           ['eve'])) is False
 
 
 def GenTests(api):

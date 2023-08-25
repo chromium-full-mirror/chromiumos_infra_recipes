@@ -78,7 +78,7 @@ def GenTests(api):
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
-                  'topic': "INCORRECT_TOPIC",
+                  'topic': 'INCORRECT_TOPIC',
                   'files': {
                       'foo/bar/bar.ebuild': {},
                   }
@@ -110,7 +110,7 @@ def GenTests(api):
               CHANGE_NUM: {
                   'project': PROJECT_NAME,
                   'branch': 'main',
-                  'topic': "chromeos-base/lacros-ash-atomic",
+                  'topic': 'chromeos-base/lacros-ash-atomic',
                   'files': {
                       'foo/bar/bar.ebuild': {},
                   }

@@ -179,8 +179,8 @@ def GenTests(api):
       api.step_data(
           'source cache.resize GCE disk (2)', stdout=api.raw_io.output(
               'Some non-sequitur message to the disk size.\n'
-              'New disk size \'10\' GiB must be larger '
-              'than existing size \'10\' GiB.\n'), retcode=1),
+              "New disk size '10' GiB must be larger "
+              "than existing size '10' GiB.\n"), retcode=1),
   )
   yield api.test(
       'create-disk-fails-as-exists-but-404-before',
@@ -189,7 +189,7 @@ def GenTests(api):
           'source cache (5).setup source cache disk.create disk from snapshot image.create disk from image',
           stderr=api.raw_io.output_text(
               'Some non-sequitur message to disk existing.\n'
-              'The resource \'a/big/resource/thing\' already exists'),
+              "The resource 'a/big/resource/thing' already exists"),
           retcode=404),
       api.post_check(
           post_process.DoesNotRun,
@@ -203,7 +203,7 @@ def GenTests(api):
           'source cache (5).setup source cache disk.create disk from snapshot image.create disk from image',
           stdout=api.raw_io.output(
               'Some non-sequitur message to disk existing.\n'
-              'The resource \'a/big/resource/thing\' already exists'),
+              "The resource 'a/big/resource/thing' already exists"),
           retcode=404),
       api.post_check(
           post_process.DoesNotRun,
@@ -213,13 +213,13 @@ def GenTests(api):
 
   yield api.test(
       'staging-execution',
-      api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
+      api.buildbucket.generic_build(builder='staging_SourceCacheBuilder',
                                     bucket='staging'),
       api.gcloud.infra_host('chromeos-ci-infra-us-central1-b-x16-0-nvcj'),
   )
   yield api.test(
       'release-staging-execution',
-      api.buildbucket.generic_build(builder="staging_SourceCacheBuilder",
+      api.buildbucket.generic_build(builder='staging_SourceCacheBuilder',
                                     bucket='staging'),
       api.gcloud.infra_host(
           'chromeos-release-staging-us-central1-b-x16-0-nvcj'),

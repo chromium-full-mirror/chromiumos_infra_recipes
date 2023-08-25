@@ -71,7 +71,7 @@ def RunSteps(api: RecipeApi):
       'gs://bucket/directory1/directory2/releases/file1.instructions',
       'gs://bucket/directory1/directory2/releases/file2.instructions',
   ])
-  with api.step.nest("verify results") as child_step:
+  with api.step.nest('verify results') as child_step:
     child_step.step_summary_text = api.signing.get_signed_build_metadata(
         metadata)
     api.signing.verify_signing_success(metadata, child_step)
@@ -108,7 +108,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'full-run',
-      api.properties(**{"$chromeos/signing": SigningProperties(timeout=5)}),
+      api.properties(**{'$chromeos/signing': SigningProperties(timeout=5)}),
       api.signing.mock_meta(
           'gs://bucket/directory1/directory2/releases/file1.instructions.json',
           _RUNNING),
@@ -158,7 +158,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'times-out',
       api.properties(
-          **{"$chromeos/signing": SigningProperties(timeout=5)}),
+          **{'$chromeos/signing': SigningProperties(timeout=5)}),
       api.signing.mock_meta(
           'gs://bucket/directory1/directory2/releases/file1.instructions.json',
           _RUNNING),  # Never succeeds.
@@ -186,7 +186,7 @@ def GenTests(api: RecipeTestApi):
   # Failed test.
   yield api.test(
       'signing-failed',
-      api.properties(**{"$chromeos/signing": SigningProperties(timeout=5)}),
+      api.properties(**{'$chromeos/signing': SigningProperties(timeout=5)}),
       api.signing.mock_meta(
           'gs://bucket/directory1/directory2/releases/file1.instructions.json',
           _RUNNING),
@@ -219,7 +219,7 @@ def GenTests(api: RecipeTestApi):
       'signing-failed-already-exists',
       api.properties(
           **{
-              "$chromeos/signing":
+              '$chromeos/signing':
                   SigningProperties(timeout=5, ignore_already_exists_errors=True
                                    )
           }),
@@ -252,7 +252,7 @@ def GenTests(api: RecipeTestApi):
   # Malformed json
   yield api.test(
       'malformed-json',
-      api.properties(**{"$chromeos/signing": SigningProperties(timeout=5)}),
+      api.properties(**{'$chromeos/signing': SigningProperties(timeout=5)}),
       # Bad json (missing closing brace).
       api.signing.mock_meta_str(
           'gs://bucket/directory1/directory2/releases/file1.instructions.json',

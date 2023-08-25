@@ -26,7 +26,7 @@ def RunSteps(api):
 def GenTests(api):
 
   props = api.properties(**{
-      "$chromeos/auto_retry_util": {
+      '$chromeos/auto_retry_util': {
           'throttle_2hr': 30,
           'throttle_24hr': 300,
       }

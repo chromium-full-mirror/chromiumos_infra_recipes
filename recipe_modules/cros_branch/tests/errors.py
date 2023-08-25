@@ -21,7 +21,7 @@ def RunSteps(api):
 
   with api.assertions.assertRaises(StepFailure):
     # Bad version string.
-    api.cros_branch.create_from_buildspec("foo", branch=None)
+    api.cros_branch.create_from_buildspec('foo', branch=None)
 
   with api.assertions.assertRaises(StepFailure):
     api.cros_branch.create_from_file(download_path, branch=None)

@@ -34,6 +34,6 @@ def GenTests(api):
       attempt_retry_repo(api, 1),
       attempt_retry_repo(api, 2),
       api.properties(**{'$chromeos/repo': {
-          "remove_manifests_git": True
+          'remove_manifests_git': True
       }}),
   )

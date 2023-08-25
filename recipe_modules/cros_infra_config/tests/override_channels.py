@@ -19,7 +19,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   api.assertions.assertTrue(
       api.cros_infra_config.should_override_release_channels)
-  api.assertions.assertEqual(["2", "3"],
+  api.assertions.assertEqual(['2', '3'],
                              api.cros_infra_config.override_release_channels)
 
 

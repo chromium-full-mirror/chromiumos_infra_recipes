@@ -97,7 +97,7 @@ def GenTests(api):
 
     ret += api.properties(
         **{
-            "$chromeos/cros_prebuilts":
+            '$chromeos/cros_prebuilts':
                 CrosPrebuiltsProperties(
                     use_staging_branch=use_staging,
                     send_snapshot_prebuilts=send_snapshot_prebuilts)

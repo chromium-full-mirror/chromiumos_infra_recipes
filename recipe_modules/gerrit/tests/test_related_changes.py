@@ -26,9 +26,9 @@ gerrit_change = GerritChange(host='chromium-review.googlesource.com',
 
 RELATED_OUTPUT = {
     'related': [{
-        "_change_number": "321"
+        '_change_number': '321'
     }, {
-        "_change_number": "432"
+        '_change_number': '432'
     }]
 }
 NO_RELATED_OUTPUT = {'related': []}
@@ -85,5 +85,5 @@ def GenTests(api):
       api.properties(gerrit_change=gerrit_change, expect_success=False),
       api.gerrit.set_gerrit_related_changes({}, retcode=1),
       api.post_check(post_process.StepTextEquals, 'call gerrit_related_changes',
-                     'couldn\'t parse output of related changes'),
+                     "couldn't parse output of related changes"),
       api.post_process(post_process.DropExpectation))

@@ -121,7 +121,7 @@ def GenTests(api):
 
 def mock_dlc(api):
   return api.step_data(
-      'Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text("""
+      'Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text('''
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/meta/imageloader.json
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/meta/table
@@ -134,15 +134,15 @@ gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/packa
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/meta/table
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/root/compact.fst.local
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/root/latin_indy.tflite
-      """), retcode=0)
+      '''), retcode=0)
 
 
 def mock_dlc_scaling(api, failed=False):
   if failed:
     return api.step_data('Find DLCs.gsutil ls dlc-scaling',
-                         stdout=api.raw_io.output_text(""), retcode=1)
+                         stdout=api.raw_io.output_text(''), retcode=1)
   return api.step_data(
-      'Find DLCs.gsutil ls dlc-scaling', stdout=api.raw_io.output_text("""
+      'Find DLCs.gsutil ls dlc-scaling', stdout=api.raw_io.output_text('''
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/meta/imageloader.json
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/borealis-dlc2/package/meta/table
@@ -155,4 +155,4 @@ gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/meta/table
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/root/compact.fst.local
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc-scaling/handwriting-de/package/root/latin_indy.tflite
-      """), retcode=0)
+      '''), retcode=0)

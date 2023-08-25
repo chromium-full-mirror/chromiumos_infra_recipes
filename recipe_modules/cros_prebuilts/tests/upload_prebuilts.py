@@ -223,7 +223,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.buildbucket.generic_build(
           experiments=['chromeos.publish.to.binhost_lookup_service']),
       api.post_check(post_process.StepSuccess,
-                     "upload prebuilts.publish binhost metadata"),
+                     'upload prebuilts.publish binhost metadata'),
       api.post_process(post_process.DropExpectation))
 
   # Binhost metadata is not published when the
@@ -236,5 +236,5 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           **api.binhost_lookup_service.input_properties,
       ),
       api.post_check(post_process.DoesNotRun,
-                     "upload prebuilts.publish binhost metadata"),
+                     'upload prebuilts.publish binhost metadata'),
       api.post_process(post_process.DropExpectation))

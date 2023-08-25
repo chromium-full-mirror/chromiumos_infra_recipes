@@ -19,7 +19,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_check(post_process.StepCommandContains, 'download GS file', [
-          "gcloud", "storage", "cp", "gs://my-bucket/fake-dlc/dlc.img", "/tmp"
+          'gcloud', 'storage', 'cp', 'gs://my-bucket/fake-dlc/dlc.img', '/tmp'
       ]),
       api.post_process(post_process.DropExpectation),
   )

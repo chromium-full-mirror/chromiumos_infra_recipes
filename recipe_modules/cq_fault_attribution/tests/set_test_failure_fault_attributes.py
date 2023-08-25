@@ -415,10 +415,10 @@ def RunSteps(api):
 
   orch_snapshot = \
     GitilesCommit(
-        host="chrome-internal.googlesource.com",
-        project="chromeos/manifest-internal",
+        host='chrome-internal.googlesource.com',
+        project='chromeos/manifest-internal',
         id=ORCH_SNAPSHOT_COMMIT_SHA,
-        ref="refs/heads/snapshot")
+        ref='refs/heads/snapshot')
 
   fault_attributes = api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(

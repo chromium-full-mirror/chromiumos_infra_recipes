@@ -30,7 +30,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'create image from disk', stdout=api.raw_io.output(
               'Some non-sequitur message to disk existing.\n'
-              'The resource \'a/big/resource/thing\' already exists'),
+              "The resource 'a/big/resource/thing' already exists"),
           retcode=404),
       api.post_check(post_process.DoesNotRun, 'create image from disk (2)'),
       api.post_check(post_process.DropExpectation),

@@ -20,8 +20,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   with api.deferrals.raise_exceptions_at_end():
     with api.deferrals.defer_exceptions():
-      raise InfraFailure("exception")
-    api.deferrals.defer_exception(InfraFailure("exception"))
+      raise InfraFailure('exception')
+    api.deferrals.defer_exception(InfraFailure('exception'))
     api.step('a step that should happen no matter what', ['ls'])
 
 

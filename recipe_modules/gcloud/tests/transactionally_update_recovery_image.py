@@ -115,7 +115,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'custom-recovery-image',
       api.properties(recovery_image='foooooo',
-                     expected_return="foooooo-fallback"),
+                     expected_return='foooooo-fallback'),
       api.gcloud.set_image_exists_data([{
           'name': 'image-123'
       }, {

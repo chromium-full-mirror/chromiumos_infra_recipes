@@ -40,9 +40,9 @@ def GenTests(api):
       api.properties(
           fatal=True, **{
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -73,7 +73,7 @@ def GenTests(api):
       api.properties(fatal=True),
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation),
-      status="FAILURE",
+      status='FAILURE',
   )
 
   # `fatal` shouldn't affect the no buildspec failure.
@@ -82,7 +82,7 @@ def GenTests(api):
       api.properties(fatal=False),
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation),
-      status="FAILURE",
+      status='FAILURE',
   )
 
   yield api.test(
@@ -90,9 +90,9 @@ def GenTests(api):
       api.properties(
           fatal=True, **{
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -107,7 +107,7 @@ def GenTests(api):
                                               ),
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation),
-      status="FAILURE",
+      status='FAILURE',
   )
 
   yield api.test(
@@ -115,9 +115,9 @@ def GenTests(api):
       api.properties(
           fatal=False, **{
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -146,9 +146,9 @@ def GenTests(api):
                   'original_build_bbid': '123',
               },
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -181,9 +181,9 @@ def GenTests(api):
                   'original_build_bbid': '123',
               },
               '$chromeos/cros_source': {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml",
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromeos-manifest-versions/buildspecs/114/15406.0.0.xml',
                   },
               },
           }),
@@ -207,5 +207,5 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepFailure, 'check buildspec'),
       api.post_process(post_process.DropExpectation),
-      status="FAILURE",
+      status='FAILURE',
   )

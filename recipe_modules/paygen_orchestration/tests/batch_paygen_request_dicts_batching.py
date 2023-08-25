@@ -162,4 +162,4 @@ def GenTests(api: RecipeTestApi):
               api.paygen_orchestration.get_example_gen_requests_delta_n2n()
               [0].SerializeToString(),
           ])), api.post_check(post_process.StepFailure, 'run test'),
-      status="FAILURE")
+      status='FAILURE')

@@ -25,21 +25,21 @@ PROPERTIES = ShouldLfgProperties
 
 one_gerrit_change = [
     GerritChange(
-        host="chromium-review.googlesource.com",
+        host='chromium-review.googlesource.com',
         change=1234,
     )
 ]
 multiple_gerrit_changes = [
     GerritChange(
-        host="chromium-review.googlesource.com",
+        host='chromium-review.googlesource.com',
         change=1234,
     ),
     GerritChange(
-        host="chromium-review.googlesource.com",
+        host='chromium-review.googlesource.com',
         change=5678,
     ),
     GerritChange(
-        host="chromium-review.googlesource.com",
+        host='chromium-review.googlesource.com',
         change=9012,
     )
 ]
@@ -144,9 +144,9 @@ def GenTests(api):
   # TODO(b/276363760): Remove when relation chains are supported.
   related_output = {
       'related': [{
-          "_change_number": "1234"
+          '_change_number': '1234'
       }, {
-          "_change_number": "4321"
+          '_change_number': '4321'
       }]
   }
   yield api.test(

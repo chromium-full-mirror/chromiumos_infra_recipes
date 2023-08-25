@@ -52,10 +52,10 @@ def GenTests(api):
                   'deadbeef'
           }),
       api.step_data(
-          'Hash DLCs.Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text("""
+          'Hash DLCs.Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text('''
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/found/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/found2/dlc.img
-      """), retcode=0),
+      '''), retcode=0),
       api.post_check(post_process.DoesNotRun, 'Hash DLCs.download GS file'),
       api.post_process(post_process.DropExpectation))
 
@@ -69,10 +69,10 @@ gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/found2/dlc.img
                   'deadbeef'
           }),
       api.step_data(
-          'Hash DLCs.Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text("""
+          'Hash DLCs.Find DLCs.gsutil ls dlc', stdout=api.raw_io.output_text('''
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/missing/dlc.img
 gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/found/dlc.img
-      """), retcode=0),
+      '''), retcode=0),
       # Downloads exactly one file.
       api.post_check(post_process.MustRun, 'Hash DLCs.download GS file'),
       api.post_check(post_process.DoesNotRun, 'Hash DLCs.download GS file (2)'),

@@ -19,7 +19,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   gerrit_changes = [
       GerritChange(
-          host="chromium-review.googlesource.com",
+          host='chromium-review.googlesource.com',
           change=1234,
       )
   ]

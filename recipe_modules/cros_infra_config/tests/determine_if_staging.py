@@ -30,19 +30,19 @@ def GenTests(
   """Create test cases."""
 
   yield api.test(
-      'staging-bucket', api.buildbucket.generic_build(bucket="staging"),
+      'staging-bucket', api.buildbucket.generic_build(bucket='staging'),
       api.post_check(post_process.PropertyEquals, 'is_staging', True),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'staging-shadow-bucket',
-      api.buildbucket.generic_build(bucket="staging.shadow"),
+      api.buildbucket.generic_build(bucket='staging.shadow'),
       api.post_check(post_process.PropertyEquals, 'is_staging', True),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'staging-builder',
-      api.buildbucket.generic_build(builder="staging-sign-image"),
+      api.buildbucket.generic_build(builder='staging-sign-image'),
       api.post_check(post_process.PropertyEquals, 'is_staging', True),
       api.post_process(post_process.DropExpectation))
 

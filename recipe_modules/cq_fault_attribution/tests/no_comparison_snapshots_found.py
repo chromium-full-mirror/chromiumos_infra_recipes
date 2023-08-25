@@ -48,10 +48,10 @@ def RunSteps(api):
   ]
   orch_snapshot = \
     GitilesCommit(
-        host="chrome-internal.googlesource.com",
-        project="chromeos/manifest-internal",
+        host='chrome-internal.googlesource.com',
+        project='chromeos/manifest-internal',
         id=ORCH_SNAPSHOT_COMMIT_SHA,
-        ref="refs/heads/snapshot")
+        ref='refs/heads/snapshot')
 
   # Testing the case of when no comparison snapshots are found with using the
   # orchestrator commit sha.

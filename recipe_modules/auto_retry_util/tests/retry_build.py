@@ -72,7 +72,7 @@ def GenTests(api):
         post_process.StepCommandContains,
         f'retry build {build_id}.set labels on CL {change_id}.curl https://chromium.googlesource.com/changes/{change_id}/revisions/current/review',
         [
-            json.dumps({"labels": labels}),
+            json.dumps({'labels': labels}),
             f'https://chromium.googlesource.com/changes/{change_id}/revisions/current/review'
         ],
     )
@@ -94,24 +94,24 @@ def GenTests(api):
         f'retry build {build_id}.add comment on CL {change_id}.curl https://chromium.googlesource.com/changes/{change_id}/revisions/current/review',
         [
             json.dumps(
-                {"comments": {
-                    "/PATCHSET_LEVEL": [{
-                        "message": comment
+                {'comments': {
+                    '/PATCHSET_LEVEL': [{
+                        'message': comment
                     }]
                 }}),
             f'https://chromium.googlesource.com/changes/{change_id}/revisions/current/review'
         ],
     )
 
-  expected_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
+  expected_comment = '''The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
 - Some child builders are now retryable:builderA, builderB
 - Some tests are now retryable:suite1, suite2
-"""
+'''
   yield api.test(
       'retry-build',
       api.auto_retry_util.enable_retries(),
-      check_labels(build_id=123, change_id=456, labels={"Commit-Queue": 2}),
-      check_labels(build_id=123, change_id=789, labels={"Commit-Queue": 2}),
+      check_labels(build_id=123, change_id=456, labels={'Commit-Queue': 2}),
+      check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 2}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
       check_comment(build_id=123, change_id=789, comment=expected_comment),
       api.post_process(post_process.DropExpectation),
@@ -124,8 +124,8 @@ def GenTests(api):
       api.properties(
           runMode='DRY_RUN',
       ),
-      check_labels(build_id=123, change_id=456, labels={"Commit-Queue": 1}),
-      check_labels(build_id=123, change_id=789, labels={"Commit-Queue": 1}),
+      check_labels(build_id=123, change_id=456, labels={'Commit-Queue': 1}),
+      check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 1}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
       check_comment(build_id=123, change_id=789, comment=expected_comment),
       api.post_process(post_process.DropExpectation),
@@ -142,10 +142,10 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  many_builds_and_tests_comment = """The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
+  many_builds_and_tests_comment = '''The previous build (https://cr-buildbucket.appspot.com/build/123) is being automatically retried for the following reasons:
 - Some child builders are now retryable:builder0, builder1, builder2, builder3, builder4,...
 - Some tests are now retryable:suite0, suite1, suite2, suite3, suite4,...
-"""
+'''
   yield api.test(
       'many-builds-and-tests',
       api.auto_retry_util.enable_retries(),

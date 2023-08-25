@@ -21,7 +21,7 @@ DEPS = [
 
 def RunSteps(api):
   """RunSteps runs ensure_labpack"""
-  assert isinstance(api, RecipeScriptApi), "api has wrong type: {}".format(
+  assert isinstance(api, RecipeScriptApi), 'api has wrong type: {}'.format(
       repr(type(api)))
   with api.step.nest('run labpack test suite') as test_suite:
     with api.step.nest('run_labpack fails with not_implemented error'):
@@ -32,7 +32,7 @@ def RunSteps(api):
 
 def GenTests(api):
   """GenTests runs RunSteps and checks that the test suite as a whole succeeded."""
-  assert isinstance(api, RecipeTestApi), "api has wrong type: {}".format(
+  assert isinstance(api, RecipeTestApi), 'api has wrong type: {}'.format(
       repr(type(api)))
   yield api.test(
       'basic',

@@ -21,7 +21,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):
-  bbids = api.conductor.collect('child builds', ["123", "456"],
+  bbids = api.conductor.collect('child builds', ['123', '456'],
                                 step_name='conductor collect')
   api.assertions.assertEqual(bbids, [123, 456])
 
@@ -29,17 +29,17 @@ def RunSteps(api: RecipeApi):
 collect_config = CollectConfig(rules=[RetryRule(cutoff_seconds=1)])
 
 TEST_REPORT = {
-    "builders": {
-        "adlrvp-release-main": {
-            "builds": [{
-                "bbid": 8792359518877252753,
-                "status": "SUCCESS",
-                "retry": False
+    'builders': {
+        'adlrvp-release-main': {
+            'builds': [{
+                'bbid': 8792359518877252753,
+                'status': 'SUCCESS',
+                'retry': False
             }],
-            "retry_count": 0
+            'retry_count': 0
         },
     },
-    "retry_count": 0
+    'retry_count': 0
 }
 
 

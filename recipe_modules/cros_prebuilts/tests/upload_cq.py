@@ -47,7 +47,7 @@ def GenTests(api):
       'staging-branch',
       api.properties(
           **{
-              "$chromeos/cros_prebuilts":
+              '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(use_staging_branch=True)
           }),
       cq=True,
@@ -57,7 +57,7 @@ def GenTests(api):
       'creating-prebuilt',
       api.properties(
           **{
-              "$chromeos/cros_prebuilts":
+              '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
                                           enable_snapshot_prebuilts=True,
                                           commit_overlay_binhost=False)
@@ -69,7 +69,7 @@ def GenTests(api):
       'staging-branch-creating-prebuilt',
       api.properties(
           **{
-              "$chromeos/cros_prebuilts":
+              '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(use_staging_branch=True,
                                           send_snapshot_prebuilts=True,
                                           enable_snapshot_prebuilts=True,
@@ -83,7 +83,7 @@ def GenTests(api):
       'creating-and-commiting-prebuilt',
       api.properties(
           **{
-              "$chromeos/cros_prebuilts":
+              '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
                                           enable_snapshot_prebuilts=True,
                                           commit_overlay_binhost=True)
@@ -98,7 +98,7 @@ def GenTests(api):
       'staging-branch-creating-and-commiting-prebuilt',
       api.properties(
           **{
-              "$chromeos/cros_prebuilts":
+              '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(use_staging_branch=True,
                                           send_snapshot_prebuilts=True,
                                           enable_snapshot_prebuilts=True,

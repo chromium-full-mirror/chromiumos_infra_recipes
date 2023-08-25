@@ -31,7 +31,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  SOME_FAILED_RESPONSE = """{
+  SOME_FAILED_RESPONSE = '''{
   "artifacts": {
     "image": {
       "artifacts": [
@@ -69,7 +69,7 @@ def GenTests(api):
       ]
     }
   }
-}"""
+}'''
 
   yield api.test(
       'some-failed',
@@ -115,13 +115,12 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload artifacts.gsutil rsync'),
       api.post_check(
           post_process.ResultReason,
-          'Infra Failure: Step(\'upload artifacts.gsutil rsync\') (retcode: 1)'
-      ),
+          "Infra Failure: Step('upload artifacts.gsutil rsync') (retcode: 1)"),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
 
-  ALL_FAILED_RESPONSE = """{
+  ALL_FAILED_RESPONSE = '''{
   "artifacts": {
     "sysroot": {
       "artifacts": [
@@ -133,7 +132,7 @@ def GenTests(api):
       ]
     }
   }
-}"""
+}'''
 
   yield api.test(
       'all-failed',

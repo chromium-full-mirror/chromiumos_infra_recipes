@@ -81,10 +81,10 @@ def RunSteps(api):
 
   orch_snapshot = \
     GitilesCommit(
-        host="chrome-internal.googlesource.com",
-        project="chromeos/manifest-internal",
+        host='chrome-internal.googlesource.com',
+        project='chromeos/manifest-internal',
         id=ORCH_SNAPSHOT_COMMIT_SHA,
-        ref="refs/heads/snapshot")
+        ref='refs/heads/snapshot')
   api.looks_for_green.stats.suggested.snap_commit_sha = LFG_COMMIT_SHA
 
   if api.properties['should_use_lfg']:
@@ -110,8 +110,8 @@ def GenTests(api):
           post_process.StepCommandContains,
           'set fault attributes.buildbucket.search',
           [
-              "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/orchsnapshotcommitsha\"}]}"
+              '-predicate',
+              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/orchsnapshotcommitsha"}]}'
           ],
       ))
 
@@ -129,7 +129,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'set fault attributes.buildbucket.search',
           [
-              "-predicate",
-              "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/lfgcommitsha\"}]}"
+              '-predicate',
+              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/lfgcommitsha"}]}'
           ],
       ))

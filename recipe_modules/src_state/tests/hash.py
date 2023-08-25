@@ -12,12 +12,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  HOST, HOST2 = "my_host", "my_host2"
-  PROJECT, PROJECT2 = "my_project", "my_project2"
-  REL_PATH, REL_PATH2 = "my_rel_path", "my_rel_path2"
-  WORKSPACE_PATH, WORKSPACE_PATH2 = "my_workspace_path", "my_workspace_path2"
-  REF, REF2 = "my_ref", "my_ref2"
-  GERRIT_HOST, GERRIT_HOST2 = "my_gerrit_host", "my_gerrit_host2"
+  HOST, HOST2 = 'my_host', 'my_host2'
+  PROJECT, PROJECT2 = 'my_project', 'my_project2'
+  REL_PATH, REL_PATH2 = 'my_rel_path', 'my_rel_path2'
+  WORKSPACE_PATH, WORKSPACE_PATH2 = 'my_workspace_path', 'my_workspace_path2'
+  REF, REF2 = 'my_ref', 'my_ref2'
+  GERRIT_HOST, GERRIT_HOST2 = 'my_gerrit_host', 'my_gerrit_host2'
 
   # Two equivalent ManifestProjects should have equal hashes.
   mp1 = api.src_state.ManifestProject(HOST, PROJECT, REL_PATH, WORKSPACE_PATH,

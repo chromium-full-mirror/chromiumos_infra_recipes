@@ -30,14 +30,14 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(GetCurrentConfigProperties(prefix="prefix-first")),
+      api.properties(GetCurrentConfigProperties(prefix='prefix-first')),
       api.post_process(post_process.StepSuccess,
                        'getting config for prefix-first'))
 
   yield api.test(
       'prefix-with-no-config',
       api.properties(
-          GetCurrentConfigProperties(prefix="prefix-should-return-none")),
+          GetCurrentConfigProperties(prefix='prefix-should-return-none')),
       api.post_process(post_process.StepSuccess,
                        'getting config for prefix-should-return-none'),
       status='FAILURE',

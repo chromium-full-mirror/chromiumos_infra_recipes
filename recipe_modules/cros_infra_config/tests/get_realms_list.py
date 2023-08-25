@@ -16,7 +16,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   realms_list = api.cros_infra_config.get_realms_list()
 
-  api.assertions.assertEqual(realms_list, ["brya-taeko", "dedede-galnat"])
+  api.assertions.assertEqual(realms_list, ['brya-taeko', 'dedede-galnat'])
 
 
 def GenTests(api):

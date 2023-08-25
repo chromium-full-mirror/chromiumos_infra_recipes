@@ -35,7 +35,7 @@ def GenTests(api: RecipeTestApi):
                   'status': 'failed',
                   'details': 'failed for reason foo',
               }
-          }, expected="failed for reason foo"),
+          }, expected='failed for reason foo'),
       api.post_process(post_process.DropExpectation),
   )
   yield api.test(

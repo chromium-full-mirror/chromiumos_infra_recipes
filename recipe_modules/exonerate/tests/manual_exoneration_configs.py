@@ -18,7 +18,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  expected_configs = {"fake.test": ["target"]}
+  expected_configs = {'fake.test': ['target']}
   api.assertions.assertDictEqual(expected_configs,
                                  api.exonerate.manual_exoneration_configs)
 
@@ -36,9 +36,9 @@ def RunSteps(api):
 def GenTests(api):
   exoneration_cfg = TestDisablementCfg(disablements=[
       TestDisablement(
-          name="fake.test", bug_ids=["123456"], dut_criteria=[
-              TestDisablement.FilterCriterion(key="build_target",
-                                              values=["target"])
+          name='fake.test', bug_ids=['123456'], dut_criteria=[
+              TestDisablement.FilterCriterion(key='build_target',
+                                              values=['target'])
           ])
   ])
   yield api.test(
