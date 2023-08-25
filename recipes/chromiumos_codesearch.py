@@ -110,7 +110,8 @@ def RunSteps(api, properties):
       api.build_menu.setup_workspace_and_chroot(replace=True):  # pragma: no cover
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
     api.build_menu.bootstrap_sysroot(config)
-    api.build_menu.install_packages(config, env_info.packages)
+    api.build_menu.install_packages(config=config, packages=env_info.packages,
+                                    timeout_sec=60 * 60 * 9)
 
     # Once ChromiumOS has been set up, start the process of creating a kzip.
     workspace = api.cros_source.workspace_path
