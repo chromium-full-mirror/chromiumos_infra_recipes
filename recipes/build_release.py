@@ -102,7 +102,9 @@ def RunSteps(api, properties):
     with api.build_reporting.publish_to_gs():
       with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
                                               raise_on_failed_publish=True):
-        with api.build_menu.configure_builder() as config, \
+        with api.build_menu.configure_builder(
+          lookup_config_with_bucket=True,
+        ) as config, \
             api.build_menu.setup_workspace_and_chroot(replace=True):
           branch = api.src_state.gitiles_commit.ref
           if branch.startswith('refs/heads/'):

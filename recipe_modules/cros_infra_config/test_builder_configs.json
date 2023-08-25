@@ -2717,7 +2717,7 @@
       "id": {
         "name": "staging-eve-release-main",
         "type": "RELEASE",
-        "bucket": "release"
+        "bucket": "staging"
       },
       "general": {
         "critical": true,

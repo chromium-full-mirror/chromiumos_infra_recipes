@@ -11395,7 +11395,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#124)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#126)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
