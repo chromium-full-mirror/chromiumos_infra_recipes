@@ -245,13 +245,39 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         with self._api.context(infra_steps=True, deadline=deadline):
           self.cft_test_request.primary_dut.provision_state.update_firmware = \
             self.should_update_os_bundled_firmware(self.cft_test_request.primary_dut)
-          provision_request = ctr.CrosToolRunnerProvisionRequest(devices=[
+          for companion in self.cft_test_request.companion_duts:
+            companion.provision_state.update_firmware = self.should_update_os_bundled_firmware(
+                companion)
+
+          devices = [
               ctr.CrosToolRunnerProvisionRequest.Device(
                   dut=metadata.primary_dut, provision_state=self
                   .cft_test_request.primary_dut.provision_state,
                   container_metadata_key=self.cft_test_request.primary_dut
                   .container_metadata_key)
-          ])
+          ]
+
+          companion_duts = []
+          for peer in metadata.peer_duts:
+            # Expect a single dut of chromeos dut_type
+            build_target = peer.chromeos.dut_model.build_target
+            model = peer.chromeos.dut_model.model_name
+            for companion in self.cft_test_request.companion_duts:
+              if companion.dut_model.build_target == build_target and companion.dut_model.model_name == model:
+                companion_duts.append(companion)
+                break
+
+          companionDevices = [
+              ctr.CrosToolRunnerProvisionRequest.Device(
+                  dut=metadata.peer_duts[i],
+                  provision_state=companion.provision_state,
+                  container_metadata_key=self.cft_test_request.primary_dut
+                  .container_metadata_key)
+              for i, companion in enumerate(companion_duts)
+          ]
+          devices.extend(companionDevices)
+          provision_request = ctr.CrosToolRunnerProvisionRequest(
+              devices=devices)
           prejob_response = self._process_prejob_response(
               self._api.cros_tool_runner.provision(provision_request))
 
