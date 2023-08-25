@@ -53,7 +53,7 @@ def RunSteps(api: RecipeApi):
                           build=Build(channel='dev-channel')))
           }), None),
       api.paygen_testing.create_paygen_build_report_payload(
-          build_pb2.Build(status="FAILURE"), None),
+          build_pb2.Build(status='FAILURE'), None),
       api.paygen_testing.create_paygen_build_report_payload(
           dotdict({
               'generation_request':
@@ -124,7 +124,7 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-  json_data = """{
+  json_data = '''{
   "appid": "appid",
   "metadata_signature": "signature",
   "metadata_size": 1337,
@@ -133,7 +133,7 @@ def GenTests(api: RecipeTestApi):
   "target_version": "4.5.6",
   "sha256_hex": "deadbeef",
   "is_delta": true
-}"""
+}'''
 
   yield api.test(
       'basic',

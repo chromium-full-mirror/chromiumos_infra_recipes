@@ -18,14 +18,14 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 gerrit_changes = [
     GerritChange(
-        host="chromium-review.googlesource.com",
-        project="src/projectA",
+        host='chromium-review.googlesource.com',
+        project='src/projectA',
         change=123,
         patchset=3,
     ),
     GerritChange(
-        host="chromium-review.googlesource.com",
-        project="src/project/nestedproject/projectB",
+        host='chromium-review.googlesource.com',
+        project='src/project/nestedproject/projectB',
         change=456,
         patchset=7,
     ),
@@ -50,15 +50,15 @@ def GenTests(api):
               '$chromeos/cros_test_plan_v2':
                   CrosTestPlanV2Properties(migration_configs=[
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
-                          host="chromium-review.googlesource.com",
-                          project="src/projectA",
+                          host='chromium-review.googlesource.com',
+                          project='src/projectA',
                           file_allowlist_regexps=['a/b/.*'],
                           file_blocklist_regexps=['a/b/d/otherfile.json'],
                           branch_allowlist_regexps=['.*'],
                       ),
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
-                          host="chromium-review.googlesource.com",
-                          project="src/project/.*",
+                          host='chromium-review.googlesource.com',
+                          project='src/project/.*',
                           file_allowlist_regexps=['test.json'],
                           branch_allowlist_regexps=['.*'],
                       )
@@ -94,8 +94,8 @@ def GenTests(api):
               '$chromeos/cros_test_plan_v2':
                   CrosTestPlanV2Properties(migration_configs=[
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
-                          host="chromium-review.googlesource.com",
-                          project="src/projectA",
+                          host='chromium-review.googlesource.com',
+                          project='src/projectA',
                           file_blocklist_regexps=['a/b/d/otherfile.json'],
                       ),
                   ])

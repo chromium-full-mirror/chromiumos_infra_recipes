@@ -27,11 +27,11 @@ def GenTests(api):
       'basic',
       api.properties(
           **{
-              "$chromeos/manifest_doctor": {
-                  "manifest_doctor_cipd_package":
-                      "chromiumos/infra/manifest_doctor_foo",
-                  "manifest_doctor_cipd_ref":
-                      "bar"
+              '$chromeos/manifest_doctor': {
+                  'manifest_doctor_cipd_package':
+                      'chromiumos/infra/manifest_doctor_foo',
+                  'manifest_doctor_cipd_ref':
+                      'bar'
               }
           }),
       api.post_check(post_process.StepCommandContains,

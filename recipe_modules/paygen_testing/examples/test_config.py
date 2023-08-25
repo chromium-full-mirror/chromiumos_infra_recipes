@@ -211,7 +211,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation),
   )
 
-  generate_test_config_output = """{
+  generate_test_config_output = '''{
     "perTargetTestRequirements": [
         {
             "targetCriteria": {
@@ -239,7 +239,7 @@ def GenTests(api: RecipeTestApi):
             }
         }
     ]
-}"""
+}'''
 
   yield api.test(
       'generate',

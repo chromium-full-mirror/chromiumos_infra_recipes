@@ -38,7 +38,7 @@ def RunSteps(api):
           'board': 'fake-board'
       })
   bigquery_export = invocation_pb2.BigQueryExport(
-      project="cros-test-analytics", dataset="resultdb", table="test_results",
+      project='cros-test-analytics', dataset='resultdb', table='test_results',
       test_results=invocation_pb2.BigQueryExport.TestResults())
   api.cros_resultdb.export_invocation_to_bigquery([bigquery_export])
 

@@ -21,15 +21,15 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test JSON protos.
-INSTALL_PACKAGES_REQUEST = """
+INSTALL_PACKAGES_REQUEST = '''
 {
    "sysroot":{
       "path":"/a/b/c"
    }
 }
-"""
+'''
 
-INSTALL_PACKAGES_RESPONSE = """
+INSTALL_PACKAGES_RESPONSE = '''
 {
    "failed_package_data":[
       {
@@ -42,7 +42,7 @@ INSTALL_PACKAGES_RESPONSE = """
       }
    ]
 }
-"""
+'''
 
 
 def RunSteps(api: RecipeApi):

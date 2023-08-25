@@ -41,12 +41,12 @@ def RunSteps(api, properties):
   gs_tuple = api.goma.process_artifacts(
       InstallPackagesResponse(
           goma_artifacts=GomaArtifacts(
-              counterz_file="counterz.binaryproto",
-              stats_file="stats.binaryproto", log_files=[
-                  "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
-                  "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
-                  "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
-                  "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
+              counterz_file='counterz.binaryproto',
+              stats_file='stats.binaryproto', log_files=[
+                  'compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz',
+                  'compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz',
+                  'gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz',
+                  'ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz'
               ])), str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target')
   # Because the goma module uses recipe_engine/time rather than datetime,
   # during testing the self.m.time.utcnow() method will always return the same
@@ -57,12 +57,12 @@ def RunSteps(api, properties):
   staging_tuple = api.goma.process_artifacts(
       InstallPackagesResponse(
           goma_artifacts=GomaArtifacts(
-              counterz_file="counterz.binaryproto",
-              stats_file="stats.binaryproto", log_files=[
-                  "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
-                  "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
-                  "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
-                  "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
+              counterz_file='counterz.binaryproto',
+              stats_file='stats.binaryproto', log_files=[
+                  'compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz',
+                  'compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz',
+                  'gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz',
+                  'ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz'
               ])), str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target',
       is_staging=True)
   # Because the goma module uses recipe_engine/time rather than datetime,

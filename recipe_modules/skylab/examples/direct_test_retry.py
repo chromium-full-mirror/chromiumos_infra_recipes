@@ -87,7 +87,7 @@ def RunSteps(api):
   api.skylab.schedule_suites(
       [unit_hw_test, some_other_unit_hw_test, another_unit_hw_test],
       timeout=duration_pb2.Duration(seconds=3600),
-      container_metadata=api.metadata.test_api.mock_metadata(target="target"),
+      container_metadata=api.metadata.test_api.mock_metadata(target='target'),
       previous_results=previous_results)
 
 

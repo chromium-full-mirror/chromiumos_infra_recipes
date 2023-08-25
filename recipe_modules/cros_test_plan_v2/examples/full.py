@@ -29,20 +29,20 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   relevant_plans = api.cros_test_plan_v2.relevant_plans([
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectA",
+          host='chromium-review.googlesource.com',
+          project='src/projectA',
           change=123,
           patchset=3,
       ),
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectB",
+          host='chromium-review.googlesource.com',
+          project='src/projectB',
           change=456,
           patchset=7,
       ),
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectA",
+          host='chromium-review.googlesource.com',
+          project='src/projectA',
           change=789,
           patchset=5,
       ),
@@ -59,7 +59,7 @@ def RunSteps(api):
   hw_test_plans = api.cros_test_plan_v2.generate_hw_test_plans([
       StarlarkPackage(root='root1', main='example1.star',
                       template_parameters=TemplateParameters()),
-      StarlarkPackage(root='root2', main="example2.star",
+      StarlarkPackage(root='root2', main='example2.star',
                       template_parameters=TemplateParameters()),
   ])
   api.assertions.assertEqual(

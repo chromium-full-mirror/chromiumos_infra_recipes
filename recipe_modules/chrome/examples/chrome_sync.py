@@ -61,10 +61,10 @@ def GenTests(api):
       'basic-override-version',
       api.step_data(
           'chrome sync check.sync chrome source async.find chrome cache head.read HEAD ref',
-          api.file.read_text("ref: refs/heads/main")),
+          api.file.read_text('ref: refs/heads/main')),
       api.step_data(
           'chrome sync check.sync chrome source async.find chrome cache head.read HEAD hash',
-          api.file.read_text("deadbeef\n")),
+          api.file.read_text('deadbeef\n')),
       api.post_check(
           post_process.StepCommandContains,
           'chrome sync check.sync chrome source async.sync chrome.gclient sync',

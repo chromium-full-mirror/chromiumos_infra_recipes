@@ -128,8 +128,8 @@ def GenTests(api):
       api.post_check(verify_dep_fetched, 2, 12345),
       api.post_check(verify_dep_fetched, 2, 67890),
       api.properties(
-          **{"$chromeos/cros_cq_depends": {
-              "allow_missing_depends": True
+          **{'$chromeos/cros_cq_depends': {
+              'allow_missing_depends': True
           }}),
   )
 

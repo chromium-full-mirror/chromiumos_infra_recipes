@@ -14,8 +14,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):
-  api.ipc.send('topic', '/path/to/message/file', {"foo": "bar", "baz": "quux"})
-  api.ipc.receive('topic', 'subscription name', {"foo": "bar", "baz": "quux"})
+  api.ipc.send('topic', '/path/to/message/file', {'foo': 'bar', 'baz': 'quux'})
+  api.ipc.receive('topic', 'subscription name', {'foo': 'bar', 'baz': 'quux'})
   api.ipc.make_subscription('topic', 'subscription')
 
 

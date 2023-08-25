@@ -47,8 +47,8 @@ def GenTests(api):
           **{
               '$chromeos/cts_results_archive':
                   CTSResultsArchiveProperties(
-                      cts_results_gsurl="gs://fake/results",
-                      cts_apfe_gsurl="gs://fake/apfe",
+                      cts_results_gsurl='gs://fake/results',
+                      cts_apfe_gsurl='gs://fake/apfe',
                   )
           }))
 
@@ -64,8 +64,8 @@ def GenTests(api):
           **{
               '$chromeos/cts_results_archive':
                   CTSResultsArchiveProperties(
-                      cts_results_gsurl="gs://fake/results",
-                      cts_apfe_gsurl="gs://fake/apfe",
+                      cts_results_gsurl='gs://fake/results',
+                      cts_apfe_gsurl='gs://fake/apfe',
                   )
           }))
 
@@ -82,8 +82,8 @@ def GenTests(api):
           **{
               '$chromeos/cts_results_archive':
                   CTSResultsArchiveProperties(
-                      cts_results_gsurl="gs://fake/results",
-                      cts_apfe_gsurl="gs://fake/apfe",
+                      cts_results_gsurl='gs://fake/results',
+                      cts_apfe_gsurl='gs://fake/apfe',
                   )
           }))
 
@@ -98,7 +98,7 @@ def GenTests(api):
           **{
               '$chromeos/cts_results_archive':
                   CTSResultsArchiveProperties(
-                      cts_results_gsurl="gs://fake/results",
-                      cts_apfe_gsurl="gs://fake/apfe",
+                      cts_results_gsurl='gs://fake/results',
+                      cts_apfe_gsurl='gs://fake/apfe',
                   )
           }))

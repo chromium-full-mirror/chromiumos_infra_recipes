@@ -81,15 +81,15 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "$chromeos/cros_relevance": {
-                  "build_plan_generator_cipd_package":
-                      "build_plan_generator_foo",
-                  "build_plan_generator_cipd_ref":
-                      "bar",
-                  "pointless_build_checker_cipd_package":
-                      "pointless_build_checker_foo",
-                  "pointless_build_checker_cipd_ref":
-                      "bar",
+              '$chromeos/cros_relevance': {
+                  'build_plan_generator_cipd_package':
+                      'build_plan_generator_foo',
+                  'build_plan_generator_cipd_ref':
+                      'bar',
+                  'pointless_build_checker_cipd_package':
+                      'pointless_build_checker_foo',
+                  'pointless_build_checker_cipd_ref':
+                      'bar',
               }
           }),
       api.post_check(post_process.StepCommandContains,

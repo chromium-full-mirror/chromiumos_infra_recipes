@@ -474,10 +474,10 @@ def GenTests(api):
       'public-orchestrator',
       api.properties(
           **{
-              "$chromeos/cros_source": {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromiumos-manifest-versions/buildspecs/108/15156.0.0.xml"
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/108/15156.0.0.xml'
                   }
               }
           }),
@@ -891,17 +891,17 @@ def GenTests(api):
 
   RELATED_OUTPUT = {
       'related': [{
-          "_change_number": "123456",
-          "_revision_number": "7",
-          "project": "chromeos/manifest-internal"
+          '_change_number': '123456',
+          '_revision_number': '7',
+          'project': 'chromeos/manifest-internal'
       }, {
-          "_change_number": "321",
-          "_revision_number": "1",
-          "project": "sample"
+          '_change_number': '321',
+          '_revision_number': '1',
+          'project': 'sample'
       }, {
-          "_change_number": "432",
-          "_revision_number": "2",
-          "project": "sample"
+          '_change_number': '432',
+          '_revision_number': '2',
+          'project': 'sample'
       }]
   }
 

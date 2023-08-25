@@ -43,8 +43,8 @@ def RunSteps(api, properties):
   # logs were processed (since the goma_artifacts did not contain any).
   gs_tuple = api.goma.process_artifacts(
       InstallPackagesResponse(
-          goma_artifacts=GomaArtifacts(counterz_file="counterz.binaryproto",
-                                       stats_file="stats.binaryproto")),
+          goma_artifacts=GomaArtifacts(counterz_file='counterz.binaryproto',
+                                       stats_file='stats.binaryproto')),
       str(api.path.mkdtemp(prefix='goma-logs-')), 'build_target')
   # Because the goma module uses recipe_engine/time rather than datetime,
   # during testing the self.m.time.utcnow() method will always return the same

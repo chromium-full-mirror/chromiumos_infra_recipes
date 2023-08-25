@@ -23,7 +23,7 @@ def RunSteps(api):
   api.cros_test_plan_v2.generate_hw_test_plans([
       StarlarkPackage(root='root1', main='example1.star',
                       template_parameters=TemplateParameters()),
-      StarlarkPackage(root='root2', main="example2.star",
+      StarlarkPackage(root='root2', main='example2.star',
                       template_parameters=TemplateParameters()),
   ])
 

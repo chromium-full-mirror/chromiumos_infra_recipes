@@ -79,17 +79,17 @@ def GenTests(api):
       'parameters-all-set',
       api.properties(
           **{
-              "$chromeos/cros_test_plan": {
-                  "board_priority_config_path":
-                      "something/bpcp.binary_proto",
-                  "source_tree_test_config_path":
-                      "something/sttp.binary_proto",
-                  "target_test_requirements_path":
-                      "something/ttrp.binary_proto",
-                  "source_gitiles_repo":
-                      "chromeos/infra/config",
-                  "source_gitiles_branch":
-                      "release-R93-14092.B",
+              '$chromeos/cros_test_plan': {
+                  'board_priority_config_path':
+                      'something/bpcp.binary_proto',
+                  'source_tree_test_config_path':
+                      'something/sttp.binary_proto',
+                  'target_test_requirements_path':
+                      'something/ttrp.binary_proto',
+                  'source_gitiles_repo':
+                      'chromeos/infra/config',
+                  'source_gitiles_branch':
+                      'release-R93-14092.B',
               }
           }),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
@@ -97,14 +97,14 @@ def GenTests(api):
       api.post_check(
           post_process.StepCommandContains,
           'generate test plan.call test_planner', [
-              "--gitiles_repo", "chromeos/infra/config", "--gitiles_branch",
-              "release-R93-14092.B", "--board_priority_config",
-              "something/bpcp.binary_proto", "--source_tree_test_config",
-              "something/sttp.binary_proto", "--target_test_requirements",
-              "something/ttrp.binary_proto"
+              '--gitiles_repo', 'chromeos/infra/config', '--gitiles_branch',
+              'release-R93-14092.B', '--board_priority_config',
+              'something/bpcp.binary_proto', '--source_tree_test_config',
+              'something/sttp.binary_proto', '--target_test_requirements',
+              'something/ttrp.binary_proto'
           ]))
 
-  generate_test_config_output = """{
+  generate_test_config_output = '''{
     "perTargetTestRequirements": [
         {
             "targetCriteria": {
@@ -132,7 +132,7 @@ def GenTests(api):
             }
         }
     ]
-}"""
+}'''
 
   yield api.test(
       'generate-test-config',

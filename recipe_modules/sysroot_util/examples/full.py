@@ -55,7 +55,7 @@ def RunSteps(api, properties):
 
   api.sysroot_util.build_images(
       image_types, 'builder/path', disable_rootfs_verification=True,
-      disk_layout="big_disk", base_is_recovery=properties.base_is_recovery,
+      disk_layout='big_disk', base_is_recovery=properties.base_is_recovery,
       test_test_data=image_test_json, skip_image_tests=properties.skip_tests,
       verify_image_size_delta=properties.verify_image_size_delta)
 
@@ -69,22 +69,22 @@ def GenTests(api):
   def goma_artifacts(with_goma=False):
     ret = {
         'events': [{
-            "name": "fake_package-path/fake-package-name-0.0.1-r2",
-            "durationMilliseconds": "1523",
-            "timestampMilliseconds": "1580481610805"
+            'name': 'fake_package-path/fake-package-name-0.0.1-r2',
+            'durationMilliseconds': '1523',
+            'timestampMilliseconds': '1580481610805'
         }]
     }
     if with_goma:
       ret['gomaArtifacts'] = {
-          "counterzFile":
-              "counterz.binaryproto",
-          "statsFile":
-              "stats.binaryproto",
-          "logFiles": [
-              "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
-              "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
-              "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
-              "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"
+          'counterzFile':
+              'counterz.binaryproto',
+          'statsFile':
+              'stats.binaryproto',
+          'logFiles': [
+              'compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz',
+              'compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz',
+              'gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz',
+              'ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz'
           ]
       }
     return json.dumps(ret, sort_keys=True)
@@ -93,9 +93,9 @@ def GenTests(api):
     ret = {}
     if rootfs_size:
       ret['events'] = [{
-          "name": "board.total_size.base.rootfs",
-          "gauge": str(rootfs_size),
-          "timestampMilliseconds": "1580481610805"
+          'name': 'board.total_size.base.rootfs',
+          'gauge': str(rootfs_size),
+          'timestampMilliseconds': '1580481610805'
       }]
     return json.dumps(ret, sort_keys=True)
 
@@ -201,34 +201,34 @@ def GenTests(api):
           json.dumps(
               {
                   'failedPackageData': [{
-                      "name": {
-                          "category": "chromeos-base",
-                          "packageName": "thislongpackagenameomg",
-                          "version": "0.0.1-r199",
+                      'name': {
+                          'category': 'chromeos-base',
+                          'packageName': 'thislongpackagenameomg',
+                          'version': '0.0.1-r199',
                       },
-                      "log_path": {
-                          "path": "/all/your/package/are/belong/to/us",
-                          "location": 1,
-                      },
-                  }, {
-                      "name": {
-                          "category": "safari-base",
-                          "packageName": "thisotherexceedinglylongpackage",
-                          "version": "0.0.1-r129",
-                      },
-                      "log_path": {
-                          "path": "/all/your/ebuild/are/belong/to/us",
-                          "location": 1,
+                      'log_path': {
+                          'path': '/all/your/package/are/belong/to/us',
+                          'location': 1,
                       },
                   }, {
-                      "name": {
-                          "category": "edge-base",
-                          "packageName": "shortpackagename",
-                          "version": "0.0.1-r197",
+                      'name': {
+                          'category': 'safari-base',
+                          'packageName': 'thisotherexceedinglylongpackage',
+                          'version': '0.0.1-r129',
                       },
-                      "log_path": {
-                          "path": "/all/your/overlay/are/belong/to/us",
-                          "location": 1,
+                      'log_path': {
+                          'path': '/all/your/ebuild/are/belong/to/us',
+                          'location': 1,
+                      },
+                  }, {
+                      'name': {
+                          'category': 'edge-base',
+                          'packageName': 'shortpackagename',
+                          'version': '0.0.1-r197',
+                      },
+                      'log_path': {
+                          'path': '/all/your/overlay/are/belong/to/us',
+                          'location': 1,
                       },
                   }]
               }, sort_keys=True)),

@@ -65,6 +65,6 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.build(build_message))
 
   yield api.test('bad-json', api.buildbucket.build(build_message), bad_json,
-                 status="FAILURE")
+                 status='FAILURE')
   yield api.test('not-json', api.buildbucket.build(build_message), not_json,
-                 status="FAILURE")
+                 status='FAILURE')

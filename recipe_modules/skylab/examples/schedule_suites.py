@@ -77,9 +77,9 @@ def RunSteps(api, properties: ScheduleSuitesProperties):
   hw_test_container.total_shards = 5
   hw_test_container.tag_criteria.CopyFrom(
       ctr_test_suite.TestSuite.TestCaseTagCriteria(
-          tags=["include_this_tag_1", "include_this_tag_2"],
-          tag_excludes=["exclude_this_tag_1",
-                        "exclude_this_tag_2"], test_names=['include_this_test'],
+          tags=['include_this_tag_1', 'include_this_tag_2'],
+          tag_excludes=['exclude_this_tag_1',
+                        'exclude_this_tag_2'], test_names=['include_this_test'],
           test_name_excludes=['exlude_this_test']))
   unit_hw_test_container = UnitHwTest(
       unit=hw_test_unit_container,
@@ -102,7 +102,7 @@ def RunSteps(api, properties: ScheduleSuitesProperties):
           unit_hw_test_with_license,
           unit_hw_test_container,
       ], timeout=duration_pb2.Duration(seconds=3600),
-      container_metadata=api.metadata.test_api.mock_metadata(target="target"),
+      container_metadata=api.metadata.test_api.mock_metadata(target='target'),
       build_target_critical_allowlist=build_target_critical_allowlist)
 
   api.assertions.assertEqual(len(tasks), 5)
@@ -138,13 +138,13 @@ def GenTests(api):
           post_process.LogContains,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"CRITICAL\"'],
+          ['"CRITICAL"'],
       ),
       api.post_check(
           post_process.LogDoesNotContain,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"NON_CRITICAL\"'],
+          ['"NON_CRITICAL"'],
       ),
   )
 
@@ -161,13 +161,13 @@ def GenTests(api):
           post_process.LogContains,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"NON_CRITICAL\"'],
+          ['"NON_CRITICAL"'],
       ),
       api.post_check(
           post_process.LogDoesNotContain,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"CRITICAL\"'],
+          ['"CRITICAL"'],
       ),
   )
 
@@ -184,13 +184,13 @@ def GenTests(api):
           post_process.LogContains,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"CRITICAL\"'],
+          ['"CRITICAL"'],
       ),
       api.post_check(
           post_process.LogDoesNotContain,
           'schedule skylab tests v2.create test requests.configure test-board-release-main (specific-model)',
           'request',
-          ['\"NON_CRITICAL\"'],
+          ['"NON_CRITICAL"'],
       ),
   )
 

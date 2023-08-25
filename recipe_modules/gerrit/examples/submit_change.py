@@ -13,7 +13,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-ALREADY_MERGED_STDERR = """
+ALREADY_MERGED_STDERR = '''
 [W2023-04-14 08:55:56,903 21912 140092904916864 gerrit_util.py] A transient error occurred while querying chrome-internal-review.googlesource.com:
 POST https://chrome-internal-review.googlesource.com/a/changes/chromeos%2Fmanifest-versions~5752695/submit HTTP/1.1
 HTTP/1.1 409 Conflict
@@ -25,7 +25,7 @@ change is merged
     raise GerritError(response.status, reason)
 gerrit_util.GerritError: (409) Conflict: change is merged
 
-"""
+'''
 
 
 def RunSteps(api):

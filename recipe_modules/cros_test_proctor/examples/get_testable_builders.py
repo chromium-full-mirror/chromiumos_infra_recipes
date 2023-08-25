@@ -35,14 +35,14 @@ def RunSteps(api):
 def GenTests(api):
   gerrit_changes = [
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectA",
+          host='chromium-review.googlesource.com',
+          project='src/projectA',
           change=123,
           patchset=3,
       ),
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectB",
+          host='chromium-review.googlesource.com',
+          project='src/projectB',
           change=456,
           patchset=7,
       ),

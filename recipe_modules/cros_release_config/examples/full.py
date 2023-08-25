@@ -24,43 +24,43 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def expected_config(*blocks):
-  return "".join(blocks)
+  return ''.join(blocks)
 
 
-MAIN_BLOCK = """builders {
+MAIN_BLOCK = '''builders {
   milestone {
     number: -1
     branch_name: "main"
   }
   build_schedule: "0 1 * * *"
 }
-"""
+'''
 
-BLOCK_1 = """builders {
+BLOCK_1 = '''builders {
   milestone {
     number: 1
     branch_name: "release-R01-00001.B"
   }
 }
-"""
+'''
 
-BLOCK_2 = """builders {
+BLOCK_2 = '''builders {
   milestone {
     number: 2
     branch_name: "release-R02-00002.B"
   }
 }
-"""
+'''
 
-BLOCK_3 = """builders {
+BLOCK_3 = '''builders {
   milestone {
     number: 3
     branch_name: "release-R03-00003.B"
   }
 }
-"""
+'''
 
-BLOCK_NEW = """builders {
+BLOCK_NEW = '''builders {
   milestone {
     number: %(number)d
     branch_name: "%(branch_name)s"
@@ -82,19 +82,19 @@ BLOCK_NEW = """builders {
     value: "git_tm-arc-m%(number)s"
   }
 }
-"""
+'''
 
-EXPIRATION_SECTION_TEMPLATE = """
+EXPIRATION_SECTION_TEMPLATE = '''
   expiration_date {
     value: "%s"
-  }"""
+  }'''
 
-BLOCK_NEW_STABILIZE = """builders {
+BLOCK_NEW_STABILIZE = '''builders {
   milestone {
     branch_name: "%s"
   }%s
 }
-"""
+'''
 
 # Return a block of config to be included in textpb expecations.
 def new_block(number, branch_name, expiration_date=None):
@@ -116,7 +116,7 @@ def new_stabilize_block(branch_name, expiration_date=None):
   return BLOCK_NEW_STABILIZE % (branch_name, expiration_block)
 
 
-BLOCK_EXPIRATION = """builders {
+BLOCK_EXPIRATION = '''builders {
   milestone {
     number: 40
     branch_name: "release-R40-00040.B"
@@ -125,9 +125,9 @@ BLOCK_EXPIRATION = """builders {
     value: "2100-01-01"
   }
 }
-"""
+'''
 
-EXPECTED_WRITE_PRUNED_TEMPLATE = """builders {
+EXPECTED_WRITE_PRUNED_TEMPLATE = '''builders {
   milestone {
     number: -1
     branch_name: "main"
@@ -146,7 +146,7 @@ builders {
     branch_name: "release-R03-00003.B"
   }
 }
-"""
+'''
 
 PROPERTIES = TestProperties
 
@@ -167,9 +167,9 @@ def GenTests(api):
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
-                      reviewers=[Email(email="jackneus@google.com")],
+                      reviewers=[Email(email='jackneus@google.com')],
                       ccs=[Email(
-                          email="engeg@google.com")], keep_n_milestones=4)
+                          email='engeg@google.com')], keep_n_milestones=4)
           }),
       api.step_data(
           'update config.fetch chromiumdash schedule.curl fetch_milestone_schedule',
@@ -186,7 +186,7 @@ def GenTests(api):
           ]))
 
   six_months_out = (datetime.datetime.today() +
-                    datetime.timedelta(days=30 * 6)).strftime("%Y-%m-%d")
+                    datetime.timedelta(days=30 * 6)).strftime('%Y-%m-%d')
 
   yield api.test(
       'stabilize-branch',
@@ -196,9 +196,9 @@ def GenTests(api):
                   'stabilize-12345.B',
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
-                      reviewers=[Email(email="jackneus@google.com")],
+                      reviewers=[Email(email='jackneus@google.com')],
                       ccs=[Email(
-                          email="engeg@google.com")], keep_n_milestones=4)
+                          email='engeg@google.com')], keep_n_milestones=4)
           }),
       api.post_process(
           post_process.StepCommandContains,
@@ -285,8 +285,8 @@ def GenTests(api):
                   branch,
               '$chromeos/cros_release_config':
                   CrosReleaseConfigProperties(
-                      reviewers=[Email(email="fakedeveloper@chromium.org")],
-                      ccs=[Email(email="fakedeveloper@google.com")])
+                      reviewers=[Email(email='fakedeveloper@chromium.org')],
+                      ccs=[Email(email='fakedeveloper@google.com')])
           }),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,

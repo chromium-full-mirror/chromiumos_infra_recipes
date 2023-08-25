@@ -27,17 +27,17 @@ def RunSteps(api):
 
   api.cros_branch.create_from_file(
       download_path, branch=Branch(type=Branch.RELEASE),
-      step_name="create branch from http://chromium.org/manifest.xml",
+      step_name='create branch from http://chromium.org/manifest.xml',
       push=True, force=True)
 
   branch = api.cros_branch.create_from_buildspec(
       'R89-13729.0.0',
       branch=Branch(type=Branch.RELEASE),
-      step_name="create branch from buildspec",
+      step_name='create branch from buildspec',
       push=True,
       force=True,
   )
-  api.assertions.assertEqual(branch, "release-R89-13729.B")
+  api.assertions.assertEqual(branch, 'release-R89-13729.B')
 
   api.cros_branch.create_from_file(
       download_path, branch=Branch(type=Branch.CUSTOM, name='mybranch',
@@ -49,11 +49,11 @@ def RunSteps(api):
   api.cros_branch.delete(my_branch)
 
 
-TEST_STDOUT = """
+TEST_STDOUT = '''
 2021/02/16 23:10:18.736295 No branch exists for version 13729.0.0. Continuing...
 2021/02/16 23:10:18.744031 Creating branch: release-R89-13729.B
 2021/02/16 23:10:19 Repairing manifest project chromiumos/manifest
-"""
+'''
 
 
 def GenTests(api):
@@ -90,11 +90,11 @@ def GenTests(api):
       'with-ref',
       api.properties(
           **{
-              "$chromeos/cros_branch": {
-                  "branch_util_cipd_package":
-                      "chromiumos/infra/branch_util_foo",
-                  "branch_util_cipd_ref":
-                      "bar"
+              '$chromeos/cros_branch': {
+                  'branch_util_cipd_package':
+                      'chromiumos/infra/branch_util_foo',
+                  'branch_util_cipd_ref':
+                      'bar'
               }
           }),
       api.step_data('create branch from buildspec',

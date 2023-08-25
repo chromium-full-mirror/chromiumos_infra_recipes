@@ -21,12 +21,12 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/debug_symbols': {
-                  "cipd_ref": 'staging',
-                  "gs_path": 'gs-test',
-                  "worker_count": 90,
-                  "retry_quota": 90,
-                  "staging": True,
-                  "dryrun": False,
+                  'cipd_ref': 'staging',
+                  'gs_path': 'gs-test',
+                  'worker_count': 90,
+                  'retry_quota': 90,
+                  'staging': True,
+                  'dryrun': False,
               }
           }))
   yield api.test(

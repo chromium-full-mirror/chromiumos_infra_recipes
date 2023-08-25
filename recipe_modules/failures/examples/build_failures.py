@@ -47,7 +47,7 @@ def RunSteps(api, properties):
 
   build_results = api.failures.get_build_results(
       properties.builds, properties.refresh_config,
-      api.properties["relevant_child_builder_names"])
+      api.properties['relevant_child_builder_names'])
 
   api.assertions.assertEqual(expected_failures, build_results.failures)
   api.assertions.assertEqual(

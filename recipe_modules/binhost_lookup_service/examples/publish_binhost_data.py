@@ -21,9 +21,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   with api.step.nest('test publish binhost metadata'):
     api.binhost_lookup_service.publish_binhost_metadata(
-        build_target=common_pb2.BuildTarget(name="test_target"),
-        profile=common_pb2.Profile(name="test_profile"), snapshot_sha="1",
-        gs_uri="gs://test", gs_bucket_name="test_bucket", buildbucket_id=2,
+        build_target=common_pb2.BuildTarget(name='test_target'),
+        profile=common_pb2.Profile(name='test_profile'), snapshot_sha='1',
+        gs_uri='gs://test', gs_bucket_name='test_bucket', buildbucket_id=2,
         complete=True, private=True,
         raise_on_failure=api.properties['raise_on_failure'])
 

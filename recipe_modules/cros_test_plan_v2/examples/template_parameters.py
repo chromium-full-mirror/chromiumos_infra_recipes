@@ -98,10 +98,10 @@ def GenTests(api):
           post_process.StepCommandContains,
           'generate hw test plans.docker run',
           [
-              "-plan",
-              "/input/root/templatedplan1.star",
-              "-templateparameter",
-              "/input/root/templatedplan1.star:'{\"tagCriteria\": {\"tags\": [\"group:catA\"],\"tagExcludes\": [\"informational\"]},\"suiteName\": \"catA\"}'",
+              '-plan',
+              '/input/root/templatedplan1.star',
+              '-templateparameter',
+              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
           ],
       ),
       # Second call passes the same file with two different TemplateParameters,
@@ -110,10 +110,10 @@ def GenTests(api):
           post_process.StepCommandContains,
           'generate hw test plans (2).docker run',
           [
-              "-plan", "/input/root/templatedplan1.star", "-templateparameter",
-              "/input/root/templatedplan1.star:'{\"tagCriteria\": {\"tags\": [\"group:catA\"],\"tagExcludes\": [\"informational\"]},\"suiteName\": \"catA\"}'",
-              "-templateparameter",
-              "/input/root/templatedplan1.star:'{\"tagCriteria\": {\"tags\": [\"group:catB\"],\"tagExcludes\": [\"informational\"]},\"suiteName\": \"catB\"}'"
+              '-plan', '/input/root/templatedplan1.star', '-templateparameter',
+              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
+              '-templateparameter',
+              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catB"],"tagExcludes": ["informational"]},"suiteName": "catB"}\''
           ],
       ),
       # Third call passes two different files with the same TemplateParameters,
@@ -122,11 +122,11 @@ def GenTests(api):
           post_process.StepCommandContains,
           'generate hw test plans (3).docker run',
           [
-              "-plan", "/input/root/templatedplan1.star", "-plan",
-              "/input/root/templatedplan2.star", "-templateparameter",
-              "/input/root/templatedplan1.star:'{\"tagCriteria\": {\"tags\": [\"group:catA\"],\"tagExcludes\": [\"informational\"]},\"suiteName\": \"catA\"}'",
-              "-templateparameter",
-              "/input/root/templatedplan2.star:'{\"tagCriteria\": {\"tags\": [\"group:catA\"],\"tagExcludes\": [\"informational\"]},\"suiteName\": \"catA\"}'"
+              '-plan', '/input/root/templatedplan1.star', '-plan',
+              '/input/root/templatedplan2.star', '-templateparameter',
+              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
+              '-templateparameter',
+              '/input/root/templatedplan2.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\''
           ],
       ),
       api.post_process(post_process.DropExpectation),

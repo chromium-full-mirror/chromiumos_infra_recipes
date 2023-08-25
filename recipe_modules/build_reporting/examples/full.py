@@ -27,21 +27,21 @@ PARENT_ID = 8832734656515626817
 def RunSteps(api):
   # basic build setup
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     "build_target")
+                                     'build_target')
   api.build_reporting.publish_status(BuildStatus.RUNNING)
 
   # publish config information about the build
   build_report = api.build_reporting.create_build_report()
   config = build_report.config
-  config.branch.name = "release-R12-12345.B"
+  config.branch.name = 'release-R12-12345.B'
 
   config.release.channels.append(Channel.CHANNEL_BETA)
   config.release.channels.append(Channel.CHANNEL_DEV)
   config.release.channels.append(Channel.CHANNEL_CANARY)
 
-  config.models.add().name = "fooble"
-  config.models.add().name = "barble"
-  config.models.add().name = "bazble"
+  config.models.add().name = 'fooble'
+  config.models.add().name = 'barble'
+  config.models.add().name = 'bazble'
   build_report.publish()
 
   # build some stuff
@@ -58,8 +58,8 @@ def RunSteps(api):
 
   api.build_reporting.publish_build_artifact(
       BuildReport.BuildArtifact.RELEASE_IMAGE,
-      "gs://chromeos-image-archive/garble.tgz",
-      "3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60",
+      'gs://chromeos-image-archive/garble.tgz',
+      '3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60',
   )
 
   # Publish the branch.
@@ -97,8 +97,8 @@ def RunSteps(api):
   )
   api.assertions.assertEqual(build_report.status.value, BuildStatus.SUCCESS)
   api.assertions.assertEqual(len(build_report.artifacts), 1)
-  api.assertions.assertTrue(build_report.HasField("config"))
-  api.assertions.assertTrue(build_report.HasField("steps"))
+  api.assertions.assertTrue(build_report.HasField('config'))
+  api.assertions.assertTrue(build_report.HasField('steps'))
   api.assertions.assertEqual(len(build_report.steps.info), 1)
   api.assertions.assertEqual(build_report.parent.buildbucket_id, PARENT_ID)
   api.assertions.assertEqual(build_report.sdk_version, sdk_version)

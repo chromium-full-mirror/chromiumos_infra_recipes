@@ -38,7 +38,7 @@ def RunSteps(api):
   api.assertions.assertIsNotNone(annotation)
   api.assertions.assertIsNone(annotation.bugs)
   api.assertions.assertEqual(annotation.snooze_time_ms, 0)
-  api.assertions.assertEqual(annotation.group_id, "123")
+  api.assertions.assertEqual(annotation.group_id, '123')
   api.assertions.assertEqual(
       api.cros_som.get_silence_reason(annotation),
       'step failure is snoozed by Sheriff-o-Matic.')

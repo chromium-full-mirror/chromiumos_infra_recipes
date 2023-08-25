@@ -26,13 +26,13 @@ BUILD_OUTPUT.properties['greenness'] = {
         98,
     'targetGreenness': [
         {
-            "buildMetric": "98",
-            "metric": "78",
-            "target": "eve-kernelnext-not-relevant"
+            'buildMetric': '98',
+            'metric': '78',
+            'target': 'eve-kernelnext-not-relevant'
         },
         {
-            "context": "IRRELEVANT",
-            "target": "eve-kernelnext"
+            'context': 'IRRELEVANT',
+            'target': 'eve-kernelnext'
         },
     ]
 }

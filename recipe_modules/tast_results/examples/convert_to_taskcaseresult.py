@@ -18,7 +18,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   passed_test_result = jsonpb.Parse(
-      """
+      '''
   {
     "name": "arc.Boot",
     "errors": [],
@@ -27,9 +27,9 @@ def RunSteps(api):
     "outDir": "/tmp/vm-test-results.JxZdcJ/tests/arc.Boot",
     "skipReason": ""
   }
-  """, TestResult())
+  ''', TestResult())
   failed_test_result = jsonpb.Parse(
-      """
+      '''
   {
       "name": "arc.BuildProperties",
       "start": "2020-01-27T15:16:33.421007899-08:00",
@@ -42,15 +42,15 @@ def RunSteps(api):
         }
       ]
   }
-  """, TestResult())
+  ''', TestResult())
   skipped_test_result = jsonpb.Parse(
-      """
+      '''
   {
       "name": "arc.StartStop",
       "errors": [],
       "skipReason": "Felt like it."
   }
-  """, TestResult())
+  ''', TestResult())
   passed_tcr = api.tast_results.convert_to_testcaseresult(passed_test_result)
   api.assertions.assertEqual(passed_tcr.verdict, TaskState.VERDICT_PASSED)
   failed_tcr = api.tast_results.convert_to_testcaseresult(failed_test_result)

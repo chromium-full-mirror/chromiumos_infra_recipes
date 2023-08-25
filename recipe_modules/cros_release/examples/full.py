@@ -49,13 +49,13 @@ def RunSteps(api):
   api.assertions.assertEqual(
       instructions,
       [
-          "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions",
-          "gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions",
+          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
+          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
       ],
   )
 
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     "build_target")
+                                     'build_target')
   api.cros_release.check_buildspec()
   api.cros_release.set_output_properties()
   api.cros_release.run_payload_generation(
@@ -77,16 +77,16 @@ def GenTests(api):
           **{
               '$chromeos/cros_version':
                   CrosVersionProperties(remove_snapshot_from_version=True),
-              "$chromeos/cros_source": {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
           }),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
-                     'json.output', ['\"bucket\": \"release\"']),
+                     'json.output', ['"bucket": "release"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator.collect'),
@@ -118,17 +118,17 @@ def GenTests(api):
                       'paygen-orch': {},
                   },
               },
-              "$chromeos/cros_source": {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
           }),
       api.post_check(
           post_process.LogContains,
           'generate payloads.running paygen orchestrator.buildbucket.schedule',
-          'json.output', ['\"bucket\": \"try-preprod\"']),
+          'json.output', ['"bucket": "try-preprod"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
           'generate payloads.running paygen orchestrator'),
@@ -154,10 +154,10 @@ def GenTests(api):
                   CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
                                         src_paygen_bucket='chromeos-releases',
                                         minios_unsupported=True),
-              "$chromeos/cros_source": {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
           }),
@@ -167,7 +167,7 @@ def GenTests(api):
           ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
-                     'json.output', ['\"bucket\": \"release\"']),
+                     'json.output', ['"bucket": "release"']),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
               id=8922054662172514000, status='FAILURE',
@@ -191,10 +191,10 @@ def GenTests(api):
               '$chromeos/cros_release':
                   CrosReleaseProperties(channels=[common_pb2.CHANNEL_BETA],
                                         src_paygen_bucket='chromeos-releases'),
-              "$chromeos/cros_source": {
-                  "syncToManifest": {
-                      "manifestGsPath":
-                          "gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml"
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
           }),
@@ -204,7 +204,7 @@ def GenTests(api):
           ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
-                     'json.output', ['\"bucket\": \"release\"']),
+                     'json.output', ['"bucket": "release"']),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
               id=8922054662172514000, status='INFRA_FAILURE',

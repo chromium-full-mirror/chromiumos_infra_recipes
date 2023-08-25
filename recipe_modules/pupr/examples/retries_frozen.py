@@ -18,13 +18,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  change_info = {1: {"change_id": 1, "hashtags": [HASHTAG_FREEZE_RETRIES]}}
+  change_info = {1: {'change_id': 1, 'hashtags': [HASHTAG_FREEZE_RETRIES]}}
   open_cls = [
       PatchSet(
           collections.defaultdict(str, {
-              "change_number": k,
-              "info": v,
-              "revision_info": {},
+              'change_number': k,
+              'info': v,
+              'revision_info': {},
           })) for k, v in change_info.items()
   ]
   api.assertions.assertTrue(api.pupr.retries_frozen(open_cls))

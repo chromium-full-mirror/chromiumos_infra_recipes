@@ -118,13 +118,13 @@ def _get_values_dict(api):
                   'size': 0
               },
           },
-          'hashtags': ["foo", "bar"],
+          'hashtags': ['foo', 'bar'],
           'messages': [{
-              'id': "1",
-              "message": "hello!"
+              'id': '1',
+              'message': 'hello!'
           }, {
-              'id': "2",
-              "message": "goodbye."
+              'id': '2',
+              'message': 'goodbye.'
           }],
           '_display_id':
               'example.com:2',

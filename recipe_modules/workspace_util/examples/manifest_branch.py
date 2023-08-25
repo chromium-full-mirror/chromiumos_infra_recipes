@@ -26,7 +26,7 @@ def RunSteps(api: RecipeApi) -> None:
   _ = api.cros_source.configure_builder()
   cache_dir = api.cros_cache.create_cache_dir('temp_cache')
   with api.workspace_util.sync_to_manifest_groups(
-      ['group1', 'group2'], manifest_branch="release-R123",
+      ['group1', 'group2'], manifest_branch='release-R123',
       cache_path_override=cache_dir):
     pass
 

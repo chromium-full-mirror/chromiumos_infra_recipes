@@ -19,17 +19,17 @@ StepDetails = BuildReport.StepDetails
 
 def RunSteps(api):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     "build_target")
+                                     'build_target')
 
-  for failure in [None, "failure", "infra_failure"]:
+  for failure in [None, 'failure', 'infra_failure']:
     with api.build_reporting.publish_to_gs(gs_path='gs://foo/bar'):
       with api.build_reporting.step_reporting(StepDetails.STEP_SYNC) \
           as step_report:
         # sync the tree
-        if failure == "failure":
+        if failure == 'failure':
           step_report.fail()
 
-        if failure == "infra_failure":
+        if failure == 'infra_failure':
           step_report.infra_fail()
 
 

@@ -18,7 +18,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def mock_metadata(target="test-target"):
+def mock_metadata(target='test-target'):
   metadata = container_metadata.ContainerMetadata(
       containers={
           target:
@@ -68,10 +68,10 @@ def RunSteps(api):
   api.cros_tool_runner.test(test_req)
 
   with api.assertions.assertRaises(ValueError):
-    api.cros_tool_runner.upload_to_tko(None, "dummy/results/dir")
+    api.cros_tool_runner.upload_to_tko(None, 'dummy/results/dir')
   with api.assertions.assertRaises(ValueError):
-    api.cros_tool_runner.upload_to_tko("dummy/autotest/dir", None)
-  api.cros_tool_runner.upload_to_tko("dummy/autotest/dir", "dummy/results/dir")
+    api.cros_tool_runner.upload_to_tko('dummy/autotest/dir', None)
+  api.cros_tool_runner.upload_to_tko('dummy/autotest/dir', 'dummy/results/dir')
 
   api.cros_tool_runner.read_dut_hostname()
 

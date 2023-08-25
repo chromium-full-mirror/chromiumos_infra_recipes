@@ -30,7 +30,7 @@ def GenTests(api):
                                      bucket='release').build,
       api.properties(
           **{'$chromeos/cros_version': {
-              "remove_snapshot_from_version": True,
+              'remove_snapshot_from_version': True,
           }}),
       api.post_process(
           post_process.StepCommandContains,
@@ -45,7 +45,7 @@ def GenTests(api):
                                      bucket='release').build,
       api.properties(
           **{'$chromeos/cros_version': {
-              "remove_snapshot_from_version": True,
+              'remove_snapshot_from_version': True,
           }}),
       api.post_process(
           post_process.StepCommandContains,

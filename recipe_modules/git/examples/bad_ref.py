@@ -25,7 +25,7 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.step_data(
-          "git merge-base",
+          'git merge-base',
           retcode=2,
           stdout=api.raw_io.output(
               'fatal: Not a valid commit name {}'.format(sha1)),

@@ -77,7 +77,7 @@ def RunSteps(api):
 
   api.cros_artifacts.push_image(
       chroot=common.Chroot(path='/path/to/chroot'),
-      gs_image_dir="gs://chromeos-image-archive/atlas-release/R89-13604.0.0",
+      gs_image_dir='gs://chromeos-image-archive/atlas-release/R89-13604.0.0',
       sysroot=sysroot.Sysroot(build_target=common.BuildTarget(name='atlas')),
       dryrun=True)
 

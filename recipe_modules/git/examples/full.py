@@ -45,7 +45,7 @@ def RunSteps(api):
   api.git.stash()
 
   api.assertions.assertEqual(api.git.remote_url(),
-                             "https://chromium.googlesource.com")
+                             'https://chromium.googlesource.com')
   api.git.push('origin', 'HEAD:main', dry_run=True, capture_stdout=True,
                capture_stderr=True, force=True, infra_step=False, timeout=30)
 

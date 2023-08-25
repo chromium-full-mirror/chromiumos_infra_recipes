@@ -24,14 +24,14 @@ def RunSteps(api):
   # fallback_to_default set, so it uses fallback_default_source_test_plan.
   relevant_plans = api.cros_test_plan_v2.relevant_plans([
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectA",
+          host='chromium-review.googlesource.com',
+          project='src/projectA',
           change=123,
           patchset=3,
       ),
       GerritChange(
-          host="chromium-review.googlesource.com",
-          project="src/projectB",
+          host='chromium-review.googlesource.com',
+          project='src/projectB',
           change=456,
           patchset=7,
       ),
@@ -55,8 +55,8 @@ def GenTests(api):
               '$chromeos/cros_test_plan_v2':
                   CrosTestPlanV2Properties(migration_configs=[
                       CrosTestPlanV2Properties.ProjectMigrationConfig(
-                          host="chromium-review.googlesource.com",
-                          project="src/projectA",
+                          host='chromium-review.googlesource.com',
+                          project='src/projectA',
                           fallback_to_default=True,
                       ),
                   ])

@@ -37,7 +37,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def verify_manifest_url(check, steps, expected, name=None):
-    name = name or "ensure synced checkout.repo init"
+    name = name or 'ensure synced checkout.repo init'
     data = steps[name].cmd
     return check('--manifest-url' in data and
                  data[data.index('--manifest-url') + 1] == expected)

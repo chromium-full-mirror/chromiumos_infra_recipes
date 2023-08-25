@@ -20,17 +20,17 @@ StepDetails = BuildReport.StepDetails
 
 def RunSteps(api):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
-                                     "build_target")
+                                     'build_target')
 
-  for failure in [None, "failure", "infra_failure"]:
+  for failure in [None, 'failure', 'infra_failure']:
     try:
       with api.build_reporting.step_reporting(StepDetails.STEP_SYNC):
         # sync the tree
-        if failure == "failure":
-          raise StepFailure("step failure")
+        if failure == 'failure':
+          raise StepFailure('step failure')
 
-        if failure == "infra_failure":
-          raise InfraFailure("infra failure")
+        if failure == 'infra_failure':
+          raise InfraFailure('infra failure')
     except (StepFailure, InfraFailure):
       continue
 

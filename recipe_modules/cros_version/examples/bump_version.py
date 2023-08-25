@@ -96,9 +96,9 @@ def GenTests(api):
       orchestrator(),
       api.properties(
           **{
-              "$chromeos/cros_version": {
-                  "version_bumper_cipd_package": "version_bumper_foo",
-                  "version_bumper_cipd_ref": "bar",
+              '$chromeos/cros_version': {
+                  'version_bumper_cipd_package': 'version_bumper_foo',
+                  'version_bumper_cipd_ref': 'bar',
               }
           }),
       api.post_check(post_process.StepCommandContains,

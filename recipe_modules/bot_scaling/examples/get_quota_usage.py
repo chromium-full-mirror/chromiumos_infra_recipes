@@ -24,12 +24,12 @@ def RunSteps(api):
   for appl in robocrop_action.appl_resource_utilization:
     api.assertions.assertEqual(appl.application, 'chromeos')
     for resource in appl.resource_utilization:
-      if resource.region == "global":
+      if resource.region == 'global':
         api.assertions.assertEqual(resource.vms, 120)
         api.assertions.assertEqual(resource.cpus, 480)
         api.assertions.assertEqual(resource.memory_gb, 1920)
         api.assertions.assertEqual(resource.max_cpus, 1200)
-      if resource.region == "first":
+      if resource.region == 'first':
         api.assertions.assertEqual(resource.vms, 30)
         api.assertions.assertEqual(resource.cpus, 120)
         api.assertions.assertEqual(resource.memory_gb, 480)

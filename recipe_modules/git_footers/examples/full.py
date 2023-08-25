@@ -15,7 +15,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-DESCRIPTION_EXISTING = """
+DESCRIPTION_EXISTING = '''
 This is a change where the footer in question already exists.
 
 BUG=None
@@ -24,9 +24,9 @@ TEST=None
 Cq-Footer: foo
 Cq-Depend: {}
 Change-Id: ffffffffffffffff
-"""
+'''
 
-DESCRIPTION_NON_EXISTING = """
+DESCRIPTION_NON_EXISTING = '''
 This is a change where the footer in question does not exist.
 
 BUG=None
@@ -34,7 +34,7 @@ TEST=None
 {}
 Cq-Footer: foo
 Change-Id: ffffffffffffffff
-"""
+'''
 
 
 def RunSteps(api):
@@ -72,26 +72,26 @@ def RunSteps(api):
                                                      parent_step_name='test',
                                                      step_number=2))
 
-  description_existing = DESCRIPTION_EXISTING.format("bar")
-  expected_description = DESCRIPTION_EXISTING.format("baz")
+  description_existing = DESCRIPTION_EXISTING.format('bar')
+  expected_description = DESCRIPTION_EXISTING.format('baz')
   api.assertions.assertEqual(
       api.git_footers.edit_add_change_description(description_existing,
-                                                  "Cq-Depend", "baz"),
+                                                  'Cq-Depend', 'baz'),
       expected_description)
 
-  description_existing = DESCRIPTION_EXISTING.format("bar")
-  expected_description = DESCRIPTION_EXISTING.format("baz")
+  description_existing = DESCRIPTION_EXISTING.format('bar')
+  expected_description = DESCRIPTION_EXISTING.format('baz')
   api.assertions.assertEqual(
       api.git_footers.edit_add_change_description(description_existing,
-                                                  "Cq-Depend",
-                                                  "Cq-Depend: baz"),
+                                                  'Cq-Depend',
+                                                  'Cq-Depend: baz'),
       expected_description)
 
-  description_nonexisting = DESCRIPTION_NON_EXISTING.format("")
-  expected_description = DESCRIPTION_NON_EXISTING.format("\nCq-Depend: baz")
+  description_nonexisting = DESCRIPTION_NON_EXISTING.format('')
+  expected_description = DESCRIPTION_NON_EXISTING.format('\nCq-Depend: baz')
   api.assertions.assertEqual(
       api.git_footers.edit_add_change_description(description_nonexisting,
-                                                  "Cq-Depend", "baz"),
+                                                  'Cq-Depend', 'baz'),
       expected_description)
   api.assertions.assertEqual(
       {'deadbeef'},

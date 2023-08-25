@@ -23,8 +23,8 @@ def RunSteps(api):
     api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
     api.code_coverage.upload_code_coverage('[START_DIR]/coverage.tbz2', 'LLVM',
-                                           "chromeos-image-archive",
-                                           "buildername/id")
+                                           'chromeos-image-archive',
+                                           'buildername/id')
 
 
 def GenTests(api):

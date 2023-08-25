@@ -16,7 +16,7 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-_TEST_SDK_VERSION_FILE = """# The last version of the sdk that we built & tested.
+_TEST_SDK_VERSION_FILE = '''# The last version of the sdk that we built & tested.
 SDK_LATEST_VERSION="2022.06.26.170938"
 
 # How to find the standalone toolchains from the above sdk.
@@ -25,7 +25,7 @@ TC_PATH="2022/06/%(target)s-2022.06.26.170938.tar.xz"
 # Frozen version of SDK used for bootstrapping.
 # If unset, SDK_LATEST_VERSION will be used for bootstrapping.
 BOOTSTRAP_FROZEN_VERSION="2022.05.09.125449"
-"""
+'''
 
 
 def RunSteps(api):

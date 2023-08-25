@@ -31,7 +31,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'version-at-least-true', api.properties(version='2.29', at_least=True),
       api.step_data(
           'check if repo version is at least 2.29.repo version',
-          stdout=api.raw_io.output_text("""repo version v2.29-cr1
+          stdout=api.raw_io.output_text('''repo version v2.29-cr1
         (from https://chromium.googlesource.com/external/repo)
         (tracking refs/heads/main)
         (Tue, 23 Aug 2022 11:20:59 -0400)
@@ -45,7 +45,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
  [GCC 10.2.1 20210130 (Red Hat 10.2.1-11)]
  OS Linux 5.4.0-125-generic (#141~18.04.1-Ubuntu SMP Thu Aug 11 20:15:56 UTC 2022)
  CPU x86_64 (x86_64)
- Bug reports: https://issues.gerritcodereview.com/issues/new?component=1370071"""
+ Bug reports: https://issues.gerritcodereview.com/issues/new?component=1370071'''
                                        )),
       api.post_process(post_process.DropExpectation))
 
@@ -53,7 +53,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'version-at-least-false', api.properties(version='2.30', at_least=False),
       api.step_data(
           'check if repo version is at least 2.30.repo version',
-          stdout=api.raw_io.output_text("""repo version v2.29-cr1
+          stdout=api.raw_io.output_text('''repo version v2.29-cr1
         (from https://chromium.googlesource.com/external/repo)
         (tracking refs/heads/main)
         (Tue, 23 Aug 2022 11:20:59 -0400)
@@ -67,7 +67,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
  [GCC 10.2.1 20210130 (Red Hat 10.2.1-11)]
  OS Linux 5.4.0-125-generic (#141~18.04.1-Ubuntu SMP Thu Aug 11 20:15:56 UTC 2022)
  CPU x86_64 (x86_64)
- Bug reports: https://issues.gerritcodereview.com/issues/new?component=1370071"""
+ Bug reports: https://issues.gerritcodereview.com/issues/new?component=1370071'''
                                        )),
       api.post_process(post_process.DropExpectation))
 

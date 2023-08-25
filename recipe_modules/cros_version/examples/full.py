@@ -47,7 +47,7 @@ def GenTests(api):
   yield api.test(
       'set-version', api.cros_version.workspace_version('R86-13421.11.0'),
       api.git_footers.simulated_get_footers(
-          ['99'], "read chromeos version.read snapshot"),
+          ['99'], 'read chromeos version.read snapshot'),
       api.properties(
           TestInputProperties(expected_version='R86-13421.11.0',
                               expected_version_snapshot='99')))

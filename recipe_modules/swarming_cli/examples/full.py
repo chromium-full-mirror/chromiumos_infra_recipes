@@ -16,8 +16,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   dimensions = [
-      SwarmingDimension(name="role", value="cq", values=["cq"]),
-      SwarmingDimension(name="bot_size", value="large", values=["large"])
+      SwarmingDimension(name='role', value='cq', values=['cq']),
+      SwarmingDimension(name='bot_size', value='large', values=['large'])
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
   swarming_instance = 'chromeos-swarming.appspot.com'
@@ -27,8 +27,8 @@ def RunSteps(api):
   api.assertions.assertEqual(int(bot_count.get('count'), 0), 23)
 
   dimensions = [
-      SwarmingDimension(name="role", value="foo", values=["foo"]),
-      SwarmingDimension(name="bot_size", value="large", values=["large"])
+      SwarmingDimension(name='role', value='foo', values=['foo']),
+      SwarmingDimension(name='bot_size', value='large', values=['large'])
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
   for dim in query_dim:
@@ -36,8 +36,8 @@ def RunSteps(api):
   api.assertions.assertEqual(int(bot_count.get('busy', 0)), 0)
 
   dimensions = [
-      SwarmingDimension(name="role", value="cq", values=["cq"]),
-      SwarmingDimension(name="bot_size", value="large", values=["large"])
+      SwarmingDimension(name='role', value='cq', values=['cq']),
+      SwarmingDimension(name='bot_size', value='large', values=['large'])
   ]
   query_dim = api.bot_scaling.unpack_policy_dimensions(dimensions)
   TASK_STATES = ['RUNNING', 'PENDING']
