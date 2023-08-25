@@ -14,6 +14,7 @@ from PB.chromite.api import binhost
 from PB.chromite.api import build_api_test
 from PB.chromite.api import copybot
 from PB.chromite.api import depgraph
+from PB.chromite.api import dlc
 from PB.chromite.api import firmware
 from PB.chromite.api import image
 from PB.chromite.api import observability
@@ -125,6 +126,9 @@ def RunSteps(api):
           'GetBuildDependencyGraph': depgraph.GetBuildDependencyGraphResponse,
           'GetToolchainPaths': depgraph.GetToolchainPathsResponse,
           'List': depgraph.ListResponse,
+      },
+      'DlcService': {
+          'GenerateDlcArtifactsList': dlc.GenerateDlcArtifactsListResponse,
       },
       'FirmwareService': {
           'BuildAllFirmware': firmware.BuildAllFirmwareResponse,

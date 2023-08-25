@@ -11,6 +11,8 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'cros_build_api',
+    'future_utils',
     'gcloud',
 ]
 

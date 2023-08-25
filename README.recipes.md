@@ -424,6 +424,8 @@
   * [dirmd:examples/full](#recipes-dirmd_examples_full)
   * [dirmd_update](#recipes-dirmd_update)
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
+  * [dlc_utils:tests/copy_prebuilt_dlcs](#recipes-dlc_utils_tests_copy_prebuilt_dlcs)
+  * [dlc_utils:tests/copy_prebuilt_dlcs_exception](#recipes-dlc_utils_tests_copy_prebuilt_dlcs_exception)
   * [dlc_utils:tests/get_dlc_artifacts](#recipes-dlc_utils_tests_get_dlc_artifacts) &mdash; Tests to verify dlc_utils.
   * [dlc_utils:tests/get_dlcs_in_path](#recipes-dlc_utils_tests_get_dlcs_in_path) &mdash; Tests to verify dlc_utils.
   * [dupit](#recipes-dupit) &mdash; Recipe for syncing remote, distributed tarballs to our local cache.
@@ -485,6 +487,8 @@
   * [gcloud:tests/gcloud_disks](#recipes-gcloud_tests_gcloud_disks)
   * [gcloud:tests/lookup_device_id](#recipes-gcloud_tests_lookup_device_id)
   * [gcloud:tests/setup_cache_disk](#recipes-gcloud_tests_setup_cache_disk)
+  * [gcloud:tests/storage_cp](#recipes-gcloud_tests_storage_cp)
+  * [gcloud:tests/storage_ls](#recipes-gcloud_tests_storage_ls)
   * [gcloud:tests/transactionally_update_recovery_image](#recipes-gcloud_tests_transactionally_update_recovery_image)
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
@@ -2702,7 +2706,7 @@ Args:
 
 API for working with the protobuf-based Build API.
 
-#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#257)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosBuildApiApi](/recipe_modules/cros_build_api/api.py#261)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This recipe module exposes client stubs for all build API services.
 
@@ -2719,7 +2723,7 @@ will "magically" know what to do and fail gracefully if it does not. Example:
 
 The stub will perform some validation and then call the build API command.
 
-&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#379)(self, test_data=None):**
+&mdash; **def [GetVersion](/recipe_modules/cros_build_api/api.py#383)(self, test_data=None):**
 
 Get the Build API version.
 
@@ -2731,7 +2735,7 @@ Args:
 Returns:
   The version of the Build API.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#496)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/cros_build_api/api.py#500)(self, endpoint: str, input_proto: message.Message, output_type: descriptor.Descriptor, test_output_data: Optional[str]=None, test_teelog_data: Optional[str]=None, name: Optional[str]=None, infra_step: bool=False, timeout: Optional[int]=None, response_lambda: Optional[Callable[([message.Message], str)]]=None, pkg_logs_lambda: Optional[Callable[([message.Message, message.Message], Tuple[(str, str)])]]=None, step_text: Optional[str]=None, retcode_fn: Optional[Callable[([int], None)]]=None):**
 
 Call the build API with the given input proto.
 
@@ -2765,7 +2769,7 @@ Args:
 Returns:
   The parsed response proto.
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#439)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_data\_names](/recipe_modules/cros_build_api/api.py#443)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2779,7 +2783,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#403)(self, input_proto: message.Message, output_proto: message.Message):**
+&mdash; **def [failed\_pkg\_logs](/recipe_modules/cros_build_api/api.py#407)(self, input_proto: message.Message, output_proto: message.Message):**
 
 Function to cat log file and retrieve package name.
 
@@ -2795,7 +2799,7 @@ Args:
 Returns:
   A list of tuples (package_name, build_log).
 
-&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#468)(output_proto: message.Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [failed\_pkg\_names](/recipe_modules/cros_build_api/api.py#472)(output_proto: message.Message):**
 
 Function to append a list of failed package to the failure step.
 
@@ -2808,7 +2812,7 @@ Args:
 Returns:
   A string to append to the response step name.
 
-&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#676)(self, stub: 'Stub', method: str):**
+&mdash; **def [has\_endpoint](/recipe_modules/cros_build_api/api.py#680)(self, stub: 'Stub', method: str):**
 
 Verifies that the given endpoint can be called.
 
@@ -2819,28 +2823,28 @@ Args:
 Returns:
   Whether `method` can be called on `stub`.
 
-&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#274)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_build_api/api.py#278)(self):**
 
 Expose all client stubs defined in this module.
 
-&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#375)(self, major=1, minor=0, bug=0):**
+&mdash; **def [is\_at\_least\_version](/recipe_modules/cros_build_api/api.py#379)(self, major=1, minor=0, bug=0):**
 
 Return whether the Build API version is at least major.minor.bug.
 
-&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#336)(self):**
+&emsp; **@property**<br>&mdash; **def [log\_level](/recipe_modules/cros_build_api/api.py#340)(self):**
 
 Return the log level used when calling Build API.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#293)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#297)(self):**
 
 Sets up the build API for running operations in parallel.
 
 Since we check out the chromite commit before making calls, parallel calls
 can clobber each other, so this context does the checkout once.
 
-&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#310)(self):**
+&mdash; **def [reset\_checkout](/recipe_modules/cros_build_api/api.py#314)(self):**
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#358)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_build_api/api.py#362)(self):**
 
 Return the version that this build API uses.
 ### *recipe_modules* / [cros\_cache](/recipe_modules/cros_cache)
@@ -5485,18 +5489,31 @@ Args:
 A context wrapper for track().
 ### *recipe_modules* / [dlc\_utils](/recipe_modules/dlc_utils)
 
-[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [gcloud](#recipe_modules-gcloud), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/dlc_utils/__init__.py#8): [cros\_build\_api](#recipe_modules-cros_build_api), [future\_utils](#recipe_modules-future_utils), [gcloud](#recipe_modules-gcloud), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [DlcUtilsApi](/recipe_modules/dlc_utils/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [DlcUtilsApi](/recipe_modules/dlc_utils/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module handle special operations around DLCs.
 
-&emsp; **@artifacts_local_path.setter**<br>&mdash; **def [artifacts\_local\_path](/recipe_modules/dlc_utils/api.py#31)(self, artifacts_local_path: str):**
+&emsp; **@artifacts_local_path.setter**<br>&mdash; **def [artifacts\_local\_path](/recipe_modules/dlc_utils/api.py#38)(self, artifacts_local_path: str):**
 
 Set the local path where artifacts are placed by BAPI.
 
-&mdash; **def [get\_dlc\_artifacts](/recipe_modules/dlc_utils/api.py#94)(self, gs_path: str):**
+&mdash; **def [copy\_prebuilt\_dlcs](/recipe_modules/dlc_utils/api.py#138)(self, bucket: str, sysroot: ArtifactsByService.Sysroot, chroot: common_pb2.Chroot, is_staging: bool):**
+
+Retrieves the list of prebuilt DLCs and copies them to the bucket.
+
+Args:
+  bucket: GS bucket to copy into.
+  sysroot: The sysroot to use.
+  chroot: The chroot to use.
+  is_staging: Whether this is running in the staging environment.
+
+Returns:
+  Dict mapping DLC locations to file hashes.
+
+&mdash; **def [get\_dlc\_artifacts](/recipe_modules/dlc_utils/api.py#101)(self, gs_path: str):**
 
 Retrieves DLC artifact locations and corresponding file hashes.
 
@@ -5506,7 +5523,7 @@ Args:
 Returns:
   Dict mapping DLC locations to file hashes.
 
-&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#64)(self, path: str, use_local_path: Optional[bool]=False):**
+&mdash; **def [get\_dlcs\_in\_path](/recipe_modules/dlc_utils/api.py#71)(self, path: str, use_local_path: Optional[bool]=False):**
 
 Retrieves a list of DLCs in the provided local or GS path.
 
@@ -6403,7 +6420,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [disk\_short\_name](/recipe_modules/gcloud/api.py#139)(self):**
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [download\_file](/recipe_modules/gcloud/api.py#1313)(self, source_path: str, dest_path: str):**
+&mdash; **def [download\_file](/recipe_modules/gcloud/api.py#1313)(self, source_path: str, dest_path: str):**
 
 Download Google Storage object.
 
@@ -6552,6 +6569,23 @@ The path to the local version file.
 
 This is the path to the local version file that contains the image
 version that was used to create the local named cache.
+
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [storage\_cp](/recipe_modules/gcloud/api.py#1324)(self, source: str, dest: str, step: str='gcloud storage cp', flags: List[str]=[]):**
+
+Do a gcloud storage cp.
+
+Args:
+  source: source location to copy.
+  dest: destination location to copy.
+  step: step name.
+  flags: additional command line flags.
+
+&mdash; **def [storage\_ls](/recipe_modules/gcloud/api.py#1341)(self, path: str):**
+
+Do a gcloud storage ls.
+
+Args:
+  path: the path to ls.
 
 &mdash; **def [sync\_disk\_cache](/recipe_modules/gcloud/api.py#377)(self, name):**
 
@@ -11237,14 +11271,14 @@ Recipe for building a BuildTarget image for Postsubmit.
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#33)(api: RecipeApi):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
-[DEPS](/recipes/build_release.py#27): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [mass\_deploy](#recipe_modules-mass_deploy), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_release.py#29): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [mass\_deploy](#recipe_modules-mass_deploy), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#121)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#123)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipes/build_release.py#69)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
 
 [DEPS](/recipe_modules/build_reporting/examples/contexts_1.py#9): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12032,10 +12066,10 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/failed_pkg_names.py#18)(api):**
 ### *recipes* / [cros\_build\_api:tests/misc](/recipe_modules/cros_build_api/tests/misc.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/misc.py#31): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_build_api/tests/misc.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#40)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#41)(api):**
 ### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -12963,6 +12997,18 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/disk_usage/examples/full.py#14)(api):**
+### *recipes* / [dlc\_utils:tests/copy\_prebuilt\_dlcs](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs.py)
+
+[DEPS](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [dlc\_utils](#recipe_modules-dlc_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs.py#19)(api):**
+### *recipes* / [dlc\_utils:tests/copy\_prebuilt\_dlcs\_exception](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs_exception.py)
+
+[DEPS](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs_exception.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [dlc\_utils](#recipe_modules-dlc_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/dlc_utils/tests/copy_prebuilt_dlcs_exception.py#19)(api):**
 ### *recipes* / [dlc\_utils:tests/get\_dlc\_artifacts](/recipe_modules/dlc_utils/tests/get_dlc_artifacts.py)
 
 [DEPS](/recipe_modules/dlc_utils/tests/get_dlc_artifacts.py#10): [dlc\_utils](#recipe_modules-dlc_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -13360,6 +13406,18 @@ An experimental recipe for running GCE tests.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gcloud/tests/setup_cache_disk.py#28)(api, properties):**
+### *recipes* / [gcloud:tests/storage\_cp](/recipe_modules/gcloud/tests/storage_cp.py)
+
+[DEPS](/recipe_modules/gcloud/tests/storage_cp.py#7): [gcloud](#recipe_modules-gcloud)
+
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/storage_cp.py#14)(api):**
+### *recipes* / [gcloud:tests/storage\_ls](/recipe_modules/gcloud/tests/storage_ls.py)
+
+[DEPS](/recipe_modules/gcloud/tests/storage_ls.py#7): [gcloud](#recipe_modules-gcloud)
+
+
+&mdash; **def [RunSteps](/recipe_modules/gcloud/tests/storage_ls.py#14)(api):**
 ### *recipes* / [gcloud:tests/transactionally\_update\_recovery\_image](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py)
 
 [DEPS](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py#14): [gcloud](#recipe_modules-gcloud), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

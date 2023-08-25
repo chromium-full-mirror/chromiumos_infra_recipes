@@ -5,13 +5,20 @@
 
 from typing import Dict, List, Optional
 
+import re
+
+from PB.chromite.api.dlc import GenerateDlcArtifactsListRequest
+from PB.chromiumos import common as common_pb2
+from PB.chromiumos.common import ArtifactsByService
 from recipe_engine import recipe_api
+from recipe_engine.recipe_api import StepFailure
 
 # Number of seconds to wait on gsutil ops.
 
 GSUTIL_TIMEOUT_SECONDS = 5 * 60
 DEFAULT_DLC_DIRECTORIES = ['dlc']
 DEFAULT_DLC_FILE_NAMES = ['dlc.img']
+MATCH_EVERYTHING_AFTER_BUCKET = re.compile(r'gs://[^/]+/(.*)$')
 
 
 class DlcUtilsApi(recipe_api.RecipeApi):
@@ -127,3 +134,57 @@ class DlcUtilsApi(recipe_api.RecipeApi):
         ] + failed_logs + ['Attempting to download from Google Storage.']
         pres.logs['failed local hashes'] = '\n'.join(failed_logs)
       return dlc_artifacts
+
+  def copy_prebuilt_dlcs(
+      self,
+      bucket: str,
+      sysroot: ArtifactsByService.Sysroot,
+      chroot: common_pb2.Chroot,
+      is_staging: bool,
+  ) -> Dict[str, str]:
+    """Retrieves the list of prebuilt DLCs and copies them to the bucket.
+
+    Args:
+      bucket: GS bucket to copy into.
+      sysroot: The sysroot to use.
+      chroot: The chroot to use.
+      is_staging: Whether this is running in the staging environment.
+
+    Returns:
+      Dict mapping DLC locations to file hashes.
+    """
+    with self.m.step.nest('upload prebuilt DLCs'):
+      resp = None
+      # Quick branch check.
+      if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.DlcService,
+                                            'GenerateDlcArtifactsList'):
+        # Retrieve the list of DLCs from the Build API.
+        resp = self.m.cros_build_api.DlcService.GenerateDlcArtifactsList(
+            GenerateDlcArtifactsListRequest(sysroot=sysroot, chroot=chroot))
+      ret = {}
+      if not resp or not resp.dlc_artifacts:
+        return ret
+
+      runner = self.m.future_utils.create_parallel_runner()
+
+      for artifact in resp.dlc_artifacts:
+        # Parse out the location to copy to from the path.
+        path = artifact.gs_uri_path
+        parsed_path = MATCH_EVERYTHING_AFTER_BUCKET.match(path).group(1)
+        # Copy all the DLCs from the locations given to the bucket.
+        env_string = 'staging' if is_staging else 'prod'
+        new_location = f'gs://{bucket}/{env_string}-dlc-images/{parsed_path}'
+        if self.m.gcloud.storage_ls(new_location).retcode != 0:
+          runner.run_function_async(
+              lambda paths, _: self.m.gcloud.storage_cp(
+                  paths[0], paths[1], flags=['--recursive', '--no-clobber']),
+              [path, new_location])
+        # Construct the object for each one.
+        key = f'{new_location}/{artifact.image_name}'
+        if key in ret and ret[key] != artifact.image_hash:
+          raise StepFailure('Duplicate DLCs with different hashes provided')
+        ret[key] = artifact.image_hash
+
+      runner.wait_for_and_throw()
+
+      return ret

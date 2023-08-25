@@ -143,11 +143,15 @@ class BinhostService(Stub):
 
 
 class CopybotService(Stub):
-  """Stub for PayloadService."""
+  """Stub for CopybotService."""
 
 
 class DependencyService(Stub):
   """Stub for DependencyService."""
+
+
+class DlcService(Stub):
+  """Stub for DlcService."""
 
 
 class FirmwareService(Stub):

@@ -1310,7 +1310,6 @@ class GcloudApi(recipe_api.RecipeApi):
     # race condition).
     return fallback_recovery_name
 
-  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def download_file(self, source_path: str, dest_path: str):
     """Download Google Storage object.
 
@@ -1318,6 +1317,32 @@ class GcloudApi(recipe_api.RecipeApi):
       source_path: Google Storage path to copy (e.g. 'gs://my-bucket/file.txt')
       dest_path: Local path to save the object (e.g. '/tmp')
     """
+    # TODO: not sure if this context is needed.
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
-      self.m.step('download GS file',
-                  ['gcloud', 'storage', 'cp', source_path, dest_path])
+      self.storage_cp(source_path, dest_path, step='download GS file')
+
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
+  def storage_cp(self, source: str, dest: str, step: str = 'gcloud storage cp',
+                 flags: List[str] = []):
+    """Do a gcloud storage cp.
+
+    Args:
+      source: source location to copy.
+      dest: destination location to copy.
+      step: step name.
+      flags: additional command line flags.
+    """
+    args = ['gcloud', 'storage', 'cp']
+    if flags:
+      args.extend(flags)
+    args.extend([source, dest])
+    self.m.step(step, args)
+
+  def storage_ls(self, path: str):
+    """Do a gcloud storage ls.
+
+    Args:
+      path: the path to ls.
+    """
+    return self.m.step('gcloud storage ls', ['gcloud', 'storage', 'ls', path],
+                       ok_ret=(0, 1))

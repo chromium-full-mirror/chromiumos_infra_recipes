@@ -247,6 +247,27 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def dlc_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate responses for DlcService."""
+    responses = {}
+    responses['GenerateDlcArtifactsList'] = jsonify(dlc_artifacts=[{
+        'image_hash':
+            '88d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
+        'image_name':
+            'dlc.img',
+        'gs_uri_path':
+            'gs://some/uri/prefix/for/dlc-1',
+    }, {
+        'image_hash':
+            '99d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
+        'image_name':
+            'dlc.img',
+        'gs_uri_path':
+            'gs://some/uri/prefix/for/dlc-2',
+    }])
+    return responses
+
+  @property
   def firmware_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for FirmwareService."""
     _uploaded_path = lambda name: {'path': self.path(name), 'location': 2}
@@ -653,6 +674,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BinhostService': self.binhost_service_responses,
         'CopybotService': self.copybot_service_responses,
         'DependencyService': self.dependency_service_responses,
+        'DlcService': self.dlc_service_responses,
         'FirmwareService': self.firmware_service_responses,
         'ImageService': self.image_service_responses,
         'ObservabilityService': self.observability_service_responses,
