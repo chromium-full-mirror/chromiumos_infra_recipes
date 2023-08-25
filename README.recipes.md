@@ -14511,7 +14511,7 @@ Recipe for running PVS-related scripts.
 [DEPS](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py#14): [recipe\_analyze](#recipe_modules-recipe_analyze), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py#24)(api: recipe_api.RecipeApi, properties: is_recipe_affected_pb2.IsRecipeAffectedProperties):**
+&mdash; **def [RunSteps](/recipe_modules/recipe_analyze/tests/is_recipe_affected.py#26)(api: recipe_api.RecipeApi, properties: is_recipe_affected_pb2.IsRecipeAffectedProperties):**
 
 Main test logic.
 

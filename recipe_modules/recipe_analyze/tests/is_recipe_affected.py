@@ -12,8 +12,10 @@ from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 
 DEPS = [
-    'recipe_engine/assertions', 'recipe_engine/json',
-    'recipe_engine/properties', 'recipe_analyze'
+    'recipe_engine/assertions',
+    'recipe_engine/json',
+    'recipe_engine/properties',
+    'recipe_analyze',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
