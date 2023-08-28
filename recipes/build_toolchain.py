@@ -276,7 +276,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       # those dependencies.
       gerrit_change = central_cl.to_gerrit_change_proto()
       description = api.gerrit.get_change_description(gerrit_change)
-      binhost_re = '|'.join(re.escape(text) for text in binhost_cls.keys())
+      binhost_re = '|'.join(re.escape(text) for text in binhost_cls)
       description = re.sub(
           r'^Cq-Depend: (?:%s)$' % (binhost_re,),
           '',

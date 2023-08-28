@@ -61,7 +61,6 @@ docstring-quote=double
 disable=
     attribute-defined-outside-init,
     bad-continuation,
-    consider-iterating-dictionary,
     consider-using-f-string,
     duplicate-code,
     file-ignored,

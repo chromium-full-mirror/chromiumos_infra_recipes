@@ -199,7 +199,7 @@ def DoRunSteps(api, config, properties):
               api.build_menu.chroot,
               api.cros_infra_config.is_staging,
           )
-          with api.step.nest("publish DLCs to pubsub"):
+          with api.step.nest('publish DLCs to pubsub'):
             # TODO(b/277931195): Determine whether dlc_locations publishing is
             # still needed by GoldenEye and remove if not.
             dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)

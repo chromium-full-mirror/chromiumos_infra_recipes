@@ -5,14 +5,10 @@
 
 """Recipe for linting CLs."""
 
-import json
 from collections import OrderedDict
-from typing import Any
-from typing import Dict
-from typing import Generator
-from typing import List
-from typing import Optional
-from typing import Set
+import itertools
+import json
+from typing import Any, Dict, Generator, List, Optional, Set
 
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 
@@ -97,10 +93,10 @@ def _GetRelevantPatchsetsByLinter(
         if relevant_for_patchset:
           relevant_patchsets[linter][patch_set] = relevant_for_patchset
 
-    output_data = {
-        linter: sorted(f for files in relevant_patchsets[linter].values()
-                       for f in files) for linter in relevant_extensions.keys()
-    }
+    output_data = {}
+    for linter, files_by_patchset in relevant_patchsets.items():
+      files = sorted(itertools.chain.from_iterable(files_by_patchset.values()))
+      output_data[linter] = files
     presentation.logs['output'] = json.dumps(output_data, sort_keys=True)
     if any(len(files) for files in output_data.values()):
       presentation.step_text = 'found relevant files'

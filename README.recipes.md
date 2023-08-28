@@ -6570,7 +6570,7 @@ The path to the local version file.
 This is the path to the local version file that contains the image
 version that was used to create the local named cache.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [storage\_cp](/recipe_modules/gcloud/api.py#1324)(self, source: str, dest: str, step: str='gcloud storage cp', flags: List[str]=[]):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [storage\_cp](/recipe_modules/gcloud/api.py#1324)(self, source: str, dest: str, step: str='gcloud storage cp', flags: Optional[List[str]]=None):**
 
 Do a gcloud storage cp.
 
@@ -11122,14 +11122,14 @@ recipe.
 &mdash; **def [RunSteps](/recipes/build_legacy_fw.py#554)(api, properties):**
 ### *recipes* / [build\_linters](/recipes/build_linters.py)
 
-[DEPS](/recipes/build_linters.py#35): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
+[DEPS](/recipes/build_linters.py#31): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [chromite](#recipe_modules-chromite), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/tricium][recipe_engine/recipe_modules/tricium]
 
 
 Recipe for linting CLs.
 
-&mdash; **def [DoRunSteps](/recipes/build_linters.py#276)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
+&mdash; **def [DoRunSteps](/recipes/build_linters.py#272)(api: RecipeApi, config: BuilderConfig, relevant_patchsets_by_linter: Dict[(str, Dict[(PatchSet, List[str])])]):**
 
-&mdash; **def [RunSteps](/recipes/build_linters.py#259)(api: RecipeApi, properties: BuildLintersProperties):**
+&mdash; **def [RunSteps](/recipes/build_linters.py#255)(api: RecipeApi, properties: BuildLintersProperties):**
 ### *recipes* / [build\_mass\_deploy](/recipes/build_mass_deploy.py)
 
 [DEPS](/recipes/build_mass_deploy.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
