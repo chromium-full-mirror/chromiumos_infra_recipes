@@ -179,12 +179,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       build = failed_vm_test['build']
       model = EMPTY_MODEL
       build_target = self.m.cros_infra_config.get_build_target_name(build)
-      # Some failed vm / gce test names within the build are not prefixed with
-      # 'tast.' like how the invocation results are. For those cases, let's add
-      # the prefix.
-      test_prefix = 'tast.'
-      test_id = test_case['name'] if test_case['name'].startswith(test_prefix) \
-        else test_prefix + test_case['name']
+      test_id = self._get_vm_test_id(test_case)
       failure_reason = test_case.get('humanReadableSummary', '')
       self._set_fault_attribution_properties(build_target, model, test_id,
                                              failure_reason)
@@ -340,7 +335,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_failures = json_format.MessageToDict(prop_struct)
         for test_case in test_failures:
           self._failed_vm_tests.append({'build': build, 'test_case': test_case})
-          failed_test_names.add(test_case['name'])
+          test_id = self._get_vm_test_id(test_case)
+          failed_test_names.add(test_id)
 
     return failed_test_names
 
@@ -468,7 +464,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
   def _get_test_id_from_rdb_test_name(self, rdb_test_name: str) -> str:
     """Returns the test_id from a test_result name from rdb.
 
-    rdb test namesare of the format:
+    rdb test names are of the format:
       "invocations/{INVOCATION_ID}/tests/{TEST_ID}/results/{RESULT_ID}".
     """
     m = re.search(TEST_ID_REGEX, rdb_test_name)
@@ -487,3 +483,16 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       comparison_snapshot.end_time.seconds
 
     return comparison_snapshot_properties
+
+  def _get_vm_test_id(self, test_case: Dict) -> str:
+    """Returns the test_id for a vm / gce test prefixed with 'tast'.
+    """
+
+    # Some failed vm / gce test names within the build are not prefixed with
+    # 'tast.' like how the invocation results are. For those cases, let's add
+    # the prefix.
+    test_prefix = 'tast.'
+    test_id = test_case['name'] if test_case['name'].startswith(test_prefix) \
+      else test_prefix + test_case['name']
+
+    return test_id
