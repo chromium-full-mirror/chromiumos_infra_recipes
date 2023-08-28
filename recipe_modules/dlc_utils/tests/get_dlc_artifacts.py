@@ -37,7 +37,7 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(
       len(properties.expected_artifacts), len(dlc_artifacts))
   for url, dlc_hash in properties.expected_artifacts.items():
-    api.assertions.assertEqual(dlc_hash, dlc_artifacts[url])
+    api.assertions.assertEqual(dlc_hash, dlc_artifacts[url]['hash'])
 
 
 def GenTests(api):

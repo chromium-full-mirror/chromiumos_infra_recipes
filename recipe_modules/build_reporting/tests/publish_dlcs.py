@@ -26,9 +26,15 @@ def RunSteps(api):
   # DLC GS locations with hashes.
   api.build_reporting.publish_dlc_artifacts({
       'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/libsoda/package/dlc.img':
-          'deadbeef',
+          {
+              'hash': 'deadbeef',
+              'id': 'libsoda'
+          },
       'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-es/package/dlc.img':
-          'beefdead'
+          {
+              'hash': 'beefdead',
+              'id': 'handwriting-es'
+          }
   })
 
 

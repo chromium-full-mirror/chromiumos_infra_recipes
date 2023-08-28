@@ -98,7 +98,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
 
       return dlc_paths
 
-  def get_dlc_artifacts(self, gs_path: str) -> Dict[str, str]:
+  def get_dlc_artifacts(self, gs_path: str) -> Dict[str, Dict[str, str]]:
     """Retrieves DLC artifact locations and corresponding file hashes.
 
     Args:
@@ -119,7 +119,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
         if self.m.path.exists(local_dlc):
           file_hash = self.m.file.file_hash(local_dlc, test_data='deadbeef')
           # Report the uploaded location.
-          dlc_artifacts[uploaded_dlc] = file_hash
+          dlc_artifacts[uploaded_dlc] = {'hash': file_hash}
         else:
           failed_logs.append(
               f'Failed to find corresponding local DLC (at {local_dlc}) for GS DLC (at {uploaded_dlc}).'
@@ -127,7 +127,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
           # Fall back to downloading the Google Storage version if we can't avoid the network call.
           self.m.gcloud.download_file(uploaded_dlc, local_dlc)
           file_hash = self.m.file.file_hash(local_dlc, test_data='deadbeef')
-          dlc_artifacts[uploaded_dlc] = file_hash
+          dlc_artifacts[uploaded_dlc] = {'hash': file_hash}
       if failed_logs:
         failed_logs = [
             'The following DLCs were not found locally: '
@@ -141,7 +141,7 @@ class DlcUtilsApi(recipe_api.RecipeApi):
       sysroot: ArtifactsByService.Sysroot,
       chroot: common_pb2.Chroot,
       is_staging: bool,
-  ) -> Dict[str, str]:
+  ) -> Dict[str, Dict[str, str]]:
     """Retrieves the list of prebuilt DLCs and copies them to the bucket.
 
     Args:
@@ -183,7 +183,10 @@ class DlcUtilsApi(recipe_api.RecipeApi):
         key = f'{new_location}/{artifact.image_name}'
         if key in ret and ret[key] != artifact.image_hash:
           raise StepFailure('Duplicate DLCs with different hashes provided')
-        ret[key] = artifact.image_hash
+        ret[key] = {
+            'hash': artifact.image_hash,
+            'id': artifact.id,
+        }
 
       runner.wait_for_and_throw()
 

@@ -29,10 +29,18 @@ def RunSteps(api):
     staging = 'staging-' if api.properties['staging'] else 'prod-'
     api.assertions.assertEqual(
         {
-            f'gs://bucket/{staging}dlc-images/uri/prefix/for/dlc-1/dlc.img':
-                '88d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
-            f'gs://bucket/{staging}dlc-images/uri/prefix/for/dlc-2/dlc.img':
-                '99d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711'
+            f'gs://bucket/{staging}dlc-images/uri/prefix/for/dlc-1/dlc.img': {
+                'hash':
+                    '88d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
+                'id':
+                    'dlc-1',
+            },
+            f'gs://bucket/{staging}dlc-images/uri/prefix/for/dlc-2/dlc.img': {
+                'hash':
+                    '99d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
+                'id':
+                    'dlc-2'
+            }
         }, dlcs)
 
 

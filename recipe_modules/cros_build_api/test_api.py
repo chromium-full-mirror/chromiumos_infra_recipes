@@ -257,6 +257,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'dlc.img',
         'gs_uri_path':
             'gs://some/uri/prefix/for/dlc-1',
+        'id':
+            'dlc-1',
     }, {
         'image_hash':
             '99d54cb6b5bba15a71ffda3ca75446eb453bf7fe393e3595d3bc52beb3b61711',
@@ -264,6 +266,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'dlc.img',
         'gs_uri_path':
             'gs://some/uri/prefix/for/dlc-2',
+        'id':
+            'dlc-2',
     }])
     return responses
 

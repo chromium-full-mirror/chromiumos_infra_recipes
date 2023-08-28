@@ -536,7 +536,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self.publish(build_report)
 
-  def publish_dlc_artifacts(self, dlc_artifacts: Dict[str, str]):
+  def publish_dlc_artifacts(self, dlc_artifacts: Dict[str, Dict[str, str]]):
     """Publish DLC artifacts to pubsub, including URL and hash.
 
     Args:
@@ -545,9 +545,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     build_report = BuildReport()
 
-    for location, file_hash in dlc_artifacts.items():
+    for location, metadata in dlc_artifacts.items():
       dlc_artifact_details = build_report.dlcs.dlc_artifact_details.add()
       dlc_artifact_details.uri.gcs = location
-      dlc_artifact_details.sha256 = file_hash
+      dlc_artifact_details.sha256 = metadata['hash']
+      if 'id' in metadata:
+        dlc_artifact_details.id = metadata['id']
 
     self.publish(build_report)

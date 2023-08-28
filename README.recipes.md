@@ -1789,7 +1789,7 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#539)(self, dlc_artifacts: Dict[(str, str)]):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#539)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
 
 Publish DLC artifacts to pubsub, including URL and hash.
 
