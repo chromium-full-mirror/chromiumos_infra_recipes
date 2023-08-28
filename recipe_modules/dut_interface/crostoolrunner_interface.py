@@ -106,13 +106,13 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           lab_api.dut.DutTopology(duts=[
               lab_api.dut.Dut(
                   id=lab_api.dut.Dut.Id(
-                      value="fake_dut"), cache_server=lab_api.dut.CacheServer(
+                      value='fake_dut'), cache_server=lab_api.dut.CacheServer(
                           address=lab_api.ip_endpoint.IpEndpoint(
-                              address="0.0.0.0", port=8080)),
+                              address='0.0.0.0', port=8080)),
                   chromeos=lab_api.dut.Dut.ChromeOS(
                       dut_model=lab_api.dut.DutModel(
-                          build_target="betty", model_name="betty"), ssh=lab_api
-                      .ip_endpoint.IpEndpoint(address="fake_host", port=22)))
+                          build_target='betty', model_name='betty'), ssh=lab_api
+                      .ip_endpoint.IpEndpoint(address='fake_host', port=22)))
           ])
       ],
   )
@@ -304,7 +304,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           # nothing on our end has gone wrong and this will shield us from
           # potential misfiled bugs.
           step.presentation.staus = self._api.step.FAILURE
-          e = StepFailure("Prejob execution time limit of %.1f hours reached" %
+          e = StepFailure('Prejob execution time limit of %.1f hours reached' %
                           (max_duration_seconds / HOUR))
         raise e
 
@@ -878,7 +878,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       processed test responses tuple: (test_responses_for_output_props, test_response_for_result_uploading)
     """
-    with self._api.step.nest("Processing CTR Test Responses") as step:
+    with self._api.step.nest('Processing CTR Test Responses') as step:
       ret1_ids = []
       ret2_ids = []
 
@@ -918,7 +918,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       if not tast_via_tauto:
         # If no tast_via_tauto in test cases, keep the responses as is.
         step.presentation.logs[
-            "Output"] = "No tast_via_tauto found. So no processing required."
+            'Output'] = 'No tast_via_tauto found. So no processing required.'
         return cros_test_responses, cros_test_responses
 
       for path, resp_list in path_to_tast_dut_resp_dict.items():
@@ -930,8 +930,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ret2.append(resp)
             ret2_ids.append(resp.data.test_case_id.value)
 
-      step.presentation.logs["For_Output_Props_Test_Ids"] = ret1_ids
-      step.presentation.logs["For_Result_Uploading_Test_Ids"] = ret2_ids
+      step.presentation.logs['For_Output_Props_Test_Ids'] = ret1_ids
+      step.presentation.logs['For_Result_Uploading_Test_Ids'] = ret2_ids
 
       return RunTestResponsesTuple(
           ret1, cros_test_responses.any_test_failed), RunTestResponsesTuple(
@@ -1035,10 +1035,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       return False
     # There will be only one of list(allow/block) at a given time, so the order
     # of below blocks doesn't matters.
-    if fw_config.HasField("allow_list"):
+    if fw_config.HasField('allow_list'):
       return (device.dut_model.build_target in fw_config.allow_list.boards or
               device.dut_model.model_name in fw_config.allow_list.models)
-    if fw_config.HasField("block_list"):
+    if fw_config.HasField('block_list'):
       return (device.dut_model.build_target not in fw_config.block_list.boards
               and
               device.dut_model.model_name not in fw_config.block_list.models)

@@ -69,7 +69,7 @@ class Pulp:
 
   def __init__(self, url, existent):
     self.url = url
-    self.existent = open(existent, "r", encoding='utf-8')  # pylint: disable=consider-using-with
+    self.existent = open(existent, 'r', encoding='utf-8')  # pylint: disable=consider-using-with
     self.manifest = 'PULP_MANIFEST'
     self.useragent = os.path.basename(sys.argv[0])
     self.session = requests.Session()
@@ -104,7 +104,7 @@ class Pulp:
 
     # check dir exists
     if not os.path.exists(path):
-      print("{} does not exist".format(path))
+      print('{} does not exist'.format(path))
       return 1
 
     # download the PULP_MANIFEST
@@ -123,9 +123,9 @@ class Pulp:
       return 1
 
     # parse into lines
-    for line in rv.content.decode().split("\n"):
+    for line in rv.content.decode().split('\n'):
       try:
-        fn, _, _ = line.rsplit(",", 2)
+        fn, _, _ = line.rsplit(',', 2)
       except ValueError:
         continue
       self._sync_file(fn, path)
@@ -137,7 +137,7 @@ class Pulp:
 if __name__ == '__main__':
 
   if len(sys.argv) != 4:
-    print("USAGE: URL DIR EXISTENT")
+    print('USAGE: URL DIR EXISTENT')
     sys.exit(2)
 
   pulp = Pulp(url=sys.argv[1], existent=sys.argv[3])

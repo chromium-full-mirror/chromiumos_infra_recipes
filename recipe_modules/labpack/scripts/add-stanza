@@ -6,21 +6,25 @@
 # ./add-stanza  is a filter that adds or replaces the ile-de-france stanza
 # of a job description.
 
-import sys
 import json
+import sys
 
-INDENT = "  "
+INDENT = '  '
 
 cfg = {
-  "enabled": True,
-  "ile_de_france_selector": {
-    "allow_list": {
-      "models": [],
+  'enabled': True,
+  'ile_de_france_selector': {
+    'allow_list': {
+      'models': [],
     },
   },
 }
 
-cfg["ile_de_france_selector"]["allow_list"]["models"] = sys.argv[1].split(',') if (len(sys.argv) > 1 and sys.argv[1]) else []
+if len(sys.argv) > 1 and sys.argv[1]:
+  models = sys.argv[1].split(',')
+else:
+  models = []
+cfg['ile_de_france_selector']['allow_list']['models'] = models
 
 job = json.load(sys.stdin)
 

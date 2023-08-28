@@ -5,7 +5,7 @@
 
 def new_result_map():
   """Return an empty result map"""
-  return {"ok": True, "msg": None}
+  return {'ok': True, 'msg': None}
 
 
 def add_assertion_to_map(m, cond, msg):
@@ -32,7 +32,7 @@ def add_assertion_to_map(m, cond, msg):
   """
   if cond:
     return m
-  if m["ok"]:
-    m["ok"] = False
-    m["msg"] = msg
+  if m['ok']:
+    m['ok'] = False
+    m['msg'] = msg
   return m

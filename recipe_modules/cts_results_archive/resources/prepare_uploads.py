@@ -167,7 +167,7 @@ def _prepare_uploads_for_test(test_dir, path, result_pattern, data):
     # CTS v2 pipeline requires device info in 'board.model' format.
     # e.g. coral.robo-release, eve.eve-release, hatch.kohaku-kernelnext-release
     board_name, board_variant, build_version = re.search(
-        "(\w+)(.*)/(.*)", build).groups()
+        r'(\w+)(.*)/(.*)', build).groups()
 
     build_name_divo_format = (
         board_name + '.' + host_model_name + board_variant + '/' +
@@ -263,7 +263,7 @@ def _parse_cts_job_results_file_path(path):
   folders = path.split(os.sep)
   if 'swarming' in folders[1]:
     # Swarming job and attempt combined
-    job_id = "%s-%s" % (folders[-7], folders[-6])
+    job_id = '%s-%s' % (folders[-7], folders[-6])
   else:
     job_id = folders[-6]
 
@@ -297,7 +297,7 @@ def _find_toplevel_job_dir(start_dir):
     a top-level dir.
     @param start_dir: starting directing for the upward search"""
   job_dir = start_dir
-  while not os.path.exists(os.path.join(job_dir, ".autoserv_execute")):
+  while not os.path.exists(os.path.join(job_dir, '.autoserv_execute')):
     if job_dir in ('/', ''):
       return None
     job_dir = os.path.dirname(job_dir)

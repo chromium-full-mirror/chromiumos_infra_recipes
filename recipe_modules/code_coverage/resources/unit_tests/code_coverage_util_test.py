@@ -37,7 +37,7 @@ class CleanFileNamesInLlvmCoverageJsonTest(unittest.TestCase):
 
   def setUp(self):
     with open(
-        os.path.join(__RESOURCES_DIR__, "path_mapping.json"), 'r',
+        os.path.join(__RESOURCES_DIR__, 'path_mapping.json'), 'r',
         encoding='utf-8') as constant_file:
       self.path_mappings = json.load(constant_file)
 

@@ -22,7 +22,7 @@ def mocked_open(filename, _):
   if filename == CONSTANTS_FILE:
     content = '[{"prefix": "base-[^/]*/base","repo": "", "src_path":"base"}]'
   else:
-    content = """{
+    content = '''{
             "data":
                 [
                 {
@@ -72,7 +72,7 @@ def mocked_open(filename, _):
                     ]
                 }
                 ]
-            }"""
+            }'''
   file_object = mock.mock_open(read_data=content).return_value
   file_object.__iter__.return_value = content.splitlines(True)
   return file_object

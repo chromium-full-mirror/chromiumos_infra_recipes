@@ -26,7 +26,7 @@ def set_build_target_metadata(config, builder_metadata):
   # one build target per build. As such, we are extracting that single item
   # from the list, throwing an exception if there is more than one item.
   if len(builder_metadata.build_target_metadata) != 1:
-    raise StepFailure("build_target_metadata must have a single element")
+    raise StepFailure('build_target_metadata must have a single element')
   [build_target_metadata] = builder_metadata.build_target_metadata
 
   config.target.name = build_target_metadata.build_target

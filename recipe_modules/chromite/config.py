@@ -89,7 +89,7 @@ def base(c):
   c.repositories['cros_manifest'] = []
 
   # Resolve branch version, if available.
-  assert c.chromite_branch, "A Chromite branch must be configured."
+  assert c.chromite_branch, 'A Chromite branch must be configured.'
 
 
 @config_ctx(includes=['base'])

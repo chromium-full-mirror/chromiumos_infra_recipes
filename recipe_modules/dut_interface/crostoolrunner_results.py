@@ -57,7 +57,7 @@ class CrosToolRunnerPrejobDUTResponse(dut_results.DUTPrejobResponse
     if state:
       return state.lower()
     raise InvalidPrejobResponseStateException(
-        "No outcome found in provision response.")
+        'No outcome found in provision response.')
 
 
 class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
@@ -103,7 +103,7 @@ class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
     if state:
       return state.lower()
     raise InvalidTestResponseStateException(
-        "No verdict found in test case result.")
+        'No verdict found in test case result.')
 
 
 class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover

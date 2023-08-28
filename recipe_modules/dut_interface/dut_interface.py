@@ -344,7 +344,7 @@ class DUTInterface():  # pragma: no cover
 
     # Add deadline information to the step logs.
     step.presentation.logs[
-        'deadline information'] = "start: %s\nend: %s\ntotal_seconds: %s\n" % (
+        'deadline information'] = 'start: %s\nend: %s\ntotal_seconds: %s\n' % (
             self._format_time(current_time),
             self._format_time(deadline.soft_deadline), str(limit_seconds))
 

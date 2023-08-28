@@ -409,10 +409,10 @@ def load_files_coverage_data(coverage_files, constants_file, diff_mapping):
           path_to_coverage_file[path] = coverage_file
           file_coverage_data[path] = record
   folder_counts = collections.Counter(
-      [fn[2:].split('/')[0] for fn in file_coverage_data.keys()])
+      [fn[2:].split('/')[0] for fn in file_coverage_data])
   logging.info('Files covered per folder: %s', folder_counts.most_common())
   ext_counts = collections.Counter(
-      [os.path.splitext(fn)[1] for fn in file_coverage_data.keys()])
+      [os.path.splitext(fn)[1] for fn in file_coverage_data])
   logging.info('File extension counts: %s', ext_counts.most_common())
   return file_coverage_data.values()
 

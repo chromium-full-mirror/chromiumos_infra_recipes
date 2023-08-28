@@ -1,7 +1,5 @@
 {
-        // Because you can only invoke recipes through ./recipes.py, remote
-        // attach is the only way to debug recipes. Port number matches default
-        // in `recipes.code-snippets`.
+        "_comment": "Because you can only invoke recipes through ./recipes.py, remote attach is the only way to debug recipes. Port number matches default in `recipes.code-snippets`.",
         "version": "0.2.0",
         "configurations": [
                 {
@@ -16,6 +14,6 @@
                                         "remoteRoot": "."
                                 }
                         ]
-                },
+                }
         ]
 }

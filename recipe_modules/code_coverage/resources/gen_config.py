@@ -37,9 +37,9 @@ def gen_mapping_config(cros_home, manifest_file):
 
     # The components between path prefix and the file name, which is used to
     # generate file path matching patterns.
-    match_folder = ""
+    match_folder = ''
     absolute_path = project.attrib['path']
-    relative_path = ""
+    relative_path = ''
     config_components = []
 
     # Because repo 'src/platform2' does not include specific sub folder for
@@ -54,15 +54,15 @@ def gen_mapping_config(cros_home, manifest_file):
                             entry.name), relative_path, match_folder))
     elif absolute_path.startswith('src/platform/'):
       match_folder = absolute_path.removeprefix('src/platform/')
-      relative_path = ""
+      relative_path = ''
       config_components.append((absolute_path, relative_path, match_folder))
     elif absolute_path.startswith('src/aosp/external'):
       match_folder = absolute_path.removeprefix('src/aosp/external/')
-      relative_path = ""
+      relative_path = ''
       config_components.append((absolute_path, relative_path, match_folder))
     elif absolute_path.startswith('src/third_party'):
       match_folder = absolute_path.removeprefix('src/third_party/')
-      relative_path = ""
+      relative_path = ''
       config_components.append((absolute_path, relative_path, match_folder))
     else:
       continue

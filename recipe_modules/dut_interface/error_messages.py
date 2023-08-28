@@ -5,7 +5,7 @@
 
 """Common Error Messages."""
 
-AUTOSERV_CRASH = "autoserv crashed. The test list is likely incomplete. " \
-                 "Consult autoserv.ERROR for more details."
+AUTOSERV_CRASH = 'autoserv crashed. The test list is likely incomplete. ' \
+                 'Consult autoserv.ERROR for more details.'
 
-UNSUCCESSFUL_STATE = "ended with unsuccessful state {}"
+UNSUCCESSFUL_STATE = 'ended with unsuccessful state {}'

@@ -61,7 +61,7 @@ def _parse_args(args):
       help='absolute path to where the cleaned file should be placed.')
 
   parser.add_argument('--to_absolute_path', required=True,
-                      type=lambda x: x.lower() == "true",
+                      type=lambda x: x.lower() == 'true',
                       help='clean file paths as absolute or relative path')
 
   return parser.parse_args(args=args)

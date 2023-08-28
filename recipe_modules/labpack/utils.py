@@ -20,13 +20,13 @@ def make_common_config(enabled, allow_list, deny_list):
   assert not isinstance(allow_list, (str, bytes))
   assert not isinstance(deny_list, (str, bytes))
   assert (not allow_list) or (not deny_list)
-  out = {"enable_ile_de_france_config": {}}
-  out["enable_ile_de_france_config"]["enabled"] = enabled
+  out = {'enable_ile_de_france_config': {}}
+  out['enable_ile_de_france_config']['enabled'] = enabled
   if allow_list:
-    out["enable_ile_de_france_config"]["allow_list"] = {"models": allow_list}
+    out['enable_ile_de_france_config']['allow_list'] = {'models': allow_list}
   if deny_list:
-    out["enable_ile_de_france_config"]["deny_list"] = {
-        "models": deny_list
+    out['enable_ile_de_france_config']['deny_list'] = {
+        'models': deny_list
     }  # pragma: nocover
   return to_message(out, CommonConfig())
 
@@ -67,8 +67,8 @@ def catch(f, *args, **kwargs):
 def jsonify_labpack_input(labpack_input: LabpackInput) -> bytes:
   assert isinstance(
       labpack_input,
-      LabpackInput), "labpack_input unexpectedly has type {}".format(
+      LabpackInput), 'labpack_input unexpectedly has type {}'.format(
           type(labpack_input))
   out = json_format.MessageToJson(labpack_input)
-  out = out.encode("utf-8")
+  out = out.encode('utf-8')
   return out

@@ -58,7 +58,7 @@ def chunk(coverage_file, file_entries_per_chunk, chunk_dest_dir, coverage_type):
     for entry in chunks:
       coverage_json_temp = code_coverage_util.create_llvm_coverage_json(entry)
       chunk_file_path = os.path.join(chunk_dest_dir, str(count))
-      with open(chunk_file_path, "w", encoding='utf-8') as outfile:
+      with open(chunk_file_path, 'w', encoding='utf-8') as outfile:
         outfile.write(json.dumps(coverage_json_temp))
 
       count = count + 1

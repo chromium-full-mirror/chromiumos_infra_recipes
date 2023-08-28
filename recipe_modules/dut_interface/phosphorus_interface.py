@@ -131,7 +131,7 @@ class PhosphorusTestMetadata(dut_interface.DUTTestMetadata):  # pragma: no cover
                              request.software_dependencies)
     # We shouldn't hit this point as if a bot is matched to a test, it should
     # contain DUTs that can satisfy all resource requests from the test.
-    raise MatchDutException("Failed to match loaded DUT with prejob request.")
+    raise MatchDutException('Failed to match loaded DUT with prejob request.')
 
 
 class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
@@ -185,7 +185,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           # nothing on our end has gone wrong and this will shield us from
           # potential misfiled bugs.
           step.presentation.staus = self._api.step.FAILURE
-          e = StepFailure("Prejob execution time limit of %.1f hours reached" %
+          e = StepFailure('Prejob execution time limit of %.1f hours reached' %
                           (max_duration_seconds / HOUR))
         raise e
 
@@ -213,7 +213,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
     with self._api.step.nest('ensure all crashes were fetched') as presentation:
       try:
         if len(crash_response.crashes_rtd_only) != 0:
-          raise self._api.step.StepFailure("Missing %d crashes" %
+          raise self._api.step.StepFailure('Missing %d crashes' %
                                            len(crash_response.crashes_rtd_only))
       except self._api.step.StepFailure:  # pragma: no cover
         presentation.step_text = \
@@ -330,7 +330,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
         task=phosphorus.common.TaskEnvironment(
             results_dir=results_dir, ssp_base_image_name=self._properties.config
             .harness.ssp_base_image_name,
-            test_results_dir=os.path.join(results_dir, "autoserv_test")))
+            test_results_dir=os.path.join(results_dir, 'autoserv_test')))
 
   def save_and_seal_skylab_local_state(self, dut_state, metadata,
                                        repair_requests=None):
@@ -386,9 +386,9 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
         return False
     # There will be only one of list(allow/block) at a given time, so the order
     # of below blocks doesn't matters.
-    if fw_config.HasField("allow_list"):
+    if fw_config.HasField('allow_list'):
       return dut.board in fw_config.allow_list.boards or dut.model in fw_config.allow_list.models
-    if fw_config.HasField("block_list"):
+    if fw_config.HasField('block_list'):
       return dut.board not in fw_config.block_list.boards and dut.model not in fw_config.block_list.models
     # We shouldn't hit here ever, but for safe we return False if it happens.
     return False
@@ -512,7 +512,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
       metadata.build_dut_topology(self._properties.request.prejob)
     except MatchDutException as e:
       raise self._api.step.InfraFailure(
-          "Failed to match loaded DUT with prejob request.") from e
+          'Failed to match loaded DUT with prejob request.') from e
     return metadata
 
   @staticmethod

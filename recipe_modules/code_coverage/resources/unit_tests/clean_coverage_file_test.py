@@ -65,11 +65,11 @@ class CleanFilePathsTest(unittest.TestCase):
                                   mock_clean_file_names_in_llvm_coverage_json):
     mock_is_valid_llvm_coverage_json_file.return_value = 123123
     mock_clean_file_names_in_llvm_coverage_json.return_value = {
-        'test': "cleaned"
+        'test': 'cleaned'
     }
     self._write_to_file(self.path_to_coverage_file,
-                        json.dumps({'test': "dirty"}))
-    self._write_to_file(self.path_to_cons_file, json.dumps({'project': "[]"}))
+                        json.dumps({'test': 'dirty'}))
+    self._write_to_file(self.path_to_cons_file, json.dumps({'project': '[]'}))
 
     clean_coverage_file.clean_file_paths(self.path_to_coverage_file,
                                          self.path_to_cons_file,
