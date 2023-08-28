@@ -142,7 +142,6 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'BundleFirmware',
         'BundleEbuildLogs',
         'BundleChromeOSConfig',
-        'ExportCpeReport',
         'BundleImageArchives',
         'BundleFpmcuUnittests',
         'BundleGceTarball',
