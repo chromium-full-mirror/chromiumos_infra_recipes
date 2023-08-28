@@ -22,6 +22,8 @@ import json
 import urllib
 import zlib
 
+from google.protobuf import json_format
+
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.chromite.api.packages import RevBumpChromeRequest
@@ -424,7 +426,7 @@ def _get_gerrit_changes(api, manifest_diffs):
     tuple(
       list[Commit]: The Gerrit-reviewed commits since the last snapshot,
   """
-  with api.step.nest('record new gerrit changes'):
+  with api.step.nest('record new gerrit changes') as pres:
     gerrit_changes = []
     gerrit_commits = []
     for diff in manifest_diffs:
@@ -452,6 +454,12 @@ def _get_gerrit_changes(api, manifest_diffs):
             step.presentation.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
+
+    # Store the found gerrit changes as an output prop, so other builds can use
+    # them (e.g. the snapshot orchestrator needs the relevant gerrit changes for
+    # test planning).
+    pres.properties['found_gerrit_changes'] = ','.join(
+        json_format.MessageToJson(gc) for gc in gerrit_changes)
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
