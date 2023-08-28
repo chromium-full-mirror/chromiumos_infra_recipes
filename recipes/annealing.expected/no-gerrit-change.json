@@ -2843,7 +2843,7 @@
     "cmd": [],
     "name": "record new gerrit changes",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@found_gerrit_changes@\"\"@@@"
+      "@@@SET_BUILD_PROPERTY@found_gerrit_changes@[]@@@"
     ]
   },
   {

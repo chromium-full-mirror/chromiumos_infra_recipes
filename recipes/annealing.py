@@ -458,8 +458,9 @@ def _get_gerrit_changes(api, manifest_diffs):
     # Store the found gerrit changes as an output prop, so other builds can use
     # them (e.g. the snapshot orchestrator needs the relevant gerrit changes for
     # test planning).
-    pres.properties['found_gerrit_changes'] = ','.join(
-        json_format.MessageToJson(gc) for gc in gerrit_changes)
+    pres.properties['found_gerrit_changes'] = [
+        json_format.MessageToJson(gc) for gc in gerrit_changes
+    ]
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
