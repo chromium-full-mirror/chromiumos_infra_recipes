@@ -466,8 +466,8 @@ class CrosSdkApi(RecipeApi):
                                              no_use_image=True,
                                              bootstrap=bootstrap),
                 chroot=self.chroot, sdk_version=sdk_version,
-                skip_chroot_upgrade=not chroot_upgrade), timeout=timeout_sec,
-            test_output_data=test_data)
+                skip_chroot_upgrade=not chroot_upgrade, ccache_disable=True),
+            timeout=timeout_sec, test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
         self.link_chroot(self.m.cros_source.workspace_path)
