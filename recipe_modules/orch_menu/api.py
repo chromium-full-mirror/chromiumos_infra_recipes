@@ -1128,6 +1128,37 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self._builds_status.update([build], failures)
       return build
 
+  def _gerrit_changes_in_snapshot(self) -> List[common_pb2.GerritChange]:
+    """Find the changes landed in the orchestrator's snapshot commit.
+
+    Requires that self.gitiles_commit is set and refers to a
+    snapshot commit created by an Annealing builder.
+
+    Specifically, this method looks up the Annealing builder with
+    published_snapshot_id == self.gitiles_commit.id, and parses the
+    found_gerrit_changes output property. Note that if the found Annealing
+    builder didn't set this output property, this method will fail.
+    """
+    with self.m.step.nest('find changes in snapshot') as pres:
+      assert self.gitiles_commit, '_gerrit_changes_in_snapshot should only be called when gitiles_commit is set'
+      annealing_build = self.m.cros_history.get_annealing_from_snapshot(
+          self.gitiles_commit.id)
+
+      if not annealing_build:
+        raise RuntimeError(
+            f'no annealing build found for snapshot_id {self.gitiles_commit.id}'
+        )
+
+      changes = []
+      for change_str in annealing_build.output.properties[
+          'found_gerrit_changes']:
+        change = common_pb2.GerritChange()
+        changes.append(json_format.Parse(change_str, change))
+
+      pres.step_text = f'found {len(changes)} changes from snapshot {self.gitiles_commit.id}'
+
+      return changes
+
   def plan_and_run_tests(
       self,
       testable_builds: Optional[List[build_pb2.Build]] = None,
@@ -1162,6 +1193,19 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     self.m.skylab.apply_qs_account_overrides(self.gerrit_changes)
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
+
+    # If this is a snapshot orchestrator, it shouldn't have any input changes.
+    # Instead, lookup the gerrit changes landed in the snapshot, and test plan
+    # based on these changes.
+    #
+    # TODO(b/289227008): Snapshot should run the base snapshot testing in
+    # addition to the testing based on the snapshot CLs.
+    if self.is_snapshot_orchestrator and (
+        'chromeos.orch_menu.plan_tests_using_snapshot'
+        in self.m.cros_infra_config.experiments):
+      assert not gerrit_changes, 'gerrit_changes are not expected on the snapshot orchestrator'
+      gerrit_changes = self._gerrit_changes_in_snapshot()
+
     if gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
         gerrit_changes):
       if self.m.cros_test_plan_v2.generate_ctpv1_format:

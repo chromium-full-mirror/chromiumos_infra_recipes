@@ -926,3 +926,70 @@ def GenTests(api):
       collect_builds=collect, history_builds=data.history_builds,
       collect_after_builds=collect_after, with_history=True, git_footers=[],
       inflight_orch=[])
+
+  annealing_build_with_found_changes = build_pb2.Build()
+  annealing_build_with_found_changes.output.properties[
+      'found_gerrit_changes'] = [
+          json_format.MessageToJson(gc) for gc in [
+              GerritChange(
+                  host='chromium.googlesource.com',
+                  project='chromiumos/platform',
+                  change=1234,
+                  patchset=5,
+              ),
+              GerritChange(
+                  host='chromium.googlesource.com',
+                  project='chromiumos/platform',
+                  change=5678,
+                  patchset=2,
+              ),
+          ]
+      ]
+
+  yield api.orch_menu.test(
+      'snapshot-orch-v2-test-planning',
+      api.properties(
+          FullProperties(
+              experiments=['chromeos.orch_menu.plan_tests_using_snapshot'])),
+      api.buildbucket.simulated_search_results(
+          [annealing_build_with_found_changes],
+          'find changes in snapshot.buildbucket.search'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'find changes in snapshot.buildbucket.search', [
+              '-predicate',
+              '{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"snapshot-HEAD-SHA\"}]}'
+          ]),
+      api.post_process(post_process.StepTextEquals, 'find changes in snapshot',
+                       'found 2 changes from snapshot snapshot-HEAD-SHA'),
+      api.post_process(post_process.StepTextEquals,
+                       'check test planning v2 enabled',
+                       'enabling test planning v2'),
+      api.post_process(post_process.DropExpectation),
+      builder='snapshot-orchestrator',
+      input_properties={
+          '$chromeos/cros_test_plan_v2': {
+              'generate_ctpv1_format':
+                  True,
+              'migration_configs': [{
+                  'host': 'chromium.googlesource.com',
+                  'project': 'chromiumos/platform',
+                  'file_allowlist_regexps': ['.*'],
+                  'branch_allowlist_regexps': ['.*'],
+              },]
+          }
+      },
+  )
+
+  yield api.orch_menu.test(
+      'snapshot-orch-v2-test-planning-annealing-not-found',
+      api.properties(
+          FullProperties(
+              experiments=['chromeos.orch_menu.plan_tests_using_snapshot'])),
+      api.expect_exception('RuntimeError'),
+      api.post_process(
+          post_process.ResultReasonRE,
+          'no annealing build found for snapshot_id snapshot-HEAD-SHA'),
+      api.post_process(post_process.DropExpectation),
+      builder='snapshot-orchestrator',
+  )
