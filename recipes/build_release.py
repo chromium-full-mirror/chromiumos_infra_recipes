@@ -200,19 +200,11 @@ def DoRunSteps(api, config, properties):
               api.cros_infra_config.is_staging,
           )
           with api.step.nest('publish DLCs to pubsub'):
-            # TODO(b/277931195): Determine whether dlc_locations publishing is
-            # still needed by GoldenEye and remove if not.
-            dlc_locations = api.dlc_utils.get_dlcs_in_path(gs_image_dir)
-            api.build_reporting.publish_dlcs(dlc_locations)
-            # Publish prebuilt DLCs the old way (i.e. publish just the DLC uris.
-            api.build_reporting.publish_dlcs(prebuilt_dlcs.keys())
-            # TODO(b/277931195): Remove when stable.
-            with api.failures.ignore_exceptions():
-              dlc_artifacts = api.dlc_utils.get_dlc_artifacts(gs_image_dir)
-              api.build_reporting.publish_dlc_artifacts(dlc_artifacts)
-              # Publish prebuilt DLCs the new way (i.e. publish the DLC uri as
-              # well as the hash for provenance).
-              api.build_reporting.publish_dlc_artifacts(prebuilt_dlcs)
+            dlc_artifacts = api.dlc_utils.get_dlc_artifacts(gs_image_dir)
+            api.build_reporting.publish_dlc_artifacts(dlc_artifacts)
+            # Publish prebuilt DLCs the new way (i.e. publish the DLC uri as
+            # well as the hash for provenance).
+            api.build_reporting.publish_dlc_artifacts(prebuilt_dlcs)
       except StepFailure as sf:
         # If uploading artifacts threw an exception, surface that exception unless
         # build_images above threw an exception, in which case we want to
@@ -437,15 +429,15 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img
 gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       '''), retcode=0),
       api.post_check(post_process.LogContains,
-                     'publish DLCs to pubsub.build status pubsub update (3)',
+                     'publish DLCs to pubsub.build status pubsub update',
                      'message', ['dlcArtifactDetails']),
       api.post_check(
           post_process.LogContains,
-          'publish DLCs to pubsub.build status pubsub update (3)', 'message', [
+          'publish DLCs to pubsub.build status pubsub update', 'message', [
               '"gcs\": \"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake/dlc.img\"'
           ]),
       api.post_check(post_process.LogContains,
-                     'publish DLCs to pubsub.build status pubsub update (3)',
+                     'publish DLCs to pubsub.build status pubsub update',
                      'message', ['"sha256\": \"deadbeef\"']),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],

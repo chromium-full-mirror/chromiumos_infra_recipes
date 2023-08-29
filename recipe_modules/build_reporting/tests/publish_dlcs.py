@@ -17,12 +17,6 @@ def RunSteps(api):
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                      'build_target')
 
-  # DLC GS locations.
-  api.build_reporting.publish_dlcs([
-      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img',
-      'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/handwriting-da/package/dlc.img'
-  ])
-
   # DLC GS locations with hashes.
   api.build_reporting.publish_dlc_artifacts({
       'gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/libsoda/package/dlc.img':
@@ -41,20 +35,12 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'publish-dlcs',
-      api.post_check(post_process.LogDoesNotContain,
-                     'build status pubsub update', 'message',
-                     ['dlcArtifactDetails']),
-      api.post_check(
-          post_process.LogContains, 'build status pubsub update', 'message', [
-              '"gcs": "gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/borealis-dlc/package/dlc.img"'
-          ]),
-      api.post_check(post_process.LogContains, 'build status pubsub update (2)',
+      api.post_check(post_process.LogContains, 'build status pubsub update',
                      'message', ['dlcArtifactDetails']),
       api.post_check(
-          post_process.LogContains, 'build status pubsub update (2)', 'message',
-          [
+          post_process.LogContains, 'build status pubsub update', 'message', [
               '"gcs": "gs://chromeos-image-archive/brya-release/R108-15132.0.0/dlc/libsoda/package/dlc.img"'
           ]),
-      api.post_check(post_process.LogContains, 'build status pubsub update (2)',
+      api.post_check(post_process.LogContains, 'build status pubsub update',
                      'message', ['"sha256\": \"deadbeef\"']),
       api.post_process(post_process.DropExpectation))

@@ -521,21 +521,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self.publish(build_report)
 
-  def publish_dlcs(self, dlc_locations):
-    """Publish DLC locations to pubsub.
-
-    Args:
-      dlc_locations (List[str]): List of DLC locations in GS.
-    """
-
-    build_report = BuildReport()
-
-    for location in dlc_locations:
-      dlc_artifact = build_report.dlcs.dlc_artifacts.add()
-      dlc_artifact.gcs = location
-
-    self.publish(build_report)
-
   def publish_dlc_artifacts(self, dlc_artifacts: Dict[str, Dict[str, str]]):
     """Publish DLC artifacts to pubsub, including URL and hash.
 
