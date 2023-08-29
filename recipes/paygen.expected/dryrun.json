@@ -2555,12 +2555,6 @@
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"resultPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
@@ -2602,16 +2596,10 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"success\": true, \"versioned_artifacts\": [{\"file_path\": {\"location\": 2, \"path\": \"/path/to/cros_chroot/out/tmp/delta.bin\"}, \"local_path\": \"/tmp/aohiwdadoi/delta.bin\"}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"success\": true, \"versioned_artifacts\": [{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2623,7 +2611,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"fullUpdate\": true,\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"dryrun\": true,\n  \"tgtDlcImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"dlcId\": \"termina-dlc\",\n    \"dlcPackage\": \"package\",\n    \"dlcImage\": \"dlc.img\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"fullUpdate\": true,\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"dryrun\": true,\n  \"tgtDlcImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"dlcId\": \"termina-dlc\",\n    \"dlcPackage\": \"package\",\n    \"dlcImage\": \"dlc.img\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -2728,7 +2716,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/path/to/cros_chroot/out/tmp/delta.bin"
+      "[CACHE]/cros_chroot/chroot/tmp/aohiwdadoi/delta.bin"
     ],
     "infra_step": true,
     "luci_context": {

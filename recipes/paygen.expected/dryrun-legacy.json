@@ -2555,12 +2555,6 @@
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"resultPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
@@ -2602,12 +2596,6 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -2623,7 +2611,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"fullUpdate\": true,\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"dryrun\": true,\n  \"tgtDlcImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"dlcId\": \"termina-dlc\",\n    \"dlcPackage\": \"package\",\n    \"dlcImage\": \"dlc.img\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"fullUpdate\": true,\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"dryrun\": true,\n  \"tgtDlcImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"dlcId\": \"termina-dlc\",\n    \"dlcPackage\": \"package\",\n    \"dlcImage\": \"dlc.img\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
@@ -2721,20 +2709,58 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "doing paygen.running paygen operations in parallel.ignored exception",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CACHE]/cros_chroot/chroot/tmp/aohiwdadoi/delta.bin"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "doing paygen.running paygen operations in parallel.Compute file hash",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@caught exception@AssertionError('Artifact file_path must have Path.Location.OUTSIDE, file_path: ')@@@",
-      "@@@STEP_LOG_END@caught exception@@@"
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "doing paygen.running paygen operations in parallel.set caught_exceptions",
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      ""
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "doing paygen.running paygen operations in parallel.snoop: report_gcs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"doing paygen.running paygen operations in parallel.ignored exception\": \"AssertionError('Artifact file_path must have Path.Location.OUTSIDE, file_path: ')\"}@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

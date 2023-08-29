@@ -49,7 +49,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     self._max_dlc_batch_size = properties.max_dlc_batch_size or None
     self._paygen_children_timeout_sec = (
         properties.paygen_children_timeout_sec or 8 * 60 * 60)
-    self._artifact_result_path = None
 
   @property
   def paygen_children_timeout_sec(self) -> int:
@@ -66,16 +65,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       The int max number of seconds the paygen orchestrator should take.
     """
     return self.paygen_children_timeout_sec + 1 * 60 * 60
-
-  @property
-  def artifact_result_path(self) -> common_pb2.ResultPath:
-    """Output location for BAPI artifacts."""
-    if not self._artifact_result_path:
-      self._artifact_result_path = common_pb2.ResultPath(
-          path=common_pb2.Path(
-              path=str(self.m.path.mkdtemp()),
-              location=common_pb2.Path.OUTSIDE))
-    return self._artifact_result_path
 
   @property
   def _config(self) -> PaygenConfig:
@@ -181,14 +170,12 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot,
-                              result_path=self.artifact_result_path))
+                              chroot=self.m.cros_sdk.chroot))
         if minios:
           reqs.append(
               GenerationRequest(src_unsigned_image=tgt, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot, minios=True,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot, minios=True))
     return reqs
 
   def get_delta_requests(self, payload_def: PaygenConfig,
@@ -241,14 +228,12 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
           reqs.append(
               GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot))
           if minios:
             reqs.append(
                 GenerationRequest(src_signed_image=src, tgt_signed_image=tgt,
                                   bucket=bucket, verify=verify, dryrun=dryrun,
-                                  chroot=self.m.cros_sdk.chroot, minios=True,
-                                  result_path=self.artifact_result_path))
+                                  chroot=self.m.cros_sdk.chroot, minios=True))
         elif isinstance(src, UnsignedImage_pb2):
           # We don't create delta paygens for unsigned recovery images.
           if src.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -256,23 +241,20 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
           reqs.append(
               GenerationRequest(src_unsigned_image=src, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot))
           if minios:
             reqs.append(
                 GenerationRequest(src_unsigned_image=src,
                                   tgt_unsigned_image=tgt, bucket=bucket,
                                   verify=verify, dryrun=dryrun,
-                                  chroot=self.m.cros_sdk.chroot, minios=True,
-                                  result_path=self.artifact_result_path))
+                                  chroot=self.m.cros_sdk.chroot, minios=True))
         elif isinstance(src, DLCImage_pb2):
           if not self.m.cros_storage.DLCImage.compatible(tgt, src):
             continue  # pragma: nocover
           reqs.append(
               GenerationRequest(src_dlc_image=src, tgt_dlc_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot))
     return reqs
 
   def get_full_requests(self, tgt_artifacts: List[Image], bucket: str,
@@ -296,14 +278,12 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(full_update=True, tgt_signed_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot,
-                              result_path=self.artifact_result_path))
+                              chroot=self.m.cros_sdk.chroot))
         if minios:
           reqs.append(
               GenerationRequest(full_update=True, tgt_signed_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot, minios=True,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot, minios=True))
       elif isinstance(tgt, UnsignedImage_pb2):
         # We don't create full payloads for unsigned recovery images.
         if tgt.image_type == common_pb2.IMAGE_TYPE_RECOVERY:
@@ -311,20 +291,17 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
         reqs.append(
             GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot,
-                              result_path=self.artifact_result_path))
+                              chroot=self.m.cros_sdk.chroot))
         if minios:
           reqs.append(
               GenerationRequest(full_update=True, tgt_unsigned_image=tgt,
                                 bucket=bucket, verify=verify, dryrun=dryrun,
-                                chroot=self.m.cros_sdk.chroot, minios=True,
-                                result_path=self.artifact_result_path))
+                                chroot=self.m.cros_sdk.chroot, minios=True))
       elif isinstance(tgt, DLCImage_pb2):
         reqs.append(
             GenerationRequest(full_update=True, tgt_dlc_image=tgt,
                               bucket=bucket, verify=verify, dryrun=dryrun,
-                              chroot=self.m.cros_sdk.chroot,
-                              result_path=self.artifact_result_path))
+                              chroot=self.m.cros_sdk.chroot))
     return reqs
 
   def create_au_test_configs(

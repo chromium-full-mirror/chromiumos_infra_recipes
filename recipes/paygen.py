@@ -132,7 +132,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
 
           paygen_parallel_runner.run_function_async(
               do_a_paygen, request, success_handler=lambda resp, req=request,
-              api=api: report_paygen_success_to_snoopy(api, resp)
+              api=api: report_paygen_success_to_snoopy(api, req, resp)
               if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
 
       errors, total_retries = [], 0
@@ -286,13 +286,12 @@ def get_paygen_response_artifacts(
 
 
 def report_paygen_success_to_snoopy(api: RecipeApi,
+                                    req: PaygenProperties.PaygenRequest,
                                     resp: GenerationResponse):
   for artifact in get_paygen_response_artifacts(resp):
     with api.failures.ignore_exceptions():
-      assert artifact.file_path.location is common_pb2.Path.Location.OUTSIDE, (
-          f'Artifact file_path must have Path.Location.OUTSIDE, file_path: {artifact.file_path}'
-      )
-      abspath = artifact.file_path.path
+      abspath = api.path.join(req.generation_request.chroot.path,
+                              artifact.local_path.lstrip('/'))
       file_hash = api.file.file_hash(abspath, test_data='deadbeef')
       api.bcid_reporter.report_gcs(file_hash, artifact.remote_uri)
 
@@ -351,7 +350,6 @@ def GenTests(api: RecipeTestApi):
         step_name='making single payload{}'.format(suffix), data=data,
         retcode=retcode)
 
-  # TODO(b/296444046): Remove when older branches age out.
   # Here to support backwards compatibility on branches
   def generate_legacy_payload_response(
       api: RecipeTestApi, is_success: bool = True, local_path: str = '',
@@ -416,11 +414,7 @@ def GenTests(api: RecipeTestApi):
           }),
       generate_payload_response(
           api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
           }]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
@@ -463,11 +457,7 @@ def GenTests(api: RecipeTestApi):
           }),
       generate_payload_response(
           api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              }
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
           }]),
       api.post_check(post_process.MustRun,
                      'initialization.checkout gerrit change'),
@@ -534,19 +524,11 @@ def GenTests(api: RecipeTestApi):
               {
                   'version': 1,
                   'local_path': '/tmp/aohiwdadoi/delta.bin',
-                  'file_path': {
-                      'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                      'location': 2
-                  },
                   'remote_uri': full_payload_uri,
               },
               {
                   'version': 2,
                   'local_path': '/tmp/aohiwdadoi/delta.bin',
-                  'file_path': {
-                      'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                      'location': 2
-                  },
                   'remote_uri': f'{full_payload_uri}2',
               },
           ]),
@@ -604,11 +586,7 @@ def GenTests(api: RecipeTestApi):
               ], max_concurrent_requests=1)),
       generate_payload_response(
           api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 2
-              },
+              'local_path': '/tmp/aohiwdadoi/delta.bin'
           }]),
       api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
                     stdout=api.raw_io.output(payload_json_data)),
@@ -856,34 +834,4 @@ def GenTests(api: RecipeTestApi):
                      'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
       status='FAILURE',
-  )
-
-  yield api.test(
-      'fail-attest-path-inside-chroot',
-      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
-      api.properties(
-          PaygenProperties(requests=[{
-              'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax']),
-              ],
-          }]), **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
-          }),
-      generate_payload_response(
-          api, versioned_artifacts=[{
-              'local_path': '/tmp/aohiwdadoi/delta.bin',
-              'file_path': {
-                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
-                  'location': 1
-              }
-          }]),
-      api.post_check(
-          post_process.MustRun,
-          'doing paygen.running paygen operations in parallel.ignored exception'
-      ),
-      # api.post_process(post_process.DropExpectation),
   )
