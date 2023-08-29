@@ -264,6 +264,26 @@ class ExonerateApi(recipe_api.RecipeApi):
       new_verdict = TaskState.VERDICT_PASSED
     return new_test_cases, new_verdict
 
+  def _is_task_result_exoneration_elegible(
+      self, result: ExecuteResponse.TaskResult) -> bool:
+    """Returns whether the result is elegible for exoneration."""
+    # Skip exoneration if it passed.
+    if result.state.verdict == TaskState.VERDICT_PASSED:
+      return False
+
+    # Do not exonerate prejob failures.
+    prejob_verdicts = [s.verdict for s in result.prejob_steps]
+    if TaskState.VERDICT_FAILED in prejob_verdicts:
+      return False
+
+    # If all test cases have VERDICT_NO_VERDICT it is likely that none ran.
+    # See b/296463877.
+    if all(
+        tc.verdict == TaskState.VERDICT_NO_VERDICT for tc in result.test_cases):
+      return False
+
+    return True
+
   def _exonerate_child_results(self, results, build_target, board, model=None):
     """Exonerates [ExecuteResponse.TaskResult] based on configs.
 
@@ -282,15 +302,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       return [], common_pb2.FAILURE
     filtered_results = []
     for result in results:
-      prejob_verdicts = [s.verdict for s in result.prejob_steps]
-      if result.state.verdict == TaskState.VERDICT_PASSED:
-        filtered_results.append(result)
-      elif TaskState.VERDICT_FAILED in prejob_verdicts:
-        filtered_results.append(result)
-      elif all(tc.verdict == TaskState.VERDICT_NO_VERDICT
-               for tc in result.test_cases):
-        # Test for case where all test_cases have VERDICT_NO_VERDICT. See b/296463877.
-        # Also tests the case where there are no test_cases.
+      if not self._is_task_result_exoneration_elegible(result):
         filtered_results.append(result)
       else:
         new_result = result
@@ -729,6 +741,9 @@ class ExonerateApi(recipe_api.RecipeApi):
     for result in child_results:
       if result.state.verdict == TaskState.VERDICT_PASSED:
         continue
+      # Certain failure modes are not exonerable.
+      if not self._is_task_result_exoneration_elegible(result):
+        return False
       test_cases = result.test_cases
       for test_case in test_cases:
         test_name = self.m.exoneration_util.get_tastless_name(test_case.name)

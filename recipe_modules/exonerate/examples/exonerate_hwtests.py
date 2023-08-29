@@ -200,6 +200,24 @@ def RunSteps(api):
           test_result_pb2.TestResult(test_id='tast.test4', variant=variant)),
       True)
 
+  # Testing the case of provision failures.
+  child_results = [
+      ExecuteResponse.TaskResult(name='suite1', state=pass_state,
+                                 test_cases=passing_test_cases),
+      ExecuteResponse.TaskResult(
+          name='suite2', state=fail_state,
+          test_cases=failing_exonerable_test_cases, prejob_steps=[
+              ExecuteResponse.TaskResult.TestCaseResult(
+                  name='provision', verdict=TaskState.VERDICT_FAILED)
+          ])
+  ]
+  hw_test_failure = api.skylab_results.test_api.skylab_result(
+      task=api.skylab_results.test_api.skylab_task(), status=common_pb2.FAILURE,
+      child_results=child_results)
+
+  is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failure)
+  api.assertions.assertEqual(is_exonerable, False)
+
 
 def GenTests(api):
   yield api.test(
