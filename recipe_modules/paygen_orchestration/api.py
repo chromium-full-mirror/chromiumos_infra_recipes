@@ -682,6 +682,10 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     """
     is_staging = self.m.cros_infra_config.is_staging
     bucket = self.m.buildbucket.build.builder.bucket
+    # If this was a led run launched as a real build, schedule the build in the
+    # shadowed bucket.
+    if self.m.led.led_build:
+      bucket = self.m.led.shadowed_bucket
     builder = 'staging-paygen' if is_staging else 'paygen'
     props = {'requests': paygen_requests}
     if override_qs_account:

@@ -62,6 +62,19 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
+      'basic-led-real-build',
+      api.buildbucket.build(
+          api.buildbucket.ci_build_message(project='chromeos',
+                                           bucket='staging.shadow',
+                                           builder='paygen-orchestrator')),
+      api.properties(**{'$recipe_engine/led': {
+          'shadowed_bucket': 'staging',
+      }}),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'json.output', ['\"bucket\": \"staging\"']),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
       'conductor-no-retries',
       api.properties(
           **{
