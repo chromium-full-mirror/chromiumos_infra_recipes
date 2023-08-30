@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from google.protobuf import json_format
 from recipe_engine import recipe_api
 from recipe_engine.step_data import StepData
 from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path, jsonify_labpack_input
@@ -28,6 +29,10 @@ class LabpackCommand(recipe_api.RecipeApi):
     self.cipd_label = properties.version.cipd_label or DEFAULT_CIPD_LABEL
     self.cipd_package = properties.version.cipd_package or DEFAULT_CIPD_PACKAGE
     self.downloaded_executable_path = None
+
+  @staticmethod
+  def get_ufs_host() -> str:  # pragma: nocover
+    return "ufs.api.cr.dev"
 
   @staticmethod
   def convert_step_data_to_status(step_data, dut_state):
