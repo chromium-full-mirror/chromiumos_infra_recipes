@@ -65,13 +65,15 @@ class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
   TEST_FAILURE = 'fail'
   TEST_SKIPPED = 'skip'
   TEST_NOT_RUN = 'notrun'
+  TEST_CRASH = 'crash'
 
   def is_failure(self):
     """Whether the job has failed.
 
     Returns: bool
     """
-    return self.get_state_name() in (self.TEST_FAILURE, self.TEST_NOT_RUN)
+    return self.get_state_name() in (self.TEST_FAILURE, self.TEST_NOT_RUN,
+                                     self.TEST_CRASH)
 
   def is_skipped(self):
     """Whether the job was skipped.
