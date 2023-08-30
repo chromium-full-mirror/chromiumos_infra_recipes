@@ -348,38 +348,103 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
             )
     else:
       # Experimental new logic for testing on staging.
-      with api.cros_source.checkout_overlays_context(
-      ), api.workspace_util.sync_to_commit(staging=is_staging,
-                                           projects=BINHOST_PROJECTS):
-        # Processes public builders
-        with api.step.nest('Public binhosts') as presentation:
-          public_prebuilt_entries_len = len(public_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {public_prebuilt_entries_len} binhosts.')
-          if public_prebuilt_entries_len > 0:
-            with api.cros_build_api.parallel_operations():
-              api.cros_prebuilts.set_binhosts(
-                  binhosts=list(
-                      map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                          public_prebuilt_entries)),
-                  private=False,
-                  key=binhost_pb.CQ_BINHOST,
-              )
+      # Processes public builders
+      with api.step.nest('Public binhosts') as presentation:
+        public_prebuilt_entries_len = len(public_prebuilt_entries)
+        presentation.step_summary_text = (
+            f'Set {public_prebuilt_entries_len} binhosts.')
+        if public_prebuilt_entries_len > 0:
+          with api.cros_build_api.parallel_operations():
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        public_prebuilt_entries)),
+                private=False,
+                key=binhost_pb.CQ_BINHOST,
+            )
+      # Processes private builders
+      with api.step.nest('Private binhosts') as presentation:
+        private_prebuilt_entries_len = len(private_prebuilt_entries)
+        presentation.step_summary_text = (
+            f'Set {private_prebuilt_entries_len} binhosts.')
+        if private_prebuilt_entries_len > 0:
+          with api.cros_build_api.parallel_operations():
+            api.cros_prebuilts.set_binhosts(
+                binhosts=list(
+                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                        private_prebuilt_entries)),
+                private=True,
+                key=binhost_pb.CQ_BINHOST,
+            )
 
-        # Processes private builders
-        with api.step.nest('Private binhosts') as presentation:
-          private_prebuilt_entries_len = len(private_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {private_prebuilt_entries_len} binhosts.')
-          if private_prebuilt_entries_len > 0:
-            with api.cros_build_api.parallel_operations():
-              api.cros_prebuilts.set_binhosts(
-                  binhosts=list(
-                      map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                          private_prebuilt_entries)),
-                  private=True,
-                  key=binhost_pb.CQ_BINHOST,
-              )
+
+def update_prebuilts(api, builds, gerrit_change, is_staging,
+                     entire_timeout_sec):
+  """Utility function to try updating the prebuilts.
+
+  If there are pending operations, after waiting for their completion, the
+  logic tries updating them again.
+
+  Args:
+    api: See RunSteps documentation.
+    builds: Name of the step of this process to be shown in the Luci UI.
+    gerrit_change: The gerrit changes to get the corresponding prebuilts to.
+    is_staging: True if wants the results from the staging environment.
+    entire_timeout_sec: Duration to time out the entire operation.
+  """
+
+  # Parameters for the exponential-backoff retries.
+  INITIAL_TIMEOUT_SEC = 2 * 60
+  MAXIMUM_TIMEOUT_SEC = 30 * 60
+  MULTIPLIER_ON_NOT_FOUND = 2
+  start_time = time.time()
+
+  finished_build_targets = set()
+  timeout = INITIAL_TIMEOUT_SEC
+  count = 1
+  while True:
+    name_suffix = '' if count == 1 else f' ({count})'
+    public_prebuilt_entries, private_prebuilt_entries, running_builds = \
+        search_prebuilts(api, 'search the prebuilts' + name_suffix, builds,
+                         gerrit_change, finished_build_targets, is_staging)
+    # Set None for 2nd runs and later to retrieve the latest builds.
+    builds = None
+
+    if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
+      # If any builder finishes, set their binhosts.
+      set_binhosts(api, 'set BINHOSTs' + name_suffix, is_staging,
+                   public_prebuilt_entries, private_prebuilt_entries)
+    else:
+      # Waiting with an exponential backoff algorithm if no builder finishes.
+      timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
+
+    running_builds_len = len(running_builds)
+    if running_builds_len == 0:
+      # There are no running builders to wait for. Finishes the task.
+      break
+
+    finished_build_targets_len = len(finished_build_targets)
+    all_builds_len = len(finished_build_targets) + running_builds_len
+
+    # Adding one sec is a hack for test.
+    if (time.time() - start_time + 1) >= entire_timeout_sec:
+      return '\n'.join([
+          f'Updated {finished_build_targets_len} of {all_builds_len} ' +
+          f'builders after {count} trials.',
+          f'Interrupted: maximum running time ({entire_timeout_sec} sec) ' +
+          'exceeded.',
+      ])
+
+    with api.step.nest(f'waiting {timeout} sec for next retry') as presentation:
+      presentation.step_summary_text = \
+          f'{running_builds_len} of {all_builds_len} builds still running.'
+      api.m.time.sleep(timeout)
+
+    count += 1
+
+  finished_build_targets_len = len(finished_build_targets)
+  return (f'Updated all of {finished_build_targets_len} builders after ' +
+          f'{count} trials.')
 
 
 def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
@@ -391,7 +456,6 @@ def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
 
 def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   is_staging = api.build_menu.is_staging
-  start_time = time.time()
 
   with api.step.nest('search the last merged uprev CL') as pres_search_cls:
     change = get_last_merged_change(api)
@@ -454,54 +518,15 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   # Require to manipulate the reposity (setting BINHOSTS).
   api.cros_source.configure_builder(default_main=True)
 
-  # Parameters for the exponential-backoff retries.
-  INITIAL_TIMEOUT_SEC = 2 * 60
-  MAXIMUM_TIMEOUT_SEC = 30 * 60
-  MULTIPLIER_ON_NOT_FOUND = 2
-
-  finished_build_targets = set()
-  timeout = INITIAL_TIMEOUT_SEC
-  count = 1
-  while True:
-    name_suffix = '' if count == 1 else f' ({count})'
-    public_prebuilt_entries, private_prebuilt_entries, running_builds = \
-        search_prebuilts(api, 'search the prebuilts' + name_suffix, builds,
-                         gerrit_change, finished_build_targets, is_staging)
-    # Set None for 2nd runs and later to retrieve the latest builds.
-    builds = None
-
-    if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
-      # If any builder finishes, set their binhosts.
-      set_binhosts(api, 'set BINHOSTs' + name_suffix, is_staging,
-                   public_prebuilt_entries, private_prebuilt_entries)
-    else:
-      # Waiting with an exponential backoff algorithm if no builder finishes.
-      timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
-
-    running_builds_len = len(running_builds)
-    if running_builds_len == 0:
-      # There are no running builders to wait for. Finishes the task.
-      break
-
-    finished_build_targets_len = len(finished_build_targets)
-    all_builds_len = len(finished_build_targets) + running_builds_len
-
-    # Adding one sec is a hack for test.
-    if (time.time() - start_time + 1) >= entire_timeout_sec:
-      return '\n'.join([
-          f'Updated {finished_build_targets_len} of {all_builds_len} builders after {count} trials.',
-          f'Interrupted: maximum running time ({entire_timeout_sec} sec) exceeded.',
-      ])
-
-    with api.step.nest(f'waiting {timeout} sec for next retry') as presentation:
-      presentation.step_summary_text = \
-          f'{running_builds_len} of {all_builds_len} builds still running.'
-      api.m.time.sleep(timeout)
-
-    count += 1
-
-  finished_build_targets_len = len(finished_build_targets)
-  return f'Updated all of {finished_build_targets_len} builders after {count} trials.'
+  if is_staging:
+    with api.cros_source.checkout_overlays_context(
+    ), api.workspace_util.sync_to_commit(staging=is_staging,
+                                         projects=BINHOST_PROJECTS):
+      return update_prebuilts(api, builds, gerrit_change, is_staging,
+                              entire_timeout_sec)
+  else:
+    return update_prebuilts(api, builds, gerrit_change, is_staging,
+                            entire_timeout_sec)
 
 
 def GenTests(api: RecipeTestApi):

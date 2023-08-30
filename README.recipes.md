@@ -15411,9 +15411,9 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#392)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#457)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#385)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#450)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
 &mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#147)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
@@ -15469,6 +15469,20 @@ Args:
   step_name: Name of the step of this process to be shown in the Luci UI.
   public_prebuilt_entries: Public prebuilts to be set the binhosts of.
   private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
+
+&mdash; **def [update\_prebuilts](/recipes/upload_prebuilts_from_cq.py#381)(api, builds, gerrit_change, is_staging, entire_timeout_sec):**
+
+Utility function to try updating the prebuilts.
+
+If there are pending operations, after waiting for their completion, the
+logic tries updating them again.
+
+Args:
+  api: See RunSteps documentation.
+  builds: Name of the step of this process to be shown in the Luci UI.
+  gerrit_change: The gerrit changes to get the corresponding prebuilts to.
+  is_staging: True if wants the results from the staging environment.
+  entire_timeout_sec: Duration to time out the entire operation.
 ### *recipes* / [uprev\_borealis\_deps](/recipes/uprev_borealis_deps.py)
 
 [DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
