@@ -89,7 +89,7 @@ class Pulp:
     ) as e:
       print(str(e))
     else:
-      with open(os.path.join(path, fn), 'wb', encoding='utf-8') as f:
+      with open(os.path.join(path, fn), 'wb') as f:
         f.write(rv.content)
 
   def _sync_file(self, fn, path):
