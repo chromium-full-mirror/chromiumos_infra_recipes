@@ -6,13 +6,15 @@
 from PB.recipe_modules.chromeos.signing.signing import (SigningProperties)
 
 DEPS = [
-    'cros_build_api',
+    'depot_tools/gitiles',
     'depot_tools/gsutil',
-    'easy',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
+    'cros_build_api',
+    'cros_infra_config',
+    'easy',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

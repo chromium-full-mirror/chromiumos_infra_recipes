@@ -7,10 +7,14 @@ import re
 from json import JSONDecodeError
 from typing import Any, Dict, List, NewType, Optional
 
+from google.protobuf.text_format import Parse
+
 from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.signing import BuildTargetSigningConfigs
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
+from recipe_engine.recipe_api import StepFailure
 
 BuildConfig = BuildReport.BuildConfig
 
@@ -26,6 +30,17 @@ _DETAILS = 'details'
 INSTRUCTIONS_PATTERN = re.compile(r'^gs://[^/]+/(.*)/[^/]+\.instructions$')
 
 InstructionsMetadata = NewType('InstructionsMetadata', Any)
+
+CONFIG_INTERNAL_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
+SIGNING_CONFIG_FILEPATH = 'board_config/generated/signing_config.textproto'
+SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
+  build_target: "eve"
+  signing_configs {
+    keyset: "eve-foo-bar"
+    ensure_no_password: true
+    firmware_update: true
+  }
+}'''
 
 
 class SigningApi(recipe_api.RecipeApi):
@@ -46,10 +61,25 @@ class SigningApi(recipe_api.RecipeApi):
   def local_signing(self) -> bool:
     return self._local_signing
 
+  def get_config(self) -> BuildTargetSigningConfigs:
+    """Fetch signing config from the appropriate branch of config-internal."""
+    with self.m.step.nest('fetch signing config'):
+      try:
+        branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
+      except AttributeError as e:
+        raise StepFailure('could not get branch from builder config') from e
+      signing_config_textproto = self.m.gitiles.download_file(
+          CONFIG_INTERNAL_REPO_URL, SIGNING_CONFIG_FILEPATH, branch=branch,
+          step_test_data=lambda: self.m.gitiles.test_api.make_encoded_file(
+              SIGNING_CONFIG_TEST_DATA))
+      signing_config = Parse(signing_config_textproto,
+                             BuildTargetSigningConfigs())
+      return signing_config
+
   def sign_artifacts(self) -> None:
     """Stub implementation for local signing flow."""
     if not self.local_signing:
-      raise Exception(
+      raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
     # noop
 
