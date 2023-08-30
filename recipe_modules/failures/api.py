@@ -24,6 +24,7 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
 
 
 class FailuresApi(RecipeApi):
@@ -44,6 +45,8 @@ class FailuresApi(RecipeApi):
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
   # Test kind for hw tests.
   HW_TEST = 'hw test'
+  # Test kind for vm tests.
+  VM_TEST = 'vm test'
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
@@ -346,6 +349,8 @@ class FailuresApi(RecipeApi):
 
       if kind == self.HW_TEST:
         lines = self.aggregate_hw_test_failures(failure_group, non_fatal_failures_count_by_kind)
+      elif kind == self.VM_TEST:
+        lines = self.aggregate_vm_test_failures(failure_group, non_fatal_failures_count_by_kind)
       else:
         lines = self.aggregrate_failure_group(kind, failure_group, non_fatal_failures_count_by_kind, failure_count, total_count)
 
@@ -412,6 +417,54 @@ class FailuresApi(RecipeApi):
 
     return lines
 
+  def aggregate_vm_test_failures(self,
+      vm_test_failures: List[Failure],
+      non_fatal_failures_count_by_kind: collections.Counter) -> List[str]:
+    """Returns aggregate test failure markdown text for VM tests,
+    distinguishing between test and shard / suite failures, and grouping
+    failures from different shards in the same suite together.
+
+    Args:
+      vm_test_failures: List of all the failures for the specific kind.
+      non_fatal_failures_count_by_kind: Counter of each failure kind to its
+        non-fatal failure count.
+
+    Returns:
+      List of summary markdown lines.
+    """
+
+    # This summary markdown section will look roughly as follows:
+    #
+    # 2 vm tests failed. 1 vm test suite failed with incomplete results (1 additional non-critical failure)
+    # - betty-pi-arc-cq.tast_vm
+    #     - <a>login.ExistingUser</a>
+    #     - <a>test page</a>
+    # - reven-vmtest-cq.tast_vm
+    #     - <a>login.ExistingUser</a>
+    # ...
+
+    vm_test_shard_pattern = r'^{}$'.format(VM_FAILURE_LINK_TEXT)
+    main_line = self.get_test_failure_main_line(vm_test_shard_pattern, self.VM_TEST, vm_test_failures, non_fatal_failures_count_by_kind)
+    lines = [main_line]
+    failures_to_print = vm_test_failures[:self._failure_truncate_max]
+    failures_grouped_by_suite = collections.defaultdict(list)
+    grouped_title_pattern = r'(?P<suite>[^\.]+\.[^\.]+)(?P<shard>.+)?'
+
+    for failure in failures_to_print:
+      key = re.match(grouped_title_pattern, failure.title)
+      key = key.group('suite') if key else failure.title
+      failures_grouped_by_suite[key].extend([(k, v) for k, v in failure.link_map.items()])
+
+    for title, link_map_items in failures_grouped_by_suite.items():
+      line = '- {}'.format(title)
+      lines.append(line)
+
+      for link_text, link_url in link_map_items:
+        line = '    - [{}]({})'.format(link_text, link_url)
+        lines.append(line)
+
+    return lines
+
   def aggregate_hw_test_failures(self,
       hw_test_failures: List[Failure],
       non_fatal_failures_count_by_kind: collections.Counter) -> List[str]:
@@ -440,39 +493,8 @@ class FailuresApi(RecipeApi):
 
     # This regex works on the assumption that suite / shard failures should have
     # a reason associated e.g. tast.fingerprint-cq (timed out while running).
-    kind = self.HW_TEST
     hw_test_shard_pattern = r'^\b\S+\b\s+.+$'
-    hw_test_failed_count = 0
-    hw_shard_failed_count = 0
-    for failure in hw_test_failures:
-      if len(failure.link_map.items()) == 0:
-        hw_shard_failed_count += 1
-
-      for link_text, _ in failure.link_map.items():
-        if re.match(hw_test_shard_pattern, link_text):
-          hw_shard_failed_count += 1
-        else:
-          hw_test_failed_count += 1
-
-    main_line = ''
-    if hw_test_failed_count > 0:
-      main_line += '{} {} failed'.format(
-          hw_test_failed_count,
-          kind + 's' if hw_test_failed_count > 1 else kind,
-      )
-
-    if hw_shard_failed_count > 0:
-      if main_line:
-        main_line += '. '
-      main_line += '{} {} suite{} failed with incomplete results'.format(
-          hw_shard_failed_count,
-          kind,
-          's' if hw_shard_failed_count > 1 else '',
-      )
-
-    main_line += \
-      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
-
+    main_line = self.get_test_failure_main_line(hw_test_shard_pattern, self.HW_TEST, hw_test_failures, non_fatal_failures_count_by_kind)
     lines = [main_line]
     failures_to_print = hw_test_failures[:self._failure_truncate_max]
 
@@ -484,6 +506,54 @@ class FailuresApi(RecipeApi):
         lines.append(line)
 
     return lines
+
+  def get_test_failure_main_line(self, shard_pattern: str,
+      kind: str, failure_group: List[Failure],
+      non_fatal_failures_count_by_kind: collections.Counter) -> str:
+    """Returns the main line of the summary markdown.
+
+    Args:
+      kind: The failure kind.
+      shard_pattern: The regex pattern used to identify suite / shard failures.
+      failure_group: List of all the failures for the specified kind.
+      non_fatal_failures_count_by_kind: Counter of each failure kind to its
+        non-fatal failure count.
+
+    Returns:
+      Main line of the summary markdown.
+    """
+    shard_failure_count = 0
+    test_failure_count = 0
+    for failure in failure_group:
+      if len(failure.link_map.items()) == 0:
+        shard_failure_count += 1
+
+      for link_text, link_url in failure.link_map.items():
+        if re.match(shard_pattern, link_text):
+          shard_failure_count += 1
+        else:
+          test_failure_count += 1
+
+    main_line = ''
+    if test_failure_count > 0:
+      main_line += '{} {} failed'.format(
+          test_failure_count,
+          kind + 's' if test_failure_count > 1 else kind,
+      )
+
+    if shard_failure_count > 0:
+      if main_line:
+        main_line += '. '
+      main_line += '{} {} suite{} failed with incomplete results'.format(
+          shard_failure_count,
+          kind,
+          's' if shard_failure_count > 1 else '',
+      )
+
+    main_line += \
+      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
+
+    return main_line
 
   def get_non_critical_failures_text(self,
       kind: str,
@@ -643,7 +713,7 @@ class FailuresApi(RecipeApi):
       successes.
     """
     get_id = self.m.naming.get_vm_test_title
-    return self._get_results('vm test', vm_tests, self.get_build_status,
+    return self._get_results(self.VM_TEST, vm_tests, self.get_build_status,
                              self.m.buildbucket.is_critical,
                              self.m.naming.get_vm_test_title,
                              self.m.urls.get_vm_test_link_map, get_id)

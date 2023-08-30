@@ -63,6 +63,15 @@ def RunSteps(api):
           }, fatal=True, id='id-9'),
       api.failures.Failure(kind='hw test', title='no-links-test', link_map={},
                            fatal=True, id='id-10'),
+      api.failures.Failure(kind='vm test', title='vm-test-1.tast.shard_1',
+                           link_map={'some-vm-test-from-shard-1': 'test-1.com'},
+                           fatal=True, id='id-11'),
+      api.failures.Failure(kind='vm test', title='vm-test-1.tast.shard_2',
+                           link_map={'some-vm-test-from-shard-2': 'test-2.com'},
+                           fatal=True, id='id-12'),
+      api.failures.Failure(kind='vm test', title='vm-test-2.tast.shard_1',
+                           link_map={'test page': 'shard.com'}, fatal=True,
+                           id='id-13'),
   ]
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
   final_result = api.failures.aggregate_failures(results)
@@ -96,6 +105,18 @@ def RunSteps(api):
 1 out of 1 test failed (2 additional non-critical failures)
 
 - test-a: [subtest-1](test-a.com)
+
+2 vm tests failed. 1 vm test suite failed with incomplete results
+
+- vm-test-1.tast
+
+    - [some-vm-test-from-shard-1](test-1.com)
+
+    - [some-vm-test-from-shard-2](test-2.com)
+
+- vm-test-2.tast
+
+    - [test page](shard.com)
 
 1 non-critical very_different_kind_of_test failed''',
       final_result.summary_markdown)

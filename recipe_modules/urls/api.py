@@ -20,6 +20,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
 _LOGDOG_URL_TEMPLATE = (
     'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
     '+/u/%(step_name)s/%(log_name)s')
+VM_FAILURE_LINK_TEXT = 'test page'
 
 
 class UrlsApi(recipe_api.RecipeApi):
@@ -58,7 +59,7 @@ class UrlsApi(recipe_api.RecipeApi):
           link_map[test_case_json['name']] = link_url
 
       return link_map
-    return {'test page': link_url}
+    return {VM_FAILURE_LINK_TEXT: link_url}
 
   @staticmethod
   def get_skylab_task_url(skylab_task: SkylabTask) -> str:
