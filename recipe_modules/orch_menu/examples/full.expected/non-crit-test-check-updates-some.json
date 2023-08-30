@@ -13927,7 +13927,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:\n\n\n\n\ud83d\udce2: If this CQ attempt failed on an unrelated test, please read go/chromeos-cq-customization-psa"
+      "humanReason": "1 hw test suite failed with incomplete results (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite\n\n\n\n\ud83d\udce2: If this CQ attempt failed on an unrelated test, please read go/chromeos-cq-customization-psa"
     },
     "name": "$result"
   }

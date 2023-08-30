@@ -53,6 +53,16 @@ def RunSteps(api):
       api.failures.Failure(kind='very_different_kind_of_test', title='test-y',
                            link_map={'test-y': 'test-y.com'}, fatal=False,
                            id='id-7'),
+      api.failures.Failure(kind='hw test', title='test-1',
+                           link_map={'test-1': 'test-1.com'}, fatal=True,
+                           id='id-8'),
+      api.failures.Failure(
+          kind='hw test', title='test-2', link_map={
+              'test-2': 'test-2.com',
+              'test-shard-0 (timed out)': 'shard.com'
+          }, fatal=True, id='id-9'),
+      api.failures.Failure(kind='hw test', title='no-links-test', link_map={},
+                           fatal=True, id='id-10'),
   ]
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
   final_result = api.failures.aggregate_failures(results)
@@ -68,6 +78,20 @@ def RunSteps(api):
 1 out of 1 different_kind_of_test failed
 
 - test-x: [test-x](test-x.com)
+
+2 hw tests failed. 2 hw test suites failed with incomplete results
+
+- no-links-test
+
+- test-1
+
+    - [test-1](test-1.com)
+
+- test-2
+
+    - [test-2](test-2.com)
+
+    - [test-shard-0 (timed out)](shard.com)
 
 1 out of 1 test failed (2 additional non-critical failures)
 
@@ -96,8 +120,9 @@ def RunSteps(api):
   ]
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
-  api.assertions.assertIn('1 out of 1 hw test failed\n\n...',
-                          final_result.summary_markdown)
+  api.assertions.assertIn(
+      '2 hw tests failed\n\n- test-a\n\n    - [subtest-1](testlink.com)\n\n...',
+      final_result.summary_markdown)
   api.failures.set_exoneration_markdown(markdown_txt='some suites exonerated')
 
 

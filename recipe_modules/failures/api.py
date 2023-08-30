@@ -9,6 +9,7 @@ from __future__ import annotations
 import collections
 import contextlib
 import operator
+import re
 
 from typing import Dict, List, Optional
 from dataclasses import dataclass, field
@@ -41,9 +42,12 @@ class FailuresApi(RecipeApi):
   #       display_name.
   Failure = collections.namedtuple('Failure',
                                    ['kind', 'title', 'link_map', 'fatal', 'id'])
+  # Test kind for hw tests.
+  HW_TEST = 'hw test'
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
+    self._failure_truncate_max = 10
     self._exoneration_markdown = None
     self._caught_exceptions = {}
 
@@ -331,15 +335,6 @@ class FailuresApi(RecipeApi):
     for failure in fatal_failures:
       failures_by_kind[failure.kind].append(failure)
 
-    # The summary markdown will look roughly as follows:
-    #
-    # 1 out of 10 build failed (1 additional non-critical failure)
-    # - chromeos.cq.nami-cq: <a>build page<\a>
-    #
-    # 2 out of 20 hw tests failed
-    # - hw.coral.bvt-cq: <a>Graphics_Something<\a>
-    # - hw.coral.bvt-tast-cq: <a>Cheets_SomethingElse<\a>
-    # ...
     summary_lines = [exoneration_summary] if exoneration_summary else []
     for kind in sorted(failures_by_kind):
       failure_group = sorted(failures_by_kind[kind],
@@ -349,27 +344,13 @@ class FailuresApi(RecipeApi):
       if kind in results.successes:
         total_count += results.successes[kind]
 
-      main_line = '{} out of {} {} failed'.format(
-          failure_count,
-          total_count,
-          kind + 's' if total_count > 1 else kind,
-      )
-      if kind in non_fatal_failures_count_by_kind:
-        non_fatal_count = non_fatal_failures_count_by_kind[kind]
-        main_line += ' ({} additional non-critical failure{})'.format(
-            non_fatal_count, 's' if non_fatal_count > 1 else '')
-        del non_fatal_failures_count_by_kind[kind]
+      if kind == self.HW_TEST:
+        lines = self.aggregate_hw_test_failures(failure_group, non_fatal_failures_count_by_kind)
+      else:
+        lines = self.aggregrate_failure_group(kind, failure_group, non_fatal_failures_count_by_kind, failure_count, total_count)
 
-      lines = [main_line]
-      truncate_max = 10
-      failures_to_print = failure_group[0:truncate_max]
-      for failure in failures_to_print:
-        line = '- {}:'.format(failure.title)
-        for link_text, link_url in failure.link_map.items():
-          line += ' [{}]({})'.format(link_text, link_url)
-        lines.append(line)
-      if failure_count > truncate_max:
-        lines.append('- ...and {} others'.format(failure_count - truncate_max))
+      if failure_count > self._failure_truncate_max:
+        lines.append('- ...and {} others'.format(failure_count - self._failure_truncate_max))
       summary_lines.extend(lines)
 
     for kind in non_fatal_failures_count_by_kind:
@@ -377,7 +358,7 @@ class FailuresApi(RecipeApi):
       summary_lines.append('{} non-critical {} failed'.format(
           non_fatal_count, kind + 's' if non_fatal_count > 1 else kind))
 
-    if 'hw test' in failures_by_kind:
+    if self.HW_TEST in failures_by_kind:
       summary_lines.append('')
       summary_lines.append('📢: If this CQ attempt failed on an unrelated test, '
                            'please read go/chromeos-cq-customization-psa')
@@ -386,6 +367,141 @@ class FailuresApi(RecipeApi):
 
     return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
+
+  def aggregrate_failure_group(self, kind: str,
+      failure_group: List[Failure],
+      non_fatal_failures_count_by_kind: collections.Counter,
+      failure_count: int,
+      total_count: int) -> List[str]:
+    """Returns aggregate failure markdown text.
+
+    Args:
+      kind: The failure kind.
+      failure_group: List of all the failures for the specific kind.
+      non_fatal_failures_count_by_kind: Counter of each failure kind to its
+        non-fatal failure count.
+      failure_count: Number of failures
+      total_count: Number of all entries
+
+    Returns:
+      List of summary markdown lines.
+    """
+
+    # This summary markdown section will look roughly as follows:
+    #
+    # 2 out of 10 build failed (1 additional non-critical failure)
+    # - asurada-cq: <a>build page<\a>
+    # - atlas-cq: <a>build page<\a>
+    # ...
+    main_line = '{} out of {} {} failed'.format(
+        failure_count,
+        total_count,
+        kind + 's' if total_count > 1 else kind,
+    )
+
+    main_line += \
+      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
+
+    lines = [main_line]
+    failures_to_print = failure_group[0:self._failure_truncate_max]
+    for failure in failures_to_print:
+      line = '- {}:'.format(failure.title)
+      for link_text, link_url in failure.link_map.items():
+        line += ' [{}]({})'.format(link_text, link_url)
+      lines.append(line)
+
+    return lines
+
+  def aggregate_hw_test_failures(self,
+      hw_test_failures: List[Failure],
+      non_fatal_failures_count_by_kind: collections.Counter) -> List[str]:
+    """Returns aggregate test failure markdown text for HW tests,
+    distinguishing between test and shard / suite failures.
+
+    Args:
+      hw_test_failures: List of all the hw test failures.
+      non_fatal_failures_count_by_kind: Counter of each failure kind to its
+        non-fatal failure count.
+
+    Returns:
+      List of summary markdown lines.
+    """
+
+    # This summary markdown section will look roughly as follows:
+    #
+    # 3 hw tests failed. 1 hw test suite failed with incomplete results (1 additional non-critical failure)
+    # - brya-cq.hw.cq-medium
+    #     - <a>tast.firmware.something</a>
+    #     - <a>tast.firmware.somethingElse</a>
+    #     - <a>cq-medium-shard-1 - provisioning_failed</a>
+    # - zork-cq.hw.cq-medium
+    #     - <a>tast.firmware.something</a>
+    # ...
+
+    # This regex works on the assumption that suite / shard failures should have
+    # a reason associated e.g. tast.fingerprint-cq (timed out while running).
+    kind = self.HW_TEST
+    hw_test_shard_pattern = r'^\b\S+\b\s+.+$'
+    hw_test_failed_count = 0
+    hw_shard_failed_count = 0
+    for failure in hw_test_failures:
+      if len(failure.link_map.items()) == 0:
+        hw_shard_failed_count += 1
+
+      for link_text, _ in failure.link_map.items():
+        if re.match(hw_test_shard_pattern, link_text):
+          hw_shard_failed_count += 1
+        else:
+          hw_test_failed_count += 1
+
+    main_line = ''
+    if hw_test_failed_count > 0:
+      main_line += '{} {} failed'.format(
+          hw_test_failed_count,
+          kind + 's' if hw_test_failed_count > 1 else kind,
+      )
+
+    if hw_shard_failed_count > 0:
+      if main_line:
+        main_line += '. '
+      main_line += '{} {} suite{} failed with incomplete results'.format(
+          hw_shard_failed_count,
+          kind,
+          's' if hw_shard_failed_count > 1 else '',
+      )
+
+    main_line += \
+      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
+
+    lines = [main_line]
+    failures_to_print = hw_test_failures[:self._failure_truncate_max]
+
+    for failure in failures_to_print:
+      line = '- {}'.format(failure.title)
+      lines.append(line)
+      for link_text, link_url in failure.link_map.items():
+        line = '    - [{}]({})'.format(link_text, link_url)
+        lines.append(line)
+
+    return lines
+
+  def get_non_critical_failures_text(self,
+      kind: str,
+      non_fatal_failures_count_by_kind: collections.Counter) -> str:
+    """Returns a line summarizing the non-critical failures for the kind.
+
+    Args:
+      kind: The failure kind.
+      non_fatal_failures_count_by_kind: Counter of each failure kind to its
+        non-fatal failure count.
+    """
+    if kind in non_fatal_failures_count_by_kind:
+      non_fatal_count = non_fatal_failures_count_by_kind[kind]
+      del non_fatal_failures_count_by_kind[kind]
+      return ' ({} additional non-critical failure{})'.format(
+          non_fatal_count, 's' if non_fatal_count > 1 else '')
+
+    return ''
 
   def _format_summary_markdown(self, summary_lines):
     """Aggregate individual failure summary lines.
@@ -480,7 +596,7 @@ class FailuresApi(RecipeApi):
       successes.
     """
     get_id = self.m.naming.get_skylab_result_title
-    return self._get_results('hw test', hw_tests, self.get_hwtest_status,
+    return self._get_results(self.HW_TEST, hw_tests, self.get_hwtest_status,
                              self.is_hw_test_critical,
                              self.m.naming.get_skylab_result_title,
                              self.m.urls.get_skylab_result_link_map, get_id)
