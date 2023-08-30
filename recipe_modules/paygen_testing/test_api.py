@@ -119,6 +119,10 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
       dlc_image='dlc.img',
   )
 
+  ARTIFACT_RESULT_PATH = common_pb2.ResultPath(
+      path=common_pb2.Path(path='[CLEANUP]/chromiumos_workspace/artifacts',
+                           location=common_pb2.Path.OUTSIDE))
+
   @property
   def EXAMPLE_GEN_REQUEST_DELTA_DLC(self) -> List[GenerationRequest]:
     return [
@@ -129,6 +133,7 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
 
@@ -142,11 +147,13 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         ),
         GenerationRequest(full_update=True,
                           tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
                           verify=True, dryrun=True,
-                          chroot=self.m.cros_sdk.chroot(), minios=True)
+                          chroot=self.m.cros_sdk.chroot(), minios=True,
+                          result_path=self.ARTIFACT_RESULT_PATH)
     ]
 
   @property
@@ -160,6 +167,7 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
 
@@ -173,6 +181,7 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
 
@@ -186,11 +195,13 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         ),
         GenerationRequest(src_unsigned_image=self.UNSIGNED_TGT,
                           tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
                           verify=True, dryrun=False,
-                          chroot=self.m.cros_sdk.chroot(), minios=True)
+                          chroot=self.m.cros_sdk.chroot(), minios=True,
+                          result_path=self.ARTIFACT_RESULT_PATH)
     ]
 
   @property
@@ -203,9 +214,11 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
+            result_path=self.ARTIFACT_RESULT_PATH,
         ),
         GenerationRequest(src_signed_image=self.SIGNED_SRC,
                           tgt_signed_image=self.SIGNED_TGT, bucket='b',
                           verify=True, dryrun=False,
-                          chroot=self.m.cros_sdk.chroot(), minios=True)
+                          chroot=self.m.cros_sdk.chroot(), minios=True,
+                          result_path=self.ARTIFACT_RESULT_PATH)
     ]

@@ -20,6 +20,18 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "ensure_installed",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -46,7 +58,194 @@
       "-pid",
       "12345"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "snoop: report_stage"
+  },
+  {
+    "cmd": [],
+    "name": "dropping cores"
+  },
+  {
+    "cmd": [
+      "nproc"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "cat",
+      "/sys/devices/system/cpu/offline"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.ensure all cpus online",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu1/online"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.drop 5 cpu cores",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu2/online"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.drop 5 cpu cores (2)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu3/online"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.drop 5 cpu cores (3)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu4/online"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.drop 5 cpu cores (4)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "tee",
+      "/sys/devices/system/cpu/cpu5/online"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dropping cores.drop 5 cpu cores (5)",
+    "stdin": "0",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set enabled_cpu_cores",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@enabled_cpu_cores@3@@@"
+    ]
   },
   {
     "cmd": [],
@@ -88,6 +287,18 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -152,13 +363,25 @@
       "-root",
       "[START_DIR]/cipd-support",
       "-ensure-file",
-      "chromiumos/infra/support/${platform} prod",
+      "chromiumos/infra/support/${platform} staging",
       "-max-threads",
       "0",
       "-json-output",
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.ensure support CIPD package.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -166,7 +389,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -180,13 +403,25 @@
       "[START_DIR]/cipd-support/gitiles-fetch-ref"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -204,7 +439,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -212,7 +447,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -225,6 +460,18 @@
     ],
     "env": {
       "VIRTUAL_ENV": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "set gcloud project"
   },
@@ -262,9 +509,21 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -289,6 +548,18 @@
       "name="
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -321,6 +592,18 @@
       "name=initial-chromeos-source-snapshot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -353,6 +636,18 @@
       "name=initial-chromeos-source-snapshot-fallback"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot-fallback",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -393,6 +688,18 @@
       "json(name)"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -419,6 +726,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.ensure mount directory exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -437,6 +756,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.mount disk internal-cros",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -455,6 +786,18 @@
     "env": {
       "VIRTUAL_ENV": "1"
     },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.determine UUID",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -471,6 +814,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.update fstab for /dev/sds",
     "stdin": "UUID=860a9e6a-f624-4f86-a00d-33a5cede3430 /snapshot_mounts/chromeos ext4 discard,defaults,noatime,nofail 0 2",
     "~followup_annotations": [
@@ -489,6 +844,18 @@
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.write overlayfs branch file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -511,6 +878,18 @@
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.set disk to autodelete",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -525,14 +904,26 @@
       "/path/to/tmp/json",
       "copy",
       "initial-chromeos-source-snapshot",
-      "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
+      "[CACHE]/infra_versions/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromeos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@staging-chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromeos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -554,6 +945,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -586,6 +989,18 @@
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -604,6 +1019,18 @@
       "[CACHE]/chromeos/workdir/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -622,6 +1049,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -640,6 +1079,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "mount overlay chromeos.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -658,6 +1109,18 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "ensure chroot directory"
   },
   {
@@ -667,6 +1130,18 @@
       "-stage",
       "fetch"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "snoop: report_stage (2)"
   },
   {
@@ -683,6 +1158,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.git config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -698,6 +1185,18 @@
     ],
     "cwd": "[CLEANUP]",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.git config (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -723,6 +1222,18 @@
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.mount overlay workspace.create upperdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -741,6 +1252,18 @@
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.mount overlay workspace.create workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -759,6 +1282,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.mount overlay workspace.create mount path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -777,6 +1312,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.mount overlay workspace.mount",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -787,7 +1334,7 @@
     "name": "initialization.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -798,15 +1345,27 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -818,7 +1377,7 @@
     "name": "initialization.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
     ]
   },
   {
@@ -834,6 +1393,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.ensure root path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -846,10 +1417,9 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "snapshot",
+      "staging-snapshot",
       "--groups",
       "paygen",
-      "--repo-rev=stable",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -862,6 +1432,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo init",
     "timeout": 900,
     "~followup_annotations": [
@@ -890,6 +1472,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo binary update.repo version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -903,6 +1497,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo binary update.git checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -923,6 +1529,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo binary update.repo selfupdate",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -943,6 +1561,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo binary update.repo version (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -961,6 +1591,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.clear repo locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -993,6 +1635,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.clear git locks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1027,6 +1681,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.ensure clean checkout.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1057,6 +1723,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.ensure clean checkout.repo forall (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1091,6 +1769,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo sync",
     "timeout": 3600,
     "~followup_annotations": [
@@ -1126,6 +1816,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1172,6 +1874,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.ensure synced checkout.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1185,15 +1899,27 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1206,6 +1932,18 @@
       "-rf",
       "[CLEANUP]/chromiumos_workspace/src/config-internal"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.remove repo cruft",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1231,6 +1969,18 @@
       "[CLEANUP]/chromiumos_workspace/src/config-internal"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.clone config-internal from main branch.git clone",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1254,6 +2004,18 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.changing permissions of [CACHE]/cros_chroot/chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1271,10 +2033,10 @@
       "@@@STEP_LOG_LINE@sdk manifest url@Url in config: https://chrome-internal.googlesource.com/chromeos/manifest-internal@@@",
       "@@@STEP_LOG_LINE@sdk manifest url@Url on disk: @@@",
       "@@@STEP_LOG_END@sdk manifest url@@@",
-      "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: snapshot@@@",
+      "@@@STEP_LOG_LINE@sdk manifest branch@Branch in config: staging-snapshot@@@",
       "@@@STEP_LOG_LINE@sdk manifest branch@Branch on disk: @@@",
       "@@@STEP_LOG_END@sdk manifest branch@@@",
-      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash in config: snapshot-HEAD-SHA@@@",
+      "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash in config: staging-snapshot-HEAD-SHA@@@",
       "@@@STEP_LOG_LINE@sdk snapshot hash@Snapshot hash on disk: @@@",
       "@@@STEP_LOG_END@sdk snapshot hash@@@",
       "@@@SET_BUILD_PROPERTY@sdk_cache@\"none\"@@@"
@@ -1292,6 +2054,18 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.check SDK in named cache.read sdk cache state json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1310,6 +2084,18 @@
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.check SDK in named cache.remove sdk version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1348,6 +2134,18 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.call chromite.api.SdkService/Create.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1368,6 +2166,18 @@
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "initialization.init sdk.call chromite.api.SdkService/Create.call build API script",
     "~followup_annotations": [
@@ -1391,6 +2201,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.call chromite.api.SdkService/Create.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1429,6 +2251,7 @@
       "@@@STEP_LOG_LINE@published event@      \"version\": 123@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"initialization|init sdk|call chromite.api.SdkService/Create|call build API script\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
@@ -1439,7 +2262,7 @@
     "name": "initialization.init sdk.call chromite.api.SdkService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBBAoCCHvaAlFpbml0aWFsaXphdGlvbnxpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBBAoCCHvQAtDsgNmu8bWSfNoCUWluaXRpYWxpemF0aW9ufGluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -1457,8 +2280,20 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBBAoCCHvaAlFpbml0aWFsaXphdGlvbnxpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIxIDE/QQQgMq17gEiBgjGgMT9BMIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBBAoCCHvQAtDsgNmu8bWSfNoCUWluaXRpYWxpemF0aW9ufGluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1487,6 +2322,18 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.read chromeos version.read chromeos_version.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1504,10 +2351,22 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
+      "staging-snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.read chromeos version.read snapshot.git fetch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -1521,6 +2380,18 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.read chromeos version.read snapshot.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -1530,11 +2401,23 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.read chromeos version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -1560,6 +2443,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.link chroot in chromiumos_workspace.ensure chromiumos_workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1577,6 +2472,18 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "initialization.init sdk.link chroot in chromiumos_workspace.link chromiumos_workspace to chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1604,6 +2511,18 @@
       "-stage",
       "compile"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "doing paygen.snoop: report_stage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1622,6 +2541,18 @@
       "[CLEANUP]/chromiumos_workspace/artifacts"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "doing paygen.create artifact_result_path",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1634,32 +2565,23 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"generationRequest\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"srcUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable-channel\"@@@",
-      "@@@STEP_LOG_LINE@request@      },@@@",
-      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"tgtUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable-channel\"@@@",
-      "@@@STEP_LOG_LINE@request@      },@@@",
-      "@@@STEP_LOG_LINE@request@      \"imageType\": \"IMAGE_TYPE_TEST\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"fullUpdate\": true,@@@",
       "@@@STEP_LOG_LINE@request@    \"bucket\": \"b\",@@@",
       "@@@STEP_LOG_LINE@request@    \"verify\": true,@@@",
+      "@@@STEP_LOG_LINE@request@    \"dryrun\": true,@@@",
+      "@@@STEP_LOG_LINE@request@    \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"version\": \"13425.90.0\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"bucket\": \"b\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcId\": \"termina-dlc\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcPackage\": \"package\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"dlcImage\": \"dlc.img\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -1673,9 +2595,10 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"srcVersion\": \"123\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"srcChannel\": \"canary-channel\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -1687,34 +2610,25 @@
     "name": "doing paygen.running paygen operations in parallel.making single payload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Unsigned IMAGE_TYPE_TEST stable-channel | Delta-N2N (13425.90.0-13425.90.0)@@@",
+      "@@@STEP_TEXT@DLC (termina-dlc) stable-channel | Full (13425.90.0)@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"srcUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@      },@@@",
-      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable-channel\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"imageType\": 3,@@@",
-      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"tgtUnsignedImage\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@      },@@@",
-      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable-channel\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"imageType\": 3,@@@",
-      "@@@STEP_LOG_LINE@request@    \"milestone\": \"86\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"fullUpdate\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"bucket\": \"b\",@@@",
       "@@@STEP_LOG_LINE@request@  \"verify\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"dryrun\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"tgtDlcImage\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"build\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"version\": \"13425.90.0\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"bucket\": \"b\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"channel\": \"stable-channel\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcId\": \"termina-dlc\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcPackage\": \"package\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"dlcImage\": \"dlc.img\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -1727,7 +2641,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"failure_reason\": null, \"success\": true, \"versioned_artifacts\": [{\"file_path\": {\"location\": 1, \"path\": \"/path/to/cros_chroot/out/tmp/delta.bin\"}, \"local_path\": \"/tmp/aohiwdadoi/delta.bin\"}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1739,10 +2653,22 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"srcUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"tgtUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"fullUpdate\": true,\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"dryrun\": true,\n  \"tgtDlcImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"dlcId\": \"termina-dlc\",\n    \"dlcPackage\": \"package\",\n    \"dlcImage\": \"dlc.img\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "doing paygen.running paygen operations in parallel.making single payload.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1763,6 +2689,18 @@
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "doing paygen.running paygen operations in parallel.making single payload.call build API script",
     "~followup_annotations": [
@@ -1786,6 +2724,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "doing paygen.running paygen operations in parallel.making single payload.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -1805,7 +2755,7 @@
     "name": "doing paygen.running paygen operations in parallel.ignored exception",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@caught exception@StepFailure('Artifact file_path must have Path.Location.OUTSIDE, file_path: ')@@@",
+      "@@@STEP_LOG_LINE@caught exception@StepFailure('Artifact file_path must have Path.Location.OUTSIDE, file_path: path: \"/path/to/cros_chroot/out/tmp/delta.bin\"\\nlocation: INSIDE\\n')@@@",
       "@@@STEP_LOG_END@caught exception@@@"
     ]
   },
@@ -1814,152 +2764,15 @@
     "name": "doing paygen.running paygen operations in parallel.set caught_exceptions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"doing paygen.running paygen operations in parallel.ignored exception\": \"StepFailure('Artifact file_path must have Path.Location.OUTSIDE, file_path: ')\"}@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc.json"
-    ],
-    "infra_step": true,
-    "name": "doing paygen.gsutil cat gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"appid\": \"appid\",@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_signature\": \"signature\",@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_size\": 1337,@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"size\": 1234,@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"source_version\": \"1.2.3\",@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"target_version\": \"4.5.6\",@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"sha256_hex\": \"deadbeef\",@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@  \"is_delta\": true@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"doing paygen.running paygen operations in parallel.ignored exception\": \"StepFailure('Artifact file_path must have Path.Location.OUTSIDE, file_path: path: \\\"/path/to/cros_chroot/out/tmp/delta.bin\\\"\\\\nlocation: INSIDE\\\\n')\"}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "doing paygen.setting up paygen test config",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.setting up paygen test config.discover gs artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@artifacts found@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@artifacts found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "gs://b/canary-channel/zork/123/**"
-    ],
-    "infra_step": true,
-    "name": "doing paygen.setting up paygen test config.discover gs artifacts.gsutil list",
-    "timeout": 1800,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.setting up paygen test config.fetch target test requirements file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.setting up paygen test config.fetch target test requirements file.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        },@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"zork-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"zork-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"zork\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@    ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
-    ],
-    "name": "doing paygen.setting up paygen test config.fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@dry run, skip testing@@@"
     ]
   },
   {
@@ -1967,7 +2780,7 @@
     "name": "doing paygen.set payloads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@payloads@[{\"appid\": \"appid\", \"channel\": \"CHANNEL_STABLE\", \"metadataSignature\": \"signature\", \"metadataSize\": \"1337\", \"payload\": {\"sha256\": \"deadbeef\", \"type\": \"PAYLOAD_DELTA\", \"uri\": {\"gcs\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"}}, \"payloadType\": \"PAYLOAD_TYPE_STANDARD\", \"size\": \"1234\", \"sourceVersion\": \"1.2.3\", \"targetVersion\": \"4.5.6\"}]@@@"
+      "@@@SET_BUILD_PROPERTY@payloads@[]@@@"
     ]
   },
   {
@@ -1993,157 +2806,19 @@
       "-stage",
       "upload-complete"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "snoop: report_stage (3)"
-  },
-  {
-    "cmd": [],
-    "name": "testing paygen"
-  },
-  {
-    "cmd": [
-      "bb",
-      "batch",
-      "-host",
-      "cr-buildbucket.appspot.com"
-    ],
-    "infra_step": true,
-    "name": "testing paygen.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\"}, \"canOutliveParent\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"requests\": {\"zork-release/86-12345.0.0-canary-channel-full\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build\": \"zork-release/86-12345.0.0\", \"suite\": \"paygen_au_canary\"}, \"tags\": [\"build:zork-release/86-12345.0.0\", \"label-board:zork\", \"label-pool:quota\", \"quota_account:custom_qs_account\", \"suite:paygen_au_canary\"]}, \"metadata\": {\"containerMetadataUrl\": \"gs://b/canary-channel/zork/123/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/zork-release/86-12345.0.0\", \"testMetadataUrl\": \"gs://chromeos-image-archive/zork-release/86-12345.0.0\"}, \"retry\": {\"allow\": true, \"max\": 5.0}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"custom_qs_account\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"zork\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"zork-release/86-12345.0.0\"}], \"time\": {\"maximumDuration\": \"25200s\"}}, \"testPlan\": {\"enumeration\": {\"autotestInvocations\": [{\"displayName\": \"zork-release/86-12345.0.0/paygen_au_canary/autoupdate_EndToEndTest_paygen_au_canary_full_123_omaha\", \"test\": {\"allowRetries\": true, \"executionEnvironment\": \"EXECUTION_ENVIRONMENT_SERVER\", \"maxRetries\": 1.0, \"name\": \"autoupdate_EndToEndTest\"}, \"testArgs\": \"name=paygen_au_canary update_type=full source_release=123 target_release=12345.0.0 target_payload_uri=gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc SUITE=paygen_au_canary source_payload_uri=gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc source_archive_uri=gs://b/canary-channel/zork/123 payload_type=OMAHA\"}]}}}}}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"build\", \"value\": \"zork-release/86-12345.0.0\"}, {\"key\": \"label-board\", \"value\": \"zork\"}, {\"key\": \"label-model\", \"value\": \"no-model-found\"}, {\"key\": \"label-pool\", \"value\": \"quota\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"quota_account\", \"value\": \"custom_qs_account\"}, {\"key\": \"suite\", \"value\": \"paygen_au_canary\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"testplatform\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cros_test_platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    }@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"testplatform\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"cros_test_platform\"@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"YES\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"requests\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"zork-release/86-12345.0.0-canary-channel-full\": {@@@",
-      "@@@STEP_LOG_LINE@request@              \"params\": {@@@",
-      "@@@STEP_LOG_LINE@request@                \"decorations\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"autotestKeyvals\": {@@@",
-      "@@@STEP_LOG_LINE@request@                    \"build\": \"zork-release/86-12345.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@                    \"suite\": \"paygen_au_canary\"@@@",
-      "@@@STEP_LOG_LINE@request@                  },@@@",
-      "@@@STEP_LOG_LINE@request@                  \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@                    \"build:zork-release/86-12345.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@                    \"label-board:zork\",@@@",
-      "@@@STEP_LOG_LINE@request@                    \"label-pool:quota\",@@@",
-      "@@@STEP_LOG_LINE@request@                    \"quota_account:custom_qs_account\",@@@",
-      "@@@STEP_LOG_LINE@request@                    \"suite:paygen_au_canary\"@@@",
-      "@@@STEP_LOG_LINE@request@                  ]@@@",
-      "@@@STEP_LOG_LINE@request@                },@@@",
-      "@@@STEP_LOG_LINE@request@                \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"containerMetadataUrl\": \"gs://b/canary-channel/zork/123/metadata/containers.jsonpb\",@@@",
-      "@@@STEP_LOG_LINE@request@                  \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/zork-release/86-12345.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@                  \"testMetadataUrl\": \"gs://chromeos-image-archive/zork-release/86-12345.0.0\"@@@",
-      "@@@STEP_LOG_LINE@request@                },@@@",
-      "@@@STEP_LOG_LINE@request@                \"retry\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"allow\": true,@@@",
-      "@@@STEP_LOG_LINE@request@                  \"max\": 5.0@@@",
-      "@@@STEP_LOG_LINE@request@                },@@@",
-      "@@@STEP_LOG_LINE@request@                \"scheduling\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"managedPool\": \"MANAGED_POOL_QUOTA\",@@@",
-      "@@@STEP_LOG_LINE@request@                  \"qsAccount\": \"custom_qs_account\"@@@",
-      "@@@STEP_LOG_LINE@request@                },@@@",
-      "@@@STEP_LOG_LINE@request@                \"softwareAttributes\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@                    \"name\": \"zork\"@@@",
-      "@@@STEP_LOG_LINE@request@                  }@@@",
-      "@@@STEP_LOG_LINE@request@                },@@@",
-      "@@@STEP_LOG_LINE@request@                \"softwareDependencies\": [@@@",
-      "@@@STEP_LOG_LINE@request@                  {@@@",
-      "@@@STEP_LOG_LINE@request@                    \"chromeosBuild\": \"zork-release/86-12345.0.0\"@@@",
-      "@@@STEP_LOG_LINE@request@                  }@@@",
-      "@@@STEP_LOG_LINE@request@                ],@@@",
-      "@@@STEP_LOG_LINE@request@                \"time\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"maximumDuration\": \"25200s\"@@@",
-      "@@@STEP_LOG_LINE@request@                }@@@",
-      "@@@STEP_LOG_LINE@request@              },@@@",
-      "@@@STEP_LOG_LINE@request@              \"testPlan\": {@@@",
-      "@@@STEP_LOG_LINE@request@                \"enumeration\": {@@@",
-      "@@@STEP_LOG_LINE@request@                  \"autotestInvocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@                    {@@@",
-      "@@@STEP_LOG_LINE@request@                      \"displayName\": \"zork-release/86-12345.0.0/paygen_au_canary/autoupdate_EndToEndTest_paygen_au_canary_full_123_omaha\",@@@",
-      "@@@STEP_LOG_LINE@request@                      \"test\": {@@@",
-      "@@@STEP_LOG_LINE@request@                        \"allowRetries\": true,@@@",
-      "@@@STEP_LOG_LINE@request@                        \"executionEnvironment\": \"EXECUTION_ENVIRONMENT_SERVER\",@@@",
-      "@@@STEP_LOG_LINE@request@                        \"maxRetries\": 1.0,@@@",
-      "@@@STEP_LOG_LINE@request@                        \"name\": \"autoupdate_EndToEndTest\"@@@",
-      "@@@STEP_LOG_LINE@request@                      },@@@",
-      "@@@STEP_LOG_LINE@request@                      \"testArgs\": \"name=paygen_au_canary update_type=full source_release=123 target_release=12345.0.0 target_payload_uri=gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc SUITE=paygen_au_canary source_payload_uri=gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc source_archive_uri=gs://b/canary-channel/zork/123 payload_type=OMAHA\"@@@",
-      "@@@STEP_LOG_LINE@request@                    }@@@",
-      "@@@STEP_LOG_LINE@request@                  ]@@@",
-      "@@@STEP_LOG_LINE@request@                }@@@",
-      "@@@STEP_LOG_LINE@request@              }@@@",
-      "@@@STEP_LOG_LINE@request@            }@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"0-00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"build\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"zork-release/86-12345.0.0\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"label-board\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"zork\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"label-model\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"no-model-found\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"label-pool\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"quota\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"quota_account\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"custom_qs_account\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"suite\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"paygen_au_canary\"@@@",
-      "@@@STEP_LOG_LINE@request@          },@@@",
-      "@@@STEP_LOG_LINE@request@          {@@@",
-      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
-      "@@@STEP_LOG_LINE@request@          }@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
   },
   {
     "cmd": [],
@@ -2184,6 +2859,18 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2204,6 +2891,18 @@
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
     "~followup_annotations": [
@@ -2227,6 +2926,18 @@
       ]
     },
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -2249,17 +2960,29 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"snapshot_hash\": \"snapshot-HEAD-SHA\",\n  \"version\": 1\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"snapshot_hash\": \"staging-snapshot-HEAD-SHA\",\n  \"version\": 1\n}",
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up SDK chroot.write sdk cache state file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@{@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"staging-snapshot-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
       "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
       "@@@STEP_LOG_END@sdk_cache_state.json@@@"
@@ -2283,6 +3006,18 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace.remove original chroot link",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -2297,6 +3032,18 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up SDK chroot.changing permissions of [CACHE]/cros_chroot/chroot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2306,7 +3053,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"ensure_synced_cache\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"ensure_synced_cache\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {
@@ -2319,6 +3066,18 @@
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.unmount overlay chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2332,6 +3091,18 @@
       "[CACHE]/chromeos/workdir"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2343,6 +3114,18 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.unmount overlay workspace",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2356,6 +3139,18 @@
       "[CACHE]/workspace/workdir"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:staging"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
