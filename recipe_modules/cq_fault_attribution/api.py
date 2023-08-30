@@ -31,16 +31,22 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 TEST_ID_REGEX = 'invocations/.*/tests/(?P<test_id>.*)/results/'
 PREDICATE_PROJECT = 'chromeos'
-PREDICATE_BUILDER = 'snapshot-orchestrator'
 PREDICATE_BUCKET = 'postsubmit'
-PREDICATE_BUILDER_ID = BuilderID(project=PREDICATE_PROJECT,
-                                 bucket=PREDICATE_BUCKET,
-                                 builder=PREDICATE_BUILDER)
+SNAPSHOT_PREDICATE_BUILDER = 'snapshot-orchestrator'
+SNAPSHOT_PREDICATE_BUILDER_ID = BuilderID(project=PREDICATE_PROJECT,
+                                          bucket=PREDICATE_BUCKET,
+                                          builder=SNAPSHOT_PREDICATE_BUILDER)
+POSTSUBMIT_PREDICATE_BUILDER = 'postsubmit-orchestrator'
+POSTSUBMIT_PREDICATE_BUILDER_ID = BuilderID(
+    project=PREDICATE_PROJECT, bucket=PREDICATE_BUCKET,
+    builder=POSTSUBMIT_PREDICATE_BUILDER)
+
 VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
   [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 # Restrict snapshot retrieval to the last 8 hours (snapshot builds are
 # kicked off every 30 mins)
 SNAPSHOT_RETRIEVAL_LIMIT = 16
+POSTSUBMIT_RETRIEVAL_LIMIT = 2
 # Threshold used when marking a test as potentially flaky
 FLAKINESS_THRESHOLD = 2
 # Maximum number of failed test IDs to query for from rdb.
@@ -355,11 +361,17 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     else:
       source_snapshot_build_commit_sha = orch_snapshot.id
 
+    predicate_for_postsubmit_build_retrieval = builds_service_pb2.BuildPredicate(
+        builder=POSTSUBMIT_PREDICATE_BUILDER_ID)
+    retrieved_postsubmit_builds = self.m.buildbucket.search(
+        [predicate_for_postsubmit_build_retrieval],
+        limit=POSTSUBMIT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
+
     tagValue = 'commit/gitiles/{}/{}/+/{}'.format(
         orch_snapshot.host, orch_snapshot.project,
         source_snapshot_build_commit_sha)
     predicate_for_snapshot_build_retrieval = builds_service_pb2.BuildPredicate(
-        builder=PREDICATE_BUILDER_ID)
+        builder=SNAPSHOT_PREDICATE_BUILDER_ID)
     predicate_for_snapshot_build_retrieval.tags.append(
         StringPair(key='buildset', value=tagValue))
     retrieved_source_snapshot_build = self.m.buildbucket.search(
@@ -374,7 +386,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
     # Retrieve snapshots that are older than the upper bound build.
     predicate_for_previous_snapshot_builds = builds_service_pb2.BuildPredicate(
-        builder=PREDICATE_BUILDER_ID,
+        builder=SNAPSHOT_PREDICATE_BUILDER_ID,
         create_time=TimeRange(
             end_time=timestamp_pb2.Timestamp(
                 # +1 to make this inclusive of the upper bound build
@@ -384,13 +396,14 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     previous_snapshot_builds = self.m.buildbucket.search(
         [predicate_for_previous_snapshot_builds],
         limit=SNAPSHOT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
-    started_snapshot_builds = list(
-        filter(self._has_build_started, previous_snapshot_builds))
-    ordered_snapshot_builds = sorted(
-        started_snapshot_builds, key=(lambda build: build.start_time.seconds),
-        reverse=True)
+    started_builds = list(
+        filter(self._has_build_started,
+               previous_snapshot_builds + retrieved_postsubmit_builds))
+    ordered_builds = sorted(started_builds,
+                            key=(lambda build: build.start_time.seconds),
+                            reverse=True)
 
-    return ordered_snapshot_builds
+    return ordered_builds
 
   def _retrieve_rdb_test_results(
       self, builds: List[build_pb2.Build],
