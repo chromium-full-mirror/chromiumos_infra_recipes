@@ -357,7 +357,7 @@ def GenTests(api):
           eligible_value_dict, 1),
       api.gerrit.simulated_changes_are_submittable(
           submittable=False,
-          step_name_prefix='find candidates.filter out by merge conflicts.'),
+          step_name_prefix='find candidates.filter out by merge conflicts'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           non_new_value_dict, 2),

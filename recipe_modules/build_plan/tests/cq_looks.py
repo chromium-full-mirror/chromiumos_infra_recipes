@@ -173,7 +173,7 @@ def GenTests(api):
       'change-incompatible-with-older-snap',
       api.gerrit.simulated_changes_are_submittable(
           submittable=False,
-          step_name_prefix='filter builds.looks for green.checking mergability.'
+          step_name_prefix='filter builds.looks for green.checking mergability'
       ),
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
