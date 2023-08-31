@@ -191,25 +191,45 @@ class ResultDBCommand(recipe_api.RecipeApi):
     with self.m.step.nest(step_name):
       self._upload(config, testhaus_url)
 
-  def _is_base_build(self, board, image):
-    """Returns True if an image is a base build or False if it's a variant.
+  def _is_build_partner_visible(self, board, image):
+    """Returns True if a build is visible to partners or False otherwise.
+
+    A build is partner visible if it's a base or allowlisted variant build.
 
     Examples:
       "brya-cq/R11-123.45" is a base build
       "brya-kernelnext-cq/R11-123.45" is a variant build
 
+    The variant build is verified by the board variants which are maintained in
+    an explicit allowlist in case there are any variants that represent
+    super-secret Google projects.
+
+    Note that the input board is a basic board, and only the input image will
+    include the board variant name if it's a variant.
+
     Args:
       board (str): e.g. "brya"
       image (str): e.g. "brya-cq/R11-123.45"
     """
-    base_build_re = re.compile(r'^([a-z]+)-[a-z]+/R[0-9.\-]+$')
-    match = re.match(base_build_re, image)
+    # Matches the base board name and fetches the variant suffix if it exists.
+    board_variant_allowlist = set([
+        '64',
+        '-arc-r',
+        '-arc-s',
+        '-arc-t',
+        '-borealis',
+        '-kernelnext',
+        '-manatee-kernelnext',
+        '-userdebug',
+    ])
+    build_re = re.compile(r'^{}(.*)-[a-z]+/R[0-9.\-]+$'.format(board))
+    match = re.match(build_re, image)
     if not match:
       return False
-    # Check that the board name is what we expected.
-    if match.group(1) != board:
-      return False
-    return True
+
+    # Checks if it's a base build or an allowlisted variant build.
+    variant = match.group(1)
+    return not variant or variant in board_variant_allowlist
 
   def _get_board_model_realm(self, base_tags, skip_board_model_check):
     """Gets the board-model realm for this test result.
@@ -240,9 +260,11 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if board == '' or model == '' or image == '':
       return ''
 
-    # If the image is running a variant, don't use the board-model realm.
-    # TODO(b/251688396): Share board variants once we've audited them.
-    if not self._is_base_build(board, image):
+    # Don't use the board-model realm unless it is a base or allowlisted variant
+    # build.
+    # Note that variant builds also will be associated with board-model realm
+    # instead of board-variant-model realm which isn't supported.
+    if not self._is_build_partner_visible(board, image):
       return ''
 
     # If the test is a multi-DUT test, don't use the board-model realm.

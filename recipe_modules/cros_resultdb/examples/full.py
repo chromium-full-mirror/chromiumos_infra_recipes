@@ -179,7 +179,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'variant-per-model-realm',
+      'allowlisted-variant-per-model-realm',
       api.buildbucket.ci_build(),
       api.properties(
           rdb_config=api.json.dumps({
@@ -194,6 +194,31 @@ def GenTests(api):
                   'test_suite': 'fake-suite',
                   'board': 'brya',
                   'build': 'brya-arc-r-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'non-allowlisted-variant-per-model-realm',
+      api.buildbucket.ci_build(),
+      # The make-up board variant "brya-non-allowlisted-variant" is not included
+      # in the variant allowlist.
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'brya'),
+                  ('model', 'taeko'),
+                  ('image', 'brya-non-allowlisted-variant-cq/R11-123.45'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'brya',
+                  'build': 'brya-non-allowlisted-variant-cq/R11-123.45',
               },
           })),
       api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
