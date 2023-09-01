@@ -681,6 +681,33 @@ class GerritApi(RecipeApi):
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/review',
           {'comments': comment_map}, test_output_data='{}')
 
+  def _get_auth_token(self) -> Path:
+    """Get a token from luci-auth with gerritcodereview scope.
+
+    Gets a token from luci-auth, uses the token to write an authorization header
+    to a temp file, and returns a path to this temp file.
+
+    Returns:
+      A Path to a temp file containing the authorization header.
+    """
+    with self.m.step.nest('ensure auth token'):
+      auth_token_out = self.m.easy.stdout_step(
+          'Retrieve service_account auth token',
+          [
+              'luci-auth', 'token', '-scopes',
+              'https://www.googleapis.com/auth/gerritcodereview',
+              '-json-output', '-'
+          ],
+          test_stdout='{"token": "TEST_TOKEN"}',
+      )
+      auth_token = self.m.json.loads(auth_token_out)['token']
+      auth_token_path = self.m.path.mkstemp(prefix='service_account_auth_token')
+      self.m.file.write_text('Write auth token to temp file', auth_token_path,
+                             f'Authorization: Bearer {auth_token}',
+                             include_log=False)
+
+      return auth_token_path
+
   @exponential_retry(retries=4, delay=timedelta(seconds=5))
   def _do_post(self, url: str, json_data: Dict[str, Any],
                test_output_data: str) -> str:
@@ -695,20 +722,7 @@ class GerritApi(RecipeApi):
     Returns:
       The POST response.
     """
-    auth_token_out = self.m.easy.stdout_step(
-        'Retrieve service_account auth token',
-        [
-            'luci-auth', 'token', '-scopes',
-            'https://www.googleapis.com/auth/gerritcodereview', '-json-output',
-            '-'
-        ],
-        test_stdout='{"token": "TEST_TOKEN"}',
-    )
-    auth_token = self.m.json.loads(auth_token_out)['token']
-    auth_token_path = self.m.path.mkstemp(prefix='service_account_auth_token')
-    self.m.file.write_text('Write auth token to temp file', auth_token_path,
-                           f'Authorization: Bearer {auth_token}',
-                           include_log=False)
+    auth_token_path = self._get_auth_token()
     curl_params = [
         '-f', '-X', 'POST', '-H', f'@{auth_token_path}', '-H',
         'Content-Type: application/json', '-d',
@@ -940,10 +954,12 @@ class GerritApi(RecipeApi):
     Returns:
       Whether the revision of the change is mergeable.
     """
+    auth_token_path = self._get_auth_token()
+
     # "Get Mergeable" endpoint:
     # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-mergeable
     get_url = f'https://{gerrit_host}/changes/{change_num}/revisions/{revision}/mergeable'
-    curl_params = ['-f']
+    curl_params = ['-f', '-H', f'@{auth_token_path}']
 
     data = self.m.easy.stdout_step(f'curl {get_url}',
                                    ['curl'] + curl_params + [get_url]).decode()
@@ -951,9 +967,10 @@ class GerritApi(RecipeApi):
 
     try:
       result = self.m.json.loads(data)['mergeable']
-    except KeyError as e:
-      raise StepFailure('The response does not contain "mergeable" key: %s' %
-                        data) from e
+    except (KeyError, json.JSONDecodeError) as e:
+      raise StepFailure(
+          'The response does not contain valid JSON with a "mergeable" key: %s'
+          % data) from e
     if not isinstance(result, bool):
       raise StepFailure(
           f'"mergeable" value is not a bool: {data} (type: {type(result)})')

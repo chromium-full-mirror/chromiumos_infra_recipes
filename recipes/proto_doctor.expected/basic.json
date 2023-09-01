@@ -1460,6 +1460,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "process branch main.compile chromite protos.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -1468,9 +1475,9 @@
       "-json-output",
       "-"
     ],
-    "name": "process branch main.compile chromite protos.set labels on CL 1.Retrieve service_account auth token",
+    "name": "process branch main.compile chromite protos.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1485,9 +1492,9 @@
       "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
     "infra_step": true,
-    "name": "process branch main.compile chromite protos.set labels on CL 1.Write auth token to temp file",
+    "name": "process branch main.compile chromite protos.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2607,6 +2614,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "process branch release-R100-14526.B.compile chromite protos.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -2615,9 +2629,9 @@
       "-json-output",
       "-"
     ],
-    "name": "process branch release-R100-14526.B.compile chromite protos.set labels on CL 1.Retrieve service_account auth token",
+    "name": "process branch release-R100-14526.B.compile chromite protos.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -2632,9 +2646,9 @@
       "[CLEANUP]/service_account_auth_token_tmp_2"
     ],
     "infra_step": true,
-    "name": "process branch release-R100-14526.B.compile chromite protos.set labels on CL 1.Write auth token to temp file",
+    "name": "process branch release-R100-14526.B.compile chromite protos.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

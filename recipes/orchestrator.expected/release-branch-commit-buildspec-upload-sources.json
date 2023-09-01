@@ -3949,6 +3949,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -3970,9 +3977,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -4000,9 +4007,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "name": "set up orchestrator.create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -4648,6 +4655,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.create buildspec.commit buildspec as snapshot.commit to release-R111-12345.B-snapshot.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -4669,9 +4683,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create buildspec.commit buildspec as snapshot.commit to release-R111-12345.B-snapshot.set labels on CL 1.Retrieve service_account auth token",
+    "name": "set up orchestrator.create buildspec.commit buildspec as snapshot.commit to release-R111-12345.B-snapshot.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {
@@ -4699,9 +4713,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.create buildspec.commit buildspec as snapshot.commit to release-R111-12345.B-snapshot.set labels on CL 1.Write auth token to temp file",
+    "name": "set up orchestrator.create buildspec.commit buildspec as snapshot.commit to release-R111-12345.B-snapshot.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
+      "@@@STEP_NEST_LEVEL@6@@@"
     ]
   },
   {

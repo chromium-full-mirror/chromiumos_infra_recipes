@@ -562,6 +562,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -583,9 +590,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -613,9 +620,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1182,6 +1189,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -1203,9 +1217,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1233,9 +1247,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1844,6 +1858,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -1865,9 +1886,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -1895,9 +1916,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -2464,6 +2485,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -2485,9 +2513,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -2515,9 +2543,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (2).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3241,6 +3269,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -3262,9 +3297,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3292,9 +3327,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3861,6 +3896,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -3882,9 +3924,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3912,9 +3954,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (3).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -4588,6 +4630,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -4609,9 +4658,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -4639,9 +4688,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to master.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -5208,6 +5257,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -5229,9 +5285,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Retrieve service_account auth token",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -5259,9 +5315,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create buildspec (4).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.Write auth token to temp file",
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {

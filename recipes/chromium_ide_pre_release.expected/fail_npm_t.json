@@ -755,6 +755,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "verify update.set labels on CL 123.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -764,9 +771,9 @@
       "-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/cros-ide/src",
-    "name": "verify update.set labels on CL 123.Retrieve service_account auth token",
+    "name": "verify update.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -782,9 +789,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/cros-ide/src",
     "infra_step": true,
-    "name": "verify update.set labels on CL 123.Write auth token to temp file",
+    "name": "verify update.set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

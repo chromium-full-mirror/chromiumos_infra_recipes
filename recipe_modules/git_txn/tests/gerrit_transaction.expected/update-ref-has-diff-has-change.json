@@ -78,6 +78,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "update ref.gerrit transaction.set labels on CL 123.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -87,9 +94,9 @@
       "-"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
-    "name": "update ref.gerrit transaction.set labels on CL 123.Retrieve service_account auth token",
+    "name": "update ref.gerrit transaction.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -105,9 +112,9 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
     "infra_step": true,
-    "name": "update ref.gerrit transaction.set labels on CL 123.Write auth token to temp file",
+    "name": "update ref.gerrit transaction.set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

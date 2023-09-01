@@ -1296,6 +1296,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -1317,9 +1324,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.Retrieve service_account auth token",
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1347,9 +1354,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.Write auth token to temp file",
+    "name": "bump version.commit chromeos/config/chromeos_version.sh.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

@@ -1980,6 +1980,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -2001,9 +2008,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.Retrieve service_account auth token",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
+      "@@@STEP_NEST_LEVEL@7@@@"
     ]
   },
   {
@@ -2031,9 +2038,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.Write auth token to temp file",
+    "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction.set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
+      "@@@STEP_NEST_LEVEL@7@@@"
     ]
   },
   {

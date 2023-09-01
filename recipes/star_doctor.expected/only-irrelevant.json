@@ -3050,6 +3050,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -3059,9 +3066,9 @@
       "-"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.Retrieve service_account auth token",
+    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3077,9 +3084,9 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.Write auth token to temp file",
+    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3504,6 +3511,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -3513,9 +3527,9 @@
       "-"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_3",
-    "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.Retrieve service_account auth token",
+    "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {
@@ -3531,9 +3545,9 @@
     ],
     "cwd": "[CLEANUP]/tmp_tmp_3",
     "infra_step": true,
-    "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.Write auth token to temp file",
+    "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@5@@@"
     ]
   },
   {

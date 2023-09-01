@@ -102,6 +102,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set labels on CL 123.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "luci-auth",
       "token",
@@ -110,9 +117,9 @@
       "-json-output",
       "-"
     ],
-    "name": "set labels on CL 123.Retrieve service_account auth token",
+    "name": "set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -127,9 +134,9 @@
       "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
     "infra_step": true,
-    "name": "set labels on CL 123.Write auth token to temp file",
+    "name": "set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
