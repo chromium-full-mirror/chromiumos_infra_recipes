@@ -60,16 +60,12 @@ docstring-quote=double
 #   ...and more based on case by case and workload.
 disable=
     attribute-defined-outside-init,
-    bad-continuation,
     consider-using-f-string,
     duplicate-code,
-    file-ignored,
     fixme,
     import-error,
     invalid-name,
     line-too-long,
-    locally-disabled,
-    locally-enabled,
     missing-docstring,
     no-member,
     no-self-use,
