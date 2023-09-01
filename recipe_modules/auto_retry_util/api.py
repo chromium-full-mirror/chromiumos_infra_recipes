@@ -364,6 +364,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       * The build had a supported failure mode.
       * No CL tested in the build opted-out via footer.
       * The build was not last triggered by our service account.
+      * All CLs in the build are mergeable (as defined by the Gerrit API's
+        GetMergeable).
     """
     with self.m.step.nest('find candidates') as presentation:
       cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
@@ -427,10 +429,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       with self.m.step.nest('filter out merge conflicts') as pres:
         non_mergeable_ids = set()
         for c in cq_orchs:
-          try:
-            self.m.gerrit.assert_changes_submittable(c.input.gerrit_changes)
-          except recipe_api.StepFailure:
-            non_mergeable_ids.add(c.id)
+          for change in c.input.gerrit_changes:
+            if not self.m.gerrit.get_change_mergeable(
+                change.change, change.host, change.patchset):
+              non_mergeable_ids.add(c.id)
+              break
+
         cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]
         pres.logs['non_mergeable'] = '\n'.join(
             sorted([str(x) for x in non_mergeable_ids]))

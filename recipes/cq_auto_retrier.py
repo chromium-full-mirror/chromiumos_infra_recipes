@@ -186,6 +186,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1111',
@@ -204,6 +211,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
       api.post_process(
           post_process.MustRun,
           'performing retries.retry build 1112',

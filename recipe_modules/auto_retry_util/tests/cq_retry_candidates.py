@@ -94,6 +94,35 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', failure_2_changes,
           failure_2_fetch_changes_response, iteration=2),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+          iteration=2,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host1',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host2',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
       api.properties(expected_build_ids=[1, 2]),
       api.post_process(post_process.DropExpectation),
   )
@@ -129,6 +158,27 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', changes,
           fetch_changes_response),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host1',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host2',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
       api.properties(expected_build_ids=[2]),
       api.post_process(post_process.DropExpectation),
   )
@@ -170,6 +220,27 @@ def GenTests(api):
           'find candidates.filter out by basic eligibility', changes,
           fetch_changes_response),
       api.properties(expected_build_ids=[2]),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host1',
+          change_num=1,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host2',
+          change_num=1,
+          revision=2,
+          value=True,
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -202,6 +273,20 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
       api.properties(expected_build_ids=[12]),
       api.post_process(post_process.DropExpectation),
   )
@@ -280,6 +365,20 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review',
+          change_num=3,
+          revision=1,
+          value=True,
+      ),
       api.properties(expected_build_ids=[33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -298,6 +397,35 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict, 2),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+          iteration=2,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review',
+          change_num=3,
+          revision=1,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
       api.properties(expected_build_ids=[12, 33]),
       api.post_process(post_process.DropExpectation),
   )
@@ -392,7 +520,9 @@ def GenTests(api):
   failure_with_allowlisted_experiment = api.test_util.test_orchestrator(
       build_id=12,
       cq=True,
-      extra_changes=[common_pb2.GerritChange(change=1, host='host')],
+      extra_changes=[
+          common_pb2.GerritChange(change=1, host='host', patchset=1)
+      ],
       status='FAILURE',
       create_time=12,
       output_properties={
@@ -431,6 +561,20 @@ def GenTests(api):
           post_process.StepTextEquals,
           'find candidates.filter by experiment allowlist',
           'filtered out 1 run(s)',
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host',
+          change_num=1,
+          revision=1,
+          value=True,
       ),
       api.properties(expected_build_ids=[12]),
       api.post_process(post_process.DropExpectation),
@@ -472,7 +616,8 @@ def GenTests(api):
           build_id=10 + i,
           cq=True,
           extra_changes=[
-              common_pb2.GerritChange(host='host', project='project', change=i)
+              common_pb2.GerritChange(host='host', project='project', change=i,
+                                      patchset=1)
           ],
           status='FAILURE',
           create_time=10 + i,
@@ -490,9 +635,28 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           eligible_value_dict, 1),
-      api.gerrit.simulated_changes_are_submittable(
-          submittable=False,
-          step_name_prefix='find candidates.filter out merge conflicts'),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=False,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+          iteration=2,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='host',
+          change_num=1,
+          revision=1,
+          value=True,
+      ),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
           non_new_value_dict, 2),
