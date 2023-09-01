@@ -247,8 +247,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       manifest_versions_checkout = self.m.path.mkdtemp(
           prefix='manifest-versions')
       with self.m.context(cwd=manifest_versions_checkout):
-        # Default manifest-versions branch is 'master'.
-        branch = 'master'
+        # Default manifest-versions branch.
+        branch = 'main'
         if dry_run or self.m.build_menu.is_staging:
           # Staging is only allowed to use the staging branch.
           branch = MANIFEST_VERSIONS_DRYRUN_BRANCH

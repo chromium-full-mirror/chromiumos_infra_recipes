@@ -51,7 +51,7 @@ def GenTests(api):
       'basic', api.git.diff_check(True),
       api.post_check(
           post_process.MustRun,
-          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to master'
+          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main'
       ),
       api.post_check(post_process.DoesNotRun,
                      'create buildspec.commit buildspec as snapshot'),
