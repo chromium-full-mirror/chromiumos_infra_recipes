@@ -249,42 +249,33 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             companion.provision_state.update_firmware = self.should_update_os_bundled_firmware(
                 companion)
 
-          # Aggregate duts to assist with matching the request's boards to a dut.
-          available_duts = [metadata.primary_dut]
-          available_duts.extend(metadata.peer_duts)
+          devices = [
+              ctr.CrosToolRunnerProvisionRequest.Device(
+                  dut=metadata.primary_dut, provision_state=self
+                  .cft_test_request.primary_dut.provision_state,
+                  container_metadata_key=self.cft_test_request.primary_dut
+                  .container_metadata_key)
+          ]
 
-          devices = []
-          primary_dut_index = 0
-          # Find the dut associated with the request's primary board.
-          for i, dut in enumerate(available_duts):
-            build_target = dut.chromeos.dut_model.build_target
-            model_name = dut.chromeos.dut_model.model_name
-            if self.cft_test_request.primary_dut.dut_model.build_target == build_target and self.cft_test_request.primary_dut.dut_model.model_name == model_name:
-              devices.append(
-                  ctr.CrosToolRunnerProvisionRequest.Device(
-                      dut=dut, provision_state=self.cft_test_request.primary_dut
-                      .provision_state, container_metadata_key=self
-                      .cft_test_request.primary_dut.container_metadata_key))
-              primary_dut_index = i
-              break
-
-          # Find the dut associated with the request's companion board.
-          for i, dut in enumerate(available_duts):
-            if i == primary_dut_index:
-              continue
-            # Expect chromeos dut_type.
-            build_target = dut.chromeos.dut_model.build_target
-            model = dut.chromeos.dut_model.model_name
+          companion_duts = []
+          for peer in metadata.peer_duts:
+            # Expect a single dut of chromeos dut_type
+            build_target = peer.chromeos.dut_model.build_target
+            model = peer.chromeos.dut_model.model_name
             for companion in self.cft_test_request.companion_duts:
               if companion.dut_model.build_target == build_target and companion.dut_model.model_name == model:
-                devices.append(
-                    ctr.CrosToolRunnerProvisionRequest.Device(
-                        dut=dut, provision_state=companion.provision_state,
-                        container_metadata_key=self.cft_test_request.primary_dut
-                        .container_metadata_key))
-            # Current expectation is a single dut if there is one.
-            break
+                companion_duts.append(companion)
+                break
 
+          companionDevices = [
+              ctr.CrosToolRunnerProvisionRequest.Device(
+                  dut=metadata.peer_duts[i],
+                  provision_state=companion.provision_state,
+                  container_metadata_key=self.cft_test_request.primary_dut
+                  .container_metadata_key)
+              for i, companion in enumerate(companion_duts)
+          ]
+          devices.extend(companionDevices)
           provision_request = ctr.CrosToolRunnerProvisionRequest(
               devices=devices)
           prejob_response = self._process_prejob_response(
