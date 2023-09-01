@@ -59,6 +59,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   snapshot_branch_name = 'origin/snapshot'
   failing_build_exception = None
   error_type = ErrorType.UNKNOWN
+  use_llfg = extra_properties.use_llfg
 
   build_time_delta = extra_properties.build_time_delta
   if not build_time_delta:
@@ -121,14 +122,25 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Checkout and attempt to build the current snapshot.
   if not failing_build_exception:
     try:
-      with api.repo.m.depot_tools.on_path():
-        api.step(
-            'Apply latest manifest snapshot',
-            [
-                repo_path, 'init', '--standalone-manifest',
-                f'file://{manifest_internal_tempdir}/snapshot.xml'
-            ],
-        )
+      if use_llfg:
+        with api.repo.m.depot_tools.on_path():
+          api.step(
+              'Apply LLFG manifest snapshot',
+              [
+                  repo_path, 'init', '--u',
+                  'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+                  '-b', 'green'
+              ],
+          )
+      else:
+        with api.repo.m.depot_tools.on_path():
+          api.step(
+              'Apply latest manifest snapshot',
+              [
+                  repo_path, 'init', '--standalone-manifest',
+                  f'file://{manifest_internal_tempdir}/snapshot.xml'
+              ],
+          )
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                     retry_fetches=3, force_remove_dirty=True)
 
@@ -183,6 +195,39 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
+      api.properties(IncrementalProperties(**{'cop_enabled': True})),
+      api.post_check(post_process.DoesNotRun,
+                     'Disable cros clean-outdated-pkgs'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'update sdk'),
+      api.post_check(post_process.MustRun, 'install packages (2)'),
+      api.post_check(post_process.MustRun, 'update sdk (2)'),
+      api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
+      api.post_check(post_process.DoesNotRun, 'install packages (3)'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.post_check(post_process.PropertyEquals, 'error_type',
+                     ErrorType.UNKNOWN),
+      build_target='amd64-generic',
+      status='SUCCESS',
+  )
+  # Normal Build with LLFG.
+  yield api.build_menu.test(
+      'inc-build-llfg',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.properties(
+          IncrementalProperties(**{
+              'build_time_delta': '7.days.ago',
+              'use_llfg': True
+          })),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),

@@ -13,6 +13,10 @@ message IncrementalProperties {
 
   // Whether to run cros clean-outdated-pkgs.
   bool cop_enabled = 2;
+
+  // Whether to use Local Looks For Green for recent build
+  // (old build is not currently LLFG)
+  bool use_llfg = 3;
 }
 
 enum ErrorType {
