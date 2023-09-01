@@ -2062,8 +2062,34 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis/metadata.xml",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/metadata.xml"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "update VERSION-PIN.copy metadata.xml file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
-    "name": "update VERSION-PIN.commit version pin file",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2084,7 +2110,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.git rev-parse",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.git rev-parse",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2110,7 +2136,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.repo forall",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc|cros|refs/heads/main|refs/heads/main@@@",
@@ -2136,7 +2162,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.repo start",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.repo start",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2145,7 +2171,8 @@
     "cmd": [
       "git",
       "add",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/VERSION_PIN"
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/VERSION_PIN",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/metadata.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc",
     "env_suffixes": {
@@ -2157,7 +2184,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.git add",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.git add",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2183,7 +2210,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.write commit message",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@VERSION_PIN: updating version pin borealis-dlc to 2012.05.14.125330@@@",
@@ -2209,7 +2236,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update VERSION-PIN.commit version pin file.git commit",
+    "name": "update VERSION-PIN.commit version pin file and metadata.xml.git commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
