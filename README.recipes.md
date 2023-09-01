@@ -192,6 +192,7 @@
   * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
+  * [build_signing_docker_image](#recipes-build_signing_docker_image) &mdash; Recipe for building the signing docker image.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
@@ -11382,6 +11383,14 @@ Recipe for building images for release.
 Recipe that builds a ChromiumOS SDK and cross-compilers.
 
 &mdash; **def [RunSteps](/recipes/build_sdk.py#73)(api: recipe_api.RecipeApi, properties: build_sdk_pb2.BuildSDKProperties):**
+### *recipes* / [build\_signing\_docker\_image](/recipes/build_signing_docker_image.py)
+
+[DEPS](/recipes/build_signing_docker_image.py#18): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Recipe for building the signing docker image.
+
+&mdash; **def [RunSteps](/recipes/build_signing_docker_image.py#35)(api: RecipeApi, properties: BuildSigningDockerImageProperties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#22): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
