@@ -22,13 +22,12 @@ def RunSteps(api):
       patchset=1,
   )
 
-  api.gerrit.assert_changes_submittable([change])
-  api.assertions.assertRaises(
-      api.step.StepFailure, api.gerrit.assert_changes_submittable, [change],
-      test_output_data=api.gerrit.test_api.test_changes_are_submittable(
-          errors=['could not cherry pick']))
-  api.gerrit.test_api.simulated_changes_are_submittable(submittable=False)
+  api.assertions.assertTrue(api.gerrit.changes_submittable([change]))
+  api.assertions.assertFalse(api.gerrit.changes_submittable([change]))
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.gerrit.simulated_changes_are_submittable(submittable=False,
+                                                   iteration=2))

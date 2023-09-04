@@ -348,7 +348,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
         if self.gerrit_changes:
           # Any changes we have must be submittable.
-          self.m.gerrit.assert_changes_submittable(self.gerrit_changes)
+          if not self.m.gerrit.changes_submittable(self.gerrit_changes):
+            raise recipe_api.StepFailure(
+                'Merge conflict detected! Please rebase and retry.')
           # If enabled, ensure all related changes are present
           with self.m.failures.ignore_exceptions():
             if ('chromeos.cros_infra_config.include_related'

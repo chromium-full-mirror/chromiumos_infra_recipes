@@ -120,7 +120,8 @@
     "name": "check for merge conflicts (2)",
     "~followup_annotations": [
       "@@@STEP_TEXT@unable to cherry-pick changes@@@",
-      "@@@STEP_LOG_LINE@cherry-pick-failures@could not cherry pick@@@",
+      "@@@STEP_LOG_LINE@cherry-pick-failures@some cherry pick error line 1@@@",
+      "@@@STEP_LOG_LINE@cherry-pick-failures@line2@@@",
       "@@@STEP_LOG_END@cherry-pick-failures@@@",
       "@@@SET_BUILD_PROPERTY@merge_conflict@true@@@",
       "@@@STEP_FAILURE@@@"
@@ -137,7 +138,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"errors\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"could not cherry pick\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"some cherry pick error line 1\\nline2\"@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"

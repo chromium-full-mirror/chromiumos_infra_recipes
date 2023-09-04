@@ -2068,7 +2068,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Merge conflict detected! Please rebase and retry.\n\n    some cherry pick error line 1\n    line2"
+      "humanReason": "Merge conflict detected! Please rebase and retry."
     },
     "name": "$result"
   }

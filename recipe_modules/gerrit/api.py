@@ -510,17 +510,14 @@ class GerritApi(RecipeApi):
         host = host[len(prefix):]
     return 'https://' + host
 
-  def assert_changes_submittable(
+  def changes_submittable(
       self, gerrit_changes: List[GerritChange],
-      test_output_data: Union[Callable, Dict, List, None] = None):
+      test_output_data: Union[Callable, Dict, List, None] = None) -> bool:
     """Check whether the given changes can be merged onto their Git branches.
 
     Args:
       gerrit_changes: The changes to check.
       test_output_data: Mock response for the git-test-submit support tool.
-
-    Raises:
-      StepFailure if any of the changes cannot be merged.
     """
     with self.m.step.nest('check for merge conflicts') as presentation:
       changes = []
@@ -543,17 +540,10 @@ class GerritApi(RecipeApi):
         presentation.logs['cherry-pick-failures'] = result['errors']
         presentation.status = 'FAILURE'
         presentation.properties['merge_conflict'] = True
-        # Write an error into the failure so that it's surfaced to the user.
-        # Currently the program only returns one error, so just use the first.
-        error_markdown_lines = [
-            '    {}'.format(s) for s in result['errors'][0].splitlines()
-        ]
-        error_msg = '\n'.join(error_markdown_lines)
-        raise StepFailure(
-            'Merge conflict detected! Please rebase and retry.\n\n{}'.format(
-                error_msg))
+        return False
+
       presentation.step_text = 'confirmed no merge conflicts'
-      return
+      return True
 
   def create_change(
       self, project: Union[str, Path], reviewers: Optional[List[str]] = None,

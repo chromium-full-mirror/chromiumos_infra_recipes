@@ -570,7 +570,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
               try:
                 with self.m.context(cwd=internal_manifest.path):
                   self.m.git.checkout(chosen_internal.id, force=True)
-                self.m.gerrit.assert_changes_submittable(gerrit_changes)
+                if not self.m.gerrit.changes_submittable(gerrit_changes):
+                  raise recipe_api.StepFailure(
+                      'Merge conflict detected! Please rebase and retry.')
                 cq_looks_log.append(
                     f'Changes are submittable with internal snapshot {suggested_internal.commit_sha}, external snapshot {suggested_external_id}'
                 )
