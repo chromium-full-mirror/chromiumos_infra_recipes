@@ -20,20 +20,6 @@ enum UprevTargetKind {
   SDK = 2;
 }
 
-message G3OncallRotation {
-  // The name of the oncall rotation, e.g. chromeos-sheriffs-west.
-  string name = 1;
-
-  // The rotation position.
-  enum Position {
-    UNSPECIFIED = 0;
-    PRIMARY = 1;
-    SECONDARY = 2;
-    PRIMARY_AND_SECONDARY = 3;
-  }
-  Position position = 2;
-}
-
 // A reviewer must be some user known by Gerrit. Could be an email
 // alias that is processed by GWS.
 message Reviewer {
