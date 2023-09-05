@@ -7,7 +7,8 @@
 
 from google.protobuf.json_format import MessageToDict
 
-from PB.chromiumos.signing import BuildTargetSigningConfig, BuildTargetSigningConfigs, SigningConfig
+from PB.chromiumos.common import (IMAGE_TYPE_BASE, IMAGE_TYPE_FACTORY)
+from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -26,23 +27,43 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   # Fetch config.
   config = api.signing.get_config()
-  expected_config = BuildTargetSigningConfigs(
-      build_target_signing_configs=[
-          BuildTargetSigningConfig(
-              build_target='eve',
-              signing_configs=[
-                  SigningConfig(
-                      keyset='eve-foo-bar',
-                      ensure_no_password=True,
-                      firmware_update=True,
-                  ),
-              ],
+  expected_config = BuildTargetSigningConfig(
+      build_target='kukui',
+      signing_configs=[
+          SigningConfig(
+              image_type=IMAGE_TYPE_BASE,
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_FACTORY,
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
           ),
       ],
   )
   api.assertions.assertEqual(config, expected_config)
+
+  sign_types = [IMAGE_TYPE_BASE]
+  processed_config = api.signing.setup_signing(sign_types)
+  expected_processed_config = BuildTargetSigningConfig(
+      build_target='kukui',
+      signing_configs=[
+          SigningConfig(
+              image_type=IMAGE_TYPE_BASE,
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='/path/to/archive.tar.xz',
+          ),
+      ],
+  )
+  api.assertions.assertEqual(processed_config, expected_processed_config)
+
   # Call signing.
-  api.signing.sign_artifacts()
+  api.signing.sign_artifacts(sign_types)
 
 
 def GenTests(api: RecipeTestApi):
@@ -51,8 +72,16 @@ def GenTests(api: RecipeTestApi):
       api.properties(**{
           '$chromeos/signing':
               MessageToDict(SigningProperties(local_signing=True))
-      }), api.post_process(post_process.DropExpectation),
-      builder='eve-release-main')
+      }), api.post_process(post_process.DropExpectation), build_target='kukui',
+      builder='kukui-release-main')
+
+  yield api.build_menu.test(
+      'no-signing-config',
+      api.properties(**{
+          '$chromeos/signing':
+              MessageToDict(SigningProperties(local_signing=True))
+      }), api.post_process(post_process.DropExpectation), build_target='eve',
+      builder='eve-release-main', status='FAILURE')
 
   yield api.test(
       'no-builder-config',
@@ -67,4 +96,4 @@ def GenTests(api: RecipeTestApi):
           post_process.SummaryMarkdown,
           'Cannot sign artifacts when local signing is not configured'),
       api.post_process(post_process.DropExpectation), status='FAILURE',
-      builder='eve-release-main')
+      build_target='kukui', builder='kukui-release-main')

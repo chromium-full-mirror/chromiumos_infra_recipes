@@ -11,7 +11,7 @@ from google.protobuf.text_format import Parse
 
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
-from PB.chromiumos.signing import BuildTargetSigningConfigs
+from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
@@ -35,14 +35,20 @@ InstructionsMetadata = NewType('InstructionsMetadata', Any)
 CONFIG_INTERNAL_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 SIGNING_CONFIG_FILEPATH = 'board_config/generated/signing_config.textproto'
 SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
-  build_target: "eve"
+  build_target: "kukui"
   signing_configs {
-    keyset: "eve-foo-bar"
+    image_type: IMAGE_TYPE_BASE
+    keyset: "kukui-foo-bar"
+    ensure_no_password: true
+    firmware_update: true
+  }
+  signing_configs {
+    image_type: IMAGE_TYPE_FACTORY
+    keyset: "kukui-foo-bar"
     ensure_no_password: true
     firmware_update: true
   }
 }'''
-
 
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
@@ -60,10 +66,10 @@ class SigningApi(recipe_api.RecipeApi):
   # Methods to support the new local signing flow.
 
   @property
-  def local_signing(self) -> bool:
+  def local_signing(self) -> BuildTargetSigningConfigs:
     return self._local_signing
 
-  def get_config(self) -> BuildTargetSigningConfigs:
+  def get_config(self) -> BuildTargetSigningConfig:
     """Fetch signing config from the appropriate branch of config-internal."""
     if self._signing_config:
       return self._signing_config
@@ -78,12 +84,19 @@ class SigningApi(recipe_api.RecipeApi):
               SIGNING_CONFIG_TEST_DATA))
       signing_config = Parse(signing_config_textproto,
                              BuildTargetSigningConfigs())
-      self._signing_config = signing_config
-      return signing_config
 
-  def _setup_signing(
+      build_target = self.m.build_menu.build_target.name
+      for config in signing_config.build_target_signing_configs:
+        if config.build_target == build_target:
+          self._signing_config = config
+          return self._signing_config
+      raise StepFailure(
+          f'could not find signing config for build target "{build_target}"')
+
+  # Public method so we can test it.
+  def setup_signing(
       self,
-      sign_types: List['common_pb2.ImageType']) -> BuildTargetSigningConfigs:
+      sign_types: List['common_pb2.ImageType']) -> BuildTargetSigningConfig:
     """Set up the working dir for signing.
 
     Copies all necessary artifacts (based on signing config) from GS into a new
@@ -92,35 +105,40 @@ class SigningApi(recipe_api.RecipeApi):
 
     Also drops configs for irrelevant sign types.
     """
-    config = self.get_config()
+    build_target_config = self.get_config()
 
-    _ = sign_types
-    # TODO(b/296086340): Drop configs for irrelevant sign types.
+    relevant_configs = []
+    for signing_config in build_target_config.signing_configs:
+      if signing_config.image_type in sign_types:
+        relevant_configs.append(signing_config)
 
-    # TODO(b/296086340): Replicate copy functionality from pushimage.py
+    # TODO(b/299160925): Replicate copy functionality from pushimage.py
     # https://source.corp.google.com/h/chromium/chromiumos/codesearch/+/main:chromite/scripts/pushimage.py;drc=511a7c12bcf28eda77cbe82cc09cddcfd6b15be9;l=441
 
-    # TODO(b/296086340): Populate signing config `artifact_path` field with
-    # the path of the relevant archive.
+    for signing_config in relevant_configs:
+      # TODO(b/299160925): Populate signing config `artifact_path` field with
+      # the path of the relevant archive.
+      signing_config.archive_path = '/path/to/archive.tar.xz'
 
-    return config
+    build_target_config = BuildTargetSigningConfig(
+        build_target=build_target_config.build_target,
+        signing_configs=relevant_configs,
+    )
+    return build_target_config
 
-  def sign_artifacts(
-      self, sign_types: Optional[List['common_pb2.ImageType']] = None) -> None:
+  def sign_artifacts(self, sign_types: List['common_pb2.ImageType']) -> None:
     """Stub implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
-    _ = self._setup_signing(sign_types)
+    with self.m.step.nest('sign artifacts'):
+      _ = self.setup_signing(sign_types)
 
-    # TODO(b/296086340): Handle empty sign_types (release should pass this field
-    # in based on cros_release.sign_types, not sure about firmware).
+      # TODO(b/296086340): Call BAPI.
 
-    # TODO(b/296086340): Call BAPI.
-
-    # TODO(b/296086340): rsync working_dir to the appropriate GS dir (for now,
-    # be sure to use the throwaway bucket -- eventually we'll want to do
-    # chromeos-releases).
+      # TODO(b/296086340): rsync working_dir to the appropriate GS dir (for now,
+      # be sure to use the throwaway bucket -- eventually we'll want to do
+      # chromeos-releases).
 
   # Methods to support the legacy signing fleet flow.
 

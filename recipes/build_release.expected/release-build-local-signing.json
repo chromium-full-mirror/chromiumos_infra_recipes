@@ -11725,7 +11725,14 @@
   },
   {
     "cmd": [],
-    "name": "fetch signing config"
+    "name": "sign artifacts"
+  },
+  {
+    "cmd": [],
+    "name": "sign artifacts.fetch signing config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -11755,9 +11762,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "fetch signing config.fetch refs/heads/main:board_config/generated/signing_config.textproto",
+    "name": "sign artifacts.fetch signing config.fetch refs/heads/main:board_config/generated/signing_config.textproto",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
