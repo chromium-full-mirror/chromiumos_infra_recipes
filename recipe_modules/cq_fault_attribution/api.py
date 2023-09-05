@@ -287,6 +287,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       if any(snapshot_test_result.status == TestStatus.PASS
              for snapshot_test_result in snapshot_test_results):
         test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.SUCCESS_FOUND
+
+        return
       elif all(snapshot_test_result.status == TestStatus.FAIL
                for snapshot_test_result in snapshot_test_results):
         if any(snapshot_test_result.failure_reason.primary_error_message ==
@@ -301,10 +303,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
           # of the snapshot attempts matches the failure reason
           # (human_readable_summary) of the CQ test.
           test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.DIFFERING_FAILURE_FOUND
-      else:
-        test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
-    else:
-      test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
+
+        return
+
+    test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
 
   def _get_failed_test_names(self, hw_tests: SkylabResult,
                              vm_gce_tests: List[build_pb2.Build]):
@@ -436,6 +438,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     for invocation_id, snapshot in invocation_id_and_snapshot_pairs:
       invocation = invocation_id_to_invocation[invocation_id]
       for test_result in invocation.test_results:
+        if test_result.status == TestStatus.SKIP:
+          continue
+
         test_id = self._get_test_id_from_rdb_test_name(test_result.name)
         if not test_id:
           # Test name wasn't in the expected format. Skipping.

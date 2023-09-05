@@ -549,7 +549,7 @@ def RunSteps(api):
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        expected_snapshot_comparison_properties)
+        None)
 
   api.assertions.assertIn(
       expected_scarlet_existing_failure,
@@ -577,8 +577,7 @@ def RunSteps(api):
         SKIPPED_TEST_CASE_NAME,
         CqFailureAttribute.NO_COMPARISON,
         False,
-        expected_snapshot_comparison_properties)
-  expected_scarlet_dru_no_comparison_failure.diff_model_used = True
+        None)
 
   api.assertions.assertIn(
       expected_scarlet_dru_existing_failure,
