@@ -3574,11 +3574,11 @@ Args:
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#81)(self, buildspec: ManifestLocation):**
+&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#83)(self, buildspec: ManifestLocation):**
 
-&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#128)(self, fatal: bool=False):**
+&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#135)(self, fatal: bool=False):**
 
 Checks that the build was given a buildspec and that there doesn't
   already exist a build for this buildspec (and this build is not a retry).
@@ -3586,9 +3586,9 @@ Checks that the build was given a buildspec and that there doesn't
 Args:
   fatal: Whether or not to kill the build if the build already ran.
 
-&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#118)(self):**
+&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#120)(self):**
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#189)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#196)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -3604,7 +3604,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#545)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#552)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3612,7 +3612,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#481)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#488)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3625,7 +3625,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#509)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#516)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3637,7 +3637,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#561)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#568)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3656,11 +3656,11 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#85)(self):**
+&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#87)(self):**
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#400)(self, override_qs_account: str=None):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#407)(self, override_qs_account: str=None):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3671,18 +3671,18 @@ been built.
 Args:
   override_qs_account: QS Account to use instead of whatever is configured.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#601)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#608)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#609)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#616)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
 If the schedule cannot be fetched or is malformatted, reasonable defaults
 will be used. See go/dynamic-rc-prio for more context.
 
-&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#90)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
+&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#92)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
 
 Set the gitiles commit used for ResultDB.
 
@@ -3693,9 +3693,13 @@ Args:
   branch: Branch where commit was fetched.
   position: Used to define a total order of commits on the ref.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#52)(self, sign_types):**
+&emsp; **@property**<br>&mdash; **def [sign\_types](/recipe_modules/cros_release/api.py#130)(self):**
 
-Checks whether an array of IMAGE_TYPE enums is valid for signing.
+Return the sign types as passed into input properties.
+
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#54)(self):**
+
+Checks whether the configured sign types are valid for signing.
 
 Raises:
   StepFailure: If any of the given image types is not supported for signing.
@@ -11361,7 +11365,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#123)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#124)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#71)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -12568,10 +12572,10 @@ Main test logic.
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/override_channels.py#20)(api):**
 ### *recipes* / [cros\_release:tests/util](/recipe_modules/cros_release/tests/util.py)
 
-[DEPS](/recipe_modules/cros_release/tests/util.py#10): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_release/tests/util.py#12): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/util.py#22)(api):**
 ### *recipes* / [cros\_release\_config:examples/full](/recipe_modules/cros_release_config/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#13): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_schedule](#recipe_modules-cros_schedule), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

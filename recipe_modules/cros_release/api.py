@@ -5,12 +5,14 @@
 
 """An API for providing release related operations (e.g. paygen, signing)."""
 import json
+from typing import List
 
 from google.protobuf import json_format
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure, StepFailure
 
+from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
@@ -49,13 +51,13 @@ class CrosReleaseApi(recipe_api.RecipeApi):
   MANIFEST_INTERNAL_URL = \
       'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
 
-  def validate_sign_types(self, sign_types):
-    """Checks whether an array of IMAGE_TYPE enums is valid for signing.
+  def validate_sign_types(self):
+    """Checks whether the configured sign types are valid for signing.
 
     Raises:
       StepFailure: If any of the given image types is not supported for signing.
     """
-    if not set(sign_types).issubset(SUPPORTED_SIGN_TYPES):
+    if not set(self.sign_types).issubset(SUPPORTED_SIGN_TYPES):
       raise StepFailure('attempting to sign type not in supported sign types')
 
   def __init__(self, properties, **kwargs):
@@ -124,6 +126,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
             int(channel)
             for channel in self.m.cros_infra_config.override_release_channels
         ]
+
+  @property
+  def sign_types(self) -> List['common_pb2.ImageType']:
+    """Return the sign types as passed into input properties."""
+    return self._sign_types
 
   def check_buildspec(self, fatal: bool = False):
     """Checks that the build was given a buildspec and that there doesn't
@@ -581,14 +588,14 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       gs_image_dir = self.get_image_dir(config, sysroot, presentation)
       sysroot = Sysroot(build_target=self.m.build_menu.build_target)
       # Validate sign types given.
-      self.validate_sign_types(self._sign_types)
+      self.validate_sign_types()
 
       # Emit release bucket for each channel.
       self.emit_release_buckets(sysroot.build_target.name, presentation)
 
       response = self.m.cros_artifacts.push_image(
           self.m.build_menu.chroot, gs_image_dir, sysroot,
-          sign_types=self._sign_types,
+          sign_types=self.sign_types,
           dest_bucket='gs://' + self._release_bucket, channels=self._channels)
       instructions_uris = [
           i.instructions_file_path for i in response.instructions

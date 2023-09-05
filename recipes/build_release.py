@@ -73,6 +73,7 @@ def RunSteps(api, properties):
   api.cros_try.check_try_version()
   api.checkpoint.register()
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
+  api.cros_release.validate_sign_types()
   api.cros_release.check_channel_override()
   api.cros_release.set_output_properties()
   # For dlc_utils.get_dlc_artifacts.
@@ -245,7 +246,8 @@ def DoRunSteps(api, config, properties):
   # do it here. We do it before `PUSH_IMAGES` below because that is tightly
   # coupled with `COLLECT_SIGNING` below it as far as checkpoints is concerned.
   if api.signing.local_signing:
-    api.signing.sign_artifacts()
+    release_sign_types = api.cros_release.sign_types
+    api.signing.sign_artifacts(sign_types=release_sign_types)
     # TODO Publish any signed build metadata we have on the pubsub.
     # api.build_reporting.publish_signed_build_metadata()
 
