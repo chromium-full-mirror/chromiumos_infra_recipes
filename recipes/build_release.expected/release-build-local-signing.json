@@ -11720,7 +11720,44 @@
     "cmd": [],
     "name": "update retry summary (2)",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@retry_summary@{\"PUSH_IMAGES\": \"STARTED\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
+      "@@@SET_BUILD_PROPERTY@retry_summary@{\"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "fetch signing config"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/refs/heads/main/board_config/generated/signing_config.textproto",
+      "--format",
+      "text"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "fetch signing config.fetch refs/heads/main:board_config/generated/signing_config.textproto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

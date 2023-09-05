@@ -9,6 +9,7 @@ from typing import Any, Dict, List, NewType, Optional
 
 from google.protobuf.text_format import Parse
 
+from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.signing import BuildTargetSigningConfigs
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
@@ -54,6 +55,7 @@ class SigningApi(recipe_api.RecipeApi):
     self.ignore_already_exists_errors: bool = properties.ignore_already_exists_errors
     # Props for the new local signing flow.
     self._local_signing = properties.local_signing or False
+    self._signing_config = None
 
   # Methods to support the new local signing flow.
 
@@ -63,6 +65,8 @@ class SigningApi(recipe_api.RecipeApi):
 
   def get_config(self) -> BuildTargetSigningConfigs:
     """Fetch signing config from the appropriate branch of config-internal."""
+    if self._signing_config:
+      return self._signing_config
     with self.m.step.nest('fetch signing config'):
       try:
         branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
@@ -74,14 +78,49 @@ class SigningApi(recipe_api.RecipeApi):
               SIGNING_CONFIG_TEST_DATA))
       signing_config = Parse(signing_config_textproto,
                              BuildTargetSigningConfigs())
+      self._signing_config = signing_config
       return signing_config
 
-  def sign_artifacts(self) -> None:
+  def _setup_signing(
+      self,
+      sign_types: List['common_pb2.ImageType']) -> BuildTargetSigningConfigs:
+    """Set up the working dir for signing.
+
+    Copies all necessary artifacts (based on signing config) from GS into a new
+    temp dir and populates the artifact path field in each individual signing
+    config.
+
+    Also drops configs for irrelevant sign types.
+    """
+    config = self.get_config()
+
+    _ = sign_types
+    # TODO(b/296086340): Drop configs for irrelevant sign types.
+
+    # TODO(b/296086340): Replicate copy functionality from pushimage.py
+    # https://source.corp.google.com/h/chromium/chromiumos/codesearch/+/main:chromite/scripts/pushimage.py;drc=511a7c12bcf28eda77cbe82cc09cddcfd6b15be9;l=441
+
+    # TODO(b/296086340): Populate signing config `artifact_path` field with
+    # the path of the relevant archive.
+
+    return config
+
+  def sign_artifacts(
+      self, sign_types: Optional[List['common_pb2.ImageType']] = None) -> None:
     """Stub implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
-    # noop
+    _ = self._setup_signing(sign_types)
+
+    # TODO(b/296086340): Handle empty sign_types (release should pass this field
+    # in based on cros_release.sign_types, not sure about firmware).
+
+    # TODO(b/296086340): Call BAPI.
+
+    # TODO(b/296086340): rsync working_dir to the appropriate GS dir (for now,
+    # be sure to use the throwaway bucket -- eventually we'll want to do
+    # chromeos-releases).
 
   # Methods to support the legacy signing fleet flow.
 
