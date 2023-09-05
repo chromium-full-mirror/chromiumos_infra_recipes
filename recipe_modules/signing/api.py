@@ -9,6 +9,7 @@ from typing import Any, Dict, List, NewType, Optional
 
 from google.protobuf.text_format import Parse
 
+from PB.chromite.api.image import SignImageRequest
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig
@@ -132,11 +133,19 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
     with self.m.step.nest('sign artifacts'):
-      _ = self.setup_signing(sign_types)
+      config = BuildTargetSigningConfigs(
+          build_target_signing_configs=[self.setup_signing(sign_types)])
+      output_dir = self.m.path.mkdtemp('signed-artifacts')
+      request = SignImageRequest(
+          chroot=self.m.build_menu.chroot, signing_configs=config,
+          result_path=common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=self.m.path.abspath(output_dir),
+                  location=common_pb2.Path.Location.OUTSIDE,
+              )))
+      self.m.cros_build_api.ImageService.SignImage(request)
 
-      # TODO(b/296086340): Call BAPI.
-
-      # TODO(b/296086340): rsync working_dir to the appropriate GS dir (for now,
+      # TODO(b/296086340): rsync output_dir to the appropriate GS dir (for now,
       # be sure to use the throwaway bucket -- eventually we'll want to do
       # chromeos-releases).
 

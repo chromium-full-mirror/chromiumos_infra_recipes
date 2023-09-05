@@ -72,7 +72,10 @@ def GenTests(api: RecipeTestApi):
       api.properties(**{
           '$chromeos/signing':
               MessageToDict(SigningProperties(local_signing=True))
-      }), api.post_process(post_process.DropExpectation), build_target='kukui',
+      }),
+      api.post_check(post_process.MustRun,
+                     'sign artifacts.call chromite.api.ImageService/SignImage'),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main')
 
   yield api.build_menu.test(

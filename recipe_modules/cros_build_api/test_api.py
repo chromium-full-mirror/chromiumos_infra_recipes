@@ -352,6 +352,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'instructions_file_path': file_name
         } for file_name in CrosBuildApiTestApi.INSTRUCTIONS],
     )
+    responses['SignImage'] = '{}'
     responses['Test'] = jsonify(success=True)
     return responses
 

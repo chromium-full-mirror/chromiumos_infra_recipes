@@ -139,6 +139,7 @@ def RunSteps(api):
           'Create': image.CreateImageResult,
           'CreateNetboot': image.CreateNetbootResponse,
           'PushImage': image.PushImageResponse,
+          'SignImage': image.SignImageResponse,
           'Test': image.TestImageResult,
       },
       'MethodService': {
