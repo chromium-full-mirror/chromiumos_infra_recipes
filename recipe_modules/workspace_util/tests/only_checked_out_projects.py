@@ -51,18 +51,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           stdout=api.raw_io.output_text(
               'error: project chromiumos/config not found'),
       ),
-      api.step_data(
-          'failing apply changes.apply gerrit patch sets.repo forall (2)',
-          retcode=1,
-          stdout=api.raw_io.output_text(
-              'error: project chromiumos/config not found'),
-      ),
-      api.step_data(
-          'failing apply changes.apply gerrit patch sets.repo forall (3)',
-          retcode=1,
-          stdout=api.raw_io.output_text(
-              'error: project chromiumos/config not found'),
-      ),
       # When ignore_missing_projects is True, do a repo forall to find out
       # what repos are checked out.
       api.repo.project_infos_step_data(
@@ -95,18 +83,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'all-changes-discarded',
       api.step_data(
           'failing apply changes.apply gerrit patch sets.repo forall',
-          retcode=1,
-          stdout=api.raw_io.output_text(
-              'error: project chromiumos/config not found'),
-      ),
-      api.step_data(
-          'failing apply changes.apply gerrit patch sets.repo forall (2)',
-          retcode=1,
-          stdout=api.raw_io.output_text(
-              'error: project chromiumos/config not found'),
-      ),
-      api.step_data(
-          'failing apply changes.apply gerrit patch sets.repo forall (3)',
           retcode=1,
           stdout=api.raw_io.output_text(
               'error: project chromiumos/config not found'),
