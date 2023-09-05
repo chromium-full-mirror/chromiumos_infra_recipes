@@ -7,8 +7,7 @@ syntax = "proto3";
 package recipes.chromeos.robocrop;
 
 message RoboCropProperties {
-  // The list of the buildbucket pools to monitor and scale.
-  repeated string pools_to_monitor = 1;
+  reserved 1;
   // Boolean as to whether to make call to commit changes to GCE Provider.
   bool commit_changes = 2;
   // Chrome or ChromeOS. Determines the correct config repo to read from.
