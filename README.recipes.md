@@ -11974,7 +11974,7 @@ Recipe for analyzing and retrying failed CQ runs.
 
 &mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#323)(api):**
 
-&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#653)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties):**
+&mdash; **def [create\_expected\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#655)(test_name, snapshot_comparison_fault_attribution, likely_flaky, expected_snapshot_comparison_properties):**
 
 &mdash; **def [create\_expected\_snapshot](/recipe_modules/cq_fault_attribution/tests/set_test_failure_fault_attributes.py#644)(source_build_id, source_completed_unix_timestamp):**
 

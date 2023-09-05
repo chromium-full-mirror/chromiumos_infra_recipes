@@ -646,6 +646,8 @@ def create_expected_snapshot(source_build_id, source_completed_unix_timestamp):
   expected_snapshot_comparison_properties.source_build_id = source_build_id
   expected_snapshot_comparison_properties.source_completed_unix_timestamp = \
     source_completed_unix_timestamp
+  expected_snapshot_comparison_properties.source_started_unix_timestamp = \
+    source_completed_unix_timestamp
 
   return expected_snapshot_comparison_properties
 

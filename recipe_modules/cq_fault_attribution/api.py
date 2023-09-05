@@ -499,6 +499,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       comparison_snapshot.input.gitiles_commit.id
     comparison_snapshot_properties.source_completed_unix_timestamp = \
       comparison_snapshot.end_time.seconds
+    comparison_snapshot_properties.source_started_unix_timestamp = \
+      comparison_snapshot.start_time.seconds
 
     return comparison_snapshot_properties
 

@@ -80,6 +80,9 @@ message SnapshotProperties {
   // The commit sha of the snapshot build.
   string source_snapshot_sha = 2;
 
+  // The start_time of the snapshot build in unix format.
+  int64 source_started_unix_timestamp = 4;
+
   // The end_time of the snapshot build in unix format.
   int64 source_completed_unix_timestamp = 3;
 }
