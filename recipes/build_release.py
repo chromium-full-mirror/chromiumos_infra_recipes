@@ -11,6 +11,7 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.checkpoint import RetryStep
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import \
   CrosArtifactsProperties
@@ -512,6 +513,9 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               '$chromeos/cros_artifacts':
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
+              '$chromeos/cros_release': {
+                  'sign_types': [common_pb2.IMAGE_TYPE_BASE],
+              },
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(
@@ -535,6 +539,8 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun,
+                     'sign artifacts.download release artifacts'),
       api.post_check(
           post_process.MustRun,
           'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'

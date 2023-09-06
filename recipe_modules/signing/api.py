@@ -12,7 +12,7 @@ from google.protobuf.text_format import Parse
 from PB.chromite.api.image import SignImageRequest
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
-from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig
+from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
@@ -113,13 +113,7 @@ class SigningApi(recipe_api.RecipeApi):
       if signing_config.image_type in sign_types:
         relevant_configs.append(signing_config)
 
-    # TODO(b/299160925): Replicate copy functionality from pushimage.py
-    # https://source.corp.google.com/h/chromium/chromiumos/codesearch/+/main:chromite/scripts/pushimage.py;drc=511a7c12bcf28eda77cbe82cc09cddcfd6b15be9;l=441
-
-    for signing_config in relevant_configs:
-      # TODO(b/299160925): Populate signing config `artifact_path` field with
-      # the path of the relevant archive.
-      signing_config.archive_path = '/path/to/archive.tar.xz'
+    relevant_configs = self.download_release_artifacts(relevant_configs)
 
     build_target_config = BuildTargetSigningConfig(
         build_target=build_target_config.build_target,
@@ -359,3 +353,36 @@ class SigningApi(recipe_api.RecipeApi):
         return True
 
     return False
+
+  def download_release_artifacts(
+      self,
+      relevant_signing_configs: List[SigningConfig]) -> List[SigningConfig]:
+    """Download artifacts so we can support retries with conductor.
+
+    As opposed to in situ builds with local artifacts already present.
+
+    Args:
+      relevant_signing_configs: Build target configs with supported sign types.
+
+    Returns:
+      relevant_signing_configs with local artifact paths populated.
+    """
+    # TODO(b/299160925): Include all necessary artifacts.
+    # TODO(b/299160925): Dedupe artifact names with cros_artifacts.
+    artifacts_by_image_type = {
+        common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
+        common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz'
+    }
+    with self.m.step.nest('download release artifacts'):
+      for signing_config in relevant_signing_configs:
+        download_file_name = artifacts_by_image_type.get(
+            signing_config.image_type, None)
+        if download_file_name:
+          signing_config.archive_path = self.m.path.join(
+              self.m.path.mkdtemp('unsigned-artifacts'), download_file_name)
+
+          self.m.gsutil.download(
+              self.m.build_menu.artifacts_gs_path(), download_file_name,
+              signing_config.archive_path, name='download {} from {}'.format(
+                  download_file_name, self.m.build_menu.artifacts_gs_path()))
+      return relevant_signing_configs

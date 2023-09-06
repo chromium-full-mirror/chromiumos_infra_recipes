@@ -11779,6 +11779,47 @@
   },
   {
     "cmd": [],
+    "name": "sign artifacts.download release artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_base_image.tar.xz",
+      "[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.download release artifacts.gsutil download chromiumos_base_image.tar.xz from gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sign artifacts.call chromite.api.ImageService/SignImage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -11786,7 +11827,16 @@
       "@@@STEP_LOG_LINE@request@  \"signingConfigs\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTargetSigningConfigs\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
-      "@@@STEP_LOG_LINE@request@        \"buildTarget\": \"kukui\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"buildTarget\": \"kukui\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"signingConfigs\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"keyset\": \"kukui-foo-bar\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"imageType\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@            \"ensureNoPassword\": true,@@@",
+      "@@@STEP_LOG_LINE@request@            \"firmwareUpdate\": true,@@@",
+      "@@@STEP_LOG_LINE@request@            \"archivePath\": \"[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
@@ -11810,7 +11860,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\",\n        \"signingConfigs\": [\n          {\n            \"keyset\": \"kukui-foo-bar\",\n            \"imageType\": 1,\n            \"ensureNoPassword\": true,\n            \"firmwareUpdate\": true,\n            \"archivePath\": \"[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz\"\n          }\n        ]\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_27/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

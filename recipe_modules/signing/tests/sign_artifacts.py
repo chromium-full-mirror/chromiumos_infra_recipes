@@ -56,7 +56,7 @@ def RunSteps(api: RecipeApi):
               keyset='kukui-foo-bar',
               ensure_no_password=True,
               firmware_update=True,
-              archive_path='/path/to/archive.tar.xz',
+              archive_path='[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz',
           ),
       ],
   )
