@@ -5400,6 +5400,33 @@
     ]
   },
   {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--chroot",
+      "[CACHE]/cros_chroot/chroot",
+      "--out-dir",
+      "[CACHE]/cros_chroot/out",
+      "setup_board",
+      "--regen-configs",
+      "--board",
+      "amd64-generic"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "regenerate configs"
+  },
+  {
     "cmd": [],
     "name": "update sdk (2)"
   },

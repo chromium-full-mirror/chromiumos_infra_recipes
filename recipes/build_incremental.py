@@ -143,6 +143,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           )
       api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                     retry_fetches=3, force_remove_dirty=True)
+      api.cros_sdk('regenerate configs', [
+          'setup_board', '--regen-configs', '--board',
+          api.build_menu.build_target.name
+      ])
 
       api.cros_sdk.update_chroot(
           toolchain_targets=[api.build_menu.build_target],
