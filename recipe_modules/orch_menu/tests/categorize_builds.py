@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'git_footers',
     'orch_menu',
     'test_util',
 ]
@@ -115,6 +116,45 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  yield api.test(
+      'cq-force-testable-builders',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.try_build(builder='cq-orchestrator'),
+      api.properties(
+          **{
+              '$chromeos/cros_test_plan_v2':
+                  CrosTestPlanV2Properties(migration_configs=[
+                      CrosTestPlanV2Properties.ProjectMigrationConfig(
+                          host='chromium-review.googlesource.com',
+                          project='.*',
+                          file_allowlist_regexps=['.*'],
+                          branch_allowlist_regexps=['.*'],
+                      ),
+                  ]),
+              'expected_collect_builders': ['target3-env', 'target1-env'],
+              'expected_collect_after_builders': [],
+              'expected_no_collect_builders': ['target2-env'],
+          }),
+      api.properties(
+          **{
+              '$chromeos/cros_cq_additional_tests': {
+                  'enable_running_additional_tests': True,
+                  'run_additional_tests_as_critical': False,
+              }
+          }),
+      api.git_footers.simulated_get_footers([
+          'target1'
+      ], 'categorize builds by collect handling.get additional testable builders',
+                                            2),
+      api.step_data(
+          'categorize builds by collect handling.get testable builders.docker run',
+          stdout=api.raw_io.output_text('target3-env target2-env')),
+      api.post_check(
+          post_process.MustRun,
+          'categorize builds by collect handling.get testable builders'),
+      api.post_process(post_process.DropExpectation),
+  )
+
   # Failure to categorize via CoverageRules default to collecting all
   # non-critical builds before end-to-end testing.
   yield api.test(
@@ -151,6 +191,32 @@ def GenTests(api):
       'cq-v2-planning-not-enabled',
       api.cq(run_mode=api.cq.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'categorize builds by collect handling.get testable builders'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'cq-v1-planning-with-force-relevant-testable-builders',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.try_build(builder='cq-orchestrator'),
+      api.properties(
+          **{
+              '$chromeos/cros_cq_additional_tests': {
+                  'enable_running_additional_tests': True,
+                  'run_additional_tests_as_critical': False,
+              }
+          }),
+      api.properties(
+          expected_collect_builders=['target3-env', 'target1-env'],
+          expected_collect_after_builders=['target2-env'],
+          expected_no_collect_builders=[],
+      ),
+      api.git_footers.simulated_get_footers([
+          'target3'
+      ], 'categorize builds by collect handling.get additional testable builders',
+                                            2),
       api.post_check(
           post_process.DoesNotRun,
           'categorize builds by collect handling.get testable builders'),

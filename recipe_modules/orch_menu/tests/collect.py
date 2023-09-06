@@ -26,6 +26,7 @@ def RunSteps(api, properties):
   build = api.buildbucket.build
   child_specs_dict = {}
   child_targets_dict = {}
+  forced_testable_builders = properties.forced_testable_builders
   if properties.child_spec.name:
     child_specs_dict[build.builder.builder] = properties.child_spec
   if properties.child_target.name:
@@ -33,7 +34,8 @@ def RunSteps(api, properties):
   # pylint: disable=protected-access
   api.assertions.assertEqual(
       properties.expected_collect,
-      api.orch_menu._collect_value(build, child_specs_dict, child_targets_dict))
+      api.orch_menu._collect_value(build, child_specs_dict, child_targets_dict,
+                                   forced_testable_builders))
 
 
 def GenTests(api):

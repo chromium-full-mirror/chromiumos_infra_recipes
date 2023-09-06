@@ -21,4 +21,7 @@ message CollectProperties {
 
   // The Build target.
   chromiumos.BuildTarget build_target = 4;
+
+  //
+  repeated string forced_testable_builders = 5;
 }

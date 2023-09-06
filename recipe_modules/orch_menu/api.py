@@ -1023,6 +1023,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       build: build_pb2.Build,
       child_specs_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
       child_targets_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
+      forced_testable_builders: List[str],
   ) -> BuilderConfig.Orchestrator.ChildSpec:
     """Returns whether the orchestrator should collect the build, and when.
 
@@ -1033,12 +1034,17 @@ class OrchMenuApi(recipe_api.RecipeApi):
         Fuzzy in the sense that it just chops off from the last '-' to the end
         of the builder name. Intended to pick up the *-snapshot cases. See more
         below.
+      forced_testable_builders: The list of builders for which additional
+        testing was defined via footer.
 
     Returns:
       (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
       when.
     """
     values = BuilderConfig.Orchestrator.ChildSpec
+
+    if build.builder.builder in forced_testable_builders:
+      return values.COLLECT
 
     # For Chrome PUpr Uprev CLs, set the collect value of the additional
     # non-critical builders to NO_COLLECT.
@@ -1544,12 +1550,19 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
+    if self.m.cq.active and self.gerrit_changes:
+      forced_testable_builders = self.m.cros_cq_additional_tests.get_additional_test_builders(
+          builds, self.gerrit_changes)
+    else:
+      forced_testable_builders = []
+
     collect_when_dict = defaultdict(list)
     child_specs_dict = {cs.name: cs for cs in child_specs}
     child_targets_dict = {cs.name.rsplit('-', 1)[0]: cs for cs in child_specs}
     for b in builds:
       collect_value = self._collect_value(b, child_specs_dict,
-                                          child_targets_dict)
+                                          child_targets_dict,
+                                          forced_testable_builders)
       collect_when_dict[collect_value].append(b)
     return collect_when_dict
 
@@ -1587,6 +1600,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
       testable_builders = [
           b.builder.builder for b in builds if self.m.buildbucket.is_critical(b)
       ]
+    else:
+      forced_testable_builders = self.m.cros_cq_additional_tests.get_additional_test_builders(
+          builds, self.gerrit_changes)
+      testable_builders.update(set(forced_testable_builders))
 
     collect_when_dict = defaultdict(list)
     for b in builds:

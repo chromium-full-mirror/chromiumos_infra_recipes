@@ -23,6 +23,7 @@ DEPS = [
     'checkpoint',
     'conductor',
     'cros_artifacts',
+    'cros_cq_additional_tests',
     'cros_history',
     'cros_infra_config',
     'cros_lkgm',

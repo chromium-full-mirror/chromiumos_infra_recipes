@@ -3980,6 +3980,13 @@
   },
   {
     "cmd": [],
+    "name": "run builds.categorize builds by collect handling.get additional testable builders",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

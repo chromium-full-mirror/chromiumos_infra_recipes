@@ -50,6 +50,38 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._properties = properties
     self._not_runnable_addtnl_tests = []
+    self._enabled = properties.enable_running_additional_tests
+
+  def initialize(self):
+    # TODO(b/299186790): Having the property set should be enough. Builder input
+    # properties should be cleaned up and the conditional on the builder name
+    # should be removed.
+    self._enable_running_additional_tests = (
+        self._properties.enable_running_additional_tests and
+        'cq-orchestrator' in self.m.buildbucket.build.builder.builder)
+
+  def get_additional_test_builders(
+      self, builds: List[build_pb2.Build],
+      gerrit_changes: List[common_pb2.GerritChange]) -> List[str]:
+    """Returns the builders that had additional testing specified via footer."""
+    with self.m.step.nest('get additional testable builders') as pres:
+      if not self._enable_running_additional_tests:
+        pres.step_text: 'skipping: not enabled'
+        return []
+
+      builders = []
+      bt_build_map = self._extract_build_target_name_to_build_map(builds)
+      _, test_boards_build_targets, _ = (
+          self._read_additional_test_suites_related_footers(gerrit_changes))
+      for tbb in test_boards_build_targets:
+        _, build_targets = self._extract_board_build_target(tbb)
+        for build_target in build_targets:
+          matched_build = bt_build_map.get(build_target)
+          if matched_build:
+            builders.append(matched_build.builder.builder)
+
+      pres.logs['builders'] = sorted(builders)
+      return builders
 
   def append_user_provided_test_suites_to_test_plan(
       self,
@@ -78,8 +110,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
       CrosCqAddnlTestsMissingBuildTargetsError: When there are test suites not
         run due to failed or not built build targets.
     """
-    if (self._properties.enable_running_additional_tests and
-        'cq-orchestrator' in self.m.buildbucket.build.builder.builder):
+    if self._enable_running_additional_tests:
       with self.m.step.nest('process additional test suites') as pres:
         test_suites, test_boards_build_targets, pool = (
             self._read_additional_test_suites_related_footers(gerrit_changes))
