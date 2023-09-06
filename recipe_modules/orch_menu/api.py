@@ -7,12 +7,11 @@
 
 from __future__ import division
 
-from typing import Any, Dict, List, Optional, Tuple
-
 import contextlib
 from collections import defaultdict
 from collections import OrderedDict
 from collections import namedtuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -821,8 +820,17 @@ class OrchMenuApi(recipe_api.RecipeApi):
           if should_update:
             self._push_manifest_refs(
                 self._properties.update_manifest_refs.build)
+          self.output_local_greenness(should_update)
 
     return self._builds_status
+
+  def output_local_greenness(self, should_update: bool) -> None:
+    """Outputs info about local greenness."""
+    local_greenness_output_dict = {}
+    local_greenness_output_dict['updated'] = should_update
+    local_greenness_output_dict[
+        'greenness'] = self.m.greenness.local_greenness_dict
+    self.m.easy.set_properties_step(local_greenness=local_greenness_output_dict)
 
   def ps_relevant(self, build: build_pb2.Build) -> bool:
     """Whether the postsubmit child build was critical and relevant.

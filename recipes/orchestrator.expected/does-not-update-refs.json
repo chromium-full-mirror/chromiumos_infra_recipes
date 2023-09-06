@@ -2794,6 +2794,14 @@
   },
   {
     "cmd": [],
+    "name": "update local greenness.set local_greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@local_greenness@{\"greenness\": {\"amd64-generic-postsubmit\": [0, 0, true, true]}, \"updated\": false}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "aggregating metadata",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@container metadata (log)@{}@@@",
