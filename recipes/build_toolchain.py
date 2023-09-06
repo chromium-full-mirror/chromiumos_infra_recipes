@@ -5,6 +5,7 @@
 
 """Builds and uploads the Chromium OS toolchain."""
 
+import os
 import re
 from typing import Any
 from typing import Dict
@@ -12,6 +13,7 @@ from typing import Generator
 
 from PB.chromite.api.sdk import BuildPrebuiltsRequest
 from PB.chromite.api.sdk import BuildSdkTarballRequest
+from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromite.api.sdk import CreateBinhostCLsRequest
 from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
@@ -92,12 +94,17 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       errors.append('prebuilts_gs_bucket must be set')
     elif gs_re.match(properties.prebuilts_gs_bucket):
       errors.append('prebuilts_gs_bucket must not include "gs:" prefix')
+    if not properties.sdk_gs_bucket:
+      errors.append('sdk_gs_bucket must be set')
+    elif gs_re.match(properties.sdk_gs_bucket):
+      errors.append('sdk_gs_bucket must not include "gs:" prefix')
     if errors:
       raise StepFailure('\n'.join(errors))
 
   # Unlike normal CrOS builds, the SDK has no concept of pinned CrOS manifest
   # or specific Chrome version.  Use a datestamp instead.
   version = api.time.utcnow().strftime('%Y.%m.%d.%H%M%S')
+  version_year, version_month, _ = version.split('.', maxsplit=2)
   api.step.empty('new SDK version', step_text=version)
 
   with api.step.nest('identify key CLs'):
@@ -210,6 +217,15 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       api.cros_build_api.SdkService.BuildPrebuilts(
           BuildPrebuiltsRequest(chroot=api.cros_sdk.chroot))
 
+    with api.step.nest('create redistributable toolchains'):
+      response = api.cros_build_api.SdkService.BuildSdkToolchain(
+          BuildSdkToolchainRequest(
+              chroot=api.cros_sdk.chroot, result_path=common_pb2.ResultPath(
+                  path=common_pb2.Path(
+                      path=api.path.abspath(api.path.mkdtemp()),
+                      location=common_pb2.Path.OUTSIDE))))
+      redistributable_toolchains = response.generated_files
+
     with api.step.nest('package SDK as tarball'):
       tarball_path = api.cros_build_api.SdkService.BuildSdkTarball(
           BuildSdkTarballRequest(chroot=api.cros_sdk.chroot)).sdk_tarball_path
@@ -246,6 +262,24 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       # already existing file).
       api.gsutil.upload(tarball_path.path, properties.archive_gs_bucket,
                         upload_path, args=['-n'])
+
+    with api.step.nest('upload redistributable toolchains'):
+      for tc in redistributable_toolchains:
+        # Compute upload location.
+        # This is composed of:
+        #  - The year of the SDK version.
+        #  - The month of the SDK version.
+        #  - The basename of the toolchain tarball, without extensions.
+        #  - The SDK version.
+        #  - The extensions.
+        basename, extensions = os.path.basename(tc.path).split('.', maxsplit=1)
+        upload_path = (f'{version_year}/'
+                       f'{version_month}/'
+                       f'{basename}-{version}'
+                       f'.{extensions}')
+        # Upload with -n to prevent overwriting already existing files.
+        api.gsutil.upload(tc.path, properties.sdk_gs_bucket, upload_path,
+                          args=['-n'])
 
     with api.step.nest('upload prebuilt packages'):
       api.cros_build_api.SdkService.UploadPrebuiltPackages(
@@ -424,13 +458,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   good_properties = BuildToolchainProperties(
       archive_gs_bucket='test-archive-bucket',
       prebuilts_gs_bucket='test-prebuilt-bucket',
+      sdk_gs_bucket='test-sdk-bucket',
   )
 
   yield api.build_menu.test(
       'missing-archive-bucket',
       api.properties(
           BuildToolchainProperties(
-              prebuilts_gs_bucket='prebuilt-bucket-is-here')),
+              prebuilts_gs_bucket='prebuilt-bucket-is-here',
+              sdk_gs_bucket='sdk-bucket-is-here')),
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.DoesNotRun, 'identify key CLs'),
       api.post_check(post_process.SummaryMarkdown,
@@ -442,11 +478,25 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.build_menu.test(
       'missing-prebuilts-bucket',
       api.properties(
-          BuildToolchainProperties(archive_gs_bucket='archive-bucket-is-here')),
+          BuildToolchainProperties(archive_gs_bucket='archive-bucket-is-here',
+                                   sdk_gs_bucket='sdk-bucket-is-here')),
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.DoesNotRun, 'identify key CLs'),
       api.post_check(post_process.SummaryMarkdown,
                      'prebuilts_gs_bucket must be set'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  yield api.build_menu.test(
+      'missing-sdk-bucket',
+      api.properties(
+          BuildToolchainProperties(
+              archive_gs_bucket='archive-bucket-is-here',
+              prebuilts_gs_bucket='prebuilt-bucket-is-here')),
+      api.post_check(post_process.MustRun, 'check properties'),
+      api.post_check(post_process.DoesNotRun, 'identify key CLs'),
+      api.post_check(post_process.SummaryMarkdown, 'sdk_gs_bucket must be set'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -457,7 +507,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'identify key CLs'),
       api.post_check(
           post_process.SummaryMarkdown,
-          'archive_gs_bucket must be set\nprebuilts_gs_bucket must be set'),
+          'archive_gs_bucket must be set\nprebuilts_gs_bucket must be set\nsdk_gs_bucket must be set'
+      ),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -467,12 +518,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           BuildToolchainProperties(
               archive_gs_bucket='gs://archive-bucket-is-here',
-              prebuilts_gs_bucket='gs://archive-bucket-is-here')),
+              prebuilts_gs_bucket='gs://prebuilts-bucket-is-here',
+              sdk_gs_bucket='gs://sdk-bucket-is-here')),
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.DoesNotRun, 'identify key CLs'),
       api.post_check(post_process.SummaryMarkdown,
                      ('archive_gs_bucket must not include "gs:" prefix\n' +
-                      'prebuilts_gs_bucket must not include "gs:" prefix')),
+                      'prebuilts_gs_bucket must not include "gs:" prefix\n' +
+                      'sdk_gs_bucket must not include "gs:" prefix')),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -485,6 +538,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.DoesNotRun, 'build SDK packages'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -504,6 +559,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.DoesNotRun, 'build SDK packages'),
+      api.post_check(post_process.DoesNotRun,
+                     'create redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -524,6 +583,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.DoesNotRun, 'build SDK packages'),
+      api.post_check(post_process.DoesNotRun,
+                     'create redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -542,6 +605,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.DoesNotRun, 'build SDK packages'),
+      api.post_check(post_process.DoesNotRun,
+                     'create redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -561,9 +628,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ), api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
+      api.post_check(post_process.MustRun, 'create redistributable toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
+      api.post_check(post_process.MustRun, 'upload redistributable toolchains'),
       api.post_check(post_process.MustRun, 'upload prebuilt packages'),
       api.post_check(post_process.MustRun, 'create binhost CLs'),
       api.post_check(post_process.MustRun, 'cq-depend on binhost CLs'),
@@ -580,9 +649,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'tag key CL'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
+      api.post_check(post_process.MustRun, 'create redistributable toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
+      api.post_check(post_process.MustRun, 'upload redistributable toolchains'),
       api.post_check(post_process.MustRun, 'upload prebuilt packages'),
       api.post_check(post_process.MustRun, 'create binhost CLs'),
       api.post_check(post_process.MustRun, 'cq-depend on binhost CLs'),
@@ -601,9 +672,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ), api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
+      api.post_check(post_process.MustRun, 'create redistributable toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
+      api.post_check(post_process.MustRun, 'upload redistributable toolchains'),
       api.post_check(post_process.MustRun, 'upload prebuilt packages'),
       api.post_check(post_process.MustRun, 'create binhost CLs'),
       api.post_check(post_process.MustRun, 'cq-depend on binhost CLs'),
@@ -628,11 +701,38 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'package SDK as tarball'),
       api.post_check(post_process.DoesNotRun, 'create manifest from SDK'),
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
       api.build_menu.set_build_api_return('build SDK packages',
                                           'SdkService/BuildPrebuilts',
+                                          retcode=1),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='FAILURE',
+  )
+
+  yield api.build_menu.test(
+      'create_redistributable_toolchains-failed',
+      api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'identify key CLs',
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ),
+      api.post_check(post_process.MustRun, 'check properties'),
+      api.post_check(post_process.MustRun, 'identify key CLs'),
+      api.post_check(post_process.MustRun, 'create redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
+      api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
+      api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
+      api.build_menu.set_build_api_return('create redistributable toolchains',
+                                          'SdkService/BuildSdkToolchain',
                                           retcode=1),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[single_change_with_trybots]),
@@ -653,6 +753,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.DoesNotRun, 'create manifest from SDK'),
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -673,6 +775,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           fetch_changes_responses,
       ),
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -698,10 +802,31 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload redistributable toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
       api.step_data('upload SDK tarball.gsutil upload', retcode=1),
+      api.post_process(post_process.DropExpectation),
+      **builder_args(gerrit_changes=[single_change_with_trybots]),
+      status='INFRA_FAILURE',
+  )
+
+  yield api.build_menu.test(
+      'upload_redistributable_toolchains-failed',
+      api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'identify key CLs',
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ),
+      api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
+      api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
+      api.step_data(
+          'upload redistributable toolchains.gsutil upload',
+          retcode=1,
+      ),
       api.post_process(post_process.DropExpectation),
       **builder_args(gerrit_changes=[single_change_with_trybots]),
       status='INFRA_FAILURE',

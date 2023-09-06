@@ -11,7 +11,11 @@ message BuildToolchainProperties {
   // (e.g. "chromeos-prebuilts").
   string prebuilts_gs_bucket = 1;
 
-  // Name of the Google Storage bucket to which to upload the SDK tarball
+  // Name of the Google Storage bucket to which to archive the SDK tarball
   // (e.g. "chromeos-archive").
   string archive_gs_bucket = 2;
+
+  // Name of the Google Storage bucket to which to upload the SDK tarballs
+  // (e.g. "chromiumos-sdk").
+  string sdk_gs_bucket = 3;
 }
