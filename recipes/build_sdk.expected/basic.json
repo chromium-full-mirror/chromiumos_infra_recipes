@@ -2558,6 +2558,26 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "report uploads",
+    "~followup_annotations": [
+      "@@@STEP_LINK@sdk_tarball@gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@",
+      "@@@STEP_LINK@sdk_manifest@gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@",
+      "@@@STEP_LINK@host_prebuilts@gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LINK@target_prebuilts@gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
+      "@@@STEP_LINK@toolchain_prebuilts_foo@gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz@@@",
+      "@@@STEP_LINK@toolchain_prebuilts_bar@gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "report uploads.set uploaded_files",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@uploaded_files@{\"host_prebuilts\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages\", \"sdk_manifest\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest\", \"sdk_tarball\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz\", \"target_prebuilts\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages\", \"toolchain_prebuilts_bar\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz\", \"toolchain_prebuilts_foo\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz\"}@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",

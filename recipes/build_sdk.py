@@ -6,10 +6,11 @@
 """Recipe that builds a ChromiumOS SDK and cross-compilers."""
 
 import contextlib
+import dataclasses
 import functools
 import os
 import re
-from typing import Generator, List, Optional
+from typing import Dict, Generator, List, Optional
 
 from google.protobuf import json_format
 
@@ -74,6 +75,22 @@ def RunSteps(
     api: recipe_api.RecipeApi,
     properties: build_sdk_pb2.BuildSDKProperties) -> result_pb2.RawResult:
   return BuildSDKRun(api, properties).run()
+
+
+@dataclasses.dataclass
+class GSURI:
+  """Dataclass for a Google Storage URI.
+
+  Attributes:
+    bucket: The Google Storage bucket, such as "chromiumos-sdk".
+    path: The path to the URI within the bucket, such as "foo/bar/baz.txt".
+  """
+  bucket: str
+  path: str
+
+  def __str__(self) -> str:
+    """Format the URI as a full string."""
+    return f'gs://{self.bucket}/{self.path}'
 
 
 class BuildSDKRun:
@@ -145,6 +162,7 @@ class BuildSDKRun:
       self._upload_prebuilts()
       self._upload_sdk_tarball_and_manifest()
       self._update_gs_latest_file()
+      self._report_uploads()
       if self.properties.launch_pupr:
         scheduled_pupr_build = self._schedule_uprev()
         return self._create_build_result(scheduled_pupr_build)
@@ -237,40 +255,50 @@ class BuildSDKRun:
   def _upload_host_prebuilts(self) -> None:
     """Upload host binaries to GS://.
 
-    The destination folder typically looks like:
-      gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-${version}/packages/
-    where ${version} is the SDK version (declared elsewhere in this recipe).
-
     Raises:
-      AssertionError: If toolchain tarballs have not been built yet.
+      AssertionError: If host prebuilts have not been built yet.
     """
     with self.m.step.nest('upload host prebuilts'):
       source_dir = self.m.cros_sdk.chroot_path.join('var', 'lib', 'portage',
                                                     'pkgs')
-      dest_bucket = self._pick_bucket(PREBUILTS_BUCKET)
-      dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
-                               f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
-      self._gsutil_upload(source_dir, dest_bucket, dest_path)
+      upload_uri = self._get_host_prebuilts_upload_uri()
+      self._gsutil_upload(source_dir, upload_uri)
+
+  def _get_host_prebuilts_upload_uri(self) -> None:
+    """Return the GS:// upload URI for the host binaries.
+
+    The destination folder should be a URI like:
+      gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-${version}/packages/
+    where ${version} is the SDK version.
+    """
+    dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
+                             f'chroot-{self.version}', 'packages')
+    return GSURI(self._pick_bucket(PREBUILTS_BUCKET), dest_path)
 
   def _upload_target_prebuilts(self) -> None:
     """Upload binaries for the amd64-host build target to GS://.
 
-    The destination folder typically looks like:
-      gs://chromeos-prebuilt/board/amd64-host/chroot-${version}/packages/
-    where ${version} is the SDK version (declared elsewhere in this recipe).
-
     Raises:
-      AssertionError: If toolchain tarballs have not been built yet.
+      AssertionError: If target prebuilts have not been built yet.
     """
     with self.m.step.nest('upload target prebuilts'):
       source_dir = self.m.cros_sdk.chroot_path.join('build', SDK_BUILD_TARGET,
                                                     'packages')
-      dest_bucket = self._pick_bucket(PREBUILTS_BUCKET)
-      dest_path = os.path.join('board', SDK_BUILD_TARGET,
-                               f'chroot-{self.version}', 'packages')
       self.m.path.mock_add_directory(source_dir)
-      self._gsutil_upload(source_dir, dest_bucket, dest_path)
+      upload_uri = self._get_target_prebuilts_upload_uri()
+      self._gsutil_upload(source_dir, upload_uri)
+
+  def _get_target_prebuilts_upload_uri(self) -> None:
+    """Return the GS:// upload URI for the host binaries.
+
+    The destination folder typically looks like:
+      gs://chromeos-prebuilt/board/amd64-host/chroot-${version}/packages/
+    where ${version} is the SDK version.
+    """
+    dest_path = os.path.join('board', SDK_BUILD_TARGET,
+                             f'chroot-{self.version}', 'packages')
+    return GSURI(self._pick_bucket(PREBUILTS_BUCKET), dest_path)
 
   def _upload_toolchain_prebuilts(self) -> None:
     """Upload toolchain prebuilt tarballs to Google Storage.
@@ -302,37 +330,74 @@ class BuildSDKRun:
     """
     basename = self.m.path.basename(source_path)
     with self.m.step.nest(f'upload {basename}'):
-      target_architecture, ext = basename.split('.', 1)
-      dest_name = f'{target_architecture}-{self.version}.{ext}'
-      dest_bucket = self._pick_bucket(SDK_BUCKET)
-      dest_path = os.path.join(self._toolchain_tarball_dir, dest_name)
-      self._gsutil_upload(source_path, dest_bucket, dest_path)
+      upload_uri = self._get_toolchain_prebuilt_upload_uri(source_path)
+      self._gsutil_upload(source_path, upload_uri)
+
+  def _get_toolchain_prebuilt_upload_uri(
+      self, source_path: config_types.Path) -> GSURI:
+    """Return the GS:// upload URI for a toolchain prebuilt tarball.
+
+    Args:
+      source_path: The path to the toolchain tarball on the local filesystem.
+    """
+    basename = self.m.path.basename(source_path)
+    target_architecture, ext = basename.split('.', 1)
+    dest_basename = f'{target_architecture}-{self.version}.{ext}'
+    return GSURI(
+        self._pick_bucket(SDK_BUCKET),
+        os.path.join(self._toolchain_tarball_dir, dest_basename))
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
     """Upload the SDK tarball, and corresponding manifest, to GS://.
-
-    The destination URI for the SDK tarball typically looks like:
-      gs://chromiumos-sdk/cros-sdk-${version}.tar.xz
-    where ${version} is the SDK version (declared elsewhere in this recipe).
-
-    The destination URI for the manifest file is typically the same as the
-    tarball's destination, but with `.Manifest` appended to the basename.
 
     Raises:
       AssertionError: If the SDK tarball or manifest has not been built yet.
     """
     with self.m.step.nest('upload sdk tarball and manifest'):
-      dest_bucket = self._pick_bucket(SDK_BUCKET)
-      with self.m.step.nest('upload sdk tarball'):
-        assert self._sdk_tarball_path is not None
-        tarball_dest_path = f'cros-sdk-{self.version}.tar.xz'
-        self._gsutil_upload(self._sdk_tarball_path, dest_bucket,
-                            tarball_dest_path)
-      with self.m.step.nest('upload sdk manifest'):
-        assert self._sdk_manifest_path is not None
-        manifest_dest_path = f'{tarball_dest_path}.Manifest'
-        self._gsutil_upload(self._sdk_manifest_path, dest_bucket,
-                            manifest_dest_path)
+      self._upload_sdk_tarball()
+      self._upload_sdk_manifest()
+
+  def _upload_sdk_tarball(self) -> None:
+    """Upload the SDK tarball to Google Storage.
+
+    Raises:
+      AssertionError: If the SDK tarball has not been built yet.
+    """
+    with self.m.step.nest('upload sdk tarball'):
+      assert self._sdk_tarball_path is not None
+      upload_uri = self._get_sdk_tarball_upload_uri()
+      self._gsutil_upload(self._sdk_tarball_path, upload_uri)
+
+  def _get_sdk_tarball_upload_uri(self) -> GSURI:
+    """Return the GS:// upload URI for the SDK tarball.
+
+    The SDK tarball should be uploaded to a URI like:
+      gs://chromiumos-sdk/cros-sdk-${version}.tar.xz
+    where ${version} is the SDK version.
+    """
+    return GSURI(
+        self._pick_bucket(SDK_BUCKET), f'cros-sdk-{self.version}.tar.xz')
+
+  def _upload_sdk_manifest(self) -> None:
+    """Upload the SDK tarball to Google Storage.
+
+    Raises:
+      AssertionError: If the SDK manifest has not been built yet.
+    """
+    with self.m.step.nest('upload sdk manifest'):
+      assert self._sdk_manifest_path is not None
+      upload_uri = self._get_sdk_manifest_upload_uri()
+      self._gsutil_upload(self._sdk_manifest_path, upload_uri)
+
+  def _get_sdk_manifest_upload_uri(self) -> GSURI:
+    """Return the GS:// upload URI for the SDK manifest file.
+
+    The SDK manifest should be uploaded to a URI like:
+      gs://chromiumos-sdk/cros-sdk-${version}.tar.xz.Manifest
+    where ${version} is the SDK version.
+    """
+    sdk_tarball_uri = self._get_sdk_tarball_upload_uri()
+    return GSURI(sdk_tarball_uri.bucket, f'{sdk_tarball_uri.path}.Manifest')
 
   def _update_gs_latest_file(self) -> None:
     """Update the GS:// latest SDK file to point to the newly built SDK."""
@@ -343,9 +408,26 @@ class BuildSDKRun:
       tempfile = self.m.path.mkstemp()
       self.m.file.write_text('write local file to upload', tempfile,
                              new_contents)
-      dest_bucket = self._pick_bucket(SDK_BUCKET)
-      self._gsutil_upload(tempfile, dest_bucket, 'cros-sdk-latest.conf')
+      dest_uri = GSURI(self._pick_bucket(SDK_BUCKET), 'cros-sdk-latest.conf')
+      self._gsutil_upload(tempfile, dest_uri)
       presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self.version
+
+  def _report_uploads(self) -> None:
+    """Report what files were uploaded to Google Storage."""
+    with self.m.step.nest('report uploads') as presentation:
+      names_to_uris: Dict[str, str] = {
+          'sdk_tarball': str(self._get_sdk_tarball_upload_uri()),
+          'sdk_manifest': str(self._get_sdk_manifest_upload_uri()),
+          'host_prebuilts': str(self._get_host_prebuilts_upload_uri()),
+          'target_prebuilts': str(self._get_target_prebuilts_upload_uri()),
+      }
+      for local_tc_path in self._toolchain_tarball_paths:
+        target_arch = self.m.path.basename(local_tc_path).split('.', 1)[0]
+        tc_uri = str(self._get_toolchain_prebuilt_upload_uri(local_tc_path))
+        names_to_uris[f'toolchain_prebuilts_{target_arch}'] = tc_uri
+      for name, uri in names_to_uris.items():
+        presentation.links[name] = uri
+      self.m.easy.set_properties_step(uploaded_files=names_to_uris)
 
   def _read_existing_gs_latest_file(self) -> str:
     """Read, log, and return the existing latest SDK file on GS://.
@@ -381,8 +463,8 @@ class BuildSDKRun:
       return f'staging-{prod_bucket}'
     return prod_bucket
 
-  def _gsutil_upload(self, source_path: config_types.Path, dest_bucket: str,
-                     dest_path: str) -> None:
+  def _gsutil_upload(self, source_path: config_types.Path,
+                     dest_uri: GSURI) -> None:
     """Wrapper around self.m.gsutil.upload() with some common functionality.
 
     Fails if the source path is not present on the filesystem.
@@ -394,8 +476,7 @@ class BuildSDKRun:
 
     Args:
       source_path: Local filepath to upload.
-      dest_bucket: The Google Storage bucket to upload to (without "gs://").
-      dest_path: The filepath within dest_bucket to upload to.
+      dest_uri: The Google Storage location to upload to.
 
     Raises:
       InfraFailure: If the local filepath is not present on the filesystem.
@@ -409,7 +490,7 @@ class BuildSDKRun:
     args = []
     # gs://staging-chromiumos-sdk has uniform bucket-level access = public-read.
     # Trying to set ACLs via `gustil -a` gets an HTTP error.
-    if dest_bucket != 'staging-chromiumos-sdk':
+    if dest_uri.bucket != 'staging-chromiumos-sdk':
       args.extend(['-a', 'public-read'])
     if self.m.path.isdir(source_path):
       args.append('-r')
@@ -417,7 +498,7 @@ class BuildSDKRun:
     else:
       multithreaded = False
     self.m.gsutil.upload(
-        str(source_path), dest_bucket, dest_path, args=args,
+        str(source_path), dest_uri.bucket, dest_uri.path, args=args,
         multithreaded=multithreaded)
 
   def _schedule_uprev(self) -> build_pb2.Build:
