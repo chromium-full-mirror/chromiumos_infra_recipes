@@ -50,6 +50,10 @@ PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME = \
 PASSING_IN_SNAPSHOT_TEST_CASE_NAME = 'this.test.passed.in.the.snapshot.only'
 UNIQUE_FAILURE_TEST_CASE_NAME = \
   'this.test.failed.for.a.unique.reason.in.the.snapshot'
+ALPHANUMERIC_FAILURE_TEST_CASE_NAME = \
+  'this.test.failure.reason.should.be.treated.as.identical'
+STATUS_FAILURE_TEST_CASE_NAME = \
+  'this.test.failure.reason.should.be.treated.as.unique'
 FLAKY_TEST_CASE_NAME = 'this.test.is.flaky'
 FLAKY_FAILURE_REASON = 'flaked out for odd reasons'
 EXISTING_FAILURE_TEST_CASE_NAME = \
@@ -103,6 +107,13 @@ passed_in_snapshot_failed_in_cq_test_case = \
 unique_failure_test_case = ExecuteResponse.TaskResult.TestCaseResult(
     name=UNIQUE_FAILURE_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
     human_readable_summary='missing SoftwareDeps: android_vm')
+alphanumeric_failure_test_case = ExecuteResponse.TaskResult.TestCaseResult(
+    name=ALPHANUMERIC_FAILURE_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
+    human_readable_summary='some failure at 2023-09-06T15:57:34.502767Z on UUID F7451C0913175B8DC7DD8603C0D86B87. File /a/c/fpimages_1694011118/d'
+)
+status_failure_test_case = ExecuteResponse.TaskResult.TestCaseResult(
+    name=STATUS_FAILURE_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
+    human_readable_summary='some failure code 2000')
 flaky_failure_test_case = ExecuteResponse.TaskResult.TestCaseResult(
     name=FLAKY_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
     human_readable_summary=FLAKY_FAILURE_REASON)
@@ -127,6 +138,8 @@ mix_of_pass_fail_skipped_child_results = \
                                                            passing_test_case,
                                                            passed_in_snapshot_failed_in_cq_test_case,
                                                            unique_failure_test_case,
+                                                           alphanumeric_failure_test_case,
+                                                           status_failure_test_case,
                                                            flaky_failure_test_case,
                                                            existing_failure_test_case,
                                                            skipped_test_case])]
@@ -187,6 +200,19 @@ snapshot_2_brya_build_target_test_results = [
         failure_reason=FailureReason(
             primary_error_message='missing some other SoftwareDeps: android_vm'
         )),
+    TestResult(
+        name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
+                                      ALPHANUMERIC_FAILURE_TEST_CASE_NAME),
+        variant=brya_variant, expected=True, status=TestStatus.FAIL,
+        failure_reason=FailureReason(
+            primary_error_message='some failure at 2000-01-06T10:00:34.432123Z on UUID AB53CFI5313175B8DC7DD8343GK6B87. File /a/c/fpimages_1111111131/d'
+        )),
+    TestResult(
+        name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
+                                      STATUS_FAILURE_TEST_CASE_NAME),
+        variant=brya_variant, expected=True, status=TestStatus.FAIL,
+        failure_reason=FailureReason(
+            primary_error_message='some failure code 3000')),
     TestResult(
         name=get_rdb_test_result_name(snapshot_build_2_invocation_id,
                                       EXISTING_FAILURE_TEST_CASE_NAME),
@@ -470,6 +496,18 @@ def RunSteps(api):
         CqFailureAttribute.DIFFERING_FAILURE_FOUND,
         False,
         expected_snapshot_comparison_properties)
+  expected_brya_alphanumeric_hw_test_failure = \
+    create_expected_fault_attribute_properties(
+        ALPHANUMERIC_FAILURE_TEST_CASE_NAME,
+        CqFailureAttribute.MATCHING_FAILURE_FOUND,
+        False,
+        expected_snapshot_comparison_properties)
+  expected_brya_status_hw_test_failure = \
+    create_expected_fault_attribute_properties(
+        STATUS_FAILURE_TEST_CASE_NAME,
+        CqFailureAttribute.DIFFERING_FAILURE_FOUND,
+        False,
+        expected_snapshot_comparison_properties)
   expected_brya_existing_hw_test_failure = \
     create_expected_fault_attribute_properties(
         EXISTING_FAILURE_TEST_CASE_NAME,
@@ -516,6 +554,10 @@ def RunSteps(api):
   api.assertions.assertIn(expected_brya_new_hw_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
   api.assertions.assertIn(expected_brya_unique_hw_test_failure,
+                          actual_brya_fault_attributes_target.fault_attributes)
+  api.assertions.assertIn(expected_brya_alphanumeric_hw_test_failure,
+                          actual_brya_fault_attributes_target.fault_attributes)
+  api.assertions.assertIn(expected_brya_status_hw_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
   api.assertions.assertIn(expected_brya_existing_hw_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)

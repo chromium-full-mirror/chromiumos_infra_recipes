@@ -55,6 +55,9 @@ FLAKINESS_THRESHOLD = 2
 # snapshot retrieval limit of 16, this keeps CPU utilization at or below 80%.
 TEST_QUERY_LIMIT = 200
 EMPTY_MODEL = ''
+# Regex to match against any alphanumeric strings e.g. MAC address, timestamp,
+# UUID, etc, but NOT a string of numeric digits e.g. status codes.
+IGNORED_FAILURE_REASON_TEXT = r'(\\|\b)([\w_\-]*[A-Za-z_]\d[\w_\-]*)(\\|\b)|(\d+:\d+[:\.]\d+)'
 
 
 class CqFailureAttributionApi(recipe_api.RecipeApi):
@@ -222,6 +225,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       failure_reason: The reason why the test failed.
       attempt: The attempt number of this test.
     """
+    failure_reason = re.sub(IGNORED_FAILURE_REASON_TEXT, '', failure_reason)
     test_fault_attribute = FaultAttributionProperties()
     test_fault_attribute.test_name = test_id
     test_fault_attribute.attempt = attempt
@@ -291,9 +295,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         return
       elif all(snapshot_test_result.status == TestStatus.FAIL
                for snapshot_test_result in snapshot_test_results):
-        if any(snapshot_test_result.failure_reason.primary_error_message ==
-               failure_reason
-               for snapshot_test_result in snapshot_test_results):
+        if any(
+            re.sub(IGNORED_FAILURE_REASON_TEXT, '', snapshot_test_result
+                   .failure_reason.primary_error_message) == failure_reason
+            for snapshot_test_result in snapshot_test_results):
           # All attempts failed, and at least one of the failure reasons
           # of the snapshot attempts matches the failure reason
           # (human_readable_summary) of the CQ test.
@@ -468,7 +473,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
                 matrix_index] = snapshot
 
           if test_result.status != TestStatus.PASS:
-            failure_reason = test_result.failure_reason.primary_error_message
+            failure_reason = re.sub(
+                IGNORED_FAILURE_REASON_TEXT, '',
+                test_result.failure_reason.primary_error_message)
             self._invocation_properties_to_failure_reason_count_matrix[(
                 build_target, model, test_id, failure_reason)] += 1
 
