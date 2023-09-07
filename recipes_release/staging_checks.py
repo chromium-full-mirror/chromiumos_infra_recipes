@@ -85,7 +85,7 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
 def vm_test_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for VM test builds that have a legitimate test failure"""
   ignorable_summary_markdown_re = [
-      re.compile(r'\d+ out of \d+ vm tests? failed'),
+      re.compile(r'\d+ vm tests? failed'),
   ]
   for regex in ignorable_summary_markdown_re:
     if regex.search(build.get('summaryMarkdown', '')):
