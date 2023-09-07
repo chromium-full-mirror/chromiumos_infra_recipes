@@ -2010,7 +2010,7 @@ Return the BBID of the original build as set in input properties.
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#248)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#249)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
@@ -2018,7 +2018,7 @@ Context to handle retry logic / status reporting.
 
 Get the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#235)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#236)(self, step: 'RetryStep', status: str):**
 
 Update the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)

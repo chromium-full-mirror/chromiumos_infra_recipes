@@ -5,6 +5,13 @@
   },
   {
     "cmd": [],
+    "name": "update retry summary",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@retry_summary@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "RUNNING IN RETRY MODE",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@retry plan@{@@@",
@@ -78,14 +85,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "RUNNING IN RETRY MODE.update retry summary",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@retry_summary@{}@@@"
     ]
   },
   {

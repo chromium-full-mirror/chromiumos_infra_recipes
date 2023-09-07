@@ -9,6 +9,13 @@
   },
   {
     "cmd": [],
+    "name": "update retry summary",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@retry_summary@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check buildspec"
   },
   {
@@ -5211,7 +5218,7 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary",
+    "name": "update retry summary (2)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"STAGE_ARTIFACTS\": \"STARTED\"}@@@"
     ]
@@ -11828,14 +11835,14 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (2)",
+    "name": "update retry summary (3)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"PUSH_IMAGES\": \"STARTED\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update retry summary (3)",
+    "name": "update retry summary (4)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"PUSH_IMAGES\": \"STARTED\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
@@ -12007,14 +12014,14 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (4)",
+    "name": "update retry summary (5)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"DEBUG_SYMBOLS\": \"STARTED\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update retry summary (5)",
+    "name": "update retry summary (6)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"DEBUG_SYMBOLS\": \"STARTED\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
@@ -12532,14 +12539,14 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (6)",
+    "name": "update retry summary (7)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"DEBUG_SYMBOLS\": \"SUCCESS\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update retry summary (7)",
+    "name": "update retry summary (8)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"STARTED\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
@@ -12997,14 +13004,14 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (8)",
+    "name": "update retry summary (9)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"STARTED\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update retry summary (9)",
+    "name": "update retry summary (10)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"PAYGEN\": \"STARTED\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
@@ -13648,7 +13655,7 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (10)",
+    "name": "update retry summary (11)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"EBUILD_TESTS\": \"SUCCESS\", \"PAYGEN\": \"SUCCESS\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]
@@ -14198,7 +14205,7 @@
   },
   {
     "cmd": [],
-    "name": "update retry summary (11)",
+    "name": "update retry summary (12)",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@retry_summary@{\"COLLECT_SIGNING\": \"SUCCESS\", \"DEBUG_SYMBOLS\": \"SUCCESS\", \"EBUILD_TESTS\": \"SUCCESS\", \"PAYGEN\": \"SUCCESS\", \"PUSH_IMAGES\": \"SUCCESS\", \"STAGE_ARTIFACTS\": \"SUCCESS\"}@@@"
     ]

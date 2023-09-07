@@ -182,6 +182,10 @@ class CheckpointApi(recipe_api.RecipeApi):
 
   def register(self):
     """Perform initial set up for checkpoint / mark the build as a retry."""
+    if self._do_retry_summary:
+      self.m.easy.set_properties_step(retry_summary={},
+                                      step_name='update retry summary')
+
     if not self._retry_run:
       return
     with self.m.step.nest('RUNNING IN RETRY MODE') as presentation:
@@ -196,9 +200,6 @@ class CheckpointApi(recipe_api.RecipeApi):
       if not self._original_build:
         raise StepFailure('could not fetch build %s' %
                           self._original_build_bbid)
-
-      self.m.easy.set_properties_step(retry_summary={},
-                                      step_name='update retry summary')
 
       presentation.links['previous build'] = self.m.buildbucket.build_url(
           build_id=self._original_build_bbid)
