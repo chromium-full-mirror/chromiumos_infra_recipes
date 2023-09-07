@@ -14072,14 +14072,18 @@ Recipe for generating a Kabuto payload.
 &mdash; **def [RunSteps](/recipes/kabuto_paygen.py#42)(api: RecipeApi, properties: KabutoPaygenProperties):**
 ### *recipes* / [kabuto\_shadercache\_uprev](/recipes/kabuto_shadercache_uprev.py)
 
-[DEPS](/recipes/kabuto_shadercache_uprev.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/kabuto_shadercache_uprev.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for uprev'ing shadercache DLC ebuilds
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#164)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#137)(api: RecipeApi):**
 
-&mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#50)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+Commit changes and create a Gerrit CL in the current directory.
+
+&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#175)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+
+&mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#51)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 ### *recipes* / [kernel\_checkconfig](/recipes/kernel_checkconfig.py)
 
 [DEPS](/recipes/kernel_checkconfig.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15759,12 +15763,12 @@ Args:
   entire_timeout_sec: Duration to time out the entire operation.
 ### *recipes* / [uprev\_borealis\_deps](/recipes/uprev_borealis_deps.py)
 
-[DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/uprev_borealis_deps.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for upreving Borealis build dependencies.
 
-&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#135)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
+&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#141)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
 
 Create Git commit from changes and upload Gerrit CL.
 
@@ -15774,7 +15778,7 @@ Args:
   commit_message: Git commit message to use.
   presentation: the API step to show the Gerrit CL URL
 
-&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#51)(api: RecipeApi, use_cache: bool=True, chroot_path: str=None, out_dir: str=None, skip_termina: bool=False, stage: Optional[str]=None):**
+&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#52)(api: RecipeApi, use_cache: bool=True, chroot_path: str=None, out_dir: str=None, skip_termina: bool=False, stage: Optional[str]=None):**
 
 Perform a Borealis build_full.
 
@@ -15785,9 +15789,9 @@ Args:
   stage: The name of the step from the Dockerfile to build. Does not
     perform a full build, will stop after the specified stage is built.
 
-&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#158)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#164)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
-&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#42)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#43)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 ### *recipes* / [uprev\_chromite\_head](/recipes/uprev_chromite_head.py)
 
 [DEPS](/recipes/uprev_chromite_head.py#17): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

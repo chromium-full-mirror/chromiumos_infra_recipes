@@ -2158,7 +2158,32 @@
   },
   {
     "cmd": [],
-    "name": "commit dlc changes"
+    "name": "commit dlc changes",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Shadercache changes committed to [CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay.@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "commit dlc changes.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -2187,30 +2212,9 @@
   {
     "cmd": [
       "git",
-      "status",
-      "--porcelain"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit dlc changes.git status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
       "add",
-      "changed.txt",
-      "new.txt"
+      "a/b/text.txt",
+      "other_test.txt"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
     "env_suffixes": {

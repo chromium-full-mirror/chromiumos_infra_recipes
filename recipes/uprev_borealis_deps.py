@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'build_menu',
@@ -91,20 +92,25 @@ def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
     branch_name: Name for the local branch for repo start
   """
   borealis_repo_path = api.cros_source.workspace_path.join(_BOREALIS_REPO_PATH)
-  with api.step.nest('commit changes'), \
-          api.context(cwd=borealis_repo_path):
-    # Add a branch to avoid re-using the old commit and creating a
-    # patchseries (we want unique and separate CLs)
-    repo_branch = 'uprev-borealis-deps'
-    if branch_name:
-      # Remove all non-alphabetical characters to ensure valid branch name
-      repo_branch = ''.join([char for char in branch_name if char.isalpha()])
-    api.repo.start(repo_branch, projects=[project.name])
+  changed_files = api.git.get_diff_files('HEAD')
+  with api.step.nest('commit changes') as presentation, api.context(
+      cwd=borealis_repo_path):
+    if changed_files:
+      # Add a branch to avoid re-using the old commit and creating a
+      # patchseries (we want unique and separate CLs)
+      repo_branch = 'uprev-borealis-deps'
+      if branch_name:
+        # Remove all non-alphabetical characters to ensure valid branch name
+        repo_branch = ''.join([char for char in branch_name if char.isalpha()])
+      api.repo.start(repo_branch, projects=[project.name])
 
-    # Commit all changes in platform/borealis/{build,tools/arch_verity}/
-    api.git.add(['build/'])
-    api.git.add(['tools/arch_verity/'])
-    api.git.commit(commit_message)
+      # Commit all changes in platform/borealis/{build,tools/arch_verity}/
+      api.git.add(['build/'])
+      api.git.add(['tools/arch_verity/'])
+      api.git.commit(commit_message)
+      presentation.step_text = 'Committed changes.'
+    else:
+      presentation.step_text = 'No changes made. Not committing.'
 
 
 def _CreateCL(api: RecipeApi, project: ProjectInfo,
@@ -271,3 +277,21 @@ def GenTests(api: RecipeTestApi):
                  api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
                  api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
                  api.post_process(post_process.DropExpectation))
+
+  props = good_props.copy()
+  yield api.test(
+      'no-changed-files', api.properties(**props),
+      api.step_data('Arch mirror uprev.create Arch mirror CL.git diff',
+                    stdout=api.raw_io.output_text('')),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'))
+
+  props = good_props.copy()
+  yield api.test(
+      'changed-files', api.properties(**props),
+      api.step_data('Arch mirror uprev.create Arch mirror CL.git diff',
+                    stdout=api.raw_io.output_text('abcdefg')),
+      api.post_check(
+          post_process.MustRun,
+          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'))
