@@ -678,6 +678,7 @@
   * [skylab_results:tests/get_tagged_response](#recipes-skylab_results_tests_get_tagged_response)
   * [skylab_results:tests/test_test_api](#recipes-skylab_results_tests_test_test_api)
   * [skylab_results:tests/translate_result](#recipes-skylab_results_tests_translate_result)
+  * [snapshot_orchestrator](#recipes-snapshot_orchestrator) &mdash; Recipe that schedules snapshot/postsubmit child builders and watches for failures.
   * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
   * [src_state:examples/build_manifest](#recipes-src_state_examples_build_manifest)
   * [src_state:examples/external_manifest](#recipes-src_state_examples_external_manifest)
@@ -14943,6 +14944,16 @@ Tests for sign_artifacts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/translate_result.py#23)(api):**
+### *recipes* / [snapshot\_orchestrator](/recipes/snapshot_orchestrator.py)
+
+[DEPS](/recipes/snapshot_orchestrator.py#15): [build\_menu](#recipe_modules-build_menu), [orch\_menu](#recipe_modules-orch_menu)
+
+
+Recipe that schedules snapshot/postsubmit child builders and watches for failures.
+
+&mdash; **def [DoRunSteps](/recipes/snapshot_orchestrator.py#31)(api: RecipeApi):**
+
+&mdash; **def [RunSteps](/recipes/snapshot_orchestrator.py#23)(api: RecipeApi):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
 [DEPS](/recipes/source_cache_builder.py#19): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
