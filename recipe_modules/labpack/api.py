@@ -65,10 +65,9 @@ class LabpackCommand(recipe_api.RecipeApi):
   def has_downloaded_package(self):
     return self.downloaded_executable_path is not None  # pragma: nocover
 
-  def get_cipd_executable_name(self):
+  def get_cipd_executable_name(self):  # pragma: nocover
     """get_cipd_executable_name gets the executable name from the CIPD path"""
-    return extract_executable_name_from_cipd_path(
-        self.cipd_package)  # pragma: nocover
+    return extract_executable_name_from_cipd_path(self.cipd_package)
 
   def get_cipd_path(self):  # pragma: nocover
     """Get the path of the cipd package.
@@ -120,12 +119,15 @@ class LabpackCommand(recipe_api.RecipeApi):
     if not self.has_downloaded_package():
       self.ensure_labpack()
 
-    out = self.m.easy.step(
+    build = self._get_augmented_build()
+
+    out = self.m.step.sub_build(
         name=kwargs.get('name', 'labpack invocation'),
         cmd=[self.downloaded_executable_path],
-        stdin_data=jsonify_labpack_input(labpack_input),
-        **kwargs,
+        build=build,
+        raise_on_failure=False,
     )
+
     assert isinstance(out, StepData), 'out unexpectedly has type {}'.format(
         type(out))
     return out

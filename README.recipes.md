@@ -8014,7 +8014,7 @@ Labpack has the following public attributes:
 
 Utility method to convert step data into a status like "ready". 
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#78)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#77)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -8026,7 +8026,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#160)(self, common_config, dut_state, models=None, hostnames=None):**
+&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#162)(self, common_config, dut_state, models=None, hostnames=None):**
 
 Whether to use Ile-de-France or not.
 
@@ -8043,14 +8043,14 @@ Returns:
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#73)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#72)(self):**
 
 Get the path of the cipd package.
     
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#45)():**
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#133)(models, common_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#135)(models, common_config):**
 
 Whether to use ile de france or not
 
@@ -8063,7 +8063,7 @@ Returns:
 
 &mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#65)(self):**
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#103)(self, labpack_input: LabpackInput, \*\*kwargs):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#102)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 

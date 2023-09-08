@@ -64,7 +64,8 @@ def catch(f, *args, **kwargs):
     return (None, e)  # pragma: nocover
 
 
-def jsonify_labpack_input(labpack_input: LabpackInput) -> bytes:
+def jsonify_labpack_input(
+    labpack_input: LabpackInput) -> bytes:  # pragma: nocover
   assert isinstance(
       labpack_input,
       LabpackInput), 'labpack_input unexpectedly has type {}'.format(
