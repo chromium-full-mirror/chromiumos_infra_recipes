@@ -186,17 +186,22 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
   ), api.build_menu.setup_workspace_and_chroot():
     # Check out the central CL on a branch. This is necessary for calling
     # api.gerrit.set_change_description(), which we will do later.
-    local_branch = f'sdk{version}'
-    with api.step.nest('create tracking branch for key CL'):
+    with api.step.nest('ensure key CL branch is tracking upstream'):
       project_info = api.repo.project_info(central_cl.project)
-      api.step('create tracking branch', [
+      api.step('create named branch', [
           'git',
           '-C',
           project_info.path,
           'checkout',
           '-b',
-          local_branch,
-          '--track',
+          f'sdk{version}',
+      ])
+      api.step('set tracking branch', [
+          'git',
+          '-C',
+          project_info.path,
+          'branch',
+          '--set-upstream-to',
           f'{project_info.remote}/{project_info.branch_name}',
       ])
 
