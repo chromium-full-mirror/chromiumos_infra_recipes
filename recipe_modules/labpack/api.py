@@ -8,6 +8,7 @@ from recipe_engine.step_data import StepData
 from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path, jsonify_labpack_input
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map
 from PB.lab.labpack import LabpackInput
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 DEFAULT_CIPD_LABEL = 'prod'
 DEFAULT_CIPD_PACKAGE = 'chromiumos/infra/labpack/${platform}'
@@ -187,3 +188,9 @@ class LabpackCommand(recipe_api.RecipeApi):
         ))  # pragma: nocover
 
     return self.convert_step_data_to_status(step_data, dut_state)
+
+  def _get_build(self) -> build_pb2.Build:
+    """_get_build gets a copy of the input build"""
+    b = build_pb2.Build()
+    b.CopyFrom(self.m.buildbucket.build)
+    return b

@@ -27,6 +27,9 @@ def RunSteps(api):
     with api.step.nest('run_labpack fails with not_implemented error'):
       _, exn = catch(api.labpack.run_labpack, LabpackInput())
       assert exn is None, str(exn)
+    with api.step.nest('_get_build'):
+      _, exn = catch(api.labpack._get_build)
+      assert exn is None, str(exn)
     test_suite.step_text = 'SUCCESS'
 
 
