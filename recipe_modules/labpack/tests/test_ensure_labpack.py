@@ -27,11 +27,6 @@ def RunSteps(api):
       repr(type(api)))
   with api.step.nest('labpack test suite') as test_suite:
     with api.step.nest('ensure labpack succeeds'):
-      # Add a fake labpack executable at the expected location for testing purposes.
-      api.path.mock_add_file(api.labpack.get_cipd_path().join('labpack'))
-      assert api.path.exists(
-          api.labpack.get_cipd_path().join('labpack')
-      ), 'Test MUST create a labpack file, otherwise the test is pointless'
       assert api.labpack.ensure_labpack()
     with api.step.nest('test helper functions'):
       assert new_result_map() == {

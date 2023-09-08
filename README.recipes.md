@@ -8008,13 +8008,13 @@ Labpack has the following public attributes:
 - cipd_label
 - cipd_package
 
-- has_downloaded_package: bool
+- downloaded_executable_path: config_types.Path
 
 &emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#37)(step_data, dut_state):**
 
 Utility method to convert step data into a status like "ready". 
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#73)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#66)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -8026,7 +8026,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#155)(self, common_config, dut_state, models=None, hostnames=None):**
+&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#148)(self, common_config, dut_state, models=None, hostnames=None):**
 
 Whether to use Ile-de-France or not.
 
@@ -8046,17 +8046,11 @@ get_cipd_executable_name gets the executable name from the CIPD path
 &mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#61)(self):**
 
 Get the path of the cipd package.
-
-Get the location of a path inside cleanup, which is guaranteed to be
-cleaned between runs.
-
-See documentation below for details:
-
-https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
+    
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#33)():**
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#128)(models, common_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#121)(models, common_config):**
 
 Whether to use ile de france or not
 
@@ -8069,7 +8063,7 @@ Returns:
 
 &mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#53)(self):**
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#98)(self, labpack_input: LabpackInput, \*\*kwargs):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#91)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 

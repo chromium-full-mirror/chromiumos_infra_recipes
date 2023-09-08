@@ -20,7 +20,7 @@ class LabpackCommand(recipe_api.RecipeApi):
   - cipd_label
   - cipd_package
 
-  - has_downloaded_package: bool
+  - downloaded_executable_path: config_types.Path
 
   """
 
@@ -58,17 +58,10 @@ class LabpackCommand(recipe_api.RecipeApi):
     return extract_executable_name_from_cipd_path(
         self.cipd_package)  # pragma: nocover
 
-  def get_cipd_path(self):
+  def get_cipd_path(self):  # pragma: nocover
     """Get the path of the cipd package.
-
-    Get the location of a path inside cleanup, which is guaranteed to be
-    cleaned between runs.
-
-    See documentation below for details:
-
-    https://chromium.googlesource.com/infra/luci/recipes-py/+/HEAD/README.recipes.md#recipe_modules-path
     """
-    return self.m.path['cleanup'].join('cipd', 'labpack')
+    return self.downloaded_executable_path
 
   def ensure_labpack(self):
     """Ensure labpack ensures that labpack exists.
