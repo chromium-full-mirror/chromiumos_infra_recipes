@@ -8000,7 +8000,7 @@ Raises:
 [DEPS](/recipe_modules/labpack/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
 
@@ -8010,11 +8010,11 @@ Labpack has the following public attributes:
 
 - downloaded_executable_path: config_types.Path
 
-&emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#38)(step_data, dut_state):**
+&emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#49)(step_data, dut_state):**
 
 Utility method to convert step data into a status like "ready". 
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#67)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#78)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -8026,7 +8026,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#149)(self, common_config, dut_state, models=None, hostnames=None):**
+&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#160)(self, common_config, dut_state, models=None, hostnames=None):**
 
 Whether to use Ile-de-France or not.
 
@@ -8039,18 +8039,18 @@ Args:
 Returns:
   * the outgoing dut_state
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#57)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#68)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#62)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#73)(self):**
 
 Get the path of the cipd package.
     
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#34)():**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#45)():**
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#122)(models, common_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#133)(models, common_config):**
 
 Whether to use ile de france or not
 
@@ -8061,9 +8061,9 @@ Args:
 Returns:
   bool, whether to use ile de france or not
 
-&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#54)(self):**
+&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#65)(self):**
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#92)(self, labpack_input: LabpackInput, \*\*kwargs):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#103)(self, labpack_input: LabpackInput, \*\*kwargs):**
 
 Run labpack command.
 
@@ -13974,12 +13974,12 @@ test_run_labpack.py is a smoke test for the run_labpack function.
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_get_use_ile_de_france.py#19)(api):**
 ### *recipes* / [labpack:tests/test\_run\_labpack](/recipe_modules/labpack/tests/test_run_labpack.py)
 
-[DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#15): [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/labpack/tests/test_run_labpack.py#17): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [labpack](#recipe_modules-labpack), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 test_run_labpack.py is a smoke test for the run_labpack function.
 
-&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_run_labpack.py#25)(api):**
 
 RunSteps runs ensure_labpack
 ### *recipes* / [labpack:tests/test\_timeout](/recipe_modules/labpack/tests/test_timeout.py)

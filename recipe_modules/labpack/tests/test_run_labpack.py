@@ -10,10 +10,13 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeScriptApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from PB.lab.labpack import LabpackInput
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from RECIPE_MODULES.chromeos.labpack.utils import catch
+from unittest import mock
 
 DEPS = [
     'recipe_engine/step',
+    'cros_tags',
     'easy',
     'labpack',
 ]
@@ -30,6 +33,21 @@ def RunSteps(api):
     with api.step.nest('_get_build'):
       _, exn = catch(api.labpack._get_build)
       assert exn is None, str(exn)
+    with api.step.nest('_get_dut_name'):
+      with mock.patch.object(api.cros_tags, 'get_values',
+                             return_value=["fake-dut"]):
+        hostname, exn = catch(api.labpack._get_dut_name)
+        assert hostname == "fake-dut"
+        assert exn is None, str(exn)
+      with mock.patch.object(api.cros_tags, 'get_values', return_value=[]):
+        hostname, exn = catch(api.labpack._get_dut_name)
+        assert hostname == ""
+        assert exn is None, str(exn)
+      with mock.patch.object(api.labpack, '_get_dut_name', return_value="a"):
+        with mock.patch.object(api.labpack, '_get_build',
+                               return_value=build_pb2.Build()):
+          _, exn = catch(api.labpack._get_augmented_build)
+          assert exn is None, str(exn)
     test_suite.step_text = 'SUCCESS'
 
 

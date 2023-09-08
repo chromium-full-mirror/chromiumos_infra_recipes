@@ -9,9 +9,20 @@ from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_c
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map
 from PB.lab.labpack import LabpackInput
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from google.protobuf import struct_pb2
 
 DEFAULT_CIPD_LABEL = 'prod'
 DEFAULT_CIPD_PACKAGE = 'chromiumos/infra/labpack/${platform}'
+
+
+def _dict_to_struct(d):
+  """convert a dictionary to the well-known type Struct."""
+  return json_format.ParseDict(js_dict=d, message=struct_pb2.Struct())
+
+
+def _struct_to_dict(struct):
+  """convert an instance of the well-known type Struct to a dictionary."""
+  return json_format.MessageToDict(struct)
 
 
 class LabpackCommand(recipe_api.RecipeApi):
@@ -193,4 +204,24 @@ class LabpackCommand(recipe_api.RecipeApi):
     """_get_build gets a copy of the input build"""
     b = build_pb2.Build()
     b.CopyFrom(self.m.buildbucket.build)
+    return b
+
+  def _get_dut_name(self) -> str:
+    """get the dut name from the swarming bot dimensions"""
+    d = self.m.buildbucket.build.infra.swarming.bot_dimensions
+    vals = self.m.cros_tags.get_values('dut_name', d)
+    if vals:  # pragma: nocover
+      return vals[0]
+    return ""
+
+  def _get_augmented_build(self) -> build_pb2.Build:
+    """return a build augmented with fields"""
+    b = self._get_build()
+    props_dict = _struct_to_dict(b.input.properties)
+    props_dict["unit_name"] = self._get_dut_name()
+    props_dict["task_name"] = "post_test"
+    props_dict["caller"] = "test_runner.py"
+    props_dict["inventory_service"] = self.get_ufs_host()
+    props = _dict_to_struct(props_dict)
+    b.input.properties.CopyFrom(props)
     return b
