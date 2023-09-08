@@ -308,7 +308,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Raises:
       A LookupError if a BuilderConfig is not found for the specified builder.
     """
-    key = (bucket_name, builder_name) if bucket_name else builder_name
+    if bucket_name:
+      key = (bucket_name.rstrip('.shadow'), builder_name)
+    else:
+      key = builder_name
+
     config = self._get_name_to_builder_config().get(key)
     if not config and not missing_ok:
       raise LookupError('No BuilderConfig for builder {}'.format(key))

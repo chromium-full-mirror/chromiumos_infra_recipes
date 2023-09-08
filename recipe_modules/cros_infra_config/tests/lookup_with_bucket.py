@@ -38,3 +38,11 @@ def GenTests(api):
                                      bucket='staging').build,
       api.post_process(post_process.DropExpectation),
   )
+
+  yield api.test(
+      'with-shadow-bucket',
+      api.test_util.test_child_build('eve',
+                                     builder_name='generic-staging-builder',
+                                     bucket='staging.shadow').build,
+      api.post_process(post_process.DropExpectation),
+  )
