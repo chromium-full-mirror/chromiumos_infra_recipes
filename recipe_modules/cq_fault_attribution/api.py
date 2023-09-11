@@ -43,6 +43,8 @@ POSTSUBMIT_PREDICATE_BUILDER_ID = BuilderID(
 
 VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
   [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
+SUCCESS_VERDICTS = \
+  [TaskState.VERDICT_PASSED_ON_RETRY, TaskState.VERDICT_PASSED]
 # Restrict snapshot retrieval to the last 8 hours (snapshot builds are
 # kicked off every 30 mins)
 SNAPSHOT_RETRIEVAL_LIMIT = 16
@@ -70,9 +72,12 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     # Failed VM and GCE test list, comprising of dictionaries of the failed
     # "test_case" and "build".
     self._failed_vm_tests: List[Dict] = []
-    # Failed HW test list, comprising of dictionaries of the failed
+    # Failed HW test list, comprising dictionaries of the failed
     # "skylab_res", "child_result" and "test_case".
     self._failed_hw_tests: List[Dict] = []
+    # Passed HW test set, comprising tuples of the passed
+    # "test_id", "build_target" and "model".
+    self._passed_hw_tests: Set[Tuple] = set()
     self._enable_fault_attribution = properties.enable_fault_attribution
     self._cq_test_failure_attributes = CqTestFailureFaultAttributionStats()
     # Map of build targets and model (may be empty) to a list of fault
@@ -208,6 +213,15 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       build_target = skylab_res.task.unit.common.build_target.name
       model = skylab_res.task.test.skylab_model or \
               EMPTY_MODEL
+
+      # Some test variants may have actually succeeded on earlier
+      # attempts but may have been retried as part of a larger shard
+      # retry, e.g. when "Tast wrapped in tauto" is used. If this is the
+      # case here, let's skip fault attribution on the 'failed' test variant
+      # since we know it already passed earlier.
+      if (test_id, build_target, model) in self._passed_hw_tests:
+        continue
+
       self._set_fault_attribution_properties(build_target, model, test_id,
                                              failure_reason, attempt)
 
@@ -319,16 +333,21 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     test properties on the class instance."""
     failed_test_names = set()
     for skylab_res in hw_tests:
-      if not skylab_res.task.test.common.critical.value \
-          or skylab_res.status == Status.SUCCESS:
+      if not skylab_res.task.test.common.critical.value:
         continue
       for child_result in skylab_res.child_results:
         if child_result.state.verdict not in \
-            VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
+            VERDICTS_REQUIRING_FAULT_ATTRIBUTION + SUCCESS_VERDICTS:
           continue
-        # Test shard is not successful, check individual test cases.
         for test_case in child_result.test_cases:
-          if test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
+          if test_case.verdict in SUCCESS_VERDICTS:
+            test_id = test_case.name
+            build_target = skylab_res.task.unit.common.build_target.name
+            model = skylab_res.task.test.skylab_model or \
+              EMPTY_MODEL
+            self._passed_hw_tests.add((test_id, build_target, model))
+            continue
+          elif test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
             continue
           # test_case.name here is analogous to the test_id substring in
           # the rdb test_result name.

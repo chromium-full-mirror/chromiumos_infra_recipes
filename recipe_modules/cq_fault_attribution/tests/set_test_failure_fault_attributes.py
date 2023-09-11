@@ -70,6 +70,8 @@ VM_FAILURE_WITH_NO_REASON_TEST_CASE_NAME = \
   'tast.this.vm.test.failed.without.a.reason'
 PASSING_IN_SNAPSHOT_GCE_TEST_CASE_NAME = \
   'tast.this.gce.test.passed.in.the.snapshot.only'
+PASSED_THEN_FAILED_TEST_CASE_NAME = \
+  'this.test.passed.on.first.attempt.then.failed.on.second'
 
 
 def get_rdb_test_result_name(invocation_id: str, test_name: str) -> str:
@@ -97,9 +99,12 @@ def get_build_target_index(items: List[FaultAttributedBuildTarget],
 
 pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
 fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)
+no_verdict_state = TaskState(verdict=TaskState.VERDICT_NO_VERDICT)
 passing_test_case = ExecuteResponse.TaskResult.TestCaseResult(
     name=PASSING_IN_SNAPSHOT_AND_CQ_TEST_CASE_NAME,
     verdict=TaskState.VERDICT_PASSED)
+no_verdict_test_case = ExecuteResponse.TaskResult.TestCaseResult(
+    name='no verdict', verdict=TaskState.VERDICT_NO_VERDICT)
 passed_in_snapshot_failed_in_cq_test_case = \
   ExecuteResponse.TaskResult.TestCaseResult(
     name=PASSING_IN_SNAPSHOT_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED,
@@ -122,15 +127,31 @@ existing_failure_test_case = ExecuteResponse.TaskResult.TestCaseResult(
     human_readable_summary=EXISTING_FAILURE_REASON)
 skipped_test_case = ExecuteResponse.TaskResult.TestCaseResult(
     name=SKIPPED_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED)
+passed_on_first_attempt_test_case = ExecuteResponse.TaskResult.TestCaseResult(
+    name=PASSED_THEN_FAILED_TEST_CASE_NAME, verdict=TaskState.VERDICT_PASSED)
+failed_on_second_attempt_test_case = ExecuteResponse.TaskResult.TestCaseResult(
+    name=PASSED_THEN_FAILED_TEST_CASE_NAME, verdict=TaskState.VERDICT_FAILED)
 
 all_passed_child_results = [
     ExecuteResponse.TaskResult(name='suite1', state=pass_state, attempt=0,
+                               test_cases=[passing_test_case])
+]
+no_verdict_child_results = [
+    ExecuteResponse.TaskResult(name='suite1', state=no_verdict_state, attempt=0,
                                test_cases=[passing_test_case])
 ]
 failed_and_skipped_child_results = [
     ExecuteResponse.TaskResult(
         name='suite2', state=fail_state, attempt=0,
         test_cases=[existing_failure_test_case, skipped_test_case])
+]
+passed_on_first_attempt_child_results = [
+    ExecuteResponse.TaskResult(name='suite2', state=pass_state, attempt=0,
+                               test_cases=[passed_on_first_attempt_test_case])
+]
+failed_on_second_attempt_child_results = [
+    ExecuteResponse.TaskResult(name='suite2', state=fail_state, attempt=1,
+                               test_cases=[failed_on_second_attempt_test_case])
 ]
 mix_of_pass_fail_skipped_child_results = \
   [ExecuteResponse.TaskResult(name='suite2', state=fail_state, attempt=0,
@@ -142,7 +163,8 @@ mix_of_pass_fail_skipped_child_results = \
                                                            status_failure_test_case,
                                                            flaky_failure_test_case,
                                                            existing_failure_test_case,
-                                                           skipped_test_case])]
+                                                           skipped_test_case,
+                                                           no_verdict_test_case])]
 
 brya_variant = json_format.ParseDict({'def': {
     'build_target': 'brya'
@@ -357,6 +379,10 @@ def RunSteps(api):
   brya_build_target_task = \
     api.skylab_results.test_api.skylab_task(suite='suite1')
   brya_build_target_task.unit.common.build_target.name = 'brya'
+  brya_non_critical_build_target_task = \
+    api.skylab_results.test_api.skylab_task(suite='suite1')
+  brya_non_critical_build_target_task.unit.common.build_target.name = 'brya'
+  brya_non_critical_build_target_task.test.common.critical.value = False
   brya_redrix_build_target_task = \
     api.skylab_results.test_api.skylab_task(suite='suite1')
   brya_redrix_build_target_task.unit.common.build_target.name = 'brya'
@@ -364,15 +390,21 @@ def RunSteps(api):
   hw_tests = [
       SkylabResult(task=scarlet_build_target_task,
                    status=common_pb2.Status.FAILURE,
-                   child_results=all_passed_child_results),
+                   child_results=no_verdict_child_results),
       SkylabResult(task=scarlet_build_target_task,
                    status=common_pb2.Status.FAILURE,
                    child_results=failed_and_skipped_child_results),
+      SkylabResult(task=scarlet_build_target_task,
+                   status=common_pb2.Status.SUCCESS,
+                   child_results=passed_on_first_attempt_child_results),
+      SkylabResult(task=scarlet_build_target_task,
+                   status=common_pb2.Status.FAILURE,
+                   child_results=failed_on_second_attempt_child_results),
       # Model specific test without any model specific snapshot comparisons.
       SkylabResult(task=scarlet_dru_build_target_task,
                    status=common_pb2.Status.FAILURE,
                    child_results=failed_and_skipped_child_results),
-      SkylabResult(task=brya_build_target_task,
+      SkylabResult(task=brya_non_critical_build_target_task,
                    status=common_pb2.Status.SUCCESS,
                    child_results=all_passed_child_results),
       # Model specific test with a different test outcome for a pre-existing
@@ -573,6 +605,8 @@ def RunSteps(api):
                           actual_brya_fault_attributes_target.fault_attributes)
   api.assertions.assertIn(expected_brya_absent_reason_vm_test_failure,
                           actual_brya_fault_attributes_target.fault_attributes)
+  api.assertions.assertEqual(
+      len(actual_brya_fault_attributes_target.fault_attributes), 11)
 
   # Verify fault attributes for Scarlet build target.
   actual_scarlet_fault_attributes_target = \
@@ -599,6 +633,8 @@ def RunSteps(api):
   api.assertions.assertIn(
       expected_scarlet_no_comparison_failure,
       actual_scarlet_fault_attributes_target.fault_attributes)
+  api.assertions.assertEqual(
+      len(actual_scarlet_fault_attributes_target.fault_attributes), 2)
 
   # Verify fault attributes for Scarlet.Dru build target.
   actual_scarlet_dru_fault_attributes_target = \
@@ -627,6 +663,8 @@ def RunSteps(api):
   api.assertions.assertIn(
       expected_scarlet_dru_no_comparison_failure,
       actual_scarlet_dru_fault_attributes_target.fault_attributes)
+  api.assertions.assertEqual(
+      len(actual_scarlet_dru_fault_attributes_target.fault_attributes), 2)
 
   # Verify fault attributes for Brya.Redrix build target.
   expected_snapshot_comparison_properties = \
@@ -648,6 +686,8 @@ def RunSteps(api):
   api.assertions.assertIn(
       expected_brya_redrix_new_hw_test_failure,
       actual_brya_redrix_fault_attributes_target.fault_attributes)
+  api.assertions.assertEqual(
+      len(actual_brya_redrix_fault_attributes_target.fault_attributes), 1)
 
   api.assertions.assertEqual(len(fault_attributed_build_targets), 4)
 
