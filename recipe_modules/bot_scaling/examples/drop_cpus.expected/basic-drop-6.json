@@ -1,5 +1,11 @@
 [
   {
+    "cmd": [
+      "nproc"
+    ],
+    "name": "count online CPUs"
+  },
+  {
     "cmd": [],
     "name": "dropping cores"
   },

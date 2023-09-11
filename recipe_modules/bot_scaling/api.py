@@ -45,6 +45,12 @@ class BotScalingApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._hours_between_builds = None
 
+  def get_num_cores(self):
+    """Get the number of cores on the host."""
+    return int(
+        self.m.easy.stdout_step('count online CPUs', ['nproc'],
+                                test_stdout=' 8\n').strip())
+
   def drop_cpu_cores(self, min_cpus_left=4, max_drop_ratio=0.75,
                      test_rand=None):
     """Gather data on build's per core scaling efficiencies.
@@ -68,9 +74,7 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('dropping cores') as pres:
       # Establish the CPU count.
-      n_proc = int(
-          self.m.easy.stdout_step('count online CPUs', ['nproc'],
-                                  test_stdout=' 8\n').strip())
+      n_proc = self.get_num_cores()
 
       # Validation check that state is fresh.
       online_intervals = self.m.easy.stdout_step(

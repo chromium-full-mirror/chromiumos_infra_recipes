@@ -21,6 +21,8 @@ PROPERTIES = BotDropProperties
 
 
 def RunSteps(api, properties):
+  api.assertions.assertEqual(8, api.bot_scaling.get_num_cores())
+
   api.bot_scaling.drop_cpu_cores(min_cpus_left=properties.min_cpus_left,
                                  max_drop_ratio=properties.max_drop_ratio,
                                  test_rand=properties.test_rand)

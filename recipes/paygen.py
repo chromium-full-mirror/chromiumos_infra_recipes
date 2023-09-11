@@ -93,9 +93,9 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('compile')
 
-    # Get max number of concurrent requests - None is unlimited.
-    max_concurrent_requests = properties.max_concurrent_requests or len(
-        properties.requests)
+    # Get max number of concurrent requests - None is number of cores.
+    max_concurrent_requests = properties.max_concurrent_requests or api.bot_scaling.get_num_cores(
+    )
     presentation.step_text = 'number of concurrent requests: {}'.format(
         max_concurrent_requests)
     # Create a parallel runner with our max number of requests.
