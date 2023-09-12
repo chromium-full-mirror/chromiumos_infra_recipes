@@ -137,8 +137,7 @@ class SigningApi(recipe_api.RecipeApi):
           build_target_signing_configs=[self.setup_signing(sign_types)])
       output_dir = self.m.path.mkdtemp('signed-artifacts')
       request = SignImageRequest(
-          chroot=self.m.build_menu.chroot, signing_configs=config,
-          result_path=common_pb2.ResultPath(
+          signing_configs=config, result_path=common_pb2.ResultPath(
               path=common_pb2.Path(
                   path=self.m.path.abspath(output_dir),
                   location=common_pb2.Path.Location.OUTSIDE,
