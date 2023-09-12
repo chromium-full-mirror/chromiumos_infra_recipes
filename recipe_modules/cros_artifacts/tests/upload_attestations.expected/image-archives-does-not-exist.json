@@ -403,7 +403,7 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/log.tar.gz\"}]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/orderfile\"}]}]}}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts\": {\"legacy\": {\"artifacts\": [{\"artifact_type\": \"EBUILD_LOGS\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/log.tar.gz\"}]}]}, \"toolchain\": {\"artifacts\": [{\"artifact_type\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", \"paths\": [{\"location\": 2, \"path\": \"[START_DIR]/afdo\"}]}]}}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -545,7 +545,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../[START_DIR]/orderfile\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"], \"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [\"../../my_output_artifact\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\"}@@@"
     ]
   },
   {
@@ -569,7 +569,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/../../my_output_artifact",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
@@ -592,7 +592,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/orderfile",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/../../my_output_artifact",
       "gs://pub2/builder/R99-1234.56.0-101-/"
     ],
     "infra_step": true,
@@ -607,7 +607,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/orderfile\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_LLVM_ORDERFILE\": [{\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../my_output_artifact\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
     ]
   },
   {

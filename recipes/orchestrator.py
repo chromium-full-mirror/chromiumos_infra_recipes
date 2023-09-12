@@ -393,7 +393,7 @@ def GenTests(api: RecipeTestApi):
                            collect_builds=data.builds,
                            follow_on_orch=data.follow_on_orchestrator,
                            bucket='toolchain',
-                           builder='orderfile-generate-orchestrator')
+                           builder='artifact-generate-orchestrator')
 
   yield api.orch_menu.test('missing-gitiles-commit-with-defaults',
                            data.ctp_normal,

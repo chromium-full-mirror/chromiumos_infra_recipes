@@ -29,7 +29,8 @@ def RunSteps(api):
       toolchain=ArtifactsByService.Toolchain(output_artifacts=[
           ArtifactsByService.Toolchain.ArtifactInfo(
               artifact_types=[
-                  ArtifactsByService.Toolchain.UNVERIFIED_CHROME_LLVM_ORDERFILE
+                  ArtifactsByService.Toolchain
+                  .UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE
               ], gs_locations=['publish_gs_location', 'pub2/{gs_path}'],
               acl_name='public-read')
       ]),
@@ -44,14 +45,15 @@ def RunSteps(api):
       ]),
   )
 
-  # UNVERIFIED_CHROME_LLVM_ORDERFILE and FIRMWARE_TARBALL were previously
-  # uploaded, so should not be re-uploaded. Note that ArtifactsByService.Legacy. will be
-  # re-uploaded, even though it was previously uploaded.
+  # UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE and FIRMWARE_TARBALL were previously
+  # uploaded, so should not be re-uploaded. Note that
+  # ArtifactsByService.Legacy. will be re-uploaded, even though it was
+  # previously uploaded.
   previously_uploaded_artifacts = api.cros_artifacts.UploadedArtifacts(
       gs_bucket='test_bucket', gs_path='builder/R99-1234.56.0-101-',
       files_by_artifact={
           'EBUILD_LOGS': ['../../[START_DIR]/tmp/artifact.tar.gz'],
-          'UNVERIFIED_CHROME_LLVM_ORDERFILE': ['testorderfile'],
+          'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile'],
           'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
       })
 
@@ -126,7 +128,7 @@ def GenTests(api):
           'upload artifacts.bundle EBUILD_LOGS for upload.call chromite.api.ArtifactsService/BundleEbuildLogs',
       ),
       # The artifacts property should contain previously uploaded artifact types
-      # (UNVERIFIED_CHROME_LLVM_ORDERFILE in this case).
+      # (UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE in this case).
       api.post_process(
           post_process.PropertyEquals, 'artifacts', {
               'files_by_artifact': {
@@ -134,7 +136,7 @@ def GenTests(api):
                   'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
                   'FIRMWARE_TARBALL_INFO':
                       ['../../[START_DIR]/fw_metadata.json'],
-                  'UNVERIFIED_CHROME_LLVM_ORDERFILE': ['testorderfile']
+                  'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile']
               },
               'gs_bucket': 'test_bucket',
               'gs_path': 'builder/R99-1234.56.0-101-'

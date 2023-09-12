@@ -687,7 +687,7 @@ def GenTests(api):
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child, bucket='toolchain',
-      builder='orderfile-generate-orchestrator')
+      builder='artifact-generate-orchestrator')
 
   # Process-child times out.
   yield api.orch_menu.test(
@@ -701,7 +701,7 @@ def GenTests(api):
               process_child=data.process_child.builder.builder,
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child, process_child_timeout=True,
-      bucket='toolchain', builder='orderfile-generate-orchestrator')
+      bucket='toolchain', builder='artifact-generate-orchestrator')
 
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')

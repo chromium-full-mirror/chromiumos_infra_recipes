@@ -20,7 +20,7 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  name = properties.builder_name or 'orderfile-generate-toolchain'
+  name = properties.builder_name or 'postsubmit-orchestrator'
 
   _ = api.cros_infra_config.get_builder_config(name)
 

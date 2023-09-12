@@ -252,7 +252,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     follow_on_orchestrator = self.m.test_util.test_orchestrator(
         build_id=8922054662172515000, bucket='toolchain',
-        builder='orderfile-verify-orchestrator', status='SUCCESS').message
+        builder='artifact-verify-orchestrator', status='SUCCESS').message
 
     annealing_builds = [
         self.m.test_util.test_child_build('amd64-generic',

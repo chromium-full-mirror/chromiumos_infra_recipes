@@ -121,7 +121,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=data.builds, process_child=data.process_child,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
-      builder='orderfile-generate-orchestrator', with_history=True,
+      builder='artifact-generate-orchestrator', with_history=True,
       git_footers=[])
 
   pointless_child_build = build_pb2.Build(
@@ -133,5 +133,5 @@ def GenTests(api: RecipeTestApi):
       'orchestrator-with-pointless-process-child', data.ctp_normal,
       api.properties(process_child='benchmark-afdo-process'),
       collect_builds=[pointless_child_build], bucket='toolchain',
-      builder='orderfile-generate-orchestrator', with_history=True,
+      builder='artifact-generate-orchestrator', with_history=True,
       git_footers=[])

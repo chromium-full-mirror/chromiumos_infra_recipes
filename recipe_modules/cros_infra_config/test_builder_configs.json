@@ -1638,7 +1638,7 @@
     },
     {
       "id": {
-        "name": "orderfile-generate-orchestrator",
+        "name": "artifact-generate-orchestrator",
         "type": "TOOLCHAIN",
         "bucket": "toolchain"
       },
@@ -1649,11 +1649,11 @@
       "orchestrator": {
         "child_specs": [
           {
-            "name": "orderfile-generate-toolchain"
+            "name": "artifact-generate-toolchain"
           }
         ],
         "followOnOrchestrator": {
-          "name": "orderfile-verify-orchestrator",
+          "name": "artifact-verify-orchestrator",
           "awaitCompletion": true
         },
         "gitilesCommit": {
@@ -1816,7 +1816,7 @@
     },
     {
       "id": {
-        "name": "orderfile-generate-toolchain",
+        "name": "artifact-generate-toolchain",
         "type": "TOOLCHAIN",
         "bucket": "toolchain"
       },
@@ -1845,22 +1845,22 @@
             "inputArtifacts": [
               {
                 "artifactTypes": [
-                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                  "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
-                  "chromeos-toolchain-artifacts/orderfile/unvetted",
-                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                  "chromeos-toolchain-artifacts/afdo/unvetted",
+                  "chromeos-prebuilt/afdo-job/afdo/unvetted"
                 ]
               }
             ],
             "outputArtifacts": [
               {
                 "artifactTypes": [
-                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                  "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
-                  "chromeos-toolchain-artifacts/orderfile/unvetted",
-                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                  "chromeos-toolchain-artifacts/afdo/unvetted",
+                  "chromeos-prebuilt/afdo-job/afdo/unvetted"
                 ]
               }
             ]
@@ -1874,26 +1874,7 @@
         "internal": true
       },
       "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          },
-          {
-            "flag": "strict_toolchain_checks"
-          },
-          {
-            "flag": "-orderfile_use"
-          },
-          {
-            "flag": "orderfile_generate"
-          },
-          {
-            "flag": "-strict_toolchain_checks"
-          }
-        ],
+        "useFlags": [],
         "applyGerritChanges": true,
         "prepareForBuild": {
           "additionalArgs": {
@@ -1919,7 +1900,7 @@
     },
     {
       "id": {
-        "name": "orderfile-verify-toolchain",
+        "name": "artifact-verify-toolchain",
         "type": "TOOLCHAIN",
         "bucket": "toolchain"
       },
@@ -1948,31 +1929,31 @@
             "inputArtifacts": [
               {
                 "artifactTypes": [
-                  "UNVERIFIED_CHROME_LLVM_ORDERFILE"
+                  "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
-                  "chromeos-toolchain-artifacts/orderfile/unvetted",
-                  "chromeos-prebuilt/afdo-job/orderfiles/unvetted"
+                  "chromeos-toolchain-artifacts/afdo/unvetted",
+                  "chromeos-prebuilt/afdo-job/afdo/unvetted"
                 ]
               },
               {
                 "artifactTypes": [
-                  "VERIFIED_CHROME_LLVM_ORDERFILE"
+                  "VERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
-                  "chromeos-toolchain-artifacts/orderfile/vetted",
-                  "chromeos-prebuilt/afdo-job/orderfiles/vetted"
+                  "chromeos-toolchain-artifacts/afdo/vetted",
+                  "chromeos-prebuilt/afdo-job/afdo/vetted"
                 ]
               }
             ],
             "outputArtifacts": [
               {
                 "artifactTypes": [
-                  "VERIFIED_CHROME_LLVM_ORDERFILE"
+                  "VERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
-                  "chromeos-toolchain-artifacts/orderfile/vetted",
-                  "chromeos-prebuilt/afdo-job/orderfiles/vetted"
+                  "chromeos-toolchain-artifacts/afdo/vetted",
+                  "chromeos-prebuilt/afdo-job/afdo/vetted"
                 ],
                 "aclName": "public-read"
               }
@@ -1988,23 +1969,6 @@
       },
       "build": {
         "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          },
-          {
-            "flag": "strict_toolchain_checks"
-          },
-          {
-            "flag": "orderfile_verify"
-          },
-          {
-            "flag": "-reorder_text_sections"
-          }
-        ],
         "prepareForBuild": {
           "additionalArgs": {
             "chromeCwpProfile": "silvermont"

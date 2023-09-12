@@ -20,7 +20,7 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  name = properties.builder_name or 'orderfile-generate-toolchain'
+  name = properties.builder_name or 'benchmark-afdo-process'
   config = api.cros_infra_config.get_builder_config(name)
 
   chroot = api.cros_sdk.chroot if properties.with_chroot else None

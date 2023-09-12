@@ -271,12 +271,10 @@ def GenTests(api):
         ('forced-' if forced else '') + 'pointless-artifact-build',
         api.properties(
             FullProperties(
-                build_target=common.BuildTarget(name='chell'),
-                artifact_build=True, forced_relevant=forced, expected_packages=[
-                    common.PackageInfo(category='chromeos-base',
-                                       package_name='chromeos-chrome')
-                ])), build_target='chell', bucket='toolchain',
-        builder='orderfile-generate-toolchain', artifact_pointless=True,
+                build_target=common.BuildTarget(name='sarien'),
+                artifact_build=True, forced_relevant=forced,
+                expected_packages=[])), build_target='sarien',
+        builder='sarien-code-coverage-postsubmit', artifact_pointless=True,
         input_properties={
             '$chromeos/build_menu': {
                 'artifact_build': True,

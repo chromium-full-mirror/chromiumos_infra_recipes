@@ -18,7 +18,7 @@ PROPERTIES = TestInputProperties
 
 
 def RunSteps(api, properties):
-  name = properties.builder_name or 'orderfile-generate-toolchain'
+  name = properties.builder_name or 'sarien-code-coverage-cq'
 
   build_config = api.cros_infra_config.get_builder_config(name)
   artifacts = build_config.artifacts

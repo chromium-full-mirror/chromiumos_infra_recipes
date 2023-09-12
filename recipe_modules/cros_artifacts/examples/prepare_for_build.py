@@ -39,21 +39,17 @@ def RunSteps(api, properties):
           toolchain=Toolchain(
               input_artifacts=[
                   Toolchain.ArtifactInfo(
-                      artifact_types=['UNVERIFIED_CHROME_LLVM_ORDERFILE'],
+                      artifact_types=['UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
                       gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/unvetted'
+                          'chromeos-toolchain-artifacts/afdo/unvetted'
                       ]),
                   Toolchain.ArtifactInfo(
-                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
-                      gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/vetted'
-                      ])
+                      artifact_types=['VERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
+                      gs_locations=['chromeos-toolchain-artifacts/afdo/vetted'])
               ], output_artifacts=[
                   Toolchain.ArtifactInfo(
-                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
-                      gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/vetted'
-                      ])
+                      artifact_types=['VERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
+                      gs_locations=['chromeos-toolchain-artifacts/afdo/vetted'])
               ]),
       ), test_data=properties.api_response)
   api.assertions.assertEqual(properties.relevance, resp)
@@ -63,21 +59,17 @@ def RunSteps(api, properties):
           toolchain=Toolchain(
               input_artifacts=[
                   Toolchain.ArtifactInfo(
-                      artifact_types=['UNVERIFIED_CHROME_LLVM_ORDERFILE'],
+                      artifact_types=['UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
                       gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/unvetted'
+                          'chromeos-toolchain-artifacts/afdo/unvetted'
                       ]),
                   Toolchain.ArtifactInfo(
-                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
-                      gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/vetted'
-                      ])
+                      artifact_types=['VERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
+                      gs_locations=['chromeos-toolchain-artifacts/afdo/vetted'])
               ], output_artifacts=[
                   Toolchain.ArtifactInfo(
-                      artifact_types=['VERIFIED_CHROME_LLVM_ORDERFILE'],
-                      gs_locations=[
-                          'chromeos-toolchain-artifacts/orderfile/vetted'
-                      ])
+                      artifact_types=['VERIFIED_CHROME_BENCHMARK_AFDO_FILE'],
+                      gs_locations=['chromeos-toolchain-artifacts/afdo/vetted'])
               ]),
           legacy=Legacy(output_artifacts=[
               Legacy.ArtifactInfo(artifact_types=['IMAGE_ZIP'])

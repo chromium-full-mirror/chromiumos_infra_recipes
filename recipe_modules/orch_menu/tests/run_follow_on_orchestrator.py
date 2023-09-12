@@ -31,7 +31,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'basic',
-      api.buildbucket.ci_build(builder='orderfile-generate-orchestrator'),
+      api.buildbucket.ci_build(builder='artifact-generate-orchestrator'),
       api.post_check(post_process.MustRun, 'run follow on orchestrator'),
       api.post_check(post_process.MustRun,
                      'run follow on orchestrator.collect.wait'),
@@ -40,12 +40,12 @@ def GenTests(api):
 
   configs = BuilderConfigs()
   orch = configs.builder_configs.add()
-  orch.id.name = 'orderfile-generate-orchestrator'
-  orch.orchestrator.follow_on_orchestrator.name = 'orderfile-verify-orchestrator'
+  orch.id.name = 'artifact-generate-orchestrator'
+  orch.orchestrator.follow_on_orchestrator.name = 'artifact-verify-orchestrator'
   orch.orchestrator.follow_on_orchestrator.await_completion = False
   yield api.orch_menu.test(
       'does-not-await-completion',
-      api.buildbucket.ci_build(builder='orderfile-generate-orchestrator'),
+      api.buildbucket.ci_build(builder='artifact-generate-orchestrator'),
       api.post_check(post_process.MustRun, 'run follow on orchestrator'),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.post_check(post_process.DoesNotRun,
@@ -55,7 +55,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'follow-on-orch-timesout',
-      api.buildbucket.ci_build(builder='orderfile-generate-orchestrator'),
+      api.buildbucket.ci_build(builder='artifact-generate-orchestrator'),
       api.step_data('run follow on orchestrator.collect.wait', retcode=1),
       api.post_check(post_process.MustRun, 'run follow on orchestrator'),
       api.post_check(post_process.MustRun, 'run follow on orchestrator.get'),
@@ -64,7 +64,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'fatal-failures-no-follow-on-scheduled',
-      api.buildbucket.ci_build(builder='orderfile-generate-orchestrator'),
+      api.buildbucket.ci_build(builder='artifact-generate-orchestrator'),
       api.properties(fatal_failure=True),
       api.post_check(post_process.DoesNotRun, 'run follow on orchestrator'),
       api.post_process(post_process.DropExpectation),

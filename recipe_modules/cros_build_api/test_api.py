@@ -123,8 +123,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     },
                     'toolchain': {
                         'artifacts': [{
-                            'artifact_type': 'UNVERIFIED_CHROME_LLVM_ORDERFILE',
-                            'paths': [_uploaded_path('orderfile')]
+                            'artifact_type':
+                                'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE',
+                            'paths': [_uploaded_path('afdo')]
                         }]
                     }
                 }),
