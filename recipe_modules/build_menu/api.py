@@ -435,19 +435,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         run_spec = config.update_chroot.run_spec
         update = run_spec != BuilderConfig.RunSpec.NO_RUN
 
-      # Don't upgrade the chroot on creation if there is a subsequent call to
-      # update it.
-      # TODO(b/271120919): Remove staging and postsubmit restriction.
-      skip_chroot_upgrade = update and (
-          self.m.cros_infra_config.is_staging or
-          self.m.buildbucket.build.builder.builder.endswith('postsubmit'))
-
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
           no_chroot_timeout else 'DEFAULT', replace=replace,
-          chroot_upgrade=not skip_chroot_upgrade)
+          chroot_upgrade=not update)
       self._chroot_created = True
 
       if update:
