@@ -18,8 +18,7 @@ message CrosReleaseConfigProperties {
   // CCs for config CLs.
   repeated Email ccs = 2;
 
-  // Whether or not to auto-submit CLs.
-  bool auto_submit = 3;
+  reserved 3;
 
   // How many milestones to maintain release builders for.
   // If set and a newly added builder exceeds this number,

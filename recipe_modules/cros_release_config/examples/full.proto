@@ -9,4 +9,7 @@ package recipe_modules.chromeos.cros_release_config.examples;
 message TestProperties {
     // Branch name to use.
     string branch = 1;
+
+    // Whether to autosubmit Cls.
+    bool auto_submit = 2;
 }

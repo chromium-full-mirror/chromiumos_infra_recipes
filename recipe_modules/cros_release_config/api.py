@@ -56,7 +56,6 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     super().__init__(**kwargs)
     self._reviewers = properties.reviewers
     self._ccs = properties.ccs
-    self._auto_submit = properties.auto_submit
     self._keep_n_milestones = properties.keep_n_milestones
 
   def _extract_milestone(self, release_branch):
@@ -116,7 +115,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                reverse=True)[:self._keep_n_milestones])
     return ReleaseBuilders(builders=to_keep)
 
-  def _create_change(self, project, project_path, commit_message):
+  def _create_change(self, project, project_path, commit_message, auto_submit):
     with self.m.step.nest(
         'commit in {}'.format(project)), self.m.context(cwd=project_path):
       self.m.git.add([project_path])
@@ -129,13 +128,13 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     change = self.m.gerrit.create_change(
         project_path, reviewers=self._get_emails(self._reviewers),
         ccs=self._get_emails(self._ccs))
-    if self._auto_submit:
+    if auto_submit:
       self.m.gerrit.set_change_labels(change, {
           Label.BOT_COMMIT: 1,
           Label.COMMIT_QUEUE: 2,
       })
 
-  def update_config(self, branch):
+  def update_config(self, branch, auto_submit: bool):
     """Creates CLs updating config file to include new release branch.
 
     While Rubik is being turned-up, this endpoint modifies both the legacy
@@ -144,6 +143,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     Args:
     branch (str): Release or stabilize branch, e.g. "release-R89-13729.B" or
       "stabilize-15129.B".
+    auto_submit (bool): Whether to autosubmit the config change.
 
     """
     milestone = None
@@ -161,7 +161,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             raise StepFailure('bad release branch')
 
     with self.m.step.nest('validate CL settings'):
-      if not self._reviewers and not self._auto_submit:
+      if not self._reviewers and not auto_submit:
         raise StepFailure('no reviewers specified and auto submit is false')
 
     workpath = self.m.cros_source.workspace_path
@@ -245,4 +245,5 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             'TEST=None',
         ]
         commit_message = '\n'.join(commit_lines) + '\n'
-        self._create_change(self.CONFIG_PROJECT, proj_path, commit_message)
+        self._create_change(self.CONFIG_PROJECT, proj_path, commit_message,
+                            auto_submit)

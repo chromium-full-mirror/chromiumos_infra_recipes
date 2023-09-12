@@ -23,4 +23,7 @@ message BrancherProperties {
 
   // Whether or not the branch_util should be invoked with --force.
   bool branch_util_force = 4;
+
+  // If set, will autosubmit the config CLs.
+  bool autosubmit_config = 5;
 }

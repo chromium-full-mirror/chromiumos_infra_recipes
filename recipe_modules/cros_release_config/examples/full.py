@@ -152,7 +152,8 @@ PROPERTIES = TestProperties
 
 
 def RunSteps(api, properties):
-  api.cros_release_config.update_config(properties.branch)
+  api.cros_release_config.update_config(properties.branch,
+                                        auto_submit=properties.auto_submit)
 
 
 def GenTests(api):
@@ -237,25 +238,22 @@ def GenTests(api):
       status='FAILURE',
   )
 
-  yield api.test(
-      'auto-submit',
-      api.properties(
-          **{
-              'branch':
-                  branch,
-              '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True),
-          }))
+  yield api.test('auto-submit',
+                 api.properties(**{
+                     'auto_submit': True,
+                     'branch': branch,
+                 }))
 
   yield api.test(
       'prune',
       api.properties(
           **{
+              'auto_submit':
+                  True,
               'branch':
                   branch,
               '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True,
-                                              keep_n_milestones=2),
+                  CrosReleaseConfigProperties(keep_n_milestones=2),
           }),
       api.post_process(
           post_process.StepCommandContains,
@@ -266,13 +264,10 @@ def GenTests(api):
 
   yield api.test(
       'with-build-creator',
-      api.properties(
-          **{
-              'branch':
-                  branch,
-              '$chromeos/cros_release_config':
-                  CrosReleaseConfigProperties(auto_submit=True),
-          }),
+      api.properties(**{
+          'auto_submit': True,
+          'branch': branch,
+      }),
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
   )

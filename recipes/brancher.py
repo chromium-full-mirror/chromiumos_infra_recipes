@@ -87,7 +87,8 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
       # builds < R108.
       if properties.branch_info.type == Branch.RELEASE or is_108_or_greater(
           properties.source_version):
-        api.cros_release_config.update_config(branch_name)
+        api.cros_release_config.update_config(
+            branch_name, auto_submit=properties.autosubmit_config)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -131,6 +132,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                  name='this should not be used anywhere',
                                  descriptor='foo'),
               branch_util_push=True,
+              autosubmit_config=True,
           )),
       api.post_check(
           post_process.StepCommandContains, 'create branch.'
