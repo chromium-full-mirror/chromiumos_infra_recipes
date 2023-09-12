@@ -72,6 +72,12 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
         with api.deferrals.defer_exceptions():
           with api.step.nest('check for new files') as pres:
             for patch_set in patch_sets:
+              # Only check for new file in manifest repos (other patch sets
+              # might be inputs to the build because of Cq-Depends).
+              if patch_set.project not in ('chromeos/manifest-internal',
+                                           'chromiumos/manifest'):
+                continue
+
               project_paths = api.cros_source.find_project_paths(
                   patch_set.project, patch_set.branch)
               for project_path in project_paths:
@@ -221,3 +227,9 @@ A       _something.xml'''
       api.post_check(post_process.MustRun, 'get current project infos'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE')
+
+  yield api.test(
+      'with-non-manifest-changes',
+      api.buildbucket.try_build(project='chromiumos/platform2'),
+      api.post_process(post_process.DropExpectation),
+  )
