@@ -46,13 +46,11 @@ def RunSteps(api: RecipeApi,
           'https://chrome-internal.googlesource.com/chromeos/crostools',
           depth=1)
       # 2. build the docker image.
-      with api.context(cwd=docker_checkout.join('signing_docker/dockerbuild')):
+      with api.context(cwd=docker_checkout.join('signing_docker')):
         tag = str(api.time.ms_since_epoch())[0:8]
         image_with_tag = f'signing:{tag}'
-        api.step('docker build', [
-            'docker', 'build', '.', '-t', f'{image_with_tag}', '-t',
-            'signing:latest'
-        ])
+        api.step('docker build',
+                 ['./setup.py', '-d', f'-t {image_with_tag} -t signing:latest'])
         # 3. upload the docker image to the container registry.
         api.step('docker tag', [
             'docker', 'tag', f'{image_with_tag}',
