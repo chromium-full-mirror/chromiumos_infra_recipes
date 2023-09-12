@@ -8,17 +8,22 @@ from google.protobuf import timestamp_pb2
 
 from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromite.api.sysroot import InstallPackagesResponse
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
+from PB.recipe_modules.chromeos.analysis_service.examples.full import FullProperties
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
-    'recipe_engine/assertions', 'recipe_engine/buildbucket',
-    'recipe_engine/properties', 'recipe_engine/raw_io', 'recipe_engine/step',
-    'analysis_service'
+    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/properties',
+    'recipe_engine/raw_io',
+    'recipe_engine/step',
+    'analysis_service',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PROPERTIES = FullProperties
 
 # Test JSON protos.
 INSTALL_PACKAGES_REQUEST = '''
@@ -45,7 +50,7 @@ INSTALL_PACKAGES_RESPONSE = '''
 '''
 
 
-def RunSteps(api: RecipeApi):
+def RunSteps(api: RecipeApi, properties: FullProperties) -> None:
   test_step_data = api.step('basic_with_stdout', cmd=['echo', 'hello world'],
                             stdout=api.raw_io.output(),
                             stderr=api.raw_io.output())
@@ -63,22 +68,28 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertTrue(
       api.analysis_service.can_publish_event(
           request=install_packages_request, response=install_packages_response))
-  api.analysis_service.publish_event(request=install_packages_request,
-                                     response=install_packages_response,
-                                     request_time=request_time,
-                                     response_time=response_time,
-                                     step_data=test_step_data,
-                                     step_output=test_step_data.stdout)
+  api.analysis_service.publish_event(
+      request=install_packages_request,
+      response=install_packages_response,
+      request_time=request_time,
+      response_time=response_time,
+      step_data=test_step_data,
+      step_output=test_step_data.stdout,
+      max_stdout_stderr_bytes=properties.max_stdout_stderr_bytes,
+  )
 
   # Publish a step with non-zero retcode
   try:
     api.step('A test step with retcode', cmd=['echo', 'hello world'])
   except api.step.StepFailure as e:
-    api.analysis_service.publish_event(request=install_packages_request,
-                                       response=install_packages_response,
-                                       request_time=request_time,
-                                       response_time=response_time,
-                                       step_data=e.result)
+    api.analysis_service.publish_event(
+        request=install_packages_request,
+        response=install_packages_response,
+        request_time=request_time,
+        response_time=response_time,
+        step_data=e.result,
+        max_stdout_stderr_bytes=properties.max_stdout_stderr_bytes,
+    )
 
   try:
     api.step('A test step with timeout', cmd=['echo', 'hello world'], timeout=1)
@@ -121,11 +132,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('basic_with_stdout',
                     stdout=api.raw_io.output('Test output'),
                     stderr=api.raw_io.output('Errors')),
-      api.properties(
-          **{
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-          }),
+      api.properties(FullProperties(max_stdout_stderr_bytes=1024)),
   )
 
   yield api.test(
@@ -136,11 +143,7 @@ def GenTests(api: RecipeTestApi):
           # coding: utf8
           stdout=api.raw_io.output('國華'),
           stderr=api.raw_io.output('Errors')),
-      api.properties(
-          **{
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=1024)
-          }),
+      api.properties(FullProperties(max_stdout_stderr_bytes=1024)),
   )
 
   yield api.test(
@@ -149,11 +152,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('basic_with_stdout',
                     stdout=api.raw_io.output('Test output'),
                     stderr=api.raw_io.output('Errors')),
-      api.properties(
-          **{
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=4)
-          }),
+      api.properties(FullProperties(max_stdout_stderr_bytes=4)),
   )
 
   # This test uses unicode characters aligned to force the truncation method to
@@ -164,9 +163,5 @@ def GenTests(api: RecipeTestApi):
       api.step_data('basic_with_stdout',
                     stdout=api.raw_io.output('Test ομτρμt'),
                     stderr=api.raw_io.output('Errors')),
-      api.properties(
-          **{
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=4)
-          }),
+      api.properties(FullProperties(max_stdout_stderr_bytes=4)),
   )

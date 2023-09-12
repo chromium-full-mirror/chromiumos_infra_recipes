@@ -16,6 +16,12 @@ from recipe_engine import recipe_api
 from recipe_engine.step_data import StepData
 
 
+# Max bytes to include from stdout/stderr of each step as part of the event.
+# This limit applies to stdout and stderr individually. A step may include up to
+# this many bytes for each one.
+_MAX_STDOUT_STDERR_BYTES = 1000000  # 1MB
+
+
 def _truncate_output(full_output: Union[str, bytes],
                      max_output_bytes: int) -> Tuple[str, int]:
   """Truncate full_output if needed for sending/storing/querying.
@@ -26,23 +32,25 @@ def _truncate_output(full_output: Union[str, bytes],
   Args:
     full_output: The full output captured from a step.
     max_output_bytes: Max number of bytes in returned string.
+
   Return:
-    A tuple of truncated string, bytes removed.
+    A tuple of (truncated_string, removed), where truncated_string is the
+    modified string, and removed is the number of bytes removed.
   """
-  # Some callers are still passing in bytes, so cooerce the input to a string.
+  # Some callers are still passing in bytes, so coerce the input to a string.
   # We use UTF-32 to make all characters 4 bytes wide while we are manipulating
   # the string.
   full_string = str(full_output).encode('utf-32')
   # Divide by 4, as we have 4-byte wide characters, but remove an extra 1 as
   # UTF-32 has a '\xff\xfe\x00\x00' prefix on the string.
   len_in_chars = len(full_string) / 4 - 1
-  removed = 0
   if len_in_chars > max_output_bytes:
     removed = len_in_chars - max_output_bytes
     # We need to keep the first 4 bytes, as they are the UTF-32 prefix.
-    truncated_string = full_string[0:4] + full_string[-max_output_bytes * 4:]
+    truncated_string = (full_string[:4] + full_string[-max_output_bytes * 4:])
   else:
     truncated_string = full_string
+    removed = 0
   return truncated_string.decode('utf-32'), removed
 
 
@@ -77,7 +85,6 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     self._pubsub_project_id = properties.pubsub_project_id or 'chromeos-bot'
     self._pubsub_topic_id = (
         properties.pubsub_topic_id or 'analysis-service-events')
-    self._max_stdout_stderr_bytes = properties.max_stdout_stderr_bytes
 
   @staticmethod
   def _set_oneof_by_matching_type(analysis_service_event: AnalysisServiceEvent,
@@ -133,27 +140,31 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     assert analysis_service_event.WhichOneof(
         oneof_name) is not None, 'Expected {} to be set.'.format(oneof_name)
 
-  def _set_step_output(self, analysis_service_event: AnalysisServiceEvent,
-                       step_output: str):
+  def _set_step_output(
+      self,
+      analysis_service_event: AnalysisServiceEvent,
+      step_output: str,
+      max_stdout_stderr_bytes: int = _MAX_STDOUT_STDERR_BYTES,
+  ) -> None:
     """Set the step_data to store stdout and stderr information.
 
     Args:
       analysis_service_event: The AnalysisServiceEvent to be modified.
       step_output: Log output of the step being logged.
+      max_stdout_stderr_bytes: Truncate stdout and stderr to this many bytes.
     """
     step = self.m.step.active_result
     if step_output:
       truncated_stdout, bytes_removed = _truncate_output(
-          step_output, self._max_stdout_stderr_bytes)
+          step_output, max_stdout_stderr_bytes)
       analysis_service_event.stdout = truncated_stdout
       if bytes_removed == 0:
-        step.presentation.logs[
-            'stdout_truncation'] = 'Full step output is {} bytes, no truncation'.format(
-                len(step_output))
+        step.presentation.logs['stdout_truncation'] = (
+            f'Full step output is {len(step_output)} bytes, no truncation')
       else:
-        step.presentation.logs[
-            'stdout_truncation'] = 'Full step output is {} bytes, truncated to {} bytes'.format(
-                len(step_output), self._max_stdout_stderr_bytes)
+        step.presentation.logs['stdout_truncation'] = (
+            f'Full step output is {len(step_output)} bytes, '
+            f'truncated to {max_stdout_stderr_bytes} bytes')
 
   @staticmethod
   def can_publish_event(request: Message, response: Message) -> bool:
@@ -179,10 +190,11 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     return (_get_field_name_by_matching_type('request', request) and
             _get_field_name_by_matching_type('response', response))
 
-  def publish_event(self, request: Message, response: Message,
-                    request_time: Timestamp, response_time: Timestamp,
-                    step_data: StepData,
-                    step_output: Optional[str] = None) -> None:
+  def publish_event(
+      self, request: Message, response: Message, request_time: Timestamp,
+      response_time: Timestamp, step_data: StepData,
+      step_output: Optional[str] = None,
+      max_stdout_stderr_bytes: int = _MAX_STDOUT_STDERR_BYTES) -> None:
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
@@ -201,6 +213,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       response_time: The time the response was received by the caller.
       step_data: Data from the step that sent the request.
       step_output: Output for the step.
+      max_stdout_stderr_bytes: Truncate stdout and stderr to this many bytes.
     """
     with self.m.step.nest('publish event') as presentation:
       if not self.can_publish_event(request, response):
@@ -211,8 +224,9 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
       analysis_service_event.build_id = self.m.buildbucket.build.id
       analysis_service_event.step_name = step_data.name
-      if self._max_stdout_stderr_bytes > 0 and step_output:
-        self._set_step_output(analysis_service_event, step_output)
+      if step_output:
+        self._set_step_output(analysis_service_event, step_output,
+                              max_stdout_stderr_bytes=max_stdout_stderr_bytes)
 
       _set_step_execution_result_fields(analysis_service_event, step_data)
 

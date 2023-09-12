@@ -27,7 +27,6 @@ from PB.chromite.api import sysroot
 from PB.chromite.api import test
 from PB.chromite.api import toolchain
 from PB.chromiumos.common import BuildTarget
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
 
 DEPS = [
@@ -239,8 +238,5 @@ def GenTests(api):
                   CrosBuildApiProperties(capture_stdout_stderr=True,
                                          publish_emerge_stats_to_bq=True,
                                          publish_emerge_stats_to_prop=True),
-              # This property is needed to attach build api output to event.
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=64)
           }),
   )

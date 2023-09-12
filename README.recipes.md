@@ -742,9 +742,9 @@
 [DEPS](/recipe_modules/analysis_service/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#73)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#81)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#158)(request: Message, response: Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#169)(request: Message, response: Message):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -765,7 +765,7 @@ Args:
 Return:
   Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#182)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#193)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None, max_stdout_stderr_bytes: int=_MAX_STDOUT_STDERR_BYTES):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -785,6 +785,7 @@ Args:
   response_time: The time the response was received by the caller.
   step_data: Data from the step that sent the request.
   step_output: Output for the step.
+  max_stdout_stderr_bytes: Truncate stdout and stderr to this many bytes.
 ### *recipe_modules* / [android](/recipe_modules/android)
 
 [DEPS](/recipe_modules/android/__init__.py#5): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10883,7 +10884,7 @@ Recipe for building an AFDO benchmark profile.
 [DEPS](/recipe_modules/analysis_service/examples/full.py#15): [analysis\_service](#recipe_modules-analysis_service), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#48)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#53)(api: RecipeApi, properties: FullProperties):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
 [DEPS](/recipe_modules/android/examples/full.py#16): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -12140,10 +12141,10 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [RunSteps](/recipe_modules/cros_branch/tests/errors.py#19)(api):**
 ### *recipes* / [cros\_build\_api:examples/full](/recipe_modules/cros_build_api/examples/full.py)
 
-[DEPS](/recipe_modules/cros_build_api/examples/full.py#13): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_build_api/examples/full.py#12): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/examples/full.py#24)(api):**
 ### *recipes* / [cros\_build\_api:examples/has\_endpoint](/recipe_modules/cros_build_api/examples/has_endpoint.py)
 
 [DEPS](/recipe_modules/cros_build_api/examples/has_endpoint.py#6): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -12206,10 +12207,10 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/failed_pkg_names.py#18)(api):**
 ### *recipes* / [cros\_build\_api:tests/misc](/recipe_modules/cros_build_api/tests/misc.py)
 
-[DEPS](/recipe_modules/cros_build_api/tests/misc.py#33): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_build_api/tests/misc.py#32): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#42)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_build_api/tests/misc.py#41)(api):**
 ### *recipes* / [cros\_build\_api:tests/publish\_events\_throws](/recipe_modules/cros_build_api/tests/publish_events_throws.py)
 
 [DEPS](/recipe_modules/cros_build_api/tests/publish_events_throws.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

@@ -5,7 +5,6 @@
 
 from PB.chromite.api import binhost
 from PB.chromiumos.common import BuildTarget
-from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 from PB.recipe_modules.chromeos.cros_build_api.cros_build_api import CrosBuildApiProperties
 from recipe_engine.post_process import MustRun, DropExpectation, \
   StepCommandContains
@@ -47,9 +46,6 @@ def GenTests(api):
               # This property is needed to capture tee_log output of build_api.
               '$chromeos/cros_build_api':
                   CrosBuildApiProperties(capture_stdout_stderr=True),
-              # This property is needed to attach build api output to event.
-              '$chromeos/analysis_service':
-                  AnalysisServiceProperties(max_stdout_stderr_bytes=64)
           }))
 
   yield api.test(
