@@ -7,12 +7,14 @@ from collections import namedtuple
 from collections import defaultdict
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
+from google.protobuf.any_pb2 import Any
 
 from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToolRunnerResult, CrosToolRunnerPrejobDUTResponse, CrosToolRunnerTestDUTResponse
 
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.api import test_execution_metadata as Test_Execution_Metadata
 from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadataList
 from PB.chromiumos.test.lab import api as lab_api
 from PB.test_platform import phosphorus
@@ -347,10 +349,13 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         companion_dut_devices = [
             ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
         ]
+
+      test_execution_metadata_anypb = self.get_test_execution_metadata()
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, companion_duts=companion_dut_devices,
-          artifact_dir=metadata.artifact_dir)
+          artifact_dir=metadata.artifact_dir,
+          metadata=test_execution_metadata_anypb)
       test_response = self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
 
@@ -1057,3 +1062,38 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
               device.dut_model.model_name not in fw_config.block_list.models)
     # We shouldn't hit here ever, but for safe we return False if it happens.
     return False
+
+  def get_test_execution_metadata(self):
+    """Checks the first test case harness type and creates test execution
+    metadata based on it.
+
+    Returns:
+      Anypb: test execution metadata packed inside.
+    """
+    metadata_anypb = None
+    test_execution_metadata = None
+    if len(self.cft_test_request.test_suites) == 0:
+      return metadata_anypb
+
+    first_test = self.cft_test_request.test_suites[
+        0].test_case_ids.test_case_ids[0].value
+    gcs_path = self.cft_test_request.primary_dut.provision_state.system_image.system_image_path.path
+    if gcs_path:
+      if not gcs_path.endswith('/'):
+        gcs_path = gcs_path + '/'
+      if first_test.startswith('tast'):
+        arg = Test_Execution_Metadata.Arg(flag='buildartifactsurl',
+                                          value=gcs_path)
+        test_execution_metadata = Test_Execution_Metadata.TastExecutionMetadata(
+            args=[arg])
+      elif first_test.startswith('tauto'):
+        tauto_arg = Test_Execution_Metadata.AutotestExecutionMetadata.Arg(
+            flag='buildartifactsurl', value=gcs_path)
+        test_execution_metadata = Test_Execution_Metadata.AutotestExecutionMetadata(
+            args=[tauto_arg])
+
+    if test_execution_metadata:
+      metadata_anypb = Any()
+      metadata_anypb.Pack(test_execution_metadata)
+
+    return metadata_anypb
