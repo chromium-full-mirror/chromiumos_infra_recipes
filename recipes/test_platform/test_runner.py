@@ -585,6 +585,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * cbx: CBX label for CBX and non-CBX SKU DUTs. Current values of the label
         are "True" and "False", but in future there might be more values.
         e.g. "True", "False"
+    * wifi_router_models: A list of router models within the testbed,
+        e.g. "gale"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -679,6 +681,12 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
       'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
   if wifi_chip:
     base_tags.append(('wifi_chip', wifi_chip[0]))
+
+  wifi_router_models = api.cros_tags.get_values(
+      'label-wifi_router_models',
+      api.buildbucket.build.infra.swarming.bot_dimensions)
+  if wifi_router_models:
+    base_tags.append(('wifi_router_models', wifi_router_models[0]))
 
   hwid_sku = api.cros_tags.get_values(
       'label-hwid_sku', api.buildbucket.build.infra.swarming.bot_dimensions)
@@ -3439,6 +3447,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'dut_name': 'fakedut1-row2-rack3-host4',
               'pool': 'ChromeOSSkylab',
               'label-wifi_chip': 'marvell',
+              'label-wifi_router_models': 'gale',
               'label-hwid_sku': 'katsu_MT8183_0B',
               'label-pool': 'DUT_POOL_QUOTA',
               'label-carrier': 'fake-carrier',
