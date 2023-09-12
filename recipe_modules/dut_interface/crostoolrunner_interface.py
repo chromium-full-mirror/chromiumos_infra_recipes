@@ -1081,6 +1081,15 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         device.provision_state.firmware.main_ro_payload.firmware_image_path.path
        ):
       return False
+
+    # Get all of the pools that this DUT belongs to
+    label_pool = self._api.cros_tags.get_values(
+        'label-pool', self._api.buildbucket.build.infra.swarming.bot_dimensions)
+
+    # Check to see if this dut is in a pool that also prevents firmware updates
+    if label_pool and 'mp_firmware_testing' in label_pool:
+      return False
+
     # There will be only one of list(allow/block) at a given time, so the order
     # of below blocks doesn't matters.
     if fw_config.HasField('allow_list'):
