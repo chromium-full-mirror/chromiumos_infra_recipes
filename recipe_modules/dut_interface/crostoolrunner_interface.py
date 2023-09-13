@@ -646,7 +646,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     ctr_test_verdict = ctr_test_result.WhichOneof('verdict')
     if ctr_test_verdict == 'pass':
       skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_PASS
-    elif ctr_test_verdict == 'fail':
+    elif ctr_test_verdict in ('fail', 'crash'):
       skylab_test_verdict = Skylab_Result.Autotest.TestCase.VERDICT_FAIL
 
     start_time = ctr_test_result.start_time.ToSeconds()
