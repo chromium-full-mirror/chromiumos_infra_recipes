@@ -955,8 +955,7 @@ def _upload_missing_tast_results(api, base_variant, base_tags,
 
 def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                              autotest_keyval_file, base_variant,
-                                             base_tags, force_current_realm,
-                                             skip_board_model_check,
+                                             base_tags, skip_board_model_check,
                                              sources_file):
   """Upload the Autotest wrapper result for Tast test with base variants and
   base tags. The Autotest wrapper result is captured in the first test case
@@ -972,7 +971,6 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
   * autotest_keyval_file (dict): The contents for autotest keyval file in logs.
   * base_variant (Dict): The dict of base variants for ResultDB results.
   * base_tags (Dict): The dict of base tags for ResultDB results.
-  * force_current_realm (Bool): If enabled, publish to realm test is running in
   * skip_board_model_check (Bool): If enabled, don't verify board-model realm
       actually exists
   * sources_file (str): Path to a file containing a JSON-serialized
@@ -1025,7 +1023,6 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'base_tags': base_tags,
           'result_file': test_result_file,
           'artifact_directory': None,
-          'force_current_realm': force_current_realm,
           'skip_board_model_check': skip_board_model_check,
           'sources_file': sources_file
       }
@@ -1163,7 +1160,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                              sysinfo_keyvals,
                                              cft_is_enabled=False)
 
-    force_current_realm = properties.common_config.partner_private
     skip_board_model_check = properties.common_config.skip_board_model_realm_check
 
     # Capture the code sources which were tested.
@@ -1179,7 +1175,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
         'base_tags': base_tags,
         'result_file': result_file,
         'artifact_directory': artifact_directory,
-        'force_current_realm': force_current_realm,
         'skip_board_model_check': skip_board_model_check,
         'sources_file': sources_file
     }
@@ -1191,9 +1186,11 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
     # Uploads an additional Autotest wrapper result for Tast test.
     if is_tast_result:
-      _upload_autotest_wrapper_result_for_tast(
-          api, test_metadata, result, autotest_keyval_file, base_variant,
-          base_tags, force_current_realm, skip_board_model_check, sources_file)
+      _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
+                                               autotest_keyval_file,
+                                               base_variant, base_tags,
+                                               skip_board_model_check,
+                                               sources_file)
 
     _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file)

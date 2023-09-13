@@ -86,6 +86,36 @@
   },
   {
     "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/realms.cfg",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.fetch HEAD:generated/realms.cfg",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "rdb",
       "stream",
       "-var",
@@ -103,6 +133,10 @@
       "-tag",
       "test_suite:fake-suite",
       "-coerce-negative-duration",
+      "-new",
+      "-realm",
+      "chromeos:brya-taeko",
+      "-include",
       "-exonerate-unexpected-pass",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",

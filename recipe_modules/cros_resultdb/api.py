@@ -403,13 +403,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # See if this test result should be uploaded into a board-model realm
     # so that partners working on that model can see it.
     realm = ''
-    if not config.get('force_current_realm'):
-      hostname = self._extract_tag_value(base_tags, 'hostname')
-      if hostname == 'vm':
-        realm = self._get_partner_vm_realm(base_tags)
-      else:
-        skip_board_model_check = config.get('skip_board_model_check')
-        realm = self._get_board_model_realm(base_tags, skip_board_model_check)
+    hostname = self._extract_tag_value(base_tags, 'hostname')
+    if hostname == 'vm':
+      realm = self._get_partner_vm_realm(base_tags)
+    else:
+      skip_board_model_check = config.get('skip_board_model_check')
+      realm = self._get_board_model_realm(base_tags, skip_board_model_check)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
