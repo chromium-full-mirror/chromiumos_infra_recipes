@@ -8,6 +8,9 @@ import typing
 from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
+from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES
 
 DEPS = [
     'recipe_engine/assertions',
@@ -698,5 +701,70 @@ def GenTests(api):
                      'find candidates.filter out by basic eligibility',
                      'non_latest_patch_set', ['12']),
       api.properties(expected_build_ids=[11]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Test cq-orchestrator that had an infra failure.
+  builds = [
+      api.test_util.test_orchestrator(
+          build_id=13,
+          cq=True,
+          status='INFRA_FAILURE',
+          create_time=13,
+          output_properties={
+              'has_child_failures': False
+          },
+          experiments=['chromeos.auto_retry_util.retry_infra_failures'],
+      ).message
+  ]
+  yield api.test(
+      'infra-failure-experimental-feature-enabled',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+                          experiment_flag='chromeos.auto_retry_util.retry_infra_failures'
+                      )
+                  ])
+          }),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.properties(expected_build_ids=[13]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'infra-failure-experimental-feature-not-enabled',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+                          experiment_flag='other-experiment-name')
+                  ])
+          }),
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.post_process(
+          post_process.StepTextEquals,
+          'find candidates.filter out unsupported failure modes',
+          'filtered out 1 run(s)',
+      ),
+      api.properties(expected_build_ids=[]),
       api.post_process(post_process.DropExpectation),
   )

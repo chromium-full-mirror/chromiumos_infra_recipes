@@ -6,6 +6,9 @@
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
+from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES
 
 DEPS = [
     'recipe_engine/assertions',
@@ -37,6 +40,8 @@ def GenTests(api):
   orch.id.name = 'cq-orchestrator'
   orch.orchestrator.child_specs.add().name = 'builder1'
   orch.orchestrator.child_specs.add().name = 'builder2'
+  orch.orchestrator.child_specs.add().name = 'builder4'
+  orch.orchestrator.child_specs.add().name = 'builder5'
 
   child_build_info = [
       {
@@ -67,6 +72,13 @@ def GenTests(api):
           'status': 'SUCCESS',
           'relevant': False
       },
+      {
+          'builder': {
+              'builder': 'builder5'
+          },
+          'status': 'INFRA_FAILURE',
+          'relevant': True
+      },
   ]
   yield api.test(
       'removed-verifier',
@@ -76,6 +88,26 @@ def GenTests(api):
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(expected_success=['builder1'],
                      expected_retryable=['builder3'],
+                     expected_outstanding=['builder2', 'builder5']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'infra-failure-experiment-feature',
+      api.test_util.test_orchestrator(output_properties={
+          'child_build_info': child_build_info
+      }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
+                  ])
+          }),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(expected_success=['builder1'],
+                     expected_retryable=['builder3', 'builder5'],
                      expected_outstanding=['builder2']),
       api.post_process(post_process.DropExpectation),
   )

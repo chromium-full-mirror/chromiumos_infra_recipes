@@ -44,6 +44,10 @@ DEFAULT_RETRY_SERVICE_ACCOUNTS = [
 DEFAULT_24_HR_THROTTLE = 300
 DEFAULT_2_HR_THROTTLE = 30
 
+# Experiment with retrying any infra failures.
+# TODO(b/296441878): Remove post-launch.
+EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES = 'retry-infra-failures'
+
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
     bb_common_pb2.INFRA_FAILURE,
@@ -143,18 +147,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     return min(short_term_tries, long_term_tries)
 
   def _get_child_builders(
-      self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str]]:
+      self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str], List[str]]:
     """Returns the names of the child builders for the given cq-orchestrator.
 
     Args:
       cq_run: The cq-orchestrator build for which to get the child builders.
 
     Returns:
-      successful_builders, unsuccessful_builders: A tuple of the names of the
-          child builders categorized by whether they passed or not.
+      successful_builders, unsuccessful_builders, retryable_builders: A tuple of
+          the names of the child builders categorized by whether they passed,
+          are outstanding failures, or are retryable failures.
     """
     successful_builders = []
     unsuccessful_builders = []
+    retryable_builders = []
     output_dict = json_format.MessageToDict(cq_run.output.properties)
     child_build_info = output_dict.get('child_build_info', [])
 
@@ -165,20 +171,25 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
       if not relevant:
         continue
-      if status == 'SUCCESS':
+      if status == bb_common_pb2.Status.Name(bb_common_pb2.SUCCESS):
         successful_builders.append(builder_name)
+      # TODO(b/299482781): Remove post-launch.
+      elif self.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+          cq_run) and status == bb_common_pb2.Status.Name(
+              bb_common_pb2.INFRA_FAILURE):
+        retryable_builders.append(builder_name)
       else:
         unsuccessful_builders.append(builder_name)
 
-    return successful_builders, unsuccessful_builders
+    return successful_builders, unsuccessful_builders, retryable_builders
 
   def analyze_build_failures(
       self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str], List[str]]:
     with self.m.step.nest('analyzing build results') as pres:
-      retryable_failure_builders = []
       outstanding_failure_builders = []
 
-      successful_builders, unsuccessful_builders = self._get_child_builders(
+      successful_builders, unsuccessful_builders, retryable_failure_builders = self._get_child_builders(
           cq_run)
 
       # Builders which failed but are not longer CQ blockers are now retryable.
@@ -352,9 +363,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
   def _has_supported_failure_mode(self, cq_orch: build_pb2.Build) -> bool:
     """Returns whether a cq-orchestrator had a supported failure mode.
 
-    Currently only child build failures and end-to-end test failures are
-    supported. Other failures in the cq-orchestrator execution
-    (e.g. merge conflict) are not currently retryable.
+    Currently supports the following failure modes:
+      * child build failures and end-to-end test failures
+      * infra failures (as an experimental feature)
+
+    Other failures in the cq-orchestrator execution (e.g. merge conflict) are
+    not currently retryable.
 
     Args:
       cq_orch: The cq-orchestrator run to consider.
@@ -362,6 +376,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     Returns:
       Whether the cq-orchestrator had a failure which may be auto-retryable.
     """
+    if (self.is_experimental_feature_enabled(
+        EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES, cq_orch) and
+        cq_orch.status == bb_common_pb2.INFRA_FAILURE):
+      return True
+
     return ('has_child_failures' in cq_orch.output.properties and
             cq_orch.output.properties['has_child_failures'])
 
