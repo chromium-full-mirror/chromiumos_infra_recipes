@@ -361,6 +361,8 @@
   * [cros_resultdb:tests/apply_exonerations](#recipes-cros_resultdb_tests_apply_exonerations)
   * [cros_resultdb:tests/extract_chromium_resultdb_settings](#recipes-cros_resultdb_tests_extract_chromium_resultdb_settings)
   * [cros_resultdb:tests/upload](#recipes-cros_resultdb_tests_upload)
+  * [cros_resultdb:tests/upload_board_model](#recipes-cros_resultdb_tests_upload_board_model)
+  * [cros_resultdb:tests/upload_custom_realm](#recipes-cros_resultdb_tests_upload_custom_realm)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
   * [cros_schedule:examples/get_chrome_branch](#recipes-cros_schedule_examples_get_chrome_branch)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
@@ -3954,11 +3956,11 @@ Returns:
 [DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [exonerate](#recipe_modules-exonerate), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#39)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#537)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#561)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -3966,7 +3968,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#447)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#471)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -3985,11 +3987,11 @@ Args:
   variant_filter (dict): Attributes which must all be present in the test
       result variant definition in order to exonerate.
 
-&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#46)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#47)(self):**
 
 Return the current invocation's id.
 
-&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#56)(self, bigquery_exports=None):**
+&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#57)(self, bigquery_exports=None):**
 
 Modifies the current invocation to be exported to BigQuery (along with
 its children) once it is finalized.
@@ -4006,7 +4008,7 @@ Args:
   bigquery_exports (list(resultdb.BigQueryExport)): The BigQuery export
   configurations of tables and predicates of what to export.
 
-&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#88)(self, test_args):**
+&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#89)(self, test_args):**
 
 Extract resultdb settings from test_args for chromium test results.
 
@@ -4028,7 +4030,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#158)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#159)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -4047,7 +4049,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#126)(self, base_dir, result_format, autotest_name='chromium'):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#127)(self, base_dir, result_format, autotest_name='chromium'):**
 
 Get the path to the test results file on the drone.
 
@@ -4064,7 +4066,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#591)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#615)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -4077,7 +4079,7 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#182)(self, config, testhaus_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#183)(self, config, testhaus_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 
@@ -12777,6 +12779,18 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/upload.py#16)(api):**
+### *recipes* / [cros\_resultdb:tests/upload\_board\_model](/recipe_modules/cros_resultdb/tests/upload_board_model.py)
+
+[DEPS](/recipe_modules/cros_resultdb/tests/upload_board_model.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/upload_board_model.py#18)(api):**
+### *recipes* / [cros\_resultdb:tests/upload\_custom\_realm](/recipe_modules/cros_resultdb/tests/upload_custom_realm.py)
+
+[DEPS](/recipe_modules/cros_resultdb/tests/upload_custom_realm.py#8): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/upload_custom_realm.py#18)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#8): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -15348,7 +15362,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2046)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2058)(api, properties):**
 
 Entrypoint to the script
 
@@ -15373,7 +15387,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1807)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1819)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -15385,7 +15399,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1525)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1537)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -15401,7 +15415,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1438)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1450)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -15417,7 +15431,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1409)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1421)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -15428,7 +15442,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2000)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2012)(api, properties):**
 
 Run test and upload results.
 
@@ -15465,7 +15479,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1879)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1891)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

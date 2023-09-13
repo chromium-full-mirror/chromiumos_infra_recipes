@@ -956,7 +956,8 @@ def _upload_missing_tast_results(api, base_variant, base_tags,
 def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                              autotest_keyval_file, base_variant,
                                              base_tags, skip_board_model_check,
-                                             sources_file):
+                                             sources_file, visibility_mode,
+                                             custom_realm):
   """Upload the Autotest wrapper result for Tast test with base variants and
   base tags. The Autotest wrapper result is captured in the first test case
   after the test execution.
@@ -975,6 +976,10 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
       actually exists
   * sources_file (str): Path to a file containing a JSON-serialized
       luci.resultdb.v1.Sources proto describing the code sources being tested.
+  * visibility_mode (TestResultsUploadVisibility): Desired visibility of test
+      results.
+  * custom_realm (str): Name of custom realm to use for test results if
+      TestResultsUploadVisibility is set to CUSTOM_REALM.
   """
   try:
     # Skips if it's not a Tast test.
@@ -1024,7 +1029,9 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
           'result_file': test_result_file,
           'artifact_directory': None,
           'skip_board_model_check': skip_board_model_check,
-          'sources_file': sources_file
+          'sources_file': sources_file,
+          'visibility_mode': visibility_mode,
+          'custom_realm': custom_realm
       }
       api.cros_resultdb.upload(config, str(result.get_testhaus_log_url()))
   except api.step.StepFailure:
@@ -1161,6 +1168,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                              cft_is_enabled=False)
 
     skip_board_model_check = properties.common_config.skip_board_model_realm_check
+    visibility_mode = properties.results_upload_config.mode
+    custom_realm = properties.common_config.rdb_config.custom_realm_name
 
     # Capture the code sources which were tested.
     sources_file = None
@@ -1176,7 +1185,9 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
         'result_file': result_file,
         'artifact_directory': artifact_directory,
         'skip_board_model_check': skip_board_model_check,
-        'sources_file': sources_file
+        'sources_file': sources_file,
+        'visibility_mode': visibility_mode,
+        'custom_realm': custom_realm
     }
 
     # Uploads test results to ResultDB only when the test result file exists.
@@ -1190,7 +1201,8 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
                                                autotest_keyval_file,
                                                base_variant, base_tags,
                                                skip_board_model_check,
-                                               sources_file)
+                                               sources_file, visibility_mode,
+                                               custom_realm)
 
     _upload_missing_tast_results(api, base_variant, base_tags,
                                  autotest_keyval_file)

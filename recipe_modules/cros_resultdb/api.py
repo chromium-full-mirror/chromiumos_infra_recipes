@@ -18,6 +18,7 @@ from PB.test_platform.request import Request
 from recipe_engine import recipe_api
 
 TestExecutionBehavior = Request.Params.TestExecutionBehavior
+TestResultVisibility = Request.Params.ResultsUploadConfig.TestResultsUploadVisibility
 
 # Map of TestExecutionBehaviors and their priority where a higher value equals a
 # higher priority. When multiple TestExecutionBehaviors apply to a single test
@@ -407,8 +408,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     if hostname == 'vm':
       realm = self._get_partner_vm_realm(base_tags)
     else:
-      skip_board_model_check = config.get('skip_board_model_check')
-      realm = self._get_board_model_realm(base_tags, skip_board_model_check)
+      realm = self._get_hardware_realm(config)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(
@@ -430,6 +430,30 @@ class ResultDBCommand(recipe_api.RecipeApi):
     except self.m.step.StepFailure:
       self.m.step.active_result.presentation.status = self.m.step.FAILURE
     return
+
+  def _get_hardware_realm(self, config):
+    """Determine realm for hardware test."""
+    base_tags = config.get('base_tags', [])
+    result_visibility = config.get(
+        'visibility_mode',
+        TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED)
+    custom_realm = config.get('custom_realm', "")
+    skip_board_model_check = config.get('skip_board_model_check')
+
+    if self._should_publish_to_custom_realm(result_visibility, custom_realm):
+      realm = custom_realm
+
+      # realm needs to be in form <project>:<realm_name>
+      if not realm.startswith("chromeos:"):
+        realm = "chromeos:" + realm
+    else:
+      realm = self._get_board_model_realm(base_tags, skip_board_model_check)
+
+    return realm
+
+  def _should_publish_to_custom_realm(self, result_visibility, custom_realm):
+    """Determine if realm should be a custom, non board/model realm."""
+    return result_visibility == TestResultVisibility.TEST_RESULTS_VISIBILITY_CUSTOM_REALM and custom_realm != ""
 
   def _ensure_result_adapter_executables(self):
     """Ensure the result_adapter CLI is installed."""
