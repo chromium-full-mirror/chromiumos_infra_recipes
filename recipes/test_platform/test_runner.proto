@@ -12,6 +12,7 @@ import "test_platform/skylab_test_runner/cft_request.proto";
 import "test_platform/skylab_test_runner/result.proto";
 import "test_platform/skylab_test_runner/common_config.proto";
 import "google/protobuf/timestamp.proto";
+import "chromiumos/test/api/android_provision_metadata.proto";
 
 
 message TestRunnerProperties {
