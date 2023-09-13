@@ -21,6 +21,16 @@ message RetryDetails {
   repeated string retryable_test_suites = 4;
 }
 
+message ExperimentalFeature {
+  // The name of the experimental auto retry feature.
+  string name = 1;
+
+  // The name of the experiment that the build under consideration must have
+  // had enabled to trigger this feature.
+  // If unset, the feature will be enable by default.
+  string experiment_flag = 2;
+}
+
 message AutoRetryUtilProperties {
 
   // The window in which we will consider CLs that have recently been labeled.
@@ -55,4 +65,7 @@ message AutoRetryUtilProperties {
   // other criteria (e.g. the build is from the latest CQ attempt) still apply.
   // If this list is empty, there is no filtering by experiment.
   repeated string experiment_allowlist = 8;
+
+  // A list of experimental auto retry experimental features to enable.
+  repeated ExperimentalFeature experimental_features = 9;
 }

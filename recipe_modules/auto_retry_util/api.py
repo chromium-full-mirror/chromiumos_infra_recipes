@@ -84,6 +84,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._throttle_24hr = props.throttle_24hr or DEFAULT_24_HR_THROTTLE
     self._throttle_2hr = props.throttle_2hr or DEFAULT_2_HR_THROTTLE
     self._experiment_allowlist = set(props.experiment_allowlist)
+    self._experimental_features = {
+        x.name: x.experiment_flag for x in props.experimental_features
+    }
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -97,6 +100,15 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         c.name for c in self.m.cros_infra_config.get_builder_config(
             'cq-orchestrator').orchestrator.child_specs
     ]
+
+  def is_experimental_feature_enabled(self, feature_name: str,
+                                      build: build_pb2.Build):
+    """Returns whether the given feature is enabled on the build."""
+    if feature_name not in self._experimental_features:
+      return False
+
+    experiment_flag = self._experimental_features[feature_name]
+    return not experiment_flag or experiment_flag in build.input.experiments
 
   def _get_recent_retry_sum(self, lookback_hours: int) -> int:
     """Return the sum of retries made by the same builder in the window.
