@@ -35,7 +35,8 @@ from PB.recipes.chromeos.test_platform.cros_test_postprocess import (
     CrosTestPostprocessRequest,)
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import (
     TestResult as PostProcessTestResult,)
-from PB.test_platform import result_flow as result_flow_pb2
+from PB.test_platform.result_flow import publish
+from PB.test_platform.result_flow import common
 from PB.test_platform import service_version as service_version_pb
 from PB.test_platform.config.config import Config
 from PB.test_platform.request import Request
@@ -2136,8 +2137,7 @@ def GenTests(api):
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))),
+                  publish.PublishResponse(state=common.SUCCEEDED)))),
       _generic_enumerate_response(api), _generic_passing_execute_response(api))
 
   # Recipe running on the top level build without parent build ID.
@@ -2154,8 +2154,7 @@ def GenTests(api):
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))),
+                  publish.PublishResponse(state=common.SUCCEEDED)))),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_process(post_process.StepSuccess,
@@ -2181,8 +2180,7 @@ def GenTests(api):
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))),
+                  publish.PublishResponse(state=common.SUCCEEDED)))),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_process(post_process.DoesNotRun,
@@ -2203,8 +2201,7 @@ def GenTests(api):
           'publish build ID.call `result_flow`.publish',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  result_flow_pb2.publish.PublishResponse(
-                      state=result_flow_pb2.common.SUCCEEDED)))),
+                  publish.PublishResponse(state=common.SUCCEEDED)))),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       api.post_process(post_process.MustRun,

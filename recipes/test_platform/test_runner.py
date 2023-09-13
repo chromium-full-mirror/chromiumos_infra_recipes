@@ -32,8 +32,8 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus \
 from PB.recipe_modules.chromeos.phosphorus.phosphorus \
   import PhosphorusProperties
 from PB.recipes.chromeos.test_platform.test_runner import TestRunnerProperties
-from PB.test_platform import phosphorus
-from PB.test_platform import skylab_local_state
+from PB.test_platform.phosphorus import prejob, runtest, upload_to_gs, fetchcrashes
+from PB.test_platform.skylab_local_state import load
 from PB.test_platform.common.task import TaskLogData
 from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.skylab_test_runner.request import Request
@@ -2667,43 +2667,39 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         'execution steps.%s.Phosphorus: load skylab local state.call '
         '`phosphorus`.load' % test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
-                skylab_local_state.load.LoadResponse(
+                load.LoadResponse(
                     results_dir='dummy-results-dir', dut_topology=[
-                        skylab_local_state.load.Dut(hostname='fake_host',
-                                                    board='fake_board',
-                                                    model='fake_model'),
+                        load.Dut(hostname='fake_host', board='fake_board',
+                                 model='fake_model'),
                     ])))))
 
   def _successful_prejob_step(test_id=_DUMMY_TEST_ID):
-    return _prejob_step_with_state(phosphorus.prejob.PrejobResponse.SUCCEEDED,
-                                   test_id)
+    return _prejob_step_with_state(prejob.PrejobResponse.SUCCEEDED, test_id)
 
   def _prejob_step_with_state(state, test_id=_DUMMY_TEST_ID):
     return (api.step_data(
         'execution steps.%s.Phosphorus: run prejob.call `phosphorus`.prejob' %
         test_id, stdout=api.raw_io.output(
-            json_format.MessageToJson(
-                phosphorus.prejob.PrejobResponse(state=state)))))
+            json_format.MessageToJson(prejob.PrejobResponse(state=state)))))
 
   def _successful_run_test_step():
-    return _run_test_step_with_state(
-        phosphorus.runtest.RunTestResponse.SUCCEEDED)
+    return _run_test_step_with_state(runtest.RunTestResponse.SUCCEEDED)
 
   def _run_test_step_with_state(state, test_id=_DUMMY_TEST_ID):
     return (api.step_data(
         'execution steps.%s.Phosphorus: run test.call `phosphorus`.run-test' %
         test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
-                phosphorus.runtest.RunTestResponse(
-                    results_dir='dummy-results-dir/subdir', state=state)))))
+                runtest.RunTestResponse(results_dir='dummy-results-dir/subdir',
+                                        state=state)))))
 
   def _successful_fetch_crashes_step(test_id=_DUMMY_TEST_ID):
     return _fetch_crashes_step_with_state(
-        phosphorus.fetchcrashes.FetchCrashesResponse.SUCCEEDED, test_id)
+        fetchcrashes.FetchCrashesResponse.SUCCEEDED, test_id)
 
   def _fetch_crashes_step_with_state(state, test_id=_DUMMY_TEST_ID):
     return _fetch_crashes_step_with_proto(
-        phosphorus.fetchcrashes.FetchCrashesResponse(state=state), test_id)
+        fetchcrashes.FetchCrashesResponse(state=state), test_id)
 
   def _fetch_crashes_step_with_proto(proto, test_id=_DUMMY_TEST_ID):
     return (api.step_data(
@@ -2717,7 +2713,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         'Phosphorus: upload to GS.'
         'call `phosphorus`.upload-to-gs' % test_id, stdout=api.raw_io.output(
             json_format.MessageToJson(
-                phosphorus.upload_to_gs.UploadToGSResponse(
+                upload_to_gs.UploadToGSResponse(
                     gs_url='gs://chromeos-test-logs/common-env/UUID/logs'))))
 
   def _successful_resultdb_upload_step():
@@ -2842,11 +2838,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         'execution steps.CrosToolRunner: Phosphorus: load skylab local state.call '
         '`phosphorus`.load', stdout=api.raw_io.output(
             json_format.MessageToJson(
-                skylab_local_state.load.LoadResponse(
+                load.LoadResponse(
                     results_dir='dummy-results-dir', dut_topology=[
-                        skylab_local_state.load.Dut(hostname='fake_host',
-                                                    board='fake_board',
-                                                    model='fake_model'),
+                        load.Dut(hostname='fake_host', board='fake_board',
+                                 model='fake_model'),
                     ], lab_dut_topology=[
                         lab_api.dut.DutTopology(
                             id=lab_api.dut.DutTopology.Id(value='fake_host'),
@@ -3619,14 +3614,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           'execution steps.original_test.Phosphorus: load skylab local state.'
           'call `phosphorus`.load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
+                  load.LoadResponse(
                       results_dir='dummy-results-dir', dut_topology=[
-                          skylab_local_state.load.Dut(hostname='fake_hostname',
-                                                      board='fake_board',
-                                                      model='fake_model'),
-                          skylab_local_state.load.Dut(hostname='fake_hostname2',
-                                                      board='fake_board2',
-                                                      model='fake_model2')
+                          load.Dut(hostname='fake_hostname', board='fake_board',
+                                   model='fake_model'),
+                          load.Dut(hostname='fake_hostname2',
+                                   board='fake_board2', model='fake_model2')
                       ])))),
       _successful_prejob_step(),
       _successful_run_test_step(),
@@ -3646,15 +3639,13 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           'execution steps.original_test.Phosphorus: load skylab local state.'
           'call `phosphorus`.load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
+                  load.LoadResponse(
                       results_dir='dummy-results-dir', dut_topology=[
-                          skylab_local_state.load.Dut(hostname='fake_hostname',
-                                                      board='fake_board',
-                                                      model='fake_model'),
-                          skylab_local_state.load.Dut(
-                              hostname='fake_hostname2',
-                              board='fake_android_board',
-                              model='fake_android_model')
+                          load.Dut(hostname='fake_hostname', board='fake_board',
+                                   model='fake_model'),
+                          load.Dut(hostname='fake_hostname2',
+                                   board='fake_android_board',
+                                   model='fake_android_model')
                       ])))),
       _successful_prejob_step(),
       _successful_run_test_step(),
@@ -3946,7 +3937,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _request_properties(),
       _mock_load_step(),
       # Prejob failed and then caused the test execution step skipped.
-      _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
+      _prejob_step_with_state(prejob.PrejobResponse.FAILED),
       _successful_logs_archive_step(),
       # Returns incomplete test.
       api.step_data(
@@ -4111,7 +4102,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _misc_properties(),
       _request_properties(),
       _mock_load_step(),
-      _prejob_step_with_state(phosphorus.prejob.PrejobResponse.FAILED),
+      _prejob_step_with_state(prejob.PrejobResponse.FAILED),
       _successful_logs_archive_step(),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
@@ -4124,7 +4115,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _request_properties(),
       _mock_load_step(),
       _successful_prejob_step(),
-      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _run_test_step_with_state(runtest.RunTestResponse.FAILED),
       _successful_logs_archive_step(),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
@@ -4137,7 +4128,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _request_properties_multitest(),
       _mock_load_step(test_id='multi_test_2'),
       _successful_prejob_step(test_id='multi_test_2'),
-      _run_test_step_with_state(phosphorus.runtest.RunTestResponse.SUCCEEDED,
+      _run_test_step_with_state(runtest.RunTestResponse.SUCCEEDED,
                                 test_id='multi_test_2'),
       _successful_fetch_crashes_step(test_id='multi_test_2'),
       _successful_logs_archive_step(test_id='multi_test_2'),
@@ -4151,13 +4142,12 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
-      _fetch_crashes_step_with_state(phosphorus.runtest.RunTestResponse.FAILED),
+      _fetch_crashes_step_with_state(runtest.RunTestResponse.FAILED),
       _successful_logs_archive_step(),
   )
 
-  fetch_crashes_proto = phosphorus.fetchcrashes.FetchCrashesResponse(
-      state=phosphorus.runtest.RunTestResponse.SUCCEEDED,
-      crashes_rtd_only=['foobar.meta'])
+  fetch_crashes_proto = fetchcrashes.FetchCrashesResponse(
+      state=runtest.RunTestResponse.SUCCEEDED, crashes_rtd_only=['foobar.meta'])
   yield api.test(
       'successful-fetchcrashes-with-missed-crashes',
       _set_build(bid=42),

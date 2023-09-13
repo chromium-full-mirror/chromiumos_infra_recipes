@@ -5,7 +5,7 @@
 
 from google.protobuf import json_format
 
-from PB.test_platform import skylab_local_state
+from PB.test_platform.skylab_local_state import load
 from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
 from PB.test_platform.phosphorus.prejob import PrejobRequest
 from PB.test_platform.phosphorus.runtest import RunTestRequest
@@ -76,8 +76,7 @@ def GenTests(api):
       api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='placeholder-results-dir')))),
+                  load.LoadResponse(results_dir='placeholder-results-dir')))),
   )
   yield (api.test(
       'with-bot-prefix',
@@ -86,8 +85,7 @@ def GenTests(api):
       api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='placeholder-results-dir')))),
+                  load.LoadResponse(results_dir='placeholder-results-dir')))),
   ) + api.post_process(DropExpectation))
   yield (api.test(
       'cros-host-with-bot-prefix',
@@ -95,8 +93,7 @@ def GenTests(api):
       api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='placeholder-results-dir')))),
+                  load.LoadResponse(results_dir='placeholder-results-dir')))),
   ) + api.post_process(DropExpectation))
   yield (api.test(
       'host-without-valid-bot-prefix',
@@ -104,6 +101,5 @@ def GenTests(api):
       api.step_data(
           'call `phosphorus` (12).load', stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='placeholder-results-dir')))),
+                  load.LoadResponse(results_dir='placeholder-results-dir')))),
   ) + api.post_process(DropExpectation))

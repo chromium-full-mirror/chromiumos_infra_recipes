@@ -9,7 +9,7 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus import PhosphorusPropertie
 from PB.recipe_modules.chromeos.service_version.service_version import ServiceVersionProperties
 from PB.recipes.chromeos.test_platform.dut_leaser import DutLeaserProperties
 from PB.test_platform import service_version
-from PB.test_platform import skylab_local_state
+from PB.test_platform.skylab_local_state import load
 from recipe_engine import post_process
 
 DEPS = [
@@ -80,10 +80,9 @@ def GenTests(api):
           'lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus`.load',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
-                  skylab_local_state.load.LoadResponse(
-                      results_dir='dummy-results-dir', dut_topology=[
-                          skylab_local_state.load.Dut(hostname='dummy-hostname')
-                      ])))),
+                  load.LoadResponse(
+                      results_dir='dummy-results-dir',
+                      dut_topology=[load.Dut(hostname='dummy-hostname')])))),
       api.post_process(post_process.DropExpectation),
   )
 
