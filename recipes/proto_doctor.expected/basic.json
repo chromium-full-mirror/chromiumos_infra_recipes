@@ -370,6 +370,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "process branch main.init sdk.call chromite.api.SdkService/Create.call build API script",
     "timeout": 10800,
     "~followup_annotations": [
@@ -1748,6 +1749,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "process branch release-R100-14526.B.init sdk.call chromite.api.SdkService/Create.call build API script",
     "timeout": 10800,
     "~followup_annotations": [

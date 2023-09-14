@@ -335,10 +335,10 @@ def GenTests(api: RecipeTestApi):
       api.step_data(
           'initialization.init sdk (3).call chromite.api.SdkService/Create.call build API script',
           retcode=1),
-      api.post_check(post_process.StepFailure, 'initialization'),
+      api.post_check(post_process.StepException, 'initialization'),
       api.post_check(post_process.DoesNotRun, 'doing paygen'),
       api.post_process(post_process.DropExpectation),
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )
 
   def generate_payload_response(

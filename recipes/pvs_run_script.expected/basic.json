@@ -1735,6 +1735,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "timeout": 10800,
     "~followup_annotations": [

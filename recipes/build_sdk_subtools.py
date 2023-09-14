@@ -90,5 +90,5 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
       api.step_data(INIT_SDK_CALL_STEP, retcode=1),
       api.post_check(post_process.DoesNotRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_process(post_process.DropExpectation),
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )

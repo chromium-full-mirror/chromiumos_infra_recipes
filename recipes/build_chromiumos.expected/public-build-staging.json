@@ -2887,6 +2887,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:release"

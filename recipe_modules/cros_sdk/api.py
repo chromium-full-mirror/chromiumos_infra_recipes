@@ -446,7 +446,8 @@ class CrosSdkApi(RecipeApi):
     # is version _DEFAULT_SDK_CACHE_VERSION (1).  (Once we need to bump the
     # cache version, the config will have it for everyone.)
     version = version or _DEFAULT_SDK_CACHE_VERSION
-    with self.m.step.nest(name or 'init sdk') as presentation:
+    with self.m.step.nest(name or 'init sdk') as presentation, \
+             self.m.context(infra_steps=not chroot_upgrade):
       try:
         self.build_chmod_chroot()
         if timeout_sec == 'DEFAULT':
