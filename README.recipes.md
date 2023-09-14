@@ -196,6 +196,7 @@
   * [build_sdk_subtools](#recipes-build_sdk_subtools) &mdash; Recipe that runs the Subtools Builder.
   * [build_signing_docker_image](#recipes-build_signing_docker_image) &mdash; Recipe for building the signing docker image.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
+  * [build_snapshot](#recipes-build_snapshot) &mdash; Recipe for building a BuildTarget image for Snapshot.
   * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
@@ -8522,11 +8523,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1473)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1475)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1313)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1315)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -8541,7 +8542,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#185)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1511)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1513)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -8612,7 +8613,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1186)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1188)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -8651,11 +8652,11 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#221)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1080)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1082)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1087)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1089)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -11589,6 +11590,16 @@ Recipe for building and testing a BuildTarget's packages.
 &mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#53)(api: RecipeApi, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#39)(api: RecipeApi):**
+### *recipes* / [build\_snapshot](/recipes/build_snapshot.py)
+
+[DEPS](/recipes/build_snapshot.py#20): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Recipe for building a BuildTarget image for Snapshot.
+
+&mdash; **def [DoRunSteps](/recipes/build_snapshot.py#44)(api: RecipeApi, config: BuilderConfig):**
+
+&mdash; **def [RunSteps](/recipes/build_snapshot.py#33)(api: RecipeApi):**
 ### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
 
 [DEPS](/recipes/build_toolchain.py#29): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

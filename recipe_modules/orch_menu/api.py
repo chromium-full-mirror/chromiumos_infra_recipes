@@ -892,7 +892,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
         ]
         self.m.easy.set_properties_step(
             testing_toolchain=any(cq_toolchain_outputs))
-      elif self.config.id.type == BuilderConfig.Id.POSTSUBMIT:
+      elif self.config.id.type in [
+          BuilderConfig.Id.POSTSUBMIT, BuilderConfig.Id.SNAPSHOT
+      ]:
         self._relevant_child_builder_names = [
             x.builder.builder
             for x in self._builds_status.completed_builds

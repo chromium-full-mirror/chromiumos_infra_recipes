@@ -369,6 +369,61 @@
     },
     {
       "id": {
+        "name": "amd64-generic-bazel-snapshot",
+        "type": "SNAPSHOT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "artifacts": {
+        "prebuilts": "PUBLIC",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ],
+          "buildImagesOrchestrator": "BAZEL"
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+          "installPackagesOrchestrator": "BAZEL"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlocklist": [],
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES",
+        "unitTestsOrchestrator": "BAZEL"
+      }
+    },
+    {
+      "id": {
         "name": "amd64-generic-postsubmit-remoteexec",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"
@@ -424,6 +479,59 @@
       "id": {
         "name": "amd64-generic-postsubmit-publish-img-sizes",
         "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC",
+        "publish_image_sizes": true
+      },
+      "artifacts": {
+        "prebuilts": "PUBLIC",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlocklist": [],
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-snapshot-publish-img-sizes",
+        "type": "SNAPSHOT",
         "bucket": "postsubmit"
       },
       "general": {
@@ -1007,6 +1115,23 @@
     },
     {
       "id": {
+        "name": "arm-generic-snapshot",
+        "type": "SNAPSHOT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      }
+    },
+    {
+      "id": {
         "name": "arm-generic-v42-buildtest-postsubmit",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"
@@ -1431,6 +1556,28 @@
       "id": {
         "name": "grunt-postsubmit",
         "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES"
+        },
+        "applyGerritChanges": false
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "NO_RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "grunt-snapshot",
+        "type": "SNAPSHOT",
         "bucket": "postsubmit"
       },
       "general": {
@@ -2024,7 +2171,7 @@
     {
       "id": {
         "name": "snapshot-orchestrator",
-        "type": "POSTSUBMIT",
+        "type": "SNAPSHOT",
         "bucket": "postsubmit"
       },
       "general": {
@@ -2034,15 +2181,15 @@
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-postsubmit",
+            "name": "amd64-generic-snapshot",
             "collectHandling": "COLLECT_AFTER_HW_TEST"
           },
           {
-            "name": "arm-generic-postsubmit",
+            "name": "arm-generic-snapshot",
             "collectHandling": "COLLECT"
           },
           {
-            "name": "grunt-postsubmit",
+            "name": "grunt-snapshot",
             "collectHandling": "COLLECT"
           }
         ]
@@ -3020,6 +3167,76 @@
       "id": {
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
         "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "manifest": "PRIVATE",
+        "sdkCacheVersion": 1
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "portageProfile": {
+          "profile": "kernel-5_4-buildtest"
+        },
+        "installPackages": {
+          "runSpec": "RUN_EXIT",
+          "dependencies": "ALL_DEPENDENCIES",
+          "packages": [
+            {
+              "packageName": "linux-sources",
+              "category": "virtual"
+            }
+          ]
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
+          ]
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES"
+      }
+    },
+    {
+      "id": {
+        "name": "arm64-generic-kernel-v5_4-buildtest-snapshot",
+        "type": "SNAPSHOT",
         "bucket": "postsubmit"
       },
       "general": {
