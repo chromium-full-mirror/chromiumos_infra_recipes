@@ -103,6 +103,8 @@ class BuildSDKRun:
     self.properties = properties
 
     # Paths of built files. These will be set after build API calls.
+    self._host_prebuilts_dir: Optional[config_types.Path] = None
+    self._target_prebuilts_dir: Optional[config_types.Path] = None
     self._sdk_tarball_path: Optional[config_types.Path] = None
     self._sdk_manifest_path: Optional[config_types.Path] = None
     self._toolchain_tarball_paths: Optional[List[config_types.Path]] = None
@@ -184,7 +186,13 @@ class BuildSDKRun:
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
     request = sdk_pb2.BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
-    self.m.cros_build_api.SdkService.BuildPrebuilts(request)
+    response = self.m.cros_build_api.SdkService.BuildPrebuilts(request)
+    self._host_prebuilts_dir = self.m.util.proto_path_to_recipes_path(
+        response.host_prebuilts_path)
+    self._target_prebuilts_dir = self.m.util.proto_path_to_recipes_path(
+        response.target_prebuilts_path)
+    self.m.path.mock_add_directory(self._host_prebuilts_dir)
+    self.m.path.mock_add_directory(self._target_prebuilts_dir)
 
   def _build_toolchain(self) -> None:
     """Build cross-compiling toolchains for the SDK.
@@ -192,14 +200,9 @@ class BuildSDKRun:
     This method sets the self._toolchain_tarball_paths attribute to a list
     of Paths of the generated toolchain tarballs.
     """
-    result_path: config_types.Path = self.m.path.mkdtemp()
     request = sdk_pb2.BuildSdkToolchainRequest(
         chroot=self.m.cros_sdk.chroot,
-        result_path=common_pb2.ResultPath(
-            path=common_pb2.Path(
-                path=self.m.path.abspath(result_path),
-                location=common_pb2.Path.Location.OUTSIDE,
-            )),
+        result_path=self.m.cros_build_api.new_result_path(),
     )
     if self.properties.use_llvm_next:
       request.use_flags.add(flag=LLVM_NEXT_USE_FLAG)
@@ -259,11 +262,8 @@ class BuildSDKRun:
       AssertionError: If host prebuilts have not been built yet.
     """
     with self.m.step.nest('upload host prebuilts'):
-      source_dir = self.m.cros_sdk.chroot_path.join('var', 'lib', 'portage',
-                                                    'pkgs')
-      self.m.path.mock_add_directory(source_dir)
-      upload_uri = self._get_host_prebuilts_upload_uri()
-      self._gsutil_upload(source_dir, upload_uri)
+      self._gsutil_upload(self._host_prebuilts_dir,
+                          self._get_host_prebuilts_upload_uri())
 
   def _get_host_prebuilts_upload_uri(self) -> None:
     """Return the GS:// upload URI for the host binaries.
@@ -283,11 +283,8 @@ class BuildSDKRun:
       AssertionError: If target prebuilts have not been built yet.
     """
     with self.m.step.nest('upload target prebuilts'):
-      source_dir = self.m.cros_sdk.chroot_path.join('build', SDK_BUILD_TARGET,
-                                                    'packages')
-      self.m.path.mock_add_directory(source_dir)
-      upload_uri = self._get_target_prebuilts_upload_uri()
-      self._gsutil_upload(source_dir, upload_uri)
+      self._gsutil_upload(self._target_prebuilts_dir,
+                          self._get_target_prebuilts_upload_uri())
 
   def _get_target_prebuilts_upload_uri(self) -> None:
     """Return the GS:// upload URI for the host binaries.

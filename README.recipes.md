@@ -2852,6 +2852,10 @@ Return whether the Build API version is at least major.minor.bug.
 
 Return the log level used when calling Build API.
 
+&mdash; **def [new\_result\_path](/recipe_modules/cros_build_api/api.py#713)(self):**
+
+Create a ResultPath for the BAPI to extract output files into.
+
 &emsp; **@contextlib.contextmanager**<br>&mdash; **def [parallel\_operations](/recipe_modules/cros_build_api/api.py#301)(self):**
 
 Sets up the build API for running operations in parallel.

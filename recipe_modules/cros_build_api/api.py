@@ -710,6 +710,15 @@ class CrosBuildApiApi(RecipeApi):
       remove_endpoints = self._test_data.get('remove_endpoints', {})
     return wanted in self._endpoints and wanted not in remove_endpoints
 
+  def new_result_path(self) -> common_pb2.ResultPath:
+    """Create a ResultPath for the BAPI to extract output files into."""
+    return common_pb2.ResultPath(
+        path=common_pb2.Path(
+            path=self.m.path.abspath(self.m.path.mkdtemp()),
+            location=common_pb2.Path.Location.OUTSIDE,
+        ),
+    )
+
 
 def _response_step_name(output_proto: message.Message,
                         create_suffix: Callable[[message.Message], str]) -> str:

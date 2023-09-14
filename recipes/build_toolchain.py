@@ -225,10 +225,8 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
     with api.step.nest('create redistributable toolchains'):
       response = api.cros_build_api.SdkService.BuildSdkToolchain(
           BuildSdkToolchainRequest(
-              chroot=api.cros_sdk.chroot, result_path=common_pb2.ResultPath(
-                  path=common_pb2.Path(
-                      path=api.path.abspath(api.path.mkdtemp()),
-                      location=common_pb2.Path.OUTSIDE))))
+              chroot=api.cros_sdk.chroot,
+              result_path=api.cros_build_api.new_result_path()))
       redistributable_toolchains = response.generated_files
 
     with api.step.nest('package SDK as tarball'):

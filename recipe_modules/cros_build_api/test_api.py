@@ -6,7 +6,7 @@
 """Test responses for build API endpoints."""
 
 import json
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.cros_build_api import api as cros_build_api
@@ -56,6 +56,25 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       str: An absolute path to the source file.
     """
     return str(self.m.src_state.workspace_path.join(path))
+
+  def result_path(self, relative_path: str) -> Dict[str, Union[str, int]]:
+    """Construct a common_pb2.Path dict that mimics a ResultPath result.
+
+    If you pass a common_pb2.ResultPath into a Build API request, then the BAPI
+    field handler will extract any paths from the response object into that
+    path. This method makes it easy for example response messages to mimic those
+    responses.
+
+    Args:
+      relative_path: The filepath that would be extracted into the ResultPath.
+
+    Returns:
+      A dict representing a Path, like what the build API would return.
+    """
+    return {
+        'path': str(self.m.path['cleanup'].join('my_tmp_dir', relative_path)),
+        'location': 2,  # chromiumos.Path.Location.OUTSIDE
+    }
 
   @property
   def android_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
@@ -568,7 +587,16 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         ],
         version='2023.03.14.159265',
     )
-    responses['BuildPrebuilts'] = '{}'
+    responses['BuildPrebuilts'] = jsonify(
+        host_prebuilts_path={
+            'path': self.path('chromiumos/out/var/lib/portage/pkgs'),
+            'location': 2,  # chromiumos.Path.Location.OUTSIDE
+        },
+        target_prebuilts_path={
+            'path': self.path('chromiumos/build/amd64-host/packages'),
+            'location': 2,  # chromiumos.Path.Location.OUTSIDE
+        },
+    )
     responses['BuildSdkTarball'] = jsonify(
         sdk_tarball_path={
             'path': self.src_path('built-sdk.tar.xz'),
@@ -585,14 +613,8 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     ])
     responses['UploadPrebuiltPackages'] = '{}'
     responses['BuildSdkToolchain'] = jsonify(generated_files=[
-        {
-            'path': '[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/foo.tar.xz',
-            'location': 2,  # chromiumos.Path.Location.OUTSIDE
-        },
-        {
-            'path': '[CLEANUP]/src/chroot/out/tmp/toolchain-pkgs/bar.tar.xz',
-            'location': 2,  # chromiumos.Path.Location.OUTSIDE
-        }
+        self.result_path('foo.tar.xz'),
+        self.result_path('bar.tar.xz'),
     ])
     return responses
 
