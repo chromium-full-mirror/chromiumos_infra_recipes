@@ -223,15 +223,7 @@
     "name": "find candidates.filter out by basic eligibility",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@filtered out 0 run(s)@@@",
-      "@@@STEP_LOG_LINE@non_new@@@@",
-      "@@@STEP_LOG_END@non_new@@@",
-      "@@@STEP_LOG_LINE@non_submittable@@@@",
-      "@@@STEP_LOG_END@non_submittable@@@",
-      "@@@STEP_LOG_LINE@wip@@@@",
-      "@@@STEP_LOG_END@wip@@@",
-      "@@@STEP_LOG_LINE@non_latest_patch_set@@@@",
-      "@@@STEP_LOG_END@non_latest_patch_set@@@"
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
     ]
   },
   {
@@ -300,9 +292,7 @@
     "name": "find candidates.filter out merge conflicts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@filtered out 0 run(s)@@@",
-      "@@@STEP_LOG_LINE@non_mergeable@@@@",
-      "@@@STEP_LOG_END@non_mergeable@@@"
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
     ]
   },
   {

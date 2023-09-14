@@ -387,6 +387,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             c.id for c in cq_orchs if self.triggerer_was_us(c)
         ]
         cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
+        if last_our_retry_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(last_our_retry_ids)
+          ]
         pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
 
       with self.m.step.nest('filter out unsupported failure modes') as pres:
@@ -396,6 +401,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         cq_orchs = [
             c for c in cq_orchs if c.id not in unsupported_failure_mode_ids
         ]
+        if unsupported_failure_mode_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(unsupported_failure_mode_ids)
+          ]
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
 
       with self.m.step.nest('filter by experiment allowlist') as pres:
@@ -405,6 +415,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                   c.input.experiments).intersection(self._experiment_allowlist)
           ]
           cq_orchs = [c for c in cq_orchs if c.id not in not_in_allowlist_ids]
+          if not_in_allowlist_ids:
+            pres.logs['filtered out runs'] = [
+                self.m.buildbucket.build_url(build_id=x)
+                for x in sorted(not_in_allowlist_ids)
+            ]
           pres.step_text = f'filtered out {len(not_in_allowlist_ids)} run(s)'
         else:
           pres.step_text = 'no experiment allowlist filtering'
@@ -413,6 +428,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
         cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
         pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+        if opt_out_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(opt_out_ids)
+          ]
 
       with self.m.step.nest('filter out by basic eligibility') as pres:
         non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids = set(
@@ -430,13 +450,26 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
         ineligible_ids = non_new_ids | non_submittable_ids | wip_ids | non_latest_patch_set_ids
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
-        pres.logs['non_new'] = '\n'.join(sorted([str(x) for x in non_new_ids]))
-        pres.logs['non_submittable'] = '\n'.join(
-            sorted([str(x) for x in non_submittable_ids]))
-        pres.logs['wip'] = '\n'.join(sorted([str(x) for x in wip_ids]))
-        pres.logs['non_latest_patch_set'] = '\n'.join(
-            sorted([str(x) for x in non_latest_patch_set_ids]))
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
+        if non_new_ids:
+          pres.logs['non_new'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(non_new_ids)
+          ]
+        if non_submittable_ids:
+          pres.logs['non_submittable'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(non_submittable_ids)
+          ]
+        if wip_ids:
+          pres.logs['wip'] = [
+              self.m.buildbucket.build_url(build_id=x) for x in sorted(wip_ids)
+          ]
+        if non_latest_patch_set_ids:
+          pres.logs['non_latest_patch_set'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(non_latest_patch_set_ids)
+          ]
 
       with self.m.step.nest('filter out merge conflicts') as pres:
         non_mergeable_ids = set()
@@ -448,8 +481,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               break
 
         cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]
-        pres.logs['non_mergeable'] = '\n'.join(
-            sorted([str(x) for x in non_mergeable_ids]))
+        if non_mergeable_ids:
+          pres.logs['non_mergeable'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(non_mergeable_ids)
+          ]
         pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
