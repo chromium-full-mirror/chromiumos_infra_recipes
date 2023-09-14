@@ -87,9 +87,17 @@ def DoRunSteps(api: RecipeApi,
     # Following the instructions at
     # src/platform/borealis/docs/build-and-deploy.md
     # TODO(davidriley): Perform the build steps in parallel.
-    api.step('borealis_kernel', ['./tools/borealis_kernel.py'])
+    api.step('borealis_kernel', [
+        './tools/borealis_kernel.py',
+        '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+        '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+    ])
 
-    borealis_build_cmd = ['./tools/build_full.py', '--no-cache']
+    borealis_build_cmd = [
+        './tools/build_full.py', '--no-cache',
+        '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+        '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+    ]
     if properties.disable_arch_sig_validation:
       borealis_build_cmd.append('--disable-arch-sig-validation')
     if properties.docker_variant:
@@ -117,7 +125,9 @@ def DoRunSteps(api: RecipeApi,
                             properties.destination_gs_path)
       api.step('uprev_dlc', [
           './tools/uprev_dlc.py', '--archive', archive_name, '--bucket_url',
-          bucket_url, '--nouprev'
+          bucket_url, '--nouprev',
+          '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+          '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
       ])
       presentation.links['VM image'] = api.path.join(
           _PANTHEON_PREFIX, properties.destination_gs_bucket,
@@ -127,7 +137,9 @@ def DoRunSteps(api: RecipeApi,
     if not properties.manifest_branch and properties.build_tast_binaries:
       api.step('borealis tast taball', [
           './tools/build_tast_binaries.py', '--no-output-append-date',
-          '--output=public-borealis-tast-binaries-' + version
+          '--output=public-borealis-tast-binaries-' + version,
+          '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+          '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
       ])
       tast_archive_name = 'public-borealis-tast-binaries-' + version + '.tar.zst'
       with api.step.nest('upload tast tarball') as presentation:
@@ -218,10 +230,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'docker_variant chroot',
       api.properties(**props),
       api.post_process(
-          post_process.StepCommandContains,
-          'borealis build_full.py',
-          ['./tools/build_full.py', '--no-cache', '--variant', 'chroot'],
-      ),
+          post_process.StepCommandContains, 'borealis build_full.py', [
+              './tools/build_full.py', '--no-cache',
+              '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+              '--out-dir=/b/s/w/ir/cache/cros_chroot/out', '--variant', 'chroot'
+          ]),
   )
 
   props = good_props.copy()
@@ -229,15 +242,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'disable-arch-sig-validation',
       api.properties(**props),
-      api.post_process(
-          post_process.StepCommandContains,
-          'borealis build_full.py',
-          [
-              './tools/build_full.py',
-              '--no-cache',
-              '--disable-arch-sig-validation',
-          ],
-      ),
+      api.post_process(post_process.StepCommandContains,
+                       'borealis build_full.py', [
+                           './tools/build_full.py', '--no-cache',
+                           '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
+                           '--out-dir=/b/s/w/ir/cache/cros_chroot/out',
+                           '--disable-arch-sig-validation'
+                       ]),
   )
 
   props = good_props.copy()

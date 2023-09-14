@@ -1937,7 +1937,9 @@
   },
   {
     "cmd": [
-      "./tools/borealis_kernel.py"
+      "./tools/borealis_kernel.py",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -1953,7 +1955,9 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--no-cache"
+      "--no-cache",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -2361,7 +2365,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 75, in RunSteps",
       "    return DoRunSteps(api, properties)",
-      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 108, in DoRunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/build_borealis_rootfs.py\", line 116, in DoRunSteps",
       "    milestone_number = match.group(1)",
       "AttributeError(''NoneType' object has no attribute 'group'')"
     ]

@@ -1946,7 +1946,9 @@
   },
   {
     "cmd": [
-      "./tools/borealis_kernel.py"
+      "./tools/borealis_kernel.py",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -1962,7 +1964,9 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--no-cache"
+      "--no-cache",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -2004,7 +2008,9 @@
       "borealis-dlc-2012.05.14.125330.tar.xz",
       "--bucket_url",
       "gs://chromeos-localmirror-private/borealis",
-      "--nouprev"
+      "--nouprev",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -2024,7 +2030,9 @@
     "cmd": [
       "./tools/build_tast_binaries.py",
       "--no-output-append-date",
-      "--output=public-borealis-tast-binaries-2012.05.14.125330"
+      "--output=public-borealis-tast-binaries-2012.05.14.125330",
+      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
+      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
