@@ -282,6 +282,53 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     return 'chromeos:' + realm
 
+  def _get_partner_vm_realm(self, base_tags):
+    """Gets the partner vm realm for this test result.
+
+    Returns '' if the vm board is not allowed to share with partners.
+
+    Args:
+      base_tags (list): A list of tags for the build.
+    """
+    # Returns early if vm test results are for staging testing.
+    image = self._extract_tag_value(base_tags, 'image')
+    parts = image.split('-')
+    if len(parts) == 0 or parts[0] == "staging":
+      return ''
+
+    # The partner vm realm for vm test results which are shared with all
+    # ChromeOS partners.
+    partner_vm_realm = 'chromeos:partner-vmtest'
+    base_vm_board_allowlist = set([
+        'amd64-generic',
+        'betty',
+    ])
+
+    # Checks base vm boards (e.g. 'betty') or vm board variants
+    # (e.g. 'betty-arc-r').
+    board = self._extract_tag_value(base_tags, 'board')
+    parts = board.split('-')
+    if board in base_vm_board_allowlist or \
+      (len(parts) > 0 and parts[0] in base_vm_board_allowlist):
+      return partner_vm_realm
+
+    return ''
+
+  def _extract_tag_value(self, base_tags, tag):
+    """Extracts the value for given tag from the base tags
+
+    Returns an empty string if the given tag doesn't exist.
+
+    Args:
+      base_tags (list): A list of tags for the build.
+      tag (string): The tag name.
+    """
+    for base_tag in base_tags:
+      k, v = base_tag
+      if k == tag:
+        return v
+    return ''
+
   def _upload(self, config, testhaus_url=None):
     """Call the ResultDB module to upload test result
 
@@ -357,8 +404,12 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # so that partners working on that model can see it.
     realm = ''
     if not config.get('force_current_realm'):
-      skip_board_model_check = config.get('skip_board_model_check')
-      realm = self._get_board_model_realm(base_tags, skip_board_model_check)
+      hostname = self._extract_tag_value(base_tags, 'hostname')
+      if hostname == 'vm':
+        realm = self._get_partner_vm_realm(base_tags)
+      else:
+        skip_board_model_check = config.get('skip_board_model_check')
+        realm = self._get_board_model_realm(base_tags, skip_board_model_check)
 
     # wrap it with rdb-stream
     cmd = self.m.resultdb.wrap(

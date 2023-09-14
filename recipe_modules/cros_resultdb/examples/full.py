@@ -227,6 +227,104 @@ def GenTests(api):
   )
 
   yield api.test(
+      'basic-shared-partner-vm-realm-for-base-vm-board',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'tast',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'betty'),
+                  ('model', 'betty'),
+                  ('image', 'betty-cq/R11-123.45'),
+                  ('hostname', 'vm'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'betty',
+                  'build': 'betty-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'basic-shared-partner-vm-realm-for-vm-board-variant',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'tast',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'betty-arc-r'),
+                  ('model', 'betty-arc-r'),
+                  ('image', 'betty-arc-r-cq/R11-123.45'),
+                  ('hostname', 'vm'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'betty-arc-r',
+                  'build': 'betty-arc-r-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'non-allowlisted-basic-shared-partner-vm-realm',
+      api.buildbucket.ci_build(),
+      # The make-up vm board variant "non-allowlisted-variant" is not included
+      # in the variant allowlist.
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'gtest',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'non-allowlisted-variant'),
+                  ('model', 'taeko'),
+                  ('image', 'non-allowlisted-variant-cq/R11-123.45'),
+                  ('hostname', 'vm'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'non-allowlisted-variant',
+                  'build': 'non-allowlisted-variant-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
+      'basic-shared-partner-vm-realm-skipped-for-staging-vm-results',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'tast',
+              'base_tags': [
+                  ('test_suite', 'fake-suite'),
+                  ('board', 'betty'),
+                  ('model', 'betty'),
+                  ('image', 'staging-betty-cq/R11-123.45'),
+                  ('hostname', 'vm'),
+              ],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'betty',
+                  'build': 'staging-betty-cq/R11-123.45',
+              },
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
       'mismatched-image-and-board',
       api.buildbucket.ci_build(),
       api.properties(
