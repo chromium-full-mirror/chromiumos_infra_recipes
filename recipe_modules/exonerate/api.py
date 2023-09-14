@@ -265,16 +265,17 @@ class ExonerateApi(recipe_api.RecipeApi):
     return new_test_cases, new_verdict
 
   def _is_task_result_exoneration_elegible(
-      self, result: ExecuteResponse.TaskResult) -> bool:
+      self, result: ExecuteResponse.TaskResult,
+      exonerate_prejob_failures: Optional[bool] = False) -> bool:
     """Returns whether the result is elegible for exoneration."""
     # Skip exoneration if it passed.
     if result.state.verdict == TaskState.VERDICT_PASSED:
       return False
 
-    # Do not exonerate prejob failures.
+    # Prejob failures are not exonerable by default.
     prejob_verdicts = [s.verdict for s in result.prejob_steps]
     if TaskState.VERDICT_FAILED in prejob_verdicts:
-      return False
+      return exonerate_prejob_failures
 
     # If all test cases have VERDICT_NO_VERDICT it is likely that none ran.
     # See b/296463877.
@@ -711,13 +712,16 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def is_hw_result_exonerable(
       self, hw_test_result: SkylabResult,
-      exoneration_configs_override: Optional[Dict] = None) -> bool:
+      exoneration_configs_override: Optional[Dict] = None,
+      exonerate_prejob_failures: Optional[bool] = False) -> bool:
     """ Checks to see if hw result is exonerable.
 
     Args:
       hw_test_result: The skylab result to check if it is exonerable.
       exoneration_configs_override: Alternate exoneration configs to use when
           determining if the result is exonerable.
+      exonerate_prejob_failures: Whether to exonerate prejob failures. These
+          failures are not exonerable by default.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
@@ -737,12 +741,12 @@ class ExonerateApi(recipe_api.RecipeApi):
     child_results = hw_test_result.child_results
     if not child_results:
       return False
-    exonerated = False
     for result in child_results:
       if result.state.verdict == TaskState.VERDICT_PASSED:
         continue
       # Certain failure modes are not exonerable.
-      if not self._is_task_result_exoneration_elegible(result):
+      if not self._is_task_result_exoneration_elegible(
+          result, exonerate_prejob_failures):
         return False
       test_cases = result.test_cases
       for test_case in test_cases:
@@ -752,8 +756,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           if not self._is_test_name_exonerable(test_name, build_target,
                                                exoneration_configs_override):
             return False
-          exonerated = True
-    return exonerated
+
+    return True
 
   def is_vm_test_build_exonerable(
       self, vm_build: build_pb2.Build,

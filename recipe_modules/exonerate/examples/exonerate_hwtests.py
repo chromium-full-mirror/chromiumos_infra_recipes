@@ -215,8 +215,14 @@ def RunSteps(api):
       task=api.skylab_results.test_api.skylab_task(), status=common_pb2.FAILURE,
       child_results=child_results)
 
+  # Do not exonerate by default.
   is_exonerable = api.exonerate.is_hw_result_exonerable(hw_test_failure)
-  api.assertions.assertEqual(is_exonerable, False)
+  api.assertions.assertFalse(is_exonerable)
+
+  # Exonerate when exonerate_prejob_failures is True.
+  is_exonerable = api.exonerate.is_hw_result_exonerable(
+      hw_test_failure, exonerate_prejob_failures=True)
+  api.assertions.assertTrue(is_exonerable)
 
 
 def GenTests(api):

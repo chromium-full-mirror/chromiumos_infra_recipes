@@ -47,6 +47,9 @@ DEFAULT_2_HR_THROTTLE = 30
 # Experiment with retrying any infra failures.
 # TODO(b/296441878): Remove post-launch.
 EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES = 'retry-infra-failures'
+# Experiment with retrying any prejob failures.
+# TODO(b/296441878): Remove post-launch.
+EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES = 'retry-prejob-failures'
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -679,6 +682,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     exon_configs = self.m.exoneration_util.get_updated_configs(
         failed_test_stats, self.m.exonerate.manual_exoneration_configs)
 
+    exonerate_prejob_failures = self.is_experimental_feature_enabled(
+        EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run)
+
     exonerated_suites = []
     # Exonerate HW test results.
     if len(skylab_builder_ids) > 0:
@@ -690,7 +696,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       exonerated_suites.extend([
           self.m.naming.get_skylab_result_title(result)
           for result in hw_test_results
-          if self.m.exonerate.is_hw_result_exonerable(result, exon_configs)
+          if self.m.exonerate.is_hw_result_exonerable(
+              result, exon_configs, exonerate_prejob_failures)
       ])
     # Exonerate VM test results.
     if len(tast_vm_tests_builder_ids) > 0:

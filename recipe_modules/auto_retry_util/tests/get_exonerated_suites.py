@@ -11,10 +11,13 @@ from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
+from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES
 
 DEPS = [
     'recipe_engine/assertions',
@@ -73,7 +76,20 @@ def GenTests(api):
                                       name='fake.test',
                                       verdict=TaskState.VERDICT_FAILED)
                               ]),
-                  ])
+                  ]),
+          'e-cq.hw.suite':
+              ExecuteResponse(
+                  state=TaskState(verdict=TaskState.VERDICT_FAILED,
+                                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+                  task_results=[
+                      ExecuteResponse.TaskResult(
+                          name='suite', state=TaskState(
+                              verdict=TaskState.VERDICT_FAILED), prejob_steps=[
+                                  ExecuteResponse.TaskResult.TestCaseResult(
+                                      name='prejob-step',
+                                      verdict=TaskState.VERDICT_FAILED)
+                              ]),
+                  ]),
       })
   ctp_build = build_pb2.Build(id=111, status='FAILURE')
   ctp_build.output.properties.update({
@@ -124,6 +140,14 @@ def GenTests(api):
           'critical': True,
           'name': 'b-cq.hw.suite'
       },
+      {
+          'builder_name': 'e-cq',
+          'build_target': 'e',
+          'board': 'e',
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'e-cq.hw.suite'
+      },
       # VM test results.
       {
           'builder_name': 'c-cq',
@@ -157,5 +181,32 @@ def GenTests(api):
       api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
       api.properties(
           expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'prejob-exoneration-experimental-feature',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+                  ])
+          }),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
+      api.properties(expected_exonerated_suites=[
+          'b-cq.hw.suite', 'd-cq.tast_gce.suite', 'e-cq.hw.suite'
+      ]),
       api.post_process(post_process.DropExpectation),
   )
