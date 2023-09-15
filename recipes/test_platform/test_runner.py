@@ -1747,7 +1747,6 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
           # publish to the board-model realm
           interface.upload_to_rdb(
               test_metadata, result_for_uploading.test_responses,
-              properties.common_config.partner_private,
               properties.common_config.skip_board_model_realm_check)
       finally:
         with api.step.nest('post upload step (ctr)') as post_step:

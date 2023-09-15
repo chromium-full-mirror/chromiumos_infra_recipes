@@ -15362,7 +15362,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2058)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2057)(api, properties):**
 
 Entrypoint to the script
 
@@ -15387,7 +15387,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1819)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1818)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -15442,7 +15442,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2012)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2011)(api, properties):**
 
 Run test and upload results.
 
@@ -15479,7 +15479,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1891)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1890)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

@@ -536,13 +536,12 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return tko_metadata
 
   def upload_to_rdb(self, metadata, run_test_response,
-                    force_current_realm=False, skip_board_model_check=False):
+                    skip_board_model_check=False):
     """Uploads test results to resultDB.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test job.
     * run_test_response (DUTTestResponse): The response to the test run.
-    * force_current_realm (Boolean): Whether to force publishing to rdb in the current realm
     * skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists
     """
     tast_results_dirs = []
@@ -611,7 +610,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             skylab_test_runner_result,
             temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
             test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
-            metadata, force_current_realm, skip_board_model_check)
+            metadata, skip_board_model_check)
         self._api.cros_resultdb.upload(autotest_rdb_config,
                                        str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
@@ -620,7 +619,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         tast_rdb_config = self._tast_results_rdb_config(
             tast_result_dir, test_case_metadata_json,
             temp_dir.join(self.TEST_METADATA_JSON), metadata,
-            force_current_realm, skip_board_model_check)
+            skip_board_model_check)
         self._api.cros_resultdb.upload(tast_rdb_config,
                                        str(metadata.testhaus_logs_url))
       # Process missing tast tests if any
@@ -669,7 +668,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   def _tast_results_rdb_config(self, tast_results_dir,
                                test_metadata_file_content,
                                test_metadata_file_path, metadata,
-                               force_current_realm=False,
                                skip_board_model_check=False):
     """Build rdb config for tast test results.
 
@@ -697,8 +695,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             self._api.path.join(tast_results_dir, self.STREAMED_RESULTS_JSON),
         'artifact_directory':
             artifact_dir,
-        'force_current_realm':
-            force_current_realm,
         'skip_board_model_check':
             skip_board_model_check
     }
@@ -715,7 +711,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                                    test_runner_result_file_path,
                                    test_metadata_file_content,
                                    test_metadata_file_path, metadata,
-                                   force_current_realm=False,
                                    skip_board_model_check=False):
     """Build rdb config for tauto test results.
 
@@ -738,7 +733,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'sources_file': metadata.rdb_sources_file,
         'result_file': test_runner_result_file_path,
         'artifact_directory': None,
-        'force_current_realm': force_current_realm,
         'skip_board_model_check': skip_board_model_check
     }
 
