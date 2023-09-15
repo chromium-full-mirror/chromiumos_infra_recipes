@@ -1743,11 +1743,14 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
           # crostoolrunner_interface.py and could be similar to the
           # `_post_process_tauto_result()` method above.
 
-          # If this builder is configured to be private-partner, we don't want to
-          # publish to the board-model realm
-          interface.upload_to_rdb(
-              test_metadata, result_for_uploading.test_responses,
-              properties.common_config.skip_board_model_realm_check)
+          skip_board_model_check = properties.common_config.skip_board_model_realm_check
+          visibility_mode = properties.results_upload_config.mode
+          custom_realm = properties.common_config.rdb_config.custom_realm_name
+
+          interface.upload_to_rdb(test_metadata,
+                                  result_for_uploading.test_responses,
+                                  skip_board_model_check, visibility_mode,
+                                  custom_realm)
       finally:
         with api.step.nest('post upload step (ctr)') as post_step:
           interface.submit_post_job()

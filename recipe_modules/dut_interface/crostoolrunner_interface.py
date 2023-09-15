@@ -22,6 +22,7 @@ from PB.test_platform.skylab_local_state.load import Dut as LoadDut
 from PB.test_platform.skylab_local_state.load import LoadResponse
 from PB.test_platform.skylab_test_runner.result import Result as Skylab_Result
 from PB.chromiumos.test import api as ctr_api
+from PB.test_platform.request import Request
 
 from recipe_engine.recipe_api import StepFailure
 
@@ -32,6 +33,8 @@ PrejobResponsesTuple = namedtuple(
     ['prejob_dut_responses', 'any_provision_failed', 'failure_reason'])
 
 HOUR = 60 * 60
+
+TestResultVisibility = Request.Params.ResultsUploadConfig.TestResultsUploadVisibility
 
 
 class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
@@ -535,14 +538,18 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
     return tko_metadata
 
-  def upload_to_rdb(self, metadata, run_test_response,
-                    skip_board_model_check=False):
+  def upload_to_rdb(
+      self, metadata, run_test_response, skip_board_model_check=False,
+      visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
+      custom_realm=""):
     """Uploads test results to resultDB.
 
     Args:
     * metadata (DUTTestMetadata): Input information relevant to one test job.
     * run_test_response (DUTTestResponse): The response to the test run.
-    * skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists
+    * skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists.
+    * visibility_mode (TestResultsVisibility): Intended visibility of test results.
+    * custom_realm (string): Name of custom realm results should be published to.
     """
     tast_results_dirs = []
     skylab_test_results = []
@@ -610,7 +617,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             skylab_test_runner_result,
             temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
             test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
-            metadata, skip_board_model_check)
+            metadata, skip_board_model_check, visibility_mode, custom_realm)
         self._api.cros_resultdb.upload(autotest_rdb_config,
                                        str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
@@ -619,7 +626,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         tast_rdb_config = self._tast_results_rdb_config(
             tast_result_dir, test_case_metadata_json,
             temp_dir.join(self.TEST_METADATA_JSON), metadata,
-            skip_board_model_check)
+            skip_board_model_check, visibility_mode, custom_realm)
         self._api.cros_resultdb.upload(tast_rdb_config,
                                        str(metadata.testhaus_logs_url))
       # Process missing tast tests if any
@@ -665,10 +672,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     return skylab_result
 
-  def _tast_results_rdb_config(self, tast_results_dir,
-                               test_metadata_file_content,
-                               test_metadata_file_path, metadata,
-                               skip_board_model_check=False):
+  def _tast_results_rdb_config(
+      self, tast_results_dir, test_metadata_file_content,
+      test_metadata_file_path, metadata, skip_board_model_check=False,
+      visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
+      custom_realm=""):
     """Build rdb config for tast test results.
 
     Args:
@@ -676,6 +684,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       test_metadata_file_content (str): CFT test metadata file contents.
       test_metadata_file_path (str): path to the CFT test metadata file.
       metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
+      skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists.
+      visibility_mode (TestResultsVisibility): Intended visibility of test results.
+      custom_realm (string): Name of custom realm results should be published to.
 
     Returns: Tast config dict.
     """
@@ -696,7 +707,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'artifact_directory':
             artifact_dir,
         'skip_board_model_check':
-            skip_board_model_check
+            skip_board_model_check,
+        'visibility_mode':
+            visibility_mode,
+        'custom_realm':
+            custom_realm
     }
 
     if test_metadata_file_content:
@@ -707,11 +722,12 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     return config
 
-  def _autotest_results_rdb_config(self, test_runner_result,
-                                   test_runner_result_file_path,
-                                   test_metadata_file_content,
-                                   test_metadata_file_path, metadata,
-                                   skip_board_model_check=False):
+  def _autotest_results_rdb_config(
+      self, test_runner_result, test_runner_result_file_path,
+      test_metadata_file_content, test_metadata_file_path, metadata,
+      skip_board_model_check=False,
+      visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
+      custom_realm=""):
     """Build rdb config for tauto test results.
 
     Args:
@@ -720,6 +736,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       test_metadata_file_content (str): CFT test metadata file contents.
       test_metadata_file_path (str): path to the CFT test metadata file.
       metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
+      skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists.
+      visibility_mode (TestResultsVisibility): Intended visibility of test results.
+      custom_realm (string): Name of custom realm results should be published to.
 
     Returns: Tauto config dict.
     """
@@ -733,7 +752,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         'sources_file': metadata.rdb_sources_file,
         'result_file': test_runner_result_file_path,
         'artifact_directory': None,
-        'skip_board_model_check': skip_board_model_check
+        'skip_board_model_check': skip_board_model_check,
+        'visibility_mode': visibility_mode,
+        'custom_realm': custom_realm
     }
 
     if test_metadata_file_content:
