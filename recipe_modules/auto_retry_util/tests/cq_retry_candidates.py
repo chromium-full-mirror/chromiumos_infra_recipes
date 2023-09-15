@@ -15,6 +15,7 @@ from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RET
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'auto_retry_util',
     'cros_infra_config',
@@ -461,6 +462,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+
   # The build is retryable, but has opted out via footer.
   builds = [
       api.test_util.test_orchestrator(
@@ -481,11 +483,41 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.git_footers.simulated_get_footers(
           ['None'], 'find candidates.filter out opt-out runs'),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.post_process(
           post_process.StepTextEquals,
           'find candidates.filter out opt-out runs',
           'filtered out 1 run(s)',
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # The build is retryable, but could not fetch all the CLs.
+  yield api.test(
+      'failed-to-fetch-gerrit-changes',
+      api.properties(expected_build_ids=[]),
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.override_step_data(
+          'find candidates.filter out by basic eligibility.gerrit-fetch-changes',
+          stdout=api.json.output({'changes': [{}]})),
+      api.post_process(
+          post_process.StepTextEquals,
+          'find candidates.filter out by basic eligibility',
+          'filtered out 1 run(s)',
+      ),
+      api.post_process(post_process.PropertyEquals,
+                       'failed_to_fetch_changes_count', 1),
       api.post_process(post_process.DropExpectation),
   )
 

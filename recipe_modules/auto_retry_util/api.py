@@ -443,23 +443,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         else:
           pres.step_text = 'no experiment allowlist filtering'
 
-      with self.m.step.nest('filter out opt-out runs') as pres:
-        opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
-        cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
-        pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
-        if opt_out_ids:
-          pres.logs['filtered out runs'] = [
-              self.m.buildbucket.build_url(build_id=x)
-              for x in sorted(opt_out_ids)
-          ]
 
       with self.m.step.nest('filter out by basic eligibility') as pres:
         non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids = set(
         ), set(), set(), set()
 
+        failed_to_fetch_ids = set()
         for c in cq_orchs:
-          patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes,
-                                                      include_submittable=True)
+          try:
+            patch_sets = self.m.gerrit.fetch_patch_sets(
+                c.input.gerrit_changes, include_submittable=True)
+          except recipe_api.StepFailure:
+            failed_to_fetch_ids.add(c.id)
+            continue
+
           non_new_ids.update({c.id for p in patch_sets if p.status != 'NEW'})
           non_submittable_ids.update(
               {c.id for p in patch_sets if not p.submittable})
@@ -467,9 +464,18 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           non_latest_patch_set_ids.update(
               {c.id for p in patch_sets if not p.is_latest_patch_set()})
 
-        ineligible_ids = non_new_ids | non_submittable_ids | wip_ids | non_latest_patch_set_ids
+        ineligible_ids = (
+            non_new_ids | non_submittable_ids | wip_ids
+            | non_latest_patch_set_ids | failed_to_fetch_ids)
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
+        if failed_to_fetch_ids:
+          pres.properties['failed_to_fetch_changes_count'] = len(
+              failed_to_fetch_ids)
+          pres.logs['failed to fetch from Gerrit'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(failed_to_fetch_ids)
+          ]
         if non_new_ids:
           pres.logs['non_new'] = [
               self.m.buildbucket.build_url(build_id=x)
@@ -506,6 +512,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(non_mergeable_ids)
           ]
         pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
+
+      with self.m.step.nest('filter out opt-out runs') as pres:
+        opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
+        cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
+        pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+        if opt_out_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(opt_out_ids)
+          ]
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
 
