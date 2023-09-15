@@ -12,7 +12,10 @@ from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import RetryDetails
+from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -21,6 +24,7 @@ from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
     'auto_retry_util',
@@ -56,6 +60,13 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         # Examine builds.
         successful_builders, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
             b)
+        # TODO(b/299482781): When the retry infra failures experiment is active
+        # the cq-orchestrator could be a retryable builder. Remove post-launch.
+        if api.auto_retry_util.is_experimental_feature_enabled(
+            EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+            b) and b.status == common.INFRA_FAILURE:
+          retryable_build_failures.append(b.builder.builder)
+
         _set_len_prop(successful_builders=successful_builders,
                       retryable_build_failures=retryable_build_failures,
                       outstanding_build_failures=outstanding_build_failures)
@@ -225,4 +236,63 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.LogEquals,
                        'performing retries.retry build 1112',
                        'retryable test suites', 'builder1.hw.suite'),
+  )
+
+  retryable_orch_build = api.test_util.test_orchestrator(
+      cq=True, status='INFRA_FAILURE', build_id=1113, create_time=1113,
+      input_properties={
+          '$recipe_engine/cq': {
+              'runMode': 'FULL_RUN'
+          }
+      }, output_properties={
+          'has_child_failures': False,
+      }, experiments=['chromeos.auto_retry_util.retry_infra_failures']).message
+
+  yield api.test(
+      'retryable-orchestrator-exp-feature',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(
+                      enable_retries=True, experimental_features=[
+                          ExperimentalFeature(
+                              name=EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+                              experiment_flag='chromeos.auto_retry_util.retry_infra_failures'
+                          )
+                      ])
+          }),
+      api.buildbucket.simulated_search_results(
+          [retryable_orch_build],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.post_process(
+          post_process.MustRun,
+          'performing retries.retry build 1113',
+      ),
+      api.post_process(post_process.LogEquals,
+                       'performing retries.retry build 1113',
+                       'retryable builders', 'cq-orchestrator'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'retryable-orchestrator-exp-feature-not-enabled',
+      api.auto_retry_util.enable_retries(),
+      api.buildbucket.simulated_search_results(
+          [retryable_orch_build],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.post_process(
+          post_process.DoesNotRun,
+          'performing retries.retry build 1113',
+      ),
+      api.post_process(post_process.DropExpectation),
   )
