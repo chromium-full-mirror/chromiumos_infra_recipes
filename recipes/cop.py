@@ -220,7 +220,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
                                       build_config)
     presentation.links['build'] = log_url
 
-  with api.step.nest('wait build competion') as presentation:
+  with api.step.nest('await build completion') as presentation:
     _wait_for_build_completion(api, properties.project_name, build_id)
 
   with api.step.nest('fetch results') as presentation:
