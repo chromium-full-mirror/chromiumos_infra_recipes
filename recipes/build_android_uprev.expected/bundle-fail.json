@@ -7906,7 +7906,7 @@
       "@@@STEP_LOG_LINE@request@  \"profileInfo\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifact_type\": \"UNVERIFIED_CHROME_LLVM_ORDERFILE\", \"artifacts\": [{\"path\": \"my_output_artifact\"}]}]}@@@",
+      "@@@STEP_LOG_LINE@response@{\"artifacts_info\": [{\"artifact_type\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\", \"artifacts\": [{\"path\": \"my_output_artifact\"}]}]}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
