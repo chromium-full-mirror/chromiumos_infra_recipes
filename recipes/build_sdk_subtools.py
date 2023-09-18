@@ -53,7 +53,8 @@ class BuildSdkSubtoolsRun:
   def _setup(self) -> Generator:
     """Configure the builder and setup the workspace and chroot."""
     with self.m.build_menu.configure_builder(missing_ok=True), \
-        self.m.build_menu.setup_workspace_and_chroot() as context:
+        self.m.build_menu.setup_workspace_and_chroot(
+            force_no_chroot_upgrade=True) as context:
       # TBD how far we can get re-using the cros_sdk recipe. It will create and
       # use chroots in `m.path / cache / cros_chroot / chroot`, but the subtools
       # builder might be more efficient using its own `subtools_chroot` scope so

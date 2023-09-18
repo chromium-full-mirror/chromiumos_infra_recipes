@@ -178,9 +178,10 @@ class BuildSDKRun:
       commit = self.m.src_state.external_manifest.as_gitiles_commit_proto
       commit.ref = 'refs/heads/{}'.format(self.properties.manifest_branch)
     with self.m.build_menu.configure_builder(missing_ok=True, commit=commit), \
-      self.m.build_menu.setup_workspace_and_chroot(bootstrap_chroot=True,
-                                                   replace=True,
-                                                   update_chroot=False):
+      self.m.build_menu.setup_workspace_and_chroot(
+        bootstrap_chroot=True,
+        replace=True,
+        upgrade_in_update_step=False):
       yield
 
   def _build_sdk_packages(self) -> None:
