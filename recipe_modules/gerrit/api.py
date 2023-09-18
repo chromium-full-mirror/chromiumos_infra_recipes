@@ -410,8 +410,14 @@ class GerritApi(RecipeApi):
         'include_messages': include_messages,
         'include_submittable': include_submittable,
     }
-    results = self._gerrit_fetch_changes(request, gerrit_changes,
-                                         test_output_data=test_output_data)
+
+    try:
+      results = self._gerrit_fetch_changes(request, gerrit_changes,
+                                           test_output_data=test_output_data)
+    finally:
+      # Always log the request for debugging purposes.
+      presentation = self.m.step.active_result.presentation
+      presentation.logs['request'] = json.dumps(request)
 
     # Validate all results present.
     patch_sets = []

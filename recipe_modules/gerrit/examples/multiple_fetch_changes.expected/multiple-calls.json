@@ -94,7 +94,9 @@
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -151,7 +153,9 @@
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 2, \"patch_set\": 2}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

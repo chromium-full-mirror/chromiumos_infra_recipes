@@ -90,7 +90,9 @@
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -159,6 +161,8 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 91827, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false}@@@",
+      "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@missing gerrit patch set@no Gerrit patch set found for input {\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}@@@",
       "@@@STEP_LOG_END@missing gerrit patch set@@@",
       "@@@STEP_FAILURE@@@"

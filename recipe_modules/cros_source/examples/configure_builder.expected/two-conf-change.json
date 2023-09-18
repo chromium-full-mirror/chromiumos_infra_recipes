@@ -169,7 +169,9 @@
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 557, \"patch_set\": 1}, {\"host\": \"chromium.googlesource.com\", \"change_number\": 558, \"patch_set\": 1}], \"include_files\": true, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
