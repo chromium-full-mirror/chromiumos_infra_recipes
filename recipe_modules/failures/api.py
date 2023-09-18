@@ -8,11 +8,10 @@ from __future__ import annotations
 
 import collections
 import contextlib
-import datetime
 import operator
 import re
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -26,8 +25,7 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
-from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
-  import CqFailureAttribute, FaultAttributedBuildTarget
+
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -55,7 +53,6 @@ class FailuresApi(RecipeApi):
     self._failure_truncate_max = 10
     self._exoneration_markdown = None
     self._caught_exceptions = {}
-    self._test_variant_to_fault_attribute = collections.defaultdict(lambda: None)
 
   @dataclass
   class Results():
@@ -191,18 +188,6 @@ class FailuresApi(RecipeApi):
       markdown_txt: String containing summary of exonerations.
     """
     self._exoneration_markdown = markdown_txt
-
-  def set_test_variant_to_fault_attribute(self,
-      test_variant_to_fault_attribute: Dict[Tuple[str, str, str],
-      FaultAttributedBuildTarget]):
-    """Sets dictionary information for test variant to the corresponding
-    fault attribute.
-
-    Args:
-      test_variant_to_fault_attribute: defaultdict of tuples of the format:
-      (test_id, build_target, model), to fault attribution.
-    """
-    self._test_variant_to_fault_attribute = test_variant_to_fault_attribute
 
   @contextlib.contextmanager
   def ignore_exceptions(self):
@@ -476,7 +461,6 @@ class FailuresApi(RecipeApi):
 
       for link_text, link_url in link_map_items:
         line = '    - [{}]({})'.format(link_text, link_url)
-        line += self.get_test_fault_attribution_text(title, link_text)
         lines.append(line)
 
     return lines
@@ -519,47 +503,9 @@ class FailuresApi(RecipeApi):
       lines.append(line)
       for link_text, link_url in failure.link_map.items():
         line = '    - [{}]({})'.format(link_text, link_url)
-        line += self.get_test_fault_attribution_text(failure.title, link_text)
         lines.append(line)
 
     return lines
-
-  def get_test_fault_attribution_text(self, target_identifier: str, test_id: str) -> str:
-    """Returns the fault attribution text of a summary markdown line.
-
-    Args:
-      target_identifier: The title of the failure, consisting of build_target
-      name, suite name and optionally a model name.
-      test_id: The ID of the test.
-
-    Returns:
-      Fault attribution text for a summary line.
-    """
-    target_identifier_parts = target_identifier.split('.')
-    build_target = re.sub(r'-cq$', '', target_identifier_parts[0])
-    # The target identifier for hw tests without models is typically of the
-    # format: build_target-cq.hw.test_id. When there is a model present,
-    # it's: build_target-cq.model.hw.test_id. We can assume that the second
-    # component of the string is the model if the component size is larger than
-    # 3
-    model = target_identifier_parts[1] if len(target_identifier_parts) > 3 else ''
-    index = (build_target, model, test_id)
-    fault_attribute = self._test_variant_to_fault_attribute[index]
-    if not fault_attribute:
-      return ''
-
-    fault_attribution_text = ' | {} failure already present as of [{}]({})'
-    if fault_attribute.snapshot_comparison_fault_attribution == CqFailureAttribute.MATCHING_FAILURE_FOUND:
-      failure_type = 'identical'
-    elif fault_attribute.snapshot_comparison_fault_attribution == CqFailureAttribute.DIFFERING_FAILURE_FOUND:
-      failure_type = 'different'
-    else:
-      return ''
-
-    comparison_build_start_datetime = datetime.datetime.fromtimestamp(fault_attribute.comparison_snapshot.source_started_unix_timestamp)
-    milo_link = 'https://ci.chromium.org/ui/b/{}/test-results?q=ExactID:{}'.format(fault_attribute.comparison_snapshot.source_build_id, test_id)
-
-    return fault_attribution_text.format(failure_type, comparison_build_start_datetime, milo_link)
 
   def get_test_failure_main_line(self, shard_pattern: str,
       kind: str, failure_group: List[Failure],
