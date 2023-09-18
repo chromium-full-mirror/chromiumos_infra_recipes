@@ -3,7 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+from collections import defaultdict
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
+  import CqFailureAttribute, FaultAttributionProperties, SnapshotProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -74,6 +78,39 @@ def RunSteps(api):
                            id='id-13'),
   ]
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
+
+  test_properties_to_fault_attribute = defaultdict(lambda: None)
+  comparison_snapshot_properties = SnapshotProperties()
+  comparison_snapshot_properties.source_build_id = 12345
+  comparison_snapshot_properties.source_started_unix_timestamp = 1693893626
+
+  vm_test_fault_attribute = FaultAttributionProperties()
+  vm_test_fault_attribute.test_name = 'some-vm-test-from-shard-1'
+  vm_test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.MATCHING_FAILURE_FOUND
+  vm_test_fault_attribute.comparison_snapshot.CopyFrom(
+      comparison_snapshot_properties)
+
+  hw_test_fault_attribute = FaultAttributionProperties()
+  hw_test_fault_attribute.test_name = 'test-1'
+  hw_test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.DIFFERING_FAILURE_FOUND
+  hw_test_fault_attribute.comparison_snapshot.CopyFrom(
+      comparison_snapshot_properties)
+
+  hw_test_fault_attribute2 = FaultAttributionProperties()
+  hw_test_fault_attribute2.test_name = 'test-2'
+  hw_test_fault_attribute2.snapshot_comparison_fault_attribution = CqFailureAttribute.SUCCESS_FOUND
+  hw_test_fault_attribute2.comparison_snapshot.CopyFrom(
+      comparison_snapshot_properties)
+
+  test_properties_to_fault_attribute[(
+      'vm-test-1', '', 'some-vm-test-from-shard-1')] = vm_test_fault_attribute
+  test_properties_to_fault_attribute[('test-1', '',
+                                      'test-1')] = hw_test_fault_attribute
+  test_properties_to_fault_attribute[('test-2', '',
+                                      'test-2')] = hw_test_fault_attribute2
+  api.failures.set_test_variant_to_fault_attribute(
+      test_properties_to_fault_attribute)
+
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
   api.assertions.assertIn(
@@ -94,7 +131,7 @@ def RunSteps(api):
 
 - test-1
 
-    - [test-1](test-1.com)
+    - [test-1](test-1.com) | different failure already present as of [2023-09-05 06:00:26](https://ci.chromium.org/ui/b/12345/test-results?q=ExactID:test-1)
 
 - test-2
 
@@ -110,7 +147,7 @@ def RunSteps(api):
 
 - vm-test-1.tast
 
-    - [some-vm-test-from-shard-1](test-1.com)
+    - [some-vm-test-from-shard-1](test-1.com) | identical failure already present as of [2023-09-05 06:00:26](https://ci.chromium.org/ui/b/12345/test-results?q=ExactID:some-vm-test-from-shard-1)
 
     - [some-vm-test-from-shard-2](test-2.com)
 

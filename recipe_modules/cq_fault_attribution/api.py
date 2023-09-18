@@ -69,7 +69,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
   def __init__(self, properties: CqFaultAttributionApiProperties,
                **kwargs: Any):
     super().__init__(**kwargs)
-    # Failed VM and GCE test list, comprising of dictionaries of the failed
+    # Failed VM and GCE test list, comprising dictionaries of the failed
     # "test_case" and "build".
     self._failed_vm_tests: List[Dict] = []
     # Failed HW test list, comprising dictionaries of the failed
@@ -96,6 +96,10 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     # count.
     self._invocation_properties_to_failure_reason_count_matrix: Dict[Tuple[
         str, str, str, str], int] = defaultdict(int)
+    # Map of (test_id, build_target, model) to the determined fault attribute.
+    # This is intended to be used by the summary markdown.
+    self._test_properties_to_fault_attribute: Dict[Tuple[
+        str, str, str], FaultAttributionProperties] = defaultdict(lambda: None)
 
   @property
   def cq_test_failure_attributes(self) -> CqTestFailureFaultAttributionStats:
@@ -145,6 +149,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
               list(
                   map(self._get_snapshot_properties_object,
                       comparison_snapshots)))
+          self.m.failures.set_test_variant_to_fault_attribute(
+              self._test_properties_to_fault_attribute)
           self.m.easy.set_properties_step(
               cq_fault_attributions=self._cq_test_failure_attributes)
 
@@ -263,6 +269,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     self._set_test_case_failure_fault_attribution(failure_reason,
                                                   test_fault_attribute,
                                                   snapshot_test_results)
+    self._test_properties_to_fault_attribute[(test_id, build_target, model)] \
+      = test_fault_attribute
     if test_fault_attribute.snapshot_comparison_fault_attribution == \
         CqFailureAttribute.SUCCESS_FOUND:
       # This is classified as a new test failure. Determine and set
