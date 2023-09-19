@@ -17,6 +17,7 @@ from google.protobuf import timestamp_pb2
 from PB.chromiumos.build.api import container_metadata
 from PB.chromiumos.storage_path import StoragePath
 from PB.chromiumos.test import api as ctr_api
+from PB.chromiumos.test.api import cros_tool_runner_cli
 from PB.chromiumos.test.lab import api as lab_api
 from PB.chromiumos.test.lab.api.ip_endpoint import IpEndpoint
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -2892,11 +2893,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         'execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision',
         stdout=api.raw_io.output(
             json_format.MessageToJson(
-                ctr_api.cros_tool_runner_cli.CrosToolRunnerProvisionResponse(
-                    responses=[
-                        _provision_resp_with_state_for_ctr(
-                            state=state, failure_reason=failure_reason)
-                    ])))))
+                cros_tool_runner_cli.CrosToolRunnerProvisionResponse(responses=[
+                    _provision_resp_with_state_for_ctr(
+                        state=state, failure_reason=failure_reason)
+                ])))))
 
   def _provision_resp_with_state_for_ctr(state, failure_reason=None):
     provision_resp = ctr_api.cros_provision_cli.CrosProvisionResponse(
@@ -2924,7 +2924,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         'execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test',
         stdout=api.raw_io.output(
             json_format.MessageToJson(
-                ctr_api.cros_tool_runner_cli.CrosToolRunnerTestResponse(
+                cros_tool_runner_cli.CrosToolRunnerTestResponse(
                     test_case_results=[
                         _test_case_result_resp_with_state_for_ctr(
                             state=state, has_result_dir=has_result_dir)
