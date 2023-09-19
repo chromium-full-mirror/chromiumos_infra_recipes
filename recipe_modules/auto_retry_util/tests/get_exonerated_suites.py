@@ -13,6 +13,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
+from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
@@ -181,6 +182,42 @@ def GenTests(api):
       api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
       api.properties(
           expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'some-previously-exonerated',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              },
+              'passed_tests': ['b-cq.hw.suite'],
+          }).build,
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
+      api.properties(expected_exonerated_suites=['d-cq.tast_gce.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'exoneration-overridden',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.properties(
+          **
+          {'$chromeos/exonerate': ExonerateProperties(overall_autoex_limit=1)}),
+      api.properties(expected_exonerated_suites=[]),
+      api.post_check(post_process.DoesNotRun, 'get previous skylab tasks v2'),
       api.post_process(post_process.DropExpectation),
   )
 

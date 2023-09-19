@@ -65,6 +65,16 @@ class ExonerateApi(recipe_api.RecipeApi):
     self._per_target_autoex_limit = properties.per_target_autoex_limit or DEFAULT_PER_TARGET_AUTOEX_LIMIT
 
   @property
+  def overall_autoex_limit(self):
+    """Returns the max number of tests to auto exonerate."""
+    return self._overall_autoex_limit
+
+  @property
+  def per_target_autoex_limit(self):
+    """Returns the max number of tests to auto exonerate on a single target."""
+    return self._per_target_autoex_limit
+
+  @property
   def is_enabled(self):
     """Returns whether exoneration is enabled."""
     return self._enable_exoneration
@@ -666,8 +676,7 @@ class ExonerateApi(recipe_api.RecipeApi):
         all_stats = self.generate_failed_test_stats(failure_rates)
 
         override_info = self.m.exoneration_util.override_calculation(
-            all_stats, self._overall_autoex_limit,
-            self._per_target_autoex_limit)
+            all_stats, self.overall_autoex_limit, self.per_target_autoex_limit)
         overall_stats = OverallTestStats(
             failed_tests=sorted(all_stats, key=lambda x: x.test_id),
             override_info=override_info)

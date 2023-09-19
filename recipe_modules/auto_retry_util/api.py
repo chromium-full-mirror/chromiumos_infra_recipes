@@ -21,6 +21,7 @@ from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
 
+from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
@@ -614,8 +615,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
 
-  # TODO(b/291768475): Calculate override info before exonerating and filter out
-  # previously exonerated suites.
   def get_exonerated_suites(
       self, cq_run: build_pb2.Build,
       failed_test_stats: List[FailedTestStats]) -> List[str]:
@@ -667,6 +666,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       )
       return UnitHwTest(unit=unit, hw_test=hw_test)
 
+    # Exit early if the run exceeds any of the exoneration guardrails.
+    override_info = self.m.exoneration_util.override_calculation(
+        failed_test_stats, self.m.exonerate.overall_autoex_limit,
+        self.m.exonerate.per_target_autoex_limit)
+    if override_info.override_reason:
+      return []
+
     # Get the test result from the test builders.
     output_dict = json_format.MessageToDict(cq_run.output.properties)
     test_summary = output_dict.get('test_summary', [])
@@ -685,7 +691,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     exonerate_prejob_failures = self.is_experimental_feature_enabled(
         EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run)
 
-    exonerated_suites = []
+    exonerated_suites = set()
     # Exonerate HW test results.
     if len(skylab_builder_ids) > 0:
       hw_units = [
@@ -693,23 +699,28 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       ]
       hw_test_results = self.m.skylab_results.get_previous_results(
           skylab_builder_ids, hw_units)
-      exonerated_suites.extend([
+      exonerated_suites.update({
           self.m.naming.get_skylab_result_title(result)
           for result in hw_test_results
           if self.m.exonerate.is_hw_result_exonerable(
               result, exon_configs, exonerate_prejob_failures)
-      ])
+      })
     # Exonerate VM test results.
     if len(tast_vm_tests_builder_ids) > 0:
       vm_builds = self.m.buildbucket.get_multi(
           tast_vm_tests_builder_ids).values()
-      exonerated_suites.extend([
+      exonerated_suites.update({
           self.m.naming.get_vm_test_title(result)
           for result in vm_builds
           if self.m.exonerate.is_vm_test_build_exonerable(result, exon_configs)
-      ])
+      })
 
-    return exonerated_suites
+    # Filter out suites which were previously exonerated.
+    previously_passed_suites = set(
+        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
+
+    return sorted(exonerated_suites.difference(previously_passed_suites))
+
 
   def _create_comment(self, build: build_pb2.Build,
                       retryable_builders: List[str],
