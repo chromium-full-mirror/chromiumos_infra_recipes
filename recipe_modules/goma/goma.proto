@@ -11,7 +11,7 @@ import "chromiumos/common.proto";
 message GomaProperties {
   // cipd goma client version to ensure, will use "latest" if not set.
   string client_version = 1;
-  // GomaApproach to use, will use default if not set.
+  // GomaApproach to use, will use RBE_CHROMEOS if not set.
   .chromiumos.GomaConfig.GomaApproach goma_approach = 2;
   // Disable 'gsutil cp' to upload goma logs.
   bool disable_goma_logs_upload = 3;

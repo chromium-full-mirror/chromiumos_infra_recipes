@@ -4737,6 +4737,59 @@
   },
   {
     "cmd": [],
+    "name": "install packages.check chrome source needed.ensure goma client",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/goma",
+      "-ensure-file",
+      "infra_internal/goma/client/${platform} release",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.ensure goma client.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-release---------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra_internal/goma/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install packages.call chromite.api.SysrootService/InstallPackages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -4747,11 +4800,22 @@
       "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 4,@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"statsFile\": \"stats.binaryproto\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
@@ -4775,7 +4839,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"path\": \"/build/amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_4\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"flags\": {\n    \"useGoma\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"gomaApproach\": 4,\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\",\n    \"counterzFile\": \"counterz.binaryproto\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_4\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_10/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4898,11 +4962,22 @@
       "@@@STEP_LOG_LINE@published event@        \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"gomaConfig\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"gomaApproach\": \"RBE_CHROMEOS\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"logDir\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      \"statsFile\": \"stats.binaryproto\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"counterzFile\": \"counterz.binaryproto\"@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
@@ -4925,7 +5000,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CpEBCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSACJJChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dEoZChcKE1tDTEVBTlVQXS90bXBfdG1wXzQQAhIAGgwI34DE/QQQgMq17gEiBgjhgMT9BNAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CvUBCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBIkkKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0MmAKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYSAEKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG9KGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF80EAISABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -4960,13 +5035,22 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CpEBCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSACJJChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dEoZChcKE1tDTEVBTlVQXS90bXBfdG1wXzQQAhIAGgwI34DE/QQQgMq17gEiBgjhgMT9BNAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CvUBCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSAhgBIkkKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290IhJbU1RBUlRfRElSXS9jaHJvbWUyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0MmAKFVtTVEFSVF9ESVJdL2NpcGQvZ29tYSAEKhwKGltDTEVBTlVQXS9nb21hLWxvZ3MtX3RtcF8xMhFzdGF0cy5iaW5hcnlwcm90bzoUY291bnRlcnouYmluYXJ5cHJvdG9KGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF80EAISABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.process_goma_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
     ]
   },
   {

@@ -554,7 +554,7 @@
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [gobin:tests/get_latest_pin_value](#recipes-gobin_tests_get_latest_pin_value) &mdash; Tests for get_latest_pin_value.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
-  * [goma:examples/full](#recipes-goma_examples_full)
+  * [goma:examples/full](#recipes-goma_examples_full) &mdash; Example to demonstrate usage of the goma module.
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
@@ -8001,34 +8001,33 @@ Return the golang packages supported by this module.
 
 API for working with goma.
 
-#### **class [GomaApi](/recipe_modules/goma/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GomaApi](/recipe_modules/goma/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for working with goma.
 
-&emsp; **@property**<br>&mdash; **def [default\_bqupload\_dir](/recipe_modules/goma/api.py#69)(self):**
+&emsp; **@property**<br>&mdash; **def [default\_bqupload\_dir](/recipe_modules/goma/api.py#71)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_approach](/recipe_modules/goma/api.py#67)(self):**
 
-&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#55)(self):**
+&emsp; **@property**<br>&mdash; **def [goma\_dir](/recipe_modules/goma/api.py#57)(self):**
 
 Lazily fetches the goma client and returns its path.
 
-&mdash; **def [initialize](/recipe_modules/goma/api.py#51)(self, also_bq_upload=False):**
+&mdash; **def [initialize](/recipe_modules/goma/api.py#53)(self, also_bq_upload=False):**
 
-&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#92)(self, install_pkg_response, goma_log_dir, build_target_name, is_staging=False):**
+&mdash; **def [process\_artifacts](/recipe_modules/goma/api.py#94)(self, install_pkg_response: sysroot_pb2.InstallPackagesResponse, goma_log_dir: str, build_target_name: str, is_staging: bool=False):**
 
 Process goma artifacts, uploading to gsutil if they exist.
 
 Args:
-  install_pkg_response (chromite.api.InstallPackagesResponse): May contain
-    goma artifacts.
-  goma_log_dir (str): Log directory that contains the goma artifacts.
-  build_target_name (str): Build target string.
-  is_staging (bool): If being run in staging environment instead of prod.
+  install_pkg_response: May contain goma artifacts.
+  goma_log_dir: Log directory that contains the goma artifacts.
+  build_target_name: Build target string.
+  is_staging: If being run in staging environment instead of prod.
 
 Returns:
-  tuple[GomaResults]: tuple containing the GS bucket and path used to write
-      log files. None is returned if there were no artifacts to process.
+  Tuple containing the GS bucket and path used to write log files.
+    None is returned if there were no artifacts to process.
 ### *recipe_modules* / [greenness](/recipe_modules/greenness)
 
 [DEPS](/recipe_modules/greenness/__init__.py#8): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14456,25 +14455,27 @@ Tests for get_latest_pin_value.
 [DEPS](/recipe_modules/goma/examples/full.py#14): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
+Example to demonstrate usage of the goma module.
+
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/full.py#26)(api, properties):**
 ### *recipes* / [goma:examples/legacy\_goma](/recipe_modules/goma/examples/legacy_goma.py)
 
-[DEPS](/recipe_modules/goma/examples/legacy_goma.py#13): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/goma/examples/legacy_goma.py#14): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/legacy_goma.py#24)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/legacy_goma.py#25)(api, properties):**
 ### *recipes* / [goma:examples/with\_goma\_artifacts](/recipe_modules/goma/examples/with_goma_artifacts.py)
 
-[DEPS](/recipe_modules/goma/examples/with_goma_artifacts.py#15): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/goma/examples/with_goma_artifacts.py#16): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts.py#28)(api, properties):**
 ### *recipes* / [goma:examples/with\_goma\_artifacts\_no\_logs](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py)
 
-[DEPS](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#15): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#16): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#27)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#28)(api, properties):**
 ### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_build_info.py#11): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

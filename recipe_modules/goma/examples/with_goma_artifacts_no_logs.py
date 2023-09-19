@@ -11,6 +11,7 @@ from PB.chromiumos import common
 from PB.chromiumos.common import GomaArtifacts
 from PB.recipe_modules.chromeos.goma.examples.test import TestInputProperties
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -28,18 +29,18 @@ def RunSteps(api, properties):
   if properties.expected_goma_approach > common.GomaConfig.DEFAULT:
     api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   else:
-    api.assertions.assertEqual(api.goma.goma_dir, None)
+    api.assertions.assertIsNone(api.goma.goma_dir)
 
   # Expectations should show it didn't fetch again.
   if properties.expected_goma_approach > common.GomaConfig.DEFAULT:
     api.assertions.assertEqual(str(api.goma.goma_dir), '[START_DIR]/cipd/goma')
   else:
-    api.assertions.assertEqual(api.goma.goma_dir, None)
+    api.assertions.assertIsNone(api.goma.goma_dir)
   api.assertions.assertEqual(api.goma.goma_approach,
                              properties.expected_goma_approach)
-  api.assertions.assertEqual(
+  api.assertions.assertIsNone(
       api.goma.process_artifacts(InstallPackagesResponse(), 'goma_log_dir',
-                                 'build_target'), None)
+                                 'build_target'))
   # TODO(crbug.com/1041899): Update this comment when this test value indicates
   # that it did something. Right now there is a return value indicating a path
   # and bucket even though we are not yet handling stats and counterz and no
@@ -61,8 +62,9 @@ def GenTests(api):
       'basic',
       api.properties(
           TestInputProperties(
-              expected_goma_approach=common.GomaConfig.DEFAULT,
+              expected_goma_approach=common.GomaConfig.RBE_CHROMEOS,
           )),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -79,4 +81,22 @@ def GenTests(api):
           TestInputProperties(
               expected_goma_approach=common.GomaConfig.RBE_STAGING,
           )),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-default-goma-config',
+      api.properties(
+          **{
+              '$chromeos/goma':
+                  GomaProperties(
+                      goma_approach=common.GomaConfig.DEFAULT,
+                  ),
+          }),
+      api.properties(
+          TestInputProperties(
+              expected_goma_approach=common.GomaConfig.DEFAULT,
+          ),
+      ),
+      api.post_process(post_process.DropExpectation),
   )

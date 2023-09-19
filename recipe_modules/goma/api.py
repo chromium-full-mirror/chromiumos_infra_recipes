@@ -5,18 +5,19 @@
 
 """API for working with goma."""
 
+import collections
 import json
 import os
-from collections import namedtuple
-from google.protobuf import json_format
-from recipe_engine import recipe_api
+from typing import Optional, Tuple
 
-from PB.chromiumos import common
-from PB.goma.compile_events import CompileEvent
-from PB.goma.counterz import CounterzStats
-from PB.goma.goma_stats import GomaStats
-from PB.goma.goma_stats import MachineInfo
-from PB.goma.goma_stats import TimeStats
+from google.protobuf import json_format
+from PB.chromite.api import sysroot as sysroot_pb2
+from PB.chromiumos import common as common_pb2
+from PB.goma import compile_events as compile_events_pb2
+from PB.goma import counterz as counterz_pb2
+from PB.goma import goma_stats as goma_stats_pb2
+from recipe_engine import config_types
+from recipe_engine import recipe_api
 
 _BQUPLOAD_VERSION = 'git_revision:643892f957c8e106dff793468101f2ecfc31abb7'
 
@@ -26,10 +27,10 @@ _GOMA_NINJA_LOG_URL_TEMPLATE = (
     'https://chromium-build-stats.appspot.com/ninja_log/%s')
 
 # GsDestination stores GS bucket and path.
-GsDestination = namedtuple('GsDestination', ['bucket', 'path'])
+GsDestination = collections.namedtuple('GsDestination', ['bucket', 'path'])
 
 # GomaResults includes GSDestination fields.
-GomaResults = namedtuple('GomaResults', ['bucket', 'path'])
+GomaResults = collections.namedtuple('GomaResults', ['bucket', 'path'])
 
 
 class GomaApi(recipe_api.RecipeApi):
@@ -38,7 +39,8 @@ class GomaApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._client_version = properties.client_version or 'release'
-    self._goma_approach = properties.goma_approach or common.GomaConfig.DEFAULT
+    self._goma_approach = (
+        properties.goma_approach or common_pb2.GomaConfig.RBE_CHROMEOS)
     self._upload_goma_logs = not properties.disable_goma_logs_upload
     self._upload_stats_counterz = (not properties.disable_stats_counterz_upload)
     self._bigquery_project_id = properties.bigquery_project_id or 'goma-logs'
@@ -55,7 +57,7 @@ class GomaApi(recipe_api.RecipeApi):
   @property
   def goma_dir(self):
     """Lazily fetches the goma client and returns its path."""
-    if self._goma_approach <= common.GomaConfig.DEFAULT:
+    if self._goma_approach <= common_pb2.GomaConfig.DEFAULT:
       return None
     if self._goma_dir:
       return self._goma_dir
@@ -63,14 +65,14 @@ class GomaApi(recipe_api.RecipeApi):
     return self._goma_dir
 
   @property
-  def goma_approach(self):
+  def goma_approach(self) -> common_pb2.GomaConfig.GomaApproach:
     return self._goma_approach
 
   @property
-  def default_bqupload_dir(self):
+  def default_bqupload_dir(self) -> config_types.Path:
     return self.m.path['cache'].join('goma', 'bqupload')
 
-  def _ensure_goma(self):
+  def _ensure_goma(self) -> None:
     """Ensure that the goma client is installed."""
     with self.m.step.nest('ensure goma client'), self.m.context(
         infra_steps=True):
@@ -89,20 +91,21 @@ class GomaApi(recipe_api.RecipeApi):
                                   _BQUPLOAD_VERSION)
         self.m.cipd.ensure(self.default_bqupload_dir, bqupload_pkgs)
 
-  def process_artifacts(self, install_pkg_response, goma_log_dir,
-                        build_target_name, is_staging=False):
+  def process_artifacts(
+      self, install_pkg_response: sysroot_pb2.InstallPackagesResponse,
+      goma_log_dir: str, build_target_name: str,
+      is_staging: bool = False) -> Optional[Tuple[GomaResults]]:
     """Process goma artifacts, uploading to gsutil if they exist.
 
     Args:
-      install_pkg_response (chromite.api.InstallPackagesResponse): May contain
-        goma artifacts.
-      goma_log_dir (str): Log directory that contains the goma artifacts.
-      build_target_name (str): Build target string.
-      is_staging (bool): If being run in staging environment instead of prod.
+      install_pkg_response: May contain goma artifacts.
+      goma_log_dir: Log directory that contains the goma artifacts.
+      build_target_name: Build target string.
+      is_staging: If being run in staging environment instead of prod.
 
     Returns:
-      tuple[GomaResults]: tuple containing the GS bucket and path used to write
-          log files. None is returned if there were no artifacts to process.
+      Tuple containing the GS bucket and path used to write log files.
+        None is returned if there were no artifacts to process.
     """
     # Skip if config has disabled this step entirely.
     if not self._upload_goma_logs and not self._upload_stats_counterz:
@@ -132,30 +135,31 @@ class GomaApi(recipe_api.RecipeApi):
     # Based on GsDestination, create and return GomaResults.
     return GomaResults(gs_bucket, gs_path)
 
-  def _process_counterz_and_stats(self, install_pkg_response, goma_log_dir,
-                                  is_staging):
+  def _process_counterz_and_stats(
+      self, install_pkg_response: sysroot_pb2.InstallPackagesResponse,
+      goma_log_dir: str, is_staging: bool) -> None:
     """Process counterz and stats, uploading data to BigQuery.
 
     Args:
-      install_pkg_response (chromite.api.InstallPackagesResponse): May contain
-        goma artifacts.
-      goma_log_dir (str): Log directory that contains the goma log files.
-      is_staging (bool): If being run in staging environment instead of prod.
+      install_pkg_response): May contain goma artifacts.
+      goma_log_dir: Log directory that contains the goma log files.
+      is_staging: If being run in staging environment instead of prod.
     """
     with self.m.step.nest('process_goma_counterz_stats') as presentation:
       if install_pkg_response.HasField('goma_artifacts') and goma_log_dir:
         stats_filename = None
         counterz_filename = None
-        compile_event = CompileEvent()
+        compile_event = compile_events_pb2.CompileEvent()
         compile_event.build_id = self.m.buildbucket.build.id
         # Process stats file.
         if install_pkg_response.goma_artifacts.stats_file:
           # Populate MachineInfo in GomaStats since it has an enum type, which
           # is important to display for BigQuery type conversion.
-          test_goma_stats_proto = GomaStats(
-              time_stats=TimeStats(uptime=1234), machine_info=MachineInfo(
+          test_goma_stats_proto = goma_stats_pb2.GomaStats(
+              time_stats=goma_stats_pb2.TimeStats(uptime=1234),
+              machine_info=goma_stats_pb2.MachineInfo(
                   goma_revision='953240d2c4512d99191488cc98fc6f99@1586141662',
-                  os=MachineInfo.OSType.Value('LINUX'), ncpus=32,
+                  os=goma_stats_pb2.MachineInfo.OSType.Value('LINUX'), ncpus=32,
                   memory_size=67242942464))
           stats_filename = os.path.join(
               goma_log_dir, install_pkg_response.goma_artifacts.stats_file)
@@ -165,7 +169,7 @@ class GomaApi(recipe_api.RecipeApi):
           compile_event.stats.ParseFromString(stats_bin)
         # Process counterz file.
         if install_pkg_response.goma_artifacts.counterz_file:
-          test_counterz_proto = CounterzStats()
+          test_counterz_proto = counterz_pb2.CounterzStats()
           counterz_filename = os.path.join(
               goma_log_dir, install_pkg_response.goma_artifacts.counterz_file)
           counterz_bin = self.m.file.read_raw(
@@ -200,20 +204,21 @@ class GomaApi(recipe_api.RecipeApi):
                                 test_output_data=test_output_data,
                                 raise_on_failure=False)
 
-  def _process_log_files(self, install_pkg_response, goma_log_dir,
-                         build_target_name, is_staging):
+  def _process_log_files(
+      self, install_pkg_response: sysroot_pb2.InstallPackagesResponse,
+      goma_log_dir: str, build_target_name: str,
+      is_staging: bool) -> Tuple[GsDestination]:
     """Upload goma log files specified by the response with gsutil.
 
     Args:
-      install_pkg_response (chromite.api.InstallPackagesResponse): May contain
-        goma artifacts.
-      goma_log_dir (str): Log directory that contains the goma log files.
-      build_target_name (str): Build target string.
-      is_staging (bool): If being run in staging environment instead of prod.
+      install_pkg_response: May contain goma artifacts.
+      goma_log_dir: Log directory that contains the goma log files.
+      build_target_name: Build target string.
+      is_staging: If being run in staging environment instead of prod.
 
     Returns:
-      tuple[GsDestination]: tuple containing the bucket and gs_path used when
-          writing to the goma GS bucket
+      Tuple containing the bucket and gs_path used when writing to the goma GS
+      bucket.
     """
     with self.m.step.nest('process_goma_logs') as presentation:
       with self.m.context(cwd=self.m.path.abs_to_path(goma_log_dir)):
