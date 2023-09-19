@@ -2887,6 +2887,13 @@
   },
   {
     "cmd": [],
+    "name": "record new gerrit changes.find most recent revisions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "fetch previous snapshot identifier",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
