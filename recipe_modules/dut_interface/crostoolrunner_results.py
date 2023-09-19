@@ -64,7 +64,7 @@ class CrosToolRunnerTestDUTResponse(dut_results.DUTTestResponse
                                    ):  # pragma: no cover
   TEST_FAILURE = 'fail'
   TEST_SKIPPED = 'skip'
-  TEST_NOT_RUN = 'notrun'
+  TEST_NOT_RUN = 'not_run'
   TEST_CRASH = 'crash'
 
   def is_failure(self):
