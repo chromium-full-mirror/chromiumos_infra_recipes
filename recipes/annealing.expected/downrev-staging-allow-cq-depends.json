@@ -2843,10 +2843,7 @@
   },
   {
     "cmd": [],
-    "name": "record new gerrit changes",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@found_gerrit_changes@[]@@@"
-    ]
+    "name": "record new gerrit changes"
   },
   {
     "cmd": [],
@@ -2885,6 +2882,14 @@
     "stdin": "message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "record new gerrit changes.find most recent revisions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@found_gerrit_changes@[]@@@"
     ]
   },
   {

@@ -2530,8 +2530,7 @@
       "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
       "@@@STEP_LOG_END@projects@@@",
       "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
-      "@@@STEP_LOG_END@project chosen@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_LOG_END@project chosen@@@"
     ]
   },
   {
@@ -2575,109 +2574,7 @@
     "name": "push uprevs.push to src/overlay.git push src/overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@exception@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git symbolic-ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git symbolic-ref (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/staging-infra-main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
-      "FETCH_HEAD",
-      "-m",
-      "Resolve uprev conflict\n",
-      "--strategy=ours"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git merge",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "cros",
-      "HEAD:refs/heads/staging-infra-main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git push src/overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/overlay.retry uprev to src/overlay.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2690,8 +2587,7 @@
       "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main'), ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
       "@@@STEP_LOG_END@projects@@@",
       "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
-      "@@@STEP_LOG_END@project chosen@@@",
-      "@@@STEP_WARNINGS@@@"
+      "@@@STEP_LOG_END@project chosen@@@"
     ]
   },
   {
@@ -2735,109 +2631,7 @@
     "name": "push uprevs.push to src/private-overlay.git push src/private-overlay",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LOG_LINE@exception@!\tHEAD:refs/heads/staging-infra-main\t[rejected] (non-fast-forward)@@@",
-      "@@@STEP_LOG_END@exception@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git symbolic-ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git symbolic-ref (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/staging-infra-main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
-      "FETCH_HEAD",
-      "-m",
-      "Resolve uprev conflict\n",
-      "--strategy=ours"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git merge",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "push",
-      "--porcelain",
-      "cros",
-      "HEAD:refs/heads/staging-infra-main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git push src/private-overlay",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
-    "infra_step": true,
-    "name": "push uprevs.push to src/private-overlay.retry uprev to src/private-overlay.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -3053,7 +2847,8 @@
     "cmd": [],
     "name": "record new gerrit changes.NAME",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@message@https://pigweed-review.googlesource.com/c/pigweed/+/1@@@"
     ]
   },
   {
@@ -3093,6 +2888,12 @@
     "name": "record new gerrit changes.find most recent revisions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@ignored gerrit changes@{@@@",
+      "@@@STEP_LOG_LINE@ignored gerrit changes@  \"host\": \"pigweed-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@ignored gerrit changes@  \"project\": \"pigweed\",@@@",
+      "@@@STEP_LOG_LINE@ignored gerrit changes@  \"change\": \"1\"@@@",
+      "@@@STEP_LOG_LINE@ignored gerrit changes@}@@@",
+      "@@@STEP_LOG_END@ignored gerrit changes@@@",
       "@@@SET_BUILD_PROPERTY@found_gerrit_changes@[]@@@"
     ]
   },
