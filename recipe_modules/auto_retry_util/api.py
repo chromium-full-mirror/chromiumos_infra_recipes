@@ -771,7 +771,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       else:
         comment += ', '.join(
             retryable_test_suites[:self.suites_comment_limit]) + ',...\n'
-
+    comment += '\nDid you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.\n'
     return comment
 
   def retry_build(
