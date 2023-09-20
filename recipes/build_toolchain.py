@@ -264,7 +264,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       # Upload the file to google storage (-n so we don't overwrite an
       # already existing file).
       api.gsutil.upload(tarball_path.path, properties.archive_gs_bucket,
-                        upload_path, args=['-n'])
+                        upload_path, args=['-a', 'public-read', '-n'])
 
     with api.step.nest('upload redistributable toolchains'):
       for tc in redistributable_toolchains:
@@ -282,7 +282,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
                        f'.{extensions}')
         # Upload with -n to prevent overwriting already existing files.
         api.gsutil.upload(tc.path, properties.sdk_gs_bucket, upload_path,
-                          args=['-n'])
+                          args=['-a', 'public-read', '-n'])
 
     with api.step.nest('upload prebuilt packages'):
       api.cros_build_api.SdkService.UploadPrebuiltPackages(
