@@ -516,8 +516,20 @@ def GenTests(api):
           'find candidates.filter out by basic eligibility',
           'filtered out 1 run(s)',
       ),
-      api.post_process(post_process.PropertyEquals,
-                       'failed_to_fetch_changes_count', 1),
+      api.post_process(
+          post_process.PropertyEquals, 'filtered_build_stats', {
+              'allowlist_filtered': 0,
+              'already_retried': 0,
+              'failed_gerrit_fetch': 1,
+              'non_latest_patch_set': 0,
+              'non_mergeable': 0,
+              'non_new': 0,
+              'non_submittable': 0,
+              'opt_out': 0,
+              'total_with_retryable_statuses': 1,
+              'unsupported_failure_mode': 0,
+              'wip': 0,
+          }),
       api.post_process(post_process.DropExpectation),
   )
 

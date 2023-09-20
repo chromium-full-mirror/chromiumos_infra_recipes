@@ -843,7 +843,7 @@ Returns:
   List of modified files.
 ### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
 
-[DEPS](/recipe_modules/auto_retry_util/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 #### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#70)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -881,7 +881,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable).
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#618)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#633)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -907,7 +907,7 @@ Returns whether the given feature is enabled on the build.
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#762)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#777)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -929,7 +929,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#81)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#534)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#549)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 

@@ -404,6 +404,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('find candidates') as presentation:
       cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
+      filter_properties = {'total_with_retryable_statuses': len(cq_orchs)}
 
       with self.m.step.nest('filter out runs last triggered by retry') as pres:
         last_our_retry_ids = [
@@ -416,6 +417,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(last_our_retry_ids)
           ]
         pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
+        filter_properties['already_retried'] = len(last_our_retry_ids)
 
       with self.m.step.nest('filter out unsupported failure modes') as pres:
         unsupported_failure_mode_ids = [
@@ -430,6 +432,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(unsupported_failure_mode_ids)
           ]
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
+        filter_properties['unsupported_failure_mode'] = len(
+            unsupported_failure_mode_ids)
 
       with self.m.step.nest('filter by experiment allowlist') as pres:
         if self._experiment_allowlist:
@@ -444,8 +448,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                 for x in sorted(not_in_allowlist_ids)
             ]
           pres.step_text = f'filtered out {len(not_in_allowlist_ids)} run(s)'
+          filter_properties['allowlist_filtered'] = len(not_in_allowlist_ids)
         else:
           pres.step_text = 'no experiment allowlist filtering'
+          filter_properties['allowlist_filtered'] = 0
 
 
       with self.m.step.nest('filter out by basic eligibility') as pres:
@@ -474,8 +480,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if failed_to_fetch_ids:
-          pres.properties['failed_to_fetch_changes_count'] = len(
-              failed_to_fetch_ids)
           pres.logs['failed to fetch from Gerrit'] = [
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(failed_to_fetch_ids)
@@ -500,6 +504,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(non_latest_patch_set_ids)
           ]
 
+        filter_properties.update({
+            'failed_gerrit_fetch': len(failed_to_fetch_ids),
+            'non_new': len(non_new_ids),
+            'non_submittable': len(non_submittable_ids),
+            'wip': len(wip_ids),
+            'non_latest_patch_set': len(non_latest_patch_set_ids),
+        })
+
       with self.m.step.nest('filter out merge conflicts') as pres:
         non_mergeable_ids = set()
         for c in cq_orchs:
@@ -516,6 +528,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(non_mergeable_ids)
           ]
         pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
+        filter_properties['non_mergeable'] = len(non_mergeable_ids)
 
       with self.m.step.nest('filter out opt-out runs') as pres:
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
@@ -526,8 +539,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(opt_out_ids)
           ]
+        filter_properties['opt_out'] = len(opt_out_ids)
 
       presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
+      self.m.easy.set_properties_step(filtered_build_stats=filter_properties)
 
     return cq_orchs
 

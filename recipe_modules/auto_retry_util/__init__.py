@@ -11,6 +11,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'cros_tags',
+    'easy',
     'exonerate',
     'exoneration_util',
     'gerrit',
